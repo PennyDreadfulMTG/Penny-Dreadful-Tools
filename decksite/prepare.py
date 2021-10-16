@@ -24,7 +24,7 @@ def prepare_card(c: Card, tournament_only: bool = False) -> None:
     c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
     c.pd_legal = c.legalities.get(season_name, False) and c.legalities[season_name] != 'Banned'
     c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
-    c.non_pd_legal_formats = {k for k, v in c.legalities.items() if season_name not in k and v != 'Banned'}
+    c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
     c.has_legal_format = len(c.legal_formats) > 0
     set_legal_icons(c)
     if c.get('num_decks') is not None:

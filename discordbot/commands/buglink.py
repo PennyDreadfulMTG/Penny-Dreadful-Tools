@@ -13,6 +13,6 @@ async def buglink(ctx: MtgContext, *, c: Card) -> None:
         await ctx.send(base_url)
         return
     msg = '<{base_url}?utf8=%E2%9C%93&q=is%3Aissue+%22{name}%22>'.format(base_url=base_url, name=fetch_tools.escape(c.name))
-    if not c.bugs or len(c.bugs) == 0:
-        msg = "I don't know of a bug for {name} but here's the link: {link}".format(name=c.name, link=msg)
+    # if not c.bugs or len(c.bugs) == 0:
+    #     msg = "I don't know of a bug for {name} but here's the link: {link}".format(name=c.name, link=msg)
     await ctx.send(msg)

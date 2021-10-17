@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-flake8 = "==3.9.2"
+flake8 = "==4.0.1"
 # flake8-comprehensions = "*"
 flake8-quotes = "*"
 flake8-bugbear = "*"

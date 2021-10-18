@@ -92,7 +92,7 @@ def parse_xml(s: str) -> DecklistType:
             section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
             d[section][c['Name']] = d[section].get(c['Name'], 0) + int(c['Quantity'])
         return d
-    except xml.sax.SAXException as e:  # type: ignore
+    except xml.sax.SAXException as e:
         raise InvalidDataException(e) from e  # pylint: disable=bad-exception-context
     except AttributeError as e:
         raise InvalidDataException(e) from e  # Not valid MTGO .deck format

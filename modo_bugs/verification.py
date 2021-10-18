@@ -37,7 +37,7 @@ def main() -> None:
             if content.state == 'open':
                 keep = True
             elif not card.archived:
-                card.edit(archived=True)
+                card.edit(archived=True)  # type: ignore
         if not keep:
             print(f'Deleting empty column {col.name}')
             col.delete()

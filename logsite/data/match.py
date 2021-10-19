@@ -2,13 +2,13 @@ import datetime
 from typing import Any, Dict, List, Optional
 
 import pytz
-import sqlalchemy as sa  # type: ignore
+import sqlalchemy as sa
 from flask import url_for
 
 from shared import dtutil
 
 from .. import db
-from ..db import DB as fsa  # type: ignore
+from ..db import DB as fsa
 
 # pylint: disable=no-member
 

@@ -141,6 +141,7 @@ def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> N
         '--disallow-untyped-defs',       # All methods must be typed.
         '--strict-equality',             # Don't allow us to say "0" == 0 or other always false comparisons
         '--exclude=logsite_migrations',  # Exclude these generated files
+        '--warn-unused-ignores',
     ]
     if strict:
         args.extend([

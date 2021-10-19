@@ -1,9 +1,9 @@
 from typing import Dict
 
-import sqlalchemy as sa  # type: ignore
+import sqlalchemy as sa
 
 from .. import db
-from ..db import DB as fsa  # type: ignore
+from ..db import DB as fsa
 
 
 class TournamentInfo(fsa.Model):  # type: ignore

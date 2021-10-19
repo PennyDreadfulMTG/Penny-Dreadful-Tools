@@ -10,7 +10,7 @@ from . import APP
 
 # pylint: disable=no-member
 
-DB = SQLAlchemy(APP)  # type: ignore
+DB = SQLAlchemy(APP)
 MIGRATE = Migrate(APP, DB)
 
 MATCH_PLAYERS = DB.Table('match_players',

@@ -66,7 +66,7 @@ def main() -> None:
     bugsjson.close()
 
 def verification_numbers() -> None:
-    print('Updating Verification Model')
+    print('Populating Verification Model')
     project = repo.get_verification_project()
     for col in project.get_columns():
         if col.name == 'Needs Testing':

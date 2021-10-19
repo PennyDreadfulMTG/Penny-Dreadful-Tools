@@ -462,7 +462,7 @@ def competitions_api() -> Response:
             cr['name'] = c.name
             cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
             r.append(cr)
-    return return_json(r)  # type: ignore
+    return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')
 def competition_api(competition_id: int) -> Response:
@@ -615,7 +615,7 @@ def person_status() -> Response:
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))
         if d is not None:
-            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}  # type: ignore
+            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     active_league = league.active_league()

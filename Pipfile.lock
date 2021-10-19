@@ -1756,11 +1756,11 @@
         },
         "types-python-dateutil": {
             "hashes": [
-                "sha256:abbdaba0635d4f5fed764c2844c449bb095ed82abbdf47fcdbd035e3bf708ea1",
-                "sha256:dec1be9d9ea3caea7677d52d95ed9ee6b6334ea325afe1ef462a8af8e7522f83"
+                "sha256:74d7d3a79ff07e7921472cf252b7fe4ffda5dc35570b9d3c7c4908761e9f9b87",
+                "sha256:84a1b09fae40d61c01f450ea87cd594201bbe8511a64fecbe433051b87fb582c"
             ],
             "index": "pypi",
-            "version": "==2.8.1"
+            "version": "==2.8.2"
         },
         "types-pytz": {
             "hashes": [

@@ -164,6 +164,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         all_cards = await fetcher.all_cards_async()
     except Exception as e:
         print(f'Aborting database update because fetching from Scryfall failed: {e}')
+        return
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.

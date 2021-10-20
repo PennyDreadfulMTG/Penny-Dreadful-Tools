@@ -75,7 +75,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
-- python3 dev.py build
+- python3 build.py
 - Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
   - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';

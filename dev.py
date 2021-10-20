@@ -143,8 +143,7 @@ def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
     code = pytest.main(args)
     if os.environ.get('GITHUB_ACTIONS') == 'true':
         upload_coverage()
-    if code:
-        raise TestFailedException(code)
+    sys.exit(code)
 
 # pylint: disable=pointless-statement
 @cli.command()

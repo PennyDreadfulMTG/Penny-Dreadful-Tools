@@ -57,7 +57,7 @@ jobs:
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync --dev; fi
     - name: Run pytest
-      run: pipenv run python dev.py tests
+      run: pipenv run python dev.py test
 
 
   jslint:

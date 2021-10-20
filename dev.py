@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import List, Optional
+from typing import Iterable, List, Optional, Tuple
 
 import build as builddotpy
 from shared import configuration
@@ -47,8 +47,7 @@ def buildjs() -> None:
     builddotpy.buildjs()
 
 @cli.command()
-@click.argument('argv', nargs=-1)
-def lint(argv: List[str]) -> None:
+def lint() -> None:
     """
     Invoke Pylint with our preferred options
     """
@@ -63,7 +62,7 @@ def stylefix() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
+def mypy(argv: Tuple[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
@@ -106,19 +105,19 @@ def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> N
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def unit(argv: List[str]) -> None:
+def unit(argv: Tuple[str]) -> None:
     runtests(argv, 'not functional and not perf', True)
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def test(argv: List[str]) -> None:
+def test(argv: Tuple[str]) -> None:
     runtests(argv, '', False)
 
-def runtests(argv: List[str], m: str, mark: bool) -> None:
+def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    args = argv.copy()
+    args = list(argv)
     if mark:
         if args and not args[0].startswith('-'):
             to_find = args.pop(0)
@@ -205,7 +204,7 @@ def push() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def pull_request(argv: List[str]) -> None:
+def pull_request(argv: Tuple[str]) -> None:
     print('>>>> Pull request')
     try:
         subprocess.check_call(['gh', 'pr', 'create'])

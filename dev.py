@@ -142,7 +142,7 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
             configuration.CONFIG[k] = configuration.DEFAULTS[k]
 
     code = pytest.main(args)
-    if os.environ.get('TRAVIS') == 'true':
+    if os.environ.get('GITHUB_ACTIONS') == 'true':
         upload_coverage()
     if code:
         raise TestFailedException(code)

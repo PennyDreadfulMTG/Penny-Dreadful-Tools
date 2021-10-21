@@ -5,18 +5,20 @@ import os
 import subprocess
 import sys
 import time
-from pickle import PicklingError
-from typing import List, Optional
+from typing import Iterable, List, Optional, Tuple
 
+import build as builddotpy
 from shared import configuration
-from shared.pd_exception import InvalidArgumentException, TestFailedException
+from shared.pd_exception import TestFailedException
+from run import wait_for_db
 
 try:
+    import click
     from plumbum import FG, local
     from plumbum.commands.processes import ProcessExecutionError
 except ImportError:
-    sys.stderr.write('Please run ./dev.py build\n')
-    ProcessExecutionError = subprocess.CalledProcessError
+    sys.stderr.write('Please run ./build.py first\n')
+    sys.exit(-1)
 
 
 ON_PROD = configuration.get_bool('production')
@@ -26,94 +28,26 @@ if ON_PROD:
 
 ON_WINDOWS = sys.platform == 'win32'
 
-def run() -> None:
-    try:
-        try:
-            exit_code = None
-            run_dangerously()
-        except InvalidArgumentException:
-            exit_code = 1
-            raise
-        except TestFailedException:
-            exit_code = 2
-            raise
-        except ProcessExecutionError:
-            exit_code = 3
-            raise
-    except Exception as e:  # pylint: disable=broad-except
-        msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
-        sys.stderr.write(msg)
-        if not exit_code:
-            raise
-        sys.exit(exit_code if exit_code else 4)
 
-def run_dangerously() -> None:
-    try:
-        cmd = sys.argv[1].lower()
-        args = sys.argv[2:]
-    except IndexError as e:
-        raise InvalidArgumentException('Please supply an argument.') from e
-    if cmd == 'unit':
-        unit(args)
-    elif cmd == 'functional':
-        runtests(args, 'functional', True)
-    elif cmd == 'perf':
-        runtests(args, 'perf', True)
-    elif cmd in ('test', 'tests'):
-        runtests(args, '', False)
-    elif cmd in ('lint', 'pylint', 'flake8'):
-        lint(args)
-    elif cmd in ('autopep', 'stylefix'):
-        stylefix()
-    elif cmd in ('types', 'mypy'):
-        mypy(args)
-    elif cmd == 'mypy-strict':
-        mypy(args, strict=True)
-    elif cmd == 'typeshed':
-        mypy(args, typeshedding=True)
-    elif cmd == 'jslint':
-        jslint()
-    elif cmd == 'jsfix':
-        jsfix()
-    elif cmd in ('nuke_db', 'reset_db'):
-        reset_db()
-    elif cmd in ('imports', 'isort', 'sort'):
-        sort()
-    elif cmd in ('fix-sorts', 'fix-imports', 'fiximports'):
-        sort(True)
-    elif cmd in ('pr', 'pull-request'):
-        pull_request(args)
-    elif cmd == 'build':
-        build()
-    elif cmd == 'buildjs':
-        buildjs()
-    elif cmd == 'popclean':
-        popclean()
-    elif cmd == 'readme':
-        from generate_readme import generate_readme
-        generate_readme()
-    elif cmd == 'coverage':
-        coverage()
-    elif cmd == 'watch':
-        watch()
-    elif cmd == 'branch':
-        branch(args)
-    elif cmd == 'push':
-        push()
-    elif cmd == 'check':
-        check(args)
-    elif cmd in ('safe_push', 'safepush'):
-        safe_push(args)
-    elif cmd == 'release':
-        release(args)
-    elif cmd == 'check-reqs':
-        check_requirements()
-    elif cmd == 'swagger':
-        swagger()
-    else:
-        raise InvalidArgumentException('Unrecognised command {cmd}.'.format(cmd=cmd))
+@click.group()
+@click.option('--wait-for-db', is_flag=True, callback=wait_for_db, expose_value=False, help='Idle until the mySQL server starts accepting connections')
+def cli() -> None:
+    pass
 
-def lint(argv: List[str]) -> None:
+@cli.command()
+def build() -> None:
+    builddotpy.build()
+
+@cli.command()
+def buildpy() -> None:
+    builddotpy.buildpy()
+
+@cli.command()
+def buildjs() -> None:
+    builddotpy.buildjs()
+
+@cli.command()
+def lint() -> None:
     """
     Invoke Pylint with our preferred options
     """
@@ -121,11 +55,14 @@ def lint(argv: List[str]) -> None:
     pipenv = local['pipenv']
     pipenv['run', 'flake8'] & FG  # noqa
 
+@cli.command()
 def stylefix() -> None:
     autopep = local['autopep8']
     autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG  # noqa
 
-def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
+@cli.command()
+@click.argument('argv', nargs=-1)
+def mypy(argv: Tuple[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
@@ -166,14 +103,21 @@ def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> N
     if result[2]:
         raise TestFailedException(result[2])
 
-def unit(argv: List[str]) -> None:
+@cli.command()
+@click.argument('argv', nargs=-1)
+def unit(argv: Tuple[str]) -> None:
     runtests(argv, 'not functional and not perf', True)
 
-def runtests(argv: List[str], m: str, mark: bool) -> None:
+@cli.command()
+@click.argument('argv', nargs=-1)
+def test(argv: Tuple[str]) -> None:
+    runtests(argv, '', False)
+
+def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    args = argv.copy()
+    args = list(argv)
     if mark:
         if args and not args[0].startswith('-'):
             to_find = args.pop(0)
@@ -185,24 +129,13 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
     # pylint: disable=import-outside-toplevel
     import pytest
 
-    from magic import fetcher, multiverse, oracle, whoosh_write
-    if multiverse.init():
-        whoosh_write.reindex()
-    oracle.init()
-    try:
-        fetcher.sitemap()
-    except fetcher.FetchException:
-        print(f'Config was pointed at {fetcher.decksite_url()}, but it doesnt appear to be listening.')
-        for k in ['decksite_hostname', 'decksite_port', 'decksite_protocol']:
-            configuration.CONFIG[k] = configuration.DEFAULTS[k]
-
     code = pytest.main(args)
-    if os.environ.get('TRAVIS') == 'true':
+    if os.environ.get('GITHUB_ACTIONS') == 'true':
         upload_coverage()
-    if code:
-        raise TestFailedException(code)
+    sys.exit(code)
 
 # pylint: disable=pointless-statement
+@cli.command()
 def upload_coverage() -> None:
     try:
         print('>>>> Upload coverage')
@@ -220,6 +153,8 @@ def upload_coverage() -> None:
         print(e)
 
 # pylint: disable=import-outside-toplevel
+@cli.command()
+@click.option('--fix', is_flag=True, default=False)
 def sort(fix: bool = False) -> None:
     print('>>>> Checking imports')
     if fix:
@@ -228,6 +163,7 @@ def sort(fix: bool = False) -> None:
         subprocess.check_call(['isort', '.', '--check'])
 
 # pylint: disable=import-outside-toplevel
+@cli.command()
 def reset_db() -> None:
     """
     Handle with care.
@@ -238,6 +174,8 @@ def reset_db() -> None:
     import magic.database
     magic.database.db().nuke_database()
 
+@cli.command()
+@click.argument('argv', nargs=-1)
 def safe_push(args: List[str]) -> None:
     label = stash_if_any()
     print('>>>> Rebasing branch on master')
@@ -246,32 +184,23 @@ def safe_push(args: List[str]) -> None:
     push()
     pop_if_any(label)
 
+@cli.command()
 def push() -> None:
     print('>>>> Pushing')
     branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
 
-def pull_request(argv: List[str]) -> None:
+@cli.command()
+@click.argument('argv', nargs=-1)
+def pull_request(argv: Tuple[str]) -> None:
     print('>>>> Pull request')
     try:
         subprocess.check_call(['gh', 'pr', 'create'])
     except (subprocess.CalledProcessError, FileNotFoundError):
         subprocess.check_call(['hub', 'pull-request', *argv])
 
-def build() -> None:
-    print('>>>> Installing Requirements')
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pipenv'])
-    subprocess.check_call(['pipenv', 'sync', '--dev'])
-    if sys.prefix == sys.base_prefix:
-        subprocess.check_call([sys.executable, '-m', 'pipenv', 'install', '--system', '--dev'])
-    print('>>>> Installing node modules')
-    subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
-    buildjs()
-
-def buildjs() -> None:
-    print('>>>> Building javascript')
-    subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)
-
+@cli.command()
+@click.option('--fix', is_flag=True, default=False)
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
     files = find_files(file_extension='js', exclude=['.eslintrc.js', 'shared_web/static/js/tipped.min.js']) + find_files(file_extension='jsx')
@@ -280,22 +209,27 @@ def jslint(fix: bool = False) -> None:
         cmd.append('--fix')
     subprocess.check_call(cmd + files, shell=ON_WINDOWS)
 
+@cli.command()
 def jsfix() -> None:
     print('>>>> Fixing js')
     jslint(fix=True)
 
+@cli.command()
 def coverage() -> None:
     print('>>>> Coverage')
     subprocess.check_call(['coverage', 'run', 'dev.py', 'tests'])
     subprocess.check_call(['coverage', 'xml'])
     subprocess.check_call(['coverage', 'report'])
 
+@cli.command()
 def watch() -> None:
     print('>>>> Watching')
     subprocess.check_call(['npm', 'run', 'watch'], shell=ON_WINDOWS)
 
-# Make a branch based off of current (remote) master with all your local changes preserved (but not added).
+@cli.command()
+@click.argument('argv', nargs=-1)
 def branch(args: List[str]) -> None:
+    """Make a branch based off of current (remote) master with all your local changes preserved (but not added)."""
     if not args:
         print('Usage: dev.py branch <branch_name>')
         return
@@ -323,6 +257,7 @@ def pop_if_any(label: str) -> None:
 
 # If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
 # This cleans up for you. With the newer better behavior of --include-untracked this should now be unncessary.
+@cli.command()
 def popclean() -> None:
     print('>>>> Popping safely into messy directory.')
     try:
@@ -335,12 +270,16 @@ def popclean() -> None:
             os.remove(f)
         subprocess.check_call(['git', 'stash', 'pop'])
 
+@cli.command()
+@click.argument('argv', nargs=-1)
 def check(args: List[str]) -> None:
     sort()
     mypy(args)
     lint(args)
     jslint()
 
+@cli.command()
+@click.argument('argv', nargs=-1)
 def release(args: List[str]) -> None:
     check([])
     safe_push([])
@@ -358,11 +297,13 @@ def find_files(needle: str = '', file_extension: str = '', exclude: Optional[Lis
     return paths
 
 
+@cli.command()
 def check_requirements() -> None:
     files = find_files(file_extension='py')
     r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_extra_reqs'] + files)
     r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_missing_reqs'] + files) or r
 
+@cli.command()
 def swagger() -> None:
     import decksite
     decksite.APP.config['SERVER_NAME'] = configuration.server_name()
@@ -372,4 +313,4 @@ def swagger() -> None:
 
 
 if __name__ == '__main__':
-    run()
+    cli()

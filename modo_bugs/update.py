@@ -86,6 +86,7 @@ def process_issue(issue: Issue) -> None:
         apply_screenshot_labels(issue)
     labels = [c.name for c in issue.labels]
     see_also = strings.get_body_field(issue.body, 'See Also')
+    feedback_link = strings.get_body_field(issue.body, 'Support Thread')
     cards = get_affects(issue)
 
     if age < 5:
@@ -135,6 +136,7 @@ def process_issue(issue: Issue) -> None:
             'breaking': cat in BADCATS,
             'bannable': bannable,
             'url': issue.html_url,
+            'support_thread': feedback_link,
         }
         if 'Multiplayer' in labels:
             bug['multiplayer_only'] = True
@@ -221,6 +223,12 @@ def fix_user_errors(issue: Issue) -> None:
             if cards:
                 cardlist = ', '.join([f'[{c}]' for c in cards])
                 body = strings.set_body_field(body, 'Affects', cardlist)
+
+    if strings.get_body_field(issue.body, 'Support Thread') is None:
+        feedback_cap = re.search(strings.FEEDBACK_LINK_REGEX, body, re.I)
+        if feedback_cap:
+            body = re.sub(strings.FEEDBACK_LINK_REGEX, '', body)
+            body = strings.set_body_field(body, 'Support Thread', feedback_cap.group(0))
 
     # Push changes.
     if body != issue.body:

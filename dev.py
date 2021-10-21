@@ -129,17 +129,6 @@ def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
     # pylint: disable=import-outside-toplevel
     import pytest
 
-    from magic import fetcher, multiverse, oracle, whoosh_write
-    if multiverse.init():
-        whoosh_write.reindex()
-    oracle.init()
-    try:
-        fetcher.sitemap()
-    except fetcher.FetchException:
-        print(f'Config was pointed at {fetcher.decksite_url()}, but it doesnt appear to be listening.')
-        for k in ['decksite_hostname', 'decksite_port', 'decksite_protocol']:
-            configuration.CONFIG[k] = configuration.DEFAULTS[k]
-
     code = pytest.main(args)
     if os.environ.get('GITHUB_ACTIONS') == 'true':
         upload_coverage()

@@ -22,6 +22,7 @@ WHITELIST = [
     'b u r n',
     'r e a n i m a t o r',
     'meme deck for #general',
+    "do y'all zoomers remember what yore-tiller means",
 ]
 
 PROFANITY_WHITELIST = [

@@ -31,8 +31,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/run.py",
             "args": [
-                "modo_bugs"
-            ]
+                "modo-bugs"
+            ],
+            "stopOnEntry": true
         },
         {
             "name": "Dev: Linter",

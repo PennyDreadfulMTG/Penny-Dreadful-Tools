@@ -1,5 +1,5 @@
-import sys
 import subprocess
+import sys
 
 ON_WINDOWS = sys.platform == 'win32'
 

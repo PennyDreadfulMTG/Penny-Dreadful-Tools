@@ -8,9 +8,9 @@ import time
 from typing import Iterable, List, Optional, Tuple
 
 import build as builddotpy
+from run import wait_for_db
 from shared import configuration
 from shared.pd_exception import TestFailedException
-from run import wait_for_db
 
 try:
     import click

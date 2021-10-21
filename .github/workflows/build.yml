@@ -59,7 +59,7 @@ jobs:
     - name: Run pytest
       run: |
         pipenv run pytest
-        pipenv run dev.py upload-coverage
+        pipenv run python dev.py upload-coverage
 
   jslint:
     name: jslint

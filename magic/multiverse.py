@@ -130,7 +130,7 @@ def base_query(where: str = '(1 = 1)') -> str:
         GROUP BY u.id
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()),
-        format_id=get_format_id('Penny Dreadful', True),
+        format_id=get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
@@ -164,19 +164,18 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         all_cards = await fetcher.all_cards_async()
     except Exception as e:
         print(f'Aborting database update because fetching from Scryfall failed: {e}')
+        return
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
-    db().execute("""
-        DELETE FROM card_color;
-        DELETE FROM card_color_identity;
-        DELETE FROM card_legality;
-        DELETE FROM card_bug;
-        DELETE FROM face;
-        DELETE FROM printing;
-        DELETE FROM card;
-        DELETE FROM `set`;
-    """)
+    db().execute('DELETE FROM card_color')
+    db().execute('DELETE FROM card_color_identity')
+    db().execute('DELETE FROM card_legality')
+    db().execute('DELETE FROM card_bug')
+    db().execute('DELETE FROM face')
+    db().execute('DELETE FROM printing')
+    db().execute('DELETE FROM card')
+    db().execute('DELETE FROM `set`')
     for s in sets:
         insert_set(s)
     every_card_printing = all_cards
@@ -200,7 +199,7 @@ async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
     if values['card_legality']:
         insert_many('card_legality', card.card_legality_properties(), values['card_legality'], ['legality'])
     # Create the current Penny Dreadful format if necessary.
-    get_format_id('Penny Dreadful', True)
+    get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True)
     await update_bugged_cards_async()
     return [c['id'] for c in values['card']]
 
@@ -267,6 +266,10 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             for color in p.get('color_identity', []):
                 color_id = colors[color]
                 card_color_identity_values.append({'card_id': card_id, 'color_id': color_id})
+            # DFCs store their colors in their faces, not at the top level. See #9022.
+            for color in face_colors(p):
+                color_id = colors[color]
+                card_color_values.append({'card_id': card_id, 'color_id': color_id})
             for format_, status in p.get('legalities', {}).items():
                 if status == 'not_legal' or format_.capitalize() == 'Penny':  # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
                     continue
@@ -297,6 +300,13 @@ def valid_layout(p: CardDescription) -> bool:
     # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
     return p['layout'] not in ['art_series', 'token']
 
+def face_colors(p: CardDescription) -> Set[str]:
+    colors = set()
+    for f in p.get('card_faces', []):
+        for color in f.get('colors', []):
+            colors.add(color)
+    return colors
+
 def insert_many(table: str, properties: TableDescription, values: List[Dict[str, Any]], additional_columns: Optional[List[str]] = None) -> None:
     columns = additional_columns or []
     columns += [k for k, v in properties.items() if v.get('foreign_key')]
@@ -326,9 +336,9 @@ async def update_bugged_cards_async() -> None:
 
 async def update_pd_legality_async() -> None:
     for s in seasons.SEASONS:
+        await set_legal_cards_async(season=s)
         if s == seasons.current_season_code():
             break
-        await set_legal_cards_async(season=s)
 
 def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Dict[str, Any]:
     if not card_id:
@@ -380,8 +390,8 @@ def is_meld_result(p: CardDescription) -> bool:
     meld_result_name = next(part['name'] for part in all_parts if part['component'] == 'meld_result')
     return p['name'] == meld_result_name
 
-def load_sets() -> dict:
-    return {s['code']: s['id'] for s in db().select('SELECT id, code FROM `set`')}
+def load_sets() -> Dict[str, int]:
+    return {s['code']: int(s['id']) for s in db().select('SELECT id, code FROM `set`')}
 
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
@@ -417,23 +427,26 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     return result
 
 async def set_legal_cards_async(season: Optional[str] = None) -> None:
+    if season is None:
+        season = seasons.current_season_code()
+
     new_list: Set[str] = set()
     try:
         new_list = set(await fetcher.legal_cards_async(season=season))
     except fetcher.FetchException:
-        pass
-    if season is None:
-        format_id = get_format_id('Penny Dreadful')
-    else:
-        format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
-
+        return
     if new_list == set() or new_list is None:
         return
+
+    format_id = get_format_id(f'Penny Dreadful {season}', True)
+
     if season is not None:
         # Older formats don't change
         populated = db().select('SELECT id from card_legality WHERE format_id = %s LIMIT 1', [format_id])
         if populated:
             return
+
+    print(f'Setting Legal Cards for {season} ({format_id}) - {len(new_list)} cards')
 
     # In case we get windows line endings.
     new_list = set(c.rstrip() for c in new_list)
@@ -493,6 +506,8 @@ def date2int(s: str, name: str) -> Union[str, float]:
 
 # I'm not sure this belong here, but it's here for now.
 def get_format_id(name: str, allow_create: bool = False) -> int:
+    if name == 'Penny Dreadful':
+        raise InvalidArgumentException('Queried PD without a season')
     if len(FORMAT_IDS) == 0:
         rs = db().select('SELECT id, name FROM format')
         for row in rs:
@@ -506,10 +521,7 @@ def get_format_id(name: str, allow_create: bool = False) -> int:
 
 def get_format_id_from_season_id(season_id: int) -> int:
     season_code = seasons.SEASONS[int(season_id) - 1]
-    if season_code == seasons.current_season_code():
-        format_name = 'Penny Dreadful'
-    else:
-        format_name = 'Penny Dreadful {f}'.format(f=season_code)
+    format_name = 'Penny Dreadful {f}'.format(f=season_code)
     return get_format_id(format_name)
 
 def get_all_cards() -> List[Card]:

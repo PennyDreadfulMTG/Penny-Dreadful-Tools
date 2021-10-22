@@ -165,7 +165,7 @@ def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
     return sorted(out, key=lambda card: card['name'])
 
 def if_todays_prices(out: bool = True) -> List[Card]:
-    current_format = multiverse.get_format_id('Penny Dreadful')
+    current_format = multiverse.get_format_id(f'Penny Dreadful {seasons.current_season_code()}')
     if out:
         not_clause = ''
         compare = '<'

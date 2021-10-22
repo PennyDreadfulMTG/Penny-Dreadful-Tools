@@ -4,6 +4,7 @@ import importlib
 import pkgutil
 import sys
 import time
+from types import ModuleType
 from typing import Any, List, Optional
 
 import click
@@ -121,17 +122,11 @@ def task(args: List[str]) -> None:
             if use_app_context:
                 from decksite.main import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
-                app_context = APP.app_context()  # type: ignore
-                app_context.__enter__()  # type: ignore
-            if getattr(s, 'scrape', None) is not None:
-                exitcode = s.scrape(*args[2:])  # type: ignore
-            elif getattr(s, 'run', None) is not None:
-                exitcode = s.run()  # type: ignore
-            # Only when called directly, not in 'all'
-            elif getattr(s, 'ad_hoc', None) is not None:
-                exitcode = s.ad_hoc()  # type: ignore
-            if use_app_context:
-                app_context.__exit__(None, None, None)  # type: ignore
+                with APP.app_context():
+                    exitcode = call(args, s)
+            else:
+                exitcode = call(args, s)
+
             if exitcode is not None:
                 sys.exit(exitcode)
     except Exception as c:
@@ -139,41 +134,47 @@ def task(args: List[str]) -> None:
         repo.create_issue(f'Error running task {args}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
         raise
 
+def call(args: List[str], s: ModuleType) -> int:
+    exitcode = -99
+    if getattr(s, 'scrape', None) is not None:
+        exitcode = s.scrape(*args[2:])  # type: ignore
+    elif getattr(s, 'run', None) is not None:
+        exitcode = s.run()  # type: ignore
+    # Only when called directly, not in 'all'
+    elif getattr(s, 'ad_hoc', None) is not None:
+        exitcode = s.ad_hoc()  # type: ignore
+    return exitcode
+
 def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
     error = None
-    app_context = None
     m = importlib.import_module('{module}'.format(module=module))
-    # pylint: disable=unused-variable
-    for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):  # type: ignore
-        try:
-            s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
-            use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
-            if use_app_context and app_context is None:
-                from decksite import APP
-                APP.config['SERVER_NAME'] = configuration.server_name()
-                app_context = APP.app_context()  # type: ignore
-                app_context.__enter__()  # type: ignore
 
-            if with_flag and not getattr(s, with_flag, False):
-                continue
-            if getattr(s, 'scrape', None) is not None:
-                timer = time.perf_counter()
-                s.scrape()  # type: ignore
-                t = time.perf_counter() - timer
-                print(f'{s.__name__} completed in {t}')
+    from decksite import APP
+    APP.config['SERVER_NAME'] = configuration.server_name()
+    with APP.app_context():
+        # pylint: disable=unused-variable
+        for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):  # type: ignore
+            try:
+                s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
 
-            elif getattr(s, 'run', None) is not None:
-                timer = time.perf_counter()
-                s.run()  # type: ignore
-                t = time.perf_counter() - timer
-                print(f'{s.__name__} completed in {t}')
-        except Exception as c:  # pylint: disable=broad-except
-            from shared import repo
-            repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
-            error = c
+                if with_flag and not getattr(s, with_flag, False):
+                    continue
+                if getattr(s, 'scrape', None) is not None:
+                    timer = time.perf_counter()
+                    s.scrape()  # type: ignore
+                    t = time.perf_counter() - timer
+                    print(f'{s.__name__} completed in {t}')
 
-    if app_context is not None:
-        app_context.__exit__(None, None, None)  # type: ignore
+                elif getattr(s, 'run', None) is not None:
+                    timer = time.perf_counter()
+                    s.run()  # type: ignore
+                    t = time.perf_counter() - timer
+                    print(f'{s.__name__} completed in {t}')
+            except Exception as c:  # pylint: disable=broad-except
+                from shared import repo
+                repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
+                error = c
+
     if error:
         raise error
 

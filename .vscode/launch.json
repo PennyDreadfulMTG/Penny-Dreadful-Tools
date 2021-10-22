@@ -1,0 +1,57 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+    {
+        "name": "Python: Current File",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}"
+    },
+        {
+            "name": "Run: Rotation",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "rotation"
+            ]
+        },
+        {
+            "name": "Run: Decksite",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_decksite.py"
+        },
+        {
+            "name": "Run: Modo Bugs",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "modo-bugs"
+            ],
+            "stopOnEntry": true
+        },
+        {
+            "name": "Dev: Linter",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/dev.py",
+            "args": [
+                "lint"
+            ]
+        },
+        {
+            "name": "Run: Current Module",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "${fileDirname}"
+            ]
+        }
+    ]
+}

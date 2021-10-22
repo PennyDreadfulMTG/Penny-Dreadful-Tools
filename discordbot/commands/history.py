@@ -20,7 +20,7 @@ def card_history(c: Card) -> str:
             season_id = seasons.SEASONS.index(
                 format_name.replace('Penny Dreadful ', '')) + 1
             data[season_id] = True
-    data[seasons.current_season_num()] = c.legalities.get('Penny Dreadful', None) == 'Legal'
+    # data[seasons.current_season_num()] = c.legalities.get(seasons.current_season_name(), None) == 'Legal'
     s = '   '
     for i in range(1, seasons.current_season_num() + 1):
         s += f'{i} '

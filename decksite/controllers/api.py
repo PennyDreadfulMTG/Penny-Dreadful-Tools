@@ -1,5 +1,6 @@
 import datetime
 import json
+import sys
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 from flask import Response, request, session, url_for
@@ -11,7 +12,7 @@ from decksite.data import card
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
-from decksite.data import query
+from decksite.data import playability, query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
@@ -347,6 +348,23 @@ def matches_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/archetypes/')
+def archetypes_api() -> Response:
+    """
+    Grabs the archetype tree.
+    Input: nothing
+    Output:
+        {
+            total: int,
+            objects: [
+                { name: str, parent: str }
+            ]
+        }
+    """
+    data = archs.load_archetype_tree()
+    r = {'total': len(data), 'objects': data}
+    return return_json(r, camelize=True)
+
 @APP.route('/api/rotation/cards/')
 def rotation_cards_api() -> Response:
     """
@@ -377,12 +395,18 @@ def rotation_cards_api() -> Response:
         cs = [c for c in cs if c.name in search_results]
     if not session.get('admin', False):
         cs = [c for c in cs if c.status != 'Undecided']
-    total = len(cs)
-    # Now add interestingness to the cards, which only decksite knows not magic.rotation.
-    playability = card.playability()
+    # Now add rank to the cards, which only decksite knows not magic.rotation.
+    ranks = playability.rank()
     for c in cs:
-        c.interestingness = rotation.interesting(playability, c)
+        c.rank = ranks.get(c.name, 0 if c.never_legal() else sys.maxsize)
+        if c.rank == 0:
+            c.display_rank = 'NEW'
+        elif c.rank == sys.maxsize:
+            c.display_rank = '-'
+        else:
+            c.display_rank = str(c.rank)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
+    total = len(cs)
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
@@ -438,7 +462,7 @@ def competitions_api() -> Response:
             cr['name'] = c.name
             cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
             r.append(cr)
-    return return_json(r)  # type: ignore
+    return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')
 def competition_api(competition_id: int) -> Response:
@@ -591,7 +615,7 @@ def person_status() -> Response:
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))
         if d is not None:
-            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}  # type: ignore
+            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     active_league = league.active_league()
@@ -608,6 +632,12 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
         league.retire_deck(decks[0])
         run = decks[1]
     return run
+
+@APP.route('/api/key_cards/<int:season_num>')
+def key_cards(season_num: int) -> Response:
+    data = playability.key_cards(season_num)
+    return return_json({'data': data})
+
 
 @APP.route('/api/admin/people/<int:person_id>/notes/')
 @auth.admin_required_no_redirect

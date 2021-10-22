@@ -8,6 +8,7 @@ const renderHeaderRow = (table) => (
         <th className="name" onClick={table.sort.bind(table, "name", "ASC")}>Card</th>
         <th className="n hits" onClick={table.sort.bind(table, "hits", "DESC")}>Hits</th>
         <th className="n hits-needed" onClick={table.sort.bind(table, "hitsNeeded", "ASC")}>Needed</th>
+        <th className="n rank" onClick={table.sort.bind(table, "rank", "ASC")}>Rank</th>
     </tr>
 );
 
@@ -22,6 +23,7 @@ const renderRow = (table, card) => (
         <td className="name">{renderCard(card)}</td>
         <td className="n">{card.hits} ({card.percent}%)</td>
         <td className="n">{card.hitsNeeded} ({card.percentNeeded}%)</td>
+        <td className="n">{card.displayRank}</td>
     </tr>
 );
 

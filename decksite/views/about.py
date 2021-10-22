@@ -4,7 +4,7 @@ from typing import List, Optional
 from flask import url_for
 
 from decksite.view import View
-from magic import legality, oracle
+from magic import legality, oracle, seasons
 from magic.models import Card, Deck
 
 
@@ -64,4 +64,4 @@ def fancy_cards() -> List[Card]:
         'Living Death',
         'Edric, Spymaster of Trest',
         'Invigorate',
-    ]), 'Penny Dreadful')
+    ]), seasons.current_season_name())

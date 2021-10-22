@@ -8,7 +8,7 @@ TAPPEDOUT = {
 }
 
 def translate(mappings: Dict[str, str], data: RawDeckDescription) -> RawDeckDescription:
-    result = data.copy()  # type: ignore
+    result = data.copy()
     for k, v in data.items():
         our_key: Optional[str] = mappings.get(k)
         if our_key is not None:

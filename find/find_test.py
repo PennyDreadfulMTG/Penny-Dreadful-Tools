@@ -4,6 +4,7 @@ import pytest
 
 from find import search
 from find.search import InvalidValueException
+from magic import seasons
 from magic.database import db
 
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.
@@ -215,6 +216,10 @@ def test_double_tilde() -> None:
     do_test('o:"sacrifice ~: ~ deals 2 damage to any target"', expected)
 
 @pytest.mark.functional
+def test_color() -> None:
+    do_functional_test('c<=w t:creature', ['Icehide Golem', 'Thalia, Guardian of Thraben'], ['Delver of Secrets', 'Duskwatch Recruiter', 'Enlightened Tutor', 'Mantis Rider'])
+
+@pytest.mark.functional
 def test_only_multicolored_functional() -> None:
     do_functional_test('c:m', ['Bant Charm', 'Murderous Redcap'], ['Door to Nothingness', 'Fires of Undeath', 'Lightning Bolt'])
 
@@ -246,32 +251,38 @@ def test_exclusivemulitcolored_same() -> None:
 def test_mulitcolored_multiple() -> None:
     do_test('c=br', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
 
+@pytest.mark.functional
 def test_multicolored_exclusive_functional() -> None:
     do_functional_test('c!br', ["Kroxa, Titan of Death's Hunger", 'Fulminator Mage', 'Murderous Redcap'], ['Bosh, Iron Golem', 'Dark Ritual', 'Fires of Undeath'])
 
 def test_multicolored_exclusive() -> None:
     do_test('c!br', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
 
+@pytest.mark.functional
 def test_color_identity_functional() -> None:
     yes = ['Brainstorm', 'Force of Will', 'Mystic Sanctuary', 'Venser, Shaper Savant']
     no = ['Electrolyze', 'Swamp', 'Underground Sea']
-    do_functional_test('ci:u', yes, no)
-    do_functional_test('cid:u', yes, no)
-    do_functional_test('id:u', yes, no)
+    do_functional_test('ci=u', yes, no)
+    do_functional_test('cid=u', yes, no)
+    do_functional_test('id=u', yes, no)
 
 def test_color_identity() -> None:
     where = '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2))) AND (c.id IN (SELECT card_id FROM card_color_identity GROUP BY card_id HAVING COUNT(card_id) <= 1))'
-    do_test('ci:u', where)
-    do_test('cid:u', where)
-    do_test('id:u', where)
-    do_test('commander:u', where)
+    do_test('ci=u', where)
+    do_test('cid=u', where)
+    do_test('id=u', where)
+    do_test('commander=u', where)
+
+@pytest.mark.functional
+def test_color_identity_two_colors() -> None:
+    do_functional_test('id:uw', ['Brainstorm', 'Dream Trawler', 'Island', 'Wastes'], ['Forbidden Alchemy', 'Lightning Bolt', 'Watery Grave'])
 
 @pytest.mark.functional
 def test_color_identity_colorless_functional() -> None:
     do_functional_test('ci:c', ['Lodestone Golem', 'Wastes'], ['Academy Ruins', 'Bosh, Iron Golem', 'Lightning Bolt', 'Plains'])
 
 def test_color_identity_colorless() -> None:
-    do_test('ci:c', '(c.id NOT IN (SELECT card_id FROM card_color_identity))')
+    do_test('ci:c', '(NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 3))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 5))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 4))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 1))) AND (c.id NOT IN (SELECT card_id FROM card_color_identity))')
 
 @pytest.mark.functional
 def test_color_exclusively_functional() -> None:
@@ -339,7 +350,7 @@ def test_mana7() -> None:
 #     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
 
 def test_uppercase() -> None:
-    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term='Penny Dreadful')])
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=seasons.current_season_name())])
     do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
 
 def test_subtype() -> None:
@@ -369,7 +380,7 @@ def test_color_not_text() -> None:
 def test_color_functional() -> None:
     do_functional_test('c:g', ['Destructive Revelry', 'Rofellos, Llanowar Emissary', 'Tattermunge Maniac'], ['Ancient Grudge', 'Forest', 'Lightning Bolt'])
 
-def test_color() -> None:
+def test_color_green() -> None:
     do_test('c:g', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)))')
 
 def test_or() -> None:
@@ -403,6 +414,7 @@ def test_name() -> None:
 def test_parentheses() -> None:
     do_test('x OR (a OR (b AND c))', "(name LIKE '%%x%%') OR ((name LIKE '%%a%%') OR ((name LIKE '%%b%%') AND (name LIKE '%%c%%')))")
 
+@pytest.mark.functional
 def test_toughness_functional() -> None:
     do_functional_test('c:r tou>2', ['Bonecrusher Giant', "Kroxa, Titan of Death's Hunger"], ['Endurance', 'Ragavan, Nimble Pilferer', 'Wurmcoil Engine'])
 
@@ -443,6 +455,15 @@ def test_is_hybrid() -> None:
 
 def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")
+
+@pytest.mark.functional
+def test_format_functional() -> None:
+    legal = ['Plains']
+    not_legal = ['Black Lotus']
+    do_functional_test('f:penny', legal, not_legal)
+    do_functional_test('f:pd', legal, not_legal)
+    do_functional_test('-f:penny', not_legal, legal)
+    do_functional_test('-f:pd', not_legal, legal)
 
 @pytest.mark.functional
 def test_is_commander_illegal_commander_functional() -> None:

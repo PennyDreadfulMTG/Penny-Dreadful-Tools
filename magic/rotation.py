@@ -9,7 +9,7 @@ from magic.models import Card
 from shared import configuration, dtutil
 from shared import redis_wrapper as redis
 from shared import text
-from shared.pd_exception import DoesNotExistException, InvalidDataException
+from shared.pd_exception import InvalidDataException
 
 TOTAL_RUNS = 168
 
@@ -147,6 +147,7 @@ def rotation_sort(cs: List[Card], sort_by: Optional[str], sort_order: Optional[s
         'hits': lambda c: c.hits,
         'name': lambda c: c.name,
         'hitsNeeded': hits_needed_score,
+        'rank': lambda c: c.rank,
     }
     cs.sort(key=sort_funcs[sort_by], reverse=rev)
 

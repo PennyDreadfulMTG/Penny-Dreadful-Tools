@@ -542,6 +542,12 @@ main h2 {
     border: 0;
 }
 
+/* Prevent metagame text from overflowing the content area, scroll instead.
+   Not applicable to .content because that hides marginalia on deck tables. */
+.content-metagame {
+    overflow: scroll;
+}
+
 main h1 a:visited, main h2 a:visited {
     color: inherit;
 }
@@ -653,7 +659,7 @@ ul.decklist {
 
 Tables
 
-Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an elipsis.
+Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an ellipsis.
 We make occasional use of space in the margin to the left. This is called 'marginalia'.
 
 Sizes in the table are in ems because they should relate to the size of table text not the page base.
@@ -911,6 +917,11 @@ Although it displays a similar thing that maxes out around 7-1-1 for a long tour
 .live .hit-in-last-run {
     min-width: 1em;
     max-width: 1em;
+}
+
+.live .rank {
+    min-width: 4em;
+    max-width: 4em;
 }
 
 /* Some visual indicators of legal status on /rotation/. */
@@ -1217,7 +1228,7 @@ header.season-all:before {
     background-image: url("/banner/0.png");
 }
 
-header.season-1:before {
+/* header.season-1:before {
     background-image: url("/banner/1.png");
 }
 
@@ -1260,7 +1271,6 @@ header.season-10:before {
 header.season-11:before {
     background-image: url("/banner/11.png");
 }
-
 header.season-12:before {
     background-image: url("/banner/12.png");
 }
@@ -1270,7 +1280,7 @@ header.season-13:before {
 header.season-14:before {
     background-image: url("/banner/14.png");
 }
-/* header.season-15:before {
+header.season-15:before {
     background-image: url("/banner/15.png");
 }
 header.season-16:before {
@@ -1287,6 +1297,12 @@ header.season-19:before {
 }
 header.season-20:before {
     background-image: url("/banner/20.png");
+}
+header.season-21:before {
+    background-image: url("/banner/21.png");
+}
+header.season-22:before {
+    background-image: url("/banner/22.png");
 } */
 /*
 
@@ -2400,6 +2416,33 @@ p.detail .earned {
 p.detail .text {
     display: inline-block;
     position: relative;
+}
+
+/*
+
+Charts
+
+*/
+
+.content-metagame section {
+    max-width: 100%;
+}
+
+.variable-height-bar-chart {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.variable-height-bar-chart a {
+    border: 0.05rem solid #999;
+    color: #f9f9f9;
+    display: block;
+    font-family: main-text;
+    font-variant-numeric: normal;
+    padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metgame.LEFT_PADDING. */
+    text-shadow: 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000;
+    text-transform: none;
+    white-space: nowrap;
 }
 
 /*

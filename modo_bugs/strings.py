@@ -18,6 +18,7 @@ REGEX_BBCAT = r'^([\w ]+) ?(\([\w, ]+\))?'
 
 BAD_AFFECTS_REGEX = r'Affects: (\[Card Name\]\(, \[Second Card name\], etc\)\r?\n)\['
 
+FEEDBACK_LINK_REGEX = r'((http|https)\:\/\/)?feedback.wizards.com/forums/([a-zA-Z0-9\.\&\/\?\:@\-_=#])*'
 
 def remove_smartquotes(text: str) -> str:
     return text.replace('’', "'").replace('“', '"').replace('”', '"')

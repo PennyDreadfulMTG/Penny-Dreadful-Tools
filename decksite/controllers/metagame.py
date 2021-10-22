@@ -11,9 +11,11 @@ from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import matchup as mus
 from decksite.data import person as ps
+from decksite.data import playability
 from decksite.data import season as ss
 from decksite.deck_type import DeckType
-from decksite.views import Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Seasons
+from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
+                            Seasons)
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
@@ -26,6 +28,18 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 def decks(deck_type: Optional[str] = None) -> str:
     league_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.LEAGUE]) == DeckType.LEAGUE
     view = Decks(league_only)
+    return view.page()
+
+@APP.route('/metagame/')
+@APP.route('/metagame/<any(tournament,league):deck_type>/')
+@SEASONS.route('/metagame/')
+@SEASONS.route('/metagame/<any(tournament,league):deck_type>/')
+@cached()
+def metagame(deck_type: Optional[str] = None) -> str:
+    tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
+    disjoint_archetypes = archs.load_disjoint_archetypes(season_id=get_season_id(), tournament_only=tournament_only)
+    key_cards = playability.key_cards(get_season_id())
+    view = Metagame(disjoint_archetypes, tournament_only=tournament_only, key_cards=key_cards)
     return view.page()
 
 @APP.route('/decks/<int:deck_id>/')
@@ -69,12 +83,17 @@ def cards(deck_type: Optional[str] = None) -> str:
 def card(name: str, deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), tournament_only=tournament_only, season_id=get_season_id())
+        c = cs.load_card(parse_card_name(name), tournament_only=tournament_only, season_id=get_season_id())
         view = Card(c, tournament_only)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e
 
+def parse_card_name(name: str) -> str:
+    name = urllib.parse.unquote_plus(name)
+    if name.startswith(' '):  # Handle "+2 Mace".
+        name = '+' + name.lstrip()
+    return oracle.valid_name(name)
 
 @APP.route('/archetypes/')
 @APP.route('/archetypes/<any(tournament,league):deck_type>/')

@@ -21,6 +21,8 @@ WHITELIST = [
     'i will make combo work in season 15',
     'b u r n',
     'r e a n i m a t o r',
+    'meme deck for #general',
+    "do y'all zoomers remember what yore-tiller means",
 ]
 
 PROFANITY_WHITELIST = [
@@ -142,7 +144,7 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
-    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
+    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)] and word != 'colorless':
         name = 'mono {name}'.format(name=name)
     return name.strip()
 
@@ -215,7 +217,7 @@ def ucase_trailing_roman_numerals(name: str) -> str:
     return name
 
 def strip_leading_punctuation(name: str) -> str:
-    return re.sub('^[^a-z0-9"\']*', '', name, flags=re.IGNORECASE)
+    return re.sub(r'^[^\w"\']*', '', name, flags=re.IGNORECASE)
 
 # See #6041.
 def remove_leading_deck(name: str) -> str:

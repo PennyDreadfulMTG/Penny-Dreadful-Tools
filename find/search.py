@@ -3,7 +3,7 @@ from typing import Dict, Generator, Iterable, List, Optional, Set, Union
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
-from magic import card, mana, multiverse
+from magic import card, mana, multiverse, seasons
 from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
 from magic.models import Card
@@ -227,7 +227,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     if 'm' in colors and len(colors) > 1:
         raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term}' instead")
     if operator == ':' and subtable == 'color_identity':
-        operator = '='
+        operator = '<='
     required: Set[str] = set()
     excluded: Set[str] = set()
     min_colors, max_colors = None, None
@@ -267,8 +267,8 @@ def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
 def format_where(term: str) -> str:
-    if term == 'pd':
-        term = 'Penny Dreadful'
+    if term == 'pd' or term.startswith('penny'):
+        term = seasons.current_season_name()
     format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:
         raise InvalidValueException("Invalid format '{term}'".format(term=term))

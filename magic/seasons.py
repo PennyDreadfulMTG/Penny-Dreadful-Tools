@@ -17,7 +17,7 @@ SEASONS = [
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
-    'ICV',                       # 2022
+    'VOW',                       # 2022
 ]
 
 OVERRIDES = {
@@ -27,11 +27,6 @@ OVERRIDES = {
     'Ikoria: Lair of Behemoths': {  # Ikoria was delayed in NA because of Covid-19
         'enterDate': {
             'exact': '2020-04-17T00:00:00.000',
-        },
-    },
-    'Innistrad: Midnight Hunt': {
-        'enterDate': {
-            'exact': '2021-09-24T00:00:00.000',
         },
     },
 }
@@ -78,6 +73,9 @@ def current_season_code() -> str:
 
 def current_season_num() -> int:
     return season_num(current_season_code())
+
+def current_season_name() -> str:
+    return f'Penny Dreadful {current_season_code()}'
 
 def season_num(code_to_look_for: str) -> int:
     try:

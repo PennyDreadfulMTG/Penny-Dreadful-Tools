@@ -19,9 +19,10 @@ def prepare_cards(cs: List[Card], tournament_only: bool = False) -> None:
         prepare_card(c, tournament_only)
 
 def prepare_card(c: Card, tournament_only: bool = False) -> None:
+    season_name = seasons.current_season_name()
     prepare_card_urls(c, tournament_only)
     c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
-    c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
+    c.pd_legal = c.legalities.get(season_name, False) and c.legalities[season_name] != 'Banned'
     c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
     c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
     c.has_legal_format = len(c.legal_formats) > 0
@@ -70,6 +71,7 @@ def prepare_decks(ds: List[Deck]) -> None:
         prepare_deck(d)
 
 def prepare_deck(d: Deck) -> None:
+    season_name = seasons.current_season_name()
     set_stars_and_top8(d)
     if d.get('colors') is not None:
         d.colors_safe = colors_html(d.colors, d.colored_symbols)
@@ -100,8 +102,8 @@ def prepare_deck(d: Deck) -> None:
     elif '%' not in str(d.omw):
         d.omw = str(int(d.omw)) + '%'
     d.has_legal_format = len(d.legal_formats) > 0
-    d.pd_legal = 'Penny Dreadful' in d.legal_formats
-    d.non_pd_legal_formats = {f for f in d.legal_formats if 'Penny Dreadful' not in f}
+    d.pd_legal = season_name in d.legal_formats
+    d.non_pd_legal_formats = {f for f in d.legal_formats if season_name not in f}
     set_legal_icons(d)
     if session.get('admin') or session.get('demimod') or not d.is_in_current_run():
         d.decklist = str(d)
@@ -195,12 +197,9 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
 def set_legal_icons(o: Union[Card, Deck]) -> None:
     o.legal_icons = ''
     sets = seasons.SEASONS
-    if 'Penny Dreadful' in o.legal_formats:
-        icon = seasons.current_season_code().lower()
-        n = sets.index(icon.upper()) + 1
-        o.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
-    past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
-    past_pd_formats.sort(key=lambda code: -sets.index(code))
-    for code in past_pd_formats:
+    pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
+    pd_formats.sort(key=lambda code: -sets.index(code))
+    for code in pd_formats:
+        color = 'rare' if code in seasons.current_season_name() else 'common'
         n = sets.index(code.upper()) + 1
-        o.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
+        o.legal_icons += f'<a href="/seasons/{n}/"><i class="ss ss-{code.lower()} ss-{color} ss-grad">S{n}</i></a>'

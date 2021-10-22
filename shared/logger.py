@@ -24,7 +24,7 @@ class SupportsLogging(Protocol):
 
 def logger() -> SupportsLogging:
     if has_app_context():  # type: ignore
-        return current_app.logger  # type: ignore
+        return current_app.logger
     return logging  # type: ignore
 
 def fatal(*args: List[Any]) -> None:

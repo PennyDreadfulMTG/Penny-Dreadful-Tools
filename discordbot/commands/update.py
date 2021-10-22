@@ -8,7 +8,7 @@ from shared import configuration
 @commands.command(hidden=True)
 async def update(ctx: MtgContext) -> None:
     """Forces an update to legal cards and bugs."""
-    if configuration.get_bool('prevent_cards_db_updates'):
+    if configuration.prevent_cards_db_updates.get():
         await ctx.send('Warning: Card DB is frozen')
     await ctx.send('Begun reloading legal cards and bugs.')
     await multiverse.set_legal_cards_async()

@@ -27,12 +27,16 @@ card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
 
 # Block some of the more dangerous things from running if this is true
 production = BoolSetting('production', False)
+# Block Scryfall updates when things are broken
+prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
+
 
 # Which format should checkmarks represent?
 legality_format = StrSetting('legality_format', 'Penny Dreadful', configurable=True)
 
 # Should !time use the 24-hour format?
 use_24h = BoolSetting('use_24h', False, configurable=True)
+
 
 DEFAULTS: Dict[str, Any] = {
     # Discord Webhook endpoint
@@ -89,7 +93,6 @@ DEFAULTS: Dict[str, Any] = {
     'oauth2_client_secret': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'poeditor_api_key': None,
-    'prevent_cards_db_updates': False,
     'prices_database': 'prices',
     'pylint_threads': 4,
     'redis_db': 0,

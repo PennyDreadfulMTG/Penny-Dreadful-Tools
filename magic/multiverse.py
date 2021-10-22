@@ -30,7 +30,7 @@ async def init_async() -> bool:
     try:
         last_updated = await fetcher.scryfall_last_updated_async()
         if last_updated > database.last_updated():
-            if configuration.get_bool('prevent_cards_db_updates'):
+            if configuration.prevent_cards_db_updates.get():
                 print('Not updating cards db because prevent_cards_db_updates is True')
                 return False
             print('Database update required')

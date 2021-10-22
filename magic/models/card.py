@@ -45,7 +45,7 @@ class Card(Container):
         return False
 
     def legal_in(self, format_name: str) -> bool:
-        return self.legalities[format_name] == 'Legal'
+        return self.legalities.get(format_name) == 'Legal'
 
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]

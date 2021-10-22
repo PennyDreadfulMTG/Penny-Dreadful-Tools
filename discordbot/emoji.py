@@ -3,7 +3,7 @@ from typing import Optional
 
 from discord import Client, Emoji
 
-from magic import oracle, rotation
+from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
@@ -38,6 +38,8 @@ def replace_emoji(text: str, client: Client) -> str:
     return output
 
 def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_rotation_hype: bool = False, legality_format: str = 'Penny Dreadful') -> str:
+    if legality_format == 'Penny Dreadful':
+        legality_format = seasons.current_season_name()
     s = ''
     rot_emoji = ''
     if show_legality:

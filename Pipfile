@@ -84,7 +84,7 @@ SQLAlchemy-Utils = "==0.37.9"
 Werkzeug = "==2.0.2"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
-jishaku = "==2.3.0"
+jishaku = "==2.3.1"
 pydantic = "*"
 discord-py-slash-command = "3.0.1"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}

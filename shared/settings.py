@@ -133,7 +133,16 @@ class BoolSetting(Setting[bool]):
 
 
 class StrSetting(Setting[str]):
-    pass
+    @property
+    def value(self) -> str:
+        val = self.get()
+        if val is None:
+            raise fail(self.key, val, bool)
+        return val
+
+    @value.setter
+    def value(self, value: str) -> str:
+        return self.set(value)
 
 
 class OptionalStrSetting(Setting[Optional[str]]):

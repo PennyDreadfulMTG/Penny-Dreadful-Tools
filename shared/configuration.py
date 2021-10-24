@@ -8,7 +8,7 @@ import string
 from typing import Any, Dict, List, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException
-from shared.settings import BoolSetting, CONFIG, StrSetting, fail
+from shared.settings import BoolSetting, CONFIG, StrSetting, fail, ListSetting
 
 try:
     import dotenv
@@ -21,10 +21,13 @@ RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
 # On production, /rotation/ turns off when not active.
 always_show_rotation = BoolSetting('always_show_rotation', False)
-
+# Discord Webhook endpoint
+bugs_webhook_id = StrSetting('bugs_webhook_id', '')
+bugs_webhook_token = StrSetting('bugs_webhook_token', '')
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
 card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
-
+# Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
+cardhoarder_urls = ListSetting('cardhoarder_urls', [])
 # Block some of the more dangerous things from running if this is true
 production = BoolSetting('production', False)
 # Block Scryfall updates when things are broken
@@ -39,11 +42,7 @@ use_24h = BoolSetting('use_24h', False, configurable=True)
 
 
 DEFAULTS: Dict[str, Any] = {
-    # Discord Webhook endpoint
-    'bugs_webhook_id': None,
-    'bugs_webhook_token': None,
-    # Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
-    'cardhoarder_urls': [],
+
 
     # Path to chart storage directory.  Used by decksite.
     'charts_dir': './images/charts',

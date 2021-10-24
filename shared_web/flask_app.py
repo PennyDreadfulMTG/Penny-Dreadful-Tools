@@ -142,7 +142,7 @@ class PDFlask(Flask):
         """
         if self.static_folder is None:
             return make_response('')
-        if configuration.get_bool('is_test_site'):
+        if configuration.is_test_site.value:
             return send_from_directory(self.static_folder, 'deny-all-robots.txt')
         return send_from_directory(self.static_folder, 'robots.txt')
 

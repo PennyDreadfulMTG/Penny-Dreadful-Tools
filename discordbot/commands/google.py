@@ -9,9 +9,9 @@ from shared import configuration
 @commands.command(aliases=['g'])
 async def google(ctx: MtgContext, *, args: str) -> None:
     """Google search"""
-    api_key = configuration.get('cse_api_key')
-    cse_id = configuration.get('cse_engine_id')
-    if api_key is None or cse_id is None:
+    api_key = configuration.cse_api_key.value
+    cse_id = configuration.cse_engine_id.value
+    if not api_key or not cse_id:
         await ctx.send('The google command has not been configured.')
         return
 

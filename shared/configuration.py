@@ -18,39 +18,47 @@ except ImportError:
 
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
-
+# === Decksite ===
 # On production, /rotation/ turns off when not active.
 always_show_rotation = BoolSetting('always_show_rotation', False)
-# Discord Webhook endpoint
-bugs_webhook_id = StrSetting('bugs_webhook_id', '')
-bugs_webhook_token = StrSetting('bugs_webhook_token', '')
+# Path to chart storage directory.  Used by decksite.
+charts_dir = StrSetting('charts_dir', './images/charts')
+is_test_site = BoolSetting('is_test_site', False)
+
+# === Discord Bot ===
+# Which format should checkmarks represent?
+legality_format = StrSetting('legality_format', 'Penny Dreadful', configurable=True)
+# Should !time use the 24-hour format?
+use_24h = BoolSetting('use_24h', False, configurable=True)
+# Google Custom Search Engine (for !google)
+cse_api_key = StrSetting('cse_api_key', '')
+cse_engine_id = StrSetting('cse_engine_id', '')
+
+# === Magic ===
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
 card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
-# Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
-cardhoarder_urls = ListSetting('cardhoarder_urls', [])
-# Block some of the more dangerous things from running if this is true
-production = BoolSetting('production', False)
 # Block Scryfall updates when things are broken
 prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
 
 
-# Which format should checkmarks represent?
-legality_format = StrSetting('legality_format', 'Penny Dreadful', configurable=True)
+# === Prices & Rotation ===
+# Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
+cardhoarder_urls: ListSetting[str] = ListSetting('cardhoarder_urls', [])
+# Block some of the more dangerous things from running if this is true
+production = BoolSetting('production', False)
 
-# Should !time use the 24-hour format?
-use_24h = BoolSetting('use_24h', False, configurable=True)
+# === Modo Bugs ===
+# Discord Webhook endpoint
+bugs_webhook_id = StrSetting('bugs_webhook_id', '')
+bugs_webhook_token = StrSetting('bugs_webhook_token', '')
 
+# === Shared ===
+# Is the codebase allowed to report github issues?  Disable on dev.
+create_github_issues = BoolSetting('create_github_issues', True)
+# == Redis ==
+redis_enabled = BoolSetting('redis_enabled', True)
 
 DEFAULTS: Dict[str, Any] = {
-
-
-    # Path to chart storage directory.  Used by decksite.
-    'charts_dir': './images/charts',
-    # Is the codebase allowed to report github issues?  Disable on dev.
-    'create_github_issues': True,
-    # Google Custom Search Engine (for !google)
-    'cse_api_key': None,
-    'cse_engine_id': None,
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
     # mysql database name.  Used by decksite tests.
@@ -70,7 +78,6 @@ DEFAULTS: Dict[str, Any] = {
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
-    'is_test_site': False,
     # Discord Webhook endpoint
     'league_webhook_id': None,
     'league_webhook_token': None,
@@ -95,7 +102,6 @@ DEFAULTS: Dict[str, Any] = {
     'prices_database': 'prices',
     'pylint_threads': 4,
     'redis_db': 0,
-    'redis_enabled': True,
     'redis_host': 'localhost',
     'redis_port': 6379,
     # Discord channel id to emit rotation-in-progress messages to.
@@ -176,24 +182,6 @@ def get_list(key: str) -> List[str]:
     if isinstance(val, str):
         return val.split(',')
     raise fail(key, val, List[str])
-
-def get_bool(key: str) -> bool:
-    val = get(key)
-    if val is None:
-        raise fail(key, val, bool)
-    if isinstance(val, bool):
-        return val
-    if isinstance(val, str):
-        # required so that we can pass bool-values in environment variables
-        if val.lower() in ['true', 'yes', '1']:
-            val = 'True'
-        if val.lower() in ['false', 'no', '0']:
-            val = 'False'
-        val2 = ast.literal_eval(val)
-        if isinstance(val2, bool):
-            CONFIG[key] = val2
-            return CONFIG[key]
-    raise fail(key, val, bool)
 
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     if key in CONFIG:

@@ -18,7 +18,7 @@ U = TypeVar('U')
 ADDITIONAL_FILES = []
 LOADED_FILES = set()
 
-if os.path.exists('configs'):
+if not os.path.exists('configs'):
     os.mkdir('configs')
 
 @contextmanager

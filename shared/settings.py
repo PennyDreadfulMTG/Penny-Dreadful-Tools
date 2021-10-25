@@ -1,9 +1,10 @@
 import ast
-from contextlib import contextmanager
 import inspect
 import json
 import os
-from typing import Any, Dict, Optional, TypeVar, Generic, List, Union, Generator
+from contextlib import contextmanager
+from typing import Any, Dict, Generator, Generic, List, Optional, TypeVar, Union
+
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 SETTINGS = {}

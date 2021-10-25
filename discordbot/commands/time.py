@@ -1,6 +1,5 @@
 import logging
 import re
-from shared.settings import with_config_file
 
 from discord.ext import commands
 
@@ -8,6 +7,7 @@ from discordbot.command import MtgContext, guild_or_channel_id
 from magic import fetcher
 from shared import configuration
 from shared.pd_exception import NotConfiguredException, TooFewItemsException
+from shared.settings import with_config_file
 
 
 @commands.command(aliases=['t'])

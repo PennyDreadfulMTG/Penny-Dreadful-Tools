@@ -1,7 +1,9 @@
-from discordbot import emoji
-from magic import seasons, oracle
 from typing import List, Tuple
+
 import pytest
+
+from discordbot import emoji
+from magic import oracle, seasons
 
 
 def emoji_params() -> List[Tuple]:

@@ -2,7 +2,6 @@ import collections
 import datetime
 import re
 from copy import copy
-from shared.settings import with_config_file
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 from discord import ChannelType, Client, DMChannel, File, GroupChannel, TextChannel
@@ -17,6 +16,7 @@ from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
 from shared.lazy import lazy_property
+from shared.settings import with_config_file
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10

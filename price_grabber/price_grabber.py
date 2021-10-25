@@ -21,7 +21,7 @@ def run() -> None:
 
 def fetch() -> None:
     all_prices, timestamps = {}, []
-    ch_urls = configuration.get_list('cardhoarder_urls')
+    ch_urls = configuration.cardhoarder_urls.get()
     if ch_urls:
         for _, url in enumerate(ch_urls):
             s = fetch_tools.fetch(url)
@@ -34,7 +34,7 @@ def fetch() -> None:
         timestamps.append(dtutil.dt2ts(dtutil.now()))
         all_prices['mtgotraders'] = parser.parse_mtgotraders_prices(s)
     if not timestamps:
-        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.get_list('cardhoarder_urls'), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
+        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.cardhoarder_urls.get(), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
     count = store(min(timestamps), all_prices)
     cleanup(count)
 

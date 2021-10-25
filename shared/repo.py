@@ -72,7 +72,7 @@ def create_issue(content: str,
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
         return None
-    if not configuration.get_bool('create_github_issues'):
+    if not configuration.create_github_issues.value:
         print(f'Not creating github issue:\n{title}\n\n{body}')
         return None
     g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))

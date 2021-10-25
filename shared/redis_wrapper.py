@@ -9,7 +9,7 @@ from .serialization import extra_serializer
 
 
 def init() -> Optional[redislib.Redis]:
-    if not configuration.get_bool('redis_enabled'):
+    if not configuration.redis_enabled.value:
         return None
     instance = redislib.Redis(
         host=configuration.get_str('redis_host'),

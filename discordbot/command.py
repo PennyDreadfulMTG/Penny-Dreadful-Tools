@@ -2,6 +2,7 @@ import collections
 import datetime
 import re
 from copy import copy
+from shared.settings import with_config_file
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 from discord import ChannelType, Client, DMChannel, File, GroupChannel, TextChannel
@@ -141,15 +142,19 @@ async def post_cards(
     if len(cards) == 0:
         await post_nothing(channel, replying_to)
         return
+
+    with with_config_file(guild_or_channel_id(channel)), with_config_file(channel.id):
+        legality_format = configuration.legality_format.get()
     not_pd = configuration.get_list('not_pd')
-    disable_emoji = str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd)
+    if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):
+        legality_format = 'Unknown'
     cards = uniqify_cards(cards)
     if len(cards) > MAX_CARDS_SHOWN:
         cards = cards[:DEFAULT_CARDS_SHOWN]
     if len(cards) == 1:
-        text = single_card_text_internal(client, cards[0], disable_emoji)
+        text = single_card_text_internal(client, cards[0], legality_format)
     else:
-        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card)) if not disable_emoji else ''), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card, legality_format=legality_format))), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
@@ -187,12 +192,10 @@ async def send_image_with_retry(channel: Messageable, image_file: str, text: str
         await message.delete()
         await send(channel, file=File(image_file), content=text)
 
-def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
+def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
     mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
     mana = mana.replace('|', ' // ')
-    legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
-    if disable_emoji:
-        legal = ''
+    legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
     if requested_card.get('mode', None) == '$':
         text = '{name} {legal} — {price}'.format(name=requested_card.name, price=card_price.card_price_string(requested_card), legal=legal)
     else:

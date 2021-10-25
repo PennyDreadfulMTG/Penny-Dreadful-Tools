@@ -30,7 +30,7 @@ async def init_async() -> bool:
     try:
         last_updated = await fetcher.scryfall_last_updated_async()
         if last_updated > database.last_updated():
-            if configuration.get_bool('prevent_cards_db_updates'):
+            if configuration.prevent_cards_db_updates.get():
                 print('Not updating cards db because prevent_cards_db_updates is True')
                 return False
             print('Database update required')
@@ -227,57 +227,61 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
 
     for p in printings:
-        if not valid_layout(p):
-            continue
-
-        if p['type_line'] == 'Card':
-            continue
-
-        rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
-
         try:
-            set_id = sets[p['set']]
-        except KeyError:
-            print(f"We think we should have set {p['set']} but it's not in {sets} (from {p}) so updating sets")
-            sets = await update_sets_async()
-            set_id = sets[p['set']]
-
-        # If we already have the card, all we need is to record the next printing of it
-        if p['name'] in cards:
-            card_id = cards[p['name']]
-            printing_values.append(printing_value(p, card_id, set_id, rarity_id))
-            continue
-
-        card_id = next_card_id
-        next_card_id += 1
-        cards[p['name']] = card_id
-        card_values.append({'id': card_id, 'layout': p['layout']})
-
-        if is_meld_result(p):  # We don't make entries for a meld result until we know the card_ids of the front faces.
-            meld_result_printings.append(p)
-        elif p.get('card_faces') and p.get('layout') != 'meld':
-            face_values += multiple_faces_values(p, card_id)
-        else:
-            face_values.append(single_face_value(p, card_id))
-        for color in p.get('colors', []):
-            color_id = colors[color]
-            card_color_values.append({'card_id': card_id, 'color_id': color_id})
-        for color in p.get('color_identity', []):
-            color_id = colors[color]
-            card_color_identity_values.append({'card_id': card_id, 'color_id': color_id})
-        # DFCs store their colors in their faces, not at the top level. See #9022.
-        for color in face_colors(p):
-            color_id = colors[color]
-            card_color_values.append({'card_id': card_id, 'color_id': color_id})
-        for format_, status in p.get('legalities', {}).items():
-            if status == 'not_legal' or format_.capitalize() == 'Penny':  # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
+            if not valid_layout(p):
                 continue
-            # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
-            format_id = get_format_id(format_.capitalize(), True)
-            card_legality_values.append({'card_id': card_id, 'format_id': format_id, 'legality': status.capitalize()})
 
-        cards[p['name']] = card_id
-        printing_values.append(printing_value(p, card_id, set_id, rarity_id))
+            if p['type_line'] == 'Card':
+                continue
+
+            rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
+
+            try:
+                set_id = sets[p['set']]
+            except KeyError:
+                print(f"We think we should have set {p['set']} but it's not in {sets} (from {p}) so updating sets")
+                sets = await update_sets_async()
+                set_id = sets[p['set']]
+
+            # If we already have the card, all we need is to record the next printing of it
+            if p['name'] in cards:
+                card_id = cards[p['name']]
+                printing_values.append(printing_value(p, card_id, set_id, rarity_id))
+                continue
+
+            card_id = next_card_id
+            next_card_id += 1
+            cards[p['name']] = card_id
+            card_values.append({'id': card_id, 'layout': p['layout']})
+
+            if is_meld_result(p):  # We don't make entries for a meld result until we know the card_ids of the front faces.
+                meld_result_printings.append(p)
+            elif p.get('card_faces') and p.get('layout') != 'meld':
+                face_values += multiple_faces_values(p, card_id)
+            else:
+                face_values.append(single_face_value(p, card_id))
+            for color in p.get('colors', []):
+                color_id = colors[color]
+                card_color_values.append({'card_id': card_id, 'color_id': color_id})
+            for color in p.get('color_identity', []):
+                color_id = colors[color]
+                card_color_identity_values.append({'card_id': card_id, 'color_id': color_id})
+            # DFCs store their colors in their faces, not at the top level. See #9022.
+            for color in face_colors(p):
+                color_id = colors[color]
+                card_color_values.append({'card_id': card_id, 'color_id': color_id})
+            for format_, status in p.get('legalities', {}).items():
+                if status == 'not_legal' or format_.capitalize() == 'Penny':  # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
+                    continue
+                # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
+                format_id = get_format_id(format_.capitalize(), True)
+                card_legality_values.append({'card_id': card_id, 'format_id': format_id, 'legality': status.capitalize()})
+
+            cards[p['name']] = card_id
+            printing_values.append(printing_value(p, card_id, set_id, rarity_id))
+        except Exception as e:
+            print(f'Exception while importing card: {repr(p)}')
+            raise InvalidDataException() from e
 
     for p in meld_result_printings:
         face_values += meld_face_values(p, cards)

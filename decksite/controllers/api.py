@@ -663,7 +663,7 @@ def deck_embed(deck_id: int) -> Response:
 
 @APP.route('/api/test_500')
 def trigger_test_500() -> Response:
-    if configuration.get_bool('production'):
+    if configuration.production.value:
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
     raise TooManyItemsException
 

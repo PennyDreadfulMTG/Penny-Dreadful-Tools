@@ -44,7 +44,7 @@ def run() -> None:
         rotation.clear_redis(clear_files=True)
 
     all_prices = {}
-    for url in configuration.get_list('cardhoarder_urls'):
+    for url in configuration.cardhoarder_urls.get():
         s = fetch_tools.fetch(url)
         s = ftfy.fix_encoding(s)
         all_prices[url] = parse_cardhoarder_prices(s)

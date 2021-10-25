@@ -61,7 +61,7 @@ def image(path: str, costs: Dict[str, int]) -> str:
     return path
 
 def determine_path(name: str) -> str:
-    charts_dir = configuration.get_str('charts_dir')
+    charts_dir = configuration.charts_dir.value
     pathlib.Path(charts_dir).mkdir(parents=True, exist_ok=True)
     if not os.path.exists(charts_dir):
         raise DoesNotExistException('Cannot store graph images because {charts_dir} does not exist.'.format(charts_dir=charts_dir))

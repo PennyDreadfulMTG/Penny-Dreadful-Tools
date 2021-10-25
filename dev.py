@@ -21,7 +21,7 @@ except ImportError:
     sys.exit(-1)
 
 
-ON_PROD = configuration.get_bool('production')
+ON_PROD = configuration.production.value
 if ON_PROD:
     sys.stderr.write('DO NOT RUN dev.py ON PROD\n')
     sys.exit(1)

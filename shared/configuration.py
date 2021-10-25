@@ -5,9 +5,10 @@ import os
 import random
 import re
 import string
-from typing import Any, Dict, List, Match, Optional, Set, Union, overload
+from typing import Any, Dict, List, Optional, Set, Union, overload
 
-from shared.pd_exception import InvalidArgumentException, InvalidDataException
+from shared.pd_exception import InvalidArgumentException
+from shared.settings import BoolSetting, CONFIG, StrSetting, fail, ListSetting
 
 try:
     import dotenv
@@ -17,23 +18,47 @@ except ImportError:
 
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
+# === Decksite ===
+# On production, /rotation/ turns off when not active.
+always_show_rotation = BoolSetting('always_show_rotation', False)
+# Path to chart storage directory.  Used by decksite.
+charts_dir = StrSetting('charts_dir', './images/charts')
+is_test_site = BoolSetting('is_test_site', False)
+
+# === Discord Bot ===
+# Which format should checkmarks represent?
+legality_format = StrSetting('legality_format', 'Penny Dreadful', configurable=True)
+# Should !time use the 24-hour format?
+use_24h = BoolSetting('use_24h', False, configurable=True)
+# Google Custom Search Engine (for !google)
+cse_api_key = StrSetting('cse_api_key', '')
+cse_engine_id = StrSetting('cse_engine_id', '')
+
+# === Magic ===
+# Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
+card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
+# Block Scryfall updates when things are broken
+prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
+
+
+# === Prices & Rotation ===
+# Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
+cardhoarder_urls: ListSetting[str] = ListSetting('cardhoarder_urls', [])
+# Block some of the more dangerous things from running if this is true
+production = BoolSetting('production', False)
+
+# === Modo Bugs ===
+# Discord Webhook endpoint
+bugs_webhook_id = StrSetting('bugs_webhook_id', '')
+bugs_webhook_token = StrSetting('bugs_webhook_token', '')
+
+# === Shared ===
+# Is the codebase allowed to report github issues?  Disable on dev.
+create_github_issues = BoolSetting('create_github_issues', True)
+# == Redis ==
+redis_enabled = BoolSetting('redis_enabled', True)
+
 DEFAULTS: Dict[str, Any] = {
-    # On production, /rotation/ turns off when not active.
-    'always_show_rotation': False,
-    # Discord Webhook endpoint
-    'bugs_webhook_id': None,
-    'bugs_webhook_token': None,
-    # Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
-    'cardhoarder_urls': [],
-    # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
-    'card_alias_file': './card_aliases.tsv',
-    # Path to chart storage directory.  Used by decksite.
-    'charts_dir': './images/charts',
-    # Is the codebase allowed to report github issues?  Disable on dev.
-    'create_github_issues': True,
-    # Google Custom Search Engine (for !google)
-    'cse_api_key': None,
-    'cse_engine_id': None,
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
     # mysql database name.  Used by decksite tests.
@@ -53,7 +78,6 @@ DEFAULTS: Dict[str, Any] = {
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
-    'is_test_site': False,
     # Discord Webhook endpoint
     'league_webhook_id': None,
     'league_webhook_token': None,
@@ -75,31 +99,25 @@ DEFAULTS: Dict[str, Any] = {
     'oauth2_client_secret': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'poeditor_api_key': None,
-    'prevent_cards_db_updates': False,
     'prices_database': 'prices',
-    'production': False,  # Block some of the more dangerous things from running if this is true
     'pylint_threads': 4,
     'redis_db': 0,
-    'redis_enabled': True,
     'redis_host': 'localhost',
     'redis_port': 6379,
     # Discord channel id to emit rotation-in-progress messages to.
     'rotation_hype_channel_id': '207281932214599682',
-    'save_historic_legal_lists': False,
     'scratch_dir': '.',
     'sentry_token': None,
     'slow_fetch': 10.0,
     'slow_page': 10.0,
     'slow_query': 5.0,
     'slow_bot_start': 30,
-    'spellfix': './spellfix',
     'test_vcr_record_mode': 'new_episodes',  # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
     'to_password': '',
     'to_username': '',
     'tournament_channel_id': '334220558159970304',
     'tournament_reminders_channel_id': '207281932214599682',
     'typeahead_data_path': 'shared_web/static/dist/typeahead.json',
-    'use_24h': False,
     'web_cache': '.web_cache',
     'whoosh_index_dir': 'whoosh_index',
     # Dreadrise top-level URL. used for dreadrise-based searches.
@@ -107,8 +125,6 @@ DEFAULTS: Dict[str, Any] = {
     'dreadrise_url': 'https://dreadrise.wizzerinus.tk',
     'dreadrise_public_url': 'https://dreadrise.wizzerinus.tk',
 }
-
-CONFIG: Dict[str, Any] = {}
 
 def get_optional_str(key: str) -> Optional[str]:
     val = get(key)
@@ -167,30 +183,13 @@ def get_list(key: str) -> List[str]:
         return val.split(',')
     raise fail(key, val, List[str])
 
-def get_bool(key: str) -> bool:
-    val = get(key)
-    if val is None:
-        raise fail(key, val, bool)
-    if isinstance(val, bool):
-        return val
-    if isinstance(val, str):
-        # required so that we can pass bool-values in environment variables
-        if val.lower() in ['true', 'yes', '1']:
-            val = 'True'
-        if val.lower() in ['false', 'no', '0']:
-            val = 'False'
-        val2 = ast.literal_eval(val)
-        if isinstance(val2, bool):
-            CONFIG[key] = val2
-            return CONFIG[key]
-    raise fail(key, val, bool)
-
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     if key in CONFIG:
         return CONFIG[key]
     subkey = RE_SUBKEY.match(key)
     if subkey:
-        return get_sub(subkey)
+        raise NotImplementedError()
+
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
@@ -215,17 +214,6 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     fh = open('config.json', 'w')
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
-
-
-def get_sub(key: Match) -> Optional[Union[str, List[str], int, float]]:
-    filename = key.group(1) + '.config.json'
-    keyname = key.group(2)
-    try:
-        with open(filename) as f:
-            cfg = json.load(f)
-    except FileNotFoundError:
-        cfg = {}
-    return cfg.get(keyname, get(keyname))
 
 
 # pylint: disable=unused-argument, function-redefined
@@ -271,9 +259,6 @@ def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union
     fh = open(filename, 'w')
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
-
-def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
-    return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))
 
 def server_name() -> str:
     return get_str('decksite_hostname') + ':{port}'.format(port=get_int('decksite_port')) if get_optional_int('decksite_port') else ''

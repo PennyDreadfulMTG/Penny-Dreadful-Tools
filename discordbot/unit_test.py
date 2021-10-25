@@ -3,7 +3,7 @@ import os
 import pytest
 
 from discordbot import command, emoji
-from magic import image_fetcher, oracle
+from magic import image_fetcher, oracle, seasons
 from magic.models import Card
 from shared import configuration, fetch_tools
 
@@ -73,7 +73,7 @@ def test_info_emoji() -> None:
     assert emoji.info_emoji(legal_card, no_rotation_hype=True) == ':white_check_mark:'
     illegal_card = oracle.load_card('black lotus')
     assert emoji.info_emoji(illegal_card, no_rotation_hype=True) == ':no_entry_sign:'
-    assert emoji.info_emoji(illegal_card, verbose=True, no_rotation_hype=True) == ':no_entry_sign: (not legal in PD)'
+    assert emoji.info_emoji(illegal_card, verbose=True, no_rotation_hype=True) == f':no_entry_sign: (not legal in {seasons.current_season_name()})'
 
 def test_accents() -> None:
     c = oracle.load_card('Lim-Dûl the Necromancer')

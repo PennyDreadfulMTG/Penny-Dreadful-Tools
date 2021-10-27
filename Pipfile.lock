@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "bb7168251f362e025c932a88fdc13063fdbe7833672e7f9a6998ee0a72f26c2d"
+            "sha256": "fc0961df46e6e0393eca0b7fc24f4d27921d12123d99db5bb3a6f544ac08ee61"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -61,11 +61,11 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:0e361da0744d5011d4f5d57e64473ba9b7ab4da1e2d45d6631ebd67dd28c3cce",
-                "sha256:f9d66e3a4a0e5b52819b2ff41ac2b179df9d180697db71c92beb33a60c661794"
+                "sha256:0755c998e7117078dcb7d0bda621391dd2a85da48052d948c7411ab187325346",
+                "sha256:1e83a69fd51b013ebf5912d26b9338d6643a55fec2f20c787792680610eed4a2"
             ],
             "index": "pypi",
-            "version": "==2.8.3"
+            "version": "==2.8.4"
         },
         "astunparse": {
             "hashes": [
@@ -387,7 +387,7 @@
                 "sha256:2dc5218ee1192f9d67147cece18f47a929a9ef746cb69c50ab5ff5cfc983647b",
                 "sha256:6e99f4b3b099feb50de20302f2f8987c1c36e80a3f856ce852675bdf7a0935d3"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==2.3.2"
         },
         "google-auth-httplib2": {

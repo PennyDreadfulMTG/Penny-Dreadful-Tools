@@ -1,4 +1,5 @@
 import traceback
+from typing import Any
 from discord.ext import commands
 
 from discordbot.command import MtgContext
@@ -6,7 +7,7 @@ from shared import configuration, settings
 
 
 class ConfigError(commands.BadArgument):
-    def __init__(self, scope: int, message=None, *args):
+    def __init__(self, scope: int, message: str = None, *args) -> None:
         super().__init__(message=message, *args)
         self.scope = scope
 
@@ -35,7 +36,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
         raise ConfigError(configuring)
 
     with settings.with_config_file(configuring):
-        settings.SETTINGS[key].value = value
+        settings.SETTINGS[key].value = value  # type: ignore
 
 @configure.error
 async def configure_error(ctx: MtgContext, error: Exception) -> None:
@@ -48,7 +49,7 @@ async def configure_error(ctx: MtgContext, error: Exception) -> None:
         traceback.print_exception(type(error), error, error.__traceback__)
         await ctx.send('There was an error processing your command')
 
-def help_message(scope):
+def help_message(scope: Any) -> str:
     msg = '!configure {server|channel} {SETTING=VALUE}\n\n'
     with settings.with_config_file(scope):
         for name in settings.CONFIGURABLE_NAMES:

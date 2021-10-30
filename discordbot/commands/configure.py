@@ -7,7 +7,7 @@ from shared import configuration, settings
 
 
 class ConfigError(commands.BadArgument):
-    def __init__(self, scope: int, message: str = None, *args) -> None:
+    def __init__(self, scope: int, message: str = None, *args: Any) -> None:
         super().__init__(message=message, *args)
         self.scope = scope
 

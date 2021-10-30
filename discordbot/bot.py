@@ -19,8 +19,8 @@ from github.GithubException import GithubException
 
 import discordbot.commands
 from discordbot import command
-from discordbot.shared import guild_id
 from discordbot.help import PennyHelpCommand
+from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments, whoosh_write
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf

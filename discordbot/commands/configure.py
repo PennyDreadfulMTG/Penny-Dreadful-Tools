@@ -1,5 +1,6 @@
 import traceback
 from typing import Any
+
 from discord.ext import commands
 
 from discordbot.command import MtgContext

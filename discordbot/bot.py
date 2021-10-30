@@ -19,6 +19,7 @@ from github.GithubException import GithubException
 
 import discordbot.commands
 from discordbot import command
+from discordbot.shared import guild_id
 from discordbot.help import PennyHelpCommand
 from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments, whoosh_write
 from magic.models import Card
@@ -26,6 +27,7 @@ from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
 from shared import repo
 from shared.container import Container
+from shared.settings import with_config_file
 
 TASKS = []
 
@@ -175,8 +177,12 @@ class Bot(commands.Bot):
     async def on_reaction_add(self, reaction: Reaction, author: Member) -> None:
         if reaction.message.author == self.user:
             c = reaction.count
+            with with_config_file(guild_id(reaction.message.channel)), with_config_file(reaction.message.channel.id):
+                dismissable = configuration.dismiss_any
             if reaction.me:
                 c = c - 1
+            elif not dismissable:
+                return
             if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
                 try:
                     await reaction.message.delete()

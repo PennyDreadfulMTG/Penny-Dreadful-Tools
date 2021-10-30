@@ -11,6 +11,7 @@ from discord.member import Member
 from discord.message import Message
 
 from discordbot import emoji
+from discordbot.shared import guild_id
 from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
@@ -143,10 +144,10 @@ async def post_cards(
         await post_nothing(channel, replying_to)
         return
 
-    with with_config_file(guild_or_channel_id(channel)), with_config_file(channel.id):
-        legality_format = configuration.legality_format.get()
+    with with_config_file(guild_id(channel)), with_config_file(channel.id):
+        legality_format = configuration.legality_format.value
     not_pd = configuration.get_list('not_pd')
-    if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):
+    if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):  # This needs to be migrated
         legality_format = 'Unknown'
     cards = uniqify_cards(cards)
     if len(cards) > MAX_CARDS_SHOWN:
@@ -235,9 +236,6 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
 
-def guild_or_channel_id(channel: Union[TextChannel, DMChannel, GroupChannel]) -> int:
-    return getattr(channel, 'guild', channel).id
-
 class MtgContext(commands.Context):
     async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
         message = await self.send(file=File(image_file), content=text)
@@ -247,6 +245,9 @@ class MtgContext(commands.Context):
             await self.send(file=File(image_file), content=text)
 
     async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+        if c is None:
+            return
+
         not_pd = configuration.get_list('not_pd')
         if str(self.channel.id) in not_pd or (getattr(self.channel, 'guild', None) is not None and str(self.channel.guild.id) in not_pd):
             show_legality = False

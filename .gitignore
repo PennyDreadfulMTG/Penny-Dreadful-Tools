@@ -50,3 +50,4 @@ whoosh_index/
 /scryfall-default-cards.json
 /.env
 /src/pystache/
+/configs/*

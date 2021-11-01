@@ -27,9 +27,10 @@ is_test_site = BoolSetting('is_test_site', False)
 
 # === Discord Bot ===
 # Which format should checkmarks represent?
-legality_format = StrSetting('legality_format', 'Penny Dreadful', configurable=True)
+legality_format = StrSetting('legality_format', 'Penny Dreadful', configurable=True, doc='Which format should the bot mark legality for?')
+dismiss_any = BoolSetting('dismiss_any', True, configurable=True, doc='Allows ❎ to dismiss any message')
 # Should !time use the 24-hour format?
-use_24h = BoolSetting('use_24h', False, configurable=True)
+use_24h = BoolSetting('use_24h', False, configurable=True, doc='Use a 24 hour clock')
 # Google Custom Search Engine (for !google)
 cse_api_key = StrSetting('cse_api_key', '')
 cse_engine_id = StrSetting('cse_engine_id', '')
@@ -241,7 +242,7 @@ def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union
     filename = 'config.json'
     fullkey = key
     if subkey:
-        filename = subkey.group(1) + '.config.json'
+        filename = os.path.join('configs', f'{subkey.group(1)}.config.json')
         key = subkey.group(2)
 
     try:

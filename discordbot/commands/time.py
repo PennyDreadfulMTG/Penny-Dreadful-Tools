@@ -3,7 +3,8 @@ import re
 
 from discord.ext import commands
 
-from discordbot.command import MtgContext, guild_or_channel_id
+from discordbot.command import MtgContext
+from discordbot.shared import guild_id
 from magic import fetcher
 from shared import configuration
 from shared.pd_exception import NotConfiguredException, TooFewItemsException
@@ -17,9 +18,8 @@ async def time(ctx: MtgContext, *, args: str) -> None:
         await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))
         return
     try:
-        with with_config_file(guild_or_channel_id(ctx.channel)):
-            with with_config_file(ctx.channel.id):
-                twentyfour = configuration.use_24h.get()
+        with with_config_file(guild_id(ctx.channel)), with_config_file(ctx.channel.id):
+            twentyfour = configuration.use_24h.value
         ts = fetcher.time(args, twentyfour)
         times_s = ''
         for t, zones in ts.items():

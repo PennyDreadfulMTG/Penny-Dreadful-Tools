@@ -23,6 +23,10 @@ if not os.path.exists('configs'):
 
 @contextmanager
 def with_config_file(namespace: Any) -> Generator[None, None, None]:
+    if namespace is None:
+        yield
+        return
+
     filename = os.path.join('configs', f'{namespace}.config.json')
     if filename not in LOADED_FILES:
         LOADED_FILES.add(filename)
@@ -50,10 +54,11 @@ class Setting(Generic[T]):
         SETTINGS[key] = self
 
     def get(self) -> T:
-        for cat in ADDITIONAL_FILES:
-            key = f'{cat}_{self.key}'
-            if key in NS_CONFIG:
-                return NS_CONFIG[key]
+        if self.configurable:
+            for cat in ADDITIONAL_FILES:
+                key = f'{cat}_{self.key}'
+                if key in NS_CONFIG:
+                    return NS_CONFIG[key]
 
         key = self.key
         if key in CONFIG:
@@ -84,7 +89,7 @@ class Setting(Generic[T]):
 
     def set(self, value: T) -> T:
         filename = 'config.json'
-        if ADDITIONAL_FILES:
+        if ADDITIONAL_FILES and self.configurable:
             filename = ADDITIONAL_FILES[-1]
             fullkey = f'{filename}_{self.key}'
             NS_CONFIG[fullkey] = value

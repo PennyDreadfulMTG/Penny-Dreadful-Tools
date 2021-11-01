@@ -123,7 +123,18 @@
 <section>
     <h2>New Rule</h2>
     <form method="post">
-    {{>archetypedropdown}}
-    <button type="submit">Create</button>
+        <div>
+            <label>Archetype</label>
+            {{>archetypedropdown}}
+        </div>
+        <div>
+            <label>Must include</label>
+            <textarea name="include"></textarea>
+        </div>
+        <div>
+            <label>Must not include</label>
+            <textarea name="exclude"></textarea>
+        </div>
+        <button type="submit">Create</button>
     </form>
 </section>

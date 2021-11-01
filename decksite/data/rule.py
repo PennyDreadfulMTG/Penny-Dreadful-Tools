@@ -1,11 +1,13 @@
 from typing import Dict, List, Tuple
 
-from decksite.data import deck, preaggregation
+from decksite.data import card, deck, preaggregation
 from decksite.database import db
+from magic.decklist import parse_line
 from magic.models import Deck
 from shared import logger
 from shared.container import Container
 from shared.decorators import retry_after_calling
+from shared.pd_exception import InvalidDataException
 
 IGNORE: List[str] = ['Commander', 'Unclassified']
 
@@ -198,9 +200,29 @@ def load_all_rules() -> List[Container]:
             result_by_id[r.rule_id].excluded_cards.append({'n': r.n, 'card': r.card})
     return result
 
-def add_rule(archetype_id: int) -> None:
+def add_rule(archetype_id: int) -> int:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
-    db().insert(sql, [archetype_id])
+    return db().insert(sql, [archetype_id])
+
+def update_cards_raw(rule_id: int, include: str, exclude: str) -> Tuple[bool, str]:
+    inc = []
+    exc = []
+    for line in include.strip().splitlines():
+        try:
+            inc.append(parse_line(line))
+        except InvalidDataException:
+            return False, f"Couldn't find a card count and name on line: {line}"
+        if not card.card_exists(inc[-1][1]):
+            return False, f'Card not found in any deck: {line}'
+    for line in exclude.strip().splitlines():
+        try:
+            exc.append(parse_line(line))
+        except InvalidDataException:
+            return False, f"Couldn't find a card count and name on line: {line}"
+        if not card.card_exists(exc[-1][1]):
+            return False, f'Card not found in any deck {line}'
+    update_cards(rule_id, inc, exc)
+    return True, ''
 
 # @retry_after_calling(cache_all_rules)
 def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, str]]) -> None:
@@ -209,12 +231,12 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
     db().execute(sql, [rule_id])
     sql = 'DELETE FROM rule_card WHERE rule_id = %s'
     db().execute(sql, [rule_id])
-    for n, card in inc:
+    for n, c in inc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, TRUE)'
-        db().execute(sql, [rule_id, card, n])
-    for n, card in exc:
+        db().execute(sql, [rule_id, c, n])
+    for n, c in exc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
-        db().execute(sql, [rule_id, card, n])
+        db().execute(sql, [rule_id, c, n])
     sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
     db().execute(sql)
     db().commit('update_rule_cards')

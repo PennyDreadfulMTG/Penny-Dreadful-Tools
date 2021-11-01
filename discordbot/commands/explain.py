@@ -199,13 +199,6 @@ class ExplainCog(commands.Cog):
                 """,
                 {},
             ),
-            'verification': (
-                """
-                Gatherling verification is currently broken.
-                It no longer does anything except put a green tick by your name anyway.
-                """,
-                {},
-            ),
             'wrongdeck': (
                 """
                 If a player realizes they have the wrong deck before the match begins they should take a screenshot of their opening hand as proof. Fix the deck and recreate the match. The player who had the wrong deck must give the choice of play or draw to their opponent.
@@ -221,7 +214,6 @@ class ExplainCog(commands.Cog):
         self.explanations['tournaments'] = self.explanations['tournament']
         self.explanations['watching'] = self.explanations['spectating']
         self.explanations['spectate'] = self.explanations['spectating']
-        self.explanations['verify'] = self.explanations['verification']
         self.reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
             'tournament': (
                 """

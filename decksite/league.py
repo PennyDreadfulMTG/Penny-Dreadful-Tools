@@ -193,7 +193,7 @@ def identifier(params: Dict[str, str]) -> str:
 def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int]) -> List[Dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
-    return [{'text': d.name if d.person_id == viewer_id else d.person, 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
+    return [{'text': d.name if d.person_id == viewer_id else f'{d.person} ({d.name}, {d.id})', 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where: str = 'TRUE') -> List[deck.Deck]:
     where = """

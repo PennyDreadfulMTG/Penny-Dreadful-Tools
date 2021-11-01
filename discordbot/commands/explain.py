@@ -58,6 +58,10 @@ class ExplainCog(commands.Cog):
                 "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
                 {},
             ),
+            'gamehistory': (
+                'You can find your Game History under the gear icon in the top right on MTGO. Latest match is at the bottom.',
+                {},
+            ),
             'language': (
                 """
                 To change the language you see the site in use the language switcher in the top-left hand corner (desktop only) or follow the link below for English.

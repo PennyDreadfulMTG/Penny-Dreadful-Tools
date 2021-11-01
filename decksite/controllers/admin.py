@@ -108,8 +108,9 @@ def edit_rules() -> wrappers.Response:
 @APP.route('/admin/rules/', methods=['POST'])
 @auth.demimod_required
 def post_rules() -> wrappers.Response:
-    if request.form.get('archetype_id') is not None:
-        rs.add_rule(cast_int(request.form.get('archetype_id')))
+    if request.form.get('archetype_id'):
+        rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
+        rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
     return edit_rules()

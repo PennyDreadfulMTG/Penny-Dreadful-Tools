@@ -94,6 +94,13 @@ class ExplainCog(commands.Cog):
                     'All Decklists': fetcher.decksite_url('/decks/'),
                 },
             ),
+            'next round': (
+                """
+                The next round will begin when all matches are finished.
+                You can check the reported and unreported results by looking at the pinned message in #tournament-room
+                """,
+                {},
+            ),
             'noshow': (
                 """
                 If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.

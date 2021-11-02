@@ -22,7 +22,8 @@ WHITELIST = [
     'b u r n',
     'r e a n i m a t o r',
     'meme deck for #general',
-    "do y'all zoomers remember what yore-tiller means",
+    'i will make combo work in season 15',
+    's15 is a meme',
 ]
 
 PROFANITY_WHITELIST = [

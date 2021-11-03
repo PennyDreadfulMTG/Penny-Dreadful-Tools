@@ -24,6 +24,8 @@ WHITELIST = [
     'meme deck for #general',
     'i will make combo work in season 15',
     's15 is a meme',
+    'blue man group',
+    'no green jeskai asc',
 ]
 
 PROFANITY_WHITELIST = [

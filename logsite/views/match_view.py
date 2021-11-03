@@ -60,6 +60,9 @@ class Match(View):
         description = '{fmt} match.'.format(fmt=fmt)
         return description
 
+    def page_title(self) -> str:
+        return ''
+
 def player_link(name: str) -> str:
     url = url_for('show_person', person=name)
     return '<a href="{url}">{name}</a>'.format(url=html.escape(url), name=html.escape(name))

@@ -60,7 +60,7 @@ class Match(View):
         description = '{fmt} match.'.format(fmt=fmt)
         return description
 
-    def page_title(self):
+    def page_title(self) -> str:
         return ''
 
 def player_link(name: str) -> str:

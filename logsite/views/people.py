@@ -50,3 +50,6 @@ class People(View):
                 else:
                     p.fav_format = '⸺'
                 redis.store(key, {'fav_format': p.fav_format, 'num_matches': p.num_matches}, ex=3600)
+
+    def page_title(self) -> str:
+        return 'People'

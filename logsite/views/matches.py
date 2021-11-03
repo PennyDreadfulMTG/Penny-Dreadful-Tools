@@ -24,6 +24,9 @@ def matches() -> str:
 
 # pylint: disable=no-self-use
 class Matches(View):
+    def page_title(self) -> str:
+        return 'Matches'
+
     @fill_args('person', 'format_name')
     def __init__(self, person: str = None, format_name: str = None) -> None:
         super().__init__()

@@ -17,9 +17,9 @@ class View(BaseView):
         return url_for('favicon', rest='-152.png')
 
     def title(self) -> str:
-        if not self.subtitle():
+        if not self.page_title():
             return 'PDBot Logs'
-        return '{subtitle} – PDBot Logs'.format(subtitle=self.subtitle())
+        return f'{self.page_title()} – PDBot Logs'
 
-    def subtitle(self) -> Optional[str]:
-        pass
+    def page_title(self) -> str:
+        return ''

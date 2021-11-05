@@ -1,0 +1,32 @@
+<section>
+    {{#message}}
+        <p>{{message}}</p>
+    {{/message}}
+    <form method="post">
+        <input type="hidden" name="cmd" value="ban">
+        {{> persondropdown}}
+        <button type="submit">Ban</button>
+    </form>
+    <p>Banning a person affects the league only, you have to do Gatherling separately.</p>
+</section>
+<section>
+    <h2>Unban</h2>
+    <table>
+        <tr>
+            <th>Person</th>
+            <th></th>
+        </tr>
+        {{#banned_people}}
+            <tr>
+                <td>{{name}}</td>
+                <td>
+                    <form class="inline" method="post">
+                        <input type="hidden" name="cmd" value="unban">
+                        <input type="hidden" name="person_id" value="{{id}}">
+                        <input type="submit" value="Unban">
+                    </form>
+                </td>
+            </tr>
+        {{/banned_people}}
+    </table>
+</section>

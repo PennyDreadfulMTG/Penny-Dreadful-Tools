@@ -15,9 +15,9 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
-from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
-                            EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
-                            RotationChecklist, Sorters, Unlink)
+from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes,
+                            EditLeague, EditMatches, EditNews, EditRules, PlayerNotes,
+                            Prizes, RotationChecklist, Sorters, Unlink)
 from magic.models import Deck
 from shared import dtutil
 from shared import redis_wrapper as redis
@@ -228,6 +228,32 @@ def post_unlink() -> str:
         except ValueError:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)
+
+@APP.route('/admin/ban/')
+@auth.admin_required
+def ban(success: Optional[bool] = None) -> str:
+    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    view = Ban(all_people, success)
+    return view.page()
+
+@APP.route('/admin/ban/', methods=['POST'])
+@auth.admin_required
+def post_ban() -> str:
+    cmd = request.form.get('cmd')
+    person_id = request.form.get('person_id')
+    if not person_id:
+        raise InvalidArgumentException('No person_id in post_ban')
+    person_id = int(person_id)
+    success = False
+    if cmd == 'ban':
+        p = ps.load_person_by_id(person_id)
+        if p.decks and p.decks[0].is_in_current_run():
+            lg.retire_deck(p.decks[0])
+        success = ps.ban(person_id) > 0
+    elif cmd == 'unban':
+        success = ps.unban(person_id) > 0
+    return ban(success)
+
 
 @APP.route('/admin/league/')
 @auth.admin_required

@@ -127,6 +127,7 @@ def load_people(where: str = 'TRUE',
             p.discord_id,
             p.elo,
             p.locale,
+            p.banned,
             SUM(1) AS num_decks,
             SUM(dc.wins) AS wins,
             SUM(dc.losses) AS losses,
@@ -407,3 +408,11 @@ def load_sorters() -> List[Person]:
         sorter.last_sorted = dtutil.ts2dt(sorter['last_sorted'])
         sorters.append(sorter)
     return sorters
+
+def ban(person_id: int) -> int:
+    sql = 'UPDATE person SET banned = TRUE WHERE id = %s'
+    return db().execute(sql, [person_id])
+
+def unban(person_id: int) -> int:
+    sql = 'UPDATE person SET banned = FALSE WHERE id = %s'
+    return db().execute(sql, [person_id])

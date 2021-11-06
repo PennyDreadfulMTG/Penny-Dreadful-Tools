@@ -208,6 +208,9 @@ def pull_request(argv: Tuple[str]) -> None:
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
 def jslint(fix: bool = False) -> None:
+    do_jslint(fix)
+
+def do_jslint(fix: bool) -> None:
     print('>>>> Linting javascript')
     files = find_files(file_extension='js', exclude=['.eslintrc.js', 'shared_web/static/js/tipped.min.js']) + find_files(file_extension='jsx')
     cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
@@ -218,7 +221,7 @@ def jslint(fix: bool = False) -> None:
 @cli.command()
 def jsfix() -> None:
     print('>>>> Fixing js')
-    jslint(fix=True)
+    do_jslint(fix=True)
 
 @cli.command()
 def coverage() -> None:

@@ -106,6 +106,9 @@ def mypy(argv: Tuple[str], strict: bool = False, typeshedding: bool = False) -> 
 @cli.command()
 @click.argument('argv', nargs=-1)
 def unit(argv: Tuple[str]) -> None:
+    do_unit(argv)
+
+def do_unit(argv: Tuple[str]) -> None:
     runtests(argv, 'not functional and not perf', True)
 
 @cli.command()
@@ -176,16 +179,19 @@ def reset_db() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def safe_push(args: List[str]) -> None:
+def safe_push(argv: List[str]) -> None:
     label = stash_if_any()
     print('>>>> Rebasing branch on master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
-    unit(args)
-    push()
+    do_unit(argv)
+    do_push()
     pop_if_any(label)
 
 @cli.command()
 def push() -> None:
+    do_push()
+
+def do_push() -> None:
     print('>>>> Pushing')
     branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])

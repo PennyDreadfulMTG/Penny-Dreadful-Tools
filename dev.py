@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional
 
 import build as builddotpy
 from run import wait_for_db
@@ -48,6 +48,9 @@ def buildjs() -> None:
 
 @cli.command()
 def lint() -> None:
+    do_lint()
+
+def do_lint() -> None:
     """
     Invoke Pylint with our preferred options
     """
@@ -62,7 +65,10 @@ def stylefix() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def mypy(argv: Tuple[str], strict: bool = False, typeshedding: bool = False) -> None:
+def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
+    do_mypy(argv, strict, typeshedding)
+
+def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
@@ -105,12 +111,15 @@ def mypy(argv: Tuple[str], strict: bool = False, typeshedding: bool = False) -> 
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def unit(argv: Tuple[str]) -> None:
+def unit(argv: List[str]) -> None:
+    do_unit(argv)
+
+def do_unit(argv: List[str]) -> None:
     runtests(argv, 'not functional and not perf', True)
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def test(argv: Tuple[str]) -> None:
+def test(argv: List[str]) -> None:
     runtests(argv, '', False)
 
 def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
@@ -156,6 +165,9 @@ def upload_coverage() -> None:
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
 def sort(fix: bool = False) -> None:
+    do_sort(fix)
+
+def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
     if fix:
         subprocess.check_call(['isort', '.'])
@@ -176,23 +188,32 @@ def reset_db() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def safe_push(args: List[str]) -> None:
+def safe_push(argv: List[str]) -> None:
+    do_safe_push(argv)
+
+def do_safe_push(argv: List[str]) -> None:
     label = stash_if_any()
     print('>>>> Rebasing branch on master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
-    unit(args)
-    push()
+    do_unit(argv)
+    do_push()
     pop_if_any(label)
 
 @cli.command()
 def push() -> None:
+    do_push()
+
+def do_push() -> None:
     print('>>>> Pushing')
     branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def pull_request(argv: Tuple[str]) -> None:
+def pull_request(argv: List[str]) -> None:
+    do_pull_request(argv)
+
+def do_pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
     try:
         subprocess.check_call(['gh', 'pr', 'create'])
@@ -202,6 +223,9 @@ def pull_request(argv: Tuple[str]) -> None:
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
 def jslint(fix: bool = False) -> None:
+    do_jslint(fix)
+
+def do_jslint(fix: bool) -> None:
     print('>>>> Linting javascript')
     files = find_files(file_extension='js', exclude=['.eslintrc.js', 'shared_web/static/js/tipped.min.js']) + find_files(file_extension='jsx')
     cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
@@ -212,7 +236,7 @@ def jslint(fix: bool = False) -> None:
 @cli.command()
 def jsfix() -> None:
     print('>>>> Fixing js')
-    jslint(fix=True)
+    do_jslint(fix=True)
 
 @cli.command()
 def coverage() -> None:
@@ -272,18 +296,21 @@ def popclean() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def check(args: List[str]) -> None:
-    sort()
-    mypy(args)
-    lint(args)
-    jslint()
+def check(argv: List[str]) -> None:
+    do_check(argv)
+
+def do_check(argv: List[str]) -> None:
+    do_sort(False)
+    do_mypy(argv)
+    do_lint()
+    do_jslint(fix=False)
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def release(args: List[str]) -> None:
-    check([])
-    safe_push([])
-    pull_request(args)
+def release(argv: List[str]) -> None:
+    do_check([])
+    do_safe_push([])
+    do_pull_request(argv)
 
 def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None) -> List[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
@@ -295,13 +322,6 @@ def find_files(needle: str = '', file_extension: str = '', exclude: Optional[Lis
     if exclude:
         paths = [p for p in paths if p not in exclude]
     return paths
-
-
-@cli.command()
-def check_requirements() -> None:
-    files = find_files(file_extension='py')
-    r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_extra_reqs'] + files)
-    r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_missing_reqs'] + files) or r
 
 @cli.command()
 def swagger() -> None:

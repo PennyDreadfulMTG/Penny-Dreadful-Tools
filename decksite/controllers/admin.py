@@ -15,9 +15,9 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
-from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes,
-                            EditLeague, EditMatches, EditNews, EditRules, PlayerNotes,
-                            Prizes, RotationChecklist, Sorters, Unlink)
+from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague,
+                            EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
+                            RotationChecklist, Sorters, Unlink)
 from magic.models import Deck
 from shared import dtutil
 from shared import redis_wrapper as redis

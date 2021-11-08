@@ -169,10 +169,11 @@ def sort(fix: bool = False) -> None:
 
 def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
+    pipenv = local['pipenv']
     if fix:
-        subprocess.check_call(['isort', '.'])
+        pipenv['run', 'isort', '.'] & FG  # noqa
     else:
-        subprocess.check_call(['isort', '.', '--check'])
+        pipenv['run', 'isort', '.', '--check'] & FG  # noqa
 
 # pylint: disable=import-outside-toplevel
 @cli.command()
@@ -300,7 +301,6 @@ def check(argv: List[str]) -> None:
     do_check(argv)
 
 def do_check(argv: List[str]) -> None:
-    do_sort(False)
     do_mypy(argv)
     do_lint()
     do_jslint(fix=False)

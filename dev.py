@@ -305,10 +305,23 @@ def do_check(argv: List[str]) -> None:
     do_lint()
     do_jslint(fix=False)
 
+# `full-check` differs from `check` in that it additionally checks import sorting.
+# This is not strictly necessary because a bot will follow up any PR with another PR to correct import sorting.
+# If you want to avoid that subsequent PR you can use `sort` and/or `full-check` to find import sorting issues.
+# This adds 4s to the 18s run time of `check` on my laptop.
+@cli.command()
+@click.argument('argv', nargs=-1)
+def full_check(argv: List[str]) -> None:
+    do_full_check(argv)
+
+def do_full_check(argv: List[str]) -> None:
+    do_sort(False)
+    do_check(argv)
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def release(argv: List[str]) -> None:
-    do_check([])
+    do_full_check([])
     do_safe_push([])
     do_pull_request(argv)
 

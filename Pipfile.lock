@@ -1846,11 +1846,11 @@
         },
         "types-markdown": {
             "hashes": [
-                "sha256:85694139371e4a4edbc440e2f8f7cc17a1ac4850a46d6a2eef64bc84a590f04e",
-                "sha256:fcddffa11e0899ad13dce4a5a259b389cf70abc7fc0c377c3ce04451e667d0c0"
+                "sha256:12f1169a433ec01f4dbea6d04f19cfc199e551bdaee9a36cd11fbc53d6e9af15",
+                "sha256:b4c6d677fa2a550b0c68ecc0149a32d3fd5a634df86d2208e7362257c1cb63b6"
             ],
             "index": "pypi",
-            "version": "==3.3.6"
+            "version": "==3.3.7"
         },
         "types-markupsafe": {
             "hashes": [

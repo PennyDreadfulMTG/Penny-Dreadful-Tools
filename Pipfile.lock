@@ -550,11 +550,11 @@
         },
         "jinja2": {
             "hashes": [
-                "sha256:827a0e32839ab1600d4eb1c4c33ec5a8edfbc5cb42dafa13b81f182f97784b45",
-                "sha256:8569982d3f0889eed11dd620c706d39b60c36d6d25843961f33f77fb6bc6b20c"
+                "sha256:077ce6014f7b40d03b47d1f1ca4b0fc8328a692bd284016f806ed0eaca390ad8",
+                "sha256:611bb273cd68f3b993fabdc4064fc858c5b47a973cb5aa7999ec1ba405c87cd7"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==3.0.2"
+            "version": "==3.0.3"
         },
         "jishaku": {
             "hashes": [
@@ -1831,11 +1831,11 @@
         },
         "types-flask": {
             "hashes": [
-                "sha256:09306465574a1b42c48fa4a83458fbb0cd9a46df20f6901e4bf148550126cc85",
-                "sha256:ed06c39b5838eed4e099c5fc0117714097975d86177b1663c4fb547a5f7ff298"
+                "sha256:1294df1615e01135c5dbba530e3f8d58918afa6796f1dee8b2143c7dd47b7970",
+                "sha256:80086412a55202b2d18a2774d3a24b4a9acfa0d2f7935e9ecf4de53a705e1944"
             ],
             "index": "pypi",
-            "version": "==1.1.4"
+            "version": "==1.1.5"
         },
         "types-jinja2": {
             "hashes": [

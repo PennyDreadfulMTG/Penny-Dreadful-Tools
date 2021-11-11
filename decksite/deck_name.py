@@ -27,6 +27,7 @@ WHITELIST = [
     'blue man group',
     'no green jeskai asc',
     'ub or not ub? that is the question',
+    'Rakdos aggro but with green instead of black',
 ]
 
 PROFANITY_WHITELIST = [

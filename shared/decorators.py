@@ -1,5 +1,8 @@
 import functools
 from typing import Any, Callable, Dict, List, TypeVar
+import os
+import fasteners
+import six
 
 from shared.pd_exception import DatabaseException
 
@@ -34,3 +37,21 @@ def memoize(obj: FuncType[T]) -> FuncType[T]:
 
 def lock(func: FuncType[T]) -> T:
     return func()
+
+def interprocess_locked(path: str) -> Callable:
+    """Acquires & releases a interprocess lock around call into
+       decorated function."""
+
+    lock = fasteners.InterProcessLock(path)
+
+    def decorator(f: Callable) -> Callable:
+        @six.wraps(f)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            with lock:
+                r = f(*args, **kwargs)
+            os.remove(path)
+            return r
+
+        return wrapper
+
+    return decorator

@@ -5,6 +5,7 @@ import re
 import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
+import os
 
 import discord
 from discord import Guild, Member, Role, VoiceState
@@ -326,7 +327,9 @@ class Bot(commands.Bot):
         while self.is_ready():
             until_rotation = seasons.next_rotation() - dtutil.now()
             last_run_time = rotation.last_run_time()
-            if until_rotation < datetime.timedelta(7) and last_run_time is not None:
+            if os.path.exists('.rotation.lock'):
+                timer = 10
+            elif until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
                     hype = await rotation_hype_message(False)
                     if hype:
@@ -370,7 +373,8 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
     return None
 
 async def rotation_hype_message(hype_command: bool) -> Optional[str]:
-    rotation.clear_redis()
+    if not hype_command:
+        rotation.clear_redis()
     runs, runs_percent, cs = rotation.read_rotation_files()
     runs_remaining = rotation.TOTAL_RUNS - runs
     newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]

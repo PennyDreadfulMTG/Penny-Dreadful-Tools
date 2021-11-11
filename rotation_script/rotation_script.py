@@ -12,7 +12,7 @@ import ftfy
 
 from magic import card_price, fetcher, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
-from shared import configuration, dtutil, fetch_tools
+from shared import configuration, dtutil, fetch_tools, decorators
 from shared import redis_wrapper as redis
 from shared import repo, text
 
@@ -20,6 +20,7 @@ TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
 TIME_SINCE_ROTATION = dtutil.now() - seasons.last_rotation()
 BANNED_CARDS = ['Cleanse', 'Crusade']  # These cards are banned, even in Freeform
 
+@decorators.interprocess_locked('.rotation.lock')
 def run() -> None:
     files = rotation.files()
     n = len(files)

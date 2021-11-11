@@ -2,7 +2,6 @@ from discord.ext import commands
 
 from discordbot.command import MtgContext
 from magic import fetcher, tournaments
-from shared import dtutil
 
 
 @commands.command(aliases=['to', 'tournaments'])
@@ -14,8 +13,7 @@ async def tournament(ctx: MtgContext) -> None:
         started = 'it started '
     else:
         started = ''
-    prev_message = 'The last tournament was {name}, {started}{time} ago'.format(
-        name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
-    next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(
-        0, 0) else t['next_tournament_time']
-    await ctx.send('The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
+    prev_message = 'The last tournament was {name}, {started}{time}'.format(
+        name=prev['next_tournament_name'], started=started, time=prev['discord_relative'])
+    next_time = t['discord_relative']
+    await ctx.send('The next tournament is {name} {next_time} ({full}).\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/'), full=t['discord_full']))

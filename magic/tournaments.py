@@ -48,6 +48,8 @@ def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, 
         'next_tournament_time': next_tournament_time,
         'next_tournament_time_precise': next_tournament_time_precise,
         'near': near,
+        'discord_relative': f'<t:{dtutil.dt2ts(time)}:R>',
+        'discord_full': f'<t:{dtutil.dt2ts(time)}:F>',
     }
     info.update(series_info(tournament_id))
     return info

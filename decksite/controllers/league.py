@@ -27,10 +27,13 @@ def current_league() -> wrappers.Response:
 
 @APP.route('/signup/')
 @auth.load_person
-def signup(form: Optional[SignUpForm] = None) -> str:
+@fill_cookies('deck_id')
+def signup(form: Optional[SignUpForm] = None, deck_id: Optional[int] = None) -> str:
+    print(deck_id)
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id())
+    d = ds.load_deck(deck_id) if deck_id else None
+    view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id(), d)
     return view.page()
 
 
@@ -86,5 +89,7 @@ def retire_deck() -> wrappers.Response:
         d = ds.load_deck(form.entry)
         ps.associate(d, session['id'])
         lg.retire_deck(d)
-        return redirect(url_for('signup'))
+        response = redirect(url_for('signup'))
+        response.set_cookie('deck_id', '')
+        return response
     return make_response(retire(form))

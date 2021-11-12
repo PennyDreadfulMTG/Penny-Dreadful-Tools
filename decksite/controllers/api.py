@@ -47,6 +47,7 @@ DECK = APP.api.model('Deck', {
     'updated_date': fields.DateTime(),
     'wins': fields.Integer(),
     'losses': fields.Integer(),
+    'draws': fields.Integer(),
     'finish': fields.Integer(),
     'archetype_id': fields.Integer(),
     'archetype_name': fields.String(),
@@ -61,6 +62,9 @@ DECK = APP.api.model('Deck', {
     'season_id': fields.Integer(),
     'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
     'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
+    'url': fields.String(),
+    'source_name': fields.String(),
+    'competition_type_name': fields.String(),
 })
 
 COMPETITION = APP.api.model('Competition', {

@@ -9,8 +9,9 @@ from shared import fetch_tools
 async def randomdeck(ctx: MtgContext) -> None:
     """A random deck from the current season."""
     blob = fetch_tools.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
+    print(blob)
     if 'error' in blob or 'url' not in blob:
-        await ctx.send(blob.get('msg', ''))
+        await ctx.send(f'{ctx.author.mention}: Error fetching random legal deck (' + blob.get('msg', 'Unknown') + ')')
     else:
         ctn = blob.get('competition_type_name', None)
         if ctn is not None:

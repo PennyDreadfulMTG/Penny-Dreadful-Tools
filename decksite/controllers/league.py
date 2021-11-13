@@ -29,7 +29,6 @@ def current_league() -> wrappers.Response:
 @auth.load_person
 @fill_cookies('deck_id')
 def signup(form: Optional[SignUpForm] = None, deck_id: Optional[int] = None) -> str:
-    print(deck_id)
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     d = ds.load_deck(deck_id) if deck_id else None

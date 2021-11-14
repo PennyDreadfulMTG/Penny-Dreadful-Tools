@@ -217,9 +217,9 @@ def pull_request(argv: List[str]) -> None:
 def do_pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
     try:
-        subprocess.check_call(['gh', 'pr', 'create'])
-    except (subprocess.CalledProcessError, FileNotFoundError):
         subprocess.check_call(['hub', 'pull-request', *argv])
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        subprocess.check_call(['gh', 'pr', 'create'])
 
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)

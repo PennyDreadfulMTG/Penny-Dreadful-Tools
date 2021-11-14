@@ -12,7 +12,7 @@ import ftfy
 
 from magic import card_price, fetcher, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
-from shared import configuration, dtutil, fetch_tools, decorators
+from shared import configuration, decorators, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared import repo, text
 

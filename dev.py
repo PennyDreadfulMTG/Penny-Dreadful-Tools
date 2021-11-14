@@ -75,7 +75,6 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
     """
     print('>>>> Typechecking')
     args = [
-        '--show-error-codes',
         '--ignore-missing-imports',      # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',      # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',
@@ -83,7 +82,6 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
         '--check-untyped-defs',          # Typecheck on all methods, not just typed ones.
         '--disallow-untyped-defs',       # All methods must be typed.
         '--strict-equality',             # Don't allow us to say "0" == 0 or other always false comparisons
-        '--exclude=logsite_migrations',  # Exclude these generated files
         '--warn-unused-ignores',
     ]
     if strict:
@@ -98,7 +96,8 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
             '--custom-typeshed', '../typeshed',
         ])
     args.extend(argv or ['.'])  # Invoke on the entire project.
-    # pylint: disable=import-outside-toplevel
+
+    print('mypy ' + ' '.join(args))
     from mypy import api
     result = api.run(args)
     if result[0]:

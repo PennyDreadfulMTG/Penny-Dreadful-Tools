@@ -1,6 +1,7 @@
 import functools
-from typing import Any, Callable, Dict, List, TypeVar
 import os
+from typing import Any, Callable, Dict, List, TypeVar
+
 import fasteners
 import six
 

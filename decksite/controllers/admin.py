@@ -91,7 +91,7 @@ def post_archetypes() -> wrappers.Response:
         archs.move(int(request.form.getlist('archetype_id')[0]), int(request.form.getlist('archetype_id')[1]))
     elif request.form.get('parent') is not None:
         if len(request.form.get('name', '')) > 0:
-            archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')))
+            archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
@@ -199,12 +199,13 @@ def player_notes() -> str:
     return view.page()
 
 @APP.route('/admin/people/notes/', methods=['POST'])
+@fill_form('person_id', 'note')
 @auth.admin_required
-def post_player_note() -> wrappers.Response:
+def post_player_note(person_id: int, note: str) -> wrappers.Response:
     if not request.form.get('person_id') or not request.form.get('note'):
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/people/notes: {request.form}')
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, int(request.form['person_id']), request.form['note'])
+    ps.add_note(creator.id, person_id, note)
     return redirect(url_for('player_notes'))
 
 @APP.route('/admin/unlink/')

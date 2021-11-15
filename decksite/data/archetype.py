@@ -75,8 +75,8 @@ def load_archetypes_deckless_for(archetype_id: int, season_id: Optional[int] = N
             return list(a.ancestors) + [a] + list(a.descendants)
     return list()
 
-def add(name: str, parent: int) -> None:
-    archetype_id = db().insert('INSERT INTO archetype (name) VALUES (%s)', [name])
+def add(name: str, parent: int, description: str) -> None:
+    archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])
     ancestors = db().select('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:

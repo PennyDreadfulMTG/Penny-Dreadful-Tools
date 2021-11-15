@@ -199,12 +199,13 @@ def player_notes() -> str:
     return view.page()
 
 @APP.route('/admin/people/notes/', methods=['POST'])
+@fill_form('person_id', 'note')
 @auth.admin_required
-def post_player_note() -> wrappers.Response:
+def post_player_note(person_id: int, note: str) -> wrappers.Response:
     if not request.form.get('person_id') or not request.form.get('note'):
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/people/notes: {request.form}')
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, int(request.form['person_id']), request.form['note'])
+    ps.add_note(creator.id, person_id, note)
     return redirect(url_for('player_notes'))
 
 @APP.route('/admin/unlink/')

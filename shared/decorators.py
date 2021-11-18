@@ -20,9 +20,9 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]
                 retry_func()
                 try:
                     return decorated_func(*args, **kwargs)
-                except DatabaseException as e:
+                except DatabaseException:
                     print("That didn't help, giving up.")
-                    raise e
+                    raise
         return wrapper
     return decorator
 

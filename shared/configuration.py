@@ -189,7 +189,7 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         return CONFIG[key]
     subkey = RE_SUBKEY.match(key)
     if subkey:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     try:
         cfg = json.load(open('config.json'))

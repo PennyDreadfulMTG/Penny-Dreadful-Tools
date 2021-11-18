@@ -21,7 +21,7 @@ class Match(View):
     def __init__(self, viewed_match: match.Match) -> None:
         super().__init__()
         if not viewed_match:
-            raise DoesNotExistException()
+            raise DoesNotExistException
         self.match = viewed_match
         self.id = viewed_match.id
         self.comment = viewed_match.comment

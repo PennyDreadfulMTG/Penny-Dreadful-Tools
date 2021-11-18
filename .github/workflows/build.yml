@@ -12,6 +12,7 @@ jobs:
       uses: actions/setup-python@v2.3.0
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel
@@ -28,6 +29,7 @@ jobs:
       uses: actions/setup-python@v2.3.0
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel pydantic
@@ -49,6 +51,7 @@ jobs:
       uses: actions/setup-python@v2.3.0
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - uses: getong/mariadb-action@v1.1
       with:
         mysql root password: bad-password
@@ -71,6 +74,7 @@ jobs:
       uses: actions/setup-python@v2.3.0
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.4.1
       with:

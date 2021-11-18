@@ -99,8 +99,8 @@ def tokenize(s: str) -> Expression:
             else:
                 raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
             i += 1
-    except KeyError:
-        raise InvalidSearchException(f'Invalid nesting in {s}')
+    except KeyError as e:
+        raise InvalidSearchException(f'Invalid nesting in {s}') from e
     if mode == QUOTED_STRING:
         raise InvalidSearchException('Reached end of expression without finding the end of a quoted string in {s}'.format(s=s))
     if depth != 0:

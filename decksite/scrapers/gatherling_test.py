@@ -68,7 +68,7 @@ def test_vivify_date() -> None:
     assert d.second == 12
     try:
         gatherling.vivify_date('gibberish')
-        raise AssertionError()
+        raise AssertionError
     except ValueError:
         assert True
 

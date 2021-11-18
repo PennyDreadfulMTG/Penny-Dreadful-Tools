@@ -148,7 +148,7 @@ class PDFlask(Flask):
 
     def favicon(self, rest: str) -> Response:
         if not self.static_folder:
-            raise DoesNotExistException()
+            raise DoesNotExistException
         return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), 'favicon{rest}'.format(rest=rest))
 
     def external_url_handler(self, error: Exception, endpoint: str, values: Dict[str, Any]) -> str:

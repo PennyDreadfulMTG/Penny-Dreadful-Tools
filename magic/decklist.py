@@ -16,10 +16,13 @@ DecklistType = Dict[str, SectionType]
 
 def parse_line(line: str) -> Tuple[int, str]:
     match = re.match(r'(?:SB: ?)?(\d+)\s+(.*)', line)
+    if match is not None:
+        n, name = match.groups()
+        return int(n), name
+    match = re.match(r'(?:SB: ?)?(.*)', line)
     if match is None:
-        raise InvalidDataException('No number specified with `{line}`'.format(line=line))
-    n, name = match.groups()
-    return (int(n), name)
+        raise InvalidDataException(f'Could not parse {line}')
+    return 1, match.groups()[0]
 
 def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():

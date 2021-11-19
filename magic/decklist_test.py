@@ -693,3 +693,87 @@ def test_dfcs() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 36
     assert sum(d['sideboard'].values()) == 0
+
+def test_no_numbers() -> None:
+    s = """
+        Blood Artist
+        Blood Artist
+        Blood Artist
+        Blood Artist
+        Bloodthrone Vampire
+        Bloodthrone Vampire
+        Cathodion
+        Cathodion
+        Cathodion
+        Cathodion
+        Cruel Celebrant
+        Cruel Celebrant
+        Stonehewer Giant
+        Stonehewer Giant
+        Su-Chi
+        Su-Chi
+        Nim Deathmantle
+        Nim Deathmantle
+        Piston Sledge
+        Piston Sledge
+        Piston Sledge
+        Piston Sledge
+        Plains
+        Plains
+        Plains
+        Plains
+        Plains
+        Plains
+        Plains
+        Scoured Barrens
+        Scoured Barrens
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Swamp
+        Temple of Silence
+        Temple of Silence
+        Temple of Silence
+        Temple of Silence
+        Vindicate
+        Vindicate
+        Vindicate
+        Vindicate
+        Wretched Banquet
+        Wretched Banquet
+        Wretched Banquet
+        Wretched Banquet
+        Heartless Act
+        Heartless Act
+        Enduring Renewal
+        Enduring Renewal
+        Enduring Renewal
+        Enduring Renewal
+        Sideboard
+        Crux of Fate
+        Crux of Fate
+        Deafening Silence
+        Deafening Silence
+        Deafening Silence
+        Deafening Silence
+        Duress
+        Duress
+        Duress
+        Glass Casket
+        Glass Casket
+        Nature's Ruin
+        Soul-Guide Lantern
+        Soul-Guide Lantern
+        Soul-Guide Lantern
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert sum(d['sideboard'].values()) == 15

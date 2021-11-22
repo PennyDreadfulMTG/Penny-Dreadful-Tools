@@ -1,4 +1,5 @@
 import logging
+
 from magic import fetcher, multiverse, oracle, whoosh_write
 from shared import configuration
 

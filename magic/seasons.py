@@ -77,7 +77,7 @@ class RotationInfo():
         self.previous = self.calc_prev()
         self.next = self.calc_next()
 
-    def calc_next(self) -> SetInfo:
+    def calc_next(self):
         try:
             return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
         except ValueError:
@@ -89,7 +89,7 @@ class RotationInfo():
 
             return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
 
-    def calc_prev(self) -> SetInfo:
+    def calc_prev(self):
         return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
 

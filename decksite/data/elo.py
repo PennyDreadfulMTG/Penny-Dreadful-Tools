@@ -1,4 +1,5 @@
 import logging
+
 from decksite.data import person
 from decksite.database import db
 from shared import guarantee

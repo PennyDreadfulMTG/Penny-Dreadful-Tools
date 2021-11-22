@@ -67,26 +67,30 @@ class RotationInfo():
     next: SetInfo
     previous: SetInfo
 
+    def __init__(self) -> None:
+        self.previous = self.calc_prev()
+        self.next = self.calc_next()
+
     def validate(self) -> None:
         if (self.next.enter_date_dt + ROTATION_OFFSET) > dtutil.now():
             return
-        self.previous = calc_prev()
-        self.next = calc_next()
+        self.previous = self.calc_prev()
+        self.next = self.calc_next()
 
-def calc_next() -> SetInfo:
-    try:
-        return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
-    except ValueError:
-        fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
-        fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90 + 365 + 365)
-        fake_exit_year = fake_exit_date_dt.year
-        fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
-        fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
+    def calc_next(self) -> SetInfo:
+        try:
+            return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
+        except ValueError:
+            fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
+            fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90 + 365 + 365)
+            fake_exit_year = fake_exit_date_dt.year
+            fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
+            fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
 
-        return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
+            return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
 
-def calc_prev() -> SetInfo:
-    return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
+    def calc_prev(self) -> SetInfo:
+        return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
 
 @functools.lru_cache
@@ -100,7 +104,7 @@ def sets() -> List[SetInfo]:
 
 @functools.lru_cache
 def rotation_info() -> RotationInfo:
-    return RotationInfo(calc_next(), calc_prev())
+    return RotationInfo()
 
 def current_season_code() -> str:
     return last_rotation_ex().code

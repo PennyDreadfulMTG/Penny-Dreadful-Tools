@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# pylint: disable=import-outside-toplevel
 import json
 import os
 import subprocess
@@ -56,7 +55,11 @@ def do_lint() -> None:
     """
     print('>>>> Running flake8')
     pipenv = local['pipenv']
-    pipenv['run', 'flake8'] & FG  # noqa
+    try:
+        pipenv['run', 'flake8'] & FG  # noqa
+    except ProcessExecutionError as e:
+        sys.exit(e.retcode)
+
 
 @cli.command()
 def stylefix() -> None:
@@ -134,7 +137,6 @@ def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
 
     argstr = ' '.join(args)
     print(f'>>>> Running tests with "{argstr}"')
-    # pylint: disable=import-outside-toplevel
     import pytest
 
     code = pytest.main(args)
@@ -143,12 +145,10 @@ def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
     if code:
         sys.exit(code)
 
-# pylint: disable=pointless-statement
 @cli.command()
 def upload_coverage() -> None:
     try:
         print('>>>> Upload coverage')
-        # pylint: disable=import-outside-toplevel
         from shared import fetch_tools
         fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
         python3 = local['python3']
@@ -161,7 +161,6 @@ def upload_coverage() -> None:
     except fetch_tools.FetchException as e:
         print(e)
 
-# pylint: disable=import-outside-toplevel
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
 def sort(fix: bool = False) -> None:
@@ -175,7 +174,6 @@ def do_sort(fix: bool) -> None:
     else:
         pipenv['run', 'isort', '.', '--check'] & FG  # noqa
 
-# pylint: disable=import-outside-toplevel
 @cli.command()
 def reset_db() -> None:
     """

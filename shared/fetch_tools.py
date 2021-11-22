@@ -1,3 +1,4 @@
+import logging
 import json
 import os
 import urllib.request
@@ -9,12 +10,14 @@ import requests
 from shared import perf
 from shared.pd_exception import OperationalException
 
+logger = logging.getLogger(__name__)
+
 
 def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False, session: Optional[requests.Session] = None) -> str:
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
-    print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
+    logger.info('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
         p = perf.start()
         if session is not None:
@@ -30,7 +33,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
         t = response.text
         took = round(perf.took(p), 2)
         if took > 1:
-            print('Getting text from response was very slow. Setting an explicit character_encoding may help.')
+            logger.warning('Getting text from response was very slow. Setting an explicit character_encoding may help.')
         return t
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError, TimeoutError) as e:
         if retry:
@@ -38,7 +41,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
         raise FetchException(e) from e
 
 async def fetch_async(url: str) -> str:
-    print(f'Async fetching {url}')
+    logger.info(f'Async fetching {url}')
     try:
         async with aiohttp.ClientSession() as aios:
             response = await aios.get(url)
@@ -53,7 +56,7 @@ def fetch_json(url: str, character_encoding: Optional[str] = None, session: Opti
             return json.loads(blob)
         return None
     except json.decoder.JSONDecodeError as e:
-        print('Failed to load JSON:\n{0}'.format(blob))
+        logger.error('Failed to load JSON:\n{0}'.format(blob))
         raise FetchException(e) from e
 
 async def fetch_json_async(url: str) -> Any:
@@ -63,14 +66,14 @@ async def fetch_json_async(url: str) -> Any:
             return json.loads(blob)
         return None
     except json.decoder.JSONDecodeError:
-        print('Failed to load JSON:\n{0}'.format(blob))
+        logger.error('Failed to load JSON:\n{0}'.format(blob))
         raise
 
 def post(url: str,
          data: Optional[Dict[str, str]] = None,
          json_data: Any = None,
          ) -> str:
-    print('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
+    logger.info('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
         response = requests.post(url, data=data, json=json_data)
         return response.text
@@ -78,7 +81,7 @@ def post(url: str,
         raise FetchException(e) from e
 
 def store(url: str, path: str) -> requests.Response:
-    print('Storing {url} in {path}'.format(url=url, path=path))
+    logger.info('Storing {url} in {path}'.format(url=url, path=path))
     try:
         response = requests.get(url, stream=True)
         with open(path, 'wb') as fout:
@@ -92,7 +95,7 @@ def store(url: str, path: str) -> requests.Response:
 
 
 async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
-    print('Async storing {url} in {path}'.format(url=url, path=path))
+    logger.info('Async storing {url} in {path}'.format(url=url, path=path))
     try:
         async with aiohttp.ClientSession() as aios:
             response = await aios.get(url)

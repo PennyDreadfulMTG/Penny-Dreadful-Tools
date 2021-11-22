@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import Iterable, List, Match, Optional
 
@@ -8,6 +9,8 @@ from github.Issue import Issue
 
 from . import fetcher, repo, strings
 from .strings import BBT_REGEX, strip_squarebrackets
+
+logger = logging.getLogger(__name__)
 
 
 def main(changes: List[str]) -> None:
@@ -24,32 +27,32 @@ def scrape_bb(url: str) -> None:
 
 def parse_block(collapsible_block: Tag) -> None:
     title = collapsible_block.find_all('h2')[0].get_text()
-    print(title)
+    logger.info(title)
     handle_autocards(collapsible_block)
     if title == 'Change Log':
         parse_changelog(collapsible_block)
     elif title == 'Known Issues List':
         parse_knownbugs(collapsible_block)
     else:
-        print('Unknown block: {0}'.format(title))
+        logger.warning('Unknown block: {0}'.format(title))
 
 def parse_changelog(collapsible_block: Tag) -> None:
     # They never show Fixed bugs in the Bug Blog anymore.  Fixed bugs are now listed on the Build Notes section of MTGO weekly announcements.
     # This is frustrating.
     for added in collapsible_block.find_all('ul'):
         for item in added.find_all('li'):
-            print(item)
+            logger.info(item)
             bbt = strings.remove_smartquotes(item.get_text())
 
             issue = find_issue_by_code(bbt)
             if issue is not None:
                 if not repo.is_issue_from_bug_blog(issue):
-                    print('Adding Bug Blog to labels')
+                    logger.info('Adding Bug Blog to labels')
                     issue.add_to_labels('From Bug Blog')
             elif find_issue_by_name(bbt):
-                print('Already exists.')
+                logger.info('Already exists.')
             else:
-                print('Creating new issue')
+                logger.info('Creating new issue')
                 text = 'From Bug Blog.\nBug Blog Text: {0}'.format(bbt)
                 repo.get_repo().create_issue(bbt, body=strings.remove_smartquotes(text), labels=['From Bug Blog'])
 
@@ -67,7 +70,7 @@ def parse_knownbugs(b: Tag) -> None:
                 find_bbt_in_issue_title(issue, b)
                 bbt = re.search(BBT_REGEX, issue.body, re.MULTILINE)
                 if bbt is None:
-                    print('Issue #{id} {cards} has no Bug Blog text!'.format(id=issue.number, cards=cards))
+                    logger.warning('Issue #{id} {cards} has no Bug Blog text!'.format(id=issue.number, cards=cards))
                     issue.add_to_labels('Invalid Bug Blog')
                 continue
 
@@ -80,10 +83,10 @@ def parse_knownbugs(b: Tag) -> None:
                 parent = line.parent
                 bb_text = parent.get_text().strip()
                 if find_issue_by_code(bb_text) is not None:
-                    print('Already assigned.')
+                    logger.info('Already assigned.')
                     continue
                 text = ''.join(parent.strings)
-                print(text)
+                logger.info(text)
                 repo.create_comment(issue, 'Found in bug blog.\nBug Blog Text: {0}'.format(text))
                 if not repo.is_issue_from_bug_blog(issue):
                     issue.add_to_labels('From Bug Blog')
@@ -107,16 +110,16 @@ def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
                 break
             if strip_squarebrackets(rowtext) == strip_squarebrackets(text):
                 # Fix this
-                print("Issue #{id}'s bug blog text has differing autocard notation.".format(id=issue.number))
+                logger.info("Issue #{id}'s bug blog text has differing autocard notation.".format(id=issue.number))
                 old_bbt = strings.get_body_field(issue.body, 'Bug Blog Text')
                 body = re.sub(BBT_REGEX, 'Bug Blog Text: {0}'.format(rowtext), issue.body, flags=re.MULTILINE)
                 new_bbt = strings.get_body_field(body, 'Bug Blog Text')
                 issue.edit(body=body)
-                print('Updated to `{0}`'.format(rowtext))
+                logger.info('Updated to `{0}`'.format(rowtext))
                 issue.create_comment(f'Changed bug blog text from `{old_bbt}` to `{new_bbt}`')
                 break
         else:
-            print('{id} is fixed!'.format(id=issue.number))
+            logger.info('{id} is fixed!'.format(id=issue.number))
             repo.create_comment(issue, 'This bug has been removed from the bug blog!')
             issue.edit(state='closed')
 
@@ -145,9 +148,9 @@ def check_for_missing_bugs(b: Tag) -> None:
                 if g2 in strings.METACATS:
                     issue.add_to_labels(g2)
                     continue
-            print(f'Unknown BBCat: {bbcat.group(0)}')
+            logger.warning(f'Unknown BBCat: {bbcat.group(0)}')
             continue
-        print('Could not find issue for `{row}`'.format(row=row_text))
+        logger.warning('Could not find issue for `{row}`'.format(row=row_text))
         text = 'From Bug Blog.\nBug Blog Text: {0}'.format(row_text)
         repo.get_repo().create_issue(strings.remove_smartquotes(row_text), body=strings.remove_smartquotes(text), labels=['From Bug Blog'])
 

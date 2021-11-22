@@ -3,6 +3,9 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[scripts]
+lint = "python dev.py lint"
+
 [dev-packages]
 flake8 = "==4.0.1"
 # flake8-comprehensions = "*"
@@ -11,7 +14,7 @@ flake8-bugbear = "*"
 flake8-commas = "*"
 flake8-raise = "*"
 flake8-deprecated = "*"
-# flake8-print =  "*"
+flake8-print = "*"
 mypy = "==0.910"
 types-flask = "*"
 types-Markdown = "*"

@@ -61,6 +61,7 @@ def layouts() -> Dict[str, bool]:
         'modal_dfc': True,
         'normal': True,
         'planar': False,
+        'reversible_card': True,
         'saga': True,
         'scheme': False,
         'split': True,
@@ -79,7 +80,9 @@ def is_playable_layout(layout: str) -> bool:
     cache_key = 'missing_layout_logged'
     if not hasattr(is_playable_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
         try:
-            repo.create_issue(f'Did not recognize layout `{layout}` – need to add it', 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
+            warning = f'Did not recognize layout `{layout}` – need to add it'
+            print(warning)
+            repo.create_issue(warning, 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
         except GithubException:
             pass  # We tried. Not gonna break the world because we couldn't log it.
         setattr(is_playable_layout, cache_key, list())  # The other half of the hack.
@@ -231,7 +234,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             if not valid_layout(p):
                 continue
 
-            if p['type_line'] == 'Card':
+            if p.get('type_line') == 'Card':
                 continue
 
             rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
@@ -280,7 +283,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             cards[p['name']] = card_id
             printing_values.append(printing_value(p, card_id, set_id, rarity_id))
         except Exception as e:
-            print(f'Exception while importing card: {repr(p)}')
+            print(f'Exception `{e}` while importing card: {repr(p)}')
             raise InvalidDataException() from e
 
     for p in meld_result_printings:

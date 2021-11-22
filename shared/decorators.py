@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]], FuncType[T]]:
     def decorator(decorated_func: FuncType[T]) -> FuncType[T]:
+        @functools.wraps(decorated_func)
         def wrapper(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
             try:
                 return decorated_func(*args, **kwargs)
@@ -28,16 +29,6 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]
                     raise
         return wrapper
     return decorator
-
-def memoize(obj: FuncType[T]) -> FuncType[T]:
-    cache = obj.cache = {}  # type: ignore
-
-    @functools.wraps(obj)
-    def memoizer(*args, **kwargs):  # type: ignore
-        if args not in cache:
-            cache[args] = obj(*args, **kwargs)
-        return cache[args]
-    return memoizer
 
 def lock(func: FuncType[T]) -> T:
     return func()

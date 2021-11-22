@@ -1,3 +1,4 @@
+import logging
 import collections
 import datetime
 import re
@@ -189,7 +190,7 @@ async def send(channel: Messageable, content: str, file: Optional[File] = None) 
 async def send_image_with_retry(channel: Messageable, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
-        print('Message size is zero so resending')
+        logging.warning('Message size is zero so resending')
         await message.delete()
         await send(channel, file=File(image_file), content=text)
 
@@ -240,7 +241,7 @@ class MtgContext(commands.Context):
     async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
         message = await self.send(file=File(image_file), content=text)
         if message and message.attachments and message.attachments[0].size == 0:
-            print('Message size is zero so resending')
+            logging.warning('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
 

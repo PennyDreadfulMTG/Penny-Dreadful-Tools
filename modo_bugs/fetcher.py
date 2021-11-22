@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from typing import Dict, List, Optional, Tuple
@@ -7,21 +8,22 @@ from bs4.element import Tag
 
 from shared import fetch_tools, lazy
 
+logger = logging.getLogger(__name__)
 
 def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':
         return 0, [], []
-    print(f'Searching scryfall for `{query}`')
+    logger.info(f'Searching scryfall for `{query}`')
     result_json = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=' + fetch_tools.escape(query), character_encoding='utf-8')
     if 'code' in result_json.keys():  # The API returned an error
         if result_json['status'] == 404:  # No cards found
             return 0, [], []
-        print('Error fetching scryfall data:\n', result_json)
+        logger.error('Error fetching scryfall data:\n', result_json)
         return 0, [], []
     for warning in result_json.get('warnings', []):  # scryfall-provided human-readable warnings
-        print(warning)
+        logger.warning(warning)
     result_data = result_json['data']
     result_data.sort(key=lambda x: x['legalities']['penny'])
 
@@ -57,7 +59,7 @@ def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool
     orig = bb_jekyl.read()
     bb_jekyl.close()
     if orig != text:
-        print(f'New {file} update!')
+        logger.info(f'New {file} update!')
         bb_jekyl = open(fname, mode='w')
         bb_jekyl.write(text)
         bb_jekyl.close()
@@ -71,14 +73,14 @@ def find_bug_blog() -> Tuple[Optional[str], bool]:
     if not bug_blogs:
         return (None, False)
     (title, link) = bug_blogs[0]
-    print('Found: {0} ({1})'.format(title, link))
+    logger.info('Found: {0} ({1})'.format(title, link))
     new = update_redirect('bug_blog', title.text, link)
     return (link, new)
 
 def find_announcements() -> Tuple[str, bool]:
     articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
     (title, link) = articles[0]
-    print('Found: {0} ({1})'.format(title, link))
+    logger.info('Found: {0} ({1})'.format(title, link))
     bn = 'Build Notes' in fetch_tools.fetch(link)
     new = update_redirect('announcements', title.text, link, has_build_notes=str(bn))
     return (link, new)

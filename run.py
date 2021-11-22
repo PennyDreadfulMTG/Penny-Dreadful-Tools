@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-# pylint: disable=import-outside-toplevel
 import importlib
+import logging
 import pkgutil
 import sys
 import time
 from types import ModuleType
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 import click
 
 from shared import configuration
 
+logging.basicConfig(level=logging.INFO)
 
 def wait_for_db(_: Any, __: Any, value: bool) -> None:
     if not value:
@@ -95,9 +96,10 @@ def github_tools() -> None:
     site.APP.run(host='0.0.0.0', port=5002, debug=True)
 
 @cli.command()
-def modo_bugs() -> None:
+@click.argument('argv', nargs=-1)
+def modo_bugs(argv: Tuple[str]) -> None:
     from modo_bugs import main
-    main.run()
+    main.run(argv)
 
 def task(args: List[str]) -> None:
     try:

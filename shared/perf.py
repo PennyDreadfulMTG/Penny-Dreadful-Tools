@@ -25,7 +25,7 @@ def test(f: Callable, limit: float) -> None:
     begin = time.perf_counter()
     f()
     duration = time.perf_counter() - begin
-    print(duration)
+    print(duration)  # noqa: T001
     assert duration <= limit
 
 def took(start_time: float) -> float:

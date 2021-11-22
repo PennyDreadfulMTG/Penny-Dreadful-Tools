@@ -21,8 +21,6 @@ async def p1p1(ctx: MtgContext) -> None:
             await ctx.post_cards(cards[5:10])
             await ctx.post_cards(cards[10:])
             unlock(ctx.channel.id)
-    else:
-        print('Pack1Pick1 was denied as it was still processing another one.')  # This command will be heavy enough by itself, make sure the bot doesn't process it too much.
 
 def is_p1p1_ready(channel_id: int) -> bool:
     return not redis.get_bool(f'discordbot:p1p1:{channel_id}')

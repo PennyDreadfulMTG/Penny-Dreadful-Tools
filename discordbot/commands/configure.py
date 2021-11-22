@@ -1,3 +1,4 @@
+import logging
 import traceback
 from typing import Any
 
@@ -46,7 +47,7 @@ async def configure_error(ctx: MtgContext, error: Exception) -> None:
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(help_message(None))
     else:
-        print(error)
+        logging.error(error)
         traceback.print_exception(type(error), error, error.__traceback__)
         await ctx.send('There was an error processing your command')
 

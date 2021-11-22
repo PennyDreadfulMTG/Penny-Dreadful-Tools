@@ -13,8 +13,10 @@ per-file-ignores =
     analysis/*:T001
     logsite/*:T001
     maintenance/*:T001
+    magic/*:T001
     magic/multiverse.py:T001
+    modo_bugs/*:T001
     price_grabber/*:T001
     rotation_script/*:T001
-    shared_web/template_test.py:T001
+    shared/*:T001
     *_test.py:T001

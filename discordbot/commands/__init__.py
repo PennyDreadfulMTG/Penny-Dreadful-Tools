@@ -33,7 +33,7 @@ def setup(bot: Bot) -> None:
                 cogs.append(obj(bot))
                 n += 1
         if n == 0:
-            print(f'No command found in {m.__name__}')
+            logging.error(f'No command found in {m.__name__}')
             # print(repr(inspect.getmembers(m)))
 
     aliases = text.unambiguous_prefixes(names)

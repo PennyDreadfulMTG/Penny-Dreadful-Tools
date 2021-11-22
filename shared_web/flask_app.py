@@ -1,3 +1,4 @@
+import logging
 import os
 import subprocess
 import urllib
@@ -39,7 +40,7 @@ if sentry_token:
             before_send=sentry_filter,
         )
     except Exception as c:  # pylint: disable=broad-except
-        print(c)
+        logging.error(c)
 
 
 # pylint: disable=no-self-use, too-many-public-methods

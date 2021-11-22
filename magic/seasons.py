@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import attr
 
 from magic import fetcher
-from shared import decorators, dtutil, recursive_update
+from shared import dtutil, recursive_update
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
@@ -89,11 +89,9 @@ def last_rotation() -> datetime.datetime:
 def next_rotation() -> datetime.datetime:
     return next_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
-@decorators.memoize
 def last_rotation_ex() -> SetInfo:
     return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
-@decorators.memoize
 def next_rotation_ex() -> SetInfo:
     try:
         return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)

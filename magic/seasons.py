@@ -1,6 +1,5 @@
 import datetime
-import functools
-from typing import List, Optional, Set, Union
+from typing import List, Optional, Union
 
 import attr
 
@@ -62,45 +61,12 @@ class SetInfo():
                    enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0),
                    )
 
-@attr.define()
-class RotationInfo():
-    next: SetInfo
-    previous: SetInfo
-
-    def validate(self) -> None:
-        if (self.next.enter_date_dt + ROTATION_OFFSET) > dtutil.now():
-            return
-        self.previous = calc_prev()
-        self.next = calc_next()
-
-def calc_next() -> SetInfo:
-    try:
-        return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
-    except ValueError:
-        fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
-        fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90 + 365 + 365)
-        fake_exit_year = fake_exit_date_dt.year
-        fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
-        fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
-
-        return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
-
-def calc_prev() -> SetInfo:
-    return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
-
-
-@functools.lru_cache
-def sets() -> List[SetInfo]:
+def init() -> List[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
     set_info = [SetInfo.parse(s) for s in info['sets']]
     return [release for release in set_info if release.enter_date.exact is not None]
-
-
-@functools.lru_cache
-def rotation_info() -> RotationInfo:
-    return RotationInfo(calc_next(), calc_prev())
 
 def current_season_code() -> str:
     return last_rotation_ex().code
@@ -123,13 +89,23 @@ def last_rotation() -> datetime.datetime:
 def next_rotation() -> datetime.datetime:
     return next_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
+@decorators.memoize
 def last_rotation_ex() -> SetInfo:
-    rotation_info().validate()
-    return rotation_info().previous
+    return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
+@decorators.memoize
 def next_rotation_ex() -> SetInfo:
-    rotation_info().validate()
-    return rotation_info().next
+    try:
+        return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
+    except ValueError:
+        fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
+        fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90 + 365 + 365)
+        fake_exit_year = fake_exit_date_dt.year
+        fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
+        fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
+
+        fake = SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
+        return fake
 
 def message() -> str:
     upcoming = next_rotation_ex()
@@ -179,3 +155,10 @@ def get_set_info(code: str) -> SetInfo:
         if setinfo.code == code:
             return setinfo
     raise DoesNotExistException('Could not find Set Info about {code}'.format(code=code))
+
+
+__SETS: List[SetInfo] = []
+def sets() -> List[SetInfo]:
+    if not __SETS:
+        __SETS.extend(init())
+    return __SETS

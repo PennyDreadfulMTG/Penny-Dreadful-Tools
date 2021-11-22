@@ -5,7 +5,7 @@ from typing import List, Optional, Set, Union
 import attr
 
 from magic import fetcher
-from shared import decorators, dtutil, recursive_update
+from shared import dtutil, recursive_update, decorators
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'

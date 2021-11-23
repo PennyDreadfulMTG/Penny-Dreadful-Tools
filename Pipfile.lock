@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "991955e28c4c968bad7f3bab44bac3f06f4a3185171649682042205c07b83be5"
+            "sha256": "d4ecf3d8a9e25b6c2a5fe97f807e7c2c98d74309779c8d19b913a86a3e94d811"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1199,12 +1199,11 @@
         },
         "pygithub": {
             "hashes": [
-                "sha256:053f1b8d553a344ebd3ca3972765d923ee7e8ecc3ea55bd203683f164348fa1a",
-                "sha256:14c96d55e3c0e295598e52fbbbf2a7862a293723482ae9000cb9c816faab4fb4",
-                "sha256:9e0a143d8b3df0a5e6f21067b0cef8458c3f527c3c3dbc77ab27d1a8cfa6b83d"
+                "sha256:300bc16e62886ca6537b0830e8f516ea4bc3ef12d308e0c5aff8bdbd099173d4",
+                "sha256:87afd6a67ea582aa7533afdbf41635725f13d12581faed7e3e04b1579c0c0627"
             ],
             "index": "pypi",
-            "version": "==1.54"
+            "version": "==1.54.1"
         },
         "pygtrie": {
             "hashes": [
@@ -1611,7 +1610,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.25.11"
         },
         "vcrpy": {
@@ -1731,7 +1730,7 @@
                 "sha256:f18d68f2be6bf0e89f1521af2b1bb46e66ab0018faafa81d70f358153170a317",
                 "sha256:f379b7f83f23fe12823085cd6b906edc49df969eb99757f58ff382349a3303c6"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3.6'",
             "version": "==1.5.1"
         },
         "zipp": {

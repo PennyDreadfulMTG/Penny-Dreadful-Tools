@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c34227d6452d00cc2a5838c012767ac1be26fbd918a3375162079bd6200481f4"
+            "sha256": "991955e28c4c968bad7f3bab44bac3f06f4a3185171649682042205c07b83be5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -61,11 +61,11 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:11f7356737b624c42e21e71fe85eea6875cb94c03c82ac76bd535a0ff10b0f25",
-                "sha256:abc423a1e85bc1553954a14f2053473d2b7f8baf32eae62a328be24f436b5107"
+                "sha256:5939cf55de24b92bda00345d4d0659d01b3c7dafb5055165c330bc7c568ba273",
+                "sha256:776ca0b748b4ad69c00bfe0fff38fa2d21c338e12c84aa9715ee0d473c422778"
             ],
             "index": "pypi",
-            "version": "==2.8.5"
+            "version": "==2.9.0"
         },
         "astunparse": {
             "hashes": [
@@ -221,9 +221,6 @@
             "version": "==8.0.3"
         },
         "coverage": {
-            "extras": [
-
-            ],
             "hashes": [
                 "sha256:046647b96969fda1ae0605f61288635209dd69dcd27ba3ec0bf5148bc157f954",
                 "sha256:06d009e8a29483cbc0520665bc46035ffe9ae0e7484a49f9782c2a716e37d0a0",
@@ -1614,7 +1611,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.25.11"
         },
         "vcrpy": {

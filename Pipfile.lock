@@ -1949,11 +1949,11 @@
         },
         "types-python-dateutil": {
             "hashes": [
-                "sha256:74d7d3a79ff07e7921472cf252b7fe4ffda5dc35570b9d3c7c4908761e9f9b87",
-                "sha256:84a1b09fae40d61c01f450ea87cd594201bbe8511a64fecbe433051b87fb582c"
+                "sha256:42262d0b8f8ecb06cdc5c458956685eb3b27c74f170adf541d1cc5ee4ff68bdc",
+                "sha256:d94e7c7ecd9f0e23b3a78087eae12c0d7aa4af9e067a8ea963ad03ed0abd1cb7"
             ],
             "index": "pypi",
-            "version": "==2.8.2"
+            "version": "==2.8.3"
         },
         "types-pytz": {
             "hashes": [

@@ -464,6 +464,8 @@ def test_format_functional() -> None:
     do_functional_test('f:pd', legal, not_legal)
     do_functional_test('-f:penny', not_legal, legal)
     do_functional_test('-f:pd', not_legal, legal)
+    do_functional_test('format:pd', legal, not_legal)
+    do_functional_test('legal:pd', legal, not_legal)
 
 @pytest.mark.functional
 def test_is_commander_illegal_commander_functional() -> None:

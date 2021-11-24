@@ -171,7 +171,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return subtable_where('subtype', term.value())
     if key.value() in ['edition', 'e', 'set', 's']:
         return set_where(term.value())
-    if key.value() == 'format' or key.value() == 'f':
+    if key.value() == 'format' or key.value() == 'f' or key.value() == 'legal':
         return format_where(term.value())
     if key.value() == 'rarity' or key.value() == 'r':
         return rarity_where(operator.value(), term.value())

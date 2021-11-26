@@ -138,6 +138,9 @@ def banner_cards(seasonnum: int) -> Tuple[List[str], str]:
     elif seasonnum == 22:
         cardnames = ['Daybreak Coronet', 'Brainstorm', 'Ichorid', 'Hazoret the Fervent', 'Lovestruck Beast', 'Quillspike', 'Phyrexian Revoker']
         background = 'Shivan Reef'
+    elif seasonnum == 23:
+        cardnames = ['Yosei, the Morning Star', 'Counterspell', 'Recurring Nightmare', 'Abrade', 'Channel', 'Meddling Mage', "Lich's Mirror"]
+        background = 'Adarkar Wastes'
     else:
         cardnames, background = guess_banner(seasonnum)
     return cardnames, background

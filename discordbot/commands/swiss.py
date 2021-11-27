@@ -1,16 +1,14 @@
 import math
 from typing import List, Optional, Tuple
 
-from discord.ext import commands
-from discord_slash import cog_ext
-from discord_slash.utils.manage_commands import create_option
+from dis_snek import Snake
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgInteractionContext
 from magic import tournaments
 
 
-class SwissCog(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class SwissCog(Scale):
+    def __init__(self, bot: Snake) -> None:
         self.bot = bot
         super().__init__()
         self.slash_swiss = cog_ext.cog_slash(
@@ -36,7 +34,7 @@ class SwissCog(commands.Cog):
         )(self.swiss.callback)
 
     @commands.command()
-    async def swiss(self, ctx: MtgContext, num_players: Optional[int], num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
+    async def swiss(self, ctx: MtgInteractionContext, num_players: Optional[int], num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
         """Display the record need to reach the elimination rounds for X players with (optionally) Y rounds of Swiss and (optionally) Top Z. 'swiss 33', 'swiss 128 7', 'swiss 12 4 4'"""
         if not num_players:
             await ctx.send(f'{ctx.author.mention}: Please provide the number of players.')
@@ -89,3 +87,6 @@ def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) ->
             if total_so_far >= players_in_elimination_rounds:
                 record_required = f'{wins}–{losses}'
     return (num_players_by_losses, record_required)
+
+def setup(bot: Snake) -> None:
+    SwissCog(bot)

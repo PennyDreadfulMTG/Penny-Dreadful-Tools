@@ -1,4 +1,4 @@
-from discord.ext import commands
+from dis_snek import Snake
 
 from discordbot.command import MtgContext
 from shared import repo
@@ -12,3 +12,6 @@ async def bug(ctx: MtgContext, *, text: str) -> None:
         await ctx.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
     else:
         await ctx.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
+
+def setup(bot: Snake) -> None:
+    ...

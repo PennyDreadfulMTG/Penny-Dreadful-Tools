@@ -1,9 +1,11 @@
 from typing import Optional, Union
 
-import discord
+from dis_snek.models.discord_objects.channel import DMChannel, GuildText
 
 
-def guild_id(channel: Union[discord.TextChannel, discord.DMChannel, discord.GroupChannel]) -> Optional[int]:
-    if isinstance(channel, discord.TextChannel):
+
+
+def guild_id(channel: Union[GuildText, DMChannel]) -> Optional[int]:
+    if isinstance(channel, GuildText):
         return channel.id
     return None

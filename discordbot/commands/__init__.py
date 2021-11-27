@@ -5,50 +5,28 @@ import logging
 from os import path
 from typing import List, Optional
 
-from discord.ext.commands import Bot, Command, Context
-from discord.ext.commands.cog import Cog, CogMeta
-from discord.ext.commands.errors import BadArgument
+from dis_snek import Snake
+from dis_snek.models.context import Context
+from dis_snek.models.scale import Scale
+from dis_snek.models.application_commands import InteractionCommand, SlashCommand
+from dis_snek.models.command import MessageCommand
 
 from discordbot import command
 from magic.models import Card
 from shared import text
 
 
-def setup(bot: Bot) -> None:
+def setup(bot: Snake) -> None:
     Card.convert = CardConverter.convert
     modules = glob.glob(path.join(path.dirname(__file__), '*.py'))
     files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith('__init__.py')]
 
-    commands, cogs, names = [], [], []
+    # commands, interactions, names = [], [], []
     for mod in files:
-        n = 0
-        m = importlib.import_module(f'.{mod}', package=__name__)
-        for _, obj in inspect.getmembers(m):
-            if isinstance(obj, Command):
-                names.append(obj.name)
-                names += obj.aliases
-                commands.append(obj)
-                n += 1
-            if isinstance(obj, CogMeta):
-                cogs.append(obj(bot))
-                n += 1
-        if n == 0:
-            logging.error(f'No command found in {m.__name__}')
-            # print(repr(inspect.getmembers(m)))
-
-    aliases = text.unambiguous_prefixes(names)
-    for cmd in commands:
-        to_add = []
-        for prefix in aliases:
-            if cmd.name.startswith(prefix):
-                to_add.append(prefix)
-            for alias in cmd.aliases:
-                if alias.startswith(prefix):
-                    to_add.append(prefix)
-        cmd.aliases += to_add
-        bot.add_command(cmd)
-    for cog in cogs:
-        bot.add_cog(cog)
+        try:
+            bot.grow_scale(f'.{mod}', __name__)
+        except Exception as e:
+            logging.exception(e)
 
 class CardConverter:
     @classmethod
@@ -65,4 +43,4 @@ class CardConverter:
                 await message.add_reaction('❎')
             return None
         except Exception as exc:
-            raise BadArgument('Could not find card') from exc
+            raise Exception('Could not find card') from exc

@@ -3,6 +3,7 @@ import pathlib
 from typing import Dict
 
 import matplotlib as mpl
+
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
 # pylint: disable=wrong-import-position
 mpl.use('Agg')
@@ -12,6 +13,7 @@ import seaborn as sns
 from decksite.data import deck
 from shared import configuration, logger
 from shared.pd_exception import DoesNotExistException, OperationalException
+
 
 def cmc(deck_id: int, attempts: int = 0) -> str:
     if attempts > 3:

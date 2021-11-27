@@ -2,146 +2,142 @@ import asyncio
 import datetime
 import logging
 import os
-import re
 import subprocess
 import sys
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
-import discord
-from discord import Guild, Member, Role, VoiceState
-from discord.activity import Streaming
-from discord.enums import Status
-from discord.errors import Forbidden, NotFound
-from discord.ext import commands
-from discord.message import Message
-from discord.reaction import Reaction
-from discord_slash import SlashCommand
+from dis_snek import Snake
+from dis_snek.models.context import AutocompleteContext, ComponentContext, InteractionContext, MessageContext
+from dis_snek.models.discord_objects.activity import ActivityType
+from dis_snek.models.discord_objects.channel import GuildText
+from dis_snek.models.discord_objects.embed import Embed
+from dis_snek.models.discord_objects.guild import Guild
+from dis_snek.models.discord_objects.message import Message
+from dis_snek.models.discord_objects.role import Role
+from dis_snek.models.discord_objects.user import Member, User
+from dis_snek.models.enums import Intents
+from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageReactionAdd,
+                                            PresenceUpdate)
+from dis_snek.models.listener import listen
 from github.GithubException import GithubException
 
 import discordbot.commands
 from discordbot import command
-from discordbot.help import PennyHelpCommand
 from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments, whoosh_write
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
 from shared import repo
-from shared.container import Container
 from shared.settings import with_config_file
 
 TASKS = []
 
 def background_task(func: Callable) -> Callable:
-    async def wrapper(self: discord.Client) -> None:
+    async def wrapper(self: Snake) -> None:
         try:
             await self.wait_until_ready()
             await func(self)
-        except Exception:  # pylint: disable=broad-except
-            await self.on_error(func.__name__)
+        except Exception as e:
+            await self.on_error(func.__name__, e)
     TASKS.append(wrapper)
     return wrapper
 
 
-class Bot(commands.Bot):
+class Bot(Snake):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
-        help_command = PennyHelpCommand()
-        intents = discord.Intents.default()
-        intents.members = True
-        intents.presences = True
-        intents.typing = False
+        intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES)
 
-        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, intents=intents, **kwargs)
-        super().load_extension('jishaku')
-        self.slash = SlashCommand(self, sync_commands=True, sync_on_cog_reload=True)
-        self.voice = None
+        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!', **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
 
-    async def close(self) -> None:
+    # async def get_context(self, data: Union[dict, Message], interaction: bool = False) -> Union[MessageContext, InteractionContext, ComponentContext, AutocompleteContext]:
+
+    async def stop(self) -> None:
         try:
             p = await asyncio.create_subprocess_shell('git pull')
             await p.wait()
-            p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pip install -U -r requirements.txt --no-cache')
+            p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pipenv install')
             await p.wait()
         except Exception as c:  # pylint: disable=broad-except
             repo.create_issue('Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
-        await super().close()
+        await super().stop()
 
+    @listen()
     async def on_ready(self) -> None:
-        logging.info('Logged in as %s (%d)', self.user.name, self.user.id)
+        logging.info('Logged in as %s (%d)', self.user, self.user.id)
         names = ', '.join([guild.name or '' for guild in self.guilds])
         logging.info('Connected to %s', names)
         logging.info('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
-    async def on_message(self, message: Message) -> None:
-        # We do not want the bot to reply to itself.
-        if message.author == self.user:
-            return
-        if message.author.bot:
-            return
-        ctx = await self.get_context(message, cls=command.MtgContext)
-        if ctx.valid:
-            await self.invoke(ctx)
-        else:
-            await command.respond_to_card_names(message, self)
+    @listen()
+    async def on_message_create(self, event: MessageCreate) -> None:
+        await command.respond_to_card_names(event.message, self)
 
-    async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
-        # pylint: disable=unused-argument
-        # If we're the only one left in a voice chat, leave the channel
-        guild = getattr(after.channel, 'guild', None)
-        if guild is None:
-            return
-        voice = guild.voice_client
-        if voice is None or not voice.is_connected():
-            return
-        if len(voice.channel.voice_members) == 1:
-            await voice.disconnect()
+    # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
+    #     # pylint: disable=unused-argument
+    #     # If we're the only one left in a voice chat, leave the channel
+    #     guild = getattr(after.channel, 'guild', None)
+    #     if guild is None:
+    #         return
+    #     voice = guild.voice_client
+    #     if voice is None or not voice.is_connected():
+    #         return
+    #     if len(voice.channel.voice_members) == 1:
+    #         await voice.disconnect()
 
-    async def on_member_join(self, member: Member) -> None:
+    async def on_member_add(self, event: MemberAdd) -> None:
+        member: Member = event.member
         if member.bot:
             return
-        # is_test_server = member.guild.id == 226920619302715392
-        if is_pd_server(member.guild):  # or is_test_server:
+        if is_pd_server(member.guild):
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
-            chan = member.guild.get_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
+            chan = await member.guild.get_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
             await chan.send(greeting)
 
-    async def on_member_update(self, before: Member, after: Member) -> None:
-        if before.bot:
+    async def on_presence_update(self, event: PresenceUpdate) -> None:
+        user: User = event.user
+        member: Member = await self.get_member(user.id, event.guild_id)
+        guild: Guild = await self.get_guild(event.guild_id)
+        if user.bot:
             return
-        # streamers.
-        streaming_role = await get_role(before.guild, 'Currently Streaming')
+        # streamers
+        streaming_role = await get_role(guild, 'Currently Streaming')
         if streaming_role:
-            if not isinstance(after.activity, Streaming) and streaming_role in before.roles:
-                await after.remove_roles(streaming_role)
-            if isinstance(after.activity, Streaming) and not streaming_role in before.roles:
-                await after.add_roles(streaming_role)
+            streaming = False
+            for activity in event.activities:
+                if activity.type == ActivityType.STREAMING:
+                    streaming = True
+            if not streaming and streaming_role in member.roles:
+                await member.remove_roles(streaming_role)
+            elif streaming and not streaming_role in member.roles:
+                await member.add_roles(streaming_role)
         # Achievements
-        role = await get_role(before.guild, 'Linked Magic Online')
-        if role and before.status == Status.offline and after.status in [Status.online, Status.dnd]:
+        role = await get_role(member.guild, 'Linked Magic Online')
+        if role and event.status in ['online', 'dnd']:
             data = None
             # Linked to PDM
-            if role is not None and not role in before.roles:
+            if role is not None and not role in member.roles:
                 if data is None:
-                    data = await fetcher.person_data_async(before.id)
+                    data = await fetcher.person_data_async(member.id)
                 if data.get('id', None):
-                    await after.add_roles(role)
+                    await member.add_roles(role)
 
-            key = f'discordbot:achievements:players:{before.id}'
-            if is_pd_server(before.guild) and not redis.get_bool(key) and not data:
-                data = await fetcher.person_data_async(before.id)
+            key = f'discordbot:achievements:players:{member.id}'
+            if is_pd_server(guild) and not redis.get_bool(key) and not data:
+                data = await fetcher.person_data_async(member.id)
                 redis.store(key, True, ex=14400)
 
             # Trophies
-            if is_pd_server(before.guild) and data is not None and data.get('achievements', None) is not None:
+            if is_pd_server(guild) and data is not None and data.get('achievements', None) is not None:
                 expected: List[Role] = []
                 remove: List[Role] = []
 
@@ -155,27 +151,37 @@ class Bot(commands.Bot):
                 for name, count in data['achievements'].items():
                     if int(count) > 0:
                         trophy = await achievement_name(name)
-                        role = await get_role(before.guild, trophy, create=True)
+                        role = await get_role(guild, trophy, create=True)
                         if role is not None:
                             expected.append(role)
-                for role in before.roles:
+                for role in member.roles:
                     if role in expected:
                         expected.remove(role)
                     elif '🏆' in role.name:
                         remove.append(role)
-                await before.remove_roles(*remove)
-                await before.add_roles(*expected)
+                await member.remove_roles(*remove)
+                await member.add_roles(*expected)
 
-    async def on_guild_join(self, server: Guild) -> None:
-        for channel in server.text_channels:
-            try:
-                await channel.send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
-                await channel.send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
-                return
-            except Forbidden:
-                pass
+    # async def on_guild_join(self, server: Guild) -> None:
+    #     for channel in server.channels:
+    #         if isinstance(channel, GuildText):
+    #             try:
+    #                 await channel.send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
+    #                 await channel.send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+    #                 return
+    #             except Exception:  # noqa
+    #                 pass
 
-    async def on_reaction_add(self, reaction: Reaction, author: Member) -> None:
+    @listen()
+    async def on_message_reaction_add(self, event: MessageReactionAdd) -> None:
+        for i in range(len(event.message.reactions)):
+            r = event.message.reactions[i]
+            if r.emoji == event.emoji:
+                reaction = r
+                break
+        else:
+            return
+
         if reaction.message.author == self.user:
             c = reaction.count
             with with_config_file(guild_id(reaction.message.channel)), with_config_file(reaction.message.channel.id):
@@ -185,27 +191,23 @@ class Bot(commands.Bot):
             elif not dismissable:
                 return
             if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
-                try:
-                    await reaction.message.delete()
-                except NotFound:  # Someone beat us to it?
-                    pass
-            elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
-                async with reaction.message.channel.typing():
-                    search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)
-                    if search:
-                        previous_command, suggestions = search.group(1, 2)
-                        card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji] - 1]
-                        # pylint: disable=protected-access
-                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
-                        await self.on_message(message)
-                        await reaction.message.delete()
+                await reaction.message.delete()
+            # elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
+            #     async with reaction.message.channel.typing():
+            #         search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)
+            #         if search:
+            #             previous_command, suggestions = search.group(1, 2)
+            #             card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji] - 1]
+            #             # pylint: disable=protected-access
+            #             message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
+            #             await self.on_message(message)
+            #             await reaction.message.delete()
 
-    async def on_error(self, event_method: str, *args: Any, **kwargs: Any) -> None:
-        await super().on_error(event_method, args, kwargs)
-        (_, exception, __) = sys.exc_info()
+    async def on_error(self, source: str, error: Exception, *args: Any, **kwargs: Any) -> None:
+        await super().on_error(source, error, *args, **kwargs)
         try:
             content = [arg.content for arg in args if hasattr(arg, 'content')]  # The default string representation of a Message does not include the message content.
-            repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
+            repo.create_issue(f'Bot error {source}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=error)
         except GithubException as e:
             logging.error('Github error\n%s', e)
 
@@ -215,8 +217,8 @@ class Bot(commands.Bot):
         if not tournament_channel_id:
             logging.warning('tournament channel is not configured')
             return
-        channel = self.get_channel(tournament_channel_id)
-        if not isinstance(channel, discord.abc.Messageable):
+        channel = await self.get_channel(tournament_channel_id)
+        if not isinstance(channel, GuildText):
             logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
             return
         while self.is_ready:
@@ -226,7 +228,7 @@ class Bot(commands.Bot):
                 message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
             else:
                 message = 'A free tournament'
-            embed = discord.Embed(title=info['next_tournament_name'], description=message)
+            embed = Embed(title=info['next_tournament_name'], description=message)
             if diff <= 1:
                 embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
             elif diff <= 14400:
@@ -237,7 +239,7 @@ class Bot(commands.Bot):
                 embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
                 # See #2809.
                 # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed=embed)
+                await channel.send(embed)
 
             if diff <= 300:
                 # Five minutes, final warning.  Sleep until the tournament has started.
@@ -266,8 +268,8 @@ class Bot(commands.Bot):
         if not tournament_channel_id:
             logging.warning('tournament channel is not configured')
             return
-        channel = self.get_channel(tournament_channel_id)
-        if not isinstance(channel, discord.abc.Messageable):
+        channel = await self.get_channel(tournament_channel_id)
+        if not isinstance(channel, GuildText):
             logging.warning('tournament channel could not be found')
             return
 
@@ -289,13 +291,13 @@ class Bot(commands.Bot):
                           - datetime.datetime.now(tz=datetime.timezone.utc))
                          / datetime.timedelta(seconds=1))
 
-            embed = discord.Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
+            embed = Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
             if diff <= 60 * 60 * 24:
                 embed.add_field(name='Ending in:', value=dtutil.display_time(diff, 2))
                 embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
                 # See #2809.
                 # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed=embed)
+                await channel.send(embed)
             if diff <= 5 * 60:
                 # Five minutes, final warning.
                 timer = 301
@@ -320,11 +322,11 @@ class Bot(commands.Bot):
         if not rotation_hype_channel_id:
             logging.warning('rotation hype channel is not configured')
             return
-        channel = self.get_channel(rotation_hype_channel_id)
-        if not isinstance(channel, discord.abc.Messageable):
+        channel = await self.get_channel(rotation_hype_channel_id)
+        if not isinstance(channel, GuildText):
             logging.warning('rotation hype channel is not a text channel')
             return
-        while self.is_ready():
+        while True:
             until_rotation = seasons.next_rotation() - dtutil.now()
             last_run_time = rotation.last_run_time()
             if os.path.exists('.rotation.lock'):
@@ -344,10 +346,10 @@ class Bot(commands.Bot):
         do_reboot_key = 'discordbot:do_reboot'
         if redis.get_bool(do_reboot_key):
             redis.clear(do_reboot_key)
-        while self.is_ready():
+        while True:
             if redis.get_bool(do_reboot_key):
                 logging.info('Got request to reboot from redis')
-                await self.logout()
+                await self.stop()
             await asyncio.sleep(60)
 
 def init() -> None:
@@ -359,7 +361,7 @@ def init() -> None:
     asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
     logging.info('Connecting to Discord')
-    client.run(configuration.get_str('token'))
+    client.start(configuration.get_str('token'))
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682  # or guild.id == 226920619302715392

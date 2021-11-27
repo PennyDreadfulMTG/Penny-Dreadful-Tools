@@ -1,14 +1,14 @@
 import re
 from typing import Any, Dict
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgInteractionContext
 from magic import fetcher
 
 
-@commands.command(aliases=['who'])
-async def whois(ctx: MtgContext, *, args: str) -> None:
+@slash_command('whois')
+async def whois(ctx: MtgInteractionContext, *, args: str) -> None:
     """Who is a person?"""
     mention = re.match(r'<@!?(\d+)>', args)
     async with ctx.typing():

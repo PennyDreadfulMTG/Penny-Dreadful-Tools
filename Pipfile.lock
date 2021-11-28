@@ -1932,11 +1932,11 @@
         },
         "types-markdown": {
             "hashes": [
-                "sha256:7dc36709af9ac0d1ff1f725f3bb6021f2f3f5ac25696ca2f42cead5b44f8e4a6",
-                "sha256:c5a04f4300ac1496ed404e155833c88e05180a62089f09743df60f53169981b2"
+                "sha256:0fd38830517560f88c2f460ce5dc7006d831f560ec2a73f50c4ac06efac06793",
+                "sha256:4ab46c58185796366fd0e0a83fa901fbe8107f141d1ac3f1bca6b31df0e8b86c"
             ],
             "index": "pypi",
-            "version": "==3.3.8"
+            "version": "==3.3.9"
         },
         "types-markupsafe": {
             "hashes": [

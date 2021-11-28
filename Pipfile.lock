@@ -1987,11 +1987,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:606dd8c7edff3100fae8277c270e65285e5cdb6a7819c0b1ea6a8973690e68da",
-                "sha256:b96bd911f87d15258c38e10ee3f0921c32887a5d22e41c39d15707b4d0e4d0f1"
+                "sha256:8dda49da00f9610f2442b6bd0566088a83127f8fc8093c52e1d175eb2111fec4",
+                "sha256:b1e21becdaee01e11cdb788f820ac030b9f22d14b91f88184a31cc2424064163"
             ],
             "index": "pypi",
-            "version": "==1.16.2"
+            "version": "==1.16.3"
         },
         "types-toml": {
             "hashes": [

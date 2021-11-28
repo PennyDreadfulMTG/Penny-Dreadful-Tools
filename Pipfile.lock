@@ -1917,11 +1917,11 @@
         },
         "types-flask": {
             "hashes": [
-                "sha256:1294df1615e01135c5dbba530e3f8d58918afa6796f1dee8b2143c7dd47b7970",
-                "sha256:80086412a55202b2d18a2774d3a24b4a9acfa0d2f7935e9ecf4de53a705e1944"
+                "sha256:6ab8a9a5e258b76539d652f6341408867298550b19b81f0e41e916825fc39087",
+                "sha256:aac777b3abfff9436e6b01f6d08171cf23ea6e5be71cbf773aaabb1c5763e9cf"
             ],
             "index": "pypi",
-            "version": "==1.1.5"
+            "version": "==1.1.6"
         },
         "types-jinja2": {
             "hashes": [

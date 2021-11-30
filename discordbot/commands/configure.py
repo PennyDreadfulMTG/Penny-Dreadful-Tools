@@ -2,29 +2,26 @@ import logging
 import traceback
 from typing import Any
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
+from dis_snek.errors import CommandException
 
 from discordbot.command import MtgContext
 from shared import configuration, settings
 
 
-class ConfigError(commands.BadArgument):
+class ConfigError(CommandException):
     def __init__(self, scope: int, message: str = None, *args: Any) -> None:
         super().__init__(message=message, *args)
         self.scope = scope
 
-
-@commands.command()
+@slash_command('configure')
 async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
+    if not ctx.author.guild_permissions.manage_channels:
+        await ctx.send("You don't have permsssion to configure this server.")
+        return
     if scope == 'channel':
-        if not ctx.author.permissions_in(ctx.channel).manage_channels:
-            await ctx.send("You don't have permsssion to configure this channel.")
-            return
         configuring = ctx.channel.id
     elif scope in ['server', 'guild']:
-        if not ctx.author.guild_permissions.manage_channels:
-            await ctx.send("You don't have permsssion to configure this server.")
-            return
         configuring = ctx.channel.guild.id
     else:
         await ctx.send('You need to configure one of `server` or `channel`.')
@@ -44,7 +41,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
 async def configure_error(ctx: MtgContext, error: Exception) -> None:
     if isinstance(error, ConfigError):
         await ctx.send(help_message(error.scope))
-    elif isinstance(error, commands.MissingRequiredArgument):
+    elif isinstance(error, CommandException):
         await ctx.send(help_message(None))
     else:
         logging.error(error)

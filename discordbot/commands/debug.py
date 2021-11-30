@@ -22,6 +22,7 @@ from dis_snek.models import (
     MaterialColors,
     Timestamp,
 )
+from dis_snek.models.checks import is_owner
 from dis_snek.models.enums import Intents
 from dis_snek.models.scale import Scale
 from dis_snek.utils.cache import TTLCache
@@ -51,6 +52,7 @@ def strf_delta(time_delta: datetime.timedelta, show_seconds=True) -> str:
 
 
 async def check_is_owner(ctx):
+
     return ctx.author.id == 154363842451734528
 
 
@@ -233,6 +235,11 @@ class DebugScale(Scale):
             else:
                 await ctx.send(e)
 
+    @regrow.error
+    async def exec_error(self, error, ctx):
+        if isinstance(error, CommandCheckFailure):
+            return await ctx.send("You do not have permission to execute this command")
+        raise
 
 
 def setup(bot):

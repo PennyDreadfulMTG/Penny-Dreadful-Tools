@@ -6,6 +6,7 @@ from os import path
 from typing import List, Optional
 
 from dis_snek import Snake
+from dis_snek.errors import ExtensionLoadException
 from dis_snek.models.context import Context
 from dis_snek.models.scale import Scale
 from dis_snek.models.application_commands import InteractionCommand, SlashCommand
@@ -21,12 +22,28 @@ def setup(bot: Snake) -> None:
     modules = glob.glob(path.join(path.dirname(__file__), '*.py'))
     files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith('__init__.py')]
 
-    # commands, interactions, names = [], [], []
     for mod in files:
         try:
             bot.grow_scale(f'.{mod}', __name__)
         except Exception as e:
-            logging.exception(e)
+            if not scaleless_load(bot, mod):
+                logging.exception(e)
+
+
+def scaleless_load(bot: Snake, module: str) -> bool:
+    n = 0
+    try:
+        m = importlib.import_module(f'.{module}', package=__name__)
+        for _, obj in inspect.getmembers(m):
+            if isinstance(obj, InteractionCommand):
+                bot.add_interaction(obj)
+                n += 1
+            elif isinstance(obj, MessageCommand):
+                bot.add_message_command(obj)
+                n += 1
+    except Exception:
+        pass
+    return n > 0
 
 class CardConverter:
     @classmethod

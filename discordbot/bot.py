@@ -7,6 +7,7 @@ import sys
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from dis_snek import Snake
+from dis_snek.errors import Forbidden
 from dis_snek.models.context import AutocompleteContext, ComponentContext, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.activity import ActivityType
 from dis_snek.models.discord_objects.channel import GuildText
@@ -217,7 +218,12 @@ class Bot(Snake):
         if not tournament_channel_id:
             logging.warning('tournament channel is not configured')
             return
-        channel = await self.get_channel(tournament_channel_id)
+        try:
+            channel = await self.get_channel(tournament_channel_id)
+        except Forbidden:
+            channel = None
+            configuration.write('tournament_reminders_channel_id', 0)
+
         if not isinstance(channel, GuildText):
             logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
             return
@@ -268,7 +274,12 @@ class Bot(Snake):
         if not tournament_channel_id:
             logging.warning('tournament channel is not configured')
             return
-        channel = await self.get_channel(tournament_channel_id)
+        try:
+            channel = await self.get_channel(tournament_channel_id)
+        except Forbidden:
+            channel = None
+            configuration.write('tournament_reminders_channel_id', 0)
+
         if not isinstance(channel, GuildText):
             logging.warning('tournament channel could not be found')
             return
@@ -322,7 +333,12 @@ class Bot(Snake):
         if not rotation_hype_channel_id:
             logging.warning('rotation hype channel is not configured')
             return
-        channel = await self.get_channel(rotation_hype_channel_id)
+        try:
+            channel = await self.get_channel(rotation_hype_channel_id)
+        except Forbidden:
+            channel = None
+            configuration.write('rotation_hype_channel_id', 0)
+
         if not isinstance(channel, GuildText):
             logging.warning('rotation hype channel is not a text channel')
             return

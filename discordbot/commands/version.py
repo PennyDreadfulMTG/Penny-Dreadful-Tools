@@ -1,13 +1,11 @@
 import subprocess
 import sys
 
-from discord.ext import commands
-
 from discordbot.command import MtgContext
 from magic import database
 
 
-@commands.command(hidden=True)
+# @commands.command(hidden=True)
 async def version(ctx: MtgContext) -> None:
     """Display the current version numbers"""
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')

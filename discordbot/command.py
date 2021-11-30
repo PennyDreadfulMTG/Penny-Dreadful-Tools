@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, Un
 import attr
 
 from dis_snek.models.application_commands import OptionTypes, slash_option
-from dis_snek.models.context import Context, InteractionContext, MessageContext
+from dis_snek.models.context import AutocompleteContext, Context, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.user import Member
 from dis_snek.models.discord_objects.message import Message
 from dis_snek import Snake
@@ -253,10 +253,25 @@ def slash_card_option() -> Callable:
             description='Name of a Card',
             required=True,
             opt_type=OptionTypes.STRING,
-            autocomplete=False
+            autocomplete=False,
         )(func)
 
     return wrapper
+
+async def autocomplete_card(scale, ctx: AutocompleteContext, card: str):
+    def choice(name: str) -> Dict[str, str]:
+        return {
+            'name': name,
+            'value': name,
+        }
+    choices = []
+    results = searcher().search(card)
+    choices.extend(results.exact)
+    choices.extend(results.prefix_whole_word)
+    choices.extend(results.other_prefixed)
+    choices.extend(results.fuzzy)
+
+    await ctx.send(choices=[choice(c) for c in choices])
 
 class MtgMixin:
     async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
@@ -301,3 +316,5 @@ class MtgInteractionContext(InteractionContext, MtgMixin):
 class MtgMessageContext(MessageContext, MtgMixin):
     pass
 
+
+MtgContext = Union[MtgMessageContext, MtgInteractionContext]

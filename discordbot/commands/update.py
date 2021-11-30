@@ -1,11 +1,9 @@
-from discord.ext import commands
-
 from discordbot.command import MtgContext
 from magic import multiverse, oracle, whoosh_write
 from shared import configuration
 
 
-@commands.command(hidden=True)
+# @commands.command(hidden=True)
 async def update(ctx: MtgContext) -> None:
     """Forces an update to legal cards and bugs."""
     if configuration.prevent_cards_db_updates.get():

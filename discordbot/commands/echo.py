@@ -1,11 +1,12 @@
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
+from dis_snek.models.command import message_command
 
 from discordbot import emoji
 from discordbot.command import MtgContext
+from dis_snek.annotations.argument_annotations import CMD_BODY
 
-
-@commands.command()
-async def echo(ctx: MtgContext, *, args: str) -> None:
+@message_command('echo')
+async def echo(ctx: MtgContext, *, args: CMD_BODY) -> None:
     """Repeat after me…"""
     s = emoji.replace_emoji(args, ctx.bot)
     if not s:

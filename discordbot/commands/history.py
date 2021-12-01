@@ -1,17 +1,23 @@
 from typing import Dict
 
-from discord.ext import commands
+from dis_snek import Snake
+from dis_snek.models.application_commands import slash_command
+from dis_snek.models.scale import Scale
+from discordbot import command
 
 from discordbot.command import MtgContext
 from magic import fetcher, seasons
 from magic.models import Card
 from shared import fetch_tools
 
+class History(Scale):
+    @slash_command('history')
+    @command.slash_card_option()
+    async def history(ctx: MtgContext, *, c: Card) -> None:
+        """Show the legality history of the specified card and a link to its all time page."""
+        await ctx.single_card_text(c, card_history, show_legality=False)
 
-@commands.command(aliases=['h', 'hi'])
-async def history(ctx: MtgContext, *, c: Card) -> None:
-    """Show the legality history of the specified card and a link to its all time page."""
-    await ctx.single_card_text(c, card_history, show_legality=False)
+    history.autocomplete('card')(command.autocomplete_card)
 
 def card_history(c: Card) -> str:
     data: Dict[int, bool] = {}
@@ -30,3 +36,6 @@ def card_history(c: Card) -> str:
     s += '\n<' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(
         name=fetch_tools.escape(c.name, skip_double_slash=True))) + '>'
     return s
+
+def setup(bot: Snake) -> None:
+    History(bot)

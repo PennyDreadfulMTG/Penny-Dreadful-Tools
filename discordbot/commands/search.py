@@ -1,4 +1,4 @@
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle

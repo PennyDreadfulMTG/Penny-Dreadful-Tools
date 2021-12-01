@@ -2,40 +2,36 @@ import math
 from typing import List, Optional, Tuple
 
 from dis_snek import Snake
+from dis_snek.models.command import message_command
 
 from discordbot.command import MtgInteractionContext
 from magic import tournaments
+from dis_snek.models.scale import Scale
+from dis_snek.models.application_commands import slash_command, slash_option
 
-
-class SwissCog(Scale):
+class Swiss(Scale):
     def __init__(self, bot: Snake) -> None:
         self.bot = bot
         super().__init__()
-        self.slash_swiss = cog_ext.cog_slash(
-            name='swiss',
-            description='Display the record need to reach the elimination rounds',
-            options=[
-                create_option(
-                    name='players',
-                    description='number of players in the event',
-                    option_type=4,
-                    required=True),
-                create_option(
-                    name='rounds',
-                    description='number of rounds of Swiss',
-                    option_type=4,
-                    required=False),
-                create_option(
-                    name='elimination',
-                    description='number of players who make it to the elimination round (ie: Top N)',
-                    option_type=4,
-                    required=False),
-            ],
-        )(self.swiss.callback)
 
-    @commands.command()
-    async def swiss(self, ctx: MtgInteractionContext, num_players: Optional[int], num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
-        """Display the record need to reach the elimination rounds for X players with (optionally) Y rounds of Swiss and (optionally) Top Z. 'swiss 33', 'swiss 128 7', 'swiss 12 4 4'"""
+    @slash_command('swiss')
+    @slash_option(
+        name='players',
+        description='number of players in the event',
+        opt_type=4,
+        required=True)
+    @slash_option(
+        name='rounds',
+        description='number of rounds of Swiss',
+        opt_type=4,
+        required=False)
+    @slash_option(
+        name='elimination',
+        description='number of players who make it to the elimination round (ie: Top N)',
+        opt_type=4,
+        required=False)
+    async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
+        """Display the record need to reach the elimination rounds for a given tournament"""
         if not num_players:
             await ctx.send(f'{ctx.author.mention}: Please provide the number of players.')
             return
@@ -67,6 +63,8 @@ class SwissCog(Scale):
                 s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
         await ctx.send(s)
 
+    m_swiss = message_command('swiss')(swiss.callback)
+
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:
     players_in_elimination_rounds = 2 ** num_elimination_rounds
     # Math from https://www.mtgsalvation.com/forums/magic-fundamentals/magic-general/325775-making-the-cut-in-swiss-tournaments
@@ -89,4 +87,4 @@ def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) ->
     return (num_players_by_losses, record_required)
 
 def setup(bot: Snake) -> None:
-    SwissCog(bot)
+    Swiss(bot)

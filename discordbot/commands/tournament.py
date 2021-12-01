@@ -1,8 +1,10 @@
+
+from dis_snek.models.application_commands import slash_command
 from discordbot.command import MtgContext
 from magic import fetcher, tournaments
 
 
-# @commands.command(aliases=['to', 'tournaments'])
+@slash_command('tournament')
 async def tournament(ctx: MtgContext) -> None:
     """Information about the next tournament."""
     t = tournaments.next_tournament_info()

@@ -1,9 +1,11 @@
-from discordbot.command import MtgContext
+from discordbot.command import MtgContext, slash_permission_pd_mods
 from magic import multiverse, oracle, whoosh_write
 from shared import configuration
+from dis_snek.models.application_commands import Permission, slash_command, slash_permission
 
 
-# @commands.command(hidden=True)
+@slash_command('update', default_permission=False)
+@slash_permission_pd_mods()
 async def update(ctx: MtgContext) -> None:
     """Forces an update to legal cards and bugs."""
     if configuration.prevent_cards_db_updates.get():

@@ -1,13 +1,21 @@
-from discord.ext import commands
+from dis_snek import Snake
+from dis_snek.models.application_commands import slash_command
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic.models import Card
+from dis_snek.models.scale import Scale
 
+class Oracle(Scale):
+    @slash_command('oracle')
+    @slash_card_option()
+    async def oracle(ctx: MtgContext, *, card: Card) -> None:
+        """Oracle text of a card."""
+        await ctx.single_card_text(card, oracle_text)
 
-@commands.command(aliases=['o'])
-async def oracle(ctx: MtgContext, *, c: Card) -> None:
-    """Oracle text of a card."""
-    await ctx.single_card_text(c, oracle_text)
+    oracle.autocomplete('card')(autocomplete_card)
 
 def oracle_text(c: Card) -> str:
     return c.oracle_text
+
+def setup(bot: Snake) -> None:
+    Oracle(bot)

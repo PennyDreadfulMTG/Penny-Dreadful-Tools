@@ -6,7 +6,7 @@ from copy import copy
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 import attr
 
-from dis_snek.models.application_commands import OptionTypes, slash_option
+from dis_snek.models.application_commands import OptionTypes, Permission, PermissionTypes, slash_option, slash_permission
 from dis_snek.models.context import AutocompleteContext, Context, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.user import Member
 from dis_snek.models.discord_objects.message import Message
@@ -32,8 +32,6 @@ DISAMBIGUATION_EMOJIS_BY_NUMBER = {1: '1⃣', 2: '2⃣', 3: '3⃣', 4: '4⃣', 5
 DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣': 1, '2⃣': 2, '3⃣': 3, '4⃣': 4, '5⃣': 5}
 
 HELP_GROUPS: Set[str] = set()
-
-Messageable = Union[DMChannel, GuildText]
 
 @lazy_property
 def searcher() -> WhooshSearcher:
@@ -116,7 +114,7 @@ async def disambiguation_reactions(message: Message, cards: List[str]) -> None:
     for i in range(1, len(cards) + 1):
         await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
-async def single_card_or_send_error(channel: GuildText, args: str, author: Member, command: str) -> Optional[Card]:
+async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, command: str) -> Optional[Card]:
     if not args:
         await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         return None
@@ -131,7 +129,7 @@ async def single_card_or_send_error(channel: GuildText, args: str, author: Membe
     return None
 
 # pylint: disable=too-many-arguments
-async def single_card_text(client: Snake, channel: GuildText, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
+async def single_card_text(client: Snake, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
         name = c.name
@@ -144,7 +142,7 @@ async def single_card_text(client: Snake, channel: GuildText, args: str, author:
 async def post_cards(
         client: Snake,
         cards: List[Card],
-        channel: Messageable,
+        channel: TYPE_MESSAGEABLE_CHANNEL,
         replying_to: Optional[Member] = None,
         additional_text: str = '',
 ) -> None:
@@ -181,7 +179,7 @@ async def post_cards(
     else:
         await send_image_with_retry(channel, image_file, text)
 
-async def post_nothing(channel: Messageable, replying_to: Optional[Member] = None) -> None:
+async def post_nothing(channel: TYPE_MESSAGEABLE_CHANNEL, replying_to: Optional[Member] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
@@ -190,11 +188,11 @@ async def post_nothing(channel: Messageable, replying_to: Optional[Member] = Non
     await message.add_reaction('❎')
 
 
-async def send(channel: Messageable, content: str, file: Optional[File] = None) -> Message:
+async def send(channel: TYPE_MESSAGEABLE_CHANNEL, content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
-async def send_image_with_retry(channel: Messageable, image_file: str, text: str = '') -> None:
+async def send_image_with_retry(channel: TYPE_MESSAGEABLE_CHANNEL, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         logging.warning('Message size is zero so resending')
@@ -244,12 +242,12 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
 
-def slash_card_option() -> Callable:
+def slash_card_option(param: str = 'card') -> Callable:
     """Predefined Slash command argument `card`"""
 
     def wrapper(func: Callable) -> Callable:
         return slash_option(
-            name='card',
+            name=param,
             description='Name of a Card',
             required=True,
             opt_type=OptionTypes.STRING,
@@ -257,6 +255,15 @@ def slash_card_option() -> Callable:
         )(func)
 
     return wrapper
+
+def slash_permission_pd_mods() -> Callable:
+    """Restrict this command to Mods in the PD server"""
+
+    def wrapper(func: Callable) -> Callable:
+        return slash_permission(Permission(id=226785937970036748, guild_id=207281932214599682, type=PermissionTypes.ROLE))(func)
+
+    return wrapper
+
 
 async def autocomplete_card(scale, ctx: AutocompleteContext, card: str):
     def choice(name: str) -> Dict[str, str]:

@@ -1,5 +1,6 @@
 import textwrap
 from typing import Dict, Optional, Tuple, Union
+from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 
 import inflect
 from dis_snek.models.scale import Scale
@@ -283,7 +284,7 @@ class ExplainCog(Scale):
 
     m_explain = message_command('explain')(explain.callback)
 
-def is_tournament_channel(channel: Messageable) -> bool:
+def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
     tournament_channel_id = configuration.get_int('tournament_channel_id')
     if not tournament_channel_id:
         return False

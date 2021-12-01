@@ -1,6 +1,6 @@
 import random
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext
 from magic import oracle

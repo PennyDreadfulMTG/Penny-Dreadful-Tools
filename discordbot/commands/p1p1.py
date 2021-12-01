@@ -1,13 +1,13 @@
 import random
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext
 from magic import image_fetcher, oracle
 from shared import redis_wrapper as redis
 
 
-@commands.command()
+@slash_command('p1p1')
 async def p1p1(ctx: MtgContext) -> None:
     """`!p1p1` Summon a pack 1, pick 1 game."""
 

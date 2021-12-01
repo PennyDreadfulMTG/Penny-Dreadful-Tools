@@ -1,7 +1,7 @@
 from typing import Dict
 
 from discord import Embed
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle

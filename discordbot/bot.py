@@ -4,11 +4,10 @@ import logging
 import os
 import subprocess
 import sys
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 from dis_snek import Snake
 from dis_snek.errors import Forbidden
-from dis_snek.models.context import AutocompleteContext, ComponentContext, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.activity import ActivityType
 from dis_snek.models.discord_objects.channel import GuildText
 from dis_snek.models.discord_objects.embed import Embed

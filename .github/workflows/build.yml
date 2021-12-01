@@ -8,10 +8,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.0
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
     - name: Install dependencies
       run: |
@@ -25,10 +25,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.0
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
     - name: Install dependencies
       run: |
@@ -47,10 +47,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.0
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
     - uses: getong/mariadb-action@v1.1
       with:
@@ -70,10 +70,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.0
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.4.1

@@ -133,8 +133,8 @@ class ReportForm(Form):
         else:
             entry_decks = decks
 
-        self.entry_options = deck_options(entry_decks, self.get('entry', deck_id), person_id)
-        self.opponent_options = deck_options([d for d in decks if d.person_id != person_id], self.get('opponent', None), person_id)
+        self.entry_options = deck_options(entry_decks, self.get('entry', deck_id), person_id, False)
+        self.opponent_options = deck_options([d for d in decks if d.person_id != person_id], self.get('opponent', None), person_id, False)
         self.result_options = [
             {'text': 'Win 2–0', 'value': '2–0', 'selected': self.get('result', None) == '2–0'},
             {'text': 'Win 2–1', 'value': '2–1', 'selected': self.get('result', None) == '2–1'},
@@ -168,7 +168,7 @@ class RetireForm(Form):
             self.decks = active_decks_by_person(person_object.id)
         else:
             self.decks = active_decks()
-        self.entry_options = deck_options(self.decks, self.get('entry', deck_id), person_object.id if person_object else None)
+        self.entry_options = deck_options(self.decks, self.get('entry', deck_id), person_object.id if person_object else None, True)
         self.discord_user = discord_user
         if len(self.decks) == 0:
             self.errors['entry'] = "You don't have any decks to retire"
@@ -190,10 +190,20 @@ def identifier(params: Dict[str, str]) -> str:
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
-def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int]) -> List[Dict[str, Any]]:
+def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int], show_details: bool) -> List[Dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
-    return [{'text': d.name if d.person_id == viewer_id else d.person, 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
+    r = []
+    for d in decks:
+        r.append({'text': deck_option_text(d, viewer_id, show_details), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw})
+    return r
+
+def deck_option_text(d: deck.Deck, viewer_id: Optional[int], show_details: bool) -> str:
+    if d.person_id == viewer_id:
+        return d.name
+    elif show_details:
+        return f'{d.person} ({d.name}, {d.id})'
+    return d.person
 
 def active_decks(additional_where: str = 'TRUE') -> List[deck.Deck]:
     where = """

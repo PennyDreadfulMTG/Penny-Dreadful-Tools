@@ -7,11 +7,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2.3.1
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel
@@ -23,11 +24,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2.3.1
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel pydantic
@@ -44,11 +46,12 @@ jobs:
       mysql_host: 127.0.0.1
 
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2.3.1
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - uses: getong/mariadb-action@v1.1
       with:
         mysql root password: bad-password
@@ -57,26 +60,28 @@ jobs:
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync --dev; fi
     - name: Run pytest
-      run: pipenv run python dev.py tests
-
+      run: |
+        pipenv run pytest
+        pipenv run python dev.py upload-coverage
 
   jslint:
     name: jslint
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.3.4
+    - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2.3.1
       with:
         python-version: 3.8
+        cache: 'pipenv'
     - name: Setup Node.js environment
-      uses: actions/setup-node@v2.4.0
+      uses: actions/setup-node@v2.5.0
       with:
         node-version: 12
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel
-        python dev.py build
+        python build.py
     - name: Run jslint
       run: pipenv run python dev.py jslint

@@ -1,3 +1,4 @@
+import logging
 import os
 import subprocess
 import urllib
@@ -39,7 +40,7 @@ if sentry_token:
             before_send=sentry_filter,
         )
     except Exception as c:  # pylint: disable=broad-except
-        print(c)
+        logging.error(c)
 
 
 # pylint: disable=no-self-use, too-many-public-methods
@@ -142,13 +143,13 @@ class PDFlask(Flask):
         """
         if self.static_folder is None:
             return make_response('')
-        if configuration.get_bool('is_test_site'):
+        if configuration.is_test_site.value:
             return send_from_directory(self.static_folder, 'deny-all-robots.txt')
         return send_from_directory(self.static_folder, 'robots.txt')
 
     def favicon(self, rest: str) -> Response:
         if not self.static_folder:
-            raise DoesNotExistException()
+            raise DoesNotExistException
         return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), 'favicon{rest}'.format(rest=rest))
 
     def external_url_handler(self, error: Exception, endpoint: str, values: Dict[str, Any]) -> str:

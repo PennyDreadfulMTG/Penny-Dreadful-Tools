@@ -1,3 +1,5 @@
+import logging
+
 from decksite.data import person
 from decksite.database import db
 from shared import guarantee
@@ -10,6 +12,8 @@ from shared.database import sqlescape
 STARTING_ELO = 1500
 ELO_WIDTH = 1600
 K_FACTOR = 12
+
+logger = logging.getLogger(__name__)
 
 def adjustment(elo1: int, elo2: int) -> int:
     e = expected(elo1, elo2)
@@ -26,8 +30,8 @@ def adjust_elo(winning_deck_id: int, losing_deck_id: int) -> None:
     adj = adjustment(winner.elo or STARTING_ELO, loser.elo or STARTING_ELO)
     sql = 'UPDATE person SET elo = IFNULL(elo, {starting_elo}) + %s WHERE id = %s'.format(starting_elo=sqlescape(STARTING_ELO))
     db().begin('per-match-elo-adjustment')
-    print('Elo (winner) ', adj, winner.id, winner.mtgo_username, winner.elo, sql)
-    print('Elo (loser) ', -adj, loser.id, loser.mtgo_username, loser.elo, sql)
+    logger.info('Elo (winner) ', adj, winner.id, winner.mtgo_username, winner.elo, sql)
+    logger.info('Elo (loser) ', -adj, loser.id, loser.mtgo_username, loser.elo, sql)
     db().execute(sql, [adj, winner.id])
     db().execute(sql, [-adj, loser.id])
     db().commit('per-match-elo-adjustment')

@@ -33,7 +33,7 @@ def setup(bot: Bot) -> None:
                 cogs.append(obj(bot))
                 n += 1
         if n == 0:
-            print(f'No command found in {m.__name__}')
+            logging.error(f'No command found in {m.__name__}')
             # print(repr(inspect.getmembers(m)))
 
     aliases = text.unambiguous_prefixes(names)
@@ -61,7 +61,8 @@ class CardConverter:
                 message = await ctx.send('{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=ctx.author.mention, c=ctx.command, s=command.disambiguation(result.get_ambiguous_matches()[0:5])))
                 await command.disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
             else:
-                await ctx.send('{author}: No matches.'.format(author=ctx.author.mention))
+                message = await ctx.send('{author}: No matches.'.format(author=ctx.author.mention))
+                await message.add_reaction('❎')
             return None
         except Exception as exc:
             raise BadArgument('Could not find card') from exc

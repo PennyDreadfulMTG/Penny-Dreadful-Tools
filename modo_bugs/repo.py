@@ -1,3 +1,4 @@
+import functools
 from typing import Dict, Optional
 
 from github import Github
@@ -6,7 +7,7 @@ from github.IssueComment import IssueComment
 from github.Project import Project
 from github.Repository import Repository
 
-from shared import configuration, decorators
+from shared import configuration
 from shared import redis_wrapper as redis
 from shared.pd_exception import OperationalException
 
@@ -14,13 +15,13 @@ from . import strings
 
 ISSUE_CODES: Dict[int, str] = {}
 
-@decorators.memoize
+@functools.lru_cache
 def get_github() -> Optional[Github]:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
     return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
 
-@decorators.memoize
+@functools.lru_cache
 def get_repo() -> Repository:
     gh = get_github()
     if gh is not None:

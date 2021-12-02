@@ -19,7 +19,7 @@ def charts() -> str:
 
 # pylint: disable=no-self-use
 class Charts(View):
-    def subtitle(self) -> str:
+    def page_title(self) -> str:
         return gettext('Stats')
 
     def js_extra_url(self) -> str:

@@ -1,5 +1,5 @@
 """
-Forces a rebuild of the woosh index.
+Forces a rebuild of the whoosh index.
 """
 import time
 

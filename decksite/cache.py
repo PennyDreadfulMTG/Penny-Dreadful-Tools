@@ -11,7 +11,7 @@ from decksite import get_season_id
 from magic import seasons
 from shared_web import localization
 
-CACHE = SimpleCache()  # type: ignore
+CACHE = SimpleCache()
 
 def cached() -> Callable:
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
@@ -66,7 +66,7 @@ def cached_impl(cacheable: bool = False,
 
             client_etag = request.headers.get('If-None-Match')
 
-            response = CACHE.get(cache_key)  # type: ignore
+            response = CACHE.get(cache_key)
             # Respect a hard refresh from the client, if sent.
             # Note: Safari/OSX does not send a Cache-Control (or any additional) header on a hard refresh so people using Safari can't bypass/refresh server cache.
             if response is not None and request.headers.get('Cache-Control', '') != 'no-cache':

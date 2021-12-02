@@ -99,8 +99,8 @@ def tokenize(s: str) -> Expression:
             else:
                 raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
             i += 1
-    except KeyError:
-        raise InvalidSearchException(f'Invalid nesting in {s}')
+    except KeyError as e:
+        raise InvalidSearchException(f'Invalid nesting in {s}') from e
     if mode == QUOTED_STRING:
         raise InvalidSearchException('Reached end of expression without finding the end of a quoted string in {s}'.format(s=s))
     if depth != 0:
@@ -171,7 +171,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return subtable_where('subtype', term.value())
     if key.value() in ['edition', 'e', 'set', 's']:
         return set_where(term.value())
-    if key.value() == 'format' or key.value() == 'f':
+    if key.value() == 'format' or key.value() == 'f' or key.value() == 'legal':
         return format_where(term.value())
     if key.value() == 'rarity' or key.value() == 'r':
         return rarity_where(operator.value(), term.value())
@@ -227,7 +227,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     if 'm' in colors and len(colors) > 1:
         raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term}' instead")
     if operator == ':' and subtable == 'color_identity':
-        operator = '='
+        operator = '<='
     required: Set[str] = set()
     excluded: Set[str] = set()
     min_colors, max_colors = None, None
@@ -267,7 +267,7 @@ def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
 def format_where(term: str) -> str:
-    if term == 'pd' or term == 'Penny Dreadful':
+    if term == 'pd' or term.startswith('penny'):
         term = seasons.current_season_name()
     format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:

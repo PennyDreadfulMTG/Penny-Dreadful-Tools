@@ -32,7 +32,7 @@ async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
 
 async def all_cards_async() -> List[CardDescription]:
     try:
-        f = open('scryfall-default-cards.json')
+        f = open('scryfall-default-cards.json', encoding='utf-8')
         return json.load(f)
     except FileNotFoundError as c:
         endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
@@ -60,7 +60,7 @@ async def bugged_cards_async() -> Optional[List[Dict[str, Any]]]:
     return bugs
 
 def card_aliases() -> List[List[str]]:
-    with open(configuration.get_str('card_alias_file'), newline='', encoding='utf-8') as f:
+    with open(configuration.card_alias_file.get(), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
 def card_price(cardname: str) -> PriceDataType:
@@ -127,10 +127,6 @@ async def legal_cards_async(season: str = None) -> List[str]:
     legal_txt = await fetch_tools.fetch_async(url)
     if legal_txt.startswith('<!DOCTYPE html>'):
         return []
-    if season is not None and configuration.get_bool('save_historic_legal_lists'):
-        with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:
-            h.write(legal_txt)
-
     return legal_txt.strip().split('\n')
 
 async def mtgo_status() -> str:

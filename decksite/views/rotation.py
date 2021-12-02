@@ -10,7 +10,7 @@ class Rotation(View):
     def __init__(self) -> None:
         super().__init__()
         until_rotation = seasons.next_rotation() - dtutil.now()
-        in_rotation = configuration.get_bool('always_show_rotation')
+        in_rotation = configuration.always_show_rotation.value
         if until_rotation < datetime.timedelta(7):
             in_rotation = True
             self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(seasons.next_rotation(), 2)

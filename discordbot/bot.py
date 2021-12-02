@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -20,12 +21,14 @@ from github.GithubException import GithubException
 import discordbot.commands
 from discordbot import command
 from discordbot.help import PennyHelpCommand
+from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments, whoosh_write
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
 from shared import repo
 from shared.container import Container
+from shared.settings import with_config_file
 
 TASKS = []
 
@@ -175,8 +178,12 @@ class Bot(commands.Bot):
     async def on_reaction_add(self, reaction: Reaction, author: Member) -> None:
         if reaction.message.author == self.user:
             c = reaction.count
+            with with_config_file(guild_id(reaction.message.channel)), with_config_file(reaction.message.channel.id):
+                dismissable = configuration.dismiss_any
             if reaction.me:
                 c = c - 1
+            elif not dismissable:
+                return
             if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
                 try:
                     await reaction.message.delete()
@@ -320,9 +327,11 @@ class Bot(commands.Bot):
         while self.is_ready():
             until_rotation = seasons.next_rotation() - dtutil.now()
             last_run_time = rotation.last_run_time()
-            if until_rotation < datetime.timedelta(7) and last_run_time is not None:
+            if os.path.exists('.rotation.lock'):
+                timer = 10
+            elif until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
-                    hype = await rotation_hype_message()
+                    hype = await rotation_hype_message(False)
                     if hype:
                         await channel.send(hype)
                 timer = 5 * 60
@@ -363,8 +372,9 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
         return await guild.create_role(name=rolename)
     return None
 
-async def rotation_hype_message() -> Optional[str]:
-    rotation.clear_redis()
+async def rotation_hype_message(hype_command: bool) -> Optional[str]:
+    if not hype_command:
+        rotation.clear_redis()
     runs, runs_percent, cs = rotation.read_rotation_files()
     runs_remaining = rotation.TOTAL_RUNS - runs
     newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]
@@ -372,9 +382,12 @@ async def rotation_hype_message() -> Optional[str]:
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
-    s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
-    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
+    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2 and not hype_command:
         return None  # Sometimes there's nothing to report
+    s = f'Rotation run number {runs} completed.'
+    if hype_command:
+        s = f'{runs} rotation checks have completed.'
+    s += f' Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)
         s += f'\nFirst hit for: {newly_hit_s}.'

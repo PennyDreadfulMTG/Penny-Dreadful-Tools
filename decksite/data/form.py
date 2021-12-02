@@ -8,7 +8,7 @@ from shared.container import Container
 class Form(Container):
     def __init__(self, form: ImmutableMultiDict) -> None:
         super().__init__()
-        self.update(form.to_dict())  # type: ignore
+        self.update(form.to_dict())
         self.errors: Dict[str, str] = {}
         self.warnings: Dict[str, str] = {}
 

@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from bs4 import BeautifulSoup
@@ -7,6 +8,7 @@ from shared import configuration, fetch_tools
 
 from . import fetcher
 
+logger = logging.getLogger(__name__)
 
 def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_announcements()
@@ -21,10 +23,11 @@ def scrape(url: str) -> None:
         parse_header(b)
 
 def parse_header(h: Tag) -> None:
+    logger.debug(h)
     txt = h.text
-    if txt.startswith('Downtime'):
+    if 'Downtime' in txt:
         parse_downtimes(h)
-    elif txt.startswith('Build Notes'):
+    elif txt.startswith('Build Notes') or txt.startswith('Change Log'):
         parse_build_notes(h)
 
 def parse_build_notes(h: Tag) -> None:
@@ -42,10 +45,10 @@ def parse_build_notes(h: Tag) -> None:
         'description': '\n'.join(entries),
         'url': fetcher.find_announcements()[0],
     }
-    if configuration.get_optional_str('bugs_webhook_id') is not None:
+    if configuration.bugs_webhook_id.value:
         fetch_tools.post_discord_webhook(
-            configuration.get_str('bugs_webhook_id'),
-            configuration.get_str('bugs_webhook_token'),
+            configuration.bugs_webhook_id.value,
+            configuration.bugs_webhook_token.value,
             embeds=[embed],
             username='Magic Online Announcements',
             avatar_url='https://magic.wizards.com/sites/mtg/files/styles/auth_small/public/images/person/wizards_authorpic_larger.jpg',
@@ -57,6 +60,6 @@ def parse_downtimes(h: Tag) -> None:
             with open('downtimes.txt', 'w', encoding='utf-8') as f:
                 txt = n.text.strip()
                 txt = txt.replace("Please note that there are no more 'extended' or 'normal' downtimes; in the new world with fewer downtimes, they're all the same length of time.", '')
-                print(txt)
+                logger.info(txt)
                 f.write(txt)
             break

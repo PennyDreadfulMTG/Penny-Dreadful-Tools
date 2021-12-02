@@ -1,27 +1,27 @@
+import logging
 import os
 import subprocess
 import sys
-from typing import List
+from typing import List, Tuple
 
 from modo_bugs import scrape_announcements, scrape_bugblog, update, verification
 from shared import configuration
 
 
-def run() -> None:
+def run(argv: Tuple[str]) -> None:
+    args = list(argv)
+    logger = logging.getLogger(__name__)
     wd = configuration.get_str('modo_bugs_dir')
     if not os.path.exists(wd):
         subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/modo-bugs.git', wd], check=True)
     os.chdir(wd)
     subprocess.run(['git', 'pull'], check=True)
-    args = sys.argv[2:]
     if not args:
-        args.extend(['scrape', 'update', 'verify', 'commit'])
-    print('modo_bugs invoked with modes: ' + repr(args))
+        args.extend(['scrape_bb', 'scrape_an', 'update', 'verify', 'commit'])
+    logger.info('modo_bugs invoked with modes: ' + repr(args))
 
     changes: List[str] = []
 
-    if 'scrape' in args:
-        args.extend(['scrape_bb', 'scrape_an'])
     if 'scrape_bb' in args:
         scrape_bugblog.main(changes)
     if 'scrape_an' in args:

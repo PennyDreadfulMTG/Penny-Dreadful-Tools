@@ -21,6 +21,13 @@ WHITELIST = [
     'i will make combo work in season 15',
     'b u r n',
     'r e a n i m a t o r',
+    'meme deck for #general',
+    'i will make combo work in season 15',
+    's15 is a meme',
+    'blue man group',
+    'no green jeskai asc',
+    'ub or not ub? that is the question',
+    'Rakdos aggro but with green instead of black',
 ]
 
 PROFANITY_WHITELIST = [
@@ -142,7 +149,7 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
-    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
+    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)] and word != 'colorless':
         name = 'mono {name}'.format(name=name)
     return name.strip()
 
@@ -186,7 +193,7 @@ def add_colors_if_no_deckname(name: str, colors: Set[str]) -> str:
     return name
 
 def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
-    if not name in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
+    if not name.replace('mono ', '') in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
         return name
     archetype_contains_color_name = False
     for k in COLOR_COMBINATIONS:
@@ -215,7 +222,7 @@ def ucase_trailing_roman_numerals(name: str) -> str:
     return name
 
 def strip_leading_punctuation(name: str) -> str:
-    return re.sub('^[^a-z0-9"\']*', '', name, flags=re.IGNORECASE)
+    return re.sub(r'^[^\w"\']*', '', name, flags=re.IGNORECASE)
 
 # See #6041.
 def remove_leading_deck(name: str) -> str:

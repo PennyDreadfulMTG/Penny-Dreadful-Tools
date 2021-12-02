@@ -52,9 +52,9 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
             {'name': gettext('Meta'), 'endpoint': '.metagame'},
             {'name': gettext('Decks'), 'endpoint': '.decks'},
-            {'name': gettext('Archetypes'), 'endpoint': 'archetypes', 'badge': archetypes_badge},
-            {'name': gettext('People'), 'endpoint': 'people'},
-            {'name': gettext('Cards'), 'endpoint': 'cards'},
+            {'name': gettext('Archetypes'), 'endpoint': '.archetypes', 'badge': archetypes_badge},
+            {'name': gettext('People'), 'endpoint': '.people'},
+            {'name': gettext('Cards'), 'endpoint': '.cards'},
             {'name': gettext('Past Seasons'), 'endpoint': 'seasons'},
             {'name': gettext('Matchups'), 'endpoint': 'matchups'},
         ]},
@@ -85,7 +85,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     ]
     setup_links(menu)
     for item in menu:
-        item['current'] = item.get('endpoint', '').replace('seasons', '').replace('.', '') == current_template or current_template in [entry.get('endpoint', '') for entry in item.get('submenu', [])]
+        item['current'] = item.get('endpoint', '').replace('seasons', '').replace('.', '') == current_template or current_template in [entry.get('endpoint', '').replace('.', '') for entry in item.get('submenu', [])]
         item['has_submenu'] = item.get('submenu') is not None
     return menu
 
@@ -100,10 +100,10 @@ def setup_links(menu: List[Dict[str, Any]]) -> None:
 try:
     oracle.init()
 except DatabaseException as e:
-    print("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
+    APP.logger.warning("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
     multiverse.init()
     oracle.init()
 
-from decksite.controllers import admin  # isort:skip # pylint: disable=wrong-import-position
-from .data import deck  # isort:skip # pylint: disable=wrong-import-position
+from decksite.controllers import admin  # isort:skip
+from .data import deck  # isort:skip
 APP.config['menu'] = build_menu

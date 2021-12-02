@@ -1,5 +1,6 @@
 import datetime
 import json
+import sys
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 from flask import Response, request, session, url_for
@@ -19,11 +20,10 @@ from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard,
 from decksite.views import DeckEmbed
 from find import search as card_search
 from magic import oracle, rotation, seasons, tournaments
-from magic.decklist import parse_line
-from magic.models import Card, Deck
+from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import DoesNotExistException, InvalidDataException, TooManyItemsException
+from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
@@ -47,6 +47,7 @@ DECK = APP.api.model('Deck', {
     'updated_date': fields.DateTime(),
     'wins': fields.Integer(),
     'losses': fields.Integer(),
+    'draws': fields.Integer(),
     'finish': fields.Integer(),
     'archetype_id': fields.Integer(),
     'archetype_name': fields.String(),
@@ -61,6 +62,9 @@ DECK = APP.api.model('Deck', {
     'season_id': fields.Integer(),
     'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
     'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
+    'url': fields.String(),
+    'source_name': fields.String(),
+    'competition_type_name': fields.String(),
 })
 
 COMPETITION = APP.api.model('Competition', {
@@ -394,18 +398,18 @@ def rotation_cards_api() -> Response:
         cs = [c for c in cs if c.name in search_results]
     if not session.get('admin', False):
         cs = [c for c in cs if c.status != 'Undecided']
-    total = len(cs)
     # Now add rank to the cards, which only decksite knows not magic.rotation.
     ranks = playability.rank()
     for c in cs:
-        c.rank = ranks.get(c.name, 0 if c.never_legal() else total)
+        c.rank = ranks.get(c.name, 0 if c.never_legal() else sys.maxsize)
         if c.rank == 0:
             c.display_rank = 'NEW'
-        elif c.rank == total:
+        elif c.rank == sys.maxsize:
             c.display_rank = '-'
         else:
             c.display_rank = str(c.rank)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
+    total = len(cs)
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
@@ -461,7 +465,7 @@ def competitions_api() -> Response:
             cr['name'] = c.name
             cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
             r.append(cr)
-    return return_json(r)  # type: ignore
+    return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')
 def competition_api(competition_id: int) -> Response:
@@ -564,24 +568,8 @@ def post_reassign(deck_id: int, archetype_id: int) -> Response:
 @auth.demimod_required
 def post_rule_update(rule_id: int = None) -> Response:
     if rule_id is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
-        inc = []
-        exc = []
-        for line in cast(str, request.form.get('include')).strip().splitlines():
-            try:
-                inc.append(parse_line(line))
-            except InvalidDataException:
-                return return_json({'success': False, 'msg': f"Couldn't find a card count and name on line: {line}"})
-            if not card.card_exists(inc[-1][1]):
-                return return_json({'success': False, 'msg': f'Card not found in any deck: {line}'})
-        for line in cast(str, request.form.get('exclude')).strip().splitlines():
-            try:
-                exc.append(parse_line(line))
-            except InvalidDataException:
-                return return_json({'success': False, 'msg': f"Couldn't find a card count and name on line: {line}"})
-            if not card.card_exists(exc[-1][1]):
-                return return_json({'success': False, 'msg': f'Card not found in any deck {line}'})
-        rs.update_cards(rule_id, inc, exc)
-        return return_json({'success': True})
+        success, msg = rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
+        return return_json({'success': success, 'msg': msg})
     return return_json({'success': False, 'msg': 'Required keys not found'})
 
 @APP.route('/api/sitemap/')
@@ -614,7 +602,7 @@ def person_status() -> Response:
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))
         if d is not None:
-            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}  # type: ignore
+            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     active_league = league.active_league()
@@ -662,7 +650,7 @@ def deck_embed(deck_id: int) -> Response:
 
 @APP.route('/api/test_500')
 def trigger_test_500() -> Response:
-    if configuration.get_bool('production'):
+    if configuration.production.value:
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
     raise TooManyItemsException
 

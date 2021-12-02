@@ -58,6 +58,10 @@ class ExplainCog(commands.Cog):
                 "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
                 {},
             ),
+            'gamehistory': (
+                'You can find your Game History under the gear icon in the top right on MTGO. Latest match is at the bottom.',
+                {},
+            ),
             'language': (
                 """
                 To change the language you see the site in use the language switcher in the top-left hand corner (desktop only) or follow the link below for English.
@@ -89,6 +93,13 @@ class ExplainCog(commands.Cog):
                     'Archetypes': fetcher.decksite_url('/archetypes/'),
                     'All Decklists': fetcher.decksite_url('/decks/'),
                 },
+            ),
+            'next round': (
+                """
+                The next round will begin when all matches are finished.
+                You can check the reported and unreported results by looking at the pinned message in #tournament-room
+                """,
+                {},
             ),
             'noshow': (
                 """
@@ -195,13 +206,6 @@ class ExplainCog(commands.Cog):
                 """,
                 {},
             ),
-            'verification': (
-                """
-                Gatherling verification is currently broken.
-                It no longer does anything except put a green tick by your name anyway.
-                """,
-                {},
-            ),
             'wrongdeck': (
                 """
                 If a player realizes they have the wrong deck before the match begins they should take a screenshot of their opening hand as proof. Fix the deck and recreate the match. The player who had the wrong deck must give the choice of play or draw to their opponent.
@@ -217,7 +221,6 @@ class ExplainCog(commands.Cog):
         self.explanations['tournaments'] = self.explanations['tournament']
         self.explanations['watching'] = self.explanations['spectating']
         self.explanations['spectate'] = self.explanations['spectating']
-        self.explanations['verify'] = self.explanations['verification']
         self.reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
             'tournament': (
                 """

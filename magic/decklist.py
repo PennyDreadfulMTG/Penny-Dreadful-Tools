@@ -16,10 +16,13 @@ DecklistType = Dict[str, SectionType]
 
 def parse_line(line: str) -> Tuple[int, str]:
     match = re.match(r'(?:SB: ?)?(\d+)\s+(.*)', line)
+    if match is not None:
+        n, name = match.groups()
+        return int(n), name
+    match = re.match(r'(?:SB: ?)?(.*)', line)
     if match is None:
-        raise InvalidDataException('No number specified with `{line}`'.format(line=line))
-    n, name = match.groups()
-    return (int(n), name)
+        raise InvalidDataException(f'Could not parse {line}')
+    return 1, match.groups()[0]
 
 def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():
@@ -92,7 +95,7 @@ def parse_xml(s: str) -> DecklistType:
             section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
             d[section][c['Name']] = d[section].get(c['Name'], 0) + int(c['Quantity'])
         return d
-    except xml.sax.SAXException as e:  # type: ignore
+    except xml.sax.SAXException as e:
         raise InvalidDataException(e) from e  # pylint: disable=bad-exception-context
     except AttributeError as e:
         raise InvalidDataException(e) from e  # Not valid MTGO .deck format

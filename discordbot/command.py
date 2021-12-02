@@ -1,5 +1,6 @@
 import collections
 import datetime
+import logging
 import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
@@ -11,11 +12,13 @@ from discord.member import Member
 from discord.message import Message
 
 from discordbot import emoji
+from discordbot.shared import guild_id
 from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
 from shared.lazy import lazy_property
+from shared.settings import with_config_file
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -141,15 +144,19 @@ async def post_cards(
     if len(cards) == 0:
         await post_nothing(channel, replying_to)
         return
+
+    with with_config_file(guild_id(channel)), with_config_file(channel.id):
+        legality_format = configuration.legality_format.value
     not_pd = configuration.get_list('not_pd')
-    disable_emoji = str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd)
+    if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):  # This needs to be migrated
+        legality_format = 'Unknown'
     cards = uniqify_cards(cards)
     if len(cards) > MAX_CARDS_SHOWN:
         cards = cards[:DEFAULT_CARDS_SHOWN]
     if len(cards) == 1:
-        text = single_card_text_internal(client, cards[0], disable_emoji)
+        text = single_card_text_internal(client, cards[0], legality_format)
     else:
-        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card)) if not disable_emoji else ''), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card, legality_format=legality_format))), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
@@ -183,16 +190,14 @@ async def send(channel: Messageable, content: str, file: Optional[File] = None) 
 async def send_image_with_retry(channel: Messageable, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
-        print('Message size is zero so resending')
+        logging.warning('Message size is zero so resending')
         await message.delete()
         await send(channel, file=File(image_file), content=text)
 
-def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
+def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
     mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
     mana = mana.replace('|', ' // ')
-    legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
-    if disable_emoji:
-        legal = ''
+    legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
     if requested_card.get('mode', None) == '$':
         text = '{name} {legal} — {price}'.format(name=requested_card.name, price=card_price.card_price_string(requested_card), legal=legal)
     else:
@@ -232,18 +237,18 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
 
-def guild_or_channel_id(channel: Union[TextChannel, DMChannel, GroupChannel]) -> int:
-    return getattr(channel, 'guild', channel).id
-
 class MtgContext(commands.Context):
     async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
         message = await self.send(file=File(image_file), content=text)
         if message and message.attachments and message.attachments[0].size == 0:
-            print('Message size is zero so resending')
+            logging.warning('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
 
     async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+        if c is None:
+            return
+
         not_pd = configuration.get_list('not_pd')
         if str(self.channel.id) in not_pd or (getattr(self.channel, 'guild', None) is not None and str(self.channel.guild.id) in not_pd):
             show_legality = False

@@ -14,7 +14,7 @@ from shared.pd_exception import InvalidDataException
 TOTAL_RUNS = 168
 
 def interesting(playability: Dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> Optional[str]:
-    if new and len({k: v for (k, v) in c['legalities'].items() if seasons.current_season_name() in k}) == (0 if speculation else 1):
+    if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
         return 'new'
     p = playability.get(c.name, 0)
     if p > 0.1:
@@ -24,7 +24,7 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
     return None
 
 def in_rotation() -> bool:
-    if configuration.get_bool('always_show_rotation'):
+    if configuration.always_show_rotation.value:
         return True
     until_rotation = seasons.next_rotation() - dtutil.now()
     return until_rotation < datetime.timedelta(7)

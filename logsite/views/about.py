@@ -12,7 +12,7 @@ def about() -> str:
 
 # pylint: disable=no-self-use
 class About(View):
-    def subtitle(self) -> str:
+    def page_title(self) -> str:
         return gettext('About')
 
     def languages(self) -> str:

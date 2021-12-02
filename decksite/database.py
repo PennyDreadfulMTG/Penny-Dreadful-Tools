@@ -16,13 +16,13 @@ def db() -> Database:
     elif g:
         ctx = g
     if not hasattr(ctx, 'database'):
-        ctx.database = get_database(configuration.get_str('decksite_database'))  # type: ignore
-    return ctx.database  # type: ignore
+        ctx.database = get_database(configuration.get_str('decksite_database'))
+    return ctx.database
 
 def setup_in_app_context() -> None:
     # pylint: disable=import-outside-toplevel
     from decksite import APP
-    with APP.app_context():  # type: ignore
+    with APP.app_context():
         setup()
 
 def setup() -> None:

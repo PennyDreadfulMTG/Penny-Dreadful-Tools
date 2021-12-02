@@ -12,5 +12,5 @@ fi
 echo $APP
 cd $(dirname $0)
 git pull
-python3 run.py build
+python3 build.py
 python3 run.py $APP

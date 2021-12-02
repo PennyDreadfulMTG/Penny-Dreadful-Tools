@@ -15,7 +15,7 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
-from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
+from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague,
                             EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Sorters, Unlink)
 from magic.models import Deck
@@ -91,7 +91,7 @@ def post_archetypes() -> wrappers.Response:
         archs.move(int(request.form.getlist('archetype_id')[0]), int(request.form.getlist('archetype_id')[1]))
     elif request.form.get('parent') is not None:
         if len(request.form.get('name', '')) > 0:
-            archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')))
+            archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
@@ -108,8 +108,9 @@ def edit_rules() -> wrappers.Response:
 @APP.route('/admin/rules/', methods=['POST'])
 @auth.demimod_required
 def post_rules() -> wrappers.Response:
-    if request.form.get('archetype_id') is not None:
-        rs.add_rule(cast_int(request.form.get('archetype_id')))
+    if request.form.get('archetype_id'):
+        rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
+        rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
     return edit_rules()
@@ -198,12 +199,13 @@ def player_notes() -> str:
     return view.page()
 
 @APP.route('/admin/people/notes/', methods=['POST'])
+@fill_form('person_id', 'note')
 @auth.admin_required
-def post_player_note() -> wrappers.Response:
+def post_player_note(person_id: int, note: str) -> wrappers.Response:
     if not request.form.get('person_id') or not request.form.get('note'):
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/people/notes: {request.form}')
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, int(request.form['person_id']), request.form['note'])
+    ps.add_note(creator.id, person_id, note)
     return redirect(url_for('player_notes'))
 
 @APP.route('/admin/unlink/')
@@ -227,6 +229,32 @@ def post_unlink() -> str:
         except ValueError:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)
+
+@APP.route('/admin/ban/')
+@auth.admin_required
+def ban(success: Optional[bool] = None) -> str:
+    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    view = Ban(all_people, success)
+    return view.page()
+
+@APP.route('/admin/ban/', methods=['POST'])
+@auth.admin_required
+def post_ban() -> str:
+    cmd = request.form.get('cmd')
+    person_id = request.form.get('person_id')
+    if not person_id:
+        raise InvalidArgumentException('No person_id in post_ban')
+    person_id = int(person_id)
+    success = False
+    if cmd == 'ban':
+        p = ps.load_person_by_id(person_id)
+        if p.decks and p.decks[0].is_in_current_run():
+            lg.retire_deck(p.decks[0])
+        success = ps.ban(person_id) > 0
+    elif cmd == 'unban':
+        success = ps.unban(person_id) > 0
+    return ban(success)
+
 
 @APP.route('/admin/league/')
 @auth.admin_required

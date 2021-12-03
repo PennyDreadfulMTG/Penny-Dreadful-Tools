@@ -1,5 +1,5 @@
 import textwrap
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 
 import inflect
@@ -8,7 +8,8 @@ from dis_snek.client import Snake
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.command import message_command
 
-from discordbot.command import Messageable, MtgContext
+from discordbot import command
+from discordbot.command import MtgContext
 from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
 
@@ -250,7 +251,7 @@ class ExplainCog(Scale):
         description='Thing to be explained',
         opt_type=OptionTypes.STRING,
         required=False,
-        choices=[x.lower() for x in keys])
+        choices=[command.make_choice(x.lower()) for x in keys])
     async def explain(self, ctx: MtgContext, thing: Optional[str]) -> None:
         """Answers for Frequently Asked Questions"""
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.

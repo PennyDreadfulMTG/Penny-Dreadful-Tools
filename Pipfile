@@ -32,7 +32,7 @@ types-toml = "*"
 types-typed-ast = "*"
 
 [packages]
-aiohttp = "==3.6.3"
+aiohttp = "==3.7.4"
 anytree = "==2.8.0"
 astroid = "==2.8.5"
 attrs = "==21.2.0"
@@ -91,7 +91,8 @@ sentry-sdk = {extras = ["flask"], version = "*"}
 pydantic = "*"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
-dis-snek = "*"
+tomli = "*"
+dis-snek = {editable = false, git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
 orjson = "*"
 
 [requires]

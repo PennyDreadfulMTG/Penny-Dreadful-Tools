@@ -41,6 +41,10 @@ def scaleless_load(bot: Snake, module: str) -> bool:
             elif isinstance(obj, MessageCommand):
                 bot.add_message_command(obj)
                 n += 1
+            elif isinstance(obj, Scale):
+                logging.warning(f'{module} is a Scale, but it doesnt have a setup method')
+                obj(bot)
+                n += 1
     except Exception:
         pass
     return n > 0

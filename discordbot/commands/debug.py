@@ -9,6 +9,7 @@ import textwrap
 import traceback
 from collections import Counter
 from contextlib import redirect_stdout
+from dis_snek.client import Snake
 
 from dis_snek.const import __version__, __py_version__
 from dis_snek.errors import CommandCheckFailure, ScaleLoadException
@@ -23,12 +24,13 @@ from dis_snek.models import (
     Timestamp,
 )
 from dis_snek.models.checks import is_owner
+from dis_snek.models.context import Context
 from dis_snek.models.enums import Intents
 from dis_snek.models.scale import Scale
 from dis_snek.utils.cache import TTLCache
 
 
-def strf_delta(time_delta: datetime.timedelta, show_seconds=True) -> str:
+def strf_delta(time_delta: datetime.timedelta, show_seconds: bool = True) -> str:
     """Formats timedelta into a human readable string"""
     years, days = divmod(time_delta.days, 365)
     hours, rem = divmod(time_delta.seconds, 3600)
@@ -51,11 +53,6 @@ def strf_delta(time_delta: datetime.timedelta, show_seconds=True) -> str:
     return f"{minutes_fmt}"
 
 
-async def check_is_owner(ctx):
-
-    return ctx.author.id == 154363842451734528
-
-
 class DebugScale(Scale):
     def D_Embed(self, title: str) -> Embed:
         e = Embed(
@@ -74,7 +71,7 @@ class DebugScale(Scale):
         sub_cmd_name="info",
         sub_cmd_description="Get basic information about the bot",
     )
-    async def debug_info(self, ctx: InteractionContext):
+    async def debug_info(self, ctx: InteractionContext) -> None:
         await ctx.defer()
 
         uptime = datetime.datetime.now() - self.bot.start_time
@@ -104,7 +101,7 @@ class DebugScale(Scale):
     @debug_info.subcommand(
         "cache", sub_cmd_description="Get information about the current cache state"
     )
-    async def cache_info(self, ctx: InteractionContext):
+    async def cache_info(self, ctx: InteractionContext) -> None:
         await ctx.defer()
         e = self.D_Embed("Cache")
         e.description = ""
@@ -128,9 +125,9 @@ class DebugScale(Scale):
         await ctx.send(embeds=[e])
 
     @debug_info.subcommand(
-        "cmds", sub_cmd_description="Get Information about registered app commands"
+        "cmds", sub_cmd_description="Get Information about registered app commands",
     )
-    async def app_cmd(self, ctx: InteractionContext):
+    async def app_cmd(self, ctx: InteractionContext) -> None:
         await ctx.defer()
         e = self.D_Embed("Application-Commands")
 
@@ -159,8 +156,8 @@ class DebugScale(Scale):
         await ctx.send(embeds=[e])
 
     @message_command("exec")
-    @check(check_is_owner)
-    async def debug_exec(self, ctx: MessageContext):
+    @check(is_owner)
+    async def debug_exec(self, ctx: MessageContext) -> None:
         await ctx.channel.trigger_typing()
         body = ctx.message.content.removeprefix(
             f"{await self.bot.get_prefix(ctx.message)}{ctx.invoked_name} "
@@ -184,14 +181,14 @@ class DebugScale(Scale):
         to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
         try:
             exec(to_compile, env)
-        except SyntaxError as e:
+        except SyntaxError:
             return await ctx.send("```py\n{}\n```".format(traceback.format_exc()))
 
         func = env["func"]
         try:
             with redirect_stdout(stdout):
                 ret = await func()
-        except Exception as e:
+        except Exception:
             value = stdout.getvalue()
             return await ctx.send(
                 "```py\n{}{}\n```".format(value, traceback.format_exc())
@@ -216,20 +213,22 @@ class DebugScale(Scale):
                     await ctx.send("```py\n%s%s\n```" % (value, ret))
 
     @debug_exec.error
-    async def exec_error(self, error, ctx):
+    async def exec_error(self, error: Exception, ctx: Context):
         if isinstance(error, CommandCheckFailure):
             return await ctx.send("You do not have permission to execute this command")
         raise
 
     @message_command('regrow')
-    @check(check_is_owner)
+    @check(is_owner)
     async def regrow(self, ctx: MessageContext, module: str) -> None:
         try:
             self.bot.regrow_scale(f'discordbot.commands.{module}')
+            ctx.message
         except ScaleLoadException as e:
             if 'Unable to shed scale: No scale exists with name' in str(e):
                 try:
                     self.bot.grow_scale(f'discordbot.commands.{module}')
+
                 except ScaleLoadException as c:
                     await ctx.send(c)
             else:
@@ -242,5 +241,5 @@ class DebugScale(Scale):
         raise
 
 
-def setup(bot):
+def setup(bot: Snake) -> None:
     DebugScale(bot)

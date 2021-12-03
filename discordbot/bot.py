@@ -61,13 +61,6 @@ class Bot(Snake):
     # async def get_context(self, data: Union[dict, Message], interaction: bool = False) -> Union[MessageContext, InteractionContext, ComponentContext, AutocompleteContext]:
 
     async def stop(self) -> None:
-        try:
-            p = await asyncio.create_subprocess_shell('git pull')
-            await p.wait()
-            p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pipenv install')
-            await p.wait()
-        except Exception as c:  # pylint: disable=broad-except
-            repo.create_issue('Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
         await super().stop()
 
     @listen()
@@ -364,6 +357,13 @@ class Bot(Snake):
         while True:
             if redis.get_bool(do_reboot_key):
                 logging.info('Got request to reboot from redis')
+                try:
+                    p = await asyncio.create_subprocess_shell('git pull')
+                    await p.wait()
+                    p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pipenv install')
+                    await p.wait()
+                except Exception as c:
+                    repo.create_issue('Bot error while rebooting', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
                 await self.stop()
             await asyncio.sleep(60)
 

@@ -20,7 +20,7 @@ async def google(ctx: MtgContext, query: str) -> None:
         return
 
     if len(query) == 0:
-        await ctx.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=ctx.author.mention), flags=MessageFlags.EPHEMERAL))
+        await ctx.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=ctx.author.mention), flags=MessageFlags.EPHEMERAL)
         return
 
     try:

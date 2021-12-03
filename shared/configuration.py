@@ -229,10 +229,6 @@ def write(key: str, value: float) -> float:
     pass
 
 @overload
-def write(key: str, value: None) -> None:
-    pass
-
-@overload
 def write(key: str, value: Set[str]) -> Set[str]:
     pass
 

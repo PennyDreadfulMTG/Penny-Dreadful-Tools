@@ -1,11 +1,11 @@
 import datetime
 import functools
-from typing import List, Optional, Set, Union
+from typing import List, Optional, Union
 
 import attr
 
 from magic import fetcher
-from shared import decorators, dtutil, recursive_update
+from shared import dtutil, recursive_update
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
@@ -18,7 +18,7 @@ SEASONS = [
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
-    'VOW',                       # 2022
+    'VOW', 'NEO',                # 2022
 ]
 
 OVERRIDES = {

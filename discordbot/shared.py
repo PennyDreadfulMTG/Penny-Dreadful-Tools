@@ -1,8 +1,6 @@
-from typing import Optional, Union
+from typing import Optional
 
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
-
-
+from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, GuildText
 
 
 def guild_id(channel: TYPE_MESSAGEABLE_CHANNEL) -> Optional[int]:

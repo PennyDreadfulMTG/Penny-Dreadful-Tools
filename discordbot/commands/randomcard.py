@@ -1,17 +1,20 @@
 import random
 
-from dis_snek.models.application_commands import slash_command
+from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import oracle
 
 
-@commands.command(aliases=['r', 'rand', 'random'])
+@slash_command('random-card')
+@slash_option('number', 'How many cards?', OptionTypes.INTEGER)
 async def randomcard(ctx: MtgContext, number: int = 1) -> None:
     """A random PD legal card.
 `!random X` X random PD legal cards."""
     additional_text = ''
-    if number > 10:
+    if number < 1:
+        number = 1
+    elif number > 10:
         additional_text = "{number}? Tsk. Here's ten.".format(number=number)
         number = 10
     cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), number)]

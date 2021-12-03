@@ -1,22 +1,23 @@
 import re
 from typing import Dict, Optional
 
-from dis_snek.models.application_commands import slash_command
+from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 
 from discordbot.command import MtgContext, roughly_matches
 from magic import fetcher
 from shared import fetch_tools
 
 
-@commands.command(aliases=['res', 'pdm'])
-async def resources(ctx: MtgContext, *, args: Optional[str]) -> None:
-    """Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
+@slash_command('resources')
+@slash_option('resource', 'Your query', OptionTypes.STRING)
+async def resources(ctx: MtgContext, resource: Optional[str]) -> None:
+    """Useful pages related to `args`."""
     results = {}
-    if args is None:
-        args = ''
-    if len(args) > 0:
-        results.update(resources_resources(args))
-        results.update(site_resources(args))
+    if resource is None:
+        resource = ''
+    if len(resource) > 0:
+        results.update(resources_resources(resource))
+        results.update(site_resources(resource))
     s = ''
     if len(results) == 0:
         s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))

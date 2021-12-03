@@ -27,7 +27,5 @@ class Art(Scale):
 
     art.autocomplete('card')(command.autocomplete_card)
 
-    # m_art = message_command('art')(art.callback)
-
 def setup(bot: Snake) -> None:
     Art(bot)

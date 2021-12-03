@@ -1,7 +1,7 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Tuple, cast
+from dis_snek.models.context import Context
 
-import discord
 import pytest
 
 from discordbot.bot import Bot
@@ -16,7 +16,7 @@ def discordbot() -> Bot:
     bot = Bot()
     return bot
 
-class ContextForTests(MtgContext):
+class ContextForTests(Context):
     def __init__(self, **attrs: Any) -> None:  # pylint: disable=super-init-not-called
         self.sent = False
         self.sent_args = False
@@ -89,7 +89,7 @@ def get_params() -> List[Tuple]:
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
 async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name
-    command: discord.ext.commands.Command = discordbot.all_commands[cmd]
+    command = discordbot.all_commands[cmd]
     ctx = ContextForTests()
     ctx.bot = discordbot
     ctx.message = Container()

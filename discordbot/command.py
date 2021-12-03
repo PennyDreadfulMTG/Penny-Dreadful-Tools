@@ -15,6 +15,7 @@ from dis_snek.models.enums import ChannelTypes
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, DMChannel, GuildText
 from dis_snek.mixins.send import SendMixin
 from dis_snek.models.file import File
+from dis_snek.models.scale import Scale
 
 from discordbot import emoji
 from discordbot.shared import guild_id
@@ -264,13 +265,13 @@ def slash_permission_pd_mods() -> Callable:
 
     return wrapper
 
+def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
+    return {
+        'name': name or value,
+        'value': value,
+    }
 
-async def autocomplete_card(scale, ctx: AutocompleteContext, card: str):
-    def choice(name: str) -> Dict[str, str]:
-        return {
-            'name': name,
-            'value': name,
-        }
+async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -> None:
     choices = []
     results = searcher().search(card)
     choices.extend(results.exact)
@@ -278,7 +279,7 @@ async def autocomplete_card(scale, ctx: AutocompleteContext, card: str):
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
 
-    await ctx.send(choices=[choice(c) for c in choices])
+    await ctx.send(choices=[make_choice(c) for c in choices])
 
 class MtgMixin:
     async def send_image_with_retry(self, image_file: str, text: str = '') -> None:

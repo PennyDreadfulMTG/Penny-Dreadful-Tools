@@ -5,7 +5,7 @@ from magic import fetcher
 from shared import fetch_tools
 
 
-@commands.command(aliases=['rd'])
+@slash_command('random-deck')
 async def randomdeck(ctx: MtgContext) -> None:
     """A random deck from the current season."""
     blob = fetch_tools.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))

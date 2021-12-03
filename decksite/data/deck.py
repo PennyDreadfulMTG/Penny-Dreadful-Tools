@@ -192,8 +192,7 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
             season.season_id,
-            IFNULL(MAX(m.date), d.created_date) AS active_date,
-            q.changed_date AS magic_time
+            IFNULL(MAX(m.date), d.created_date) AS active_date
         FROM
             deck AS d
         LEFT JOIN

@@ -73,8 +73,8 @@ class Bot(Snake):
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:
         if event.message.channel is None:
-            print(event.message._channel_id)
-            breakpoint()
+            logging.warn(f'Got Message with no channel: {event.message}')
+
         await command.respond_to_card_names(event.message, self)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:

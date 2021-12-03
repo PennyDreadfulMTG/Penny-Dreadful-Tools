@@ -1,6 +1,3 @@
-from typing import Optional
-
-from dis_snek.models.application_commands import slash_command
 from dis_snek.models.command import message_command
 from dis_snek.annotations.argument_annotations import CMD_BODY
 

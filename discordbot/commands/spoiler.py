@@ -1,4 +1,4 @@
-from dis_snek.models.application_commands import slash_command, slash_option
+from dis_snek.models.application_commands import slash_command
 from dis_snek.models.file import File
 from discordbot import emoji
 from discordbot.command import MtgContext, slash_card_option

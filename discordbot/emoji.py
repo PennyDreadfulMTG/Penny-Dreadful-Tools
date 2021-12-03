@@ -4,12 +4,9 @@ from typing import Optional
 from dis_snek.client import Snake
 from dis_snek.models.discord_objects.emoji import Emoji
 
-
-
 from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
-
 
 def find_emoji(emoji: str, client: Snake) -> Optional[Emoji]:
     try:

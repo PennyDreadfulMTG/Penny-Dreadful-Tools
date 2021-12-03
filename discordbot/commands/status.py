@@ -1,5 +1,4 @@
 from dis_snek.models.application_commands import slash_command
-from dis_snek.models.enums import MessageFlags
 
 from discordbot.command import MtgContext
 from magic import fetcher

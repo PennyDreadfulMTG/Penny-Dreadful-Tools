@@ -56,7 +56,7 @@ def do_lint() -> None:
     print('>>>> Running flake8')
     pipenv = local['pipenv']
     try:
-        pipenv['run', 'flake8'] & FG  # noqa
+        pipenv['run', 'python', '-m', 'flake8'] & FG  # noqa
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 

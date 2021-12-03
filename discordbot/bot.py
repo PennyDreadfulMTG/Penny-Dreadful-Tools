@@ -12,7 +12,6 @@ from dis_snek.models.discord_objects.activity import ActivityType
 from dis_snek.models.discord_objects.channel import GuildText
 from dis_snek.models.discord_objects.embed import Embed
 from dis_snek.models.discord_objects.guild import Guild
-from dis_snek.models.discord_objects.message import Message
 from dis_snek.models.discord_objects.role import Role
 from dis_snek.models.discord_objects.user import Member, User
 from dis_snek.models.enums import Intents
@@ -73,6 +72,9 @@ class Bot(Snake):
 
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:
+        if event.message.channel is None:
+            print(event.message._channel_id)
+            breakpoint()
         await command.respond_to_card_names(event.message, self)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:

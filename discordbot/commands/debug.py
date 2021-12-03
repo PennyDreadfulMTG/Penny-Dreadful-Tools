@@ -99,7 +99,7 @@ class DebugScale(Scale):
         await ctx.send(embeds=[e])
 
     @debug_info.subcommand(
-        "cache", sub_cmd_description="Get information about the current cache state"
+        "cache", sub_cmd_description="Get information about the current cache state",
     )
     async def cache_info(self, ctx: InteractionContext) -> None:
         await ctx.defer()
@@ -156,7 +156,7 @@ class DebugScale(Scale):
         await ctx.send(embeds=[e])
 
     @message_command("exec")
-    @check(is_owner)
+    @check(is_owner())
     async def debug_exec(self, ctx: MessageContext) -> None:
         await ctx.channel.trigger_typing()
         body = ctx.message.content.removeprefix(
@@ -219,16 +219,16 @@ class DebugScale(Scale):
         raise
 
     @message_command('regrow')
-    @check(is_owner)
+    @check(is_owner())
     async def regrow(self, ctx: MessageContext, module: str) -> None:
         try:
-            self.bot.regrow_scale(f'discordbot.commands.{module}')
-            ctx.message
+            self.bot.regrow_scale(f'{__package__}.{module}')
+            await ctx.message.add_reaction('🔁')
         except ScaleLoadException as e:
             if 'Unable to shed scale: No scale exists with name' in str(e):
                 try:
-                    self.bot.grow_scale(f'discordbot.commands.{module}')
-
+                    self.bot.grow_scale(f'{__package__}.{module}')
+                    await ctx.message.add_reaction('▶')
                 except ScaleLoadException as c:
                     await ctx.send(c)
             else:
@@ -239,7 +239,6 @@ class DebugScale(Scale):
         if isinstance(error, CommandCheckFailure):
             return await ctx.send("You do not have permission to execute this command")
         raise
-
 
 def setup(bot: Snake) -> None:
     DebugScale(bot)

@@ -22,10 +22,10 @@ def format_deck(x: Dict) -> Dict:
     }
 
 @slash_command('dreadrise',
-        description='Dreadrise',
-        sub_cmd_name='search',
-        sub_cmd_description='Card Search using Dreadrise'
-    )
+               description='Dreadrise',
+               sub_cmd_name='search',
+               sub_cmd_description='Card Search using Dreadrise',
+               )
 @slash_option('query', 'search query', OptionTypes.STRING)
 async def drc(ctx: MtgContext, query: str) -> None:
     """Card search using Dreadrise."""

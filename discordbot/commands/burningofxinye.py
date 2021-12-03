@@ -1,6 +1,4 @@
 from discordbot.command import MtgContext
-from magic import fetcher, tournaments
-from shared import dtutil
 from dis_snek.models.command import message_command
 
 

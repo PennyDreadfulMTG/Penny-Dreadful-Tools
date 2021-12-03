@@ -1,6 +1,5 @@
 import glob
 import os
-from dis_snek.client import Snake
 from dis_snek.models.application_commands import slash_command
 
 

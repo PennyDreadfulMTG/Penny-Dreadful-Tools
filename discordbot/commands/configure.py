@@ -6,7 +6,7 @@ from dis_snek.models.application_commands import slash_command
 from dis_snek.errors import CommandException
 
 from discordbot.command import MtgContext
-from shared import configuration, settings
+from shared import settings
 
 
 class ConfigError(CommandException):

@@ -3,17 +3,16 @@ import datetime
 import logging
 import re
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
+from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 import attr
 
 from dis_snek.models.application_commands import OptionTypes, Permission, PermissionTypes, slash_option, slash_permission
-from dis_snek.models.context import AutocompleteContext, Context, InteractionContext, MessageContext
+from dis_snek.models.context import AutocompleteContext, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.user import Member
 from dis_snek.models.discord_objects.message import Message
 from dis_snek import Snake
 from dis_snek.models.enums import ChannelTypes
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, DMChannel, GuildText
-from dis_snek.mixins.send import SendMixin
+from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 from dis_snek.models.file import File
 from dis_snek.models.scale import Scale
 
@@ -151,7 +150,7 @@ async def post_cards(
         await post_nothing(channel, replying_to)
         return
 
-    with with_config_file(guild_id(channel)), with_config_file(channel.id):
+    with with_config_file(guild_id(channel)), with_config_file(channel.id if channel else None):
         legality_format = configuration.legality_format.value
     not_pd = configuration.get_list('not_pd')
     if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):  # This needs to be migrated
@@ -166,8 +165,8 @@ async def post_cards(
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
-        with channel.typing():
-            image_file = await image_fetcher.download_image_async(cards)
+        await channel.trigger_typing()
+        image_file = await image_fetcher.download_image_async(cards)
     if image_file is None:
         text += '\n\n'
         if len(cards) == 1:
@@ -272,6 +271,9 @@ def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
     }
 
 async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -> None:
+    if not card:
+        await ctx.send(choices=[])
+        return
     choices = []
     results = searcher().search(card)
     choices.extend(results.exact)

@@ -18,7 +18,7 @@ from dis_snek.models.file import File
 from dis_snek.models.scale import Scale
 
 from discordbot import emoji
-from discordbot.shared import guild_id
+from discordbot.shared import SendableContext, guild_id
 from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
@@ -282,14 +282,14 @@ async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -
     await ctx.send(choices=[make_choice(c) for c in choices])
 
 class MtgMixin:
-    async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
+    async def send_image_with_retry(self: SendableContext, image_file: str, text: str = '') -> None:
         message = await self.send(file=File(image_file), content=text)
         if message and message.attachments and message.attachments[0].size == 0:
             logging.warning('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
 
-    async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+    async def single_card_text(self: SendableContext, c: Card, f: Callable, show_legality: bool = True) -> None:
         if c is None:
             return
 
@@ -303,11 +303,11 @@ class MtgMixin:
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 
-    async def post_cards(self, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
+    async def post_cards(self: SendableContext, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
 
-    async def post_nothing(self) -> None:
+    async def post_nothing(self: SendableContext) -> None:
         await post_nothing(self.channel)
 
 

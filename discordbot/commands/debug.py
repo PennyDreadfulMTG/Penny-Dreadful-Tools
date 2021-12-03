@@ -213,7 +213,7 @@ class DebugScale(Scale):
                     await ctx.send("```py\n%s%s\n```" % (value, ret))
 
     @debug_exec.error
-    async def exec_error(self, error: Exception, ctx: Context):
+    async def exec_error(self, error: Exception, ctx: Context) -> None:
         if isinstance(error, CommandCheckFailure):
             return await ctx.send("You do not have permission to execute this command")
         raise
@@ -235,7 +235,7 @@ class DebugScale(Scale):
                 await ctx.send(e)
 
     @regrow.error
-    async def exec_error(self, error, ctx):
+    async def regrow_error(self, error: Exception, ctx: Context) -> None:
         if isinstance(error, CommandCheckFailure):
             return await ctx.send("You do not have permission to execute this command")
         raise

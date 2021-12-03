@@ -123,7 +123,7 @@ def decks_api() -> Response:
     Output:
         {
             'page': <int>,
-            'objects': [<deck>]
+            'objects': [<deck>],
             'total': <int>
         }
     """
@@ -137,6 +137,40 @@ def decks_api() -> Response:
     where = query.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
     total = deck.load_decks_count(where=where, season_id=season_id)
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    prepare_decks(ds)
+    r = {'page': page, 'total': total, 'objects': ds}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
+@APP.route('/api/scraper/')
+def deck_scraper_api() -> Response:
+    """
+    Grab a slice of finished sorted decks last updated after a certain point.
+    Input:
+        {
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'page': <int>,
+            'pageSize': <int>,
+            'lastTimestamp': <int>
+        }
+    Output:
+        {
+            'page': <int>,
+            'objects': [<deck>],
+            'total: <int>
+        }
+    """
+    order_by = 'GREATEST(cache.active_date, q.changed_date) DESC'
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    timestamp = int(request.args.get('lastTimestamp', 0))
+    start = page * page_size
+    limit = f'LIMIT {start}, {page_size}'
+    where = query.decks_where(request.args, False, None) + query.deck_scraper(timestamp)
+    total = deck.load_decks_count(where=where, season_id='all')
+    ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id='all')
     prepare_decks(ds)
     r = {'page': page, 'total': total, 'objects': ds}
     resp = return_json(r, camelize=True)

@@ -40,32 +40,39 @@ DECK_ENTRY = APP.api.model('DecklistEntry', {
     'name': fields.String(),
 })
 
-DECK = APP.api.model('Deck', {
-    'id': fields.Integer(readonly=True),
-    'name': fields.String(),
-    'created_date': fields.DateTime(),
-    'updated_date': fields.DateTime(),
-    'wins': fields.Integer(),
-    'losses': fields.Integer(),
-    'draws': fields.Integer(),
-    'finish': fields.Integer(),
-    'archetype_id': fields.Integer(),
-    'archetype_name': fields.String(),
-    'source_url': fields.String(),
-    'competition_id': fields.Integer(),
-    'competition_name': fields.String(),
-    'person': fields.String(),
-    'decklist_hash': fields.String(),
-    'retired': fields.Boolean(),
-    'colors': fields.List(fields.String()),
-    'omw': fields.Integer(),
-    'season_id': fields.Integer(),
-    'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
-    'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
-    'url': fields.String(),
-    'source_name': fields.String(),
-    'competition_type_name': fields.String(),
-})
+def get_deck_model(include_last_update: bool) -> Any:
+    temp = APP.api.model('Deck', {
+        'id': fields.Integer(readonly=True),
+        'name': fields.String(),
+        'created_date': fields.DateTime(),
+        'updated_date': fields.DateTime(),
+        'wins': fields.Integer(),
+        'losses': fields.Integer(),
+        'draws': fields.Integer(),
+        'finish': fields.Integer(),
+        'archetype_id': fields.Integer(),
+        'archetype_name': fields.String(),
+        'source_url': fields.String(),
+        'competition_id': fields.Integer(),
+        'competition_name': fields.String(),
+        'person': fields.String(),
+        'decklist_hash': fields.String(),
+        'retired': fields.Boolean(),
+        'colors': fields.List(fields.String()),
+        'omw': fields.String(),
+        'season_id': fields.Integer(),
+        'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
+        'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
+        'url': fields.String(),
+        'source_name': fields.String(),
+        'competition_type_name': fields.String(),
+    })
+    if include_last_update:
+        temp['last_archetype_change'] = fields.Integer()
+    return temp
+
+DECK = get_deck_model(False)
+DECK_WITH_ARCH_CHANGE = get_deck_model(True)
 
 COMPETITION = APP.api.model('Competition', {
     'id': fields.Integer(readonly=True),
@@ -81,6 +88,12 @@ COMPETITION = APP.api.model('Competition', {
     'type': fields.String(),
     'season_id': fields.Integer(),
     'decks': fields.List(fields.Nested(DECK)),
+})
+
+MULTIPLE_DECKS = APP.api.model('MultipleDecks', {
+    'objects': fields.List(fields.Nested(DECK_WITH_ARCH_CHANGE)),
+    'page': fields.Integer(),
+    'total': fields.Integer(),
 })
 
 RELEASE_DATE = APP.api.model('ReleaseDate', {
@@ -143,39 +156,40 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-@APP.route('/api/scraper/')
-def deck_scraper_api() -> Response:
-    """
-    Grab a slice of finished sorted decks last updated after a certain point.
-    Input:
-        {
-            'sortBy': <str>,
-            'sortOrder': <'ASC'|'DESC'>,
-            'page': <int>,
-            'pageSize': <int>,
-            'lastTimestamp': <int>
-        }
-    Output:
-        {
-            'page': <int>,
-            'objects': [<deck>],
-            'total: <int>
-        }
-    """
-    order_by = 'GREATEST(cache.active_date, q.changed_date) DESC'
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    timestamp = int(request.args.get('lastTimestamp', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
-    where = query.decks_where(request.args, False, None) + query.deck_scraper(timestamp)
-    total = deck.load_decks_count(where=where, season_id='all')
-    ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id='all')
-    prepare_decks(ds)
-    r = {'page': page, 'total': total, 'objects': ds}
-    resp = return_json(r, camelize=True)
-    resp.set_cookie('page_size', str(page_size))
-    return resp
+@APP.api.route('/scraper/')
+class Scraper(Resource):
+    @APP.api.marshal_with(MULTIPLE_DECKS)
+    def get(self) -> Dict[str, Any]:
+        """
+        Grab a slice of finished sorted decks last updated after a certain point.
+        Input:
+            {
+                'sortBy': <str>,
+                'sortOrder': <'ASC'|'DESC'>,
+                'page': <int>,
+                'pageSize': <int>,
+                'lastTimestamp': <int>,
+                'seasonId': <int|'all'>
+            }
+        Output:
+            {
+                'page': <int>,
+                'objects': [<deck>],
+                'total: <int>
+            }
+        """
+        season = seasons.season_id(str(request.args.get('seasonId')), None)
+        order_by = 'GREATEST(cache.active_date, q.changed_date) DESC'
+        page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+        page = int(request.args.get('page', 0))
+        timestamp = int(request.args.get('lastTimestamp', 0))
+        start = page * page_size
+        limit = f'LIMIT {start}, {page_size}'
+        where = query.decks_where(request.args, False, None) + query.deck_scraper(timestamp)
+        total = deck.load_decks_count(where=where, season_id=season)
+        ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season)
+        prepare_decks(ds)
+        return {'page': page, 'total': total, 'objects': ds}
 
 @APP.route('/api/cards2/')
 def cards2_api() -> Response:

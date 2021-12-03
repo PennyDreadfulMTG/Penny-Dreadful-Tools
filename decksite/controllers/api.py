@@ -23,7 +23,7 @@ from magic import oracle, rotation, seasons, tournaments
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import DoesNotExistException, TooManyItemsException
+from shared.pd_exception import DoesNotExistException, TooManyItemsException, InvalidArgumentException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
@@ -157,8 +157,8 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-@APP.api.route('/scraper/')
-class Scraper(Resource):
+@APP.api.route('/updated/')
+class UpdatedDecks(Resource):
     @APP.api.marshal_with(MULTIPLE_DECKS)
     def get(self) -> Dict[str, Any]:
         """
@@ -169,7 +169,7 @@ class Scraper(Resource):
                 'sortOrder': <'ASC'|'DESC'>,
                 'page': <int>,
                 'pageSize': <int>,
-                'lastTimestamp': <int>,
+                'since': <int>,
                 'seasonId': <int|'all'>
             }
         Output:
@@ -180,15 +180,16 @@ class Scraper(Resource):
             }
         """
         season = seasons.season_id(str(request.args.get('seasonId')), None)
-        order_by = 'GREATEST(cache.active_date, q.changed_date) DESC'
         page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
         page = int(request.args.get('page', 0))
-        timestamp = int(request.args.get('lastTimestamp', 0))
+        timestamp = int(request.args.get('since', 0))
+        if timestamp < 1e9:
+            raise InvalidArgumentException('Invalid timestamp!')
         start = page * page_size
         limit = f'LIMIT {start}, {page_size}'
-        where = query.decks_where(request.args, False, None) + query.deck_scraper(timestamp)
-        total = deck.load_decks_count(where=where, season_id=season)
-        ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season)
+        where = '(' + query.decks_where(request.args, False, None) + ') AND ' + query.decks_updated_since(timestamp)
+        total = deck.load_decks_count(where=where, season_id=season, distinct=True)
+        ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
         prepare_decks(ds)
         return {'page': page, 'total': total, 'objects': ds}
 

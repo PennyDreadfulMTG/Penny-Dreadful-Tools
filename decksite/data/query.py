@@ -238,5 +238,5 @@ def card_search_where(q: str) -> str:
 def tournament_only_clause() -> str:
     return "ct.name = 'Gatherling'"
 
-def deck_scraper(ts: int) -> str:
-    return f') AND d.finish AND (q.changed_date > {ts} OR d.updated_date > {ts}'
+def decks_updated_since(ts: int) -> str:
+    return f'(q.changed_date > {ts} OR d.updated_date > {ts})'

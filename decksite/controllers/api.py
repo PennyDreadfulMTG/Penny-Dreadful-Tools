@@ -71,6 +71,7 @@ def get_deck_model(include_last_update: bool) -> Any:
         temp['last_archetype_change'] = fields.Integer()
     return temp
 
+
 DECK = get_deck_model(False)
 DECK_WITH_ARCH_CHANGE = get_deck_model(True)
 

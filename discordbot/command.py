@@ -4,15 +4,16 @@ import logging
 import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
-import attr
 
-from dis_snek.models.application_commands import OptionTypes, Permission, PermissionTypes, slash_option, slash_permission
-from dis_snek.models.context import AutocompleteContext, InteractionContext, MessageContext
-from dis_snek.models.discord_objects.user import Member
-from dis_snek.models.discord_objects.message import Message
+import attr
 from dis_snek import Snake
-from dis_snek.models.enums import ChannelTypes
+from dis_snek.models.application_commands import (OptionTypes, Permission, PermissionTypes,
+                                                  slash_option, slash_permission)
+from dis_snek.models.context import AutocompleteContext, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
+from dis_snek.models.discord_objects.message import Message
+from dis_snek.models.discord_objects.user import Member
+from dis_snek.models.enums import ChannelTypes
 from dis_snek.models.file import File
 from dis_snek.models.scale import Scale
 

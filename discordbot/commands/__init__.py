@@ -6,10 +6,10 @@ from os import path
 from typing import Optional
 
 from dis_snek import Snake
-from dis_snek.models.context import Context
-from dis_snek.models.scale import Scale
 from dis_snek.models.application_commands import InteractionCommand
 from dis_snek.models.command import MessageCommand
+from dis_snek.models.context import Context
+from dis_snek.models.scale import Scale
 
 from discordbot import command
 from magic.models import Card

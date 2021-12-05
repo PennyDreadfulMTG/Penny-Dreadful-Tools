@@ -1,13 +1,12 @@
 from dis_snek.client import Snake
-
 from dis_snek.models.application_commands import slash_command
-from discordbot import command
+from dis_snek.models.scale import Scale
 
+from discordbot import command
 from discordbot.command import MtgContext, slash_card_option
 from magic import oracle
 from magic.models import Card
 
-from dis_snek.models.scale import Scale
 
 class Flavour(Scale):
     @slash_command('flavor')

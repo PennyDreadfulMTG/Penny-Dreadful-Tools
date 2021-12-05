@@ -1,7 +1,6 @@
 import os
 import pathlib
 
-
 from dis_snek.models.application_commands import slash_command
 from dis_snek.models.command import message_command
 from dis_snek.models.file import File

@@ -7,6 +7,7 @@ from dis_snek.models.scale import Scale
 from discordbot.command import MtgContext
 from shared import repo
 
+
 class Bug(Scale):
     @slash_command('bug')
     @slash_option('title', 'One sentence description of the issue', OptionTypes.STRING)

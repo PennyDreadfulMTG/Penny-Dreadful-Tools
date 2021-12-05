@@ -2,10 +2,10 @@ import subprocess
 from distutils.dist import Distribution  # pylint: disable=no-name-in-module,import-error
 from typing import Any, Dict, Generator, List
 
-import pystache
 from babel.messages import frontend
 from poeditor.client import POEditorAPI
 
+import pystache
 from shared import configuration
 from shared_web import template
 

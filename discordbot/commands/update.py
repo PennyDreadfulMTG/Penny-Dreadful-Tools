@@ -1,9 +1,11 @@
+from dis_snek import Snake
+from dis_snek.models import Scale, check, message_command, slash_command
+from dis_snek.models.checks import is_owner
+
 from discordbot.command import MtgContext, slash_permission_pd_mods
 from magic import multiverse, oracle, whoosh_write
 from shared import configuration
-from dis_snek import Snake
-from dis_snek.models import message_command, check, slash_command, Scale
-from dis_snek.models.checks import is_owner
+
 
 class Update(Scale):
     @slash_command('update', default_permission=False)

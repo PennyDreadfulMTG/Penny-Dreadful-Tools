@@ -2,12 +2,13 @@ import math
 from typing import List, Optional, Tuple
 
 from dis_snek import Snake
+from dis_snek.models.application_commands import slash_command, slash_option
 from dis_snek.models.command import message_command
+from dis_snek.models.scale import Scale
 
 from discordbot.command import MtgInteractionContext
 from magic import tournaments
-from dis_snek.models.scale import Scale
-from dis_snek.models.application_commands import slash_command, slash_option
+
 
 class Swiss(Scale):
     def __init__(self, bot: Snake) -> None:

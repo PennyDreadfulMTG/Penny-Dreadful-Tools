@@ -9,20 +9,12 @@ import textwrap
 import traceback
 from collections import Counter
 from contextlib import redirect_stdout
-from dis_snek.client import Snake
 
-from dis_snek.const import __version__, __py_version__
+from dis_snek.client import Snake
+from dis_snek.const import __py_version__, __version__
 from dis_snek.errors import CommandCheckFailure, ScaleLoadException
-from dis_snek.models import (
-    slash_command,
-    InteractionContext,
-    Embed,
-    message_command,
-    MessageContext,
-    check,
-    MaterialColors,
-    Timestamp,
-)
+from dis_snek.models import (Embed, InteractionContext, MaterialColors, MessageContext, Timestamp,
+                             check, message_command, slash_command)
 from dis_snek.models.checks import is_owner
 from dis_snek.models.context import Context
 from dis_snek.models.enums import Intents

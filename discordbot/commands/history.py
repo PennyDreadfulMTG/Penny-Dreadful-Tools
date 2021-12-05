@@ -3,12 +3,13 @@ from typing import Dict
 from dis_snek import Snake
 from dis_snek.models.application_commands import slash_command
 from dis_snek.models.scale import Scale
-from discordbot import command
 
+from discordbot import command
 from discordbot.command import MtgContext
 from magic import fetcher, seasons
 from magic.models import Card
 from shared import fetch_tools
+
 
 class History(Scale):
     @slash_command('history')

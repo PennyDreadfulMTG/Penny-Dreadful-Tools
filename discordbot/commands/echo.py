@@ -1,8 +1,9 @@
+from dis_snek.annotations.argument_annotations import CMD_BODY
 from dis_snek.models.command import message_command
 
 from discordbot import emoji
 from discordbot.command import MtgContext
-from dis_snek.annotations.argument_annotations import CMD_BODY
+
 
 @message_command('echo')
 async def echo(ctx: MtgContext, *, args: CMD_BODY) -> None:

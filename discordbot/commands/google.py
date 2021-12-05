@@ -1,11 +1,9 @@
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.enums import MessageFlags
-
-from discordbot.command import MtgContext
-
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from discordbot.command import MtgContext
 from shared import configuration
 
 

@@ -1,18 +1,17 @@
 import textwrap
 from typing import Dict, Optional, Tuple
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 
 import inflect
-from dis_snek.models.scale import Scale
 from dis_snek.client import Snake
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.command import message_command
+from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
+from dis_snek.models.scale import Scale
 
 from discordbot import command
 from discordbot.command import MtgContext
 from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
-
 
 num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
 explanations: Dict[str, Tuple[str, Dict[str, str]]] = {

@@ -8,6 +8,7 @@ from dis_snek.models.scale import Scale
 from discordbot.command import MtgContext
 from magic import fetcher
 
+
 class Whois(Scale):
     @message_command('whois')
     async def whois(self, ctx: MtgContext, args: str) -> None:

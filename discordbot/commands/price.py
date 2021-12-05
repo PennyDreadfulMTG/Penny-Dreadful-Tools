@@ -6,6 +6,7 @@ from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic import card_price
 from magic.models import Card
 
+
 class Price(Scale):
     @slash_command('price')
     @slash_card_option()

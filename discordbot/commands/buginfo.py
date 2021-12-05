@@ -1,12 +1,11 @@
 from dis_snek.client import Snake
 from dis_snek.models.application_commands import slash_command
-from discordbot import command
-from shared import fetch_tools
+from dis_snek.models.scale import Scale
 
+from discordbot import command
 from discordbot.command import MtgContext
 from magic.models import Card
-
-from dis_snek.models.scale import Scale
+from shared import fetch_tools
 
 
 class BugInfo(Scale):

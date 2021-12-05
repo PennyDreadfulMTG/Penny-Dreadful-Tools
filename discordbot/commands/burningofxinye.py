@@ -1,5 +1,6 @@
-from discordbot.command import MtgContext
 from dis_snek.models.command import message_command
+
+from discordbot.command import MtgContext
 
 
 @message_command()

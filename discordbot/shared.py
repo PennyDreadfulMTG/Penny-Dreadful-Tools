@@ -1,16 +1,17 @@
-from typing import Any, List, Optional, Protocol, Union
 from io import IOBase
 from pathlib import Path
-from dis_snek.models.enums import MessageFlags
+from typing import Any, List, Optional, Protocol, Union
 
 from dis_snek import Snake
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, GuildText
 from dis_snek.models import File
+from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, GuildText
 from dis_snek.models.discord_objects.components import BaseComponent
 from dis_snek.models.discord_objects.embed import Embed
 from dis_snek.models.discord_objects.message import AllowedMentions, Message, MessageReference
 from dis_snek.models.discord_objects.sticker import Sticker
+from dis_snek.models.enums import MessageFlags
 from dis_snek.models.snowflake import Snowflake_Type
+
 
 def guild_id(channel: TYPE_MESSAGEABLE_CHANNEL) -> Optional[int]:
     if isinstance(channel, GuildText):

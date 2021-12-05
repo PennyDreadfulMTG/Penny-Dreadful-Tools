@@ -1,8 +1,8 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Tuple, cast
-from dis_snek.models.context import Context
 
 import pytest
+from dis_snek.models.context import Context
 
 from discordbot.bot import Bot
 from discordbot.command import MtgContext

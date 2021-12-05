@@ -125,9 +125,9 @@ class DebugScale(Scale):
 
         cmds = 0
         for v in self.bot.interactions.values():
-            for cmd in v.values():
-                # if cmd.subcommands:
-                #     cmds += len(cmd.subcommands)
+            for _cmd in v.values():
+                # if _cmd.subcommands:
+                #     cmds += len(_cmd.subcommands)
                 #     continue
                 cmds += 1
 
@@ -140,8 +140,8 @@ class DebugScale(Scale):
                 len(
                     Counter(
                         scope for scope in self.bot._interaction_scopes.values()
-                    ).keys()
-                )
+                    ).keys(),
+                ),
             ),
         )
 
@@ -152,7 +152,7 @@ class DebugScale(Scale):
     async def debug_exec(self, ctx: MessageContext) -> None:
         await ctx.channel.trigger_typing()
         body = ctx.message.content.removeprefix(
-            f"{await self.bot.get_prefix(ctx.message)}{ctx.invoked_name} "
+            f"{await self.bot.get_prefix(ctx.message)}{ctx.invoked_name} ",
         )
         env = {
             "bot": self.bot,
@@ -183,25 +183,25 @@ class DebugScale(Scale):
         except Exception:
             value = stdout.getvalue()
             return await ctx.send(
-                "```py\n{}{}\n```".format(value, traceback.format_exc())
+                "```py\n{}{}\n```".format(value, traceback.format_exc()),
             )
         else:
             value = stdout.getvalue()
             try:
                 await ctx.message.add_reaction("\u2705")
-            except:
+            except Exception:
                 pass
 
             if ret is None:
                 if value:
                     try:
                         await ctx.message.reply("```py\n%s\n```" % value)
-                    except:
+                    except Exception:
                         await ctx.send("```py\n%s\n```" % value)
             else:
                 try:
                     await ctx.message.reply("```py\n%s%s\n```" % (value, ret))
-                except:
+                except Exception:
                     await ctx.send("```py\n%s%s\n```" % (value, ret))
 
     @debug_exec.error

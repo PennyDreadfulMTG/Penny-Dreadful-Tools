@@ -3,9 +3,9 @@ from typing import Any, Dict, List, Optional, Tuple, cast
 
 import pytest
 from dis_snek.models.context import Context
+from dis_snek import Snake
 
 from discordbot.bot import Bot
-from discordbot.command import MtgContext
 from discordbot.commands import CardConverter
 from magic.models import Card
 from shared.container import Container
@@ -17,11 +17,11 @@ def discordbot() -> Bot:
     return bot
 
 class ContextForTests(Context):
-    def __init__(self, **attrs: Any) -> None:  # pylint: disable=super-init-not-called
-        self.sent = False
-        self.sent_args = False
-        self.sent_file = False
-        self.content: Optional[str] = None
+    sent = False
+    sent_args = False
+    sent_file = False
+    content: Optional[str] = None
+    bot: Snake = None
 
     async def send(self, content: Optional[str], *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
         self.sent = True
@@ -29,20 +29,6 @@ class ContextForTests(Context):
         self.sent_file = 'file' in kwargs.keys()
         self.content = content
 
-    def typing(self) -> 'ContextForTests':
-        return self
-
-    def __enter__(self) -> None:
-        pass
-
-    async def __aenter__(self) -> 'ContextForTests':
-        return self
-
-    def __exit__(self, exc_type, exc, tb):  # type: ignore
-        pass
-
-    async def __aexit__(self, exc_type, exc, tb) -> None:  # type: ignore
-        pass
 
 async def card(param: str) -> Card:
     ctx = ContextForTests()
@@ -52,26 +38,26 @@ async def card(param: str) -> Card:
 def get_params() -> List[Tuple]:
     async def params() -> List[Tuple]:
         return [
-            ('art', {'c': await card('Island')}, None),
+            ('art', {'card': 'Island'}, None),
             ('barbs', {}, None),
             ('echo', {'args': 'test string!'}, None),
             ('explain', {'thing': None}, None),
             ('explain', {'thing': 'bugs'}, None),
-            ('flavor', {'c': await card('Falling Star')}, 'No flavor text available'),  # No flavor
-            ('flavor', {'c': await card('Dwarven Pony')}, 'likes to eat meat'),  # Meaty flavor
-            ('flavor', {'c': await card('Gruesome Menagerie|grn')}, 'Variety is also the spice of death.'),  # Spicy flavor
-            ('flavor', {'c': await card('capital offense|UST')}, 'part basket case, all lowercase.'),  # Capital flavor
-            ('flavor', {'c': await card('Reliquary Tower|plg20')}, 'Archmage Vintra'),  # Long set code
-            ('history', {'c': await card('Necropotence')}, None),
-            ('legal', {'c': await card('Island')}, None),
-            ('legal', {'c': await card('Black Lotus')}, None),
-            ('oracle', {'c': await card('Dark Ritual')}, None),
+            ('flavor', {'card': 'Falling Star'}, 'No flavor text available'),  # No flavor
+            ('flavor', {'card': 'Dwarven Pony'}, 'likes to eat meat'),  # Meaty flavor
+            ('flavor', {'card': 'Gruesome Menagerie|grn'}, 'Variety is also the spice of death.'),  # Spicy flavor
+            ('flavor', {'card': 'capital offense|UST'}, 'part basket case, all lowercase.'),  # Capital flavor
+            ('flavor', {'card': 'Reliquary Tower|plg20'}, 'Archmage Vintra'),  # Long set code
+            ('history', {'card': 'Necropotence'}, None),
+            ('legal', {'card': 'Island'}, None),
+            ('legal', {'card': 'Black Lotus'}, None),
+            ('oracle', {'card': 'Dark Ritual'}, None),
             pytest.param('p1p1', {}, None, marks=pytest.mark.functional),
             ('patreon', {}, None),
-            ('price', {'c': await card('Gleemox')}, None),
+            ('price', {'card': 'Gleemox'}, None),
             ('rotation', {}, None),
             pytest.param('rhinos', {}, None, marks=pytest.mark.functional),
-            ('rulings', {'c': await card('Worldknit')}, None),
+            ('rulings', {'card': 'Worldknit'}, None),
             ('search', {'args': 'f:pd'}, None),
             ('status', {}, None),
             ('time', {'args': 'AEST'}, None),
@@ -88,13 +74,19 @@ def get_params() -> List[Tuple]:
 @pytest.mark.functional
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
-async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name
-    command = discordbot.all_commands[cmd]
+async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name
+    command = None
+    for cmds in discordbot.interactions.values():
+        if cmd in cmds:
+            command = cmds[cmd]
+            break
+    else:
+        command = discordbot.commands[cmd]
+
     ctx = ContextForTests()
     ctx.bot = discordbot
     ctx.message = Container()
     ctx.message.channel = Container({'id': '1'})
-    ctx.message.channel.typing = ctx.typing
     ctx.message.channel.send = ctx.send
     ctx.author = Container()
     ctx.author.mention = '<@111111111111>'

@@ -7,6 +7,7 @@ from typing import List, Optional
 from shared import fetch_tools
 
 from .data import game, match, tournament
+from . import APP
 
 REGEX_GAME_HEADER = r'== Game \d \((?P<id>\d+)\) =='
 REGEX_SWITCHEROO = r'!! Warning, unexpected game 3 !!'
@@ -33,7 +34,7 @@ def import_from_pdbot(match_id: int) -> None:
 def import_log(lines: List[str], match_id: int) -> match.Match:
     """Processes a log"""
     lines = [line.strip('\r\n') for line in lines]
-    print('importing {0}'.format(match_id))
+    APP.logger.info('importing {0}'.format(match_id))
     local = import_header(lines, match_id)
     if local.has_unexpected_third_game is None:
         local.has_unexpected_third_game = False
@@ -59,12 +60,12 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
             game_lines.append(line)
         elif gm:
             tname = gm.group(1)
-            print('Gatherling Event: {0}'.format(tname))
+            APP.logger.info('Gatherling Event: {0}'.format(tname))
             process_tourney_info(local, tname=tname)
             game_lines.append(line)
         elif gr:
             roundnum = gr.group(1)
-            print('Gatherling Round: {0}'.format(roundnum))
+            APP.logger.info('Gatherling Round: {0}'.format(roundnum))
             process_tourney_info(local, roundnum=roundnum)
             game_lines.append(line)
         else:

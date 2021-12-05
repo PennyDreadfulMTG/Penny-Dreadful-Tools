@@ -1,4 +1,3 @@
-import ast
 import inspect
 import json
 import os
@@ -216,23 +215,18 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
 
-
-# pylint: disable=unused-argument, function-redefined
 @overload
 def write(key: str, value: str) -> str:
     pass
 
-# pylint: disable=unused-argument, function-redefined
 @overload
 def write(key: str, value: int) -> int:
     pass
 
-# pylint: disable=unused-argument, function-redefined
 @overload
 def write(key: str, value: float) -> float:
     pass
 
-# pylint: disable=unused-argument, function-redefined
 @overload
 def write(key: str, value: Set[str]) -> Set[str]:
     pass

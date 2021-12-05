@@ -1,19 +1,20 @@
-from discord import File
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
+from dis_snek.models.file import File
 
 from discordbot import emoji
-from discordbot.command import MtgContext
+from discordbot.command import MtgContext, slash_card_option
 from magic import oracle
 from shared import configuration, fetch_tools
 
 
-@commands.command(aliases=['sp', 'spoil'])
-async def spoiler(ctx: MtgContext, *, args: str) -> None:
+@slash_command('spoiler')
+@slash_card_option()
+async def spoiler(ctx: MtgContext, card: str) -> None:
     """Request a card from an upcoming set."""
-    if len(args) == 0:
+    if not card:
         await ctx.send('{author}: Please specify a card name.'.format(author=ctx.author.mention))
         return
-    sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
+    sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=card))
     if sfcard['object'] == 'error':
         await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))
         return

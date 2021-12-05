@@ -1,9 +1,5 @@
 #!/bin/bash
-if [ -d "~/.pyenv/bin" ]
-then
-echo 'Using pyenv'
-export PATH=~/.pyenv/shims:~/.pyenv/bin:"$PATH"
-fi
+export PIPENV_VENV_IN_PROJECT="enabled"
 APP="$@"
 if [ $# -lt "1" ]
 then
@@ -12,5 +8,5 @@ fi
 echo $APP
 cd $(dirname $0)
 git pull
-python3 build.py
-python3 run.py $APP
+pipenv sync
+pipenv run $APP

@@ -5,14 +5,20 @@ import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
-from discord import ChannelType, Client, DMChannel, File, GroupChannel, TextChannel
-from discord.abc import Messageable
-from discord.ext import commands
-from discord.member import Member
-from discord.message import Message
+import attr
+from dis_snek import Snake
+from dis_snek.models.application_commands import (OptionTypes, Permission, PermissionTypes,
+                                                  slash_option, slash_permission)
+from dis_snek.models.context import AutocompleteContext, InteractionContext, MessageContext
+from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
+from dis_snek.models.discord_objects.message import Message
+from dis_snek.models.discord_objects.user import Member
+from dis_snek.models.enums import ChannelTypes
+from dis_snek.models.file import File
+from dis_snek.models.scale import Scale
 
 from discordbot import emoji
-from discordbot.shared import guild_id
+from discordbot.shared import SendableContext, guild_id
 from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
@@ -32,11 +38,11 @@ HELP_GROUPS: Set[str] = set()
 def searcher() -> WhooshSearcher:
     return WhooshSearcher()
 
-async def respond_to_card_names(message: Message, client: Client) -> None:
+async def respond_to_card_names(message: Message, client: Snake) -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
     if 'gatherer.wizards.com' in message.content.lower():
         return
-    compat = message.channel.type == ChannelType.text and client.get_user(268547439714238465) in message.channel.members
+    compat = False and message.channel.type == ChannelTypes.GUILD_TEXT and await client.get_user(268547439714238465) in message.channel.members  # see #7074
     queries = parse_queries(message.content, compat)
     if len(queries) > 0:
         await message.channel.trigger_typing()
@@ -109,7 +115,7 @@ async def disambiguation_reactions(message: Message, cards: List[str]) -> None:
     for i in range(1, len(cards) + 1):
         await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
-async def single_card_or_send_error(channel: TextChannel, args: str, author: Member, command: str) -> Optional[Card]:
+async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, command: str) -> Optional[Card]:
     if not args:
         await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         return None
@@ -124,7 +130,7 @@ async def single_card_or_send_error(channel: TextChannel, args: str, author: Mem
     return None
 
 # pylint: disable=too-many-arguments
-async def single_card_text(client: Client, channel: TextChannel, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
+async def single_card_text(client: Snake, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
         name = c.name
@@ -135,9 +141,9 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
 
 
 async def post_cards(
-        client: Client,
+        client: Snake,
         cards: List[Card],
-        channel: Messageable,
+        channel: TYPE_MESSAGEABLE_CHANNEL,
         replying_to: Optional[Member] = None,
         additional_text: str = '',
 ) -> None:
@@ -145,7 +151,7 @@ async def post_cards(
         await post_nothing(channel, replying_to)
         return
 
-    with with_config_file(guild_id(channel)), with_config_file(channel.id):
+    with with_config_file(guild_id(channel)), with_config_file(channel.id if channel else None):
         legality_format = configuration.legality_format.value
     not_pd = configuration.get_list('not_pd')
     if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):  # This needs to be migrated
@@ -160,8 +166,8 @@ async def post_cards(
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
-        with channel.typing():
-            image_file = await image_fetcher.download_image_async(cards)
+        await channel.trigger_typing()
+        image_file = await image_fetcher.download_image_async(cards)
     if image_file is None:
         text += '\n\n'
         if len(cards) == 1:
@@ -174,7 +180,7 @@ async def post_cards(
     else:
         await send_image_with_retry(channel, image_file, text)
 
-async def post_nothing(channel: Messageable, replying_to: Optional[Member] = None) -> None:
+async def post_nothing(channel: TYPE_MESSAGEABLE_CHANNEL, replying_to: Optional[Member] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
@@ -183,18 +189,18 @@ async def post_nothing(channel: Messageable, replying_to: Optional[Member] = Non
     await message.add_reaction('❎')
 
 
-async def send(channel: Messageable, content: str, file: Optional[File] = None) -> Message:
+async def send(channel: TYPE_MESSAGEABLE_CHANNEL, content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
-async def send_image_with_retry(channel: Messageable, image_file: str, text: str = '') -> None:
+async def send_image_with_retry(channel: TYPE_MESSAGEABLE_CHANNEL, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         logging.warning('Message size is zero so resending')
         await message.delete()
         await send(channel, file=File(image_file), content=text)
 
-def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
+def single_card_text_internal(client: Snake, requested_card: Card, legality_format: str) -> str:
     mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
     mana = mana.replace('|', ' // ')
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
@@ -237,15 +243,56 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
 
-class MtgContext(commands.Context):
-    async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
+def slash_card_option(param: str = 'card') -> Callable:
+    """Predefined Slash command argument `card`"""
+
+    def wrapper(func: Callable) -> Callable:
+        return slash_option(
+            name=param,
+            description='Name of a Card',
+            required=True,
+            opt_type=OptionTypes.STRING,
+            autocomplete=False,
+        )(func)
+
+    return wrapper
+
+def slash_permission_pd_mods() -> Callable:
+    """Restrict this command to Mods in the PD server"""
+
+    def wrapper(func: Callable) -> Callable:
+        return slash_permission(Permission(id=226785937970036748, guild_id=207281932214599682, type=PermissionTypes.ROLE))(func)
+
+    return wrapper
+
+def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
+    return {
+        'name': name or value,
+        'value': value,
+    }
+
+async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -> None:
+    if not card:
+        await ctx.send(choices=[])
+        return
+    choices = []
+    results = searcher().search(card)
+    choices.extend(results.exact)
+    choices.extend(results.prefix_whole_word)
+    choices.extend(results.other_prefixed)
+    choices.extend(results.fuzzy)
+
+    await ctx.send(choices=[make_choice(c) for c in choices])
+
+class MtgMixin:
+    async def send_image_with_retry(self: SendableContext, image_file: str, text: str = '') -> None:
         message = await self.send(file=File(image_file), content=text)
         if message and message.attachments and message.attachments[0].size == 0:
             logging.warning('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
 
-    async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+    async def single_card_text(self: SendableContext, c: Card, f: Callable, show_legality: bool = True) -> None:
         if c is None:
             return
 
@@ -259,9 +306,26 @@ class MtgContext(commands.Context):
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 
-    async def post_cards(self, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
+    async def post_cards(self: SendableContext, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
 
-    async def post_nothing(self) -> None:
+    async def post_nothing(self: SendableContext) -> None:
         await post_nothing(self.channel)
+
+
+# Some hackery here.  The classes below don't actually exist.  They just appear to do so for type-checking.
+# In reality, we're adding the above mixin as a parent to the appropriate classes
+InteractionContext.__bases__ += (MtgMixin,)
+MessageContext.__bases__ += (MtgMixin,)
+
+@attr.define
+class MtgInteractionContext(InteractionContext, MtgMixin):
+    pass
+
+@attr.define
+class MtgMessageContext(MessageContext, MtgMixin):
+    pass
+
+
+MtgContext = Union[MtgMessageContext, MtgInteractionContext]

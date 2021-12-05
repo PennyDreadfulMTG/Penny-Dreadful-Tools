@@ -1,14 +1,13 @@
 import glob
 import os
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext
 from shared import configuration
 
 
-@commands.is_owner()
-@commands.command()
+@slash_command('clearimagecache')
 async def clearimagecache(ctx: MtgContext) -> None:
     """Deletes all the cached images.  Use sparingly"""
     image_dir = configuration.get('image_dir')

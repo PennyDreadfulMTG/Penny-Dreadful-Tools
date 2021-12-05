@@ -1,14 +1,17 @@
 import re
 from typing import Optional
 
-from discord import Client, Emoji
+from dis_snek.client import Snake
+from dis_snek.models.discord_objects.emoji import Emoji
 
 from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
 
-def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:
+def find_emoji(emoji: str, client: Snake) -> Optional[Emoji]:
+    if not client.guilds:
+        return None
     try:
         for guild in client.guilds:
             emojis = guild.emojis
@@ -19,7 +22,7 @@ def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:
     except AttributeError:
         return None
 
-def replace_emoji(text: str, client: Client) -> str:
+def replace_emoji(text: str, client: Snake) -> str:
     if text is None:
         return ''
     output = text

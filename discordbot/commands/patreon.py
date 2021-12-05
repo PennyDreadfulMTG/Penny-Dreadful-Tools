@@ -1,9 +1,9 @@
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext
 
 
-@commands.command()
+@slash_command('patreon')
 async def patreon(ctx: MtgContext) -> None:
     """Link to the PD Patreon."""
     await ctx.send('<https://www.patreon.com/silasary/>')

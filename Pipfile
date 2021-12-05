@@ -4,7 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [scripts]
+discordbot = "python run.py discordbot"
+
 lint = "python dev.py lint"
+test = "python dev.py test"
 
 [dev-packages]
 flake8 = "==4.0.1"
@@ -31,7 +34,7 @@ types-toml = "*"
 types-typed-ast = "*"
 
 [packages]
-aiohttp = "==3.6.3"
+aiohttp = "==3.7.4"
 anytree = "==2.8.0"
 astroid = "==2.9.0"
 attrs = "==21.2.0"
@@ -40,7 +43,6 @@ better-profanity = "==0.7.0"
 cachelib = "==0.4.1"
 click = "==8.0.3"
 coverage = "==6.2"
-"discord.py" = {extras = ["voice"], version = "==1.5.1"}
 feedparser = "==6.0.8"
 flask-restx = "==0.5.1"
 ftfy = "==6.0.3"
@@ -88,11 +90,12 @@ SQLAlchemy-Utils = "==0.37.9"
 Werkzeug = "==2.0.2"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
-jishaku = "==2.3.2"
 pydantic = "*"
-discord-py-slash-command = "3.0.1"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
+tomli = "*"
+dis-snek = {editable = false, git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
+orjson = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"

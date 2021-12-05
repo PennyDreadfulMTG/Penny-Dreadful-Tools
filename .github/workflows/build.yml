@@ -8,11 +8,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.1
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
+    - uses: PennyDreadfulMTG/setup-linters@main
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel
@@ -25,11 +26,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.1
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
+    - uses: PennyDreadfulMTG/setup-linters@main
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel pydantic
@@ -47,10 +49,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.1
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
     - uses: getong/mariadb-action@v1.1
       with:
@@ -59,10 +61,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync --dev; fi
+    - uses: PennyDreadfulMTG/setup-linters@main
     - name: Run pytest
       run: |
         pipenv run pytest
         pipenv run python dev.py upload-coverage
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v2
+      if: always() # always run even if the previous step fails
+      with:
+        report_paths: '**/TestResults.xml'
+        check_name: 'Pytest Results'
 
   jslint:
     name: jslint
@@ -70,10 +79,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2.3.1
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: 'pipenv'
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.5.0

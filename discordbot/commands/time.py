@@ -1,7 +1,8 @@
 import logging
 import re
+from dis_snek.annotations.argument_annotations import CMD_BODY
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext
 from discordbot.shared import guild_id
@@ -11,8 +12,8 @@ from shared.pd_exception import NotConfiguredException, TooFewItemsException
 from shared.settings import with_config_file
 
 
-@commands.command(aliases=['t'])
-async def time(ctx: MtgContext, *, args: str) -> None:
+@slash_command('time')
+async def time(ctx: MtgContext, args: CMD_BODY) -> None:
     """Current time in location."""
     if len(args) == 0:
         await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))

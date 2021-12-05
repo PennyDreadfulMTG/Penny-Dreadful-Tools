@@ -10,6 +10,8 @@ from shared import redis_wrapper as redis
 
 
 def find_emoji(emoji: str, client: Snake) -> Optional[Emoji]:
+    if not client.guilds:
+        return None
     try:
         for guild in client.guilds:
             emojis = guild.emojis

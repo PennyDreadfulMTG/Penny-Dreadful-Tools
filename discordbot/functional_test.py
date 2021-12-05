@@ -79,7 +79,7 @@ def get_params() -> List[Tuple]:
 @pytest.mark.functional
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
-async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name
+async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:
     command = find_command(discordbot, cmd)
 
     ctx = ContextForTests()

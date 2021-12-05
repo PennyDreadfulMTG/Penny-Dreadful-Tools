@@ -75,7 +75,7 @@ async def decks(ctx: MtgContext, query: str) -> None:
         card=output['data'][0]['main_cards'][0].replace(' ', '%20')))
     for x in arr:
         embed.add_field(name=x['name'], value=x['value'], inline=False)
-    await ctx.send(embed=embed)
+    await ctx.send(embeds=[embed])
 
 @drc.subcommand('matchups')
 async def matchups(ctx: MtgContext, args: CMD_BODY) -> None:

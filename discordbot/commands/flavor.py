@@ -11,7 +11,7 @@ from magic.models import Card
 class Flavour(Scale):
     @slash_command('flavor')
     @slash_card_option()
-    async def flavor(ctx: MtgContext, card: Card) -> None:
+    async def flavor(self, ctx: MtgContext, card: Card) -> None:
         """Flavor text of a card"""
         await ctx.single_card_text(card, flavor_text)
 

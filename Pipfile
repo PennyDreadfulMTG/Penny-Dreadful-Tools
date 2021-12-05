@@ -34,7 +34,7 @@ types-toml = "*"
 types-typed-ast = "*"
 
 [packages]
-aiohttp = "==3.7.4"
+aiohttp = "==3.8.1"
 anytree = "==2.8.0"
 astroid = "==2.9.0"
 attrs = "==21.2.0"

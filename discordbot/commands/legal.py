@@ -10,9 +10,9 @@ from magic.models import Card
 class Legal(Scale):
     @slash_command('legal')
     @command.slash_card_option()
-    async def legal(ctx: MtgContext, *, c: Card) -> None:
+    async def legal(ctx: MtgContext, card: Card) -> None:
         """Announce whether the specified card is legal or not."""
-        await ctx.single_card_text(c, lambda c: '')
+        await ctx.single_card_text(card, lambda c: '')
 
     legal.autocomplete('card')(command.autocomplete_card)
 

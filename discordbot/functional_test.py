@@ -1,6 +1,8 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Tuple, cast
 
+from dis_snek.models.command import BaseCommand
+
 import pytest
 from dis_snek.models.context import Context
 from dis_snek import Snake
@@ -97,7 +99,7 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content
 
-def find_command(discordbot, cmd):
+def find_command(discordbot: Snake, cmd: str) -> BaseCommand:
     command = None
     for cmds in discordbot.interactions.values():
         if cmd in cmds:

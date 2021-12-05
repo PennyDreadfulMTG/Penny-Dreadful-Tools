@@ -9,7 +9,7 @@ from magic.models import Card
 class Oracle(Scale):
     @slash_command('oracle')
     @slash_card_option()
-    async def oracle(ctx: MtgContext, *, card: Card) -> None:
+    async def oracle(ctx: MtgContext, card: Card) -> None:
         """Oracle text of a card."""
         await ctx.single_card_text(card, oracle_text)
 

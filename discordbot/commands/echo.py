@@ -6,7 +6,7 @@ from discordbot.command import MtgContext
 
 
 @message_command('echo')
-async def echo(ctx: MtgContext, *, args: CMD_BODY) -> None:
+async def echo(ctx: MtgContext, args: CMD_BODY) -> None:
     """Repeat after me…"""
     s = emoji.replace_emoji(args, ctx.bot)
     if not s:

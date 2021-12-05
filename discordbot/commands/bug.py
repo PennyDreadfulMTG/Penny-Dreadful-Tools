@@ -20,7 +20,7 @@ class Bug(Scale):
             await ctx.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
 
     @message_command('gbug')
-    async def gatherlingbug(ctx: MtgContext, *, text: CMD_BODY) -> None:
+    async def gatherlingbug(ctx: MtgContext, text: CMD_BODY) -> None:
         """Report a Gatherling bug."""
         issue = repo.create_issue(text, str(ctx.author), 'Discord', 'PennyDreadfulMTG/gatherling')
         if issue is None:

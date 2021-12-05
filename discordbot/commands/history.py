@@ -14,9 +14,9 @@ from shared import fetch_tools
 class History(Scale):
     @slash_command('history')
     @command.slash_card_option()
-    async def history(ctx: MtgContext, *, c: Card) -> None:
+    async def history(ctx: MtgContext, card: Card) -> None:
         """Show the legality history of the specified card and a link to its all time page."""
-        await ctx.single_card_text(c, card_history, show_legality=False)
+        await ctx.single_card_text(card, card_history, show_legality=False)
 
     history.autocomplete('card')(command.autocomplete_card)
 

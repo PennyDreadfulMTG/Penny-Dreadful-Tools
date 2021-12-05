@@ -1,11 +1,10 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Tuple, cast
 
-from dis_snek.models.command import BaseCommand
-
 import pytest
-from dis_snek.models.context import Context
 from dis_snek import Snake
+from dis_snek.models.command import BaseCommand
+from dis_snek.models.context import Context
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin

@@ -1,6 +1,6 @@
 from typing import Dict
-from dis_snek.annotations.argument_annotations import CMD_BODY
 
+from dis_snek.annotations.argument_annotations import CMD_BODY
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.discord_objects.embed import Embed
 

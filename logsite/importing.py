@@ -6,8 +6,8 @@ from typing import List, Optional
 
 from shared import fetch_tools
 
-from .data import game, match, tournament
 from . import APP
+from .data import game, match, tournament
 
 REGEX_GAME_HEADER = r'== Game \d \((?P<id>\d+)\) =='
 REGEX_SWITCHEROO = r'!! Warning, unexpected game 3 !!'

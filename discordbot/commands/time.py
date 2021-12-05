@@ -1,7 +1,7 @@
 import logging
 import re
-from dis_snek.annotations.argument_annotations import CMD_BODY
 
+from dis_snek.annotations.argument_annotations import CMD_BODY
 from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext

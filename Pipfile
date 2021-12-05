@@ -4,8 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [scripts]
-lint = "python dev.py lint"
 discordbot = "python run.py discordbot"
+
+lint = "python dev.py lint"
+test = "python dev.py test"
 
 [dev-packages]
 flake8 = "==4.0.1"

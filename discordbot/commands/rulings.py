@@ -11,7 +11,7 @@ from shared import fetch_tools
 class Rulings(Scale):
     @slash_command('rulings')
     @slash_card_option()
-    async def rulings(ctx: MtgContext, *, card: Card) -> None:
+    async def rulings(ctx: MtgContext, card: Card) -> None:
         """Rulings for a card."""
         await ctx.single_card_text(card, card_rulings)
 

@@ -6,6 +6,7 @@ from dis_snek.models.context import Context
 from dis_snek import Snake
 
 from discordbot.bot import Bot
+from discordbot.command import MtgMixin
 from discordbot.commands import CardConverter
 from magic.models import Card
 from shared.container import Container
@@ -16,7 +17,7 @@ def discordbot() -> Bot:
     bot = Bot()
     return bot
 
-class ContextForTests(Context):
+class ContextForTests(Context, MtgMixin):
     sent = False
     sent_args = False
     sent_file = False
@@ -29,6 +30,8 @@ class ContextForTests(Context):
         self.sent_file = 'file' in kwargs.keys()
         self.content = content
 
+    async def trigger_typing(self) -> None:
+        ...
 
 async def card(param: str) -> Card:
     ctx = ContextForTests()
@@ -58,7 +61,7 @@ def get_params() -> List[Tuple]:
             ('rotation', {}, None),
             pytest.param('rhinos', {}, None, marks=pytest.mark.functional),
             ('rulings', {'card': 'Worldknit'}, None),
-            ('search', {'args': 'f:pd'}, None),
+            ('scry', {'query': 'f:pd'}, None),
             ('status', {}, None),
             ('time', {'args': 'AEST'}, None),
             ('tournament', {}, None),
@@ -75,6 +78,26 @@ def get_params() -> List[Tuple]:
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
 async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name
+    command = find_command(discordbot, cmd)
+
+    ctx = ContextForTests()
+    ctx.bot = discordbot
+    ctx.channel = Container({'id': '1'})
+    ctx.channel.send = ctx.send
+    ctx.channel.trigger_typing = ctx.trigger_typing
+    ctx.message = Container()
+    ctx.message.channel = ctx.channel
+    ctx.author = Container()
+    ctx.author.mention = '<@111111111111>'
+    ctx.kwargs = kwargs
+    ctx.args = []
+    ctx.content_parameters = kwargs.get('args', '')
+    await command(ctx, **kwargs)
+    assert ctx.sent
+    if expected_content is not None and ctx.content is not None:
+        assert expected_content in ctx.content
+
+def find_command(discordbot, cmd):
     command = None
     for cmds in discordbot.interactions.values():
         if cmd in cmds:
@@ -82,17 +105,4 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
             break
     else:
         command = discordbot.commands[cmd]
-
-    ctx = ContextForTests()
-    ctx.bot = discordbot
-    ctx.message = Container()
-    ctx.message.channel = Container({'id': '1'})
-    ctx.message.channel.send = ctx.send
-    ctx.author = Container()
-    ctx.author.mention = '<@111111111111>'
-    ctx.kwargs = kwargs
-    ctx.args = []
-    await command(ctx, **kwargs)
-    assert ctx.sent
-    if expected_content is not None and ctx.content is not None:
-        assert expected_content in ctx.content
+    return command

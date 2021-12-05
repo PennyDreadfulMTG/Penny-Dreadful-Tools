@@ -10,7 +10,7 @@ from magic.models import Card
 class Price(Scale):
     @slash_command('price')
     @slash_card_option()
-    async def price(ctx: MtgContext, card: Card) -> None:
+    async def price(self, ctx: MtgContext, card: Card) -> None:
         """Price information for a card."""
         await ctx.single_card_text(card, card_price.card_price_string)
 

@@ -19,6 +19,7 @@ from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageRea
                                             PresenceUpdate)
 from dis_snek.models.listener import listen
 from github.GithubException import GithubException
+import sentry_sdk
 
 import discordbot.commands
 from discordbot import command
@@ -29,6 +30,16 @@ from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
+
+sentry_token = configuration.get_optional_str('sentry_token')
+if sentry_token:
+    try:
+        sentry_sdk.init(
+            dsn=sentry_token,
+            integrations=[],
+        )
+    except Exception as c:  # pylint: disable=broad-except
+        logging.error(c)
 
 TASKS = []
 

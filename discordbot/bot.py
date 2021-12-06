@@ -57,6 +57,7 @@ def background_task(func: Callable) -> Callable:
 class Bot(Snake):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
+        self.launched = False
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
@@ -79,7 +80,9 @@ class Bot(Snake):
         names = ', '.join([guild.name or '' for guild in self.guilds])
         logging.info('Connected to %s', names)
         logging.info('--------')
-        perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
+        if not self.launched:
+            perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
+            self.launched = True
 
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:

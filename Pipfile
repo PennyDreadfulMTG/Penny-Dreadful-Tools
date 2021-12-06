@@ -97,7 +97,7 @@ pydantic = "*"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
 tomli = "*"
-dis-snek = {editable = false, git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
+dis-snek = "==3.0.0"
 orjson = "*"
 
 [requires]

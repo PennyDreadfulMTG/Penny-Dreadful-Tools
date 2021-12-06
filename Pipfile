@@ -5,6 +5,9 @@ verify_ssl = true
 
 [scripts]
 discordbot = "python run.py discordbot"
+maintenance = "python run.py maintenance"
+scraper = "python run.py scraper"
+modo-bugs = "python run.py modo-bugs"
 
 lint = "python dev.py lint"
 test = "python dev.py test"

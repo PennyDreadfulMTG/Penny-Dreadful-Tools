@@ -78,7 +78,8 @@ async def decks(ctx: MtgContext, query: str) -> None:
     await ctx.send(embeds=[embed])
 
 @drc.subcommand('matchups')
-async def matchups(ctx: MtgContext, args: CMD_BODY) -> None:
+@slash_option('args', 'No description given', OptionTypes.STRING)
+async def matchups(ctx: MtgContext, args: str) -> None:
     """Matchup calculation using Dreadrise. Accepts two queries separated by exclamation mark !."""
     q_list = args.split('!')
     q1 = q_list[0]

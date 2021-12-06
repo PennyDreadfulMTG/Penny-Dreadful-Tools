@@ -1,5 +1,4 @@
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.command import message_command
 from dis_snek.models.enums import MessageFlags
 from discordbot import command
 from googleapiclient.discovery import build
@@ -39,4 +38,4 @@ async def google(ctx: MtgContext, query: str) -> None:
 
     await ctx.send(s)
 
-m_google = command.alias_card_command_to_message_command(google, 'query')
+m_google = command.alias_message_command_to_slash_command(google, 'query')

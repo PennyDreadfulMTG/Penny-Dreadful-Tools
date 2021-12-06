@@ -18,7 +18,7 @@ class Bug(Scale):
         """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `/modobug`."""
         text = title
         if body:
-            text += '\n\n{body}'
+            text += f'\n\n{body}'
         issue = repo.create_issue(text, ctx.author)
         if issue is None:
             await ctx.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')

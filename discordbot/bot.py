@@ -6,6 +6,7 @@ import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
+import sentry_sdk
 from dis_snek import Snake
 from dis_snek.errors import Forbidden
 from dis_snek.models.discord_objects.activity import ActivityType
@@ -19,7 +20,6 @@ from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageRea
                                             PresenceUpdate)
 from dis_snek.models.listener import listen
 from github.GithubException import GithubException
-import sentry_sdk
 
 import discordbot.commands
 from discordbot import command

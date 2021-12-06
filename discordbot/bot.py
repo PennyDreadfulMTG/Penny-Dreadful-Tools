@@ -378,6 +378,7 @@ class Bot(Snake):
                 except Exception as c:
                     repo.create_issue('Bot error while rebooting', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
                 await self.stop()
+                sys.exit(0)
             await asyncio.sleep(60)
 
 def init() -> None:

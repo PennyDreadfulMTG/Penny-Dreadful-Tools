@@ -7,10 +7,12 @@ from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
 from dis_snek import Snake
-from dis_snek.models.application_commands import (OptionTypes, Permission, PermissionTypes,
+from dis_snek.annotations.argument_annotations import CMD_BODY
+from dis_snek.models.application_commands import (InteractionCommand, OptionTypes, Permission, PermissionTypes,
                                                   slash_option, slash_permission)
 from dis_snek.models.context import (AutocompleteContext, Context, InteractionContext,
                                      MessageContext)
+from dis_snek.models.command import MessageCommand, message_command
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 from dis_snek.models.discord_objects.message import Message
 from dis_snek.models.discord_objects.user import Member
@@ -289,6 +291,19 @@ async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -
     choices.extend(results.fuzzy)
 
     await ctx.send(choices=[make_choice(c) for c in choices])
+
+def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None) -> MessageCommand:
+    """
+    This is a horrible hack.  Use it if a slash command takes one multiword argument
+    """
+
+    async def wrapper(scale, ctx: MtgMessageContext, body: CMD_BODY) -> None:
+        ctx.kwargs[param] = body
+        await command.call_callback(command.callback, ctx)
+
+    if name is None:
+        name = command.name
+    return message_command(name)(wrapper)
 
 class MtgMixin:
     async def send_image_with_retry(self: SendableContext, image_file: str, text: str = '') -> None:

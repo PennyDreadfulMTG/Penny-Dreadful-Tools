@@ -2,7 +2,7 @@ import math
 from typing import List, Optional, Tuple
 
 from dis_snek import Snake
-from dis_snek.models.application_commands import slash_command, slash_option
+from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.command import message_command
 from dis_snek.models.scale import Scale
 
@@ -19,17 +19,17 @@ class Swiss(Scale):
     @slash_option(
         name='players',
         description='number of players in the event',
-        opt_type=4,
+        opt_type=OptionTypes.INTEGER,
         required=True)
     @slash_option(
-        name='rounds',
+        name='num_rounds',
         description='number of rounds of Swiss',
-        opt_type=4,
+        opt_type=OptionTypes.INTEGER,
         required=False)
     @slash_option(
-        name='elimination',
+        name='top_n',
         description='number of players who make it to the elimination round (ie: Top N)',
-        opt_type=4,
+        opt_type=OptionTypes.INTEGER,
         required=False)
     async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
         """Display the record need to reach the elimination rounds for a given tournament"""

@@ -9,7 +9,7 @@ import attr
 from dis_snek import Snake
 from dis_snek.models.application_commands import (OptionTypes, Permission, PermissionTypes,
                                                   slash_option, slash_permission)
-from dis_snek.models.context import AutocompleteContext, InteractionContext, MessageContext
+from dis_snek.models.context import AutocompleteContext, Context, InteractionContext, MessageContext
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 from dis_snek.models.discord_objects.message import Message
 from dis_snek.models.discord_objects.user import Member
@@ -18,7 +18,7 @@ from dis_snek.models.file import File
 from dis_snek.models.scale import Scale
 
 from discordbot import emoji
-from discordbot.shared import SendableContext, guild_id
+from discordbot.shared import SendableContext, channel_id, guild_id
 from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
@@ -143,7 +143,7 @@ async def single_card_text(client: Snake, channel: TYPE_MESSAGEABLE_CHANNEL, arg
 async def post_cards(
         client: Snake,
         cards: List[Card],
-        channel: TYPE_MESSAGEABLE_CHANNEL,
+        channel: Union[TYPE_MESSAGEABLE_CHANNEL, Context],
         replying_to: Optional[Member] = None,
         additional_text: str = '',
 ) -> None:
@@ -151,10 +151,10 @@ async def post_cards(
         await post_nothing(channel, replying_to)
         return
 
-    with with_config_file(guild_id(channel)), with_config_file(channel.id if channel else None):
+    with with_config_file(guild_id(channel)), with_config_file(channel_id(channel)):
         legality_format = configuration.legality_format.value
     not_pd = configuration.get_list('not_pd')
-    if str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd):  # This needs to be migrated
+    if str(channel_id(channel)) in not_pd or str(guild_id(channel)) in not_pd:  # This needs to be migrated
         legality_format = 'Unknown'
     cards = uniqify_cards(cards)
     if len(cards) > MAX_CARDS_SHOWN:
@@ -166,7 +166,12 @@ async def post_cards(
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
-        await channel.trigger_typing()
+        if isinstance(channel, InteractionContext):
+            await channel.defer()
+        elif isinstance(channel, MessageContext):
+            await channel.channel.trigger_typing()
+        else:
+            await channel.trigger_typing()
         image_file = await image_fetcher.download_image_async(cards)
     if image_file is None:
         text += '\n\n'
@@ -180,7 +185,7 @@ async def post_cards(
     else:
         await send_image_with_retry(channel, image_file, text)
 
-async def post_nothing(channel: TYPE_MESSAGEABLE_CHANNEL, replying_to: Optional[Member] = None) -> None:
+async def post_nothing(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], replying_to: Optional[Member] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
@@ -189,11 +194,11 @@ async def post_nothing(channel: TYPE_MESSAGEABLE_CHANNEL, replying_to: Optional[
     await message.add_reaction('❎')
 
 
-async def send(channel: TYPE_MESSAGEABLE_CHANNEL, content: str, file: Optional[File] = None) -> Message:
+async def send(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
-async def send_image_with_retry(channel: TYPE_MESSAGEABLE_CHANNEL, image_file: str, text: str = '') -> None:
+async def send_image_with_retry(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         logging.warning('Message size is zero so resending')
@@ -308,7 +313,7 @@ class MtgMixin:
 
     async def post_cards(self: SendableContext, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
-        await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
+        await post_cards(self.bot, cards, self, replying_to, additional_text)
 
     async def post_nothing(self: SendableContext) -> None:
         await post_nothing(self.channel)

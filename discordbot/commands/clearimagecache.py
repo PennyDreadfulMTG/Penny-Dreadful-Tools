@@ -2,8 +2,8 @@ import glob
 import os
 
 from dis_snek.models.application_commands import slash_command
-from discordbot import command
 
+from discordbot import command
 from discordbot.command import MtgContext
 from shared import configuration
 

@@ -1,8 +1,8 @@
 from dis_snek import Snake
 from dis_snek.models.application_commands import slash_command
 from dis_snek.models.scale import Scale
-from discordbot import command
 
+from discordbot import command
 from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic.models import Card
 

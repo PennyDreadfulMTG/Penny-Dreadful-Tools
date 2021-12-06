@@ -1,7 +1,6 @@
 import logging
 import re
 
-from dis_snek.annotations.argument_annotations import CMD_BODY
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.command import message_command
 

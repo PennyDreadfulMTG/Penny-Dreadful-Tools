@@ -166,7 +166,12 @@ async def post_cards(
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
-        await channel.trigger_typing()
+        if isinstance(channel, InteractionContext):
+            await channel.defer()
+        elif isinstance(channel, MessageContext):
+            await channel.channel.trigger_typing()
+        else:
+            await channel.trigger_typing()
         image_file = await image_fetcher.download_image_async(cards)
     if image_file is None:
         text += '\n\n'

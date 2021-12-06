@@ -17,7 +17,7 @@ async def search(ctx: MtgContext, query: str) -> None:
     await ctx.post_cards(cards, ctx.author, more_results_link(query, how_many))
 
 @message_command('scry')
-async def m_scry(self, ctx: MtgMessageContext, args: CMD_BODY) -> None:
+async def m_scry(ctx: MtgMessageContext, args: CMD_BODY) -> None:
     ctx.kwargs['query'] = args
     search.call_callback(search.callback, ctx)
 

@@ -1,3 +1,4 @@
+from typing import Optional
 from dis_snek import Snake
 from dis_snek.annotations.argument_annotations import CMD_BODY
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
@@ -12,7 +13,7 @@ class Bug(Scale):
     @slash_command('bug')
     @slash_option('title', 'One sentence description of the issue', OptionTypes.STRING, required=True)
     @slash_option('body', 'More info', OptionTypes.STRING)
-    async def bug(self, ctx: MtgContext, title: str, body: str) -> None:
+    async def bug(self, ctx: MtgContext, title: str, body: Optional[str] = None) -> None:
         """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `/modobug`."""
         text = title
         if body:

@@ -1,10 +1,10 @@
 from dis_snek import Snake
-from dis_snek.annotations.argument_annotations import CMD_BODY
 from dis_snek.models.application_commands import slash_command
 from dis_snek.models.command import message_command
 from dis_snek.models.scale import Scale
+from discordbot import command
 
-from discordbot.command import MtgContext, MtgMessageContext, autocomplete_card, slash_card_option
+from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic import card_price
 from magic.models import Card
 
@@ -18,11 +18,8 @@ class Price(Scale):
 
     price.autocomplete('card')(autocomplete_card)
 
-    @message_command('price')
-    async def m_price(self, ctx: MtgMessageContext, cardname: CMD_BODY) -> None:
-        ctx.kwargs['card'] = cardname
-        await self.price.call_callback(self.price.callback, ctx)
-
+    m_price = command.alias_message_command_to_slash_command(price)
+    m_pr = message_command('pr')(m_price.callback)
     m_p = message_command('p')(m_price.callback)
 
 

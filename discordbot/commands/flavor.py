@@ -17,6 +17,8 @@ class Flavour(Scale):
 
     flavor.autocomplete('card')(command.autocomplete_card)
 
+    m_flavor = command.alias_message_command_to_slash_command(flavor)
+
 def flavor_text(c: Card) -> str:
     for printing in oracle.get_printings(c):
         if c.preferred_printing is not None and c.preferred_printing != printing.set_code:

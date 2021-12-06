@@ -16,5 +16,7 @@ class Legal(Scale):
 
     legal.autocomplete('card')(command.autocomplete_card)
 
+    m_legal = command.alias_message_command_to_slash_command(legal)
+
 def setup(bot: Snake) -> None:
     Legal(bot)

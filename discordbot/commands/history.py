@@ -2,6 +2,7 @@ from typing import Dict
 
 from dis_snek import Snake
 from dis_snek.models.application_commands import slash_command
+from dis_snek.models.command import message_command
 from dis_snek.models.scale import Scale
 
 from discordbot import command
@@ -19,6 +20,9 @@ class History(Scale):
         await ctx.single_card_text(card, card_history, show_legality=False)
 
     history.autocomplete('card')(command.autocomplete_card)
+
+    m_h = command.alias_message_command_to_slash_command(history)
+    m_hi = message_command('hi')(m_h.callback)
 
 def card_history(c: Card) -> str:
     data: Dict[int, bool] = {}

@@ -1,6 +1,7 @@
 import datetime
 
 from dis_snek.models.application_commands import slash_command
+from dis_snek.models.command import message_command
 from dis_snek.models.enums import MessageFlags
 
 from discordbot import bot  # This is a circular import
@@ -21,3 +22,5 @@ async def hype(ctx: MtgContext) -> None:
         await ctx.send(msg, flags=MessageFlags.EPHEMERAL)
     else:
         await ctx.send(f'{ctx.author.mention}: No rotation hype message.', flags=MessageFlags.EPHEMERAL)
+
+m_hype = message_command('hype')(hype.callback)

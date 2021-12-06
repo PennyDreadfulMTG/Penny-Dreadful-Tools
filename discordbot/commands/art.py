@@ -26,7 +26,7 @@ class Art(Scale):
 
     art.autocomplete('card')(command.autocomplete_card)
 
-    m_art = command.alias_card_command_to_message_command(art)
+    m_art = command.alias_message_command_to_slash_command(art)
 
 def setup(bot: Snake) -> None:
     Art(bot)

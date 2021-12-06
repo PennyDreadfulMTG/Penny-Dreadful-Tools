@@ -297,7 +297,7 @@ def alias_message_command_to_slash_command(command: InteractionCommand, param: s
     This is a horrible hack.  Use it if a slash command takes one multiword argument
     """
 
-    async def wrapper(scale, ctx: MtgMessageContext, body: CMD_BODY) -> None:
+    async def wrapper(_scale: Scale, ctx: MtgMessageContext, body: CMD_BODY) -> None:
         ctx.kwargs[param] = body
         await command.call_callback(command.callback, ctx)
 

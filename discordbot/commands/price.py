@@ -18,7 +18,7 @@ class Price(Scale):
 
     price.autocomplete('card')(autocomplete_card)
 
-    m_price = command.alias_card_command_to_message_command(price)
+    m_price = command.alias_message_command_to_slash_command(price)
     m_pr = message_command('pr')(m_price.callback)
     m_p = message_command('p')(m_price.callback)
 

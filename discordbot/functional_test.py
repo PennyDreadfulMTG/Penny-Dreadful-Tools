@@ -64,7 +64,7 @@ def get_params() -> List[Tuple]:
             ('rulings', {'card': 'Worldknit'}, None),
             ('scry', {'query': 'f:pd'}, None),
             ('status', {}, None),
-            ('time', {'args': 'AEST'}, None),
+            ('time', {'place': 'AEST'}, None),
             ('tournament', {}, None),
             ('version', {}, None),
             ('whois', {'args': 'silasary'}, None),

@@ -2,12 +2,13 @@ from dis_snek.client import Snake
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.enums import MessageFlags
 from dis_snek.models.scale import Scale
-from discordbot import command
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from discordbot import command
 from discordbot.command import MtgContext
 from shared import configuration
+
 
 class Google(Scale):
     @slash_command('google')

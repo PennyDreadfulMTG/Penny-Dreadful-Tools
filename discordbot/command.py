@@ -290,7 +290,7 @@ async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
 
-    await ctx.send(choices=[make_choice(c) for c in choices])
+    await ctx.send(choices=[make_choice(c) for c in choices][:20])
 
 def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None) -> MessageCommand:
     """

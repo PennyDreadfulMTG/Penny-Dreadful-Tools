@@ -8,11 +8,11 @@ from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 import attr
 from dis_snek import Snake
 from dis_snek.annotations.argument_annotations import CMD_BODY
-from dis_snek.models.application_commands import (InteractionCommand, OptionTypes, Permission, PermissionTypes,
-                                                  slash_option, slash_permission)
+from dis_snek.models.application_commands import (InteractionCommand, OptionTypes, Permission,
+                                                  PermissionTypes, slash_option, slash_permission)
+from dis_snek.models.command import MessageCommand, message_command
 from dis_snek.models.context import (AutocompleteContext, Context, InteractionContext,
                                      MessageContext)
-from dis_snek.models.command import MessageCommand, message_command
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
 from dis_snek.models.discord_objects.message import Message
 from dis_snek.models.discord_objects.user import Member

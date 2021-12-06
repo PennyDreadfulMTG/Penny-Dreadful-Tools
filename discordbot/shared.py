@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Protocol, Union
 
 from dis_snek import Snake
 from dis_snek.models import File
-from dis_snek.models.context import Context
+from dis_snek.models.context import Context, InteractionContext
 from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, GuildText
 from dis_snek.models.discord_objects.components import BaseComponent
 from dis_snek.models.discord_objects.embed import Embed
@@ -27,6 +27,11 @@ def channel_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[
     if ctx is None:
         return None
     if isinstance(ctx, Context):
+        if ctx.channel is None:
+            if isinstance(ctx, InteractionContext):
+                # Not sure why this happens
+                return ctx.data.get('channel_id')
+            return None
         return ctx.channel.id
     return ctx.id
 

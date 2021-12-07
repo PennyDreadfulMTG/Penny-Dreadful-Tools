@@ -1,5 +1,5 @@
 # from dis_snek.models.checks import is_owner
-from dis_snek.models.command import message_command # ,check
+from dis_snek.models.command import message_command  # ,check
 
 from discordbot.command import MtgContext
 from shared import redis_wrapper

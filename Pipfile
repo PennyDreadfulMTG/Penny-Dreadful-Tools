@@ -8,7 +8,6 @@ discordbot = "python run.py discordbot"
 maintenance = "python run.py maintenance"
 scraper = "python run.py scraper"
 modo-bugs = "python run.py modo-bugs"
-
 lint = "python dev.py lint"
 test = "python dev.py test"
 
@@ -97,7 +96,7 @@ pydantic = "*"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
 tomli = "*"
-dis-snek = "==3.0.0"
+dis-snek = {git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
 orjson = "*"
 
 [requires]

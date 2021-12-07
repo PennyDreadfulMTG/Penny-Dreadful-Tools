@@ -6,7 +6,7 @@ from shared import redis_wrapper
 
 
 @message_command('reboot')
-@check(is_owner())
+# @check(is_owner())
 async def restartbot(ctx: MtgContext) -> None:
     """Restart the bot."""
     await ctx.send('Scheduling reboot')

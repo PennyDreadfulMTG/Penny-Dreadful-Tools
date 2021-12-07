@@ -138,7 +138,7 @@ async def single_card_text(client: Snake, channel: TYPE_MESSAGEABLE_CHANNEL, arg
     if c is not None:
         name = c.name
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
-        text = emoji.replace_emoji(f(c), client)
+        text = await emoji.replace_emoji(f(c), client)
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
 
@@ -163,7 +163,7 @@ async def post_cards(
     if len(cards) > MAX_CARDS_SHOWN:
         cards = cards[:DEFAULT_CARDS_SHOWN]
     if len(cards) == 1:
-        text = single_card_text_internal(client, cards[0], legality_format)
+        text = await single_card_text_internal(client, cards[0], legality_format)
     else:
         text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card, legality_format=legality_format))), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
     if len(cards) > MAX_CARDS_SHOWN:
@@ -179,7 +179,7 @@ async def post_cards(
     if image_file is None:
         text += '\n\n'
         if len(cards) == 1:
-            text += emoji.replace_emoji(cards[0].oracle_text, client)
+            text += await emoji.replace_emoji(cards[0].oracle_text, client)
         else:
             text += 'No image available.'
     text += additional_text
@@ -208,8 +208,8 @@ async def send_image_with_retry(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL
         await message.delete()
         await send(channel, file=File(image_file), content=text)
 
-def single_card_text_internal(client: Snake, requested_card: Card, legality_format: str) -> str:
-    mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
+async def single_card_text_internal(client: Snake, requested_card: Card, legality_format: str) -> str:
+    mana = await emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
     mana = mana.replace('|', ' // ')
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
     if requested_card.get('mode', None) == '$':
@@ -323,7 +323,7 @@ class MtgMixin:
 
         name = c.name
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
-        text = emoji.replace_emoji(f(c), self.bot)
+        text = await emoji.replace_emoji(f(c), self.bot)
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 

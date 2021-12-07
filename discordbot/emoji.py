@@ -8,7 +8,6 @@ from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
-
 CACHE: Dict[str, Emoji] = {}
 
 async def find_emoji(emoji: str, client: Snake) -> Optional[Emoji]:

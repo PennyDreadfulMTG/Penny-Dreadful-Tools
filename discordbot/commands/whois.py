@@ -1,17 +1,21 @@
 import re
 from typing import Any, Dict
 
-from discord.ext import commands
+from dis_snek import Snake
+from dis_snek.models import message_command
+from dis_snek.models.scale import Scale
 
 from discordbot.command import MtgContext
 from magic import fetcher
 
 
-@commands.command(aliases=['who'])
-async def whois(ctx: MtgContext, *, args: str) -> None:
-    """Who is a person?"""
-    mention = re.match(r'<@!?(\d+)>', args)
-    async with ctx.typing():
+class Whois(Scale):
+    @message_command('whois')
+    async def whois(self, ctx: MtgContext, args: str) -> None:
+        """Who is a person?"""
+        mention = re.match(r'<@!?(\d+)>', args)
+        await ctx.trigger_typing()
+
         if mention:
             person = await fetcher.person_data_async(mention.group(1))
             if not_found(person) or person.get('name') is None:
@@ -28,3 +32,6 @@ async def whois(ctx: MtgContext, *, args: str) -> None:
 
 def not_found(person: Dict[str, Any]) -> bool:
     return person is None or (person.get('error') is not None and person.get('code') == 'NOTFOUND')
+
+def setup(bot: Snake) -> None:
+    Whois(bot)

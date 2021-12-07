@@ -1,7 +1,7 @@
 from typing import Dict
 
-from discord import Embed
-from discord.ext import commands
+from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
+from dis_snek.models.discord_objects.embed import Embed
 
 from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle
@@ -21,30 +21,36 @@ def format_deck(x: Dict) -> Dict:
             arch=x['archetype'], author=x['author'], format=x['printed_format'], id=x['id'], domain=link_domain),
     }
 
-@commands.command(aliases=['dreadrise', 'ds'])
-async def drc(ctx: MtgContext, *, args: str) -> None:
+@slash_command('dreadrise',
+               description='Dreadrise',
+               sub_cmd_name='search',
+               sub_cmd_description='Card Search using Dreadrise',
+               )
+@slash_option('query', 'search query', OptionTypes.STRING)
+async def drc(ctx: MtgContext, query: str) -> None:
     """Card search using Dreadrise."""
-    count, error = await fetcher.dreadrise_count_cards(args)
+    count, error = await fetcher.dreadrise_count_cards(query)
     if error:
         await ctx.send(f'Search error: `{error}`')
         return
 
     cards_shown = DEFAULT_CARDS_SHOWN if count > MAX_CARDS_SHOWN else count
-    cardnames = await fetcher.dreadrise_search_cards(args, cards_shown, 1)
+    cardnames = await fetcher.dreadrise_search_cards(query, cards_shown, 1)
     if len(cardnames) < cards_shown:
-        cardnames += await fetcher.dreadrise_search_cards(args, cards_shown - len(cardnames), -1)
+        cardnames += await fetcher.dreadrise_search_cards(query, cards_shown - len(cardnames), -1)
 
     cbn = oracle.cards_by_name()
     cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
     if count > DEFAULT_CARDS_SHOWN:
         cards = cards[:MAX_CARDS_SHOWN]
-    await ctx.post_cards(cards, ctx.author, more_results_link(args, count))
+    await ctx.post_cards(cards, ctx.author, more_results_link(query, count))
 
-@commands.command(aliases=['dd', 'deck'])
-async def decks(ctx: MtgContext, *, args: str) -> None:
+@drc.subcommand('deck')
+@slash_option('query', 'search query', OptionTypes.STRING)
+async def decks(ctx: MtgContext, query: str) -> None:
     """Deck search using Dreadrise."""
 
-    count, output, error = await fetcher.dreadrise_search_decks(args, MAX_DECKS_SHOWN)
+    count, output, error = await fetcher.dreadrise_search_decks(query, MAX_DECKS_SHOWN)
     if error:
         await ctx.send(f'Search error: `{error}`')
         return
@@ -68,10 +74,11 @@ async def decks(ctx: MtgContext, *, args: str) -> None:
         card=output['data'][0]['main_cards'][0].replace(' ', '%20')))
     for x in arr:
         embed.add_field(name=x['name'], value=x['value'], inline=False)
-    await ctx.send(embed=embed)
+    await ctx.send(embeds=[embed])
 
-@commands.command(aliases=['mu', 'mus'])
-async def matchups(ctx: MtgContext, *, args: str) -> None:
+@drc.subcommand('matchups')
+@slash_option('args', 'No description given', OptionTypes.STRING)
+async def matchups(ctx: MtgContext, args: str) -> None:
     """Matchup calculation using Dreadrise. Accepts two queries separated by exclamation mark !."""
     q_list = args.split('!')
     q1 = q_list[0]

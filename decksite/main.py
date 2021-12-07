@@ -136,7 +136,7 @@ def banner_cards(seasonnum: int) -> Tuple[List[str], str]:
         cardnames = ["Council's Judgment", 'Ponder', 'Hymn to Tourach', 'Faithless Looting', 'Birds of Paradise', 'Dream Trawler', "Arcum's Astrolabe"]
         background = 'Drowned Catacomb'
     elif seasonnum == 22:
-        cardnames = ['Daybreak Coronet', 'Brainstorm', 'Ichorid', 'Hazoret the Fervent', 'Lovestruck Beast', 'Quillspike', 'Phyrexian Revoker']
+        cardnames = ['Daybreak Coronet', 'Brainstorm', "Bloodchief's Thirst", 'Cleansing Wildfire', 'Lovestruck Beast', 'Izzet Charm', "Smuggler's Copter"]
         background = 'Shivan Reef'
     elif seasonnum == 23:
         cardnames = ["Council's Judgment", 'Counterspell', 'Recurring Nightmare', 'Monastery Swiftspear', 'Channel', 'Meddling Mage', "Arcum's Astrolabe"]

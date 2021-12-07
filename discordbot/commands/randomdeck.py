@@ -1,11 +1,11 @@
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext
 from magic import fetcher
 from shared import fetch_tools
 
 
-@commands.command(aliases=['rd'])
+@slash_command('random-deck')
 async def randomdeck(ctx: MtgContext) -> None:
     """A random deck from the current season."""
     blob = fetch_tools.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))

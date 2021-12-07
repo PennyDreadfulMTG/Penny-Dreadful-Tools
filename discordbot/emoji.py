@@ -1,25 +1,34 @@
 import re
-from typing import Optional
+from typing import Dict, Optional
 
-from discord import Client, Emoji
+from dis_snek.client import Snake
+from dis_snek.models.discord_objects.emoji import Emoji
 
 from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
+CACHE: Dict[str, Emoji] = {}
 
-def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:
+async def find_emoji(emoji: str, client: Snake) -> Optional[Emoji]:
+    if res := CACHE.get(emoji):
+        return res
+
+    if not client.guilds:
+        return None
+
     try:
         for guild in client.guilds:
-            emojis = guild.emojis
+            emojis = await guild.get_all_custom_emojis()
             res = next((x for x in emojis if x.name == emoji), None)
             if res is not None:
+                CACHE[emoji] = res
                 return res
         return None
     except AttributeError:
         return None
 
-def replace_emoji(text: str, client: Client) -> str:
+async def replace_emoji(text: str, client: Snake) -> str:
     if text is None:
         return ''
     output = text
@@ -32,7 +41,7 @@ def replace_emoji(text: str, client: Client) -> str:
                 name = '0' + name
             else:
                 name = name + name
-        emoji = find_emoji(name, client)
+        emoji = await find_emoji(name, client)
         if emoji is not None:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output

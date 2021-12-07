@@ -56,7 +56,7 @@ def do_lint() -> None:
     print('>>>> Running flake8')
     pipenv = local['pipenv']
     try:
-        pipenv['run', 'flake8'] & FG  # noqa
+        pipenv['run', 'python', '-m', 'flake8'] & FG  # noqa
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 
@@ -77,16 +77,7 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
     """
     print('>>>> Typechecking')
-    args = [
-        '--ignore-missing-imports',      # Don't complain about 3rd party libs with no stubs
-        '--disallow-untyped-calls',      # Strict Mode.  All function calls must have a return type.
-        '--warn-redundant-casts',
-        '--disallow-incomplete-defs',    # All parameters must have type definitions.
-        '--check-untyped-defs',          # Typecheck on all methods, not just typed ones.
-        '--disallow-untyped-defs',       # All methods must be typed.
-        '--strict-equality',             # Don't allow us to say "0" == 0 or other always false comparisons
-        '--warn-unused-ignores',
-    ]
+    args = []
     if strict:
         args.extend([
             '--disallow-any-generics',  # Generic types like List or Dict need [T]

@@ -12,8 +12,7 @@ def buildpy() -> None:
     print('>>>> Installing Requirements')
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pipenv'])
     subprocess.check_call(['pipenv', 'sync', '--dev'])
-    if sys.prefix == sys.base_prefix:
-        subprocess.check_call([sys.executable, '-m', 'pipenv', 'install', '--system', '--dev'])
+
 
 def buildjs() -> None:
     print('>>>> Installing node modules')

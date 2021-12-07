@@ -1,13 +1,13 @@
 import random
 
-from discord.ext import commands
+from dis_snek.models.application_commands import slash_command
 
 from discordbot.command import MtgContext, complex_search
 from magic import oracle
 from magic.models import Card
 
 
-@commands.command()
+@slash_command('rhinos')
 async def rhinos(ctx: MtgContext) -> None:
     """Anything can be a rhino if you try hard enough"""
     rhino_name = 'Siege Rhino'

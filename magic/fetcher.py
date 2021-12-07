@@ -271,7 +271,12 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
     return fetch_tools.fetch_json(card['uri'] + '/rulings')['data']
 
 def sitemap() -> List[str]:
-    return fetch_tools.fetch_json(decksite_url('/api/sitemap/'))['urls']
+    cached = redis.get_list('magic:fetcher:sitemap')
+    if cached is not None:
+        return cached
+    sitemap = fetch_tools.fetch_json(decksite_url('/api/sitemap/'))['urls']
+    redis.store('magic:fetcher:sitemap', sitemap, ex=300)
+    return sitemap
 
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'

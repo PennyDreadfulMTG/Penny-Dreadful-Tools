@@ -26,10 +26,9 @@ def load_deck(deck_id: int) -> Deck:
 
 def load_decks_count(where: str = 'TRUE',
                      having: str = 'TRUE',
-                     season_id: Optional[Union[str, int]] = None,
-                     distinct: bool = False) -> int:
-    columns = 'COUNT(*) AS n' if not distinct else 'COUNT(DISTINCT d.id)'
-    sql = load_decks_query(columns, where=where, group_by=None, having=having, order_by='TRUE', limit='', season_id=season_id)
+                     season_id: Optional[Union[str, int]] = None) -> int:
+    sql = load_decks_query('COUNT(DISTINCT d.id) AS n', where=where, group_by=None, having=having,
+                           order_by='TRUE', limit='', season_id=season_id)
     return int(db().value(sql))
 
 def load_decks(where: str = 'TRUE',

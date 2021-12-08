@@ -181,7 +181,7 @@ class UpdatedDecks(Resource):
         start = page * page_size
         limit = f'LIMIT {start}, {page_size}'
         where = '(' + query.decks_where(request.args, False, None) + ') AND ' + query.decks_updated_since(timestamp)
-        total = deck.load_decks_count(where=where, season_id=season, distinct=True)
+        total = deck.load_decks_count(where=where, season_id=season)
         ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
         prepare_decks(ds)
         return {'page': page, 'total': total, 'objects': ds}

@@ -1,4 +1,3 @@
-
 # Penny Dreadful Tools
 
 Repository for the tools used by the Penny Dreadful Community.
@@ -6,7 +5,6 @@ Repository for the tools used by the Penny Dreadful Community.
 View individual subdirectories for details
 
 [![Build Status](https://travis-ci.org/PennyDreadfulMTG/Penny-Dreadful-Tools.svg?branch=master)](https://travis-ci.org/PennyDreadfulMTG/Penny-Dreadful-Tools)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b4e068a91bd048e9a8e803e8bde29c9d)](https://www.codacy.com/app/clockwork-singularity/Penny-Dreadful-Tools?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PennyDreadfulMTG/Penny-Dreadful-Tools&amp;utm_campaign=Badge_Grade)
 [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m778417564-ebc98d54a784806de06fee4d.svg)](https://status.pennydreadfulmagic.com)
 
 # Modules
@@ -51,7 +49,6 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - docker-compose up
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
-
 - Install python3.9
 - Install pipenv
 - Install npm
@@ -59,9 +56,10 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - cd Penny-Dreadful-Tools
 - pipenv --python 3.9
 - pipenv install
-- pipenv run python3 dev.py build
+- pipenv run python dev.py build
 
 ## Configuring Environment
+
 - Add a bot at <https://discordapp.com/developers/applications/me>
 - Add a bot user for the bot
 - Add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
@@ -70,7 +68,6 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Do the same for the discord client_id and client_secret
 - Optionally take a look at shared/configuration.py and enter any required non-default information into `.env`
 - You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
-
 
 ## Manual Development Environment Setup (Non-docker instructions)
 
@@ -81,7 +78,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
 - pipenv install
-- pipenv run python3 build.py
+- pipenv run python build.py
 - Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
   - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
@@ -96,7 +93,6 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
   - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
   - mysql -u <mysql_user> -p<mysql_passwd> -e "CREATE DATABASE <decksite_test_database>"
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
-
 
 ## Running Decksite (pennydreadfulmagic.com)
 
@@ -124,4 +120,4 @@ Check the dev.py source code for the full set of options including `unit`, `type
 ## Working on React components
 
 - Run logsite
-- python3 dev.py watch # Builds bundle.js after every file change.
+- pipenv run python dev.py watch # Builds bundle.js after every file change.

@@ -51,11 +51,15 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - docker-compose up
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
-- Install python3.7+
+
+- Install python3.9
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
-- python3 dev.py build
+- cd Penny-Dreadful-Tools
+- pipenv --python 3.9
+- pipenv install
+- pipenv run python3 dev.py build
 
 ## Configuring Environment
 - Add a bot at <https://discordapp.com/developers/applications/me>
@@ -71,11 +75,13 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 ## Manual Development Environment Setup (Non-docker instructions)
 
 - Install MariaDB 10.0+
-- Install python3.7+
+- Install python3.9
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
-- python3 build.py
+- cd Penny-Dreadful-Tools
+- pipenv install
+- pipenv run python3 build.py
 - Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
   - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';

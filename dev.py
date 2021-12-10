@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import importlib
 import json
 import os
 import subprocess
@@ -344,17 +343,18 @@ def repip() -> None:
     import pipfile
     from shared import fetch_tools
     from packaging import version
+    from importlib.metadata import version as _v
     reqs = pipfile.load()
     default = reqs.data['default']
     for i in default.items():
         name: str = i[0]
         val: Union[str, dict] = i[1]
         if isinstance(val, dict) and 'git' in val.keys():
-            print(repr(i))
-            m = importlib.import_module(name.replace('-', '_'))
-            installed = version.Version(m.__version__)
+            print('> ' + repr(i))
+            installed = version.Version(_v(name))
             info = fetch_tools.fetch_json(f'https://pypi.org/pypi/{name}/json')
             remote = version.Version(info['info']['version'])
+            print(f'==\n{name}\nInstalled:\t{installed}\nPyPI:\t\t{remote}\n==')
             if remote > installed:
                 pipenv = local['pipenv']
                 try:

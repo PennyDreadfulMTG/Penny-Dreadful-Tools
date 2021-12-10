@@ -3,7 +3,6 @@ Debug stuff
 """
 
 from dis_snek.client import Snake
-from dis_snek.const import __py_version__, __version__
 from dis_snek.errors import CommandCheckFailure, ScaleLoadException
 from dis_snek.models import MessageContext, check, message_command
 from dis_snek.models.checks import is_owner

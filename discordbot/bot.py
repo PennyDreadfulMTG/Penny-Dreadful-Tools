@@ -68,7 +68,8 @@ class Bot(Snake):
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
-        self.grow_scale('dis_snek.debug_scale')
+        if configuration.bot_debug:
+            self.grow_scale('dis_snek.debug_scale')
 
     async def stop(self) -> None:
         await super().stop()

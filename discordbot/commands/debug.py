@@ -30,8 +30,15 @@ class PDDebug(Scale):
     @regrow.error
     async def regrow_error(self, error: Exception, ctx: Context) -> None:
         if isinstance(error, CommandCheckFailure):
-            return await ctx.send("You do not have permission to execute this command")
+            return await ctx.send('You do not have permission to execute this command')
         raise
+
+    @message_command('enable_debugger')
+    @check(is_owner())
+    async def debugger(self, ctx: MessageContext) -> None:
+        self.bot.grow_scale('dis_snek.debug_scale')
+        await ctx.send('Enabled')
+
 
 def setup(bot: Snake) -> None:
     PDDebug(bot)

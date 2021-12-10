@@ -34,8 +34,9 @@ class PDDebug(Scale):
 
     @message_command('enable_debugger')
     @check(is_owner())
-    async def debugger(self, ctx: MessageContext) -> None:
+    async def enable_debugger(self, ctx: MessageContext) -> None:
         self.bot.grow_scale('dis_snek.debug_scale')
+        await self.bot.synchronise_interactions()
         await ctx.send('Enabled')
 
 

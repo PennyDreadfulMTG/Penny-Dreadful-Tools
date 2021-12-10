@@ -34,6 +34,7 @@ types-pkg-resources = "*"
 types-python-dateutil = "*"
 types-toml = "*"
 types-typed-ast = "*"
+pipfile = "*"
 
 [packages]
 aiohttp = "==3.8.1"
@@ -96,8 +97,8 @@ pydantic = "*"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
 tomli = "*"
-dis-snek = {git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
+dis-snek = {editable = true, git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
 orjson = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"

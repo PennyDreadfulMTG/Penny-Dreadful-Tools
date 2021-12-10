@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Union
 
 import build as builddotpy
 from run import wait_for_db
@@ -332,6 +332,35 @@ def swagger() -> None:
     with decksite.APP.app_context():
         with open('decksite_api.yml', 'w') as f:
             f.write(json.dumps(decksite.APP.api.__schema__))
+
+
+@cli.command()
+def repip() -> None:
+    """
+    Sometimes, we need to pin to a dev commit of a dependency to fix a bug.
+    This is a CI task to undo that when the next release lands
+    """
+    import pipfile
+    from shared import fetch_tools
+    from packaging import version
+    from importlib.metadata import version as _v
+    reqs = pipfile.load()
+    default = reqs.data['default']
+    for i in default.items():
+        name: str = i[0]
+        val: Union[str, dict] = i[1]
+        if isinstance(val, dict) and 'git' in val.keys():
+            print('> ' + repr(i))
+            installed = version.Version(_v(name))
+            info = fetch_tools.fetch_json(f'https://pypi.org/pypi/{name}/json')
+            remote = version.Version(info['info']['version'])
+            print(f'==\n{name}\nInstalled:\t{installed}\nPyPI:\t\t{remote}\n==')
+            if remote > installed:
+                pipenv = local['pipenv']
+                try:
+                    pipenv['install', f'{name}=={remote}'] & FG  # noqa
+                except ProcessExecutionError as e:
+                    sys.exit(e.retcode)
 
 
 if __name__ == '__main__':

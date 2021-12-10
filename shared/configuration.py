@@ -33,6 +33,7 @@ use_24h = BoolSetting('use_24h', False, configurable=True, doc='Use a 24 hour cl
 # Google Custom Search Engine (for !google)
 cse_api_key = StrSetting('cse_api_key', '')
 cse_engine_id = StrSetting('cse_engine_id', '')
+bot_debug = BoolSetting('bot_debug', False)
 
 # === Magic ===
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.

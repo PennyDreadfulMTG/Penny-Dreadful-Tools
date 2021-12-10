@@ -68,8 +68,8 @@ class Bot(Snake):
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
-
-    # async def get_context(self, data: Union[dict, Message], interaction: bool = False) -> Union[MessageContext, InteractionContext, ComponentContext, AutocompleteContext]:
+        if configuration.bot_debug:
+            self.grow_scale('dis_snek.debug_scale')
 
     async def stop(self) -> None:
         await super().stop()

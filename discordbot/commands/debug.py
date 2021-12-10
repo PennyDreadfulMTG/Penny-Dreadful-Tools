@@ -9,6 +9,7 @@ from dis_snek.models.checks import is_owner
 from dis_snek.models.context import Context
 from dis_snek.models.scale import Scale
 
+
 class PDDebug(Scale):
     @message_command('regrow')
     @check(is_owner())

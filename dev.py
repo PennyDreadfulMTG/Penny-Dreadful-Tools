@@ -340,10 +340,12 @@ def repip() -> None:
     Sometimes, we need to pin to a dev commit of a dependency to fix a bug.
     This is a CI task to undo that when the next release lands
     """
-    import pipfile
-    from shared import fetch_tools
-    from packaging import version
     from importlib.metadata import version as _v
+
+    import pipfile
+    from packaging import version
+
+    from shared import fetch_tools
     reqs = pipfile.load()
     default = reqs.data['default']
     for i in default.items():

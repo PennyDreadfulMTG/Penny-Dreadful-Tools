@@ -70,8 +70,6 @@ class Bot(Snake):
         discordbot.commands.setup(self)
         self.grow_scale('dis_snek.debug_scale')
 
-    # async def get_context(self, data: Union[dict, Message], interaction: bool = False) -> Union[MessageContext, InteractionContext, ComponentContext, AutocompleteContext]:
-
     async def stop(self) -> None:
         await super().stop()
 

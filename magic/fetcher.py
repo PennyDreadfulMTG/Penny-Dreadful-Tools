@@ -38,7 +38,10 @@ async def all_cards_async() -> List[CardDescription]:
         endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
         for e in endpoints['data']:
             if e['type'] == 'default_cards':
-                return await fetch_tools.fetch_json_async(e['download_uri'])
+                response = await fetch_tools.fetch_json_async(e['download_uri'])
+                if not isinstance(response, list):
+                    raise FetchException(f'Default Cards not in expected format. Got {response}') from c
+                return response
         raise FetchException('Unable to find Default Cards') from c
 
 async def all_sets_async() -> List[Dict[str, Any]]:

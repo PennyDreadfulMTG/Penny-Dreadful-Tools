@@ -31,6 +31,7 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
+
 def sentry_filter(event, hint):  # type: ignore
     if 'log_record' in hint:
         record: logging.LogRecord = hint['log_record']

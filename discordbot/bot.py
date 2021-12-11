@@ -86,6 +86,8 @@ class Bot(Snake):
 
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:
+        if event.message.author.bot:
+            return
         if event.message.channel is None:
             logging.warn(f'Got Message with no channel: {event.message}')
 

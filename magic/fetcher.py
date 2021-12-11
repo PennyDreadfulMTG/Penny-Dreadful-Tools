@@ -30,19 +30,24 @@ async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
     data = await fetch_tools.fetch_json_async(decksite_url('/api/achievements'))
     return {a['key']: a for a in data['achievements']}
 
-async def all_cards_async() -> List[CardDescription]:
-    try:
-        f = open('scryfall-default-cards.json', encoding='utf-8')
-        return json.load(f)
-    except FileNotFoundError as c:
-        endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
-        for e in endpoints['data']:
-            if e['type'] == 'default_cards':
-                response = await fetch_tools.fetch_json_async(e['download_uri'])
-                if not isinstance(response, list):
-                    raise FetchException(f'Default Cards not in expected format. Got {response}') from c
-                return response
-        raise FetchException('Unable to find Default Cards') from c
+async def all_cards_async() -> Tuple[List[CardDescription], str]:
+    download_uri = await bulk_data_uri()
+    response = await fetch_tools.fetch_json_async(download_uri)
+    if not isinstance(response, list):
+        try:
+            backup = configuration.last_good_bulk_data.value
+            return await fetch_tools.fetch_json_async(backup), backup
+        except Exception as c:
+            raise FetchException(f'Default Cards not in expected format. Got {response}') from c
+    return response, download_uri
+
+async def bulk_data_uri() -> str:
+    endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
+    for e in endpoints['data']:
+        if e['type'] == 'default_cards':
+            return e['download_uri']
+    else:
+        raise FetchException('Unable to find Default Cards')
 
 async def all_sets_async() -> List[Dict[str, Any]]:
     try:

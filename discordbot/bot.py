@@ -31,12 +31,25 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
+def sentry_filter(event, hint):  # type: ignore
+    if 'log_record' in hint:
+        record: logging.LogRecord = hint['log_record']
+        if 'dis.snek' in record.name and '/commands/permissions: 403' in record.message:
+            return None
+
+    if 'exc_info' in hint:
+        exc_type, exc_value, tb = hint['exc_info']
+        if isinstance(exc_value, OSError):
+            return None
+    return event
+
 sentry_token = configuration.get_optional_str('sentry_token')
 if sentry_token:
     try:
         sentry_sdk.init(
             dsn=sentry_token,
             integrations=[],
+            before_send=sentry_filter,
         )
     except Exception as c:  # pylint: disable=broad-except
         logging.error(c)
@@ -68,7 +81,7 @@ class Bot(Snake):
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
-        if configuration.bot_debug:
+        if configuration.bot_debug.value:
             self.grow_scale('dis_snek.debug_scale')
 
     async def stop(self) -> None:

@@ -31,6 +31,7 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
+
 def sentry_filter(event, hint):  # type: ignore
     if 'log_record' in hint:
         record: logging.LogRecord = hint['log_record']
@@ -105,7 +106,8 @@ class Bot(Snake):
         if event.message.channel is None:
             logging.warn(f'Got Message with no channel: {event.message}')
 
-        await command.respond_to_card_names(event.message, self)
+        ctx = await self.get_context(event.message)
+        await command.respond_to_card_names(ctx)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
     #     # pylint: disable=unused-argument

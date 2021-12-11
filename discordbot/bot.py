@@ -43,6 +43,7 @@ def sentry_filter(event, hint):  # type: ignore
             return None
     return event
 
+
 sentry_token = configuration.get_optional_str('sentry_token')
 if sentry_token:
     try:

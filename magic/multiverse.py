@@ -1,5 +1,7 @@
 import asyncio
 import datetime
+import json
+import os
 from typing import Any, Dict, List, Optional, Set, Union
 
 from github.GithubException import GithubException
@@ -164,7 +166,11 @@ async def update_database_async(new_date: datetime.datetime) -> None:
     sets, all_cards = [], []
     try:
         sets = await fetcher.all_sets_async()
-        all_cards = await fetcher.all_cards_async()
+        if os.path.exists('scryfall-default-cards.json'):
+            with open('scryfall-default-cards.json', encoding='utf-8') as f:
+                all_cards = json.load(f)
+        else:
+            all_cards, download_uri = await fetcher.all_cards_async()
     except Exception as e:
         print(f'Aborting database update because fetching from Scryfall failed: {e}')
         return
@@ -188,6 +194,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
     db().execute('SET FOREIGN_KEY_CHECKS=1')  # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
     rebuild_cache()
     db().commit('update_database')
+    configuration.last_good_bulk_data.value = download_uri
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
 async def insert_cards_async(printings: List[CardDescription]) -> List[int]:

@@ -41,6 +41,8 @@ card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
 # Block Scryfall updates when things are broken
 prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
 
+last_good_bulk_data = StrSetting('last_good_bulk_data', '')
+
 
 # === Prices & Rotation ===
 # Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script

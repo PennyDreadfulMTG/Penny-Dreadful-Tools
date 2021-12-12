@@ -32,7 +32,7 @@ from shared import repo
 from shared.settings import with_config_file
 
 
-def sentry_filter(event, hint):  # type: ignore
+def sentry_filter(event: dict[str, Any], hint: dict[str, Any]):  # type: ignore
     if 'log_record' in hint:
         record: logging.LogRecord = hint['log_record']
         if 'dis.snek' in record.name and '/commands/permissions: 403' in record.message:

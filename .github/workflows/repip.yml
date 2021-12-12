@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pipenv
-        pipenv install
+        if [ -f Pipfile ]; then pipenv sync --dev; fi
     - name: Run repip
       run: pipenv run python dev.py repip
     - name: Create Pull Request

@@ -41,14 +41,14 @@ HELP_GROUPS: Set[str] = set()
 def searcher() -> WhooshSearcher:
     return WhooshSearcher()
 
-async def respond_to_card_names(message: Message, client: Snake) -> None:
+async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
-    if 'gatherer.wizards.com' in message.content.lower():
+    if 'gatherer.wizards.com' in ctx.message.content.lower():
         return
-    compat = False and message.channel.type == ChannelTypes.GUILD_TEXT and await client.get_user(268547439714238465) in message.channel.members  # see #7074
-    queries = parse_queries(message.content, compat)
+    compat = False and ctx.channel.type == ChannelTypes.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
+    queries = parse_queries(ctx.message.content, compat)
     if len(queries) > 0:
-        await message.channel.trigger_typing()
+        await ctx.channel.trigger_typing()
         results = results_from_queries(queries)
         cards = []
         for i in results:
@@ -57,7 +57,7 @@ async def respond_to_card_names(message: Message, client: Snake) -> None:
                 cards.extend(cards_from_names_with_mode([r.get_best_match()], mode, preferred_printing))
             elif r.is_ambiguous():
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
-        await post_cards(client, cards, message.channel, message.author)
+        await ctx.post_cards(cards, ctx.author)
 
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.

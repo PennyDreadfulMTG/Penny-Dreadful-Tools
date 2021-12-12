@@ -6,8 +6,8 @@ from anytree import NodeMixin
 from anytree.iterators import PreOrderIter
 
 from decksite.data import deck, preaggregation, query
-from decksite.data.competition import Competition
 from decksite.database import db
+from magic.models import Competition
 from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape

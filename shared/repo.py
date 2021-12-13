@@ -9,6 +9,7 @@ from flask import request, session
 from github import Github, Issue, PullRequest
 from github.GithubException import GithubException
 from requests.exceptions import RequestException
+import traceback_with_variables
 
 from shared import configuration, dtutil
 
@@ -35,8 +36,9 @@ def create_issue(content: str,
         body += exception.__class__.__name__ + '\n'
         body += str(exception) + '\n'
         body += '</summary>\n\n'
-        stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
-        pretty = traceback.format_list(stack)
+        # stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
+        # pretty = traceback.format_list(stack)
+        pretty = traceback_with_variables.format_exc(exception)
         body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'

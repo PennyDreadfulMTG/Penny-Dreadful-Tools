@@ -16,7 +16,7 @@ async def randomdeck(ctx: MtgContext) -> None:
         if ctn is not None:
             if ctn == 'Gatherling' and blob['finish'] == 1:
                 record = 'won'
-            elif ctn == 'Gatherling' and blob['finish'] <= blob['competition_top_n']:
+            elif ctn == 'Gatherling' and blob['finish'] <= blob.get('competition_top_n', 0):
                 record = f"made Top {blob['competition_top_n']} of"
             else:
                 draws = f"-{blob['draws']}" if blob['draws'] > 0 else ''

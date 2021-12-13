@@ -53,7 +53,7 @@ if sentry_token:
             integrations=[],
             before_send=sentry_filter,
         )
-    except Exception as c:  # pylint: disable=broad-except
+    except Exception as c:
         logging.error(c)
 
 TASKS = []

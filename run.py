@@ -8,6 +8,7 @@ from types import ModuleType
 from typing import Any, List, Optional, Tuple
 
 import click
+from traceback_with_variables import activate_by_import  # noqa
 
 from shared import configuration
 

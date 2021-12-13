@@ -5,11 +5,11 @@ import textwrap
 import traceback
 from typing import Dict, List, Optional
 
+import traceback_with_variables
 from flask import request, session
 from github import Github, Issue, PullRequest
 from github.GithubException import GithubException
 from requests.exceptions import RequestException
-import traceback_with_variables
 
 from shared import configuration, dtutil
 

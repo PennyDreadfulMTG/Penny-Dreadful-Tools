@@ -99,6 +99,7 @@ fasteners = "*"
 tomli = "*"
 dis-snek = {editable = true, git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
 orjson = "*"
+traceback-with-variables = "*"
 
 [requires]
 python_version = "3.10"

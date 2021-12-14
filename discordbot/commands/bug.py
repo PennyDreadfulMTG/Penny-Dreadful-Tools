@@ -6,7 +6,7 @@ from dis_snek.models.application_commands import OptionTypes, slash_command, sla
 from dis_snek.models.command import message_command
 from dis_snek.models.scale import Scale
 
-from discordbot.command import MtgContext, MtgMessageContext
+from discordbot.command import MtgContext
 from shared import repo
 
 
@@ -24,10 +24,6 @@ class Bug(Scale):
             await ctx.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
         else:
             await ctx.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
-
-    @message_command('bug')
-    async def m_bug(self, ctx: MtgMessageContext, text: CMD_BODY) -> None:
-        await self.bug(ctx, title=text, body=None)
 
     @message_command('gbug')
     async def gatherlingbug(ctx: MtgContext, text: CMD_BODY) -> None:

@@ -17,7 +17,7 @@ class Swiss(Scale):
 
     @slash_command('swiss')
     @slash_option(
-        name='players',
+        name='num_players',
         description='number of players in the event',
         opt_type=OptionTypes.INTEGER,
         required=True)

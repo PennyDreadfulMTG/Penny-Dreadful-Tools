@@ -27,8 +27,8 @@ def load_deck(deck_id: int) -> Deck:
 def load_decks_count(where: str = 'TRUE',
                      having: str = 'TRUE',
                      season_id: Optional[Union[str, int]] = None) -> int:
-    columns = 'COUNT(*) AS n'
-    sql = load_decks_query(columns, where=where, group_by=None, having=having, order_by='TRUE', limit='', season_id=season_id)
+    sql = load_decks_query('COUNT(DISTINCT d.id) AS n', where=where, group_by=None, having=having,
+                           order_by='TRUE', limit='', season_id=season_id)
     return int(db().value(sql))
 
 def load_decks(where: str = 'TRUE',
@@ -112,6 +112,11 @@ def load_decks_query(columns: str,
         LEFT JOIN
             archetype AS a ON d.archetype_id = a.id
         """
+    if 'q.' in where or 'q.' in order_by:
+        sql += """
+        LEFT JOIN
+            deck_archetype_change AS q ON q.deck_id = d.id
+        """
     sql += """
         {competition_join}
         LEFT JOIN
@@ -153,6 +158,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
+
     sql = """
         SELECT
             d.id,
@@ -187,9 +193,12 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
             season.season_id,
-            IFNULL(MAX(m.date), d.created_date) AS active_date
+            IFNULL(MAX(m.date), d.created_date) AS active_date,
+            MAX(q.changed_date) AS last_archetype_change
         FROM
             deck AS d
+        LEFT JOIN
+            deck_archetype_change AS q ON q.deck_id = d.id
         LEFT JOIN
             person AS p ON d.person_id = p.id
         LEFT JOIN

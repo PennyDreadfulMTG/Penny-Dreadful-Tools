@@ -14,7 +14,7 @@ class Whois(Scale):
     async def whois(self, ctx: MtgContext, args: str) -> None:
         """Who is a person?"""
         mention = re.match(r'<@!?(\d+)>', args)
-        await ctx.trigger_typing()
+        await ctx.channel.trigger_typing()
 
         if mention:
             person = await fetcher.person_data_async(mention.group(1))

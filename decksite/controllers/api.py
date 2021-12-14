@@ -23,7 +23,7 @@ from magic import oracle, rotation, seasons, tournaments
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import DoesNotExistException, TooManyItemsException
+from shared.pd_exception import DoesNotExistException, TooManyItemsException, InvalidArgumentException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
@@ -58,13 +58,14 @@ DECK = APP.api.model('Deck', {
     'decklist_hash': fields.String(),
     'retired': fields.Boolean(),
     'colors': fields.List(fields.String()),
-    'omw': fields.Integer(),
+    'omw': fields.String(),
     'season_id': fields.Integer(),
     'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
     'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
     'url': fields.String(),
     'source_name': fields.String(),
     'competition_type_name': fields.String(),
+    'last_archetype_change': fields.Integer(),
 })
 
 COMPETITION = APP.api.model('Competition', {
@@ -81,6 +82,12 @@ COMPETITION = APP.api.model('Competition', {
     'type': fields.String(),
     'season_id': fields.Integer(),
     'decks': fields.List(fields.Nested(DECK)),
+})
+
+DECKS = APP.api.model('MultipleDecks', {
+    'objects': fields.List(fields.Nested(DECK)),
+    'page': fields.Integer(),
+    'total': fields.Integer(),
 })
 
 RELEASE_DATE = APP.api.model('ReleaseDate', {
@@ -123,7 +130,7 @@ def decks_api() -> Response:
     Output:
         {
             'page': <int>,
-            'objects': [<deck>]
+            'objects': [<deck>],
             'total': <int>
         }
     """
@@ -142,6 +149,42 @@ def decks_api() -> Response:
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
+
+@APP.api.route('/decks/updated/')
+class UpdatedDecks(Resource):
+    @APP.api.marshal_with(DECKS)
+    def get(self) -> Dict[str, Any]:
+        """
+        Grab a slice of finished sorted decks last updated after a certain point.
+        Input:
+            {
+                'sortBy': <str>,
+                'sortOrder': <'ASC'|'DESC'>,
+                'page': <int>,
+                'pageSize': <int>,
+                'since': <int>,
+                'seasonId': <int|'all'>
+            }
+        Output:
+            {
+                'page': <int>,
+                'objects': [<deck>],
+                'total: <int>
+            }
+        """
+        season = seasons.season_id(str(request.args.get('seasonId')), None)
+        page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+        page = int(request.args.get('page', 0))
+        timestamp = int(request.args.get('since', 0))
+        if timestamp < 1e9:
+            raise InvalidArgumentException('Invalid timestamp!')
+        start = page * page_size
+        limit = f'LIMIT {start}, {page_size}'
+        where = '(' + query.decks_where(request.args, False, None) + ') AND ' + query.decks_updated_since(timestamp)
+        total = deck.load_decks_count(where=where, season_id=season)
+        ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
+        prepare_decks(ds)
+        return {'page': page, 'total': total, 'objects': ds}
 
 @APP.route('/api/cards2/')
 def cards2_api() -> Response:

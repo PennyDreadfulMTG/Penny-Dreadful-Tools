@@ -49,12 +49,12 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - docker-compose up
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
-- Install python3.9
+- Install python 3.10
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
-- pipenv --python 3.9
+- pipenv --python 3.10
 - pipenv install
 - pipenv run python dev.py build
 
@@ -72,7 +72,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 ## Manual Development Environment Setup (Non-docker instructions)
 
 - Install MariaDB 10.0+
-- Install python3.9
+- Install python 3.10
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>

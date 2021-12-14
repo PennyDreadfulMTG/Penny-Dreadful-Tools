@@ -23,7 +23,8 @@ from magic import oracle, rotation, seasons, tournaments
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import DoesNotExistException, TooManyItemsException, InvalidArgumentException
+from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
+                                 TooManyItemsException)
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form

@@ -193,12 +193,12 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
             season.season_id,
-            IFNULL(MAX(m.date), d.created_date) AS active_date,
-            MAX(q.changed_date) AS last_archetype_change
+            IFNULL(MAX(m.date), d.created_date) AS active_date
+--            MAX(q.changed_date) AS last_archetype_change
         FROM
             deck AS d
-        LEFT JOIN
-            deck_archetype_change AS q ON q.deck_id = d.id
+--        LEFT JOIN
+--            deck_archetype_change AS q ON q.deck_id = d.id
         LEFT JOIN
             person AS p ON d.person_id = p.id
         LEFT JOIN

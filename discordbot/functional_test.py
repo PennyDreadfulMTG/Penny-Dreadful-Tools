@@ -1,5 +1,5 @@
-import asyncio
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, List, Optional, Tuple, Union
+from _pytest.mark.structures import ParameterSet
 
 import pytest
 from dis_snek import Snake
@@ -8,8 +8,6 @@ from dis_snek.models.context import Context
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin
-from discordbot.commands import CardConverter
-from magic.models import Card
 from shared.container import Container
 
 
@@ -34,52 +32,46 @@ class ContextForTests(Context, MtgMixin):
     async def trigger_typing(self) -> None:
         ...
 
-async def card(param: str) -> Card:
-    ctx = ContextForTests()
-    return cast(Card, await CardConverter.convert(ctx, param))
+def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional[str], Optional[str]]]]:
+    return [
+        ('art', {'card': 'Island'}, None, None),
+        ('barbs', {}, None, None),
+        ('echo', {'args': 'test string!'}, None, None),
+        ('explain', {'thing': None}, None, None),
+        ('explain', {'thing': 'bugs'}, None, None),
+        ('flavor', {'card': 'Falling Star'}, 'No flavor text available', None),  # No flavor
+        ('flavor', {'card': 'Dwarven Pony'}, 'likes to eat meat', None),  # Meaty flavor
+        ('flavor', {'card': 'Gruesome Menagerie|grn'}, 'Variety is also the spice of death.', None),  # Spicy flavor
+        ('flavor', {'card': 'capital offense|UST'}, 'part basket case, all lowercase.', None),  # Capital flavor
+        ('flavor', {'card': 'Reliquary Tower|plg20'}, 'Archmage Vintra', None),  # Long set code
+        ('history', {'card': 'Necropotence'}, None, None),
+        ('legal', {'card': 'Island'}, None, None),
+        ('legal', {'card': 'Black Lotus'}, None, None),
+        ('oracle', {'card': 'Dark Ritual'}, None, None),
+        pytest.param('p1p1', {}, None, None, marks=pytest.mark.functional),
+        ('patreon', {}, None, None),
+        ('price', {'card': 'Gleemox'}, None, None),
+        ('rotation', {}, None, None),
+        pytest.param('rhinos', {}, None, None, marks=pytest.mark.functional),
+        ('rulings', {'card': 'Worldknit'}, None, None),
+        ('scry', {'query': 'f:pd'}, None, None),
+        ('status', {}, None, None),
+        ('time', {'place': 'AEST'}, None, None),
+        ('tournament', {}, None, None),
+        ('version', {}, None, None),
+        ('whois', {'args': 'silasary'}, None, 'whois'),
+        ('whois', {'args': 'kaet'}, None, 'whois'),
+        # ('whois', {'args': '<@154363842451734528>'}, None, 'whois'),
+        # ('whois', {'args': '<@!224755717767299072>'}, None, 'whois'),
+    ]
 
-
-def get_params() -> List[Tuple]:
-    async def params() -> List[Tuple]:
-        return [
-            ('art', {'card': 'Island'}, None),
-            ('barbs', {}, None),
-            ('echo', {'args': 'test string!'}, None),
-            ('explain', {'thing': None}, None),
-            ('explain', {'thing': 'bugs'}, None),
-            ('flavor', {'card': 'Falling Star'}, 'No flavor text available'),  # No flavor
-            ('flavor', {'card': 'Dwarven Pony'}, 'likes to eat meat'),  # Meaty flavor
-            ('flavor', {'card': 'Gruesome Menagerie|grn'}, 'Variety is also the spice of death.'),  # Spicy flavor
-            ('flavor', {'card': 'capital offense|UST'}, 'part basket case, all lowercase.'),  # Capital flavor
-            ('flavor', {'card': 'Reliquary Tower|plg20'}, 'Archmage Vintra'),  # Long set code
-            ('history', {'card': 'Necropotence'}, None),
-            ('legal', {'card': 'Island'}, None),
-            ('legal', {'card': 'Black Lotus'}, None),
-            ('oracle', {'card': 'Dark Ritual'}, None),
-            pytest.param('p1p1', {}, None, marks=pytest.mark.functional),
-            ('patreon', {}, None),
-            ('price', {'card': 'Gleemox'}, None),
-            ('rotation', {}, None),
-            pytest.param('rhinos', {}, None, marks=pytest.mark.functional),
-            ('rulings', {'card': 'Worldknit'}, None),
-            ('scry', {'query': 'f:pd'}, None),
-            ('status', {}, None),
-            ('time', {'place': 'AEST'}, None),
-            ('tournament', {}, None),
-            ('version', {}, None),
-            ('whois', {'args': 'silasary'}, None),
-            ('whois', {'args': 'kaet'}, None),
-            ('whois', {'args': '<@154363842451734528>'}, None),
-            ('whois', {'args': '<@!224755717767299072>'}, None),
-        ]
-    loop = asyncio.new_event_loop()
-    return loop.run_until_complete(params())
 
 @pytest.mark.functional
 @pytest.mark.asyncio
-@pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
-async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:
-    command = find_command(discordbot, cmd)
+@pytest.mark.parametrize('cmd, kwargs, expected_content, function_name', get_params())
+async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str, function_name: str) -> None:
+    command = find_command(discordbot, cmd, function_name)
+    print(f'command: {command}')
 
     ctx = ContextForTests()
     ctx.bot = discordbot
@@ -98,12 +90,17 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content
 
-def find_command(discordbot: Snake, cmd: str) -> BaseCommand:
+def find_command(discordbot: Snake, cmd: str, function_name: str = None) -> BaseCommand:
     command = None
     for cmds in discordbot.interactions.values():
         if cmd in cmds:
             command = cmds[cmd]
-            break
+            print(f'found command {command} - {command.callback}')
+            if function_name and command.callback.__name__ == function_name:
+                return command
+            if not function_name:
+                break
     else:
         command = discordbot.commands[cmd]
+        print(f'found command {command} - {command.callback}')
     return command

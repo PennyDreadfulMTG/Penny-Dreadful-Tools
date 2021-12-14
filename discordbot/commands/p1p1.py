@@ -12,7 +12,7 @@ async def p1p1(ctx: MtgContext) -> None:
     """`!p1p1` Summon a pack 1, pick 1 game."""
 
     if is_p1p1_ready(ctx.channel.id):
-        await ctx.trigger_typing()
+        await ctx.channel.trigger_typing()
         lock(ctx.channel.id)  # Do not allow more than one p1p1 at the same time.
         cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), 15)]
         await image_fetcher.download_image_async(cards)  # Preload the cards to reduce the delay encountered between introduction and the cards.

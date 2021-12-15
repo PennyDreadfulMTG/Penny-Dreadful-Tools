@@ -54,7 +54,6 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
-- pipenv --python 3.10
 - pipenv install
 - pipenv run python dev.py build
 

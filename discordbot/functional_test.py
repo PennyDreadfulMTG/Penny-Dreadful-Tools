@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple, Union
-from _pytest.mark.structures import ParameterSet
 
 import pytest
+from _pytest.mark.structures import ParameterSet
 from dis_snek import Snake
 from dis_snek.models.command import BaseCommand
 from dis_snek.models.context import Context

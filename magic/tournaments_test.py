@@ -1,8 +1,9 @@
 import datetime
 
+import pytest
 import freezegun
 
-from magic import tournaments
+from magic import tournaments, seasons
 from magic.models import Competition, Deck
 from shared import dtutil
 
@@ -12,8 +13,10 @@ COMPETITIONS = {
     'normal': Competition({'name': 'Penny Dreadful Monday 99.99'}),
 }
 
+@pytest.mark.xfail(reason='The code this is testing will only ever rename the current season')
 def test_get_all_next_tournament_dates() -> None:
     with freezegun.freeze_time('2021-02-01'):
+        seasons.rotation_info().recalculate()
         just_before_s19_kick_off = datetime.datetime(2021, 2, 19).astimezone(tz=dtutil.WOTC_TZ)
         just_after_s19_kick_off = datetime.datetime(2021, 2, 21).astimezone(tz=dtutil.WOTC_TZ)
         info = tournaments.get_all_next_tournament_dates(just_before_s19_kick_off)

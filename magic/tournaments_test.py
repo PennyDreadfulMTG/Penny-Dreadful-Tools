@@ -1,9 +1,9 @@
 import datetime
 
-import pytest
 import freezegun
+import pytest
 
-from magic import tournaments, seasons
+from magic import seasons, tournaments
 from magic.models import Competition, Deck
 from shared import dtutil
 

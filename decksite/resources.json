@@ -16,15 +16,15 @@
     "Deck builder": "https://tappedout.net/mtg-deck-builder/penny-dreadful/",
     "Deck checker": "https://pennydreadfulmagic.com/deckcheck/",
     "Decklists": "https://pennydreadfulmagic.com/",
-    "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
+    "Frank Karsten manabase": "https://www.channelfireball.com/all-strategy/articles/how-many-colored-mana-sources-do-you-need-to-consistently-cast-your-spells-a-guilds-of-ravnica-update/",
     "Intro to brewing": "https://www.reddit.com/r/PennyDreadfulMTG/comments/8yy2q3/newb_guide_how_to_start_brewing_in_penny_dreadful/",
-    "Frank Karsten manabase": "https://strategy.channelfireball.com/all-strategy/mtg/channelmagic-articles/how-many-colored-mana-sources-do-you-need-to-consistently-cast-your-spells-a-guilds-of-ravnica-update/"
+    "Legal cards list": "http://pdmtgo.com/legal_cards.txt"
   },
   "Essentials": {
     "Card search": "https://scryfall.com/search/?q=f:pd",
+    "Cardhoarder free loan program": "https://www.cardhoarder.com/free-loan-program-faq",
     "Chat": "https://discord.gg/H6EHdHu",
     "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
-    "Cardhoarder free loan program": "https://www.cardhoarder.com/free-loan-program-faq",
     "Magic Online guide": "https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit",
     "Official site": "http://pdmtgo.com/",
     "Reddit": "https://reddit.com/r/PennyDreadfulMTG/"
@@ -49,11 +49,11 @@
     "Weekly Tournaments": "https://pennydreadfulmagic.com/tournaments/"
   },
   "Video": {
-    "j_meka (Twitch)": "https://twitch.tv/j_meka",
-    "j_meka (YouTube)": "https://www.youtube.com/jmeka",
-    "厳かな守護者P": "https://www.youtube.com/channel/UCsR9_jIizAKXdPLWeeFXjUw",
     "Caleb Gannon": "https://www.youtube.com/channel/UCg1tU3i6z52tAZunIPhCS4w",
     "earterms123": "https://www.twitch.tv/earterms123",
-    "tercoil": "https://www.twitch.tv/tercoil"
+    "j_meka (Twitch)": "https://twitch.tv/j_meka",
+    "j_meka (YouTube)": "https://www.youtube.com/jmeka",
+    "tercoil": "https://www.twitch.tv/tercoil",
+    "\u53b3\u304b\u306a\u5b88\u8b77\u8005P": "https://www.youtube.com/channel/UCsR9_jIizAKXdPLWeeFXjUw"
   }
 }

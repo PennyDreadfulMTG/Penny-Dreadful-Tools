@@ -335,12 +335,10 @@ class MtgMixin:
         await post_nothing(self.channel)
 
 
+# Some hackery here.  The classes below don't actually exist.  They just appear to do so for type-checking.
+# In reality, we're adding the above mixin as a parent to the appropriate classes
 InteractionContext.__bases__ += (MtgMixin,)
 MessageContext.__bases__ += (MtgMixin,)
-# Some hackery here.  The classes below don't actually get used.  They're placeholders for the sake of type-checking.
-# In reality, we're adding the above mixin as a parent to the appropriate classes
-# While the recommendation for subclassing Contexts is to override Snake.get_context, there's a lot of complex logic there,
-# and essentially rewriting the method makes forward-compatibility messy and hard to maintain.
 
 @attr.define
 class MtgInteractionContext(InteractionContext, MtgMixin):

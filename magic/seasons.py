@@ -70,6 +70,9 @@ class RotationInfo():
     def validate(self) -> None:
         if (self.next.enter_date_dt + ROTATION_OFFSET) > dtutil.now():
             return
+        self.recalculate()
+
+    def recalculate(self) -> None:
         self.previous = calc_prev()
         self.next = calc_next()
 

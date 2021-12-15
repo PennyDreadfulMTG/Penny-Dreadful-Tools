@@ -35,6 +35,7 @@ types-python-dateutil = "*"
 types-toml = "*"
 types-typed-ast = "*"
 pipfile = "*"
+types-freezegun = "*"
 
 [packages]
 aiohttp = "==3.8.1"
@@ -100,6 +101,7 @@ tomli = "*"
 dis-snek = {editable = true, git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git"}
 orjson = "*"
 traceback-with-variables = "*"
+freezegun = "*"
 
 [requires]
 python_version = "3.10"

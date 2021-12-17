@@ -9,16 +9,12 @@ from typing import Any, Callable, Dict, List, Optional
 import sentry_sdk
 from dis_snek import Snake
 from dis_snek.errors import Forbidden
-from dis_snek.models.discord_objects.activity import ActivityType
-from dis_snek.models.discord_objects.channel import GuildText
-from dis_snek.models.discord_objects.embed import Embed
-from dis_snek.models.discord_objects.guild import Guild
-from dis_snek.models.discord_objects.role import Role
-from dis_snek.models.discord_objects.user import Member, User
+from dis_snek.models import ActivityType, GuildText, Embed, Guild, Role, ScheduledEventType, Member, User
 from dis_snek.models.enums import Intents
 from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageReactionAdd,
                                             PresenceUpdate)
 from dis_snek.models.listener import listen
+from dis_snek.utils import timestamp_converter
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -253,6 +249,8 @@ class Bot(Snake):
         if not isinstance(channel, GuildText):
             logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
             return
+
+        guild = channel.guild
         while self.is_ready:
             info = tournaments.next_tournament_info()
             diff = info['next_tournament_time_precise']
@@ -291,6 +289,21 @@ class Bot(Snake):
 
             if timer < 300:
                 timer = 300
+            events = await guild.list_scheduled_events()
+            created = any(e.name == info['next_tournament_name'] for e in events)
+            if not created:
+                try:
+                    expected_duration = datetime.timedelta(hours=3)  # Maybe vary this based on event name?
+                    await guild.create_scheduled_event(
+                        name=info['next_tournament_name'],
+                        description=message,
+                        start_time=timestamp_converter(info['time']),
+                        end_time=timestamp_converter(info['time'] + expected_duration),
+                        event_type=ScheduledEventType.EXTERNAL,
+                        external_location='https://gatherling.com',
+                    )
+                except Forbidden:
+                    logging.warning('Can\t create scheduled events')
             await asyncio.sleep(timer)
         logging.warning('naturally stopping tournament reminders')
 

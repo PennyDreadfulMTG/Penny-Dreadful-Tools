@@ -411,7 +411,7 @@ def init() -> None:
     asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
     logging.info('Connecting to Discord')
-    client.start(configuration.get_str('token'))
+    client.start(configuration.token.value)
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682  # or guild.id == 226920619302715392

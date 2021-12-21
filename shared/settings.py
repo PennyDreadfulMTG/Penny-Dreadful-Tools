@@ -157,5 +157,24 @@ class OptionalStrSetting(Setting[Optional[str]]):
 class ListSetting(Setting[List[U]]):
     pass
 
+class IntSetting(Setting[int]):
+    @property
+    def value(self) -> int:
+        val = self.get()
+        if val is None:
+            raise fail(self.key, val, int)
+        if isinstance(val, int):
+            return val
+        if isinstance(val, str):
+            val2 = ast.literal_eval(val)
+            if isinstance(val2, int):
+                CONFIG[self.key] = val2
+                return CONFIG[self.key]
+        raise fail(self.key, val, int)
+
+    @value.setter
+    def value(self, value: int) -> int:
+        return self.set(value)
+
 def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
     return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))

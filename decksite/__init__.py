@@ -32,7 +32,7 @@ def pull_season_id(_endpoint: Optional[str], values: Optional[Dict[Any, Any]]) -
     g.season_id = seasons.season_id(v)
 
 
-APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
+APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
 
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     current_template = (request.endpoint or '').replace('seasons.', '')

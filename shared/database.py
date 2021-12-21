@@ -16,10 +16,10 @@ class Database():
     def __init__(self, db: str) -> None:
         warnings.filterwarnings('error', category=MySQLdb.Warning)
         self.name = db
-        self.host = configuration.get_str('mysql_host')
-        self.port = configuration.get_int('mysql_port')
-        self.user = configuration.get_str('mysql_user')
-        self.passwd = configuration.get_str('mysql_passwd')
+        self.host = configuration.mysql_host.value
+        self.port = configuration.mysql_port.value
+        self.user = configuration.mysql_user.value
+        self.passwd = configuration.mysql_passwd.value
         self.open_transactions: List[str] = []
         self.connect()
 

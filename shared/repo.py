@@ -13,6 +13,13 @@ from requests.exceptions import RequestException
 
 from shared import configuration, dtutil
 
+REDACTED_STRINGS = []
+if configuration.token.value:
+    REDACTED_STRINGS.append(configuration.token.value)
+if configuration.mysql_passwd.value:
+    REDACTED_STRINGS.append(configuration.mysql_passwd.value)
+if configuration.oauth2_client_secret.value:
+    REDACTED_STRINGS.append(configuration.oauth2_client_secret.value)
 
 # pylint: disable=too-many-locals
 def create_issue(content: str,
@@ -77,6 +84,9 @@ def create_issue(content: str,
     if not configuration.create_github_issues.value:
         print('Not creating github issue')
         return None
+    for secret in REDACTED_STRINGS:
+        if secret in body:
+            body = body.replace(secret, 'REDACTED')
     g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
     git_repo = g.get_repo(repo_name)
     if repo_name == 'PennyDreadfulMTG/perf-reports':

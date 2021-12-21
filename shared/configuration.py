@@ -7,7 +7,7 @@ import string
 from typing import Any, Dict, List, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException
-from shared.settings import CONFIG, BoolSetting, ListSetting, StrSetting, fail
+from shared.settings import CONFIG, BoolSetting, ListSetting, StrSetting, fail, IntSetting
 
 try:
     import dotenv
@@ -34,6 +34,7 @@ use_24h = BoolSetting('use_24h', False, configurable=True, doc='Use a 24 hour cl
 cse_api_key = StrSetting('cse_api_key', '')
 cse_engine_id = StrSetting('cse_engine_id', '')
 bot_debug = BoolSetting('bot_debug', False)
+token = StrSetting('token', '')
 
 # === Magic ===
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
@@ -60,6 +61,14 @@ bugs_webhook_token = StrSetting('bugs_webhook_token', '')
 create_github_issues = BoolSetting('create_github_issues', True)
 # == Redis ==
 redis_enabled = BoolSetting('redis_enabled', True)
+# == Mysql ==
+mysql_host = StrSetting('mysql_host', 'localhost')
+mysql_port = IntSetting('mysql_port', 3306)
+mysql_user = StrSetting('mysql_user', 'pennydreadful')
+mysql_passwd = StrSetting('mysql_passwd', '')
+# == Discord API ==
+oauth2_client_id = StrSetting('oauth2_client_id', '')
+oauth2_client_secret = StrSetting('oauth2_client_secret', '')
 
 DEFAULTS: Dict[str, Any] = {
     # mysql database name.  Used by decksite.
@@ -92,14 +101,7 @@ DEFAULTS: Dict[str, Any] = {
     'magic_database': 'cards',
     'modo_bugs_dir': 'modo_bugs_repo',
     'mtgotraders_url': 'http://www.mtgotraders.com/pennydreadfull.php',
-    'mysql_host': 'localhost',
-    'mysql_passwd': '',
-    'mysql_port': 3306,
-    'mysql_user': 'pennydreadful',
     'not_pd': '',
-    # Discord OAuth settings
-    'oauth2_client_id': '',
-    'oauth2_client_secret': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'poeditor_api_key': None,
     'prices_database': 'prices',

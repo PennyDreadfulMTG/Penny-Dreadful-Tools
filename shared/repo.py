@@ -10,9 +10,17 @@ from flask import request, session
 from github import Github, Issue, PullRequest
 from github.GithubException import GithubException
 from requests.exceptions import RequestException
+from traceback_with_variables.core import Format
 
 from shared import configuration, dtutil
 
+REDACTED_STRINGS = set()
+if configuration.token.value:
+    REDACTED_STRINGS.add(configuration.token.value)
+if configuration.mysql_passwd.value:
+    REDACTED_STRINGS.add(configuration.mysql_passwd.value)
+if configuration.oauth2_client_secret.value:
+    REDACTED_STRINGS.add(configuration.oauth2_client_secret.value)
 
 # pylint: disable=too-many-locals
 def create_issue(content: str,
@@ -36,9 +44,10 @@ def create_issue(content: str,
         body += exception.__class__.__name__ + '\n'
         body += str(exception) + '\n'
         body += '</summary>\n\n'
-        # stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
-        # pretty = traceback.format_list(stack)
-        pretty = traceback_with_variables.format_exc(exception)
+        fmt = Format(custom_var_printers=[
+            ('headers', '...redacted...'),
+        ])
+        pretty = traceback_with_variables.format_exc(exception, fmt=fmt)
         body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'
@@ -77,6 +86,11 @@ def create_issue(content: str,
     if not configuration.create_github_issues.value:
         print('Not creating github issue')
         return None
+
+    for secret in REDACTED_STRINGS:
+        if secret and secret in body:
+            body = body.replace(secret, 'REDACTED')
+
     g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
     git_repo = g.get_repo(repo_name)
     if repo_name == 'PennyDreadfulMTG/perf-reports':

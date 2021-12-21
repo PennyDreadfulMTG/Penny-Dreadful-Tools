@@ -92,11 +92,6 @@ def logsite() -> None:
     site.APP.run(host='0.0.0.0', port=5001, debug=True)
 
 @cli.command()
-def github_tools() -> None:
-    import github_tools as site
-    site.APP.run(host='0.0.0.0', port=5002, debug=True)
-
-@cli.command()
 @click.argument('argv', nargs=-1)
 def modo_bugs(argv: Tuple[str]) -> None:
     from modo_bugs import main

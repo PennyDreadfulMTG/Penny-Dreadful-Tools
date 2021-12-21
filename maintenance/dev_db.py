@@ -7,10 +7,10 @@ from shared.pd_exception import InvalidArgumentException, OperationalException
 
 def run() -> None:
     """Make a 'safe' (no personal info) copy of the current prod db for download by devs."""
-    host = configuration.get_str('mysql_host')
-    port = configuration.get_int('mysql_port')
-    usr = configuration.get_str('mysql_user')
-    pwd = configuration.get_str('mysql_passwd')
+    host = configuration.mysql_host.value
+    port = configuration.mysql_port.value
+    usr = configuration.mysql_user.value
+    pwd = configuration.mysql_passwd.value
     db = configuration.get_str('decksite_database')
     if not (host or port or usr or pwd or db):
         safe_pwd = 'PRESENT' if pwd else 'MISSING'

@@ -7,7 +7,7 @@ import string
 from typing import Any, Dict, List, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException
-from shared.settings import CONFIG, BoolSetting, ListSetting, StrSetting, fail, IntSetting
+from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, StrSetting, fail
 
 try:
     import dotenv

@@ -8,6 +8,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 import attr
 from dis_snek import Snake
 from dis_snek.annotations.argument_annotations import CMD_BODY
+from dis_snek.errors import Forbidden
 from dis_snek.models.application_commands import (InteractionCommand, OptionTypes, Permission,
                                                   PermissionTypes, slash_option, slash_permission)
 from dis_snek.models.command import MessageCommand, message_command
@@ -48,7 +49,10 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     compat = False and ctx.channel.type == ChannelTypes.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
     queries = parse_queries(ctx.message.content, compat)
     if len(queries) > 0:
-        await ctx.channel.trigger_typing()
+        try:
+            await ctx.channel.trigger_typing()
+        except Forbidden:
+            return
         results = results_from_queries(queries)
         cards = []
         for i in results:

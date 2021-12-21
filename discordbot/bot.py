@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
+from dis_snek.models.events.internal import Login
 
 import sentry_sdk
 from dis_snek import Snake
@@ -108,6 +109,10 @@ class Bot(Snake):
 
         ctx = await self.get_context(event.message)
         await command.respond_to_card_names(ctx)
+
+    @listen()
+    async def on_login(self, event: Login) -> None:
+        repo.REDACTED_STRINGS.add(self.http.token)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
     #     # pylint: disable=unused-argument

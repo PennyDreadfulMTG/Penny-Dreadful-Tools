@@ -71,6 +71,7 @@ class Setting(Generic[T]):
         if key in os.environ:
             cfg[key] = os.environ[key]
             print('CONFIG: {0}={1}'.format(key, cfg[key]))
+            CONFIG.update({key: cfg[key]})
             return cfg[key]
         if key in cfg:
             CONFIG.update(cfg)

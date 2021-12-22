@@ -1,5 +1,5 @@
 import math
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from flask import url_for
 
@@ -55,7 +55,7 @@ class Metagame(View):
 # See https://stackoverflow.com/a/10029645/375262
 # See https://www.evanmiller.org/how-not-to-sort-by-average-rating.html
 # Expects win_rate as a fraction of 1 NOT a 0-100 scale percentage.
-def confidence_interval(win_rate: float, matches_played: int):
+def confidence_interval(win_rate: float, matches_played: int) -> Tuple[float, float]:
     n = matches_played
     if n == 0:
         return 0.0, 0.0

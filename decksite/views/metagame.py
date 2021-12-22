@@ -41,8 +41,27 @@ class Metagame(View):
                 if not a.is_leaf:
                     a.name = f'Other {a.name}'
                 a.num_matches_plural = 'es' if a.num_matches != 1 else ''
+                a.lower_bound, a.upper_bound = confidence_interval(float(a.win_percent) / 100.0, a.num_matches)
+                a.lower_win_percent = round(a.lower_bound * 100.0, 1)
+                a.upper_win_percent = round(a.upper_bound * 100.0, 1)
                 self.archetypes.append(a)
-        self.archetypes.sort(key=lambda o: (o.display_width, o.num_matches), reverse=True)
+        self.archetypes.sort(key=lambda o: (o.lower_bound, o.display_width, o.num_matches), reverse=True)
 
     def page_title(self) -> str:
         return 'Metagame'
+
+# Calculation the lower and upper bound using the Wilson interval at 95% confidence.
+# See https://discord.com/channels/207281932214599682/230056266938974218/691464882998214686
+# See https://stackoverflow.com/a/10029645/375262
+# See https://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+# Expects win_rate as a fraction of 1 NOT a 0-100 scale percentage.
+def confidence_interval(win_rate: float, matches_played: int):
+    n = matches_played
+    if n == 0:
+        return 0.0, 0.0
+    n = float(n)
+    z = 1.96  # 1.44 = 85%, 1.96 = 95%, see https://www.dummies.com/education/math/statistics/checking-out-statistical-confidence-interval-critical-values/
+    phat = win_rate
+    lower_bound = (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
+    upper_bound = (phat + z * z / (2 * n) + z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)
+    return lower_bound, upper_bound

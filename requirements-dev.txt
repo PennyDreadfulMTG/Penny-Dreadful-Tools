@@ -1,1 +1,0 @@
-git+https://github.com/bryanforbes/discord.py.git@typings

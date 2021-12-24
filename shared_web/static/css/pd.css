@@ -101,6 +101,10 @@ i, em /* em to support markdown conversion to HTML, prefer i */ {
     font-style: italic;
 }
 
+small {
+    font-size: 0.563em;
+}
+
 nav {
     font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;

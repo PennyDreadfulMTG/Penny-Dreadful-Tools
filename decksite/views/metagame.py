@@ -56,10 +56,9 @@ class Metagame(View):
 # See https://www.evanmiller.org/how-not-to-sort-by-average-rating.html
 # Expects win_rate as a fraction of 1 NOT a 0-100 scale percentage.
 def confidence_interval(win_rate: float, matches_played: int) -> Tuple[float, float]:
-    n = matches_played
-    if n == 0:
+    if matches_played == 0:
         return 0.0, 0.0
-    n = float(n)
+    n = float(matches_played)
     z = 1.96  # 1.44 = 85%, 1.96 = 95%, see https://www.dummies.com/education/math/statistics/checking-out-statistical-confidence-interval-critical-values/
     phat = win_rate
     lower_bound = (phat + z * z / (2 * n) - z * math.sqrt((phat * (1 - phat) + z * z / (4 * n)) / n)) / (1 + z * z / n)

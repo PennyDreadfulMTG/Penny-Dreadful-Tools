@@ -55,7 +55,7 @@ class CardConverter:
             if result.has_match() and not result.is_ambiguous():
                 return command.cards_from_names_with_mode([result.get_best_match()], mode, printing)[0]
             if result.is_ambiguous():
-                message = await ctx.send('{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=ctx.author.mention, c=ctx.command, s=command.disambiguation(result.get_ambiguous_matches()[0:5])))
+                message = await ctx.send('{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=ctx.author.mention, c=ctx.invoked_name, s=command.disambiguation(result.get_ambiguous_matches()[0:5])))
                 await command.disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
             else:
                 message = await ctx.send('{author}: No matches.'.format(author=ctx.author.mention))

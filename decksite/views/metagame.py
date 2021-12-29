@@ -38,8 +38,6 @@ class Metagame(View):
                     a.background = f'linear-gradient(0deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url({url}) center top / cover no-repeat'
                 else:
                     a.background = '#ccc'
-                if not a.is_leaf:
-                    a.name = f'Other {a.name}'
                 a.num_matches_plural = 'es' if a.num_matches != 1 else ''
                 a.lower_bound, a.upper_bound = confidence_interval(float(a.win_percent) / 100.0, a.num_matches)
                 a.lower_win_percent = round(a.lower_bound * 100.0, 1)

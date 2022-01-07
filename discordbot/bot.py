@@ -111,7 +111,7 @@ class Bot(Snake):
         await command.respond_to_card_names(ctx)
 
     @listen()
-    async def on_login(self, event: Login) -> None:
+    async def on_login(self, event: Login = None) -> None:
         repo.REDACTED_STRINGS.add(self.http.token)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:

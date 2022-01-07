@@ -101,6 +101,7 @@ dis-snek = "*"
 orjson = "*"
 traceback-with-variables = "*"
 freezegun = "*"
+molter = "*"
 
 [requires]
 python_version = "3.10"

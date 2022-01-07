@@ -36,7 +36,7 @@ def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional
     return [
         ('art', {'card': 'Island'}, None, None),
         ('barbs', {}, None, None),
-        ('echo', {'args': 'test string!'}, None, None),
+        # ('echo', {'args': 'test string!'}, None, None),
         ('explain', {'thing': None}, None, None),
         ('explain', {'thing': 'bugs'}, None, None),
         ('flavor', {'card': 'Falling Star'}, 'No flavor text available', None),  # No flavor

@@ -64,7 +64,7 @@ class Swiss(Scale):
                 s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
         await ctx.send(s)
 
-    m_swiss = message_command('swiss')(swiss.callback)
+    m_swiss = message_command(name='swiss')(swiss.callback)
 
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:
     players_in_elimination_rounds = 2 ** num_elimination_rounds

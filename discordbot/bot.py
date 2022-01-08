@@ -18,7 +18,6 @@ from dis_snek.models.discord_objects.user import Member, User
 from dis_snek.models.enums import Intents
 from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageReactionAdd,
                                             PresenceUpdate)
-from dis_snek.models.events.internal import Login
 from dis_snek.models.listener import listen
 from github.GithubException import GithubException
 

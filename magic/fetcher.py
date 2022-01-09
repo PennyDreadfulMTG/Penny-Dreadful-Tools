@@ -233,51 +233,35 @@ async def dreadrise_count_cards(query: str) -> Tuple[int, Optional[str]]:
     except ValueError:
         return -1, count_txt
 
+async def dreadrise_search_json(url: str, page_size: int = 60, **kwargs: Any) -> dict:
+    kwargs['page'] = 0
+    kwargs['page_size'] = page_size
+    domain = configuration.get_str('dreadrise_url')
+    pd = '?dist=penny_dreadful'
+    try:
+        data = await fetch_tools.post_json_async(domain + url + pd, kwargs)
+        if 'success' not in data:
+            raise InvalidDataException('Invalid JSON signature!')
+        return cast(dict, data)
+    except (fetch_tools.FetchException, json.JSONDecodeError, InvalidDataException) as e:
+        print(f'Error while fetching from {url}:', e)
+        return {'success': False, 'reason': 'The request failed.'}
+
 async def dreadrise_search_cards(query: str, page_size: int = 60, pd_mode: Literal[1, 0, -1] = 0) -> dict:
     """
         pd_mode can be -1 (illegal in pd), 0 (doesn't matter if is legal in pd), and 1 (must be legal in pd).
         returns the list of found cards.
     """
-    domain = configuration.get_str('dreadrise_url')
     if pd_mode != 0:
         minus = '-' if pd_mode < 0 else ''
         query = f'{minus}f:pd ({query})'
+    return await dreadrise_search_json('/api/card-search/cards', page_size, query=query)
 
-    """
-    url = f'{domain}/api/card-search/find?q={query}+output:pagetext&page_size={page_size}'
-    return [x for x in str(await fetch_tools.fetch_async(url)).split('\n') if x]
-    """
-    url = f'{domain}/api/card-search/cards'
-    data = await fetch_tools.post_json_async(url, {'query': query, 'page': 0, 'page_size': page_size})
-    return cast(dict, data)
+async def dreadrise_search_decks(query: str, max_decks: int) -> dict:
+    return await dreadrise_search_json('/api/deck-search/decks', max_decks, query=query)
 
-async def dreadrise_search_json(url: str) -> Tuple[int, Any, Optional[str]]:
-    try:
-        output = await fetch_tools.fetch_json_async(url)
-    except (fetch_tools.FetchException, json.JSONDecodeError):
-        print(f'Unable to parse json!!! {url}')
-        return 0, None, 'The request failed.'
-
-    if 'error' not in output or 'length' not in output:
-        print(f'Wrong json signature!!! {url}')
-        return 0, None, 'The request failed.'
-    if output['error']:
-        return 0, None, output['error']
-    if output['length'] == 0:
-        return 0, None, None
-
-    return output['length'], output, None
-
-async def dreadrise_search_decks(q: str, max_decks: int) -> Tuple[int, Any, Optional[str]]:
-    domain = configuration.get_str('dreadrise_url')
-    q = fetch_tools.escape(q)
-    return await dreadrise_search_json(f'{domain}/decks/find?q={q}+output:json_api&page_size={max_decks}')
-
-async def dreadrise_search_matchups(q1: str, q2: str) -> Tuple[int, Any, Optional[str]]:
-    domain = configuration.get_str('dreadrise_url')
-    q1 = fetch_tools.escape(q1)
-    q2 = fetch_tools.escape(q2)
-    return await dreadrise_search_json(f'{domain}/matches/find?q1={q1}&q2={q2}&api=1')
+async def dreadrise_search_matchups(q1: str, q2: str, max_count: int) -> dict:
+    return await dreadrise_search_json('/api/deck-search/matchups', max_count, q1=q1, q2=q2)
 
 def rulings(cardname: str) -> List[Dict[str, str]]:
     card = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))

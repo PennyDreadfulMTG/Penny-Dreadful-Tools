@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.discord_objects.embed import Embed
@@ -29,20 +29,23 @@ def format_deck(x: Dict) -> Dict:
 @slash_option('query', 'search query', OptionTypes.STRING)
 async def drc(ctx: MtgContext, query: str) -> None:
     """Card search using Dreadrise."""
-    count, error = await fetcher.dreadrise_count_cards(query)
-    if error:
-        await ctx.send(f'Search error: `{error}`')
+    cards_shown = MAX_CARDS_SHOWN
+    card_data = await fetcher.dreadrise_search_cards(query, cards_shown, 1)
+    if 'err' in card_data and card_data['err']:
+        await ctx.send('Search error: `%s`'.format(card_data['err']))
         return
 
-    cards_shown = DEFAULT_CARDS_SHOWN if count > MAX_CARDS_SHOWN else count
-    cardnames = await fetcher.dreadrise_search_cards(query, cards_shown, 1)
-    if len(cardnames) < cards_shown:
-        cardnames += await fetcher.dreadrise_search_cards(query, cards_shown - len(cardnames), -1)
+    card_array = [x['name'] for x in card_data['sample']]
+    count = card_data['matches']
+    if count < cards_shown:
+        card_data2 = await fetcher.dreadrise_search_cards(query, cards_shown - card_data['matches'], -1)
+        card_array += [x['name'] for x in card_data2['sample']]
+        count += card_data2['matches']
 
     cbn = oracle.cards_by_name()
-    cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
-    if count > DEFAULT_CARDS_SHOWN:
-        cards = cards[:MAX_CARDS_SHOWN]
+    cards = [cbn[name] for name in card_array if cbn.get(name) is not None]
+    if count > MAX_CARDS_SHOWN:
+        cards = cards[:DEFAULT_CARDS_SHOWN]
     await ctx.post_cards(cards, ctx.author, more_results_link(query, count))
 
 @drc.subcommand('deck')
@@ -77,12 +80,11 @@ async def decks(ctx: MtgContext, query: str) -> None:
     await ctx.send(embeds=[embed])
 
 @drc.subcommand('matchups')
-@slash_option('args', 'No description given', OptionTypes.STRING)
-async def matchups(ctx: MtgContext, args: str) -> None:
+@slash_option('q1', 'The query for the first player', OptionTypes.STRING, required=True)
+@slash_option('q2', 'The query for the second player', OptionTypes.STRING)
+async def matchups(ctx: MtgContext, q1: str, q2: Optional[str]) -> None:
     """Matchup calculation using Dreadrise. Accepts two queries separated by exclamation mark !."""
-    q_list = args.split('!')
-    q1 = q_list[0]
-    q2 = q_list[1] if len(q_list) >= 2 else ''
+    q2 = q2 or ''
     count, output, error = await fetcher.dreadrise_search_matchups(q1, q2)
     if error:
         await ctx.send(f'Search error: `{error}`')

@@ -233,18 +233,23 @@ async def dreadrise_count_cards(query: str) -> Tuple[int, Optional[str]]:
     except ValueError:
         return -1, count_txt
 
-async def dreadrise_search_cards(query: str, page_size: int = 60, pd_mode: Literal[1, 0, -1] = 0) -> List[str]:
+async def dreadrise_search_cards(query: str, page_size: int = 60, pd_mode: Literal[1, 0, -1] = 0) -> dict:
     """
         pd_mode can be -1 (illegal in pd), 0 (doesn't matter if is legal in pd), and 1 (must be legal in pd).
         returns the list of found cards.
     """
     domain = configuration.get_str('dreadrise_url')
-    query = fetch_tools.escape(query)
     if pd_mode != 0:
         minus = '-' if pd_mode < 0 else ''
-        query = f'{minus}f:pd+({query})'
-    url = f'{domain}/cards/find?q={query}+output:pagetext&page_size={page_size}'
+        query = f'{minus}f:pd ({query})'
+
+    """
+    url = f'{domain}/api/card-search/find?q={query}+output:pagetext&page_size={page_size}'
     return [x for x in str(await fetch_tools.fetch_async(url)).split('\n') if x]
+    """
+    url = f'{domain}/api/card-search/cards'
+    data = await fetch_tools.post_json_async(url, {'query': query, 'page': 0, 'page_size': page_size})
+    return cast(dict, data)
 
 async def dreadrise_search_json(url: str) -> Tuple[int, Any, Optional[str]]:
     try:

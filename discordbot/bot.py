@@ -18,7 +18,6 @@ from dis_snek.models.discord_objects.user import Member, User
 from dis_snek.models.enums import Intents
 from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageReactionAdd,
                                             PresenceUpdate)
-from dis_snek.models.events.internal import Login
 from dis_snek.models.listener import listen
 from github.GithubException import GithubException
 
@@ -111,7 +110,7 @@ class Bot(Snake):
         await command.respond_to_card_names(ctx)
 
     @listen()
-    async def on_login(self, event: Login) -> None:
+    async def on_login(self) -> None:
         repo.REDACTED_STRINGS.add(self.http.token)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
@@ -250,7 +249,7 @@ class Bot(Snake):
             logging.warning('tournament channel is not configured')
             return
         try:
-            channel = await self.get_channel(tournament_channel_id)
+            channel: Optional[GuildText] = await self.get_channel(tournament_channel_id)
         except Forbidden:
             channel = None
             configuration.write('tournament_reminders_channel_id', 0)
@@ -276,7 +275,7 @@ class Bot(Snake):
                 embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
                 # See #2809.
                 # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed)
+                await channel.send(embed=embed)
 
             if diff <= 300:
                 # Five minutes, final warning.  Sleep until the tournament has started.
@@ -339,7 +338,7 @@ class Bot(Snake):
                 embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
                 # See #2809.
                 # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed)
+                await channel.send(embed=embed)
             if diff <= 5 * 60:
                 # Five minutes, final warning.
                 timer = 301

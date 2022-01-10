@@ -2,6 +2,7 @@ from typing import Dict, Optional
 
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.discord_objects.embed import Embed
+from urllib import parse
 
 from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle
@@ -17,7 +18,7 @@ def format_deck(x: Dict) -> Dict:
     return {
         'name': '{name} [{src}, {wins}-{losses}]'.format(
             name=x['deck']['name'], wins=x['deck']['wins'], losses=x['deck']['losses'], src=x['competition']['name']),
-        'value': '[A {arch} deck by {author} ({format})]({domain}/decks/{id})'.format(
+        'value': '[{arch} deck by {author} ({format})]({domain}/decks/{id})'.format(
             arch=x['tags'][0]['name'], author=x['author']['nickname'],
             format=x['format'], id=x['deck']['deck_id'], domain=link_domain),
     }
@@ -39,9 +40,9 @@ async def drc(ctx: MtgContext, query: str) -> None:
     card_array = [x['name'] for x in card_data['sample']]
     count = card_data['matches']
     if count < MAX_CARDS_SHOWN:
-        card_data2 = await fetcher.dreadrise_search_cards(query, MAX_CARDS_SHOWN - card_data['matches'], -1)
-        card_array += [x['name'] for x in card_data2['sample']]
-        count += card_data2['matches']
+        card_data_pd_illegal = await fetcher.dreadrise_search_cards(query, MAX_CARDS_SHOWN - card_data['matches'], -1)
+        card_array += [x['name'] for x in card_data_pd_illegal['sample']]
+        count += card_data_pd_illegal['matches']
 
     cbn = oracle.cards_by_name()
     cards = [cbn[name] for name in card_array if cbn.get(name) is not None]
@@ -74,7 +75,7 @@ async def decks(ctx: MtgContext, query: str) -> None:
             n=count - MAX_DECKS_SHOWN_WITH_CONTINUATION,
             path='/deck-search',
             pd='&dist=penny_dreadful',
-            query=query.replace(' ', '%20'),
+            query=parse.quote_plus(query),
         )})
 
     embed.set_thumbnail(url='https://api.scryfall.com/cards/named?exact={card}&format=image&version=art_crop'.format(
@@ -104,8 +105,8 @@ async def matchups(ctx: MtgContext, q1: str, q2: Optional[str]) -> None:
         wr=data['winrate'],
         path='/deck-search/matchups',
         pd='&dist=penny_dreadful',
-        q1=q1.replace(' ', '%20'),
-        q2=q2.replace(' ', '%20'),
+        q1=parse.quote_plus(q1),
+        q2=parse.quote_plus(q2),
     )
     await ctx.send(ans)
 

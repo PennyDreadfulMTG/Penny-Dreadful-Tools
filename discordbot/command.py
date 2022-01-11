@@ -336,7 +336,7 @@ class MtgMixin:
         await post_cards(self.bot, cards, self, replying_to, additional_text)
 
     async def post_nothing(self: SendableContext) -> None:
-        await post_nothing(self.channel)
+        await post_nothing(self)
 
 
 InteractionContext.__bases__ += (MtgMixin,)

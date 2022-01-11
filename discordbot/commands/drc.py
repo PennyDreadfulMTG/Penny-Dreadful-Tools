@@ -1,8 +1,8 @@
 from typing import Dict, Optional
+from urllib import parse
 
 from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
 from dis_snek.models.discord_objects.embed import Embed
-from urllib import parse
 
 from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle

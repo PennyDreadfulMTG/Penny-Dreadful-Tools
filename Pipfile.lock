@@ -525,11 +525,11 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:3c562d393aed7e3d2011fcd1f103b490c411dcf5644b6312ca11a166a6ea8faf",
-                "sha256:c8889f45cf58deca522888ae1d39b2a25e93e7d1b019ae8cee6456d5c726a40c"
+                "sha256:58e2c1171a3d51778bf4e428fbb4bf79cbd05007b4b44deaa80cf73c80eebc0f",
+                "sha256:ba8787b7c61632cd0340f095e1c036bef9426b2594f10afb290ba311ae8cb2cb"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==2.3.2"
+            "version": "==2.4.0"
         },
         "google-api-python-client": {
             "hashes": [
@@ -687,11 +687,11 @@
         },
         "jsonschema": {
             "hashes": [
-                "sha256:eb7a69801beb7325653aa8fd373abbf9ff8f85b536ab2812e5e8287b522fb6a2",
-                "sha256:f210d4ce095ed1e8af635d15c8ee79b586f656ab54399ba87b8ab87e5bff0ade"
+                "sha256:636694eb41b3535ed608fe04129f26542b59ed99808b4f688aa32dcf55317a83",
+                "sha256:77281a1f71684953ee8b3d488371b162419767973789272434bbc3f29d9c8823"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.3.3"
+            "version": "==4.4.0"
         },
         "kiwisolver": {
             "hashes": [
@@ -986,11 +986,11 @@
         },
         "molter": {
             "hashes": [
-                "sha256:797d3d105ac4ea2b197707b3344422d292532848056c0d79a46490308ed3dd3d",
-                "sha256:a8b5b2903f9823b6ef2f2682d2259db832dac474e96a6438acc80a8ca11b4582"
+                "sha256:09dce63f25d14442da1b7dbcd0df2c8773e795964bd2541c8af4dc8a7546dec8",
+                "sha256:12b47f73af8459eddf169304bbd99fe38222017fbf33cff06273349406af190b"
             ],
             "index": "pypi",
-            "version": "==0.4.0"
+            "version": "==0.5.1"
         },
         "multidict": {
             "hashes": [

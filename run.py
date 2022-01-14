@@ -135,12 +135,12 @@ def task(args: List[str]) -> None:
 def call(args: List[str], s: ModuleType) -> int:
     exitcode = -99
     if getattr(s, 'scrape', None) is not None:
-        exitcode = s.scrape(*args[2:])  # type: ignore
+        exitcode = s.scrape(*args[2:])
     elif getattr(s, 'run', None) is not None:
-        exitcode = s.run()  # type: ignore
+        exitcode = s.run()
     # Only when called directly, not in 'all'
     elif getattr(s, 'ad_hoc', None) is not None:
-        exitcode = s.ad_hoc()  # type: ignore
+        exitcode = s.ad_hoc()
     return exitcode
 
 def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
@@ -150,8 +150,7 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
     from decksite import APP
     APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context():
-        # pylint: disable=unused-variable
-        for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):  # type: ignore
+        for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):
             try:
                 s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
 
@@ -159,16 +158,16 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
                     continue
                 if getattr(s, 'scrape', None) is not None:
                     timer = time.perf_counter()
-                    s.scrape()  # type: ignore
+                    s.scrape()
                     t = time.perf_counter() - timer
                     print(f'{s.__name__} completed in {t}')
 
                 elif getattr(s, 'run', None) is not None:
                     timer = time.perf_counter()
-                    s.run()  # type: ignore
+                    s.run()
                     t = time.perf_counter() - timer
                     print(f'{s.__name__} completed in {t}')
-            except Exception as c:  # pylint: disable=broad-except
+            except Exception as c:
                 from shared import repo
                 repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
                 error = c

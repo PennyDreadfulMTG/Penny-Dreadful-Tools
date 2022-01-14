@@ -25,7 +25,7 @@ class SupportsLogging(Protocol):
 def logger() -> SupportsLogging:
     if has_app_context():  # type: ignore
         return current_app.logger
-    return logging  # type: ignore
+    return logging
 
 def fatal(*args: List[Any]) -> None:
     """Panic stations! Data is being irretrievably lost or other truly terrible things."""

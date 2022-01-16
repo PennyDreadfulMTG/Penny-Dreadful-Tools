@@ -2268,11 +2268,11 @@
         },
         "types-typed-ast": {
             "hashes": [
-                "sha256:510f3beaa95492b3544d67e81581afa2903c764b70889ffcdb286e6c6267d297",
-                "sha256:5c8ef528821fb2a96d750deed100b25d7fdb055610747ee5352120887d915f8c"
+                "sha256:6d8fd2ea90836cb43111ac8aae7cd864e098593c93ecceba90fe46d6b7b0c73e",
+                "sha256:8f459097ad11d2efc0c7e31f3adce45dc94e1c8950d55e1fe502aeff4b528d9a"
             ],
             "index": "pypi",
-            "version": "==1.5.1"
+            "version": "==1.5.2"
         },
         "types-urllib3": {
             "hashes": [

@@ -263,7 +263,7 @@
                 "sha256:876d180e9d7432c5d1dfd4c5d26b72f099d503e8fcc0feb7532c9289be60fcbd",
                 "sha256:cb957888737fc0bbcd78e3df769addb41fd1ff8cf950dc9e7ad7793f1bf44455"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.10"
         },
         "click": {
@@ -342,11 +342,11 @@
         },
         "dis-snek": {
             "hashes": [
-                "sha256:33deda7c4dbefae2475c07b3aaca57995c5d77a24547dee66c7bf3c0903726d6",
-                "sha256:9eb5c2a3c46ae9169c375f4c281834df44b4834b73bd9d9dc670c2cdb6f8e346"
+                "sha256:cc733b510d6b20523a8067f19b6d9b99804c13e37d78cd6e0fc401098adbca27",
+                "sha256:d1d50ba468ad6b0788e9281eb9d83f6eb2f8d964c1212ccd0e3fb33295462263"
             ],
             "index": "pypi",
-            "version": "==4.5.0"
+            "version": "==5.0.0"
         },
         "editorconfig": {
             "hashes": [
@@ -1627,14 +1627,6 @@
             ],
             "index": "pypi",
             "version": "==0.11.2"
-        },
-        "sentinel": {
-            "hashes": [
-                "sha256:bd8710dd26752039c668604f6be2aaf741b56f7811c5924a4dcdfd74359244f3",
-                "sha256:f28143aa4716dbc8f6193f5682176a3c33cd26aaae05d9ecf66c186a9887cc2d"
-            ],
-            "markers": "python_version >= '3.6' and python_version < '4.0'",
-            "version": "==0.3.0"
         },
         "sentry-sdk": {
             "extras": [

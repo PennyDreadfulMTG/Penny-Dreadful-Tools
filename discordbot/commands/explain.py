@@ -3,10 +3,8 @@ from typing import Dict, Optional, Tuple
 
 import inflect
 from dis_snek.client import Snake
-from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.command import message_command
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
-from dis_snek.models.scale import Scale
+from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, OptionTypes, Scale, message_command,
+                             slash_command, slash_option)
 
 from discordbot import command
 from discordbot.command import MtgContext

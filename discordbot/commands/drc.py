@@ -1,8 +1,7 @@
 from typing import Dict, Optional
 from urllib import parse
 
-from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.discord_objects.embed import Embed
+from dis_snek.models import Embed, OptionTypes, slash_command, slash_option
 
 from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle
@@ -23,13 +22,13 @@ def format_deck(x: Dict) -> Dict:
             format=x['format'], id=x['deck']['deck_id'], domain=link_domain),
     }
 
-@slash_command('dreadrise',
-               description='Dreadrise',
-               sub_cmd_name='search',
-               sub_cmd_description='Card Search using Dreadrise',
-               )
+@slash_command('dreadrise', description='Query Dreadrise')
+async def drc(ctx: MtgContext) -> None:
+    ...
+
+@drc.subcommand('search', sub_cmd_description='Card Search using Dreadrise')
 @slash_option('query', 'search query', OptionTypes.STRING)
-async def drc(ctx: MtgContext, query: str) -> None:
+async def cardsearch(ctx: MtgContext, query: str) -> None:
     """Card search using Dreadrise."""
     await ctx.defer()
     card_data = await fetcher.dreadrise_search_cards(query, MAX_CARDS_SHOWN, 1)

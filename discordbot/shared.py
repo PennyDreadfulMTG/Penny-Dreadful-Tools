@@ -3,15 +3,9 @@ from pathlib import Path
 from typing import Any, List, Optional, Protocol, Union
 
 from dis_snek import Snake
-from dis_snek.models import File
-from dis_snek.models.context import Context, InteractionContext
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL, GuildText
-from dis_snek.models.discord_objects.components import BaseComponent
-from dis_snek.models.discord_objects.embed import Embed
-from dis_snek.models.discord_objects.message import AllowedMentions, Message, MessageReference
-from dis_snek.models.discord_objects.sticker import Sticker
-from dis_snek.models.enums import MessageFlags
-from dis_snek.models.snowflake import Snowflake_Type
+from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AllowedMentions, BaseComponent, Context,
+                             Embed, File, GuildText, InteractionContext, Message, MessageFlags,
+                             MessageReference, Snowflake_Type, Sticker)
 
 
 def guild_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[int]:

@@ -2,8 +2,8 @@ import logging
 import traceback
 from typing import Any
 
-from dis_snek.errors import CommandException
-from dis_snek.models.application_commands import slash_command
+from dis_snek.client.errors import CommandException
+from dis_snek.models import slash_command
 
 from discordbot.command import MtgContext
 from shared import settings

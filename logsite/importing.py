@@ -42,7 +42,7 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
     while lines[0] != '':
         lines = lines[1:]
     game_id = 0
-    game_lines: List[str] = list()
+    game_lines: List[str] = []
     for line in lines:
         m = re.match(REGEX_GAME_HEADER, line)
         gm = re.match(REGEX_GATHERLING, line)
@@ -54,7 +54,7 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
             elif new_id != game_id:
                 game.insert_game(game_id, match_id, '\n'.join(game_lines))
                 game_id = new_id
-                game_lines = list()
+                game_lines = []
         elif re.match(REGEX_SWITCHEROO, line):
             local.has_unexpected_third_game = True
             game_lines.append(line)

@@ -1,7 +1,6 @@
 from dis_snek.client import Snake
-from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.enums import MessageFlags
-from dis_snek.models.scale import Scale
+from dis_snek.models import OptionTypes, Scale, slash_command, slash_option
+from dis_snek.models.discord.enums import MessageFlags
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 

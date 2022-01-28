@@ -3,8 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pytest
 from _pytest.mark.structures import ParameterSet
 from dis_snek import Snake
-from dis_snek.models.command import BaseCommand
-from dis_snek.models.context import Context
+from dis_snek.models import BaseCommand, Context
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin
@@ -23,10 +22,11 @@ class ContextForTests(Context, MtgMixin):
     content: Optional[str] = None
     bot: Snake = None
 
-    async def send(self, content: Optional[str], *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
+    async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
         self.sent = True
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()
+        self.sent_embed = 'embed' in kwargs.keys()
         self.content = content
 
     async def trigger_typing(self) -> None:

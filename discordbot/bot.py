@@ -7,18 +7,10 @@ import sys
 from typing import Any, Callable, Dict, List, Optional
 
 import sentry_sdk
-from dis_snek import Snake
-from dis_snek.errors import Forbidden
-from dis_snek.models.discord_objects.activity import ActivityType
-from dis_snek.models.discord_objects.channel import GuildText
-from dis_snek.models.discord_objects.embed import Embed
-from dis_snek.models.discord_objects.guild import Guild
-from dis_snek.models.discord_objects.role import Role
-from dis_snek.models.discord_objects.user import Member, User
-from dis_snek.models.enums import Intents
-from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageReactionAdd,
-                                            PresenceUpdate)
-from dis_snek.models.listener import listen
+from dis_snek import Snake, listen
+from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
+from dis_snek.client.errors import Forbidden
+from dis_snek.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role, User
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -78,13 +70,13 @@ class Bot(Snake):
 
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES)
 
-        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=False, default_prefix='!', **kwargs)
+        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!', **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
-            self.grow_scale('dis_snek.debug_scale')
+            self.grow_scale('dis_snek.ext.debug_scale')
 
     async def stop(self) -> None:
         await super().stop()

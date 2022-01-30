@@ -2,15 +2,15 @@ import re
 from typing import Dict, Optional
 
 from dis_snek.client import Snake
-from dis_snek.models.discord_objects.emoji import Emoji
+from dis_snek.models import PartialEmoji
 
 from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
-CACHE: Dict[str, Emoji] = {}
+CACHE: Dict[str, PartialEmoji] = {}
 
-async def find_emoji(emoji: str, client: Snake) -> Optional[Emoji]:
+async def find_emoji(emoji: str, client: Snake) -> Optional[PartialEmoji]:
     if res := CACHE.get(emoji):
         return res
 

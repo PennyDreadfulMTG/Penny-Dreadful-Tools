@@ -1,10 +1,7 @@
 from typing import Optional
 
-from dis_snek import Snake
-from dis_snek.annotations.argument_annotations import CMD_BODY
-from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.command import message_command
-from dis_snek.models.scale import Scale
+from dis_snek import Scale, Snake
+from dis_snek.models import CMD_BODY, OptionTypes, message_command, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from shared import repo

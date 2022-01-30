@@ -1,7 +1,6 @@
 
 from dis_snek import Snake
-from dis_snek.models.command import message_command
-from dis_snek.models.scale import Scale
+from dis_snek.models import Scale, message_command
 
 from discordbot.command import MtgMessageContext
 

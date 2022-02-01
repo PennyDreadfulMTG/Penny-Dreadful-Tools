@@ -14,6 +14,7 @@ X = '[XYZ]'
 SLASH = '/'
 MODIFIER = 'P'
 HALF = 'H'
+HYBRID = 'SPECIAL-HYBRID'
 
 def parse(s: str) -> List[str]:
     tmp = ''
@@ -60,10 +61,13 @@ def parse(s: str) -> List[str]:
             else:
                 raise InvalidManaCostException('Color must be followed by {color} or {slash}, `{c}` found in `{s}`.'.format(color=COLOR, slash=SLASH, c=c, s=s))
         elif mode == SLASH:
-            if re.match(COLOR, c) or re.match(MODIFIER, c):
+            if re.match(MODIFIER, c):
                 tokens.append(tmp + c)
                 tmp = ''
                 mode = START
+            elif re.match(COLOR, c):
+                tmp += c
+                mode = HYBRID
             else:
                 raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found in `{s}`.'.format(color=COLOR, modifier=MODIFIER, c=c, s=s))
         elif mode == HALF:
@@ -73,6 +77,29 @@ def parse(s: str) -> List[str]:
                 mode = START
             else:
                 raise InvalidManaCostException('H must be followed by {color}, `{c}` found in `{s}`.'.format(color=COLOR, c=c, s=s))
+        elif mode == HYBRID: # Having an additional check after HYBRID for a second slash accomodates hybrid phyrexian mana like Tamiyo, Compleated Sage
+            if re.match(SLASH, c):
+                tmp += c
+                mode = SLASH
+            elif re.match(DIGIT, c):
+                tokens.append(tmp)
+                tmp = c
+                mode = DIGIT
+            elif re.match(COLOR, c):
+                tokens.append(tmp)
+                tmp = c
+                mode = COLOR
+            elif re.match(X, c):
+                tokens.append(tmp)
+                tokens.append(c)
+                tmp = ''
+                mode = START
+            elif re.match(HALF, c):
+                tokens.append(tmp)
+                tmp = c
+                mode = HALF
+            else:
+                raise InvalidManaCostException('Symbol must start with {digit} or {color}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, c=c, s=s))
     if tmp:
         tokens.append(tmp)
     return tokens

@@ -47,6 +47,9 @@ def test_slitherhead() -> None:
 def test_little_girl() -> None:
     do_test('{HW}', ['HW'])
 
+def test_hybrid_phyrexian() -> None:
+    do_test('{2}{G}{G/U/P}{U}', ['2', 'G', 'G/U/P', 'U'])
+
 @pytest.mark.functional
 def test_everything() -> None:
     rs = database.db().select('SELECT name, mana_cost FROM face')

@@ -1,7 +1,7 @@
 import subprocess
-
 from importlib.metadata import version as _v
-from dis_snek.models import slash_command, Embed
+
+from dis_snek.models import Embed, slash_command
 
 from discordbot.command import MtgContext
 from magic import database

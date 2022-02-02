@@ -77,7 +77,7 @@ def parse(s: str) -> List[str]:
                 mode = START
             else:
                 raise InvalidManaCostException('H must be followed by {color}, `{c}` found in `{s}`.'.format(color=COLOR, c=c, s=s))
-        elif mode == HYBRID: # Having an additional check after HYBRID for a second slash accomodates hybrid phyrexian mana like Tamiyo, Compleated Sage
+        elif mode == HYBRID:  # Having an additional check after HYBRID for a second slash accomodates hybrid phyrexian mana like Tamiyo, Compleated Sage
             if re.match(SLASH, c):
                 tmp += c
                 mode = SLASH
@@ -115,12 +115,12 @@ def colored_symbols(symbols: List[str]) -> Dict[str, List[str]]:
     for symbol in symbols:
         if generic(symbol) or variable(symbol):
             pass
-        elif phyrexian(symbol):
-            cs['also'].append(symbol[0])
         elif hybrid(symbol):
             parts = symbol.split(SLASH)
             cs['also'].append(parts[0])
             cs['also'].append(parts[1])
+        elif phyrexian(symbol):
+            cs['also'].append(symbol[0])
         elif twobrid(symbol):
             parts = symbol.split(SLASH)
             cs['also'].append(parts[1])
@@ -155,10 +155,10 @@ def variable(symbol: str) -> bool:
     return bool(re.match('^{x}$'.format(x=X), symbol))
 
 def phyrexian(symbol: str) -> bool:
-    return bool(re.match('^{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol))
+    return bool(re.match('^({color}/)?{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol))
 
 def hybrid(symbol: str) -> bool:
-    return bool(re.match('^{color}/{color}$'.format(color=COLOR), symbol))
+    return bool(re.match('^{color}/{color}(/{modifier})?$'.format(color=COLOR, modifier=MODIFIER), symbol))
 
 def twobrid(symbol: str) -> bool:
     return bool(re.match('^2/{color}$'.format(color=COLOR), symbol))

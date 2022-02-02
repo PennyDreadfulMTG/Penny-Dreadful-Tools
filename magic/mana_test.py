@@ -61,8 +61,11 @@ def test_colors() -> None:
     assert mana.colors(['9', 'W', 'W', 'R']) == {'required': {'W', 'R'}, 'also': set()}
     assert mana.colors(['2/W', 'G', 'X']) == {'required': {'G'}, 'also': {'W'}}
     assert mana.colors(['U/P', 'R/P']) == {'required': set(), 'also': {'U', 'R'}}
+    assert mana.colors(['U', 'R', 'U/P', 'R/P']) == {'required': {'U', 'R'}, 'also': {'U', 'R'}}
     assert mana.colors(['X']) == {'required': set(), 'also': set()}
     assert mana.colors(['B/R']) == {'required': set(), 'also': {'B', 'R'}}
+    assert mana.colors(['2', 'G', 'G/U/P', 'U']) == {'required': {'G', 'U'}, 'also': {'G', 'U'}}
+    assert mana.colors(['W/B/P']) == {'required': set(), 'also': {'W', 'B'}}
 
 def test_colored_symbols() -> None:
     assert mana.colored_symbols(['9', 'W', 'W', 'R']) == {'required': ['W', 'W', 'R'], 'also': []}
@@ -71,6 +74,8 @@ def test_colored_symbols() -> None:
     assert mana.colored_symbols(['X']) == {'required': [], 'also': []}
     assert mana.colored_symbols(['B/R']) == {'required': [], 'also': ['B', 'R']}
     assert mana.colored_symbols(['3', 'U', 'U']) == {'required': ['U', 'U'], 'also': []}
+    assert mana.colored_symbols(['2', 'G', 'G/U/P', 'U']) == {'required': ['G', 'U'], 'also': ['G', 'U']}
+    assert mana.colored_symbols(['W/B/P']) == {'required': [], 'also': ['W', 'B']}
 
 def test_has_x() -> None:
     assert mana.has_x('{9}{X}')
@@ -120,6 +125,17 @@ def test_cmc() -> None:
     assert mana.cmc('{HG}') == 0.5
     assert mana.cmc('{1}{U}{B}') == 3
     assert mana.cmc('{X}{R}') == 1
+    assert mana.cmc('{2}{G}{G/U/P}{U}') == 5
+    assert mana.cmc('{W/B/P}') == 1
+
+def test_is_phyrexian() -> None:
+    assert mana.phyrexian('R/P')
+    assert mana.phyrexian('G/U/P')
+
+def test_is_hybrid() -> None:
+    assert mana.hybrid('G/U')
+    assert not mana.hybrid('U/P')
+    assert mana.hybrid('G/U/P')
 
 def do_test(s: str, expected: List[str]) -> None:
     symbols = mana.parse(s)

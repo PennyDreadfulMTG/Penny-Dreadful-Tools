@@ -37,7 +37,7 @@ def parse(s: str) -> List[str]:
                 tmp += c
                 mode = HALF
             else:
-                raise InvalidManaCostException('Symbol must start with {digit} or {color}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, c=c, s=s))
+                raise InvalidManaCostException('Symbol must start with {digit} or {color} or {x} or {half}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, x=X, half=HALF, c=c, s=s))
         elif mode == DIGIT:
             if re.match(DIGIT, c):
                 tmp += c
@@ -99,7 +99,7 @@ def parse(s: str) -> List[str]:
                 tmp = c
                 mode = HALF
             else:
-                raise InvalidManaCostException('Symbol must start with {digit} or {color}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, c=c, s=s))
+                raise InvalidManaCostException('Hybrid must be followed by {slash} or {digit} or {color} or {x} or {half}, `{c}` found in `{s}`.'.format(slash=SLASH, digit=DIGIT, color=COLOR, x=X, half=HALF, c=c, s=s))
     if tmp:
         tokens.append(tmp)
     return tokens

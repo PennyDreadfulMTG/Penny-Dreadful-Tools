@@ -3,7 +3,6 @@ from typing import List, Optional, Tuple
 
 from dis_snek import Snake
 from dis_snek.models import OptionTypes, Scale, slash_command, slash_option
-# from molter import message_command
 
 from discordbot.command import MtgInteractionContext
 from magic import tournaments

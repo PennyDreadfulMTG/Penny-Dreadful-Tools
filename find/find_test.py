@@ -345,6 +345,13 @@ def test_mana6() -> None:
 def test_mana7() -> None:
     do_test('mana:uu', "(mana_cost LIKE '%%{U}{U}%%')")
 
+def test_mana8() -> None:
+    do_test('mana:g/u/p', "(mana_cost LIKE '%%{G/U/P}%%')")
+
+@pytest.mark.functional
+def test_hybrid_phyrexian_mana() -> None:
+    do_functional_test('mana:g/u/p', ['Tamiyo, Compleated Sage'], ['Corrosive Gale', 'Gitaxian Probe'])
+
 # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8975
 # def test_mana8() -> None:
 #     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))

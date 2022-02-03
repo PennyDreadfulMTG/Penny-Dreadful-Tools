@@ -63,7 +63,7 @@ class PDFlask(Flask):
         self.url_build_error_handlers.append(self.external_url_handler)
         if self.config.get('SERVER_NAME') is None:
             self.config['SERVER_NAME'] = configuration.get_optional_str('flask_server_name')
-        self.config['menu'] = []
+        self.config['menu'] = lambda: []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
         self.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()

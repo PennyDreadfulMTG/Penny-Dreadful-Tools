@@ -967,11 +967,11 @@
         },
         "molter": {
             "hashes": [
-                "sha256:1e4246ef845c08b924c074f2a46a11d4663256b2860f8177b7efca817c2f46cb",
-                "sha256:febe2ee955aa710d1b189a6b612690a9448a4a94d76df1606ec54e83790dc2b9"
+                "sha256:2ffa6f6f5753ebfa6586915d3fa62d42c094ffa731fb911848abfc3add281188",
+                "sha256:6affef7242c82eaea6f3c05724abd25080d36fff1326a7125dc3d7719be7afdb"
             ],
             "index": "pypi",
-            "version": "==0.6.0"
+            "version": "==0.7.0"
         },
         "multidict": {
             "hashes": [

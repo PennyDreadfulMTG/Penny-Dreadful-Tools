@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "db513246f3cbd3eaa6546d1264d14884a4b8425a437a2975ba55e16f75245073"
+            "sha256": "2097c12179b33c9d3c13009dabfc38ec62967824363a410b739c55615f32249c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -499,10 +499,11 @@
         },
         "ftfy": {
             "hashes": [
-                "sha256:ba71121a9c8d7790d3e833c6c1021143f3e5c4118293ec3afb5d43ed9ca8e72b"
+                "sha256:0ffd33fce16b54cccaec78d6ec73d95ad370e5df5a25255c8966a6147bd667ca",
+                "sha256:bfc2019f84fcd851419152320a6375604a0f1459c281b5b199b2cd0d2e727f8f"
             ],
             "index": "pypi",
-            "version": "==6.0.3"
+            "version": "==6.1.1"
         },
         "google-api-core": {
             "hashes": [

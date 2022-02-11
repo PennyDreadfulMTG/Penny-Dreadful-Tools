@@ -6,7 +6,6 @@ import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
-import sentry_sdk
 from dis_snek import Snake, listen
 from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from dis_snek.client.errors import Forbidden

@@ -6,7 +6,6 @@ import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
-import sentry_sdk
 from dis_snek import Snake, listen
 from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from dis_snek.client.errors import Forbidden
@@ -23,30 +22,6 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
-
-def sentry_filter(event: dict[str, Any], hint: dict[str, Any]):  # type: ignore
-    if 'log_record' in hint:
-        record: logging.LogRecord = hint['log_record']
-        if 'dis.snek' in record.name and '/commands/permissions: 403' in record.message:
-            return None
-
-    if 'exc_info' in hint:
-        exc_type, exc_value, tb = hint['exc_info']
-        if isinstance(exc_value, OSError):
-            return None
-    return event
-
-
-sentry_token = configuration.get_optional_str('sentry_token')
-if sentry_token:
-    try:
-        sentry_sdk.init(
-            dsn=sentry_token,
-            integrations=[],
-            before_send=sentry_filter,
-        )
-    except Exception as c:
-        logging.error(c)
 
 TASKS = []
 
@@ -77,6 +52,9 @@ class Bot(Snake):
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
             self.grow_scale('dis_snek.ext.debug_scale')
+        self.sentry_token = configuration.get_optional_str('sentry_token')
+        if self.sentry_token:
+            self.grow_scale('dis_taipan.sentry')
 
     async def stop(self) -> None:
         await super().stop()

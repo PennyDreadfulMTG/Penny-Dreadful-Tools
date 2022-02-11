@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "48590e049102e1b7f389154831fde24ee066c93f8deeb6ac550e599a0568b580"
+            "sha256": "5de9568ffd1a47085a9e7c0f89c18dc911b2b529acdaa80cb635b61255972f50"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -344,6 +344,14 @@
             ],
             "index": "pypi",
             "version": "==6.0.0"
+        },
+        "dis-taipan": {
+            "hashes": [
+                "sha256:24f2c934491aafe7a7b0caa5831d48684b0131a41d57cdeede880a7af05413ee",
+                "sha256:d5f2db6cee61213861431f431771ce5a7d37efb93861a84e4342e4291ac30387"
+            ],
+            "index": "pypi",
+            "version": "==0.2.1"
         },
         "editorconfig": {
             "hashes": [

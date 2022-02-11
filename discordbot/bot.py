@@ -22,7 +22,6 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
-
 TASKS = []
 
 def background_task(func: Callable) -> Callable:

@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
         },
         "click": {
@@ -2166,11 +2166,11 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:a529fbae3b6c95e6790522d35a3065dc92ee29698c6b163ab573992b6144b41a",
-                "sha256:a913521c1f008775fc3816813a5981f9da3b0dd3f3b2578b0a0464a84ac5f4d4"
+                "sha256:5c8707423c60e70ba6ff9a5f01baacbb6c871e44f6a2bd562790cee9edd5b5b1",
+                "sha256:7e98c567f0e279b47b0a0ddee8c0180a086e4a5f1b95e6890b40b2a84dc97fb6"
             ],
             "index": "pypi",
-            "version": "==4.1.16"
+            "version": "==4.1.17"
         },
         "types-requests": {
             "hashes": [

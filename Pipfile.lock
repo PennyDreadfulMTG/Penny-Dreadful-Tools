@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
         "click": {
@@ -339,11 +339,11 @@
         },
         "dis-snek": {
             "hashes": [
-                "sha256:106cb08b0cc982c59db31be01ee529e4d7273835de7f418562d8e6b24d7f965d",
-                "sha256:3abe2af832bd87adced01ebc697e418b25871a4158ac8ba2e202d8fbb2921f44"
+                "sha256:5a1fa72d3d5de96a7550a480d33a4f4a6ac8509391fa20890c2eb495fb45d221",
+                "sha256:c39d0ff5e1f0cde3a0feefcd05f4a7d6de1d6b1aafbda745bbaa7a63d541af0f"
             ],
             "index": "pypi",
-            "version": "==6.0.0"
+            "version": "==7.0.0"
         },
         "dis-taipan": {
             "hashes": [
@@ -352,6 +352,14 @@
             ],
             "index": "pypi",
             "version": "==0.2.1"
+        },
+        "discord-typings": {
+            "hashes": [
+                "sha256:9d9e46db165a8759416b7d2d4595e67a2160b624a585237863f8ae1252b852da",
+                "sha256:fa16671ab03e19ec8ad9ada51f2b90b60ad15bb104d23caab964b4fa5bff998c"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==0.2.2"
         },
         "editorconfig": {
             "hashes": [
@@ -1756,7 +1764,7 @@
                 "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
                 "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.8"
         },
         "vcrpy": {

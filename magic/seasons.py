@@ -66,15 +66,19 @@ class SetInfo():
 class RotationInfo():
     next: SetInfo
     previous: SetInfo
+    calculating: bool
 
     def validate(self) -> None:
         if (self.next.enter_date_dt + ROTATION_OFFSET) > dtutil.now():
             return
-        self.recalculate()
+        if not self.calculating:
+            self.recalculate()
 
     def recalculate(self) -> None:
+        self.calculating = True
         self.previous = calc_prev()
         self.next = calc_next()
+        self.calculating = False
 
 def calc_next() -> SetInfo:
     try:

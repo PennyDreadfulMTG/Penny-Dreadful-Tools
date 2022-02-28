@@ -40,7 +40,7 @@ types-freezegun = "*"
 [packages]
 aiohttp = "*"
 anytree = "==2.8.0"
-astroid = "==2.9.3"
+astroid = "==2.10.0"
 attrs = "==21.4.0"
 beautifulsoup4 = "==4.10.0"
 better-profanity = "==0.7.0"

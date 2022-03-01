@@ -355,11 +355,11 @@
         },
         "discord-typings": {
             "hashes": [
-                "sha256:9d9e46db165a8759416b7d2d4595e67a2160b624a585237863f8ae1252b852da",
-                "sha256:fa16671ab03e19ec8ad9ada51f2b90b60ad15bb104d23caab964b4fa5bff998c"
+                "sha256:702fc90c50455b2fad62aa15ad1cabb1631c90b3e0f79ca676b6046e1be36187",
+                "sha256:c47907ced0b5dacfa587eabf386141a71105dab4eb08e99dc7e6457462f8a8d6"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==0.2.2"
+            "index": "pypi",
+            "version": "==0.3.0"
         },
         "editorconfig": {
             "hashes": [

@@ -10,7 +10,8 @@ from dis_snek import Snake, listen
 from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from dis_snek.client.errors import Forbidden
 from dis_snek.client.utils import timestamp_converter
-from dis_snek.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role, User, ScheduledEventType
+from dis_snek.models import (ActivityType, Embed, Guild, GuildText, Intents, Member, Role,
+                             ScheduledEventType, User)
 from github.GithubException import GithubException
 
 import discordbot.commands

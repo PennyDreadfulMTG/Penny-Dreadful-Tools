@@ -18,7 +18,7 @@ SEASONS = [
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
-    'VOW', 'NEO',                # 2022
+    'VOW', 'NEO', 'SNC',         # 2022
 ]
 
 OVERRIDES = {
@@ -84,8 +84,8 @@ def calc_next() -> SetInfo:
     try:
         return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
     except ValueError:
-        fake_enter_date_dt = sets()[-1].enter_date_dt + datetime.timedelta(days=90)
-        fake_exit_date_dt = sets()[-1].enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
+        fake_enter_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90)
+        fake_exit_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
         fake_exit_year = fake_exit_date_dt.year
         fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
         fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
@@ -102,7 +102,16 @@ def sets() -> List[SetInfo]:
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
     set_info = [SetInfo.parse(s) for s in info['sets']]
-    return [release for release in set_info if release.enter_date.exact is not None]
+    releases = []
+
+    last = set_info[0]
+    for s in set_info:
+        if s.enter_date_dt.timestamp() == 0:
+            s.enter_date_dt = last.enter_date_dt + datetime.timedelta(days=90)
+            print(f'guessing {s.name} enter date: {s.enter_date_dt}')
+        releases.append(s)
+        last = s
+    return releases
 
 
 @functools.lru_cache

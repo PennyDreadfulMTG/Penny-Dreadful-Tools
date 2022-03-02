@@ -2,13 +2,14 @@ import datetime
 import sys
 from typing import List
 
+import github
 from flask import url_for
 
 from decksite.data import deck
 from decksite.database import db
 from magic import fetcher
 from magic.models import Deck
-from shared import dtutil
+from shared import dtutil, logger
 from shared import redis_wrapper as redis
 from shared import repo
 from shared.container import Container
@@ -116,6 +117,9 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
                 merge.date = dtutil.ts2dt(merge.date)
         return merges
     except ConnectionError:
+        return []
+    except github.BadCredentialsException:
+        logger.warning('Bad GitHub credentials')
         return []
 
 def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:

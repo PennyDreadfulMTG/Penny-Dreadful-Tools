@@ -1,6 +1,5 @@
 from dis_snek import Snake
-from dis_snek.models import Scale, check, message_command, slash_command
-from dis_snek.models.checks import is_owner
+from dis_snek.models import Scale, check, is_owner, message_command, slash_command
 
 from discordbot.command import MtgContext, slash_permission_pd_mods
 from magic import multiverse, oracle, whoosh_write

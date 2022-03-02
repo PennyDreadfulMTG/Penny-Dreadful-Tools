@@ -26,7 +26,7 @@ from shared import redis_wrapper as redis
 from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
                                  TooManyItemsException)
 from shared_web import template
-from shared_web.api import generate_error, return_json, validate_api_key
+from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
 # pylint: disable=no-self-use
@@ -147,7 +147,7 @@ def decks_api() -> Response:
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'total': total, 'objects': ds}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
@@ -223,7 +223,7 @@ def cards2_api() -> Response:
     prepare_cards(cs, tournament_only=tournament_only)
     total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': cs}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
@@ -259,7 +259,7 @@ def people_api() -> Response:
     prepare_people(people)
     total = ps.load_people_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': people}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
@@ -298,7 +298,7 @@ def h2h_api() -> Response:
         entry.opp_url = url_for('seasons.person', mtgo_username=entry.opp_mtgo_username, season_id=season_id)
     total = ps.load_head_to_head_count(person_id=person_id, where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
@@ -347,7 +347,7 @@ def leaderboards_api() -> Response:
     prepare_leaderboard(entries)
     total = comp.load_leaderboard_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
@@ -391,7 +391,7 @@ def matches_api() -> Response:
     prepare_matches(entries)
     total = match.load_matches_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
@@ -410,7 +410,7 @@ def archetypes_api() -> Response:
     """
     data = archs.load_archetype_tree()
     r = {'total': len(data), 'objects': data}
-    return return_json(r, camelize=True)
+    return return_camelized_json(r)
 
 @APP.route('/api/rotation/cards/')
 def rotation_cards_api() -> Response:
@@ -461,7 +461,7 @@ def rotation_cards_api() -> Response:
     cs = cs[start:end]
     prepare_cards(cs)
     r = {'page': page, 'total': total, 'objects': cs}
-    resp = return_json(r, camelize=True)
+    resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 

@@ -36,6 +36,16 @@
             "stopOnEntry": true
         },
         {
+            "name": "Run: Discordbot",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "discordbot"
+            ],
+            "stopOnEntry": true
+        },
+        {
             "name": "Dev: Linter",
             "type": "python",
             "request": "launch",

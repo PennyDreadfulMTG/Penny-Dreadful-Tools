@@ -2,10 +2,7 @@ import re
 from typing import Any, Dict
 
 from dis_snek import Snake
-from dis_snek.models import message_command
-from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.discord_objects.user import User
-from dis_snek.models.scale import Scale
+from dis_snek.models import OptionTypes, Scale, User, message_command, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import fetcher

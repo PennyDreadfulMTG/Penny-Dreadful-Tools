@@ -247,7 +247,7 @@ class View(BaseView):
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
-            self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score))))  # type: ignore
+            self.legal_formats = list(map(add_season_num, sorted(self.legal_formats, key=legality.order_score)))  # type: ignore
 
     def prepare_matches(self) -> None:
         prepare.prepare_matches(getattr(self, 'matches', []))

@@ -9,8 +9,8 @@ from shared import configuration, logger
 API_BASE_URL = 'https://discordapp.com/api'
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
 TOKEN_URL = API_BASE_URL + '/oauth2/token'
-OAUTH2_CLIENT_ID = configuration.get('oauth2_client_id')
-OAUTH2_CLIENT_SECRET = configuration.get('oauth2_client_secret')
+OAUTH2_CLIENT_ID = configuration.oauth2_client_id.value
+OAUTH2_CLIENT_SECRET = configuration.oauth2_client_secret.value
 
 def setup_authentication() -> Tuple[str, str]:
     scope = ['identify', 'guilds', 'guilds.join']

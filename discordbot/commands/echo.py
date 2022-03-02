@@ -1,5 +1,4 @@
-from dis_snek.annotations.argument_annotations import CMD_BODY
-from dis_snek.models.command import message_command
+from dis_snek.models import CMD_BODY, message_command
 
 from discordbot import emoji
 from discordbot.command import MtgContext

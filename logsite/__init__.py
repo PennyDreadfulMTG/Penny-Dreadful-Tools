@@ -1,5 +1,5 @@
 import subprocess
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from flask import url_for
 from sqlalchemy import create_engine
@@ -12,13 +12,13 @@ APP = PDFlask(__name__)
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}/{db}'.format(
-    user=configuration.get('mysql_user'),
-    password=configuration.get('mysql_passwd'),
-    host=configuration.get('mysql_host'),
-    port=configuration.get('mysql_port'),
+    user=configuration.mysql_user.value,
+    password=configuration.mysql_passwd.value,
+    host=configuration.mysql_host.value,
+    port=configuration.mysql_port.value,
     db=configuration.get('logsite_database'))
 
-from . import db, stats, api, views  # isort:skip # pylint: disable=wrong-import-position, unused-import
+from . import db, stats, api, views  # isort:skip # noqa
 
 def __create_schema() -> None:
     engine = create_engine(APP.config['SQLALCHEMY_DATABASE_URI'])
@@ -30,7 +30,7 @@ def __create_schema() -> None:
 
 APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
-APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
+APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
 
 def build_menu() -> List[Dict[str, str]]:
     menu = [

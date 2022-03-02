@@ -1,8 +1,6 @@
 import datetime
 
-from dis_snek.models.application_commands import slash_command
-from dis_snek.models.command import message_command
-from dis_snek.models.enums import MessageFlags
+from dis_snek.models import MessageFlags, message_command, slash_command
 
 from discordbot import bot  # This is a circular import
 from discordbot.command import MtgContext

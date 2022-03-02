@@ -49,6 +49,15 @@ async def fetch_async(url: str) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
         raise FetchException(e) from e
 
+async def post_async_with_json(url: str, data: dict) -> str:
+    logger.info(f'Async posting to {url}')
+    try:
+        async with aiohttp.ClientSession() as aios:
+            response = await aios.post(url, json=data)
+            return await response.text()
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
+        raise FetchException(e) from e
+
 def fetch_json(url: str, character_encoding: Optional[str] = None, session: Optional[requests.Session] = None) -> Any:
     try:
         blob = fetch(url, character_encoding, session=session)
@@ -62,6 +71,16 @@ def fetch_json(url: str, character_encoding: Optional[str] = None, session: Opti
 async def fetch_json_async(url: str) -> Any:
     try:
         blob = await fetch_async(url)
+        if blob:
+            return json.loads(blob)
+        return None
+    except json.decoder.JSONDecodeError:
+        logger.error('Failed to load JSON:\n{0}'.format(blob))
+        raise
+
+async def post_json_async(url: str, data: dict) -> Any:
+    try:
+        blob = await post_async_with_json(url, data)
         if blob:
             return json.loads(blob)
         return None

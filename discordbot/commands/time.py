@@ -1,8 +1,7 @@
 import logging
 import re
 
-from dis_snek.models.application_commands import OptionTypes, slash_command, slash_option
-from dis_snek.models.command import message_command
+from dis_snek.models import OptionTypes, message_command, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from discordbot.shared import guild_id

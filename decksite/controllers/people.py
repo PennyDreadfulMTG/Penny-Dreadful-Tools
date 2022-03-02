@@ -18,7 +18,7 @@ from shared.pd_exception import DoesNotExistException
 @SEASONS.route('/people/')
 @cached()
 def people() -> str:
-    view = People(ps.load_people(season_id=get_season_id()))
+    view = People()
     return view.page()
 
 @APP.route('/people/<mtgo_username>/')

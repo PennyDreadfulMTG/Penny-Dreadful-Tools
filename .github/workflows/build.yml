@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2.3.1
+      uses: actions/setup-python@v2.3.2
       with:
         python-version: '3.10'
         cache: 'pipenv'
@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2.3.1
+      uses: actions/setup-python@v2.3.2
       with:
         python-version: '3.10'
         cache: 'pipenv'
@@ -50,7 +50,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2.3.1
+      uses: actions/setup-python@v2.3.2
       with:
         python-version: '3.10'
         cache: 'pipenv'
@@ -80,12 +80,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - name: Set up Python 3.10
-      uses: actions/setup-python@v2.3.1
+      uses: actions/setup-python@v2.3.2
       with:
         python-version: '3.10'
         cache: 'pipenv'
     - name: Setup Node.js environment
-      uses: actions/setup-node@v2.5.0
+      uses: actions/setup-node@v2.5.1
       with:
         node-version: 12
     - name: Install dependencies

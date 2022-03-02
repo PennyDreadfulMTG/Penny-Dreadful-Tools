@@ -6,19 +6,13 @@ from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
-from dis_snek import Snake
-from dis_snek.annotations.argument_annotations import CMD_BODY
-from dis_snek.models.application_commands import (InteractionCommand, OptionTypes, Permission,
-                                                  PermissionTypes, slash_option, slash_permission)
-from dis_snek.models.command import MessageCommand, message_command
-from dis_snek.models.context import (AutocompleteContext, Context, InteractionContext,
-                                     MessageContext)
-from dis_snek.models.discord_objects.channel import TYPE_MESSAGEABLE_CHANNEL
-from dis_snek.models.discord_objects.message import Message
-from dis_snek.models.discord_objects.user import Member
-from dis_snek.models.enums import ChannelTypes
-from dis_snek.models.file import File
-from dis_snek.models.scale import Scale
+from dis_snek import CMD_BODY, Snake
+from dis_snek.client.errors import Forbidden
+from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelTypes, Context,
+                             File, InteractionCommand, InteractionContext, Member, Message,
+                             MessageCommand, MessageContext, OptionTypes, Permission,
+                             PermissionTypes, Scale, message_command, slash_option,
+                             slash_permission)
 
 from discordbot import emoji
 from discordbot.shared import SendableContext, channel_id, guild_id
@@ -48,7 +42,10 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     compat = False and ctx.channel.type == ChannelTypes.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
     queries = parse_queries(ctx.message.content, compat)
     if len(queries) > 0:
-        await ctx.channel.trigger_typing()
+        try:
+            await ctx.channel.trigger_typing()
+        except Forbidden:
+            return
         results = results_from_queries(queries)
         cards = []
         for i in results:
@@ -332,7 +329,7 @@ class MtgMixin:
         await post_cards(self.bot, cards, self, replying_to, additional_text)
 
     async def post_nothing(self: SendableContext) -> None:
-        await post_nothing(self.channel)
+        await post_nothing(self)
 
 
 InteractionContext.__bases__ += (MtgMixin,)

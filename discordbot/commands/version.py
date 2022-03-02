@@ -1,8 +1,7 @@
 import subprocess
-import sys
+from importlib.metadata import version as _v
 
-import dis_snek.const
-from dis_snek.models.application_commands import slash_command
+from dis_snek.models import Embed, slash_command
 
 from discordbot.command import MtgContext
 from magic import database
@@ -11,7 +10,13 @@ from magic import database
 @slash_command('version')
 async def version(ctx: MtgContext) -> None:
     """Display the current version numbers"""
+    embed = Embed('Version')
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
+    embed.add_field('Commit hash', commit)
     age = subprocess.check_output(['git', 'show', '-s', '--format=%ci ', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
+    embed.add_field('Commit age', age)
     scryfall = database.last_updated()
-    await ctx.send(f'I am currently running mtgbot version `{commit}` ({age}), and scryfall last updated `{scryfall}`\nPython `{sys.version}`, dis_snek {dis_snek.const.__version__}')
+    embed.add_field('Scryfall last updated', scryfall)
+    snekver = _v('dis-snek')
+    embed.add_field('dis-snek version', snekver)
+    await ctx.send(embed=embed)

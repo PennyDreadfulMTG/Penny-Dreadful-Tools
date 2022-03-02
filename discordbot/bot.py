@@ -6,15 +6,10 @@ import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
-import sentry_sdk
-from dis_snek import Snake
-from dis_snek.errors import Forbidden
-from dis_snek.models import ActivityType, GuildText, Embed, Guild, Role, ScheduledEventType, Member, User
-from dis_snek.models.enums import Intents
-from dis_snek.models.events.discord import (MemberAdd, MessageCreate, MessageReactionAdd,
-                                            PresenceUpdate)
-from dis_snek.models.listener import listen
-from dis_snek.utils import timestamp_converter
+from dis_snek import Snake, listen, timestamp_converter
+from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
+from dis_snek.client.errors import Forbidden
+from dis_snek.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role, User, ScheduledEventType
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -26,31 +21,6 @@ from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
-
-
-def sentry_filter(event: dict[str, Any], hint: dict[str, Any]):  # type: ignore
-    if 'log_record' in hint:
-        record: logging.LogRecord = hint['log_record']
-        if 'dis.snek' in record.name and '/commands/permissions: 403' in record.message:
-            return None
-
-    if 'exc_info' in hint:
-        exc_type, exc_value, tb = hint['exc_info']
-        if isinstance(exc_value, OSError):
-            return None
-    return event
-
-
-sentry_token = configuration.get_optional_str('sentry_token')
-if sentry_token:
-    try:
-        sentry_sdk.init(
-            dsn=sentry_token,
-            integrations=[],
-            before_send=sentry_filter,
-        )
-    except Exception as c:
-        logging.error(c)
 
 TASKS = []
 
@@ -74,13 +44,16 @@ class Bot(Snake):
 
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES)
 
-        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=False, default_prefix='!', **kwargs)
+        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!', **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
-            self.grow_scale('dis_snek.debug_scale')
+            self.grow_scale('dis_snek.ext.debug_scale')
+        self.sentry_token = configuration.get_optional_str('sentry_token')
+        if self.sentry_token:
+            self.grow_scale('dis_taipan.sentry')
 
     async def stop(self) -> None:
         await super().stop()
@@ -104,6 +77,10 @@ class Bot(Snake):
 
         ctx = await self.get_context(event.message)
         await command.respond_to_card_names(ctx)
+
+    @listen()
+    async def on_login(self) -> None:
+        repo.REDACTED_STRINGS.add(self.http.token)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
     #     # pylint: disable=unused-argument
@@ -241,7 +218,7 @@ class Bot(Snake):
             logging.warning('tournament channel is not configured')
             return
         try:
-            channel = await self.get_channel(tournament_channel_id)
+            channel: Optional[GuildText] = await self.get_channel(tournament_channel_id)
         except Forbidden:
             channel = None
             configuration.write('tournament_reminders_channel_id', 0)
@@ -269,7 +246,7 @@ class Bot(Snake):
                 embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
                 # See #2809.
                 # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed)
+                await channel.send(embed=embed)
 
             if diff <= 300:
                 # Five minutes, final warning.  Sleep until the tournament has started.
@@ -347,7 +324,7 @@ class Bot(Snake):
                 embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
                 # See #2809.
                 # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed)
+                await channel.send(embed=embed)
             if diff <= 5 * 60:
                 # Five minutes, final warning.
                 timer = 301
@@ -424,7 +401,7 @@ def init() -> None:
     asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
     logging.info('Connecting to Discord')
-    client.start(configuration.get_str('token'))
+    client.start(configuration.token.value)
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682  # or guild.id == 226920619302715392

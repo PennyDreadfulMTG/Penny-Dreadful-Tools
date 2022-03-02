@@ -2,8 +2,8 @@ import datetime
 import sys
 from typing import List
 
-from flask import url_for
 import github
+from flask import url_for
 
 from decksite.data import deck
 from decksite.database import db

@@ -366,4 +366,7 @@ def repip() -> None:
 
 
 if __name__ == '__main__':
-    cli()
+    try:
+        cli()
+    except TestFailedException as e:
+        sys.exit(e.args[0])

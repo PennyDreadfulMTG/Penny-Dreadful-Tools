@@ -9,7 +9,8 @@ from typing import Any, Callable, Dict, List, Optional
 from dis_snek import Snake, listen
 from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from dis_snek.client.errors import Forbidden
-from dis_snek.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role, User
+from dis_snek.client.utils import timestamp_converter
+from dis_snek.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role, User, ScheduledEventType
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -226,6 +227,8 @@ class Bot(Snake):
         if not isinstance(channel, GuildText):
             logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
             return
+
+        guild = channel.guild
         while self.is_ready:
             info = tournaments.next_tournament_info()
             diff = info['next_tournament_time_precise']
@@ -264,6 +267,21 @@ class Bot(Snake):
 
             if timer < 300:
                 timer = 300
+            events = await guild.list_scheduled_events()
+            created = any(e.name == info['next_tournament_name'] for e in events)
+            if not created:
+                try:
+                    expected_duration = datetime.timedelta(hours=3)  # Maybe vary this based on event name?
+                    await guild.create_scheduled_event(
+                        name=info['next_tournament_name'],
+                        description=message,
+                        start_time=timestamp_converter(info['time']),
+                        end_time=timestamp_converter(info['time'] + expected_duration),
+                        event_type=ScheduledEventType.EXTERNAL,
+                        external_location='https://gatherling.com',
+                    )
+                except Forbidden:
+                    logging.warning('Can\t create scheduled events')
             await asyncio.sleep(timer)
         logging.warning('naturally stopping tournament reminders')
 

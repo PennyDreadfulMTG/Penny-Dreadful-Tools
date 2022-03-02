@@ -20,13 +20,7 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: Dict[str, int] = {}
 
 def init() -> bool:
-    event_loop = None
-    try:
-        event_loop = asyncio.get_event_loop()
-    except RuntimeError:
-        event_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(event_loop)
-    return event_loop.run_until_complete(init_async())
+    return asyncio.run(init_async())
 
 async def init_async() -> bool:
     try:

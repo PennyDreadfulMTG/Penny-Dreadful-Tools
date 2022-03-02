@@ -119,7 +119,9 @@ def normal_prizes() -> Prizes:
     return display_prizes(prizes_by_finish(Competition({'name': ''})))
 
 def prizes_by_finish(c: Competition) -> Prizes:
-    prizes, finish, p = [], 1, inflect.engine()
+    prizes: Prizes = []
+    finish = 1
+    p = inflect.engine()  # type: ignore
     while True:
         pz = prize_by_finish(c, finish)
         if not pz:

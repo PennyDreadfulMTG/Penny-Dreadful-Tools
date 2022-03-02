@@ -83,7 +83,7 @@ def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)
 
 def day2ordinal(m: Match) -> str:
-    p = inflect.engine()
+    p = inflect.engine()  # type: ignore
     return p.ordinal(int(m.group(1)))
 
 

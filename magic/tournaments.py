@@ -20,7 +20,8 @@ SAT = 2
 APAC = 3
 SUN = 4
 MON = 5
-THU = 6
+EU_WED = 6
+THU = 7
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -66,6 +67,7 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
 
 def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
+    eu_start = start.astimezone(tz=dtutil.EUROPE_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index])
     if is_pd500_week(start):
@@ -78,8 +80,9 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     apds_time = (APAC, 'APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index])
     pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])
     pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])
+    pdew_time = (EU_WED, 'Penny Dreadful EU Wednesdays', rrule.rrule(rrule.WEEKLY, byhour=18, byminute=0, bysecond=0, dtstart=eu_start, until=until, byweekday=rrule.WE)[index])
     pdthu_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
-    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdthu_time]
+    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdew_time, pdthu_time]
 
 # Note: this may be in the past. It always gives the date for the current season.
 # Note: if the start date of next season is not known then the date of the PD 500 cannot be known and in such a case this return None.
@@ -239,9 +242,17 @@ def all_series_info() -> List[Container]:
         Container({
             'tournament_id': info[5][0],
             'name': info[5][1],
+            'hosts': ['RavaenMTG'],
+            'display_time': '6pm CET',
+            'time': info[5][2],
+            'sponsor_name': None,
+        }),
+        Container({
+            'tournament_id': info[6][0],
+            'name': info[6][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[5][2],
+            'time': info[6][2],
             'sponsor_name': 'Cardhoarder',
         }),
     ]

@@ -6,9 +6,10 @@ import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
-from dis_snek import Snake, listen, timestamp_converter
+from dis_snek import Snake, listen
 from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from dis_snek.client.errors import Forbidden
+from dis_snek.client.utils import timestamp_converter
 from dis_snek.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role, User, ScheduledEventType
 from github.GithubException import GithubException
 

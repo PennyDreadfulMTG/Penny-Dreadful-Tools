@@ -11,11 +11,13 @@
     {{#has_external_source}}
         <li><a title="View competition source ({{type}})" class="external" href="{{url}}">Source</a></li>
     {{/has_external_source}}
-    {{#is_deck_page}}
-        <li><a title="Magic Online Download (txt)" href="{{export_url}}">Download</a></li>
-        <li><a title="Buy on Cardhoarder" class="external" href="{{cardhoarder_url}}">Buy</a></li>
-        <li><a title="View decklist source ({{source_name}})" {{#source_is_external}}class="external"{{/source_is_external}} href="{{source_url}}">Source</a></li>
-    {{/is_deck_page}}
+    {{^is_in_current_run}}
+      {{#is_deck_page}}
+          <li><a title="Magic Online Download (txt)" href="{{export_url}}">Download</a></li>
+          <li><a title="Buy on Cardhoarder" class="external" href="{{cardhoarder_url}}">Buy</a></li>
+          <li><a title="View decklist source ({{source_name}})" {{#source_is_external}}class="external"{{/source_is_external}} href="{{source_url}}">Source</a></li>
+      {{/is_deck_page}}
+    {{/is_in_current_run}}
     {{#show_filters_toggle}}
         <li><a class="toggle-filters-button" href="#">Show filters</a></li>
     {{/show_filters_toggle}}

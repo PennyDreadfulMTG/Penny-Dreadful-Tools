@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "76e6bff9444e902a0b54633b7731155f5bf065b93469b8d09237708e99f58460"
+            "sha256": "3dba6c8332abf355b0b37a2859f7f2343b75e91f5715b3b22162f18dceb57f78"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -115,7 +115,7 @@
                 "sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f",
                 "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==9.0.1"
         },
         "anytree": {
@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
         },
         "click": {
@@ -523,11 +523,11 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:7d030edbd3a0e994d796e62716022752684e863a6df9864b6ca82a1616c2a5a6",
-                "sha256:f33863a6709651703b8b18b67093514838c79f2b04d02aa501203079f24b8018"
+                "sha256:3c9f0c539281529e26cc5631dba911ded66e27ed91f269b58fc4eb53d4b81ce8",
+                "sha256:56551465be3e42966cfcb6f9243caf60aa79d023b763351876cf9702735132f4"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==2.5.0"
+            "version": "==2.6.0"
         },
         "google-api-python-client": {
             "hashes": [
@@ -1269,7 +1269,7 @@
                 "sha256:f358aa33e03b7a84e0d91270a4d4d8f5df6921abe99a377828839e8ed0c04e07",
                 "sha256:f51d5a9f137f7a2cec2d326a74b6e3fc79d635d69ffe1b036d39fc7d75430d37"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==3.19.4"
         },
         "py": {
@@ -1461,11 +1461,11 @@
         },
         "pytest-asyncio": {
             "hashes": [
-                "sha256:c43fcdfea2335dd82ffe0f2774e40285ddfea78a8e81e56118d47b6a90fbb09e",
-                "sha256:c9ec48e8bbf5cc62755e18c4d8bc6907843ec9c5f4ac8f61464093baeba24a7e"
+                "sha256:20db0bdd3d7581b2e11f5858a5d9541f2db9cd8c5853786f94ad273d466c8c6d",
+                "sha256:fc8e4190f33fee7797cc7f1829f46a82c213f088af5d1bb5d4e454fe87e6cdc2"
             ],
             "index": "pypi",
-            "version": "==0.18.1"
+            "version": "==0.18.2"
         },
         "pytest-cov": {
             "hashes": [

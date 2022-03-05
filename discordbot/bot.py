@@ -71,6 +71,10 @@ class Bot(Snake):
             self.launched = True
 
     @listen()
+    async def on_startup(self) -> None:
+        await self.prepare_database_async()
+
+    @listen()
     async def on_message_create(self, event: MessageCreate) -> None:
         if event.message.author.bot:
             return
@@ -83,6 +87,17 @@ class Bot(Snake):
     @listen()
     async def on_login(self) -> None:
         repo.REDACTED_STRINGS.add(self.http.token)
+
+    async def prepare_database_async(self) -> None:
+        if configuration.prevent_cards_db_updates.get():
+            logging.warning('Warning: Card DB is frozen')
+        await multiverse.init_async()
+        oracle.init(force=True)
+        logging.info('Begun reloading legal cards and bugs.')
+        oracle.legal_cards(force=True)
+        await multiverse.update_bugged_cards_async()
+        multiverse.rebuild_cache()
+        await asyncio.to_thread(whoosh_write.reindex)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
     #     # pylint: disable=unused-argument
@@ -102,7 +117,7 @@ class Bot(Snake):
             return
         if is_pd_server(member.guild):
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
-            chan = await member.guild.get_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
+            chan = await member.guild.fetch_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
             await chan.send(greeting)
 
     async def on_presence_update(self, event: PresenceUpdate) -> None:
@@ -220,7 +235,7 @@ class Bot(Snake):
             logging.warning('tournament channel is not configured')
             return
         try:
-            channel: Optional[GuildText] = await self.get_channel(tournament_channel_id)
+            channel: Optional[GuildText] = await self.fetch_channel(tournament_channel_id)
         except Forbidden:
             channel = None
             configuration.write('tournament_reminders_channel_id', 0)
@@ -293,7 +308,7 @@ class Bot(Snake):
             logging.warning('tournament channel is not configured')
             return
         try:
-            channel = await self.get_channel(tournament_channel_id)
+            channel = await self.fetch_channel(tournament_channel_id)
         except Forbidden:
             channel = None
             configuration.write('tournament_reminders_channel_id', 0)
@@ -352,7 +367,7 @@ class Bot(Snake):
             logging.warning('rotation hype channel is not configured')
             return
         try:
-            channel = await self.get_channel(rotation_hype_channel_id)
+            channel = await self.fetch_channel(rotation_hype_channel_id)
         except Forbidden:
             channel = None
             configuration.write('rotation_hype_channel_id', 0)
@@ -396,12 +411,12 @@ class Bot(Snake):
 
 def init() -> None:
     client = Bot()
-    logging.info('Initializing Cards DB')
-    updated = multiverse.init()
-    if updated:
-        whoosh_write.reindex()
-    asyncio.ensure_future(multiverse.update_bugged_cards_async())
-    oracle.init()
+    # logging.info('Initializing Cards DB')
+    # updated = multiverse.init()
+    # if updated:
+    #     whoosh_write.reindex()
+    # asyncio.ensure_future(multiverse.update_bugged_cards_async(), client.loop)
+    # oracle.init()
     logging.info('Connecting to Discord')
     client.start(configuration.token.value)
 

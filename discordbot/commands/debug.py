@@ -4,7 +4,7 @@ Debug stuff
 
 from dis_snek.client import Snake
 from dis_snek.client.errors import CommandCheckFailure, ScaleLoadException
-from dis_snek.models import Context, MessageContext, Scale, check, is_owner, message_command
+from dis_snek.models import MessageContext, Scale, check, is_owner, message_command
 
 
 class PDDebug(Scale):

@@ -81,7 +81,7 @@ def is_playable_layout(layout: str) -> bool:
             repo.create_issue(warning, 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
         except GithubException:
             pass  # We tried. Not gonna break the world because we couldn't log it.
-        setattr(is_playable_layout, cache_key, list())  # The other half of the hack.
+        setattr(is_playable_layout, cache_key, [])  # The other half of the hack.
     return False
 
 def cached_base_query(where: str = '(1 = 1)') -> str:

@@ -2,7 +2,7 @@ import random
 
 from dis_snek.models import slash_command, max_concurrency, Buckets
 
-from discordbot.command import MtgContext, MtgInteractionContext
+from discordbot.command import MtgInteractionContext
 from magic import image_fetcher, oracle
 
 

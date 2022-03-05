@@ -74,6 +74,7 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
     print(f'command: {command}')
 
     ctx = ContextForTests()
+    ctx._client = discordbot
     ctx.bot = discordbot
     ctx.channel = Container({'id': '1'})
     ctx.channel.send = ctx.send

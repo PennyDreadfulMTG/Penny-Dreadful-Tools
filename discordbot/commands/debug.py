@@ -20,12 +20,12 @@ class PDDebug(Scale):
                     self.bot.grow_scale(f'{__package__}.{module}')
                     await ctx.message.add_reaction('▶')
                 except ScaleLoadException as c:
-                    await ctx.send(c)
+                    await ctx.send(str(c))
             else:
-                await ctx.send(e)
+                await ctx.send(str(e))
 
     @regrow.error
-    async def regrow_error(self, error: Exception, ctx: Context) -> None:
+    async def regrow_error(self, error: Exception, ctx: MessageContext) -> None:
         if isinstance(error, CommandCheckFailure):
             return await ctx.send('You do not have permission to execute this command')
         raise

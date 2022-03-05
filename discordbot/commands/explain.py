@@ -249,7 +249,7 @@ class ExplainCog(Scale):
         opt_type=OptionTypes.STRING,
         required=False,
         choices=[command.make_choice(x.lower()) for x in keys])
-    async def explain(self, ctx: MtgContext, thing: Optional[str]) -> None:
+    async def explain(self, ctx: MtgContext, thing: Optional[str] = None) -> None:
         """Answers for Frequently Asked Questions"""
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if thing is None:

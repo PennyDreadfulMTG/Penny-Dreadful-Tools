@@ -19,7 +19,7 @@ async def find_emoji(emoji: str, client: Snake) -> Optional[PartialEmoji]:
 
     try:
         for guild in client.guilds:
-            emojis = await guild.get_all_custom_emojis()
+            emojis = await guild.fetch_all_custom_emojis()
             res = next((x for x in emojis if x.name == emoji), None)
             if res is not None:
                 CACHE[emoji] = res

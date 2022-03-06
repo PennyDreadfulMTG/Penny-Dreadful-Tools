@@ -264,6 +264,8 @@ def set_colors(d: Deck) -> None:
         for cost in c.get('mana_cost') or ():
             if c.layout == 'split':
                 continue  # They might only be using one half so ignore it.
+            if c.type_line == 'Instant — Trap':
+                continue  # People often sideboard off-colour traps.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
             deck_colors.update(card_colors['required'])

@@ -40,7 +40,6 @@ def background_task(func: Callable) -> Callable:
 class Bot(Snake):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        self.launched = False
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
@@ -66,13 +65,10 @@ class Bot(Snake):
         names = ', '.join([guild.name or '' for guild in self.guilds])
         logging.info('Connected to %s', names)
         logging.info('--------')
-        if not self.launched:
-            perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
-            self.launched = True
 
     @listen()
     async def on_startup(self) -> None:
-        await self.prepare_database_async()
+        perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:
@@ -89,17 +85,6 @@ class Bot(Snake):
         token = self.http.token
         if token:
             repo.REDACTED_STRINGS.add(token)
-
-    async def prepare_database_async(self) -> None:
-        if configuration.prevent_cards_db_updates.get():
-            logging.warning('Warning: Card DB is frozen')
-        await multiverse.init_async()
-        oracle.init(force=True)
-        logging.info('Begun reloading legal cards and bugs.')
-        oracle.legal_cards(force=True)
-        await multiverse.update_bugged_cards_async()
-        multiverse.rebuild_cache()
-        await asyncio.to_thread(whoosh_write.reindex)
 
     # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
     #     # pylint: disable=unused-argument
@@ -209,7 +194,7 @@ class Bot(Snake):
                 c = c - 1
             elif not dismissable:
                 return
-            if c > 0 and reaction.name == '❎':
+            if c > 0 and reaction.emoji.name == '❎':
                 await reaction.message.delete()
             # elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
             #     async with reaction.message.channel.typing():
@@ -413,14 +398,18 @@ class Bot(Snake):
 
 def init() -> None:
     client = Bot()
-    # logging.info('Initializing Cards DB')
-    # updated = multiverse.init()
-    # if updated:
-    #     whoosh_write.reindex()
-    # asyncio.ensure_future(multiverse.update_bugged_cards_async(), client.loop)
-    # oracle.init()
     logging.info('Connecting to Discord')
+    asyncio.run(prepare_database_async())
     client.start(configuration.token.value)
+
+async def prepare_database_async() -> None:
+    logging.info('Initializing Cards DB')
+    updated = await multiverse.init_async()
+    if updated:
+        whoosh_write.reindex()
+    await multiverse.update_bugged_cards_async()
+    oracle.init()
+
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682  # or guild.id == 226920619302715392

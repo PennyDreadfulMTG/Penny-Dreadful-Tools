@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, cast
+from magic import mana
 
 from shared import dtutil
 from shared.container import Container
@@ -46,6 +47,16 @@ class Card(Container):
 
     def legal_in(self, format_name: str) -> bool:
         return self.legalities.get(format_name) == 'Legal'
+
+    @property
+    def colors(self) -> List[str]:
+        colors = set()
+        for cost in self.get('mana_cost') or ():
+            card_symbols = mana.parse(cost)
+            cs = mana.colors(card_symbols)
+            colors.update(cs['required'])
+            colors.update(cs['also'])
+        return mana.order(colors)
 
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]

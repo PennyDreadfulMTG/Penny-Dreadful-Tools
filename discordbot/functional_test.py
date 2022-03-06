@@ -82,7 +82,7 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
     ctx.channel.trigger_typing = ctx.trigger_typing
     ctx.message = Container()
     ctx.message.channel = ctx.channel
-    ctx.author = Container()
+    ctx.author = Container(id=2)
     ctx.author.mention = '<@111111111111>'
     ctx.kwargs = kwargs
     ctx.args = []

@@ -32,6 +32,7 @@ def channel_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[
 class SendableContext(Protocol):
     channel: TYPE_MESSAGEABLE_CHANNEL
     bot: Snake
+    invoked_name: str
 
     author: Union[Member, User]
     guild_id: Snowflake_Type

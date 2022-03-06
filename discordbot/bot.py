@@ -122,8 +122,8 @@ class Bot(Snake):
 
     async def on_presence_update(self, event: PresenceUpdate) -> None:
         user: User = event.user
-        member: Member = await self.get_member(user.id, event.guild_id)
-        guild: Guild = await self.get_guild(event.guild_id)
+        member: Member = await self.fetch_member(user.id, event.guild_id)
+        guild: Guild = await self.fetch_guild(event.guild_id)
         if user.bot:
             return
         # streamers

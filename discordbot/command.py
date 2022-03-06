@@ -11,7 +11,7 @@ from dis_snek.client.errors import Forbidden
 from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelTypes, Context,
                              File, InteractionCommand, InteractionContext, Member, Message,
                              MessageCommand, MessageContext, OptionTypes, Permission,
-                             PermissionTypes, Scale, message_command, slash_option,
+                             PermissionTypes, Scale, User, message_command, slash_option,
                              slash_permission)
 
 from discordbot import emoji
@@ -327,7 +327,7 @@ class MtgMixin:
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 
-    async def post_cards(self: SendableContext, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
+    async def post_cards(self: SendableContext, cards: List[Card], replying_to: Optional[User | Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self, replying_to, additional_text)
 

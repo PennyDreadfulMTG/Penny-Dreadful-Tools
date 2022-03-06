@@ -148,6 +148,7 @@ def banner_cards(seasonnum: int) -> Tuple[List[str], str]:
 @functools.lru_cache
 def guess_banner(season_num: int) -> Tuple[List[str], str]:
     cardnames: List[str] = []
+    picked_colors = []
     try:
         cards = playability.season_playability(season_num)
         for row in cards:
@@ -156,9 +157,13 @@ def guess_banner(season_num: int) -> Tuple[List[str], str]:
             c = oracle.load_card(row['name'])
             if 'Basic' in c.type_line:
                 continue
+            color = ''.join(c.colors)
+            if color in picked_colors:
+                continue
             if len(cardnames) == 7:
                 return cardnames, row['name']
             cardnames.append(row['name'])
+            picked_colors.append(color)
     except DatabaseException as e:
         logger.error(e)
     return ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'Enter the Infinite'

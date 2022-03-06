@@ -6,9 +6,10 @@ from os import path
 from typing import Optional
 
 from dis_snek import Snake
-from dis_snek.models import Context, InteractionCommand, MessageCommand, Scale
+from dis_snek.models import InteractionCommand, MessageCommand, Scale
 
 from discordbot import command
+from discordbot.shared import SendableContext
 from magic.models import Card
 
 
@@ -46,7 +47,7 @@ def scaleless_load(bot: Snake, module: str) -> bool:
 
 class CardConverter:
     @classmethod
-    async def convert(cls, ctx: Context, argument: str) -> Optional[Card]:
+    async def convert(cls, ctx: SendableContext, argument: str) -> Optional[Card]:
         try:
             result, mode, printing = command.results_from_queries([argument])[0]
             if result.has_match() and not result.is_ambiguous():

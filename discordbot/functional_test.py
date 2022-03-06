@@ -32,6 +32,9 @@ class ContextForTests(Context, MtgMixin):
     async def trigger_typing(self) -> None:
         ...
 
+    async def defer(self) -> None:
+        ...
+
 def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional[str], Optional[str]]]]:
     return [
         ('art', {'card': 'Island'}, None, None),
@@ -74,13 +77,15 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
     print(f'command: {command}')
 
     ctx = ContextForTests()
+    ctx._client = discordbot
+    ctx.id = 1
     ctx.bot = discordbot
     ctx.channel = Container({'id': '1'})
     ctx.channel.send = ctx.send
     ctx.channel.trigger_typing = ctx.trigger_typing
     ctx.message = Container()
     ctx.message.channel = ctx.channel
-    ctx.author = Container()
+    ctx.author = Container(id=2)
     ctx.author.mention = '<@111111111111>'
     ctx.kwargs = kwargs
     ctx.args = []

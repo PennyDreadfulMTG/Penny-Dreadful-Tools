@@ -10,7 +10,7 @@ from magic import database
 @slash_command('version')
 async def version(ctx: MtgContext) -> None:
     """Display the current version numbers"""
-    embed = Embed('Version')
+    embed = Embed(title='Version')
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
     embed.add_field('Commit hash', commit)
     age = subprocess.check_output(['git', 'show', '-s', '--format=%ci ', 'HEAD'], universal_newlines=True).strip('\n').strip('"')

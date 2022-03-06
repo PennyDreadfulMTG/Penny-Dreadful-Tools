@@ -11,7 +11,7 @@ from shared import settings
 
 class ConfigError(CommandException):
     def __init__(self, scope: int, message: str = None, *args: Any) -> None:
-        super().__init__(message=message, *args)
+        super().__init__(message, *args)
         self.scope = scope
 
 @slash_command('configure')

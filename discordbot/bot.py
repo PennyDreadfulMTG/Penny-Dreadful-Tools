@@ -86,7 +86,9 @@ class Bot(Snake):
 
     @listen()
     async def on_login(self) -> None:
-        repo.REDACTED_STRINGS.add(self.http.token)
+        token = self.http.token
+        if token:
+            repo.REDACTED_STRINGS.add(token)
 
     async def prepare_database_async(self) -> None:
         if configuration.prevent_cards_db_updates.get():
@@ -122,8 +124,8 @@ class Bot(Snake):
 
     async def on_presence_update(self, event: PresenceUpdate) -> None:
         user: User = event.user
-        member: Member = await self.get_member(user.id, event.guild_id)
-        guild: Guild = await self.get_guild(event.guild_id)
+        member: Member = await self.fetch_member(user.id, event.guild_id)
+        guild: Guild = await self.fetch_guild(event.guild_id)
         if user.bot:
             return
         # streamers
@@ -207,7 +209,7 @@ class Bot(Snake):
                 c = c - 1
             elif not dismissable:
                 return
-            if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
+            if c > 0 and reaction.name == '❎':
                 await reaction.message.delete()
             # elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
             #     async with reaction.message.channel.typing():

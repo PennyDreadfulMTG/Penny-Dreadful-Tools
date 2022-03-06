@@ -27,7 +27,8 @@ class PDDebug(Scale):
     @regrow.error
     async def regrow_error(self, error: Exception, ctx: MessageContext) -> None:
         if isinstance(error, CommandCheckFailure):
-            return await ctx.send('You do not have permission to execute this command')
+            await ctx.send('You do not have permission to execute this command')
+            return
         raise
 
     @message_command('enable_debugger')

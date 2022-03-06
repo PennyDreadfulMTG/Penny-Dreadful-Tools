@@ -207,7 +207,7 @@ class Bot(Snake):
                 c = c - 1
             elif not dismissable:
                 return
-            if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
+            if c > 0 and reaction.name == '❎':
                 await reaction.message.delete()
             # elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
             #     async with reaction.message.channel.typing():

@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Protocol, Union
 from dis_snek import Snake
 from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AllowedMentions, BaseComponent, Context,
                              Embed, File, GuildText, InteractionContext, Message, MessageFlags,
-                             MessageReference, Snowflake_Type, Sticker)
+                             MessageReference, Snowflake_Type, Sticker, User, Member)
 
 
 def guild_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[int]:
@@ -32,6 +32,10 @@ def channel_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[
 class SendableContext(Protocol):
     channel: TYPE_MESSAGEABLE_CHANNEL
     bot: Snake
+
+    author: Union[Member, User]
+    guild_id: Snowflake_Type
+    message: Message
 
     async def send(
         self,

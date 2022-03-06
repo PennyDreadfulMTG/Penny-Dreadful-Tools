@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, cast
-from magic import mana
 
+from magic import mana
 from shared import dtutil
 from shared.container import Container
 

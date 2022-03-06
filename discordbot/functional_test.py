@@ -32,6 +32,9 @@ class ContextForTests(Context, MtgMixin):
     async def trigger_typing(self) -> None:
         ...
 
+    async def defer(self) -> None:
+        ...
+
 def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional[str], Optional[str]]]]:
     return [
         ('art', {'card': 'Island'}, None, None),

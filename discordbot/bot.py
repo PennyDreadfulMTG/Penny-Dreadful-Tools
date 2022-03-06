@@ -86,7 +86,9 @@ class Bot(Snake):
 
     @listen()
     async def on_login(self) -> None:
-        repo.REDACTED_STRINGS.add(self.http.token)
+        token = self.http.token
+        if token:
+            repo.REDACTED_STRINGS.add(token)
 
     async def prepare_database_async(self) -> None:
         if configuration.prevent_cards_db_updates.get():

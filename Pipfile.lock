@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
         },
         "click": {
@@ -355,11 +355,11 @@
         },
         "discord-typings": {
             "hashes": [
-                "sha256:702fc90c50455b2fad62aa15ad1cabb1631c90b3e0f79ca676b6046e1be36187",
-                "sha256:c47907ced0b5dacfa587eabf386141a71105dab4eb08e99dc7e6457462f8a8d6"
+                "sha256:65890c467751daa025dcef15683c32160f07427baf83380cfdf11d84ceec980a",
+                "sha256:854cfb66d34edad49b36d8aaffc93179bb397a97c81caba2da02896e72821a74"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==0.3.0"
+            "index": "pypi",
+            "version": "==0.3.1"
         },
         "editorconfig": {
             "hashes": [
@@ -1764,7 +1764,7 @@
                 "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
                 "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.8"
         },
         "vcrpy": {

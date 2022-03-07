@@ -4,6 +4,7 @@ This is the High-Level equivelent of shared.fetch_tools
 """
 import csv
 import datetime
+import functools
 import json
 import os
 import re
@@ -117,6 +118,14 @@ async def gatherling_whois(name: Optional[str] = None, discord_id: Optional[str]
         raise InvalidArgumentException('No identifier provided')
     data = await fetch_tools.fetch_json_async(url)
     return Container(data)
+
+def hq_artcrops() -> Dict[str, Tuple[str, int]]:
+    with open('hq_artcrops.json') as f:
+        return json.load(f)
+
+
+if configuration.production.value:
+    hq_artcrops = functools.lru_cache(hq_artcrops)  # These won't be changing in production, so avoid the IO cost of reading the file every time.
 
 async def legal_cards_async(season: str = None) -> List[str]:
     if season is None:

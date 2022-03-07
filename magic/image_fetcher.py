@@ -3,11 +3,12 @@ import hashlib
 import math
 import os
 import re
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from PIL import Image
 
 from magic import card, oracle
+from magic import fetcher
 from magic.models import Card, Printing
 from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape
@@ -70,6 +71,18 @@ async def download_scryfall_image(cards: List[Card], filepath: str, version: str
     if len(image_filepaths) > 1:
         save_composite_image(image_filepaths, filepath)
     return fetch_tools.acceptable_file(filepath)
+
+async def download_art_crop(c: Card, hq_data: Dict[str, Tuple[str, int]]) -> Optional[str]:
+    if hq_data is None:
+        hq_data = await fetcher.hq_artcrops()
+    if c.name in hq_data:
+        url = hq_data[c.name][0]
+        file_path = re.sub('.jpg$', '.hq_art_crop.jpg', determine_filepath([c]))
+        if not fetch_tools.acceptable_file(file_path):
+            await fetch_tools.store_async(url, file_path)
+        if fetch_tools.acceptable_file(file_path):
+            return file_path
+    return await download_scryfall_art_crop(c)
 
 async def download_scryfall_art_crop(c: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
@@ -148,16 +161,26 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
         x_offset += image.size[0]
     new_image.save(out_filepath)
 
-async def generate_banner(names: List[str], background: str, v_crop: int = 33) -> str:
+async def generate_banner(names: List[str], background: str, v_crop: int = None) -> str:
     cards = [oracle.load_card(name) for name in names]
-    out_filepath = determine_filepath(cards, f'banner-{background}{v_crop}-', '.png')
+    hq_artcrops = fetcher.hq_artcrops()
+    hq = False
+    if background in hq_artcrops.keys():
+        hq = True
+        if v_crop is None:
+            v_crop = hq_artcrops[background][1]
+
+    if v_crop is None:
+        v_crop = 33
+
+    out_filepath = determine_filepath(cards, f'banner-{background}{"hq" if hq else ""}{v_crop}-', '.png')
 
     if fetch_tools.acceptable_file(out_filepath):
         return out_filepath
 
     canvas = Image.new('RGB', (1920, 210))
     c = oracle.load_card(background)
-    file_path = await download_scryfall_art_crop(c)
+    file_path = await download_art_crop(c, hq_artcrops)
     if file_path:
         with Image.open(file_path) as img:
             h = v_crop / 100 * 1315

@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
         "click": {
@@ -358,7 +358,7 @@
                 "sha256:65890c467751daa025dcef15683c32160f07427baf83380cfdf11d84ceec980a",
                 "sha256:854cfb66d34edad49b36d8aaffc93179bb397a97c81caba2da02896e72821a74"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==0.3.1"
         },
         "editorconfig": {
@@ -523,11 +523,11 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:3c9f0c539281529e26cc5631dba911ded66e27ed91f269b58fc4eb53d4b81ce8",
-                "sha256:56551465be3e42966cfcb6f9243caf60aa79d023b763351876cf9702735132f4"
+                "sha256:80cf307660624f84c754d68c3c6cd31780368019741d87e0c5df5ed84730ed26",
+                "sha256:eadba785e358e61be576f2a93f361bb15f144162814c7b3303e78c12288aa33f"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==2.6.0"
+            "version": "==2.6.1"
         },
         "google-api-python-client": {
             "hashes": [
@@ -1203,11 +1203,11 @@
         },
         "pip": {
             "hashes": [
-                "sha256:c146f331f0805c77017c6bb9740cec4a49a0d4582d0c3cc8244b057f83eca359",
-                "sha256:f29d589df8c8ab99c060e68ad294c4a9ed896624f6368c5349d70aa581b333d0"
+                "sha256:b3a9de2c6ef801e9247d1527a4b16f92f2cc141cd1489f3fffaf6a9e96729764",
+                "sha256:c6aca0f2f081363f689f041d90dab2a07a9a07fb840284db2218117a52da800b"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==22.0.3"
+            "index": "pypi",
+            "version": "==22.0.4"
         },
         "pip-check-reqs": {
             "hashes": [

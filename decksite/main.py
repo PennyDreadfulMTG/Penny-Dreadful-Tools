@@ -19,7 +19,7 @@ from decksite.data import news as ns
 from decksite.data import playability
 from decksite.database import db
 from decksite.views import Banners, Home
-from magic import card as mc
+from magic import card as mc, fetcher
 from magic import image_fetcher, oracle, seasons
 from shared import dtutil, logger, perf
 from shared.container import Container
@@ -68,10 +68,13 @@ def image(c: str = '') -> wrappers.Response:
 @APP.route('/admin/banners/')
 def banner_stats() -> str:
     banners = []
+    hq_crops = fetcher.hq_artcrops().keys()
     for i in range(seasons.current_season_num() + 1):
         nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{i}.png')
         if not os.path.exists(nice_path):
             cards, bg = banner_cards(i)
+            if bg in hq_crops:
+                bg += '✨'
             data = {'num': i, 'cards': cards, 'background': bg}
             banners.append(Container(data))
     view = Banners(banners)
@@ -89,7 +92,7 @@ def bannercss() -> Response:
 
 @APP.route('/banner/<int:seasonnum>.png')
 @APP.route('/banner/<int:seasonnum>_<int:crop>.png')
-def banner(seasonnum: int, crop: int = 33) -> Response:
+def banner(seasonnum: int, crop: int = None) -> Response:
     nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))

@@ -7,8 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 from PIL import Image
 
-from magic import card, oracle
-from magic import fetcher
+from magic import card, fetcher, oracle
 from magic.models import Card, Printing
 from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape

@@ -19,8 +19,8 @@ from decksite.data import news as ns
 from decksite.data import playability
 from decksite.database import db
 from decksite.views import Banners, Home
-from magic import card as mc, fetcher
-from magic import image_fetcher, oracle, seasons
+from magic import card as mc
+from magic import fetcher, image_fetcher, oracle, seasons
 from shared import dtutil, logger, perf
 from shared.container import Container
 from shared.pd_exception import DatabaseException, TooFewItemsException

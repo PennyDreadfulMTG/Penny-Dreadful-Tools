@@ -115,7 +115,7 @@
                 "sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f",
                 "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==9.0.1"
         },
         "anytree": {
@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==2.0.12"
         },
         "click": {
@@ -347,11 +347,11 @@
         },
         "dis-taipan": {
             "hashes": [
-                "sha256:0c1629af2161d584ac1de6ead312776b13105b46adcbeac471bcd19bf8664507",
-                "sha256:28cb835533cb00f934648373ea8373a6e4d94d00528e7ccd2262c46c831c1e32"
+                "sha256:34115d7763430bcd650ea2956248af715633b6f67ec2f690295337398ccc55ab",
+                "sha256:36b5dee35a12a56bbe8be16a43001625abcd8e57ab93ab534a70c21aff632040"
             ],
             "index": "pypi",
-            "version": "==0.2.3"
+            "version": "==0.2.4"
         },
         "discord-typings": {
             "hashes": [
@@ -1270,7 +1270,7 @@
                 "sha256:f358aa33e03b7a84e0d91270a4d4d8f5df6921abe99a377828839e8ed0c04e07",
                 "sha256:f51d5a9f137f7a2cec2d326a74b6e3fc79d635d69ffe1b036d39fc7d75430d37"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==3.19.4"
         },
         "py": {

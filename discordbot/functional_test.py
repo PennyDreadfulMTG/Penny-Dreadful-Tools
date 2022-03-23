@@ -1,3 +1,4 @@
+import random
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pytest
@@ -21,6 +22,7 @@ class ContextForTests(Context, MtgMixin):
     sent_file = False
     content: Optional[str] = None
     bot: Snake = None
+    id = random.randint(111111111111111111, 999999999999999999)
 
     async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
         self.sent = True
@@ -78,7 +80,6 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
 
     ctx = ContextForTests()
     ctx._client = discordbot
-    ctx.id = 1
     ctx.bot = discordbot
     ctx.channel = Container({'id': '1'})
     ctx.channel.send = ctx.send

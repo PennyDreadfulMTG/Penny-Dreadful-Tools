@@ -48,7 +48,7 @@ class Bot(Snake):
         super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!', **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
-            asyncio.ensure_future(task(self), loop=self.loop)
+            asyncio.ensure_future(task(self))
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
             self.grow_scale('dis_snek.ext.debug_scale')

@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
         "click": {
@@ -347,11 +347,11 @@
         },
         "dis-taipan": {
             "hashes": [
-                "sha256:34115d7763430bcd650ea2956248af715633b6f67ec2f690295337398ccc55ab",
-                "sha256:36b5dee35a12a56bbe8be16a43001625abcd8e57ab93ab534a70c21aff632040"
+                "sha256:55fcd044ea2b6ce02ab8b586d4496cee64fd11f4a37d03b90755e25ea82e6206",
+                "sha256:a32bd362a5a9228f6a681cb1182eed3be4dc83e9bde06356951441bddbf89e93"
             ],
             "index": "pypi",
-            "version": "==0.2.4"
+            "version": "==0.2.8"
         },
         "discord-typings": {
             "hashes": [

@@ -236,7 +236,8 @@ class View(BaseView):
             prepare.prepare_card(cs[v[0]], getattr(self, 'tournament_only', False))
             a.most_common_cards.append(cs[v[0]])
         a.has_most_common_cards = len(a.most_common_cards) > 0
-        for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:
+        archetype_ids = {a.id for a in archetypes}
+        for b in [b for b in PreOrderIter(a) if b.id in archetype_ids]:
             b['url'] = url_for('.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             b['depth'] = b.depth

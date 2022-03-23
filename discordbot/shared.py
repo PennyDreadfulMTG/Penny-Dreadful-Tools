@@ -1,11 +1,6 @@
-from io import IOBase
-from pathlib import Path
-from typing import Any, List, Optional, Protocol, Union
+from typing import Optional, Union
 
-from dis_snek import Snake
-from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AllowedMentions, BaseComponent, Context,
-                             Embed, File, GuildText, InteractionContext, Member, Message,
-                             MessageFlags, MessageReference, Snowflake_Type, Sticker, User)
+from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, Context, GuildText, InteractionContext)
 
 
 def guild_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[int]:

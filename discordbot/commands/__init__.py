@@ -7,9 +7,9 @@ from typing import Optional
 
 from dis_snek import Snake
 from dis_snek.models import InteractionCommand, MessageCommand, Scale
+from dis_taipan.protocols import SendableContext
 
 from discordbot import command
-from discordbot.shared import SendableContext
 from magic.models import Card
 
 

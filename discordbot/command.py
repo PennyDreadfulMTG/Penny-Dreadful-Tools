@@ -13,9 +13,10 @@ from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, Chan
                              MessageCommand, MessageContext, OptionTypes, Permission,
                              PermissionTypes, Scale, User, message_command, slash_option,
                              slash_permission)
+from dis_taipan.protocols import SendableContext
 
 from discordbot import emoji
-from discordbot.shared import SendableContext, channel_id, guild_id
+from discordbot.shared import channel_id, guild_id
 from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher

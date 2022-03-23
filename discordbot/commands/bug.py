@@ -16,7 +16,7 @@ class Bug(Scale):
         text = title
         if body:
             text += f'\n\n{body}'
-        issue = repo.create_issue(text, ctx.author)
+        issue = repo.create_issue(text, str(ctx.author))
         if issue is None:
             await ctx.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
         else:

@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, Context, GuildText, InteractionContext)
+from dis_snek.models import TYPE_MESSAGEABLE_CHANNEL, Context, GuildText, InteractionContext
 
 
 def guild_id(ctx: Union[Context, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[int]:

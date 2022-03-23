@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a83e54eb6f4e24f2caea71d5636808c42c9979578f11d8cb054ca2a69029aac7"
+            "sha256": "9ecb719a316370d49bb5294bcac3a81c01a0a1021965c5d82d1a7860e5997263"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -115,7 +115,7 @@
                 "sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f",
                 "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==9.0.1"
         },
         "anytree": {
@@ -128,11 +128,11 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:d56f6a5239981567ceaa3413d4971936c7b4b0c796fcff90c24254dcf8b05b62",
-                "sha256:e59b9d0788aa8ded1a49172ff5d4cd26d5d5aa9cb2dacd50a03a3bbf05d3cc92"
+                "sha256:33f1c15fe9661348a50b7ec6789947089ead2a5de727bb4782d530d9d2fff2c8",
+                "sha256:e3ae0984c28b7bae2a107dffbc6e9acecf9b06506322f3465e914405dd652394"
             ],
             "index": "pypi",
-            "version": "==2.11.0"
+            "version": "==2.11.1"
         },
         "async-timeout": {
             "hashes": [
@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==2.0.12"
         },
         "click": {
@@ -1269,7 +1269,7 @@
                 "sha256:f358aa33e03b7a84e0d91270a4d4d8f5df6921abe99a377828839e8ed0c04e07",
                 "sha256:f51d5a9f137f7a2cec2d326a74b6e3fc79d635d69ffe1b036d39fc7d75430d37"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_full_version >= '3.5.0'",
             "version": "==3.19.4"
         },
         "py": {

@@ -280,9 +280,12 @@ def sitemap() -> List[str]:
     cached = redis.get_list('magic:fetcher:sitemap')
     if cached is not None:
         return cached
-    sitemap = fetch_tools.fetch_json(decksite_url('/api/sitemap/'))['urls']
-    redis.store('magic:fetcher:sitemap', sitemap, ex=300)
-    return sitemap
+    d = fetch_tools.fetch_json(decksite_url('/api/sitemap/'))
+    if d is None:
+        raise FetchException('Unable to retrieve sitemap')
+    sm = d['urls']
+    redis.store('magic:fetcher:sitemap', sm, ex=300)
+    return sm
 
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'

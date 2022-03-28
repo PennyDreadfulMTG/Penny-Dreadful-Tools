@@ -347,11 +347,11 @@
         },
         "dis-taipan": {
             "hashes": [
-                "sha256:55fcd044ea2b6ce02ab8b586d4496cee64fd11f4a37d03b90755e25ea82e6206",
-                "sha256:a32bd362a5a9228f6a681cb1182eed3be4dc83e9bde06356951441bddbf89e93"
+                "sha256:8d5341690a4c113116bda14dbeb479aabc6fbf36fe64cbf27fd3db16babdfe85",
+                "sha256:e0590871b33963205a3148acee54b61ce21ddd9074ba99b08b970fd044de22db"
             ],
             "index": "pypi",
-            "version": "==0.2.8"
+            "version": "==0.2.9"
         },
         "discord-typings": {
             "hashes": [

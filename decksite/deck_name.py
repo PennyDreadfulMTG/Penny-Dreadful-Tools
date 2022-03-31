@@ -30,6 +30,7 @@ WHITELIST = [
     'rakdos aggro but with green instead of black',
     'the world is so black and white nowadays',
     'fix the gargadon bug me angy',
+    'red and black jank',
 ]
 
 PROFANITY_WHITELIST = [

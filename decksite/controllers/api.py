@@ -714,13 +714,17 @@ def all_tournaments() -> Response:
 def search() -> Response:
     init_search_cache()
     q = request.args.get('q', '').lower()
-    results: List[SearchItem] = []
+    exact_matches: List[SearchItem] = []
+    fuzzy_matches: List[SearchItem] = []
     if len(q) < 2:
-        return return_json(results)
+        return return_json([])
     for item in SEARCH_CACHE:
-        if q in item['name'].lower():
-            results.append(item)
-    return return_json(results)
+        name = item['name'].lower()
+        if q == name:
+            exact_matches.append(item)
+        elif q in name:
+            fuzzy_matches.append(item)
+    return return_json(exact_matches + fuzzy_matches)
 
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:

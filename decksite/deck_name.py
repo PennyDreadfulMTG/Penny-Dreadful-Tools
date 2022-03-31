@@ -31,6 +31,7 @@ WHITELIST = [
     'the world is so black and white nowadays',
     'fix the gargadon bug me angy',
     'red and black jank',
+    'black and green',
 ]
 
 PROFANITY_WHITELIST = [

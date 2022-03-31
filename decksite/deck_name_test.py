@@ -110,6 +110,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('让我告诉你0.75的故事', '让我告诉你0.75的故事', ['U', 'B'], 'Dimir Control'),
     ('Colorless Affinity', 'Colorless Affinity', ['C'], 'Affinity'),
     ('Fuck', 'Mono Blue Aggro', ['U'], 'Aggro'),
+    ('Mono Black Reanimator', 'Mono Black Reanimator', ['B'], 'Mono Black Reanimator'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

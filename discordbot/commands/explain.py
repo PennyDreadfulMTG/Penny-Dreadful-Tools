@@ -89,10 +89,10 @@ explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
             'All Decklists': fetcher.decksite_url('/decks/'),
         },
     ),
-    'next round': (
+    'nextround': (
         """
         The next round will begin when all matches are finished.
-        You can check the reported and unreported results by looking at the pinned message in #tournament-room
+        You can check the reported and unreported results by looking at the pinned message in <#334220558159970304>
         """,
         {},
     ),
@@ -229,7 +229,7 @@ reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
     ),
     'league': (
         """
-        If PDBot reports your league match in #league in Discord you don't need to do anything. If not, either player can report.
+        If PDBot reports your league match in <#220320082998460416> in Discord you don't need to do anything. If not, either player can report.
         """,
         {
             'League Report': fetcher.decksite_url('/report/'),

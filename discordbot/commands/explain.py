@@ -280,7 +280,10 @@ class ExplainCog(Scale):
             s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
         await ctx.send(s)
 
-    m_explain = message_command('explain')(explain.callback)
+    async def reroute(self, ctx: MtgContext) -> None:
+        await ctx.send(f'{ctx.author.mention} Please use /explain')
+
+    m_explain = message_command('explain')(reroute)
 
 def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
     tournament_channel_id = configuration.get_int('tournament_channel_id')

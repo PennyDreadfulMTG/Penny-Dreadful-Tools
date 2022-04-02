@@ -228,7 +228,7 @@ class View(BaseView):
         for d in a.get('decks', []):
             a.cards += d.maindeck + d.sideboard
             for c in d.maindeck:
-                if not c.card.type_line.startswith('Basic Land'):
+                if not c.card.type_line.startswith('Basic'):
                     counter[c['name']] += c['n']
         most_common_cards = counter.most_common(prepare.NUM_MOST_COMMON_CARDS_TO_LIST)
         cs = oracle.cards_by_name()

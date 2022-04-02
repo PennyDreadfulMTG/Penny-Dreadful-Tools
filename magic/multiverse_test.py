@@ -17,13 +17,13 @@ def test_base_query_legalities() -> None:
 def test_supertypes() -> None:
     assert multiverse.supertypes('Legendary Enchantment Creature - God') == ['Legendary']
     assert multiverse.supertypes('Artifact Creature - Construct') == []
-    assert multiverse.supertypes('Snow Basic Land - Island') == ['Basic', 'Snow']
+    assert multiverse.supertypes('Basic Snow Land - Island') == ['Basic', 'Snow']
     assert multiverse.supertypes('Enchantment') == []
     assert multiverse.supertypes('Creature - Elder Dragon') == []
 
 def test_subtypes() -> None:
     assert multiverse.subtypes('Legendary Enchantment Creature - God') == ['God']
     assert multiverse.subtypes('Artifact Creature - Construct') == ['Construct']
-    assert multiverse.subtypes('Snow Basic Land - Island') == ['Island']
+    assert multiverse.subtypes('Basic Snow Land - Island') == ['Island']
     assert multiverse.subtypes('Enchantment') == []
     assert multiverse.subtypes('Creature - Elder Dragon') == ['Elder', 'Dragon']

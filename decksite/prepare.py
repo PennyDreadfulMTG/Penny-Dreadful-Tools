@@ -38,7 +38,7 @@ def prepare_card(c: Card, tournament_only: bool = False) -> None:
     counter = Counter()  # type: ignore
     for d in c.get('decks', []):
         for c2 in d.maindeck:
-            if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
+            if not c2.card.type_line.startswith('Basic') and not c2['name'] == c.name:
                 counter[c2['name']] += c2['n']
     most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
     c.most_common_cards = []

@@ -65,6 +65,12 @@ def image(c: str = '') -> wrappers.Response:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)
 
+@APP.route('/static/dev-db.sql.gz')
+def dev_db() -> wrappers.Response:
+    path = os.path.join(str(APP.static_folder), 'dev-db.sql.gz')
+    return send_file(os.path.abspath(path), mimetype='application/gzip', as_attachment=True)
+
+
 @APP.route('/admin/banners/')
 def banner_stats() -> str:
     banners = []

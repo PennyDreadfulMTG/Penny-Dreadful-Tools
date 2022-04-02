@@ -131,6 +131,8 @@ def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
             ({season_query}) AND (ct.name = 'Gatherling')
         GROUP BY
             cs.id
+        ORDER BY
+            cs.day_of_week
     """
     return [Container(r) for r in db().select(sql)]
 

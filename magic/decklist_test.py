@@ -777,3 +777,17 @@ def test_no_numbers() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
+
+# Archidekt exports adventure cards with the adventure side as part of the name, ensure we support that.
+def test_archidekt_adventure_cards() -> None:
+    s = """
+        2 Beanstalk Giant // Fertile Footsteps
+        2 Brazen Borrower
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    v = decklist.vivify(d)
+    names = [v.maindeck[0].name, v.maindeck[1].name]
+    assert 'Beanstalk Giant' in names
+    assert 'Brazen Borrower' in names
+    assert 'Beanstalk Giant // Fertile Footsteps' not in names

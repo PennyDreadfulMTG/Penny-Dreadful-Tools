@@ -227,6 +227,20 @@ def cards2_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/cardfeed/')
+def cardfeed_api() -> Response:
+    """
+    A JSON feed of all cards with pd legality and playability rank.
+    """
+    os = []
+    cs = oracle.load_cards()
+    ranks = playability.rank()
+    for c in cs:
+        rank = ranks.get(c.name, sys.maxsize)
+        os.append({'name': c.name, 'rank': rank, 'legal': bool(c.pd_legal)})
+    r = {'cards': os}
+    return return_camelized_json(r)
+
 @APP.route('/api/people/')
 def people_api() -> Response:
     """

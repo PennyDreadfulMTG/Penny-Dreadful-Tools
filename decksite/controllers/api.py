@@ -214,14 +214,15 @@ def cards2_api() -> Response:
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
+    archetype_id = request.args.get('archetypeId') or None
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     additional_where = query.card_search_where(q) if q else 'TRUE'
-    cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
+    cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only)
-    total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)
+    total = card.load_cards_count(additional_where=additional_where, archetype_id=archetype_id, person_id=person_id, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': cs}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))

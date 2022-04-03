@@ -221,21 +221,6 @@ class View(BaseView):
     def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype], tournament_only: bool = False) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
-        counter = Counter()  # type: ignore
-        a.cards = []
-        a.most_common_cards = []
-        # Make a pass, collecting card counts for all decks and for tournament decks
-        for d in a.get('decks', []):
-            a.cards += d.maindeck + d.sideboard
-            for c in d.maindeck:
-                if not c.card.type_line.startswith('Basic'):
-                    counter[c['name']] += c['n']
-        most_common_cards = counter.most_common(prepare.NUM_MOST_COMMON_CARDS_TO_LIST)
-        cs = oracle.cards_by_name()
-        for v in most_common_cards:
-            prepare.prepare_card(cs[v[0]], getattr(self, 'tournament_only', False))
-            a.most_common_cards.append(cs[v[0]])
-        a.has_most_common_cards = len(a.most_common_cards) > 0
         archetype_ids = {a.id for a in archetypes}
         for b in [b for b in PreOrderIter(a) if b.id in archetype_ids]:
             b['url'] = url_for('.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None)

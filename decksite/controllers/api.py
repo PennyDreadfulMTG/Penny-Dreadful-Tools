@@ -237,7 +237,7 @@ def cardfeed_api() -> Response:
     cs = oracle.load_cards()
     ranks = playability.rank()
     for c in cs:
-        rank = ranks.get(c.name, sys.maxsize)
+        rank = ranks.get(c.name)
         os.append({'name': c.name, 'rank': rank, 'legal': bool(c.pd_legal)})
     r = {'cards': os}
     return return_camelized_json(r)

@@ -20,7 +20,7 @@ async def resources(ctx: MtgContext, resource: Optional[str]) -> None:
         results.update(site_resources(resource))
     s = ''
     if len(results) == 0:
-        s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
+        s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))
     elif len(results) > 10:
         s = '{author}: Too many results, please be more specific.'.format(author=ctx.author.mention)
     else:

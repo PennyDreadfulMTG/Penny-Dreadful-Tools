@@ -238,7 +238,11 @@ def cardfeed_api() -> Response:
     ranks = playability.rank()
     for c in cs:
         rank = ranks.get(c.name)
-        os.append({'name': c.name, 'rank': rank, 'legal': bool(c.pd_legal)})
+        name = c.name
+        # Scryfall requested this naming convention for modal DFCs.
+        if c.layout == 'modal_dfc':
+            name = ' // '.join(c.names)
+        os.append({'name': name, 'rank': rank, 'legal': bool(c.pd_legal)})
     r = {'cards': os}
     return return_camelized_json(r)
 

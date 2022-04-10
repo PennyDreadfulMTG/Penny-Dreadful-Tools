@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5b5974af6991d088cac669a59aace21f39cfe508045c94dee2327c5723dcc1f8"
+            "sha256": "24530e41191be0bdf7e4136b46c6079e014ccdcccbf917f27746bed95bacf36b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
         },
         "click": {
@@ -437,7 +437,7 @@
                 "sha256:59a90de72149893167e3d552ae2402c6874e006b9adc3feaf5f6d706fe20d392",
                 "sha256:b038d1a0dee0079de7ade57071e2e2aced6e35bd697de244ac62938b2b1628c1"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==4.32.0"
         },
         "freezegun": {
@@ -678,10 +678,10 @@
         },
         "jsbeautifier": {
             "hashes": [
-                "sha256:3ec9326e47d38a54395bdeff8769566a472758e70b9e11ba7cc56cfeca6a9bf6"
+                "sha256:d6d57627cf9ecd8cd901b9ec7ad4a88127a8dede910177fa4b219e76d02f9bd7"
             ],
             "index": "pypi",
-            "version": "==1.14.2"
+            "version": "==1.14.3"
         },
         "jsonschema": {
             "hashes": [

@@ -111,6 +111,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('Colorless Affinity', 'Colorless Affinity', ['C'], 'Affinity'),
     ('Fuck', 'Mono Blue Aggro', ['U'], 'Aggro'),
     ('Mono Black Reanimator', 'Mono Black Reanimator', ['B'], 'Mono Black Reanimator'),
+    ('Mad Cat Lady pd league', 'Mad Cat Lady League', ['B'], 'Aggro'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

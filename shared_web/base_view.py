@@ -1,5 +1,5 @@
 import subprocess
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from flask import current_app, make_response, url_for, wrappers
 
@@ -64,5 +64,5 @@ class BaseView:
     def language_icon(self) -> str:
         return url_for('static', filename='images/language_icon.svg')
 
-    def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
+    def menu(self) -> List[Dict[str, Any]]:
         return current_app.config['menu']()

@@ -1,9 +1,8 @@
 import copy
 import re
 import unicodedata
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TypedDict
 
-from mypy_extensions import TypedDict
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 ColumnDescription = TypedDict('ColumnDescription', {

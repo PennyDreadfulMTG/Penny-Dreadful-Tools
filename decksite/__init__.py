@@ -34,7 +34,7 @@ def pull_season_id(_endpoint: Optional[str], values: Optional[Dict[Any, Any]]) -
 
 APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
 
-def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
+def build_menu() -> List[Dict[str, Any]]:
     current_template = (request.endpoint or '').replace('seasons.', '')
     archetypes_badge = {'url': url_for('edit_archetypes'), 'text': '', 'badge_class': 'edit_archetypes'}
     resources_submenu: List[Dict[str, str]] = []

@@ -1,9 +1,7 @@
 import hashlib
 import json
 import time
-from typing import Dict, List, Optional, Set, Union
-
-from mypy_extensions import TypedDict
+from typing import Dict, List, Optional, Set, Union,TypedDict
 
 from decksite import deck_name
 from decksite.data import query, season

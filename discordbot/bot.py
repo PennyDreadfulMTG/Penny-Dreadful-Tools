@@ -105,7 +105,10 @@ class Bot(Snake):
         if is_pd_server(member.guild):
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             chan = await member.guild.fetch_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
-            await chan.send(greeting)
+            if isinstance(chan, GuildText):
+                await chan.send(greeting)
+            else:
+                logging.warn(f'Could not find channel to send greeting to. Got {type(chan)}: {chan}')
 
     async def on_presence_update(self, event: PresenceUpdate) -> None:
         user: User = event.user

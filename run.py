@@ -8,7 +8,7 @@ from types import ModuleType
 from typing import Any, List, Optional, Tuple
 
 import click
-from traceback_with_variables import activate_by_import  # noqa
+# from traceback_with_variables import activate_by_import  # noqa
 
 from shared import configuration
 
@@ -32,8 +32,24 @@ def wait_for_db(_: Any, __: Any, value: bool) -> None:
     while not attempt(i) and i < 60:
         i = i + 1
 
+def with_typeguard(_: Any, __: Any, value: bool) -> None:
+    if not value:
+        return
+    print('WARNING: Typeguard is enabled.  This has perf implications and is not recommended for production.')
+    from typeguard.importhook import install_import_hook
+    install_import_hook('decksite')
+    install_import_hook('discordbot')
+    install_import_hook('find')
+    # install_import_hook('magic')
+    # install_import_hook('shared')
+    # install_import_hook('shared_web')
+
+    install_import_hook('dis_snek')
+
+
 @click.group()
 @click.option('--wait-for-db', is_flag=True, callback=wait_for_db, expose_value=False, help='Idle until the mySQL server starts accepting connections')
+@click.option('--enable-typeguard', is_flag=True, callback=with_typeguard, expose_value=False, help='Enable runtime type checking')
 def cli() -> None:
     pass
 

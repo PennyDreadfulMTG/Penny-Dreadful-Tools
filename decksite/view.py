@@ -1,14 +1,12 @@
 import html
 import sys
-from collections import Counter
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast, TypedDict
 
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
 from flask import request, session, url_for
 from flask_babel import gettext, ngettext
-from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare

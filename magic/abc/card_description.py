@@ -1,6 +1,4 @@
-from typing import Any, Dict, List
-
-from mypy_extensions import TypedDict
+from typing import Any, Dict, List, TypedDict
 
 SetCode = str
 

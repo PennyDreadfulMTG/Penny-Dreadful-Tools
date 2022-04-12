@@ -1,6 +1,4 @@
-from typing import List
-
-from mypy_extensions import TypedDict
+from typing import List, TypedDict
 
 from decksite.view import View
 from magic import fetcher

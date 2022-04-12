@@ -120,7 +120,7 @@ def preaggregate_season_stats() -> None:
     db().execute(f'INSERT INTO {table} VALUES {values_s}')
 
 @retry_after_calling(preaggregate_season_stats)
-def season_stats() -> Dict[int, Dict[str, Union[int, datetime.datetime]]]:
+def season_stats() -> Dict[int, Dict[str, Union[int, datetime.datetime, None]]]:
     sql = """
         SELECT
             season_id,

@@ -11,11 +11,11 @@ import re
 from collections import OrderedDict
 from time import sleep
 from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
+from typing_extensions import TypedDict, NotRequired
 from urllib import parse
 
 import feedparser
 import pytz
-from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
@@ -339,15 +339,17 @@ WISSetInfoType = TypedDict('WISSetInfoType', {
     'name': str,
     'code': str,
     'codename': str,
-    'mtgoCode': str,
+    'mtgoCode': NotRequired[str],
     'symbol': str,
     'enterDate': WISDateType,
     'exitDate': WISDateType,
 })
 
 WISSchemaType = TypedDict('WISSchemaType', {
+    '$schema': str,
     'deprecated': bool,
     'sets': List[WISSetInfoType],
+    'bans': List[Any],
 })
 
 def whatsinstandard() -> WISSchemaType:

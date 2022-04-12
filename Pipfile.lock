@@ -115,7 +115,7 @@
                 "sha256:1d2b7ef82963909e93c4f24ce48d4de9e66009a21bf1c1e1c85bdd0812fe412f",
                 "sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==9.0.1"
         },
         "anytree": {
@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
         },
         "click": {
@@ -539,11 +539,11 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:5e079eb4d21df1853d55cf2b6766b77ef36f7f7bdaf7d4a70434aa97c7578d60",
-                "sha256:d65bb0e3701eaaa64fd2aa85e1325580524b0bddc6dc5db3ab89c481b6a20141"
+                "sha256:1a8c2c70c070b72fe038e2eb20072e5b4f0fd8ca1875e8fafe7f71b689a8d572",
+                "sha256:4dacb91d8a15b7755fc08688576481bd9c37cfac9842289469cf000d557f8962"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==2.6.3"
+            "version": "==2.6.4"
         },
         "google-auth-httplib2": {
             "hashes": [
@@ -2208,11 +2208,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:557435f8ad73e91562797ac7efac8e6554f0fa7893b6431b928de8ec635d866a",
-                "sha256:6857be934cfa884e166fb3bab8c0bc6f967b051af09e4f87c5ea8b166c16d2f5"
+                "sha256:7d6fa50f0ed575709eeb7b35dcdbe68daa758f33bcbb28a357d69793dc31981a",
+                "sha256:babb3a8a3316c53329975f71fa949728a69ef0ae25ecd8495c779639e369e1f0"
             ],
             "index": "pypi",
-            "version": "==1.16.12"
+            "version": "==1.16.13"
         },
         "types-toml": {
             "hashes": [

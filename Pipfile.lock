@@ -526,7 +526,7 @@
                 "sha256:65480309a7437f739e4476da037af02a3ec8263f1d1f89f72bbdc8f54fe402d2",
                 "sha256:8fcbe52dc129fd83dca4e638a76f22b3a11579c493e643134e50e9870b233302"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.6'",
             "version": "==2.7.2"
         },
         "google-api-python-client": {
@@ -2208,11 +2208,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:7d6fa50f0ed575709eeb7b35dcdbe68daa758f33bcbb28a357d69793dc31981a",
-                "sha256:babb3a8a3316c53329975f71fa949728a69ef0ae25ecd8495c779639e369e1f0"
+                "sha256:18f6856a7df44fc7a292c2d73093908333e5f7cb858667b8cbefc8ed1e91942e",
+                "sha256:d244f0537dab0d0570a5bc6f8a60c4da7f0546d960a8677520e6bff214a64fb8"
             ],
             "index": "pypi",
-            "version": "==1.16.13"
+            "version": "==1.16.15"
         },
         "types-toml": {
             "hashes": [

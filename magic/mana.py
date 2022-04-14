@@ -180,7 +180,7 @@ def order_score(initial_symbols: Tuple[str, ...]) -> int:
     symbols = [symbol for symbol in initial_symbols if symbol not in ('C', 'S')]
     if not symbols:
         return 0
-    score = 0
+    score = 100  # Start at 100 so that subtracting for Colorless and Snow don't take us below 0.
     positions = ['W', 'U', 'B', 'R', 'G']
     current = positions.index(symbols[0])
     for symbol in symbols[1:]:
@@ -190,15 +190,23 @@ def order_score(initial_symbols: Tuple[str, ...]) -> int:
             distance += len(positions)
         score += distance
         current = position
-    return score * 10 + positions.index(symbols[0])
+    score = score * 10 + positions.index(symbols[0])
+    # Prefer Colorless and Snow at the end.
+    if 'C' in initial_symbols:
+        score -= initial_symbols.index('C')
+    if 'S' in initial_symbols:
+        score -= initial_symbols.index('S') * 2
+    return score
 
-# Gives an integer sort ordering for a set of colors already in min(order_score) ordering.
-# Use on unsorted lists of color symbols will produce undesirable results.
-def sort_score(symbols: Sequence[str]) -> int:
-    positions = [None, 'C', 'S', 'W', 'U', 'B', 'R', 'G']
-    score = 0
-    for i, symbol in enumerate(reversed(symbols), start=1):
-        score += positions.index(symbol) * 10 * i
+def sort_score(initial_symbols: Sequence[str]) -> int:
+    positions = ['C', 'S', 'W', 'U', 'B', 'R', 'G']
+    symbols = set(initial_symbols)
+    # The dominant factor in ordering is how many colors are in the deck. All 2 color decks sort after all 1 color decks, etc.
+    # Colorless and Snow are not considered a color but add a little to the score so that W+C or W+S sort after just W.
+    num_colors = len([symbol for symbol in symbols if symbol in ['W', 'U', 'B', 'R', 'G']])
+    score = num_colors * pow(2, len(positions))
+    for symbol in symbols:
+        score += pow(2, positions.index(symbol))
     return score
 
 class InvalidManaCostException(ParseException):

@@ -109,10 +109,26 @@ def test_order() -> None:
     assert mana.order(['S']) == ['S']
     assert mana.order(['U', 'G']) == ['G', 'U']
     assert mana.order(['G', 'W', 'U']) == ['G', 'W', 'U']
+    assert mana.order(['S', 'B', 'W']) == ['W', 'B', 'S']
+    assert mana.order(['S', 'G', 'R']) == ['R', 'G', 'S']
+    assert mana.order(['C', 'B', 'W']) == ['W', 'B', 'C']
+    assert mana.order(['C', 'G', 'R']) == ['R', 'G', 'C']
+    assert mana.order(['C', 'G', 'R', 'S']) == ['R', 'G', 'C', 'S']
 
 def test_sort_score() -> None:
     assert mana.sort_score(['G', 'W', 'U']) > mana.sort_score(['G', 'U'])
     assert mana.sort_score(['B', 'R', 'G']) > mana.sort_score(['B', 'R'])
+    assert mana.sort_score(['B', 'G']) > mana.sort_score(['G', 'W'])
+    assert mana.sort_score(['C']) > mana.sort_score([])
+    assert mana.sort_score(['W']) > mana.sort_score(['C'])
+    assert mana.sort_score(['W', 'C']) > mana.sort_score(['W'])
+    assert mana.sort_score(['W', 'S']) > mana.sort_score(['W', 'C'])
+    assert mana.sort_score(['W', 'S', 'C']) > mana.sort_score(['W', 'C'])
+    assert mana.sort_score(['U']) > mana.sort_score(['W', 'C'])
+    assert mana.sort_score(['B', 'R', 'G', 'S']) > mana.sort_score(['B', 'R', 'G'])
+    assert mana.sort_score(['B', 'R', 'G', 'S']) > mana.sort_score(['B', 'R', 'G', 'C'])
+    assert mana.sort_score(['G']) > mana.sort_score(['C', 'W'])
+    assert mana.sort_score(['W', 'U', 'B', 'R', 'G']) > mana.sort_score(['C', 'S', 'U', 'B', 'R', 'G'])
 
 def test_colorless() -> None:
     assert mana.colored_symbols(['C']) == {'required': ['C'], 'also': []}

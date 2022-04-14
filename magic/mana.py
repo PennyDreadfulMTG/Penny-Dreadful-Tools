@@ -200,12 +200,12 @@ def order_score(initial_symbols: Tuple[str, ...]) -> int:
 
 def sort_score(initial_symbols: Sequence[str]) -> int:
     positions = ['C', 'S', 'W', 'U', 'B', 'R', 'G']
-    c = [symbol for symbol in initial_symbols if symbol in ['W', 'U', 'B', 'R', 'G']]
+    symbols = set(initial_symbols)
     # The dominant factor in ordering is how many colors are in the deck. All 2 color decks sort after all 1 color decks, etc.
     # Colorless and Snow are not considered a color but add a little to the score so that W+C or W+S sort after just W.
-    score = len(c) * pow(2, len(positions))
-    unique_symbols = set(initial_symbols)
-    for symbol in unique_symbols:
+    num_colors = len([symbol for symbol in symbols if symbol in ['W', 'U', 'B', 'R', 'G']])
+    score = num_colors * pow(2, len(positions))
+    for symbol in symbols:
         score += pow(2, positions.index(symbol))
     return score
 

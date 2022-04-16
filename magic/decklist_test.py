@@ -791,3 +791,14 @@ def test_archidekt_adventure_cards() -> None:
     assert 'Beanstalk Giant' in names
     assert 'Brazen Borrower' in names
     assert 'Beanstalk Giant // Fertile Footsteps' not in names
+
+def test_maindeck_not_sideboard() -> None:
+    s = """
+        1 Countryside Crusher
+        1 Fatal Frenzy
+        58 Mountain
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert sum(d['sideboard'].values()) == 0

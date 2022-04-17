@@ -221,7 +221,7 @@ def cards2_api() -> Response:
     q = request.args.get('q', '').strip()
     additional_where = query.card_search_where(q) if q else 'TRUE'
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
-    prepare_cards(cs, tournament_only=tournament_only)
+    prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
     total = card.load_cards_count(additional_where=additional_where, archetype_id=archetype_id, person_id=person_id, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': cs}
     resp = return_camelized_json(r)

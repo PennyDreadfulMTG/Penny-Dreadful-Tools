@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import List, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 from flask import g, session, url_for
 
@@ -14,13 +14,13 @@ from shared.container import Container
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
-def prepare_cards(cs: List[Card], tournament_only: bool = False) -> None:
+def prepare_cards(cs: List[Card], tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
     for c in cs:
-        prepare_card(c, tournament_only)
+        prepare_card(c, tournament_only, season_id)
 
-def prepare_card(c: Card, tournament_only: bool = False) -> None:
+def prepare_card(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
     season_name = seasons.current_season_name()
-    prepare_card_urls(c, tournament_only)
+    prepare_card_urls(c, tournament_only, season_id)
     c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
     c.pd_legal = c.legalities.get(season_name, False) and c.legalities[season_name] != 'Banned'
     c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
@@ -48,8 +48,8 @@ def prepare_card(c: Card, tournament_only: bool = False) -> None:
         c.most_common_cards.append(cs[v[0]])
     c.has_most_common_cards = len(c.most_common_cards) > 0
 
-def prepare_card_urls(c: Card, tournament_only: bool = False) -> None:
-    c.url = url_for_card(c, tournament_only)
+def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
+    c.url = url_for_card(c, tournament_only, season_id)
     c.img_url = url_for_image(c.name)
 
 def url_for_image(name: str) -> str:
@@ -59,11 +59,14 @@ def url_for_image(name: str) -> str:
         g.url_cache['card_image'] = url_for('image', c='--cardname--')
     return g.url_cache['card_image'].replace('--cardname--', name)
 
-def url_for_card(c: Card, tournament_only: bool = False) -> str:
+def url_for_card(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> str:
     if g.get('url_cache') is None:
         g.url_cache = {}
     if g.url_cache.get('card_page') is None:
-        g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
+        if season_id is None or season_id == seasons.current_season_num():
+            g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
+        else:
+            g.url_cache['card_page'] = url_for('seasons.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
     return g.url_cache['card_page'].replace('--cardname--', c.name)
 
 def prepare_decks(ds: List[Deck]) -> None:

@@ -32,6 +32,7 @@ WHITELIST = [
     'fix the gargadon bug me angy',
     'red and black jank',
     'black and green',
+    'blue dreadnought + more red hate',
 ]
 
 PROFANITY_WHITELIST = [

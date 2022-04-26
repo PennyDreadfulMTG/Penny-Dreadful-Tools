@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1715589c887eb467926f9a88e400dbb876cdc4db0f40c50184959c74b36e2d30"
+            "sha256": "23df78631888d6bca92daf7ae3c29718b04adfdecd6091620fb32074850d04bf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3'",
+            "markers": "python_version >= '3.5'",
             "version": "==2.0.12"
         },
         "click": {
@@ -437,7 +437,7 @@
                 "sha256:c0fdcfa8ceebd7c1b2021240bd46ef77aa8e7408cf10434be55df52384865f8e",
                 "sha256:f829c579a8678fa939a1d9e9894d01941db869de44390adb49ce67055a06cc2a"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '3.7'",
             "version": "==4.33.3"
         },
         "freezegun": {
@@ -1454,11 +1454,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:841132caef6b1ad17a9afde46dc4f6cfa59a05f9555aae5151f73bdf2820ca63",
-                "sha256:92f723789a8fdd7180b6b06483874feca4c48a5c76968e03bb3e7f806a1869ea"
+                "sha256:13d0e3ccfc2b6e26be000cb6568c832ba67ba32e719443bfe725814d3c42433c",
+                "sha256:a06a0425453864a270bc45e71f783330a7428defb4230fb5e6a731fde06ecd45"
             ],
             "index": "pypi",
-            "version": "==7.1.1"
+            "version": "==7.1.2"
         },
         "pytest-asyncio": {
             "hashes": [
@@ -1766,7 +1766,7 @@
                 "sha256:44ece4d53fb1706f667c9bd1c648f5469a2ec925fcf3a776667042d645472c14",
                 "sha256:aabaf16477806a5e1dd19aa41f8c2b7950dd3c746362d7e3223dbe6de6ac448e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.9"
         },
         "vcrpy": {

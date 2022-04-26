@@ -45,7 +45,7 @@ def discordbot() -> None:
 @cli.command()
 def decksite() -> None:
     from decksite import main
-    main.init()
+    main.init(port=configuration.get_int('decksite_port'))
 
 @cli.command()
 def profiler() -> None:
@@ -54,7 +54,7 @@ def profiler() -> None:
     from decksite import main
     main.APP.config['PROFILE'] = True
     main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30])  # type: ignore
-    main.init()
+    main.init(port=configuration.get_int('decksite_port'))
 
 @cli.command()
 def price_grabber() -> None:

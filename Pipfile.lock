@@ -263,7 +263,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
         "click": {
@@ -2115,11 +2115,11 @@
         },
         "types-chardet": {
             "hashes": [
-                "sha256:519850a12ab0009f3ec5bdca35ce1c0de4eb4a67a2110aa206386e6219b3ecd8",
-                "sha256:8990a86d4c7cfa6c6c5889fc49e456e477851e75b5adb396d42ae106d0ae02ea"
+                "sha256:43f7e32aba6faab0c4441075bfe7cd11807282456b913cd28c60e8ca7aeb8e4e",
+                "sha256:eeb10378b44261238444d61c8e12d97d8dee151f0f4b96cc9d4ac559ca8be299"
             ],
             "index": "pypi",
-            "version": "==4.0.3"
+            "version": "==4.0.4"
         },
         "types-click": {
             "hashes": [

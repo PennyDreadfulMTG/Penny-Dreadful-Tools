@@ -1766,7 +1766,7 @@
                 "sha256:44ece4d53fb1706f667c9bd1c648f5469a2ec925fcf3a776667042d645472c14",
                 "sha256:aabaf16477806a5e1dd19aa41f8c2b7950dd3c746362d7e3223dbe6de6ac448e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.26.9"
         },
         "vcrpy": {
@@ -2216,11 +2216,11 @@
         },
         "types-toml": {
             "hashes": [
-                "sha256:c1bed5926538aa9c4725cd369c250c47310f16f47d20611b7baef5988fed8634",
-                "sha256:f949463a388200be392ef9399dbad3e1e3bbe6d4543d84ad93d96c3fda028080"
+                "sha256:6aeb3ed7bfa869381551c774ed6a9142e3eed98a83efa5108a9632eafd56dcd3",
+                "sha256:c1289e9fb748a6a1ed068694ded1eb16f83df22d58cc1abae8ef6262403545d8"
             ],
             "index": "pypi",
-            "version": "==0.10.5"
+            "version": "==0.10.6"
         },
         "types-typed-ast": {
             "hashes": [

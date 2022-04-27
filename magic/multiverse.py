@@ -245,7 +245,11 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             except KeyError:
                 print(f"We think we should have set {p['set']} but it's not in {sets} (from {p}) so updating sets")
                 sets = await update_sets_async()
-                set_id = sets[p['set']]
+                try:
+                    set_id = sets[p['set']]
+                except KeyError:
+                    print(f'We still don\'t have {p["set"]}, skipping {p["name"]}')
+                    continue
 
             # If we already have the card, all we need is to record the next printing of it
             if p['name'] in cards:

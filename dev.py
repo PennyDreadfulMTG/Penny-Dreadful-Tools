@@ -100,7 +100,7 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
         sys.stderr.write(result[1])  # stderr
     print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     if result[2]:
-        raise TestFailedException(result[2])
+        sys.exit(result[2])
 
 @cli.command()
 @click.argument('argv', nargs=-1)

@@ -2200,11 +2200,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:2e81a74d2db1e6d06baa4a9e1896720543739297a23daac0436a34e2fc732574",
-                "sha256:58730c31469fb959a21496d97d2e59c06ca6de2ccdfecb583cb924b83cb0811e"
+                "sha256:5501ec6bcc164c54a6598e7ee6581827ea0ac0472e9d33b9456d202892f8d94c",
+                "sha256:e1cde99e92d5fb7afa0ee53924b211f4c47639516434d86dc84d53ec84fcfa8a"
             ],
             "index": "pypi",
-            "version": "==2.27.22"
+            "version": "==2.27.24"
         },
         "types-six": {
             "hashes": [

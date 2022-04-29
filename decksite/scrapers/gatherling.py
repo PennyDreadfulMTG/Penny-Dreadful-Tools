@@ -163,7 +163,7 @@ def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
     response = {}
     for k, v in data.items():
         # First check it's an event we are interested in.
-        if v.get('format') == Format.PENNY_DREADFUL.value:
+        if v.get('format') == Format.PENNY_DREADFUL.value and v.get('matches') is not None:
             response[k] = Event(**v)
     return response
 

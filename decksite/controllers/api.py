@@ -240,7 +240,7 @@ def cardfeed_api() -> Response:
         rank = ranks.get(c.name)
         name = c.name
         # Scryfall requested this naming convention for modal DFCs.
-        if c.layout == 'modal_dfc':
+        if c.layout in ('adventure', 'flip', 'modal_dfc', 'transform'):
             name = ' // '.join(c.names)
         os.append({'name': name, 'rank': rank, 'legal': bool(c.pd_legal)})
     r = {'cards': os}

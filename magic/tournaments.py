@@ -21,8 +21,7 @@ APAC = 3
 SUN = 4
 MON = 5
 TUE = 6
-EU_WED = 7
-THU = 8
+THU = 7
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -82,7 +81,6 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])
     pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])
     pdtue_time = (TUE, 'Penny Dreadful Tuesdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TU)[index])
-    pdew_time = (EU_WED, 'Penny Dreadful EU Wednesdays', rrule.rrule(rrule.WEEKLY, byhour=18, byminute=0, bysecond=0, dtstart=eu_start, until=until, byweekday=rrule.WE)[index])
     pdthu_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdtue_time, pdew_time, pdthu_time]
 
@@ -252,17 +250,9 @@ def all_series_info() -> List[Container]:
         Container({
             'tournament_id': info[6][0],
             'name': info[6][1],
-            'hosts': ['RavaenMTG'],
-            'display_time': '6pm CET',
-            'time': info[6][2],
-            'sponsor_name': None,
-        }),
-        Container({
-            'tournament_id': info[7][0],
-            'name': info[7][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[7][2],
+            'time': info[6][2],
             'sponsor_name': 'Cardhoarder',
         }),
     ]

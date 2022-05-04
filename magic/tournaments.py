@@ -67,7 +67,6 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
 
 def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
-    eu_start = start.astimezone(tz=dtutil.EUROPE_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index])
     if is_pd500_week(start):

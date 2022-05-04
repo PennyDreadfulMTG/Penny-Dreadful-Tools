@@ -247,7 +247,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['tiggu', 'bakert99'],
             'display_time': '7pm Eastern',
             'time': info[5][2],
-            'sponsor_name': 'Cardhoarder',
+            'sponsor_name': None,
         }),
         Container({
             'tournament_id': info[6][0],

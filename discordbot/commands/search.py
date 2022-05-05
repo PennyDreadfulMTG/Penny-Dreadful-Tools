@@ -1,4 +1,5 @@
-from dis_snek.models import CMD_BODY, OptionTypes, message_command, slash_command, slash_option
+from dis_snek.models import CMD_BODY, OptionTypes, message_command
+from dis_snek.models.snek.application_commands import slash_command, slash_option, auto_defer
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext, MtgMessageContext
 from magic import fetcher, oracle
@@ -7,6 +8,7 @@ from shared import fetch_tools
 
 @slash_command('scry')
 @slash_option('query', 'A scryfall query', OptionTypes.STRING, required=True)
+@auto_defer()
 async def search(ctx: MtgContext, query: str) -> None:
     """Card search using Scryfall."""
     how_many, cardnames = fetcher.search_scryfall(query)

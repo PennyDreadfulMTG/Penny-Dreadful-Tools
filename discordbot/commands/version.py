@@ -1,5 +1,6 @@
 import subprocess
 from importlib.metadata import version as _v
+from dis_snek import Timestamp
 
 from dis_snek.models import Embed, slash_command
 
@@ -15,7 +16,7 @@ async def version(ctx: MtgContext) -> None:
     embed.add_field('Commit hash', commit)
     age = subprocess.check_output(['git', 'show', '-s', '--format=%ci ', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
     embed.add_field('Commit age', age)
-    scryfall = database.last_updated()
+    scryfall = Timestamp.fromdatetime(database.last_updated())
     embed.add_field('Scryfall last updated', scryfall)
     snekver = _v('dis-snek')
     embed.add_field('dis-snek version', snekver)

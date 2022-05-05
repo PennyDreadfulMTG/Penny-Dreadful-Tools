@@ -1,7 +1,7 @@
 import re
 from typing import Dict, Optional
 
-from dis_snek.models import OptionTypes, slash_command, slash_option
+from dis_snek.models.snek.application_commands import slash_command, slash_option, auto_defer, OptionTypes
 
 from discordbot.command import MtgContext, roughly_matches
 from magic import fetcher
@@ -10,6 +10,7 @@ from shared import fetch_tools
 
 @slash_command('resources')
 @slash_option('resource', 'Your query', OptionTypes.STRING)
+@auto_defer()
 async def resources(ctx: MtgContext, resource: Optional[str]) -> None:
     """Useful pages related to `args`."""
     results = {}

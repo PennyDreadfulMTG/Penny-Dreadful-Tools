@@ -1,5 +1,7 @@
 from dis_snek.client import Snake
-from dis_snek.models import Scale, slash_command
+from dis_snek.models import Scale
+from dis_snek.models.snek.application_commands import slash_command, auto_defer
+
 
 from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic import fetcher
@@ -10,6 +12,7 @@ from shared import fetch_tools
 class Rulings(Scale):
     @slash_command('rulings')
     @slash_card_option()
+    @auto_defer()
     async def rulings(self, ctx: MtgContext, card: Card) -> None:
         """Rulings for a card."""
         await ctx.single_card_text(card, card_rulings)

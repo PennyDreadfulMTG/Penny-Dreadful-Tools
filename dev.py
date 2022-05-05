@@ -9,7 +9,6 @@ from typing import Iterable, List, Optional, Union
 import build as builddotpy
 from run import wait_for_db
 from shared import configuration
-from shared.pd_exception import TestFailedException
 
 try:
     import click

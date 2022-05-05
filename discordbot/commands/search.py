@@ -19,7 +19,7 @@ async def search(ctx: MtgContext, query: str) -> None:
 @message_command('scry')
 async def m_scry(ctx: MtgMessageContext, args: CMD_BODY) -> None:
     ctx.kwargs['query'] = args
-    search.call_callback(search.callback, ctx)
+    await search.call_callback(search.callback, ctx)
 
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetch_tools.escape(args)) if total > MAX_CARDS_SHOWN else ''

@@ -171,7 +171,7 @@ def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name
 
 # pylint: disable=unsubscriptable-object
 def resources() -> Dict[str, Dict[str, str]]:
-    with open('decksite/resources.json') as resources_file:
+    with open('decksite/resources.json', encoding='utf-8') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
 async def scryfall_last_updated_async() -> datetime.datetime:

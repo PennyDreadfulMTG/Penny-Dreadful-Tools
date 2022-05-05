@@ -1,5 +1,5 @@
 from dis_snek.models import CMD_BODY, OptionTypes, message_command
-from dis_snek.models.snek.application_commands import slash_command, slash_option, auto_defer
+from dis_snek.models.snek.application_commands import auto_defer, slash_command, slash_option
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext, MtgMessageContext
 from magic import fetcher, oracle

@@ -1,7 +1,6 @@
 from dis_snek.client import Snake
 from dis_snek.models import Scale
-from dis_snek.models.snek.application_commands import slash_command, auto_defer
-
+from dis_snek.models.snek.application_commands import auto_defer, slash_command
 
 from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic import fetcher

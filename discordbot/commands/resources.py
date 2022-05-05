@@ -1,7 +1,8 @@
 import re
 from typing import Dict, Optional
 
-from dis_snek.models.snek.application_commands import slash_command, slash_option, auto_defer, OptionTypes
+from dis_snek.models.snek.application_commands import (OptionTypes, auto_defer, slash_command,
+                                                       slash_option)
 
 from discordbot.command import MtgContext, roughly_matches
 from magic import fetcher

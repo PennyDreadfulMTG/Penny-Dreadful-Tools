@@ -117,3 +117,8 @@ def test_display_prizes() -> None:
         {'finish': '3rd–4th', 'prize': 2},
         {'finish': '5th–8th', 'prize': 1},
     ]
+
+def test_all_series_info() -> None:
+    si = tournaments.all_series_info()
+    dates = tournaments.get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
+    assert len(si) == len(dates)

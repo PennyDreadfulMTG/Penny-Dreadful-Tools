@@ -136,6 +136,10 @@ def do_push() -> None:
     gh_repo = os.path.join(configuration.get_str('legality_dir'), 'gh_pages')
     if not os.path.exists(gh_repo):
         subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/pennydreadfulmtg.github.io.git', gh_repo], check=True)
+    else:
+        os.chdir(gh_repo)
+        subprocess.run(['git', 'pull'], check=True)
+
     setcode = seasons.next_rotation_ex().mtgo_code
     files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']
     for fn in files:
@@ -161,6 +165,7 @@ https://pennydreadfulmagic.com/admin/rotation/
     if redis.get_str('discordbot:commit_id'):
         redis.store('discordbot:do_reboot', True)
         print('Done!', flush=True)
+        checklist += '- [x] restart discordbot\n'
     else:
         checklist += '- [ ] restart discordbot\n'
         print('Added to checklist!', flush=True)
@@ -171,6 +176,7 @@ https://pennydreadfulmagic.com/admin/rotation/
             print('Calling Post Rotation...', flush=True)
             os.chdir(ds)
             subprocess.run(['python3', 'run.py', 'maintenance', 'post_rotation'], check=True)
+            checklist += '- [x] run post_rotation\n'
         else:
             failed = True
     except Exception:  # pylint: disable=broad-except

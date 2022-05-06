@@ -175,7 +175,7 @@ def guess_banner(season_num: int) -> Tuple[List[str], str]:
             picked_colors.append(color)
     except DatabaseException as e:
         logger.error(e)
-    return ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'Enter the Infinite'
+    return ['Season of Renewal', 'Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'New Perspectives'
 
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:

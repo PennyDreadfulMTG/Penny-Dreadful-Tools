@@ -1,6 +1,6 @@
 <section>
     <ul>
-        <li>Copy legal_cards.txt to pdmtgo.com</li>
+        <li>Copy legal_cards.txt to pdmtgo.com (S3). Manually set the metadata Content-Type=text/plain; charset=utf-8.</li>
         <li>Run post_rotation task for decksite <code>python3 run.py maintenance post_rotation</code></li>
         <li>Restart decksite <code>touch /etc/uwsgi/vassals/decksite.ini</code></li>
         <li>Send <code>!suppresshype</code> to PDBot</li>

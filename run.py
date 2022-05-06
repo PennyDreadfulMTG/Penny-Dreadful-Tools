@@ -104,7 +104,7 @@ def task(args: List[str]) -> None:
             module = 'scrapers'
         if module == 'scrapers':
             module = 'decksite.scrapers'
-        name = args[1]
+        name = args[1].replace('-', '_')
         from magic import multiverse, oracle
         multiverse.init()
         if name != 'reprime_cache':

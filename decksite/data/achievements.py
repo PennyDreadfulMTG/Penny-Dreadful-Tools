@@ -780,3 +780,17 @@ class Completionist(BooleanAchievement):
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Played in {what} without retiring a league run'
+
+class PD500Winner(CountedAchievement):
+    key = 'pd500_wins'
+    title = 'Penny Dreadful 500 Winner'
+    description_safe = 'Win the Penny Dreadful 500.'
+    sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.name LIKE '%%Penny Dreadful 500%%' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.name LIKE '%%Penny Dreadful 500%%' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source']
+
+    def leaderboard_heading(self) -> str:
+        return gettext('Victories')
+
+    def localised_display(self, n: int) -> str:
+        return ngettext('1 victory', '%(num)d victories', n)

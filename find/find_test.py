@@ -463,6 +463,14 @@ def test_is_hybrid() -> None:
 def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")
 
+@pytest.mark.functional()
+def test_is_triland_functional() -> None:
+    do_functional_test('is:triland', ['Savage Lands'], ['Bant Charm', "Spara's Headquarters"])
+
+@pytest.mark.functional()
+def test_is_checkland_functional() -> None:
+    do_functional_test('is:checkland', ['Drowned Catacomb', 'Hinterland Harbor'], ['Savage Lands'])
+
 @pytest.mark.functional
 def test_format_functional() -> None:
     legal = ['Plains']

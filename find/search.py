@@ -379,6 +379,7 @@ def is_subquery(subquery_name: str) -> str:
         return "(oracle_text = '')"
     subqueries = {
         'commander': 't:legendary (t:creature OR o:"~ can be your commander") f:commander',
+        'checkland': 't:land fo:"unless you control a" fo:"} or {"',
         'creatureland': 't:land o:"becomes a"',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
         'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',
@@ -389,6 +390,7 @@ def is_subquery(subquery_name: str) -> str:
         # 205.2a The card types are artifact, conspiracy, creature, dungeon, enchantment, instant, land, phenomenon, plane, planeswalker, scheme, sorcery, tribal, and vanguard.
         'spell': 't:artifact OR t:creature OR t:enchantment OR t:instant OR t:planeswalker OR t:sorcery',
         'storageland': 'o:"storage counter"',
+        'triland': 't:land fo:": Add {" fo:"}, {" fo:"}, or {" fo:"enters the battlefield tapped" -fo:cycling',
     }
     for k in list(subqueries.keys()):
         if k.endswith('land'):

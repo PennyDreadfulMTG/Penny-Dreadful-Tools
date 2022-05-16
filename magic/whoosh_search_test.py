@@ -70,7 +70,7 @@ class WhooshSearchTest(unittest.TestCase):
         self.finds_at_least('Efficient Constructor', 'Efficient Construction')
 
     def test_exact_match(self) -> None:
-        for card in ('Upheaval', 'Hellrider', 'Necropotence', 'Skullclamp', 'Mana Leak'):
+        for card in ('Upheaval', 'Hellrider', 'Necropotence', 'Skullclamp', 'Mana Leak', 'Wasteland'):
             self.best_match_is(card, card)
 
     def test_prefix_match(self) -> None:

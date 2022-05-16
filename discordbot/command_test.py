@@ -42,6 +42,10 @@ def test_results_from_queries() -> None:
     assert result.has_match()
     assert not result.is_ambiguous()
     assert result.get_best_match() == 'Llanowar Elves'
+    result = command.results_from_queries(['Wasteland'])[0][0]
+    assert result.has_match()
+    assert not result.is_ambiguous()
+    assert result.get_best_match() == 'Wasteland'
 
 
 def test_do_not_choke_on_unicode() -> None:

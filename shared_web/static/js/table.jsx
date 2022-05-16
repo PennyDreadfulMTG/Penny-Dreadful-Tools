@@ -181,6 +181,7 @@ export class Table extends React.Component {
 
     movePage(page) {
         this.setState({ page });
+        this.divRef.current.scrollIntoView();
     }
 
     sort(sortBy, sortOrder = "ASC") {

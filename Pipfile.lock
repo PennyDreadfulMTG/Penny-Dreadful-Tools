@@ -340,11 +340,11 @@
         },
         "dis-snek": {
             "hashes": [
-                "sha256:5a1fa72d3d5de96a7550a480d33a4f4a6ac8509391fa20890c2eb495fb45d221",
-                "sha256:c39d0ff5e1f0cde3a0feefcd05f4a7d6de1d6b1aafbda745bbaa7a63d541af0f"
+                "sha256:335db8acfcb6a0c6639813252969d2c79b3491c9cc72788ef29ddda882604bd8",
+                "sha256:ac42f61872014d2e297ddca031a40dae8ec3d592816702108fa4c31eb26dda02"
             ],
             "index": "pypi",
-            "version": "==7.0.0"
+            "version": "==9.0.0"
         },
         "dis-taipan": {
             "hashes": [

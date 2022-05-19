@@ -18,7 +18,7 @@ SEASONS = [
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
-    'VOW', 'NEO', 'SNC',         # 2022
+    'VOW', 'NEO', 'SNC', 'DMU',  # 2022
 ]
 
 OVERRIDES = {

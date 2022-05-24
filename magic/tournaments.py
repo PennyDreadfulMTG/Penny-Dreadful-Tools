@@ -109,7 +109,7 @@ def is_pd500(c: Competition) -> bool:
     return 'Penny Dreadful 500' in c.name
 
 def is_kick_off(c: Competition) -> bool:
-    return 'Kick Off' in c.name
+    return 'Kick Off' in c.name or 'Kickoff' in c.name
 
 def pd500_prizes() -> Prizes:
     return display_prizes(prizes_by_finish(Competition({'name': 'Penny Dreadful 500'})))

@@ -2227,11 +2227,11 @@
         },
         "types-typed-ast": {
             "hashes": [
-                "sha256:365e5a9e509065fd532da4a1b54740f7e07c89ad4e3c5410898dd0406ff84476",
-                "sha256:67a522adfc9984878f75ab5780fbf0b213ea6d6f02593df368bba5f9edcb708e"
+                "sha256:533994780cf729b740c1475066c440762f29a99bda9511d4fa685d5ee3a84389",
+                "sha256:cb11d81b665ff3213436c0a5228952ee20f243bdd0ee2e3e19aef43149dffe05"
             ],
             "index": "pypi",
-            "version": "==1.5.5"
+            "version": "==1.5.6"
         },
         "types-urllib3": {
             "hashes": [

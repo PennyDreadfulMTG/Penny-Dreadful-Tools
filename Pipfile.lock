@@ -264,7 +264,7 @@
                 "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597",
                 "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '3'",
             "version": "==2.0.12"
         },
         "click": {
@@ -2144,11 +2144,11 @@
         },
         "types-freezegun": {
             "hashes": [
-                "sha256:6f05108d468baecadf999873bd37e57b25ceb35d35d3f83e7a742f25d6fe8b0e",
-                "sha256:fe1dd73372d96358dcb93e3aeb66d39f6ac63749e0724f13554cc145e2120efe"
+                "sha256:cb3a2d2eee950eacbaac0673ab50499823365ceb8c655babb1544a41446409ec",
+                "sha256:fadebe72213e0674036153366205038e1f95c8ca96deb4ef9b71ddc15413543e"
             ],
             "index": "pypi",
-            "version": "==1.1.9"
+            "version": "==1.1.10"
         },
         "types-jinja2": {
             "hashes": [

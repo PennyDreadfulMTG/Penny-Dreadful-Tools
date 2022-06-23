@@ -2198,11 +2198,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:b9b6cd0a6e5d500e56419b79f44ec96f316e9375ff6c8ee566c39d25e9612621",
-                "sha256:ca8d7cc549c3d10dbcb3c69c1b53e3ffd1270089c1001a65c1e9e1017eb5e704"
+                "sha256:1b6cf6a2bf57fd8018c1b636b69762900466fafddfb62e1330e092f3d4b0966a",
+                "sha256:6fab97b99fea52b9c7b466a4dd93e06bb325bc7e7420475e87831026a8dd35cc"
             ],
             "index": "pypi",
-            "version": "==2.27.30"
+            "version": "==2.27.31"
         },
         "types-six": {
             "hashes": [

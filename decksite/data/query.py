@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union, cast
+from typing import Dict, Optional, Union
 
 from decksite.deck_type import DeckType
 from find import search
@@ -207,15 +207,15 @@ def decks_where(args: Dict[str, str], is_admin: bool, viewer_id: Optional[int]) 
     elif args.get('deckType') == DeckType.TOURNAMENT.value:
         parts.append("ct.name = 'Gatherling'")
     if args.get('archetypeId'):
-        archetype_id = cast(int, args.get('archetypeId'))
+        archetype_id = int(args.get('archetypeId', ''))
         parts.append(archetype_where(archetype_id))
     if args.get('personId'):
-        person_id = cast(int, args.get('personId'))
+        person_id = int(args.get('personId', ''))
         parts.append(f'd.person_id = {person_id}')
     if args.get('cardName'):
-        parts.append(card_where(cast(str, args.get('cardName'))))
+        parts.append(card_where(args.get('cardName', '')))
     if args.get('competitionId'):
-        competition_id = cast(int, args.get('competitionId'))
+        competition_id = int(args.get('competitionId', ''))
         parts.append(f'c.id = {competition_id}')
     return ') AND ('.join(parts)
 

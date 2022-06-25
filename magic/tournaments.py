@@ -13,7 +13,7 @@ from shared import dtutil, guarantee
 from shared.container import Container
 
 TournamentDateType = Tuple[int, str, datetime.datetime]
-Prizes = List[Dict[str, Union[int, str]]]
+Prizes = List[Dict[str, Union[str, object]]]
 
 FNM = 1
 SAT = 2

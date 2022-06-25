@@ -153,7 +153,8 @@ class View(BaseView):
         pass
 
     def num_tournaments(self) -> str:
-        return inflect.engine().number_to_words(len(tournaments.all_series_info()))
+        r = inflect.engine().number_to_words(len(tournaments.all_series_info()))
+        return cast(str, r)
 
     def rotation_text(self) -> str:
         return seasons.message()

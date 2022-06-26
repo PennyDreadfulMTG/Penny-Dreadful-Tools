@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
+from werkzeug.exceptions import BadRequest
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
@@ -33,7 +34,6 @@ from shared_web.decorators import fill_args, fill_form
 
 SearchItem = Dict[str, str]
 
-DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
 SEARCH_CACHE: List[SearchItem] = []
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
@@ -136,10 +136,7 @@ def decks_api() -> Response:
         }
     """
     order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
+    page, page_size, limit = pagination(request.args)
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
@@ -174,13 +171,10 @@ class UpdatedDecks(Resource):
             }
         """
         season = seasons.season_id(str(request.args.get('seasonId')), None)
-        page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-        page = int(request.args.get('page', 0))
         timestamp = int(request.args.get('since', 0))
         if timestamp < 1e9:
             raise InvalidArgumentException('Invalid timestamp!')
-        start = page * page_size
-        limit = f'LIMIT {start}, {page_size}'
+        page, page_size, limit = pagination(request.args)
         where = '(' + query.decks_where(request.args, False, None) + ') AND ' + query.decks_updated_since(timestamp)
         total = deck.load_decks_count(where=where, season_id=season)
         ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
@@ -210,10 +204,7 @@ def cards2_api() -> Response:
         }
     """
     order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
+    page, page_size, limit = pagination(request.args)
     archetype_id = request.args.get('archetypeId') or None
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
@@ -267,10 +258,7 @@ def people_api() -> Response:
         }
     """
     order_by = query.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
+    page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
@@ -304,10 +292,7 @@ def h2h_api() -> Response:
         }
     """
     order_by = query.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
+    page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     person_id = int(request.args.get('personId', 0))
     q = request.args.get('q', '').strip()
@@ -344,11 +329,7 @@ def leaderboards_api() -> Response:
         }
     """
     order_by = query.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
-
+    page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
     where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
     try:
@@ -392,10 +373,7 @@ def matches_api() -> Response:
         }
     """
     order_by = query.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
-    start = page * page_size
-    limit = f'LIMIT {start}, {page_size}'
+    page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
     person_where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
     opponent_where = query.text_match_where(query.person_query('o'), q) if q else 'TRUE'
@@ -473,8 +451,7 @@ def rotation_cards_api() -> Response:
             c.display_rank = str(c.rank)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
     total = len(cs)
-    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
-    page = int(request.args.get('page', 0))
+    page, page_size, _ = pagination(request.args)
     start = page * page_size
     end = start + page_size
     cs = cs[start:end]
@@ -773,3 +750,9 @@ def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[st
     else:
         url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}
+
+def pagination(args: Dict[str, str]) -> Tuple[int, int, str]:
+    try:
+        return query.pagination(args)
+    except InvalidArgumentException as e:
+        raise BadRequest from e

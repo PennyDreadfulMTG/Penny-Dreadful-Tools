@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Dict, Iterable, List, Optional, Tuple, cast
+from typing import Any, Collection, Dict, Iterable, List, Optional, Tuple, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
@@ -40,7 +40,7 @@ class Database():
                 raise DatabaseConnectionRefusedException(msg) from c
             raise DatabaseException(msg) from c
 
-    def select(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> Iterable[Dict[str, ValidSqlArgumentDescription]]:
+    def select(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
         [_, rows] = self.execute_anything(sql, args)
         return rows
 
@@ -48,7 +48,7 @@ class Database():
         [n, _] = self.execute_anything(sql, args, False)
         return n
 
-    def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: bool = True) -> Tuple[int, Iterable[Dict[str, ValidSqlArgumentDescription]]]:
+    def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: bool = True) -> Tuple[int, List[Dict[str, ValidSqlArgumentDescription]]]:
         if args is None:
             args = []
         try:
@@ -62,7 +62,7 @@ class Database():
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
 
-    def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, Iterable[ValidSqlArgumentDescription]]:
+    def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:
         result = None
         # Attempt to execute the query and reconnect 3 times, then give up
         for _ in range(3):

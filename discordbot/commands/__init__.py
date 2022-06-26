@@ -39,7 +39,7 @@ def scaleless_load(bot: Snake, module: str) -> bool:
                 n += 1
             elif isinstance(obj, Scale):
                 logging.warning(f'{module} is a Scale, but it doesnt have a setup method')
-                obj(bot)
+                obj(bot) # type: ignore
                 n += 1
     except Exception:
         pass

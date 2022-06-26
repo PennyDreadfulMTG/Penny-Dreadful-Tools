@@ -44,7 +44,7 @@ def with_typeguard(_: Any, __: Any, value: bool) -> None:
     # install_import_hook('shared')
     # install_import_hook('shared_web')
 
-    install_import_hook('dis_snek')
+    # install_import_hook('dis_snek.models.snek.command')
 
 
 @click.group()

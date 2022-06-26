@@ -4,19 +4,19 @@ from typing import Any, Dict
 from dis_snek import Snake
 from dis_snek.models import OptionTypes, Scale, User, message_command, slash_command, slash_option
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgContext, MtgMessageContext
 from magic import fetcher
 
 
 class Whois(Scale):
     @message_command('whois')
-    async def whois(self, ctx: MtgContext, args: str) -> None:
+    async def whois(self, ctx: MtgMessageContext, args: str) -> None:
         """Who is a person?"""
         mention = re.match(r'<@!?(\d+)>', args)
         await ctx.channel.trigger_typing()
 
         if mention:
-            person = await self.bot.get_user(mention.group(1))
+            person = await self.bot.fetch_user(mention.group(1))
             msg = await whois_discord(person)
         else:
             msg = await whois_mtgo(args)

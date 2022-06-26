@@ -45,7 +45,10 @@ class Bot(Snake):
 
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES)
 
-        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!', **kwargs)
+        super().__init__(intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!',
+                         message_context=discordbot.commands.MtgMessageContext,
+                         interaction_context=discordbot.commands.MtgInteractionContext,
+         **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self))

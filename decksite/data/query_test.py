@@ -1,5 +1,6 @@
 from decksite.data import query
 from decksite.deck_type import DeckType
+from shared.pd_exception import InvalidArgumentException
 
 
 def test_decks_where() -> None:
@@ -24,3 +25,23 @@ def test_card_search_where() -> None:
     }
     for q, expected in tests.items():
         assert expected == query.card_search_where(q)
+
+def test_limit() -> None:
+    args = {'page': '1', 'pageSize': '150'}
+    assert query.pagination(args) == (1, 150, 'LIMIT 150, 150')
+    args = {}
+    assert query.pagination(args) == (0, 20, 'LIMIT 0, 20')
+    err = False
+    try:
+        args = {'page': '1', 'pageSize': '20000'}
+        query.pagination(args)
+    except InvalidArgumentException:
+        err = True
+    assert err
+    err = False
+    try:
+        args = {'page': 'nonsensical', 'pageSize': 'nonsensical'}
+        query.pagination(args)
+    except InvalidArgumentException:
+        err = True
+    assert err

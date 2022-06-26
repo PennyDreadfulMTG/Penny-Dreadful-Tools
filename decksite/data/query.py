@@ -1,10 +1,12 @@
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 from decksite.deck_type import DeckType
 from find import search
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
+DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
+MAX_LIVE_TABLE_PAGE_SIZE = 500
 
 def person_query(table: str = 'p') -> str:
     return 'LOWER(IFNULL(IFNULL(IFNULL({table}.name, {table}.mtgo_username), {table}.mtggoldfish_username), {table}.tappedout_username))'.format(table=table)
@@ -240,3 +242,14 @@ def tournament_only_clause() -> str:
 
 def decks_updated_since(ts: int) -> str:
     return f'(q.changed_date > {ts} OR d.updated_date > {ts})'
+
+def pagination(args: Dict[str, str]) -> Tuple[int, int, str]:
+    try:
+        page_size = int(args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+        page = int(args.get('page', 0))
+    except ValueError as e:
+        raise InvalidArgumentException from e
+    if page_size > MAX_LIVE_TABLE_PAGE_SIZE:
+        raise InvalidArgumentException(f'Page size of {page_size} greater than maximum of {MAX_LIVE_TABLE_PAGE_SIZE}')
+    start = page * page_size
+    return page, page_size, f'LIMIT {start}, {page_size}'

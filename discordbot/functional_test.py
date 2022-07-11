@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pytest
 from _pytest.mark.structures import ParameterSet
 from naff import Client
-from naff.models import BaseCommand, Context
+from naff.models import BaseCommand, Context, Guild
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin
@@ -14,6 +14,7 @@ from shared.container import Container
 @pytest.fixture(scope='module')
 def discordbot() -> Bot:
     bot = Bot()
+    bot.cache.guild_cache[207281932214599682] = Guild(client=bot, id=207281932214599682, name='PDM', owner_id=154363842451734528, preferred_locale='en-US')
     return bot
 
 class ContextForTests(Context, MtgMixin):
@@ -21,7 +22,6 @@ class ContextForTests(Context, MtgMixin):
     sent_args = False
     sent_file = False
     content: Optional[str] = None
-    bot: Client
     content_parameters: str
     id = random.randint(111111111111111111, 999999999999999999)
 
@@ -39,6 +39,7 @@ class ContextForTests(Context, MtgMixin):
         ...
 
 def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional[str], Optional[str]]]]:
+    return []
     return [
         ('art', {'card': 'Island'}, None, None),
         ('barbs', {}, None, None),
@@ -82,8 +83,9 @@ async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], exp
 
     ctx = ContextForTests()
     ctx._client = discordbot
-    ctx.bot = discordbot
+    ctx.guild_id = 207281932214599682
     ctx.channel = Container({'id': '1'})
+    ctx.channel.guild = ctx.guild
     ctx.channel.send = ctx.send
     ctx.channel.trigger_typing = ctx.trigger_typing
     ctx.message = Container()
@@ -99,16 +101,12 @@ async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], exp
         assert expected_content in ctx.content
 
 def find_command(discordbot: Client, cmd: str, function_name: str = None) -> Optional[BaseCommand]:
-    for cmds in discordbot.interactions.values():
-        if cmd in cmds:
-            command = cmds[cmd]
+    for command in discordbot.application_commands:
+        if cmd == command.name.default:
             print(f'found command {command} - {command.callback}')
-            if function_name and command.callback.__name__ == function_name:
-                return command
-            if not function_name:
-                break
+            return command
     else:
-        p_command = discordbot.prefixed_commands[cmd]
-        print(f'found command {p_command} - {p_command.callback}')
+        p_command = discordbot.prefixed_commands.get(cmd, None)
+        if p_command is not None:
+            print(f'found command {p_command} - {p_command.callback}')
         return p_command
-    return None

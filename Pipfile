@@ -91,7 +91,7 @@ Markdown = "==3.3.7"
 Pillow = "==9.2.0"
 PyGithub = "==1.55"
 SQLAlchemy = "==1.4.39"
-SQLAlchemy-Utils = "==0.38.2"
+SQLAlchemy-Utils = "==0.38.3"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 pydantic = "*"

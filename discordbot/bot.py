@@ -175,9 +175,8 @@ class Bot(Client):
                     expected.remove(role)
                 elif '🏆' in role.name:
                     remove.append(role)
-            # These methods didn't exist 😅
-            # await member.remove_roles(remove)
-            # await member.add_roles(expected)
+            await member.remove_roles(remove)
+            await member.add_roles(expected)
 
     # async def on_guild_join(self, server: Guild) -> None:
     #     for channel in server.channels:

@@ -1066,11 +1066,11 @@
         },
         "naff": {
             "hashes": [
-                "sha256:6d5e296e600acc3a2aa05fb94247d0863095867bbb75c52ac1923ef88ea88847",
-                "sha256:b6bb099cde1710870546558a502fda1479ec92ded880ee8414626f7c3fc6f20a"
+                "sha256:56819e71d867aa6c175ef1189b13a65cf6bf810d3fdd0f0a4ea3f4452ccd1dc2",
+                "sha256:da207f9850f41900fbb64eb3422c9c1fa53e800cdbdb3002606333d77e120f95"
             ],
             "index": "pypi",
-            "version": "==1.5.0"
+            "version": "==1.6.0"
         },
         "numpy": {
             "hashes": [

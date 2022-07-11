@@ -692,11 +692,11 @@
         },
         "jsonschema": {
             "hashes": [
-                "sha256:b19f62322b0f06927e8ae6215c01654e1885857cdcaf58ae1772b1aa97f1faf2",
-                "sha256:e331e32e29743014fa59fa77895b5d8669382a4904c8ef23144f7f078ec031c7"
+                "sha256:201b83d676351d51d0dc617be6f77c449feee32ca221b4a99a09d77661740643",
+                "sha256:25203dbebd62a1179f810f14339f7a638baaf279b5cc3b738a58c3744af56d65"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.6.2"
+            "version": "==4.7.1"
         },
         "kiwisolver": {
             "hashes": [
@@ -1659,11 +1659,11 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:b82ad57306d5546713f15d5d70daea0408cf7f998c7566db16e0e6257e51e561",
-                "sha256:ddbd191b6f4e696b7845b4d87389898ae1207981faf114f968a57363aa6be03c"
+                "sha256:54cc2db9d85fcad557b2269f72f82f6f6b3a52eb93ae840a02a6eca4d9a0b707",
+                "sha256:741762816cdd32f647fca94a4515098cd52cb09dfe8c78f7d70eb28d2eaf89c5"
             ],
             "index": "pypi",
-            "version": "==1.6.0"
+            "version": "==1.7.0"
         },
         "sgmllib3k": {
             "hashes": [
@@ -1762,10 +1762,10 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:c77a32b5167b9e0d99c1f7b39b7f5a3ec001c7109931dd63c51652f9e4663d07",
-                "sha256:f3d02b21ded4e47bf4f03ae7f7afe64741b2da9e4c64b2e32fec9b8dfd923801"
+                "sha256:affd968a3a7218e1c96f1806eb457f4027eac803b3caaddccf98a4e5776b1724",
+                "sha256:b0341c29c7f44f7625204532b8829bd92ebb5fd48aa9f3e2052177e743e990b1"
             ],
-            "version": "==62.6.0"
+            "version": "==62.6.1"
         },
         "typing-extensions": {
             "hashes": [

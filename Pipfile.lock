@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "136ecb4752fde125273d577f320acea8ee8380c1b7e03007cbc30f645f4021a1"
+            "sha256": "eb402608aa6c89171bcd14faa0903a2d6cb61dc0bafc0e1f8666177d71894be6"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -692,11 +692,11 @@
         },
         "jsonschema": {
             "hashes": [
-                "sha256:b19f62322b0f06927e8ae6215c01654e1885857cdcaf58ae1772b1aa97f1faf2",
-                "sha256:e331e32e29743014fa59fa77895b5d8669382a4904c8ef23144f7f078ec031c7"
+                "sha256:201b83d676351d51d0dc617be6f77c449feee32ca221b4a99a09d77661740643",
+                "sha256:25203dbebd62a1179f810f14339f7a638baaf279b5cc3b738a58c3744af56d65"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.6.2"
+            "version": "==4.7.1"
         },
         "kiwisolver": {
             "hashes": [
@@ -1731,11 +1731,10 @@
         },
         "sqlalchemy-utils": {
             "hashes": [
-                "sha256:622235b1598f97300e4d08820ab024f5219c9a6309937a8b908093f487b4ba54",
-                "sha256:9e01d6d3fb52d3926fcd4ea4a13f3540701b751aced0316bff78264402c2ceb4"
+                "sha256:9f9afba607a40455cf703adfa9846584bf26168a0c5a60a70063b70d65051f4d"
             ],
             "index": "pypi",
-            "version": "==0.38.2"
+            "version": "==0.38.3"
         },
         "titlecase": {
             "hashes": [
@@ -1762,10 +1761,10 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:c77a32b5167b9e0d99c1f7b39b7f5a3ec001c7109931dd63c51652f9e4663d07",
-                "sha256:f3d02b21ded4e47bf4f03ae7f7afe64741b2da9e4c64b2e32fec9b8dfd923801"
+                "sha256:affd968a3a7218e1c96f1806eb457f4027eac803b3caaddccf98a4e5776b1724",
+                "sha256:b0341c29c7f44f7625204532b8829bd92ebb5fd48aa9f3e2052177e743e990b1"
             ],
-            "version": "==62.6.0"
+            "version": "==62.6.1"
         },
         "typing-extensions": {
             "hashes": [

@@ -1,8 +1,8 @@
 import logging
 import traceback
 from typing import Any
-from naff import User
 
+from naff import User
 from naff.client.errors import CommandException
 from naff.models import slash_command
 

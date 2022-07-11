@@ -1,7 +1,7 @@
 import glob
 import os
-from naff import check, is_owner
 
+from naff import check, is_owner
 from naff.models import slash_command
 
 from discordbot.command import MtgContext

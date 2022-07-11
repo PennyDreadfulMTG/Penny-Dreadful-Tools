@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from naff.models import CMD_BODY, prefixed_command
 
 from discordbot import emoji

@@ -6,7 +6,7 @@ from os import path
 from typing import Optional
 
 from naff import Client
-from naff.models import InteractionCommand, PrefixedCommand, Extension, SendableContext
+from naff.models import Extension, InteractionCommand, PrefixedCommand, SendableContext
 
 from discordbot import command
 from magic.models import Card
@@ -38,7 +38,7 @@ def scaleless_load(bot: Client, module: str) -> bool:
                 n += 1
             elif isinstance(obj, Extension):
                 logging.warning(f'{module} is an Extension, but it doesnt have a setup method')
-                obj(bot)  #type: ignore
+                obj(bot)  # type: ignore
                 n += 1
     except Exception:
         pass

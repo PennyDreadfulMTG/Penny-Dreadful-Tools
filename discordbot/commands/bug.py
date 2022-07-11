@@ -1,6 +1,6 @@
 from typing import Optional
 
-from naff import Extension, Client
+from naff import Client, Extension
 from naff.models import OptionTypes, slash_command, slash_option
 
 from discordbot.command import MtgContext

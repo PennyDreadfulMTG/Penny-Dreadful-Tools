@@ -2,7 +2,7 @@ import re
 from typing import Dict, Optional
 
 from naff.models.naff.application_commands import (OptionTypes, auto_defer, slash_command,
-                                                       slash_option)
+                                                   slash_option)
 
 from discordbot.command import MtgInteractionContext, roughly_matches
 from magic import fetcher

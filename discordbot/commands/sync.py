@@ -1,6 +1,7 @@
-from shared import configuration, redis_wrapper
 from naff import slash_command
+
 from discordbot.command import MtgInteractionContext
+from shared import configuration, redis_wrapper
 
 
 @slash_command('sync', scopes=[configuration.pd_server_id.value])

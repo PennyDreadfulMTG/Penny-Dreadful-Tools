@@ -2,7 +2,7 @@ import re
 from typing import Any, Dict
 
 from naff import Client
-from naff.models import OptionTypes, Extension, User, prefixed_command, slash_command, slash_option
+from naff.models import Extension, OptionTypes, User, prefixed_command, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import fetcher

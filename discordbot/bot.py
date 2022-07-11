@@ -6,13 +6,13 @@ import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional, cast
 
+from github.GithubException import GithubException
 from naff import Client, listen
 from naff.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from naff.client.errors import Forbidden
 from naff.client.utils import timestamp_converter
 from naff.models import (ActivityType, Embed, Guild, GuildText, Intents, Member, Role,
-                             ScheduledEventType)
-from github.GithubException import GithubException
+                         ScheduledEventType)
 
 import discordbot.commands
 from discordbot import command

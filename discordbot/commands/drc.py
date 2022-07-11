@@ -3,7 +3,8 @@ from urllib import parse
 
 from naff.models import Embed, OptionTypes, slash_command, slash_option
 
-from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext, MtgInteractionContext
+from discordbot.command import (DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext,
+                                MtgInteractionContext)
 from magic import fetcher, oracle
 from shared import configuration, fetch_tools
 

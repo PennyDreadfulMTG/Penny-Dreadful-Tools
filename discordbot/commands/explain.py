@@ -3,8 +3,8 @@ from typing import Dict, Optional, Tuple
 
 import inflect
 from naff.client import Client
-from naff.models import (TYPE_MESSAGEABLE_CHANNEL, OptionTypes, Extension, prefixed_command,
-                             slash_command, slash_option)
+from naff.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionTypes, prefixed_command,
+                         slash_command, slash_option)
 
 from discordbot import command
 from discordbot.command import MtgContext

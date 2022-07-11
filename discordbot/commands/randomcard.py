@@ -1,6 +1,6 @@
 import random
 
-from dis_snek.models import OptionTypes, slash_command, slash_option
+from naff.models import OptionTypes, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import oracle

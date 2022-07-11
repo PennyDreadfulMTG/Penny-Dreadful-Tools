@@ -2,9 +2,9 @@ import textwrap
 from typing import Dict, Optional, Tuple
 
 import inflect
-from dis_snek.client import Snake
-from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, OptionTypes, Scale, message_command,
-                             slash_command, slash_option)
+from naff.client import Client
+from naff.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionTypes, prefixed_command,
+                         slash_command, slash_option)
 
 from discordbot import command
 from discordbot.command import MtgContext
@@ -238,7 +238,7 @@ reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
 }
 
 
-class ExplainCog(Scale):
+class ExplainCog(Extension):
     @slash_command(
         name='explain',
         description='Answers for Frequently Asked Questions',
@@ -283,7 +283,7 @@ class ExplainCog(Scale):
     async def reroute(self, ctx: MtgContext) -> None:
         await ctx.send(f'{ctx.author.mention} Please use /explain')
 
-    m_explain = message_command('explain')(reroute)
+    m_explain = prefixed_command('explain')(reroute)
 
 def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
     tournament_channel_id = configuration.get_int('tournament_channel_id')
@@ -306,5 +306,5 @@ def promo_explanation() -> Tuple[str, Dict[str, str]]:
         explanation += ' Affected cards include: ' + ', '.join(c.name for c in legal_cheap_promos)
     return(explanation, {})
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     ExplainCog(bot)

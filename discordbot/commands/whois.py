@@ -1,15 +1,15 @@
 import re
 from typing import Any, Dict
 
-from dis_snek import Snake
-from dis_snek.models import OptionTypes, Scale, User, message_command, slash_command, slash_option
+from naff import Client
+from naff.models import Extension, OptionTypes, User, prefixed_command, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import fetcher
 
 
-class Whois(Scale):
-    @message_command('whois')
+class Whois(Extension):
+    @prefixed_command('whois')
     async def whois(self, ctx: MtgContext, args: str) -> None:
         """Who is a person?"""
         mention = re.match(r'<@!?(\d+)>', args)
@@ -54,5 +54,5 @@ async def whois_discord(user: User) -> str:
 def not_found(person: Dict[str, Any]) -> bool:
     return person is None or (person.get('error') is not None and person.get('code') == 'NOTFOUND')
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     Whois(bot)

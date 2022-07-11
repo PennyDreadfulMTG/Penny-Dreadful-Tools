@@ -1,8 +1,8 @@
 import re
 from typing import Dict, Optional
 
-from dis_snek.client import Snake
-from dis_snek.models import PartialEmoji
+from naff.client import Client
+from naff.models import PartialEmoji
 
 from magic import rotation, seasons
 from magic.models import Card
@@ -10,7 +10,7 @@ from shared import redis_wrapper as redis
 
 CACHE: Dict[str, PartialEmoji] = {}
 
-async def find_emoji(emoji: str, client: Snake) -> Optional[PartialEmoji]:
+async def find_emoji(emoji: str, client: Client) -> Optional[PartialEmoji]:
     if res := CACHE.get(emoji):
         return res
 
@@ -28,7 +28,7 @@ async def find_emoji(emoji: str, client: Snake) -> Optional[PartialEmoji]:
     except AttributeError:
         return None
 
-async def replace_emoji(text: str, client: Snake) -> str:
+async def replace_emoji(text: str, client: Client) -> str:
     if text is None:
         return ''
     output = text

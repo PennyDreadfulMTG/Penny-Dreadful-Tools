@@ -6,14 +6,12 @@ from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
-from dis_snek import CMD_BODY, Snake
-from dis_snek.client.errors import Forbidden
-from dis_snek.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelTypes, Context,
-                             File, InteractionCommand, InteractionContext, Member, Message,
-                             MessageCommand, MessageContext, OptionTypes, Permission,
-                             PermissionTypes, Scale, User, message_command, slash_option,
-                             slash_permission)
-from dis_taipan.protocols import SendableContext
+from naff import CMD_BODY, DM, Client, DMGroup
+from naff.client.errors import Forbidden
+from naff.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelTypes, Extension,
+                         File, InteractionCommand, InteractionContext, Member, Message,
+                         OptionTypes, PrefixedCommand, PrefixedContext, User, prefixed_command,
+                         slash_option)
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
@@ -131,7 +129,7 @@ async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str
     return None
 
 # pylint: disable=too-many-arguments
-async def single_card_text(client: Snake, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
+async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
         name = c.name
@@ -140,56 +138,7 @@ async def single_card_text(client: Snake, channel: TYPE_MESSAGEABLE_CHANNEL, arg
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
 
-
-async def post_cards(
-        client: Snake,
-        cards: List[Card],
-        channel: Union[TYPE_MESSAGEABLE_CHANNEL, Context],
-        replying_to: Optional[Member] = None,
-        additional_text: str = '',
-) -> None:
-    if len(cards) == 0:
-        await post_nothing(channel, replying_to)
-        return
-
-    with with_config_file(guild_id(channel)), with_config_file(channel_id(channel)):
-        legality_format = configuration.legality_format.value
-    not_pd = configuration.get_list('not_pd')
-    if str(channel_id(channel)) in not_pd or str(guild_id(channel)) in not_pd:  # This needs to be migrated
-        legality_format = 'Unknown'
-    cards = uniqify_cards(cards)
-    if len(cards) > MAX_CARDS_SHOWN:
-        cards = cards[:DEFAULT_CARDS_SHOWN]
-    if len(cards) == 1:
-        text = await single_card_text_internal(client, cards[0], legality_format)
-    else:
-        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card, legality_format=legality_format))), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
-    if len(cards) > MAX_CARDS_SHOWN:
-        image_file = None
-    else:
-        try:
-            if isinstance(channel, InteractionContext):
-                await channel.defer()
-            elif isinstance(channel, MessageContext):
-                await channel.channel.trigger_typing()
-            else:
-                await channel.trigger_typing()
-        except Exception:
-            pass
-        image_file = await image_fetcher.download_image_async(cards)
-    if image_file is None:
-        text += '\n\n'
-        if len(cards) == 1:
-            text += await emoji.replace_emoji(cards[0].oracle_text, client)
-        else:
-            text += 'No image available.'
-    text += additional_text
-    if image_file is None:
-        await send(channel, text)
-    else:
-        await send_image_with_retry(channel, image_file, text)
-
-async def post_nothing(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], replying_to: Optional[Member] = None) -> None:
+async def post_nothing(channel: Union[PrefixedContext, InteractionContext, TYPE_MESSAGEABLE_CHANNEL], replying_to: Optional[Member | User] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
@@ -198,18 +147,18 @@ async def post_nothing(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], replyi
     await message.add_reaction('❎')
 
 
-async def send(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], content: str, file: Optional[File] = None) -> Message:
+async def send(channel: Union[PrefixedContext, InteractionContext, TYPE_MESSAGEABLE_CHANNEL], content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
-async def send_image_with_retry(channel: Union[Context, TYPE_MESSAGEABLE_CHANNEL], image_file: str, text: str = '') -> None:
+async def send_image_with_retry(channel: Union[PrefixedContext, InteractionContext, TYPE_MESSAGEABLE_CHANNEL], image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         logging.warning('Message size is zero so resending')
         await message.delete()
         await send(channel, file=File(image_file), content=text)
 
-async def single_card_text_internal(client: Snake, requested_card: Card, legality_format: str) -> str:
+async def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
     mana = await emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
     mana = mana.replace('|', ' // ')
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
@@ -266,13 +215,13 @@ def slash_card_option(param: str = 'card') -> Callable:
 
     return wrapper
 
-def slash_permission_pd_mods() -> Callable:
-    """Restrict this command to Mods in the PD server"""
+# def slash_permission_pd_mods() -> Callable:
+#     """Restrict this command to Mods in the PD server"""
 
-    def wrapper(func: Callable) -> Callable:
-        return slash_permission(Permission(id=226785937970036748, guild_id=207281932214599682, type=PermissionTypes.ROLE))(func)
+#     def wrapper(func: Callable) -> Callable:
+#         return slash_permission(Permission(id=226785937970036748, guild_id=207281932214599682, type=PermissionTypes.ROLE))(func)
 
-    return wrapper
+#     return wrapper
 
 def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
     return {
@@ -280,7 +229,7 @@ def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
         'value': value,
     }
 
-async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -> None:
+async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: str) -> None:
     if not card:
         await ctx.send(choices=[])
         return
@@ -291,35 +240,37 @@ async def autocomplete_card(scale: Scale, ctx: AutocompleteContext, card: str) -
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
 
-    await ctx.send(choices=[make_choice(c) for c in choices][:20])
+    await ctx.send(choices=list(choices)[:20])  # type: ignore
 
-def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None) -> MessageCommand:
+def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None) -> PrefixedCommand:
     """
     This is a horrible hack.  Use it if a slash command takes one multiword argument
     """
 
-    async def wrapper(_scale: Scale, ctx: MtgMessageContext, body: CMD_BODY) -> None:
+    async def wrapper(_scale: Extension, ctx: MtgMessageContext, body: CMD_BODY) -> None:
         ctx.kwargs[param] = body
         await command.call_callback(command.callback, ctx)
 
     if name is None:
-        name = command.name
-    return message_command(name)(wrapper)
+        name = command.name.default
+    return prefixed_command(name)(wrapper)
 
 class MtgMixin:
-    async def send_image_with_retry(self: SendableContext, image_file: str, text: str = '') -> None:
+    async def send_image_with_retry(self: 'MtgContext', image_file: str, text: str = '') -> None:  # type: ignore
         message = await self.send(file=File(image_file), content=text)
         if message and message.attachments and message.attachments[0].size == 0:
             logging.warning('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
 
-    async def single_card_text(self: SendableContext, c: Card, f: Callable, show_legality: bool = True) -> None:
+    async def single_card_text(self: 'MtgContext', c: Card, f: Callable, show_legality: bool = True) -> None:  # type: ignore
         if c is None:
             return
 
         not_pd = configuration.get_list('not_pd')
-        if str(self.channel.id) in not_pd or (getattr(self.channel, 'guild', None) is not None and str(self.channel.guild.id) in not_pd):
+        if str(self.channel.id) in not_pd:
+            show_legality = False
+        elif not isinstance(self.channel, (DM, DMGroup)) and str(self.channel.guild.id) in not_pd:
             show_legality = False
 
         name = c.name
@@ -328,27 +279,55 @@ class MtgMixin:
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 
-    async def post_cards(self: SendableContext, cards: List[Card], replying_to: Optional[User | Member] = None, additional_text: str = '') -> None:
-        # this feels awkward, but shrug
-        await post_cards(self.bot, cards, self, replying_to, additional_text)
+    async def post_cards(self: 'MtgContext', cards: List[Card], replying_to: Optional[User | Member] = None, additional_text: str = '') -> None:  # type: ignore
+        if len(cards) == 0:
+            await post_nothing(self, replying_to)
+            return
 
-    async def post_nothing(self: SendableContext) -> None:
+        with with_config_file(guild_id(self)), with_config_file(channel_id(self)):
+            legality_format = configuration.legality_format.value
+        not_pd = configuration.get_list('not_pd')
+        if str(channel_id(self)) in not_pd or str(guild_id(self)) in not_pd:  # This needs to be migrated
+            legality_format = 'Unknown'
+        cards = uniqify_cards(cards)
+        if len(cards) > MAX_CARDS_SHOWN:
+            cards = cards[:DEFAULT_CARDS_SHOWN]
+        if len(cards) == 1:
+            text = await single_card_text_internal(self.bot, cards[0], legality_format)
+        else:
+            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card, legality_format=legality_format))), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+        if len(cards) > MAX_CARDS_SHOWN:
+            image_file = None
+        else:
+            try:
+                if isinstance(self, InteractionContext):
+                    await self.defer()
+                elif isinstance(self, PrefixedContext):
+                    await self.channel.trigger_typing()
+            except Exception:
+                pass
+            image_file = await image_fetcher.download_image_async(cards)
+        if image_file is None:
+            text += '\n\n'
+            if len(cards) == 1:
+                text += await emoji.replace_emoji(cards[0].oracle_text, self.bot)
+            else:
+                text += 'No image available.'
+        text += additional_text
+        if image_file is None:
+            await send(self, text)
+        else:
+            await send_image_with_retry(self, image_file, text)
+
+    async def post_nothing(self: 'MtgContext') -> None:  # type: ignore
         await post_nothing(self)
-
-
-InteractionContext.__bases__ += (MtgMixin,)
-MessageContext.__bases__ += (MtgMixin,)
-# Some hackery here.  The classes below don't actually get used.  They're placeholders for the sake of type-checking.
-# In reality, we're adding the above mixin as a parent to the appropriate classes
-# While the recommendation for subclassing Contexts is to override Snake.get_context, there's a lot of complex logic there,
-# and essentially rewriting the method makes forward-compatibility messy and hard to maintain.
 
 @attr.define
 class MtgInteractionContext(InteractionContext, MtgMixin):
     pass
 
 @attr.define
-class MtgMessageContext(MessageContext, MtgMixin):
+class MtgMessageContext(PrefixedContext, MtgMixin):
     pass
 
 

@@ -1,7 +1,7 @@
 from typing import Dict
 
-from dis_snek import Snake
-from dis_snek.models import Scale, message_command, slash_command
+from naff import Client
+from naff.models import Extension, prefixed_command, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext
@@ -10,17 +10,17 @@ from magic.models import Card
 from shared import fetch_tools
 
 
-class History(Scale):
+class History(Extension):
     @slash_command('history')
     @command.slash_card_option()
     async def history(self, ctx: MtgContext, card: Card) -> None:
         """Show the legality history of the specified card and a link to its all time page."""
         await ctx.single_card_text(card, card_history, show_legality=False)
 
-    history.autocomplete('card')(command.autocomplete_card)
+    history.autocomplete('card')(command.autocomplete_card)  # type: ignore
 
     m_h = command.alias_message_command_to_slash_command(history)
-    m_hi = message_command('hi')(m_h.callback)
+    m_hi = prefixed_command('hi')(m_h.callback)
 
 def card_history(c: Card) -> str:
     data: Dict[int, bool] = {}
@@ -40,5 +40,5 @@ def card_history(c: Card) -> str:
         name=fetch_tools.escape(c.name, skip_double_slash=True))) + '>'
     return s
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     History(bot)

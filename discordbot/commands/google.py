@@ -1,15 +1,15 @@
-from dis_snek.client import Snake
-from dis_snek.models import OptionTypes, Scale, slash_command, slash_option
-from dis_snek.models.discord.enums import MessageFlags
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from naff.client import Client
+from naff.models import Extension, OptionTypes, slash_command, slash_option
+from naff.models.discord.enums import MessageFlags
 
 from discordbot import command
 from discordbot.command import MtgContext
 from shared import configuration
 
 
-class Google(Scale):
+class Google(Extension):
     @slash_command('google')
     @slash_option('query', 'Search terms', OptionTypes.STRING, required=True)
     async def google(self, ctx: MtgContext, query: str) -> None:
@@ -42,5 +42,5 @@ class Google(Scale):
 
     m_google = command.alias_message_command_to_slash_command(google, 'query')
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     Google(bot)

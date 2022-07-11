@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9e115997cb98fa9eb20e08be3c1265300467c9b9e5fa5bcb7ce33dd6ede43b62"
+            "sha256": "136ecb4752fde125273d577f320acea8ee8380c1b7e03007cbc30f645f4021a1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -359,22 +359,6 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.2.13"
-        },
-        "dis-snek": {
-            "hashes": [
-                "sha256:5a1fa72d3d5de96a7550a480d33a4f4a6ac8509391fa20890c2eb495fb45d221",
-                "sha256:c39d0ff5e1f0cde3a0feefcd05f4a7d6de1d6b1aafbda745bbaa7a63d541af0f"
-            ],
-            "index": "pypi",
-            "version": "==7.0.0"
-        },
-        "dis-taipan": {
-            "hashes": [
-                "sha256:8d5341690a4c113116bda14dbeb479aabc6fbf36fe64cbf27fd3db16babdfe85",
-                "sha256:e0590871b33963205a3148acee54b61ce21ddd9074ba99b08b970fd044de22db"
-            ],
-            "index": "pypi",
-            "version": "==0.2.9"
         },
         "discord-typings": {
             "hashes": [
@@ -986,14 +970,6 @@
             "index": "pypi",
             "version": "==3.5.2"
         },
-        "molter": {
-            "hashes": [
-                "sha256:42b280cb7fe2d96b74564f934486812bc078df5305b919951f3a43110d15c5c3",
-                "sha256:a60a8fa935a76c470602cb0bb0a900c4525b550906498907d15d676d9a5d89c9"
-            ],
-            "index": "pypi",
-            "version": "==0.10.0"
-        },
         "multidict": {
             "hashes": [
                 "sha256:0327292e745a880459ef71be14e709aaea2f783f3537588fb4ed09b6c01bca60",
@@ -1087,6 +1063,14 @@
             ],
             "index": "pypi",
             "version": "==2.1.1"
+        },
+        "naff": {
+            "hashes": [
+                "sha256:56819e71d867aa6c175ef1189b13a65cf6bf810d3fdd0f0a4ea3f4452ccd1dc2",
+                "sha256:da207f9850f41900fbb64eb3422c9c1fa53e800cdbdb3002606333d77e120f95"
+            ],
+            "index": "pypi",
+            "version": "==1.6.0"
         },
         "numpy": {
             "hashes": [
@@ -1503,7 +1487,7 @@
         "pystache": {
             "editable": true,
             "git": "https://github.com/PennyDreadfulMTG/pystache",
-            "ref": "94a3b0a14a194118aea90546ea926f5d155bd5f1"
+            "ref": "c4239ce0fd5484e707c9339a53d763d3141f3cc9"
         },
         "pytest": {
             "hashes": [
@@ -1812,7 +1796,7 @@
                 "sha256:8298d6d56d39be0e3bc13c1c97d133f9b45d797169a0e11cdd0e0489d786f7ec",
                 "sha256:879ba4d1e89654d9769ce13121e0f94310ea32e8d2f8cf587b77c08bbcdb30d6"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4.0'",
             "version": "==1.26.10"
         },
         "vcrpy": {

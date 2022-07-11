@@ -1,16 +1,15 @@
 import math
 from typing import List, Optional, Tuple
 
-from dis_snek import Snake
-from dis_snek.models import OptionTypes, Scale, slash_command, slash_option
-from molter import message_command
+from naff import Client
+from naff.models import Extension, OptionTypes, prefixed_command, slash_command, slash_option
 
 from discordbot.command import MtgInteractionContext
 from magic import tournaments
 
 
-class Swiss(Scale):
-    def __init__(self, bot: Snake) -> None:
+class Swiss(Extension):
+    def __init__(self, bot: Client) -> None:
         self.bot = bot
         super().__init__()
 
@@ -63,7 +62,7 @@ class Swiss(Scale):
                 s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
         await ctx.send(s)
 
-    m_swiss = message_command(name='swiss')(swiss.callback)
+    m_swiss = prefixed_command(name='swiss')(swiss.callback)
 
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:
     players_in_elimination_rounds = 2 ** num_elimination_rounds
@@ -86,5 +85,5 @@ def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) ->
                 record_required = f'{wins}–{losses}'
     return (num_players_by_losses, record_required)
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     Swiss(bot)

@@ -2,42 +2,43 @@
 Debug stuff
 """
 
-from dis_snek.client import Snake
-from dis_snek.client.errors import CommandCheckFailure, ScaleLoadException
-from dis_snek.models import MessageContext, Scale, check, is_owner, message_command
+from naff import Extension, prefixed_command
+from naff.client import Client
+from naff.client.errors import CommandCheckFailure, ExtensionLoadException
+from naff.models import PrefixedContext, check, is_owner
 
 
-class PDDebug(Scale):
-    @message_command('regrow')
+class PDDebug(Extension):
+    @prefixed_command('regrow')  # type: ignore
     @check(is_owner())
-    async def regrow(self, ctx: MessageContext, module: str) -> None:
+    async def regrow(self, ctx: PrefixedContext, module: str) -> None:
         try:
-            self.bot.regrow_scale(f'{__package__}.{module}')
+            self.bot.reload_extension(f'{__package__}.{module}')
             await ctx.message.add_reaction('🔁')
-        except ScaleLoadException as e:
-            if 'Unable to shed scale: No scale exists with name' in str(e):
+        except ExtensionLoadException as e:
+            if 'Attempted to reload extension thats not loaded.' in str(e):
                 try:
-                    self.bot.grow_scale(f'{__package__}.{module}')
+                    self.bot.load_extension(f'{__package__}.{module}')
                     await ctx.message.add_reaction('▶')
-                except ScaleLoadException as c:
+                except ExtensionLoadException as c:
                     await ctx.send(str(c))
             else:
                 await ctx.send(str(e))
 
     @regrow.error
-    async def regrow_error(self, error: Exception, ctx: MessageContext) -> None:
+    async def regrow_error(self, error: Exception, ctx: PrefixedContext) -> None:
         if isinstance(error, CommandCheckFailure):
             await ctx.send('You do not have permission to execute this command')
             return
         raise
 
-    @message_command('enable_debugger')
+    @prefixed_command('enable_debugger')  # type: ignore
     @check(is_owner())
-    async def enable_debugger(self, ctx: MessageContext) -> None:
-        self.bot.grow_scale('dis_snek.debug_scale')
+    async def enable_debugger(self, ctx: PrefixedContext) -> None:
+        self.bot.load_extension('naff.ext.debug_extension')
         await self.bot.synchronise_interactions()
         await ctx.send('Enabled')
 
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     PDDebug(bot)

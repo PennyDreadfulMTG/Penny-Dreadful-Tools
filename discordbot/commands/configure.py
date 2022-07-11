@@ -2,8 +2,9 @@ import logging
 import traceback
 from typing import Any
 
-from dis_snek.client.errors import CommandException
-from dis_snek.models import slash_command
+from naff import User
+from naff.client.errors import CommandException
+from naff.models import slash_command
 
 from discordbot.command import MtgContext
 from shared import settings
@@ -16,6 +17,9 @@ class ConfigError(CommandException):
 
 @slash_command('configure')
 async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
+    if isinstance(ctx.author, User):
+        await ctx.send("Can't configure DMs right now, sorry")
+        return
     if not ctx.author.guild_permissions.manage_channels:
         await ctx.send("You don't have permsssion to configure this server.")
         return
@@ -35,7 +39,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
         raise ConfigError(configuring)
 
     with settings.with_config_file(configuring):
-        settings.SETTINGS[key].value = value  # type: ignore
+        settings.SETTINGS[key].value = value
 
 @configure.error
 async def configure_error(ctx: MtgContext, error: Exception) -> None:

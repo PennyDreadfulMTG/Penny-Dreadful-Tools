@@ -1,4 +1,4 @@
-from dis_snek.models import slash_command
+from naff.models import slash_command
 
 from discordbot.command import MtgContext
 from magic import fetcher

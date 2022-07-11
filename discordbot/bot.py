@@ -4,15 +4,15 @@ import logging
 import os
 import subprocess
 import sys
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, cast
 
-from dis_snek import Snake, listen
-from dis_snek.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
-from dis_snek.client.errors import Forbidden
-from dis_snek.client.utils import timestamp_converter
-from dis_snek.models import (ActivityType, Embed, Guild, GuildText, Intents, Member, Role,
-                             ScheduledEventType, User)
 from github.GithubException import GithubException
+from naff import Client, listen
+from naff.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
+from naff.client.errors import Forbidden
+from naff.client.utils import timestamp_converter
+from naff.models import (ActivityType, Embed, Guild, GuildText, Intents, Member, Role,
+                         ScheduledEventType)
 
 import discordbot.commands
 from discordbot import command
@@ -27,7 +27,7 @@ from shared.settings import with_config_file
 TASKS = []
 
 def background_task(func: Callable) -> Callable:
-    async def wrapper(self: Snake) -> None:
+    async def wrapper(self: Client) -> None:
         try:
             await self.wait_until_ready()
             await func(self)
@@ -37,7 +37,7 @@ def background_task(func: Callable) -> Callable:
     return wrapper
 
 
-class Bot(Snake):
+class Bot(Client):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
@@ -45,16 +45,18 @@ class Bot(Snake):
 
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES)
 
-        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!', **kwargs)
+        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!',
+                         prefixed_context=command.MtgMessageContext, interaction_context=command.MtgInteractionContext,
+                         **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self))
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
-            self.grow_scale('dis_snek.ext.debug_scale')
+            self.load_extension('naff.ext.debug_extension')
         self.sentry_token = configuration.get_optional_str('sentry_token')
-        if self.sentry_token:
-            self.grow_scale('dis_taipan.sentry')
+        # if self.sentry_token:
+        #     self.load_extension('dis_taipan.sentry')
 
     async def stop(self) -> None:
         await super().stop()
@@ -77,7 +79,7 @@ class Bot(Snake):
         if event.message.channel is None:
             logging.warn(f'Got Message with no channel: {event.message}')
 
-        ctx = await self.get_context(event.message)
+        ctx = cast(command.MtgMessageContext, await self.get_context(event.message))  # Casting, because we overrode the base class
         await command.respond_to_card_names(ctx)
 
     @listen()
@@ -105,12 +107,19 @@ class Bot(Snake):
         if is_pd_server(member.guild):
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             chan = await member.guild.fetch_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
-            await chan.send(greeting)
+            if isinstance(chan, GuildText):
+                await chan.send(greeting)
+            else:
+                logging.warning('could not find greeting channel')
 
     async def on_presence_update(self, event: PresenceUpdate) -> None:
-        user: User = event.user
-        member: Member = await self.fetch_member(user.id, event.guild_id)
-        guild: Guild = await self.fetch_guild(event.guild_id)
+        user = event.user
+        member = await self.fetch_member(user.id, event.guild_id)
+        guild = await self.fetch_guild(event.guild_id)
+        if member is None:
+            return
+        if guild is None:
+            return
         if user.bot:
             return
         # streamers
@@ -121,50 +130,53 @@ class Bot(Snake):
                 if activity.type == ActivityType.STREAMING:
                     streaming = True
             if not streaming and streaming_role in member.roles:
-                await member.remove_roles(streaming_role)
+                await member.remove_role(streaming_role)
             elif streaming and not streaming_role in member.roles:
-                await member.add_roles(streaming_role)
+                await member.add_role(streaming_role)
         # Achievements
+        if event.status in ['online', 'dnd']:
+            return await self.sync_achievements(member, guild)
+
+    async def sync_achievements(self, member: Member, guild: Guild) -> None:
         role = await get_role(member.guild, 'Linked Magic Online')
-        if role and event.status in ['online', 'dnd']:
-            data = None
-            # Linked to PDM
-            if role is not None and not role in member.roles:
-                if data is None:
-                    data = await fetcher.person_data_async(member.id)
-                if data.get('id', None):
-                    await member.add_roles(role)
-
-            key = f'discordbot:achievements:players:{member.id}'
-            if is_pd_server(guild) and not redis.get_bool(key) and not data:
+        data = None
+        # Linked to PDM
+        if role is not None and not role in member.roles:
+            if data is None:
                 data = await fetcher.person_data_async(member.id)
-                redis.store(key, True, ex=14400)
+            if data.get('id', None):
+                await member.add_role(role)
 
-            # Trophies
-            if is_pd_server(guild) and data is not None and data.get('achievements', None) is not None:
-                expected: List[Role] = []
-                remove: List[Role] = []
+        key = f'discordbot:achievements:players:{member.id}'
+        if is_pd_server(guild) and not redis.get_bool(key) and not data:
+            data = await fetcher.person_data_async(member.id)
+            redis.store(key, True, ex=14400)
 
-                async def achievement_name(key: str) -> str:
-                    name = self.achievement_cache.get(key, None)
-                    if name is None:
-                        self.achievement_cache.update(await fetcher.achievement_cache_async())
-                        name = self.achievement_cache[key]
-                    return f'🏆 {name["title"]}'
+        # Trophies
+        if is_pd_server(guild) and data is not None and data.get('achievements', None) is not None:
+            expected: List[Role] = []
+            remove: List[Role] = []
 
-                for name, count in data['achievements'].items():
-                    if int(count) > 0:
-                        trophy = await achievement_name(name)
-                        role = await get_role(guild, trophy, create=True)
-                        if role is not None:
-                            expected.append(role)
-                for role in member.roles:
-                    if role in expected:
-                        expected.remove(role)
-                    elif '🏆' in role.name:
-                        remove.append(role)
-                await member.remove_roles(*remove)
-                await member.add_roles(*expected)
+            async def achievement_name(key: str) -> str:
+                name = self.achievement_cache.get(key, None)
+                if name is None:
+                    self.achievement_cache.update(await fetcher.achievement_cache_async())
+                    name = self.achievement_cache[key]
+                return f'🏆 {name["title"]}'
+
+            for name, count in data['achievements'].items():
+                if int(count) > 0:
+                    trophy = await achievement_name(name)
+                    role = await get_role(guild, trophy, create=True)
+                    if role is not None:
+                        expected.append(role)
+            for role in member.roles:
+                if role in expected:
+                    expected.remove(role)
+                elif '🏆' in role.name:
+                    remove.append(role)
+            await member.remove_roles(remove)  # type: ignore
+            await member.add_roles(expected)  # type: ignore
 
     # async def on_guild_join(self, server: Guild) -> None:
     #     for channel in server.channels:
@@ -222,7 +234,7 @@ class Bot(Snake):
             logging.warning('tournament channel is not configured')
             return
         try:
-            channel: Optional[GuildText] = await self.fetch_channel(tournament_channel_id)
+            channel = await self.fetch_channel(tournament_channel_id)
         except Forbidden:
             channel = None
             configuration.write('tournament_reminders_channel_id', 0)
@@ -411,8 +423,10 @@ async def prepare_database_async() -> None:
     oracle.init()
 
 
-def is_pd_server(guild: Guild) -> bool:
-    return guild.id == 207281932214599682  # or guild.id == 226920619302715392
+def is_pd_server(guild: Optional[Guild]) -> bool:
+    if not guild:
+        return False
+    return guild.id == configuration.pd_server_id.value
 
 async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optional[Role]:
     for r in guild.roles:

@@ -1,7 +1,7 @@
 import os
 import pathlib
 
-from dis_snek.models import File, message_command, slash_command
+from naff.models import File, prefixed_command, slash_command
 
 from discordbot.command import MtgContext
 
@@ -13,4 +13,4 @@ async def mana(ctx: MtgContext) -> None:
         img = File(f)
         await ctx.send(file=img)
 
-m_mana = message_command(mana.callback)
+m_mana = prefixed_command(mana.callback)  # type: ignore

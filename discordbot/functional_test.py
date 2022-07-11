@@ -3,8 +3,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-from dis_snek import Snake
-from dis_snek.models import BaseCommand, Context
+from naff import Client
+from naff.models import BaseCommand, Context
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin
@@ -21,7 +21,8 @@ class ContextForTests(Context, MtgMixin):
     sent_args = False
     sent_file = False
     content: Optional[str] = None
-    bot: Snake = None
+    bot: Client
+    content_parameters: str
     id = random.randint(111111111111111111, 999999999999999999)
 
     async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
@@ -74,8 +75,9 @@ def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional
 @pytest.mark.functional
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content, function_name', get_params())
-async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expected_content: str, function_name: str) -> None:
+async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], expected_content: str, function_name: str) -> None:
     command = find_command(discordbot, cmd, function_name)
+    assert command is not None
     print(f'command: {command}')
 
     ctx = ContextForTests()
@@ -96,8 +98,7 @@ async def test_command(discordbot: Snake, cmd: str, kwargs: Dict[str, Any], expe
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content
 
-def find_command(discordbot: Snake, cmd: str, function_name: str = None) -> BaseCommand:
-    command = None
+def find_command(discordbot: Client, cmd: str, function_name: str = None) -> Optional[BaseCommand]:
     for cmds in discordbot.interactions.values():
         if cmd in cmds:
             command = cmds[cmd]
@@ -107,6 +108,7 @@ def find_command(discordbot: Snake, cmd: str, function_name: str = None) -> Base
             if not function_name:
                 break
     else:
-        command = discordbot.commands[cmd]
-        print(f'found command {command} - {command.callback}')
-    return command
+        p_command = discordbot.prefixed_commands[cmd]
+        print(f'found command {p_command} - {p_command.callback}')
+        return p_command
+    return None

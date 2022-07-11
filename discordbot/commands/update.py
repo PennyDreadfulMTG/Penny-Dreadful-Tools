@@ -1,14 +1,14 @@
-from dis_snek import Snake
-from dis_snek.models import Scale, check, is_owner, message_command, slash_command
+from naff import Client
+from naff.models import Extension, check, is_owner, slash_command
 
-from discordbot.command import MtgContext, slash_permission_pd_mods
+from discordbot.command import MtgContext
 from magic import multiverse, oracle, whoosh_write
 from shared import configuration
 
 
-class Update(Scale):
-    @slash_command('update', default_permission=False)
-    @slash_permission_pd_mods()
+class Update(Extension):
+    @slash_command('update')  # type: ignore
+    @check(is_owner())
     async def update(self, ctx: MtgContext) -> None:
         """Forces an update to legal cards and bugs."""
         if configuration.prevent_cards_db_updates.get():
@@ -22,7 +22,5 @@ class Update(Scale):
         oracle.init(force=True)
         await ctx.send('Reloaded legal cards and bugs.')
 
-    m_update = message_command('update')(check(is_owner())(update.callback))
-
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     Update(bot)

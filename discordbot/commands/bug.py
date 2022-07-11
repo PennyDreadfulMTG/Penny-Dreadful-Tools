@@ -1,13 +1,13 @@
 from typing import Optional
 
-from dis_snek import Scale, Snake
-from dis_snek.models import OptionTypes, slash_command, slash_option
+from naff import Extension, Client
+from naff.models import OptionTypes, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from shared import repo
 
 
-class Bug(Scale):
+class Bug(Extension):
     @slash_command('bug')
     @slash_option('title', 'One sentence description of the issue', OptionTypes.STRING, required=True)
     @slash_option('body', 'More info', OptionTypes.STRING)
@@ -36,5 +36,5 @@ class Bug(Scale):
         else:
             await ctx.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     Bug(bot)

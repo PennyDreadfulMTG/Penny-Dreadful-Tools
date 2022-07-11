@@ -97,13 +97,11 @@ sentry-sdk = {extras = ["flask"], version = "*"}
 pydantic = "*"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
+naff = "*"
 tomli = "*"
-dis-snek = "*"
 orjson = "*"
 traceback-with-variables = "*"
 freezegun = "*"
-molter = "*"
-dis-taipan = "*"
 
 [requires]
 python_version = "3.10"

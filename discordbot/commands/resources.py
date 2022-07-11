@@ -1,18 +1,18 @@
 import re
 from typing import Dict, Optional
 
-from dis_snek.models.snek.application_commands import (OptionTypes, auto_defer, slash_command,
+from naff.models.naff.application_commands import (OptionTypes, auto_defer, slash_command,
                                                        slash_option)
 
-from discordbot.command import MtgContext, roughly_matches
+from discordbot.command import MtgInteractionContext, roughly_matches
 from magic import fetcher
 from shared import fetch_tools
 
 
-@slash_command('resources')
+@slash_command('resources')  # type: ignore
 @slash_option('resource', 'Your query', OptionTypes.STRING)
 @auto_defer()
-async def resources(ctx: MtgContext, resource: Optional[str]) -> None:
+async def resources(ctx: MtgInteractionContext, resource: Optional[str]) -> None:
     """Useful pages related to `args`."""
     results = {}
     if resource is None:

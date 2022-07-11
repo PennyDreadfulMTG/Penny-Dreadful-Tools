@@ -1,5 +1,5 @@
 
-from dis_snek.models import message_command, slash_command
+from naff.models import prefixed_command, slash_command
 
 from discordbot.command import MtgContext
 from magic import fetcher, tournaments
@@ -19,4 +19,4 @@ async def tournament(ctx: MtgContext) -> None:
     next_time = t['discord_relative']
     await ctx.send('The next tournament is {name} {next_time} ({full}).\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/'), full=t['discord_full']))
 
-m_to = message_command('to')(tournament.callback)
+m_to = prefixed_command('to')(tournament.callback)

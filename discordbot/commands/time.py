@@ -1,7 +1,7 @@
 import logging
 import re
 
-from dis_snek.models import OptionTypes, message_command, slash_command, slash_option
+from naff.models import OptionTypes, prefixed_command, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from discordbot.shared import guild_id
@@ -33,4 +33,4 @@ async def time(ctx: MtgContext, place: str) -> None:
         logging.exception('Exception trying to get the time for %s.', place)
         await ctx.send('{author}: Location not found.'.format(author=ctx.author.mention))
 
-m_time = message_command('time')(time.callback)
+m_time = prefixed_command('time')(time.callback)

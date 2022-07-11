@@ -35,6 +35,7 @@ cse_api_key = StrSetting('cse_api_key', '')
 cse_engine_id = StrSetting('cse_engine_id', '')
 bot_debug = BoolSetting('bot_debug', False)
 token = StrSetting('token', '')
+pd_server_id = IntSetting('pd_server_id', 207281932214599682)
 
 # === Magic ===
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.

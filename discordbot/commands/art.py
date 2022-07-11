@@ -1,18 +1,17 @@
 import re
-
-from dis_snek.client import Snake
-from dis_snek.models import Scale, slash_command
+from naff.client import Client
+from naff.models import Extension, slash_command
 
 from discordbot import command
-from discordbot.command import MtgContext
+from discordbot.command import MtgInteractionContext
 from magic import image_fetcher
 from magic.models import Card
 
 
-class Art(Scale):
+class Art(Extension):
     @slash_command('art')
     @command.slash_card_option()
-    async def art(self, ctx: MtgContext, card: Card) -> None:
+    async def art(self, ctx: MtgInteractionContext, card: Card) -> None:
         """Display the artwork of the requested card."""
 
         if card is not None:
@@ -23,9 +22,9 @@ class Art(Scale):
             else:
                 await ctx.send('{author}: Could not get image.'.format(author=ctx.author.mention))
 
-    art.autocomplete('card')(command.autocomplete_card)
+    art.autocomplete('card')(command.autocomplete_card)  # type: ignore
 
     m_art = command.alias_message_command_to_slash_command(art)
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     Art(bot)

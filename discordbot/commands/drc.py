@@ -1,9 +1,9 @@
 from typing import Dict, Optional
 from urllib import parse
 
-from dis_snek.models import Embed, OptionTypes, slash_command, slash_option
+from naff.models import Embed, OptionTypes, slash_command, slash_option
 
-from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
+from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext, MtgInteractionContext
 from magic import fetcher, oracle
 from shared import configuration, fetch_tools
 
@@ -28,7 +28,7 @@ async def drc(ctx: MtgContext) -> None:
 
 @drc.subcommand('search', sub_cmd_description='Card Search using Dreadrise')
 @slash_option('query', 'search query', OptionTypes.STRING)
-async def cardsearch(ctx: MtgContext, query: str) -> None:
+async def cardsearch(ctx: MtgInteractionContext, query: str) -> None:
     """Card search using Dreadrise."""
     await ctx.defer()
     card_data = await fetcher.dreadrise_search_cards(query, MAX_CARDS_SHOWN, 1)
@@ -51,7 +51,7 @@ async def cardsearch(ctx: MtgContext, query: str) -> None:
 
 @drc.subcommand('deck')
 @slash_option('query', 'search query', OptionTypes.STRING)
-async def decks(ctx: MtgContext, query: str) -> None:
+async def decks(ctx: MtgInteractionContext, query: str) -> None:
     """Deck search using Dreadrise."""
     await ctx.defer()
     data = await fetcher.dreadrise_search_decks(query, MAX_DECKS_SHOWN)
@@ -86,7 +86,7 @@ async def decks(ctx: MtgContext, query: str) -> None:
 @drc.subcommand('matchups')
 @slash_option('q1', 'The query for the first player', OptionTypes.STRING, required=True)
 @slash_option('q2', 'The query for the second player', OptionTypes.STRING, required=True)
-async def matchups(ctx: MtgContext, q1: str, q2: Optional[str]) -> None:
+async def matchups(ctx: MtgInteractionContext, q1: str, q2: Optional[str]) -> None:
     """Matchup calculation using Dreadrise."""
     await ctx.defer()
     q2 = q2 or ''

@@ -1,12 +1,12 @@
-from dis_snek.models import CMD_BODY, OptionTypes, message_command
-from dis_snek.models.snek.application_commands import auto_defer, slash_command, slash_option
+from naff.models import CMD_BODY, OptionTypes, prefixed_command
+from naff.models.naff.application_commands import auto_defer, slash_command, slash_option
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext, MtgMessageContext
 from magic import fetcher, oracle
 from shared import fetch_tools
 
 
-@slash_command('scry')
+@slash_command('scry')  # type: ignore
 @slash_option('query', 'A scryfall query', OptionTypes.STRING, required=True)
 @auto_defer()
 async def search(ctx: MtgContext, query: str) -> None:
@@ -16,7 +16,7 @@ async def search(ctx: MtgContext, query: str) -> None:
     cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
     await ctx.post_cards(cards, ctx.author, more_results_link(query, how_many))
 
-@message_command('scry')
+@prefixed_command('scry')
 async def m_scry(ctx: MtgMessageContext, args: CMD_BODY) -> None:
     ctx.kwargs['query'] = args
     await search.call_callback(search.callback, ctx)

@@ -2137,11 +2137,11 @@
         },
         "types-chardet": {
             "hashes": [
-                "sha256:5f481eb9aa258f177c14b59b6a2968b2e93b67c77b5fcba228de54ca93940add",
-                "sha256:d6bfdb92a3e764ab84acbbedda9885055acad9f69b8f7eb2c7a75454a1455e42"
+                "sha256:78f5a0c020a47b73dcb32d7955ef5a024f580fc0966b39ac8d7a0dd4047b7756",
+                "sha256:aa0f1d3a2b5803b900f59305c335ef0b686e645a2e37fba98c6124c8c12cb2f6"
             ],
             "index": "pypi",
-            "version": "==5.0.1"
+            "version": "==5.0.2"
         },
         "types-click": {
             "hashes": [

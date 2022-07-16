@@ -43,7 +43,7 @@ class Bot(Client):
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
-        intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES)
+        intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES | Intents.GUILD_MESSAGE_CONTENT)
 
         super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!',
                          prefixed_context=command.MtgMessageContext, interaction_context=command.MtgInteractionContext,

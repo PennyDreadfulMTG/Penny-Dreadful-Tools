@@ -2214,11 +2214,11 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:079713f14f6adc886561e02d6ca9aa6857db8cbbc0c56f6c36eacfd547b66f7c",
-                "sha256:2e943cb3476ca0d7a45b97955448541e053f6fec24bedd3d482883891e0c5822"
+                "sha256:431c8a5a9724d822a02f20e151eff18c437f4133fc18673973956ed102e8e1b7",
+                "sha256:75be8d1434864c7dd32314aa3aaf01f84d55d9a0432c0101261761f7e250eb38"
             ],
             "index": "pypi",
-            "version": "==4.3.6"
+            "version": "==4.3.9"
         },
         "types-requests": {
             "hashes": [

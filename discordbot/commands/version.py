@@ -18,6 +18,6 @@ async def version(ctx: MtgContext) -> None:
     embed.add_field('Commit age', Timestamp.fromtimestamp(int(age)))
     scryfall = Timestamp.fromdatetime(database.last_updated())
     embed.add_field('Scryfall last updated', scryfall)
-    snekver = _v('dis-snek')
-    embed.add_field('dis-snek version', snekver)
+    snekver = _v('naff')
+    embed.add_field('naff version', snekver)
     await ctx.send(embed=embed)

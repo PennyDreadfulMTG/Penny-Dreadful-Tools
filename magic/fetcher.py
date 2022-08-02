@@ -180,8 +180,8 @@ async def scryfall_last_updated_async() -> datetime.datetime:
         for o in d['data']:
             if o['type'] == 'default_cards':
                 return dtutil.parse_rfc3339(o['updated_at'])
-    except json.JSONDecodeError:
-        raise InvalidDataException('Scryfall data is not JSON')
+    except json.JSONDecodeError as e:
+        raise InvalidDataException('Scryfall data is not JSON') from e
     raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
 def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str]]:

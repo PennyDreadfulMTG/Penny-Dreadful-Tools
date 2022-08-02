@@ -175,10 +175,13 @@ def resources() -> Dict[str, Dict[str, str]]:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
 async def scryfall_last_updated_async() -> datetime.datetime:
-    d = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
-    for o in d['data']:
-        if o['type'] == 'default_cards':
-            return dtutil.parse_rfc3339(o['updated_at'])
+    try:
+        d = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
+        for o in d['data']:
+            if o['type'] == 'default_cards':
+                return dtutil.parse_rfc3339(o['updated_at'])
+    except json.JSONDecodeError:
+        raise InvalidDataException('Scryfall data is not JSON')
     raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
 def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str]]:

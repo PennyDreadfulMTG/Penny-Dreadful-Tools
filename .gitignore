@@ -51,3 +51,4 @@ whoosh_index/
 /.env
 /src/pystache/
 /configs/*
+/.hypothesis/

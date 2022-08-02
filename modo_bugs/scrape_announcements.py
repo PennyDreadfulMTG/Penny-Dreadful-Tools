@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_announcements()
-    if new:
+    if new and link is not None:
         scrape(link)
         changes.append('* New Magic Online Announcements')
 
@@ -27,17 +27,20 @@ def parse_header(h: Tag) -> None:
     txt = h.text
     if 'Downtime' in txt:
         parse_downtimes(h)
-    elif txt.startswith('Build Notes') or txt.startswith('Change Log'):
+    elif txt.startswith('Build Notes') or 'Change Log' in txt:
         parse_build_notes(h)
 
 def parse_build_notes(h: Tag) -> None:
     entries = []
     for n in h.next_elements:
+        if isinstance(n, Tag) and n.name == 'li':
+            if n.text:
+                entries.append(n.text)
         if isinstance(n, Tag) and n.name == 'p':
             if 'posted-in' in n.attrs.get('class', []):
                 break
-            if n.text:
-                entries.append(n.text)
+            if n.attrs.get('id', '') == 'down':
+                break
 
     embed = {
         'title': 'MTGO Build Notes',

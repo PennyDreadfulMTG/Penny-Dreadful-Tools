@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_announcements()
-    if new:
+    if new and link is not None:
         scrape(link)
         changes.append('* New Magic Online Announcements')
 

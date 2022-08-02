@@ -77,7 +77,7 @@ def find_bug_blog() -> Tuple[Optional[str], bool]:
     new = update_redirect('bug_blog', title.text, link)
     return (link, new)
 
-def find_announcements() -> Tuple[str, bool]:
+def find_announcements() -> Tuple[Optional[str], bool]:
     articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
     if not articles:
         return (None, False)

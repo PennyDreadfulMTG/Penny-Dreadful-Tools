@@ -79,6 +79,8 @@ def find_bug_blog() -> Tuple[Optional[str], bool]:
 
 def find_announcements() -> Tuple[str, bool]:
     articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
+    if not articles:
+        return (None, False)
     (title, link) = articles[0]
     logger.info('Found: {0} ({1})'.format(title, link))
     bn = 'Change Log' in fetch_tools.fetch(link)

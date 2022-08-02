@@ -81,7 +81,7 @@ def find_announcements() -> Tuple[str, bool]:
     articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
     (title, link) = articles[0]
     logger.info('Found: {0} ({1})'.format(title, link))
-    bn = 'Build Notes' in fetch_tools.fetch(link)
+    bn = 'Change Log' in fetch_tools.fetch(link)
     new = update_redirect('announcements', title.text, link, has_build_notes=str(bn))
     return (link, new)
 
@@ -93,7 +93,7 @@ def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
 @lazy.lazy_property
 def get_article_archive() -> List[Tuple[Tag, str]]:
     try:
-        html = fetch_tools.fetch('http://magic.wizards.com/en/articles/archive/184956')
+        html = fetch_tools.fetch('https://magic.wizards.com/en/articles/archive/1586807')
     except fetch_tools.FetchException:
         html = fetch_tools.fetch('http://magic.wizards.com/en/articles/archive/')
     soup = BeautifulSoup(html, 'html.parser')

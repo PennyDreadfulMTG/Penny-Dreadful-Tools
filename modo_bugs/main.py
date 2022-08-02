@@ -21,10 +21,13 @@ def run(argv: Tuple[str]) -> None:
 
     changes: List[str] = []
 
-    if 'scrape_bb' in args:
-        scrape_bugblog.main(changes)
-    if 'scrape_an' in args:
-        scrape_announcements.main(changes)
+    try:
+        if 'scrape_bb' in args:
+            scrape_bugblog.main(changes)
+        if 'scrape_an' in args:
+            scrape_announcements.main(changes)
+    except Exception as e:
+        logging.exception(e)
 
     if 'update' in args:
         update.main()

@@ -2213,11 +2213,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:36385618d4bd2ee3211d4d2e78b44f067ceb5984865c0f253f3c9ecb964526cf",
-                "sha256:38015d310d13cf7d4d712d2507178349e13fd5dab85259dab7d9a9884c2c9c2a"
+                "sha256:7a9f7b152d594a1c18dd4932cdd2596b8efbeedfd73caa4e4abb3755805b4685",
+                "sha256:b0421f9f2d0dd0f8df2c75f974686517ca67473f05b466232d4c6384d765ad7a"
             ],
             "index": "pypi",
-            "version": "==2.28.7"
+            "version": "==2.28.8"
         },
         "types-six": {
             "hashes": [

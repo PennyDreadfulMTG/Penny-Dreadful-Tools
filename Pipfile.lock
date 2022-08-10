@@ -2128,11 +2128,11 @@
         },
         "types-chardet": {
             "hashes": [
-                "sha256:035245a5c2649fe9c2b2fcbecc196b942b733c50ab50abefa74bafbdc1e4dfbd",
-                "sha256:ff45a67b6d126deeabf43ffa72e17fa5914fb37f74cf3bd64da4419bc8248ca1"
+                "sha256:449a98338fa264ddee88dd3a8141989f0ae920bcc720460c54b9f4374a6c1bb3",
+                "sha256:6946e22f32789a473852570810b4afe632172fae03c04bdbffe670606cc4ac11"
             ],
             "index": "pypi",
-            "version": "==5.0.3"
+            "version": "==5.0.4"
         },
         "types-click": {
             "hashes": [

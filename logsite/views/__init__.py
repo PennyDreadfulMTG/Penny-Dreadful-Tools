@@ -6,3 +6,5 @@ from .match_view import Match
 from .matches import Matches
 from .not_found import NotFound
 from .people import People
+
+__all__ = ('About', 'Charts', 'Home', 'InternalServerError', 'Match', 'Matches', 'NotFound', 'People')

@@ -88,6 +88,8 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
             '--warn-return-any',
             '--custom-typeshed', '../typeshed',
         ])
+    if os.environ.get('GITHUB_ACTOR') != 'dependabot[bot]':
+        args.extend(['--warn-unused-ignores'])
     args.extend(argv or ['.'])  # Invoke on the entire project.
 
     print('mypy ' + ' '.join(args))

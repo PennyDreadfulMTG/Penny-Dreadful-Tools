@@ -1092,11 +1092,11 @@
         },
         "naff": {
             "hashes": [
-                "sha256:04e312fa3404f10f729d777ffa2ecaf7e900004f760ae5b429bd360b4f0fab23",
-                "sha256:0ba29013ee7b2ca2e26ea16d8372a5db63ba351812009cec85530b936a0b9206"
+                "sha256:0ca111fa02c83022061089079a5710d158690c3a549942911ae6c1cb95e09c7b",
+                "sha256:51aceec2d0039a9472b6ded14b2ee5188577736cf63bb137be69203f62036007"
             ],
             "index": "pypi",
-            "version": "==1.7.1"
+            "version": "==1.8.1"
         },
         "numpy": {
             "hashes": [
@@ -1830,7 +1830,7 @@
                 "sha256:c33ccba33c819596124764c23a97d25f32b28433ba0dedeb77d873a38722c9bc",
                 "sha256:ea6e8fb210b19d950fab93b60c9009226c63a28808bc8386e05301e25883ac0a"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==1.26.11"
         },
         "vcrpy": {

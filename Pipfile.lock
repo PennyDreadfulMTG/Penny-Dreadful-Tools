@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b892baa32a0385f86d803474ebd7b5d5caa5b3eb8bcc2eedce5f78f8cd9b9e01"
+            "sha256": "ec276947efa168f37a7a84d624d3765da71a8823335d87a10216b8fe02dd4ea2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -695,10 +695,10 @@
         },
         "jsbeautifier": {
             "hashes": [
-                "sha256:ce2a96ecf62692fa4fa2bd56207f7ea8ab37a74ab1d5025254b80fb53169a98b"
+                "sha256:0d5244851144dc473b1d1044be3dd6c56f61fd69ebdc1f93b813d8224272f06f"
             ],
             "index": "pypi",
-            "version": "==1.14.5"
+            "version": "==1.14.6"
         },
         "jsonschema": {
             "hashes": [
@@ -1839,7 +1839,7 @@
                 "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
                 "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '3.5'",
             "version": "==1.26.12"
         },
         "vcrpy": {

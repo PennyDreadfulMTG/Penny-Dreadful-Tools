@@ -451,11 +451,11 @@
         },
         "fonttools": {
             "hashes": [
-                "sha256:cb91ef8d5a435d90aeb3ab814b2548c6b515df5bc13b4c5adaa23778f2f79823",
-                "sha256:e637d2fe06bddabbfc488e02ef32d04d561e3c71e9ba11abc7782ea753ceb218"
+                "sha256:2ee4509aeba40542a6c6d00895a0c66f3cb8b9edda2fa58438dd9f769e3ce76e",
+                "sha256:e4467a36e24f918507b5cfdc61d2a479b6c7393a85d1f126f3c84f76e8df2151"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.36.0"
+            "version": "==4.37.0"
         },
         "freezegun": {
             "hashes": [
@@ -1839,7 +1839,7 @@
                 "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
                 "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
             ],
-            "markers": "python_version >= '3.5'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4.0'",
             "version": "==1.26.12"
         },
         "vcrpy": {
@@ -2261,11 +2261,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:26f481fabb65321ba428bdfb82c97fc638e00be6b20efa83915b007cf3893e28",
-                "sha256:4f8be25faaa0a3088d6380ab7f27b4c7bc74ba81b2c7a351729f5be4af438290"
+                "sha256:5bd851a00d761c5b5df78a379cb174a9aa63defc8d967600bbb37df607099ed2",
+                "sha256:c9892951c3fd39e193aa35952049c48b31b56bd9c0bf104eb9735de030f20c8d"
             ],
             "index": "pypi",
-            "version": "==1.16.18"
+            "version": "==1.16.19"
         },
         "types-toml": {
             "hashes": [

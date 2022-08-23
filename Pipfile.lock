@@ -2261,11 +2261,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:26f481fabb65321ba428bdfb82c97fc638e00be6b20efa83915b007cf3893e28",
-                "sha256:4f8be25faaa0a3088d6380ab7f27b4c7bc74ba81b2c7a351729f5be4af438290"
+                "sha256:5bd851a00d761c5b5df78a379cb174a9aa63defc8d967600bbb37df607099ed2",
+                "sha256:c9892951c3fd39e193aa35952049c48b31b56bd9c0bf104eb9735de030f20c8d"
             ],
             "index": "pypi",
-            "version": "==1.16.18"
+            "version": "==1.16.19"
         },
         "types-toml": {
             "hashes": [

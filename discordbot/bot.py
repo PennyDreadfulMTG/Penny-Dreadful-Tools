@@ -56,7 +56,7 @@ class Bot(Client):
             self.load_extension('naff.ext.debug_extension')
         self.sentry_token = configuration.get_optional_str('sentry_token')
         # if self.sentry_token:
-        #     self.load_extension('dis_taipan.sentry')
+        #     self.load_extension('naff.ext.sentry', token=self.sentry_token)
 
     async def stop(self) -> None:
         await super().stop()
@@ -244,7 +244,7 @@ class Bot(Client):
             return
 
         guild = channel.guild
-        while self.is_ready:
+        while not self.is_closed:
             info = tournaments.next_tournament_info()
             diff = info['next_tournament_time_precise']
             if info['sponsor_name']:
@@ -316,7 +316,7 @@ class Bot(Client):
             logging.warning('tournament channel could not be found')
             return
 
-        while self.is_ready:
+        while not self.is_closed:
             try:
                 league = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/league'))
             except fetch_tools.FetchException as e:

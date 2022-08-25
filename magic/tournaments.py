@@ -20,8 +20,7 @@ SAT = 2
 APAC = 3
 SUN = 4
 MON = 5
-TUE = 6
-THU = 7
+THU = 6
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -79,9 +78,9 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     apds_time = (APAC, 'APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index])
     pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])
     pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])
-    pdtue_time = (TUE, 'Penny Dreadful Tuesdays', rrule.rrule(rrule.WEEKLY, byhour=20, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TU)[index])
+    # pdtue_time = (TUE, 'Penny Dreadful Tuesdays', rrule.rrule(rrule.WEEKLY, byhour=20, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TU)[index])
     pdthu_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
-    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdtue_time, pdthu_time]
+    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdthu_time]
 
 # Note: this may be in the past. It always gives the date for the current season.
 # Note: if the start date of next season is not known then the date of the PD 500 cannot be known and in such a case this return None.
@@ -195,63 +194,63 @@ def series_info(tournament_id: int) -> Container:
     return guarantee.exactly_one([s for s in all_series_info() if s.tournament_id == tournament_id])
 
 def all_series_info() -> List[Container]:
-    info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
+    info = {t[0]: t for t in get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))}
     return [
         Container({
-            'tournament_id': info[0][0],
-            'name': info[0][1],
+            'tournament_id': FNM,
+            'name': info[FNM][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[0][2],
+            'time': info[FNM][2],
             'sponsor_name': 'Cardhoarder',
 
         }),
         Container({
-            'tournament_id': info[1][0],
-            'name': info[1][1],
+            'tournament_id': SAT,
+            'name': info[SAT][1],
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
-            'time': info[1][2],
+            'time': info[SAT][2],
             'sponsor_name': 'Cardhoarder',
         }),
         Container({
-            'tournament_id': info[2][0],
-            'name': info[2][1],
+            'tournament_id': APAC,
+            'name': info[APAC][1],
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
-            'time': info[2][2],
+            'time': info[APAC][2],
             'sponsor_name': 'Cardhoarder',
         }),
         Container({
-            'tournament_id': info[3][0],
-            'name': info[3][1],
+            'tournament_id': SUN,
+            'name': info[SUN][1],
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
-            'time': info[3][2],
+            'time': info[SUN][2],
             'sponsor_name': 'Cardhoarder',
         }),
         Container({
-            'tournament_id': info[4][0],
-            'name': info[4][1],
+            'tournament_id': MON,
+            'name': info[MON][1],
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[4][2],
+            'time': info[MON][2],
             'sponsor_name': 'Cardhoarder',
         }),
+        # Container({
+        #     'tournament_id': TUE,
+        #     'name': info[TUE][1],
+        #     'hosts': ['tiggu', 'bakert99'],
+        #     'display_time': '7pm Eastern',
+        #     'time': info[TUE][2],
+        #     'sponsor_name': None,
+        # }),
         Container({
-            'tournament_id': info[5][0],
-            'name': info[5][1],
-            'hosts': ['tiggu', 'bakert99'],
-            'display_time': '7pm Eastern',
-            'time': info[5][2],
-            'sponsor_name': None,
-        }),
-        Container({
-            'tournament_id': info[6][0],
-            'name': info[6][1],
+            'tournament_id': info[THU][0],
+            'name': info[THU][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[6][2],
+            'time': info[THU][2],
             'sponsor_name': 'Cardhoarder',
         }),
     ]

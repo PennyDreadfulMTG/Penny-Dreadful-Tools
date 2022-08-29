@@ -53,18 +53,18 @@ def test_compat() -> None:
     assert len(names) == 0
 
 # The following two sets assume that Ertai is a long dead character, and is getting no new cards.
-# If wizards does an Invasion block throwback in some supplemental product, they may start failing.
+# This was a bad assumption, and DMU broke these tests.  We should find safer test cases.
 def test_legend_query() -> None:
     names = command.parse_queries('[Ertai]', False)
     assert len(names) == 1
     results = command.results_from_queries(names)[0][0]
-    assert len(results.get_ambiguous_matches()) == 2
+    assert len(results.get_ambiguous_matches()) == 3
 
 def test_partial_query() -> None:
     names = command.parse_queries("[Ertai's]", False)
     assert len(names) == 1
     results = command.results_from_queries(names)[0][0]
-    assert len(results.get_ambiguous_matches()) == 3
+    assert len(results.get_ambiguous_matches()) == 4
 
 def test_info_emoji() -> None:
     legal_cards = oracle.legal_cards()

@@ -3,7 +3,6 @@ import datetime
 import logging
 import os
 import subprocess
-import sys
 from typing import Any, Callable, Dict, List, Optional, cast
 
 from github.GithubException import GithubException
@@ -57,6 +56,7 @@ class Bot(Client):
         self.sentry_token = configuration.get_optional_str('sentry_token')
         if self.sentry_token:
             self.load_extension('naff.ext.sentry', token=self.sentry_token)
+        self.load_extension('discordbot.background')
 
     async def stop(self) -> None:
         await super().stop()
@@ -388,25 +388,6 @@ class Bot(Client):
             else:
                 timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
             await asyncio.sleep(timer)
-
-    @background_task
-    async def background_task_reboot(self) -> None:
-        do_reboot_key = 'discordbot:do_reboot'
-        if redis.get_bool(do_reboot_key):
-            redis.clear(do_reboot_key)
-        while True:
-            if redis.get_bool(do_reboot_key):
-                logging.info('Got request to reboot from redis')
-                try:
-                    p = await asyncio.create_subprocess_shell('git pull')
-                    await p.wait()
-                    p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pipenv install')
-                    await p.wait()
-                except Exception as c:
-                    repo.create_issue('Bot error while rebooting', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
-                await self.stop()
-                sys.exit(0)
-            await asyncio.sleep(60)
 
 def init() -> None:
     client = Bot()

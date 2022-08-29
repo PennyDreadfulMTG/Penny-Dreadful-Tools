@@ -55,8 +55,8 @@ class Bot(Client):
         if configuration.bot_debug.value:
             self.load_extension('naff.ext.debug_extension')
         self.sentry_token = configuration.get_optional_str('sentry_token')
-        # if self.sentry_token:
-        #     self.load_extension('naff.ext.sentry', token=self.sentry_token)
+        if self.sentry_token:
+            self.load_extension('naff.ext.sentry', token=self.sentry_token)
 
     async def stop(self) -> None:
         await super().stop()

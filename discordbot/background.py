@@ -1,9 +1,15 @@
 import asyncio
 import logging
 import sys
-from naff import Task, Extension, triggers, listen, Client
-from shared import configuration, redis_wrapper as redis, repo
-from magic import image_fetcher, fetcher
+
+from naff import Client, Extension, listen
+from naff.models.naff.tasks import IntervalTrigger, Task
+
+from magic import fetcher, image_fetcher
+from shared import configuration
+from shared import redis_wrapper as redis
+from shared import repo
+
 
 class BackgroundTasks(Extension):
     @listen()
@@ -14,8 +20,7 @@ class BackgroundTasks(Extension):
             redis.clear(self.do_reboot_key)
         self.background_task_reboot.start()
 
-
-    @Task.create(triggers.IntervalTrigger(hours=12))
+    @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
         guild = self.bot.get_guild(configuration.pd_server_id)
         if not guild:

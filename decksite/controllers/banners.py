@@ -1,4 +1,3 @@
-from decksite.data import playability
 import asyncio
 import functools
 import os
@@ -7,12 +6,14 @@ from typing import List, Tuple
 from flask import Response, make_response, send_file
 
 from decksite import APP, get_season_id
+from decksite.data import playability
+from decksite.views import Banners
 from magic import fetcher, image_fetcher, oracle, seasons
 from shared import logger
-from shared.pd_exception import DatabaseException
-from decksite.views import Banners
 from shared.container import Container
+from shared.pd_exception import DatabaseException
 from shared_web.api import return_json
+
 
 @APP.route('/admin/banners/')
 def banner_stats() -> str:

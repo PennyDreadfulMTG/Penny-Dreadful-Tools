@@ -66,8 +66,6 @@ def dev_db() -> wrappers.Response:
     path = os.path.join(str(APP.static_folder), 'dev-db.sql.gz')
     return send_file(os.path.abspath(path), mimetype='application/gzip', as_attachment=True)
 
-
-
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:
     if not request.path.endswith('/'):

@@ -35,7 +35,7 @@ class BackgroundTasks(Extension):
 
         await guild.edit(banner=path)
 
-    @Task.create(triggers.IntervalTrigger(minutes=1))
+    @Task.create(IntervalTrigger(minutes=1))
     async def background_task_reboot(self) -> None:
         if redis.get_bool(self.do_reboot_key):
             logging.info('Got request to reboot from redis')

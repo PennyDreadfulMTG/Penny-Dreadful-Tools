@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e90ce65246e8f517308d6fa9c2c6f980203a9643701a64323ad28596bf2e28bb"
+            "sha256": "58cc258831cfffdb509771b70775ac639f3f8e8d4133030001bb43cd198454db"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -128,11 +128,11 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:39fa822c82dc112f5072a208ddf01c58184043aa90e3e469786fa0520c71aaa7",
-                "sha256:af71cdc0775b6e4d88076746620e2c8cd1bf4533a9977cfdd00eeea97d95530c"
+                "sha256:396c88d0a58d7f8daadf730b2ce90838bf338c6752558db719ec6f99c18ec20e",
+                "sha256:d612609242996c4365aeb0345e61edba34363eaaba55f1c0addf6a98f073bef6"
             ],
             "index": "pypi",
-            "version": "==2.12.4"
+            "version": "==2.12.5"
         },
         "async-timeout": {
             "hashes": [
@@ -1838,7 +1838,7 @@
                 "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
                 "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '3.5'",
             "version": "==1.26.12"
         },
         "vcrpy": {

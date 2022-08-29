@@ -1,5 +1,5 @@
 import urllib.parse
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 from flask import redirect, request, url_for
 from werkzeug import wrappers

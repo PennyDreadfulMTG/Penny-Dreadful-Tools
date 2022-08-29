@@ -42,14 +42,6 @@ async def all_cards_async() -> Tuple[List[CardDescription], str]:
             raise FetchException(f'Default Cards not in expected format. Got {response}') from c
     return response, download_uri
 
-async def bulk_data_uri() -> str:
-    endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
-    for e in endpoints['data']:
-        if e['type'] == 'default_cards':
-            return e['download_uri']
-    else:
-        raise FetchException('Unable to find Default Cards')
-
 async def all_sets_async() -> List[Dict[str, Any]]:
     try:
         d = json.load(open('sets.json'))
@@ -57,6 +49,18 @@ async def all_sets_async() -> List[Dict[str, Any]]:
         d = await fetch_tools.fetch_json_async('https://api.scryfall.com/sets')
     assert not d['has_more']
     return d['data']
+
+async def banner_cards() -> Tuple[List[str], str]:
+    data = await fetch_tools.fetch_json_async(decksite_url('/api/banner'))
+    return (data['cardnames'], data['background'])
+
+async def bulk_data_uri() -> str:
+    endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
+    for e in endpoints['data']:
+        if e['type'] == 'default_cards':
+            return e['download_uri']
+    else:
+        raise FetchException('Unable to find Default Cards')
 
 async def bugged_cards_async() -> Optional[List[Dict[str, Any]]]:
     try:

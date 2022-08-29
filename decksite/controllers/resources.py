@@ -4,7 +4,6 @@ from flask import Response, make_response, request
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import card as cs
 from decksite.data import playability
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges

@@ -1,1 +1,3 @@
-from . import about, admin, api, competitions, league, metagame, people, resources
+from . import about, admin, api, banners, competitions, league, metagame, people, resources
+
+__all__ = ('about', 'admin', 'api', 'banners', 'competitions', 'league', 'metagame', 'people', 'resources')

@@ -28,7 +28,7 @@ async def drc(ctx: MtgContext) -> None:
     ...
 
 @drc.subcommand('search', sub_cmd_description='Card Search using Dreadrise')
-@slash_option('query', 'search query', OptionTypes.STRING)
+@slash_option('query', 'search query', OptionTypes.STRING, required=True)
 async def cardsearch(ctx: MtgInteractionContext, query: str) -> None:
     """Card search using Dreadrise."""
     await ctx.defer()
@@ -51,7 +51,7 @@ async def cardsearch(ctx: MtgInteractionContext, query: str) -> None:
     await ctx.post_cards(cards, ctx.author, more_results_link(query, count))
 
 @drc.subcommand('deck')
-@slash_option('query', 'search query', OptionTypes.STRING)
+@slash_option('query', 'search query', OptionTypes.STRING, required=True)
 async def decks(ctx: MtgInteractionContext, query: str) -> None:
     """Deck search using Dreadrise."""
     await ctx.defer()
@@ -86,7 +86,7 @@ async def decks(ctx: MtgInteractionContext, query: str) -> None:
 
 @drc.subcommand('matchups')
 @slash_option('q1', 'The query for the first player', OptionTypes.STRING, required=True)
-@slash_option('q2', 'The query for the second player', OptionTypes.STRING, required=True)
+@slash_option('q2', 'The query for the second player', OptionTypes.STRING, required=False)
 async def matchups(ctx: MtgInteractionContext, q1: str, q2: Optional[str]) -> None:
     """Matchup calculation using Dreadrise."""
     await ctx.defer()

@@ -204,19 +204,14 @@ async def generate_banner(names: List[str], background: str, v_crop: int = None)
     canvas.save(out_filepath)
     return out_filepath
 
-async def generate_discord_banner(names: List[str], background: str, v_crop: int = None) -> str:
+async def generate_discord_banner(names: List[str], background: str) -> str:
     cards = [oracle.load_card(name) for name in names]
     hq_artcrops = fetcher.hq_artcrops()
     hq = False
     if background in hq_artcrops.keys():
         hq = True
-        if v_crop is None:
-            v_crop = hq_artcrops[background][1]
 
-    if v_crop is None:
-        v_crop = 33
-
-    out_filepath = determine_filepath(cards, f'discord-banner-{background}{"hq" if hq else ""}{v_crop}-', '.png')
+    out_filepath = determine_filepath(cards, f'discord-banner-{background}{"hq" if hq else ""}-', '.png')
 
     if fetch_tools.acceptable_file(out_filepath):
         return out_filepath
@@ -234,14 +229,14 @@ async def generate_discord_banner(names: List[str], background: str, v_crop: int
         ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
             img = img.resize((320, 426), Image.LANCZOS)
-            canvas.paste(img, (x, 100))
+            canvas.paste(img, (x, 500))
             x = x + img.width + 10
     x = 300
     for c in cards[n:]:
         ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
             img = img.resize((320, 426), Image.LANCZOS)
-            canvas.paste(img, (x, 200))
+            canvas.paste(img, (x, 600))
             x = x + img.width + 10
 
     canvas.save(out_filepath)

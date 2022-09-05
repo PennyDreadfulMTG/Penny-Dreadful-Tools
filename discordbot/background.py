@@ -6,12 +6,11 @@ import sys
 from naff import Client, Extension, listen
 from naff.client.errors import Forbidden
 from naff.client.utils import timestamp_converter
+from naff.models.discord import Embed, GuildText, ScheduledEventType
 from naff.models.naff.tasks import IntervalTrigger, Task
-from naff.models.discord import GuildText, Embed, ScheduledEventType
 
-from magic import fetcher, image_fetcher, tournaments, multiverse
-from shared import configuration, redis_wrapper, dtutil
-from shared import repo
+from magic import fetcher, image_fetcher, multiverse, tournaments
+from shared import configuration, dtutil, redis_wrapper, repo
 
 
 class BackgroundTasks(Extension):

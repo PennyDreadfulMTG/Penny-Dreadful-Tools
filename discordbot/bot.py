@@ -9,7 +9,7 @@ from github.GithubException import GithubException
 from naff import Client, listen
 from naff.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from naff.client.errors import Forbidden
-from naff.models import (ActivityType, Embed, Guild, GuildText, Intents, Member, Role)
+from naff.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role
 
 import discordbot.commands
 from discordbot import command

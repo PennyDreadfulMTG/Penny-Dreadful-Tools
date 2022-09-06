@@ -75,11 +75,11 @@ class BackgroundTasks(Extension):
             logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
             return
         self.tournament_reminders_channel = channel
-        self.background_task_tournaments.start()
+        self.background_task_tournament_reminders.start()
+        self.background_task_tournament_events.start()
 
     @Task.create(IntervalTrigger(minutes=1))
-    async def background_task_tournaments(self) -> IntervalTrigger:
-        guild = self.tournament_reminders_channel.guild
+    async def background_task_tournament_reminders(self) -> IntervalTrigger:
         info = tournaments.next_tournament_info()
         diff = info['next_tournament_time_precise']
         if info['sponsor_name']:
@@ -117,11 +117,22 @@ class BackgroundTasks(Extension):
 
         if timer < 300:
             timer = 300
+        return IntervalTrigger(timer)
+
+    @Task.create(IntervalTrigger(hours=1))
+    async def background_task_tournament_events(self) -> None:
+        guild = self.tournament_reminders_channel.guild
         events = await guild.list_scheduled_events()
+        info = tournaments.next_tournament_info()
         created = any(e.name == info['next_tournament_name'] for e in events)
         if not created:
             try:
                 expected_duration = datetime.timedelta(hours=3)  # Maybe vary this based on event name?
+                if info['sponsor_name']:
+                    message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
+                else:
+                    message = 'A free tournament'
+
                 await guild.create_scheduled_event(
                     name=info['next_tournament_name'],
                     description=message,
@@ -132,7 +143,7 @@ class BackgroundTasks(Extension):
                 )
             except Forbidden:
                 logging.warning('Can\t create scheduled events')
-        return IntervalTrigger(timer)
+
 
 def setup(bot: Client) -> None:
     BackgroundTasks(bot)

@@ -179,6 +179,5 @@ class BackgroundTasks(Extension):
         await asyncio.sleep(timer)
 
 
-
 def setup(bot: Client) -> None:
     BackgroundTasks(bot)

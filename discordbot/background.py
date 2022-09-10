@@ -1,8 +1,8 @@
 import asyncio
 import datetime
 import logging
-import sys
 import os
+import sys
 
 from naff import Client, Extension, listen
 from naff.client.errors import Forbidden
@@ -10,7 +10,7 @@ from naff.client.utils import timestamp_converter
 from naff.models.discord import Embed, GuildText, ScheduledEventType
 from naff.models.naff.tasks import IntervalTrigger, Task
 
-from magic import fetcher, image_fetcher, multiverse, tournaments, seasons, rotation
+from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
 from shared import configuration, dtutil, redis_wrapper, repo
 
 

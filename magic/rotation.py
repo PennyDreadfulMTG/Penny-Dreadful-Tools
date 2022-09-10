@@ -4,7 +4,7 @@ import os
 from collections import Counter
 from typing import Dict, List, Optional, Tuple
 
-from magic import multiverse, oracle, seasons, fetcher
+from magic import fetcher, multiverse, oracle, seasons
 from magic.models import Card
 from shared import configuration, dtutil
 from shared import redis_wrapper as redis

@@ -2,7 +2,6 @@ import datetime
 
 from naff.models import MessageFlags, prefixed_command, slash_command
 
-from discordbot import bot  # This is a circular import
 from discordbot.command import MtgContext
 from magic import rotation, seasons
 from shared import dtutil
@@ -15,7 +14,7 @@ async def hype(ctx: MtgContext) -> None:
     last_run_time = rotation.last_run_time()
     msg = None
     if until_rotation < datetime.timedelta(7) and last_run_time is not None:
-        msg = await bot.rotation_hype_message(True)
+        msg = await rotation.rotation_hype_message(True)
     if msg:
         await ctx.send(msg, flags=MessageFlags.EPHEMERAL)
     else:

@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 import sys
+import os
 
 from naff import Client, Extension, listen
 from naff.client.errors import Forbidden
@@ -9,7 +10,7 @@ from naff.client.utils import timestamp_converter
 from naff.models.discord import Embed, GuildText, ScheduledEventType
 from naff.models.naff.tasks import IntervalTrigger, Task
 
-from magic import fetcher, image_fetcher, multiverse, tournaments
+from magic import fetcher, image_fetcher, multiverse, tournaments, seasons, rotation
 from shared import configuration, dtutil, redis_wrapper, repo
 
 
@@ -24,6 +25,7 @@ class BackgroundTasks(Extension):
         self.background_task_reboot.start()
 
         await self.prepare_tournaments()
+        await self.prepare_hype()
 
     @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
@@ -143,6 +145,39 @@ class BackgroundTasks(Extension):
                 )
             except Forbidden:
                 logging.warning('Can\t create scheduled events')
+
+    async def prepare_hype(self) -> None:
+        rotation_hype_channel_id = configuration.get_int('rotation_hype_channel_id')
+        if not rotation_hype_channel_id:
+            logging.warning('rotation hype channel is not configured')
+            return
+        try:
+            self.rotation_hype_channel = await self.bot.fetch_channel(rotation_hype_channel_id)
+        except Forbidden:
+            configuration.write('rotation_hype_channel_id', 0)
+            return
+
+        if not isinstance(self.rotation_hype_channel, GuildText):
+            logging.warning('rotation hype channel is not a text channel')
+            return
+        self.background_task_rotation_hype.start()
+
+    @Task.create(IntervalTrigger(hours=1))
+    async def background_task_rotation_hype(self) -> None:
+        until_rotation = seasons.next_rotation() - dtutil.now()
+        last_run_time = rotation.last_run_time()
+        if os.path.exists('.rotation.lock'):
+            timer = 10
+        elif until_rotation < datetime.timedelta(7) and last_run_time is not None:
+            if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
+                hype = await rotation.rotation_hype_message(False)
+                if hype:
+                    await self.rotation_hype_channel.send(hype)
+            timer = 5 * 60
+        else:
+            timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
+        await asyncio.sleep(timer)
+
 
 
 def setup(bot: Client) -> None:

@@ -4,7 +4,7 @@ import os
 from collections import Counter
 from typing import Dict, List, Optional, Tuple
 
-from magic import multiverse, oracle, seasons
+from magic import multiverse, oracle, seasons, fetcher
 from magic.models import Card
 from shared import configuration, dtutil
 from shared import redis_wrapper as redis
@@ -163,3 +163,40 @@ def hits_needed_score(c: Card) -> int:
     if c.status == 'Not Legal':
         return TOTAL_RUNS * 3 - c.hits
     raise InvalidDataException(f'Card status of `{c.status}` not recognized, did you pass a Card with rotation information?')
+
+async def rotation_hype_message(hype_command: bool) -> Optional[str]:
+    if not hype_command:
+        clear_redis()
+    runs, runs_percent, cs = read_rotation_files()
+    runs_remaining = TOTAL_RUNS - runs
+    newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == TOTAL_RUNS / 2]
+    newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
+    newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
+    num_undecided = len([c for c in cs if c.status == 'Undecided'])
+    num_legal_cards = len([c for c in cs if c.status == 'Legal'])
+    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < TOTAL_RUNS / 2 and not hype_command:
+        return None  # Sometimes there's nothing to report
+    s = f'Rotation run number {runs} completed.'
+    if hype_command:
+        s = f'{runs} rotation checks have completed.'
+    s += f' Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
+    if len(newly_hit) > 0 and runs_remaining > runs:
+        newly_hit_s = list_of_most_interesting(newly_hit)
+        s += f'\nFirst hit for: {newly_hit_s}.'
+    if len(newly_legal) > 0:
+        newly_legal_s = list_of_most_interesting(newly_legal)
+        s += f'\nConfirmed legal: {newly_legal_s}.'
+    if len(newly_eliminated) > 0:
+        newly_eliminated_s = list_of_most_interesting(newly_eliminated)
+        s += f'\nEliminated: {newly_eliminated_s}.'
+    s += f'\nUndecided: {num_undecided}.\n'
+    if runs_percent >= 50:
+        s += f"<{fetcher.decksite_url('/rotation/')}>"
+    return s
+
+# This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.
+def list_of_most_interesting(cs: List[Card]) -> str:
+    max_shown = 4
+    if len(cs) > max_shown:
+        return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
+    return ', '.join(c.name for c in cs)

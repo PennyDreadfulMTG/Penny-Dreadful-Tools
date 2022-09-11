@@ -174,8 +174,6 @@ async def rotation_hype_message(hype_command: bool) -> Optional[str]:
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
-    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < TOTAL_RUNS / 2 and not hype_command:
-        return None  # Sometimes there's nothing to report
     s = f'Rotation run number {runs} completed.'
     if hype_command:
         s = f'{runs} rotation checks have completed.'

@@ -15,9 +15,17 @@ MAX_DECKS_SHOWN_WITH_CONTINUATION = 3
 
 def format_deck(x: Dict) -> Dict:
     """Formats a deck object. Returns a dictionary with name and value."""
+
+    name_fdict = dict(name=x['deck']['name'], wins=x['deck']['wins'], losses=x['deck']['losses'])
+    competition = x.get('competition')
+    if competition:
+        name_fdict['src'] = competition['name']
+        name_fstring = '{name} [{src}, {wins}-{losses}]'
+    else:  # this can happen if the latest scrape attempt resulted in a bug and the competitions weren't updated
+        name_fstring = '{name} [{wins}-{losses}]'
+
     return {
-        'name': '{name} [{src}, {wins}-{losses}]'.format(
-            name=x['deck']['name'], wins=x['deck']['wins'], losses=x['deck']['losses'], src=x['competition']['name']),
+        'name': name_fstring.format(**name_fdict),
         'value': '[{arch} deck by {author} ({format})]({domain}/decks/{id})'.format(
             arch=x['tags'][0]['name'], author=x['author']['nickname'],
             format=x['format'], id=x['deck']['deck_id'], domain=link_domain),
@@ -111,5 +119,5 @@ async def matchups(ctx: MtgInteractionContext, q1: str, q2: Optional[str]) -> No
     await ctx.send(ans)
 
 def more_results_link(args: str, total: int) -> str:
-    return 'and {n} more.\n<{d}/cards/find?q={q}>'.format(
+    return 'and {n} more.\n<{d}/card-search?dist=penny_dreadful&q={q}>'.format(
         n=total - DEFAULT_CARDS_SHOWN, q=fetch_tools.escape(args), d=link_domain) if total > MAX_CARDS_SHOWN else ''

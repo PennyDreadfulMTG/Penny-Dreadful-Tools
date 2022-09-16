@@ -355,12 +355,16 @@ def determine_end_of_league(start_date: datetime.datetime, next_rotation: dateti
     return end_date
 
 def determine_league_name(start_date: datetime.datetime, end_date: datetime.datetime) -> str:
-    start_of_end_month_s = '{year}-{month}-01 00:00:00'.format(year=end_date.year, month=end_date.month)
+    local_start_date = start_date.replace(tzinfo=dtutil.UTC_TZ).astimezone(tz=dtutil.WOTC_TZ)
+    local_end_date = end_date.replace(tzinfo=dtutil.UTC_TZ).astimezone(tz=dtutil.WOTC_TZ)
+    start_of_end_month_s = '{year}-{month}-01 00:00:00'.format(year=local_end_date.year, month=local_end_date.month)
     start_of_end_month = dtutil.parse(start_of_end_month_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ).astimezone(dtutil.WOTC_TZ)
-    if start_date + datetime.timedelta(weeks=2) < start_of_end_month:
-        key_date = start_date
+    first_month_duration = start_of_end_month - local_start_date
+    second_month_duration = local_end_date - start_of_end_month
+    if first_month_duration >= second_month_duration:
+        key_date = local_start_date
     else:
-        key_date = end_date
+        key_date = local_end_date
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[key_date.month], YYYY=key_date.year)
 
 def retire_deck(d: Deck) -> None:

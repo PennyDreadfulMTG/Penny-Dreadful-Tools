@@ -1,9 +1,10 @@
 
 from naff.client.client import Client
-from naff.models import prefixed_command, slash_command, Extension
+from naff.models import Extension, prefixed_command, slash_command
 
 from discordbot.command import MtgContext, migrate_to_slash_command
 from magic import fetcher, tournaments
+
 
 class Tournament(Extension):
 

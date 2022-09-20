@@ -23,8 +23,11 @@ def test_determine_end_of_league() -> None:
 
 def test_determine_league_name() -> None:
     start_date = dtutil.parse('2017-11-01 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
-    end_date = dtutil.parse('2017-11-30 11:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
+    end_date = dtutil.parse('2017-11-30 23:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
     assert league.determine_league_name(start_date, end_date) == 'League November 2017'
     start_date = dtutil.parse('2017-09-01 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
-    end_date = dtutil.parse('2017-10-10 11:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
+    end_date = dtutil.parse('2017-10-10 23:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
     assert league.determine_league_name(start_date, end_date) == 'League September 2017'
+    start_date = dtutil.parse('2022-09-16 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
+    end_date = dtutil.parse('2022-10-31 23:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
+    assert league.determine_league_name(start_date, end_date) == 'League October 2022'

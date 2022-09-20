@@ -1,25 +1,26 @@
 version: "2"
 services:
-  # web:
-  #   build: .
-  #   ports:
-  #     - "5000:5000"
-  #     - "5001:5001"
-  #   depends_on:
-  #     - db
-  #     - redis
-  #   env_file: .env
-  #   environment:
-  #     - mysql_host=db
-  #     - redis_host=redis
-  #   volumes:
-  #     - ./decksite:/pdm/decksite
-  #     - ./logsite:/pdm/logsite
-  #     - ./magic:/pdm/magic
-  #     - ./maintenance:/pdm/maintenance
-  #     - ./find:/pdm/find
-  #     - ./shared:/pdm/shared
-  #     - ./shared_web:/pdm/shared_web
+  web:
+    build: .
+    ports:
+      - "80:80"
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    environment:
+      - mysql_host=db
+      - redis_host=redis
+    volumes:
+      - ./decksite:/pdm/decksite
+      - ./logsite:/pdm/logsite
+      - ./magic:/pdm/magic
+      - ./maintenance:/pdm/maintenance
+      - ./find:/pdm/find
+      - ./shared:/pdm/shared
+      - ./shared_web:/pdm/shared_web
+      - ./images:/pdm/images
   # discordbot:
   #   build: .
   #   command: ["pipenv", "run", "python", "run.py", "--wait-for-db", "discordbot"]

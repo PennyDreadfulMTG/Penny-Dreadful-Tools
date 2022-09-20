@@ -163,7 +163,7 @@ class BackgroundTasks(Extension):
         self.background_task_rotation_hype.start()
 
     @Task.create(IntervalTrigger(hours=1))
-    async def background_task_rotation_hype(self) -> None:
+    async def background_task_rotation_hype(self) -> IntervalTrigger:
         until_rotation = seasons.next_rotation() - dtutil.now()
         last_run_time = rotation.last_run_time()
         if os.path.exists('.rotation.lock'):
@@ -176,7 +176,7 @@ class BackgroundTasks(Extension):
             timer = 5 * 60
         else:
             timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
-        await asyncio.sleep(timer)
+        return IntervalTrigger(timer)
 
 
 def setup(bot: Client) -> None:

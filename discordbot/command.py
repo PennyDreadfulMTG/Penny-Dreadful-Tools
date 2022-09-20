@@ -242,12 +242,26 @@ async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: st
     choices = [*set(choices)]
     await ctx.send(choices=list(choices)[:20])  # type: ignore
 
-def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None) -> PrefixedCommand:
+def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) -> PrefixedCommand:
+    """
+    Maintaining prefixed commands is painful and buggy.  Sometimes we just need to turn them off.
+    """
+    async def wrapper(_scale: Extension, ctx: MtgMessageContext) -> None:
+        await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
+        if soft:
+            await command.call_callback(command.callback, ctx)
+
+    return prefixed_command(command.name.default)(wrapper)
+
+def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None, nag: bool = True) -> PrefixedCommand:
     """
     This is a horrible hack.  Use it if a slash command takes one multiword argument
     """
 
     async def wrapper(_scale: Extension, ctx: MtgMessageContext, body: CMD_BODY) -> None:
+        if nag:
+            await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
+
         ctx.kwargs[param] = body
         await command.call_callback(command.callback, ctx)
 

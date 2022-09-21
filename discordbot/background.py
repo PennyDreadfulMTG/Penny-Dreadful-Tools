@@ -11,7 +11,7 @@ from naff.models.discord import Embed, GuildText, ScheduledEventType
 from naff.models.naff.tasks import IntervalTrigger, Task
 
 from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
-from shared import configuration, dtutil, redis_wrapper, repo
+from shared import configuration, dtutil, redis_wrapper, repo, fetch_tools
 
 
 class BackgroundTasks(Extension):
@@ -26,6 +26,7 @@ class BackgroundTasks(Extension):
 
         await self.prepare_tournaments()
         await self.prepare_hype()
+        await self.prepare_league_end()
 
     @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
@@ -191,6 +192,50 @@ class BackgroundTasks(Extension):
             timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
         return IntervalTrigger(timer)
 
+    async def prepare_league_end(self) -> None:
+        if not isinstance(self.tournament_reminders_channel, GuildText):
+            logging.warning('tournament channel could not be found')
+            return
+        self.background_task_league_end.start()
+
+    @Task.create(IntervalTrigger(hours=1))
+    async def background_task_league_end(self) -> IntervalTrigger:
+        try:
+            league = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/league'))
+        except fetch_tools.FetchException as e:
+            err = '; '.join(str(x) for x in e.args)
+            logging.error("Couldn't reach decksite or decode league json with error message(s) %s", err)
+            logging.info('Sleeping for 5 minutes and trying again.')
+            return IntervalTrigger(minutes=5)
+
+        if not league:
+            return IntervalTrigger(minutes=5)
+
+        diff = round((dtutil.parse_rfc3339(league['end_date'])
+                     - datetime.datetime.now(tz=datetime.timezone.utc))
+                     / datetime.timedelta(seconds=1))
+
+        embed = Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
+        if diff <= 60 * 60 * 24:
+            embed.add_field(name='Ending in:', value=dtutil.display_time(diff, 2))
+            embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
+            await self.tournament_reminders_channel.send(embed=embed)
+        if diff <= 5 * 60:
+            # Five minutes, final warning.
+            timer = 301
+        elif diff <= 1 * 60 * 60:
+            # 1 hour. Sleep until five minute warning.
+            timer = diff - 300
+        elif diff <= 24 * 60 * 60:
+            # 1 day.  Sleep until one hour warning.
+            timer = diff - 1800
+        else:
+            # Sleep for 1 day, plus enough to leave us with a whole number of days
+            timer = 24 * 60 * 60 + diff % (24 * 60 * 60)
+
+        if timer < 300:
+            timer = 300
+        return IntervalTrigger(timer)
 
 def setup(bot: Client) -> None:
     BackgroundTasks(bot)

@@ -11,7 +11,7 @@ from naff.models.discord import Embed, GuildText, ScheduledEventType
 from naff.models.naff.tasks import IntervalTrigger, Task
 
 from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
-from shared import configuration, dtutil, redis_wrapper, repo, fetch_tools
+from shared import configuration, dtutil, fetch_tools, redis_wrapper, repo
 
 
 class BackgroundTasks(Extension):

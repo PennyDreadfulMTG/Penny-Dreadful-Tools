@@ -28,7 +28,6 @@ class BackgroundTasks(Extension):
         await self.prepare_hype()
         await self.prepare_league_end()
 
-
     @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
         guild = await self.bot.fetch_guild(configuration.pd_server_id)
@@ -213,8 +212,8 @@ class BackgroundTasks(Extension):
             return IntervalTrigger(minutes=5)
 
         diff = round((dtutil.parse_rfc3339(league['end_date'])
-                        - datetime.datetime.now(tz=datetime.timezone.utc))
-                        / datetime.timedelta(seconds=1))
+                     - datetime.datetime.now(tz=datetime.timezone.utc))
+                     / datetime.timedelta(seconds=1))
 
         embed = Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
         if diff <= 60 * 60 * 24:

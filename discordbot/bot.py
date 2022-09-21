@@ -1,36 +1,21 @@
 import asyncio
-import datetime
 import logging
 import subprocess
-from typing import Any, Callable, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 
 from github.GithubException import GithubException
 from naff import Client, listen
 from naff.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
-from naff.client.errors import Forbidden
-from naff.models import ActivityType, Embed, Guild, GuildText, Intents, Member, Role
+from naff.models import ActivityType, Guild, GuildText, Intents, Member, Role
 
 import discordbot.commands
 from discordbot import command
 from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, whoosh_write
-from shared import configuration, dtutil, fetch_tools, perf
+from shared import configuration, perf
 from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
-
-TASKS = []
-
-def background_task(func: Callable) -> Callable:
-    async def wrapper(self: Client) -> None:
-        try:
-            await self.wait_until_ready()
-            await func(self)
-        except Exception as e:
-            await self.on_error(func.__name__, e)
-    TASKS.append(wrapper)
-    return wrapper
-
 
 class Bot(Client):
     def __init__(self, **kwargs: Any) -> None:
@@ -44,8 +29,6 @@ class Bot(Client):
                          prefixed_context=command.MtgMessageContext, interaction_context=command.MtgInteractionContext,
                          **kwargs)
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
-        for task in TASKS:
-            asyncio.ensure_future(task(self))
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
             self.load_extension('naff.ext.debug_extension')
@@ -222,65 +205,6 @@ class Bot(Client):
             repo.create_issue(f'Bot error {source}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=error)
         except GithubException as e:
             logging.error('Github error\n%s', e)
-
-    @background_task
-    async def background_task_league_end(self) -> None:
-        tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
-        if not tournament_channel_id:
-            logging.warning('tournament channel is not configured')
-            return
-        try:
-            channel = await self.fetch_channel(tournament_channel_id)
-        except Forbidden:
-            channel = None
-            configuration.write('tournament_reminders_channel_id', 0)
-
-        if not isinstance(channel, GuildText):
-            logging.warning('tournament channel could not be found')
-            return
-
-        while not self.is_closed:
-            try:
-                league = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/league'))
-            except fetch_tools.FetchException as e:
-                err = '; '.join(str(x) for x in e.args)
-                logging.error("Couldn't reach decksite or decode league json with error message(s) %s", err)
-                logging.info('Sleeping for 5 minutes and trying again.')
-                await asyncio.sleep(300)
-                continue
-
-            if not league:
-                await asyncio.sleep(300)
-                continue
-
-            diff = round((dtutil.parse_rfc3339(league['end_date'])
-                          - datetime.datetime.now(tz=datetime.timezone.utc))
-                         / datetime.timedelta(seconds=1))
-
-            embed = Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
-            if diff <= 60 * 60 * 24:
-                embed.add_field(name='Ending in:', value=dtutil.display_time(diff, 2))
-                embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
-                # See #2809.
-                # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed=embed)
-            if diff <= 5 * 60:
-                # Five minutes, final warning.
-                timer = 301
-            elif diff <= 1 * 60 * 60:
-                # 1 hour. Sleep until five minute warning.
-                timer = diff - 300
-            elif diff <= 24 * 60 * 60:
-                # 1 day.  Sleep until one hour warning.
-                timer = diff - 1800
-            else:
-                # Sleep for 1 day, plus enough to leave us with a whole number of days
-                timer = 24 * 60 * 60 + diff % (24 * 60 * 60)
-
-            if timer < 300:
-                timer = 300
-            await asyncio.sleep(timer)
-        logging.warning('naturally stopping league reminders')
 
 def init() -> None:
     client = Bot()

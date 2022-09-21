@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 
-from naff import Client, Extension, listen
+from naff import Client, Extension, listen, MISSING, Absent
 from naff.client.errors import Forbidden
 from naff.client.utils import timestamp_converter
 from naff.models.discord import Embed, GuildText, ScheduledEventType
@@ -34,18 +34,28 @@ class BackgroundTasks(Extension):
             logging.warn('Could not find PD Guild')
             return
 
-        if not 'BANNER' in guild.features:
-            logging.warn('Guild does not have BANNER feature')
+        if not 'INVITE_SPLASH' in guild.features:
+            logging.warn('Guild does not have INVITE_SPLASH feature')
             return
 
         cardnames, background = await fetcher.banner_cards()
         path = await image_fetcher.generate_discord_banner(cardnames, background)
-        if path == redis_wrapper.get_str('discordbot:bannerpath'):
-            logging.info(f'Banner is already {path}')
-            return
+
+        banner_img: Absent[str] = path
+        splash_img: Absent[str] = path
+
+        if not 'BANNER' in guild.features or path == redis_wrapper.get_str('discordbot:bannerpath'):
+            banner_img = MISSING
+        else:
+            redis_wrapper.store('discordbot:bannerpath', path)
+
+        if redis_wrapper.get_str('discordbot:splashpath') == path:
+            splash_img = MISSING
+        else:
+            redis_wrapper.store('discordbot:splashpath', path)
 
         logging.info(f'Updating discord banner to {path}')
-        await guild.edit(banner=path)
+        await guild.edit(banner=banner_img, splash=splash_img)
 
     @Task.create(IntervalTrigger(minutes=1))
     async def background_task_reboot(self) -> None:

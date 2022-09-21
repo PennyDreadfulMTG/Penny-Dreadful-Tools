@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 
-from naff import Client, Extension, listen, MISSING, Absent
+from naff import MISSING, Absent, Client, Extension, listen
 from naff.client.errors import Forbidden
 from naff.client.utils import timestamp_converter
 from naff.models.discord import Embed, GuildText, ScheduledEventType

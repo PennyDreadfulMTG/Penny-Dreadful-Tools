@@ -54,6 +54,9 @@ class BackgroundTasks(Extension):
         else:
             redis_wrapper.store('discordbot:splashpath', path)
 
+        if banner_img is MISSING and splash_img is MISSING:
+            return
+
         logging.info(f'Updating discord banner to {path}')
         await guild.edit(banner=banner_img, splash=splash_img)
 

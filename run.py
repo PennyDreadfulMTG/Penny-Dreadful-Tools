@@ -10,7 +10,7 @@ from typing import Any, List, Optional, Tuple
 import click
 from traceback_with_variables import activate_by_import  # noqa
 
-from shared import configuration
+from shared import configuration, decorators
 
 logging.basicConfig(level=logging.INFO)
 
@@ -97,6 +97,7 @@ def modo_bugs(argv: Tuple[str]) -> None:
     from modo_bugs import main
     main.run(argv)
 
+@decorators.interprocess_locked('.task.lock')
 def task(args: List[str]) -> None:
     try:
         module = args[0]

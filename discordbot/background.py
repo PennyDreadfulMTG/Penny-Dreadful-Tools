@@ -30,7 +30,7 @@ class BackgroundTasks(Extension):
 
     @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
-        guild = await self.bot.fetch_guild(configuration.pd_server_id)
+        guild = await self.bot.fetch_guild(configuration.pd_server_id.value)
         if not guild:
             logging.warn('Could not find PD Guild')
             return

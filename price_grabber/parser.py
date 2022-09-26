@@ -28,7 +28,7 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
     for line in s.splitlines():
         if line.count('|') != 7:
             raise InvalidDataException('Bad line (mtgotraders): {line}'.format(line=line))
-        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|')  # pylint: disable=unused-variable
+        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|')
         in_stock_str = in_stock_str.replace('<br>', '')
         assert in_stock_str in ('Yes', 'No')
         in_stock = in_stock_str == 'Yes'

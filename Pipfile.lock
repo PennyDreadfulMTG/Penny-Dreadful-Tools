@@ -2350,11 +2350,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:5bd851a00d761c5b5df78a379cb174a9aa63defc8d967600bbb37df607099ed2",
-                "sha256:c9892951c3fd39e193aa35952049c48b31b56bd9c0bf104eb9735de030f20c8d"
+                "sha256:550ce95de763370a7d9e32b2fce51f6c1edc81c1bfd2249b8f2cd44e1fd30b1b",
+                "sha256:57c01d7ae41ba953ffe955be548dd46073c0562e76a0ea305419af9f8ac02e84"
             ],
             "index": "pypi",
-            "version": "==1.16.19"
+            "version": "==1.16.20"
         },
         "types-toml": {
             "hashes": [

@@ -9,6 +9,8 @@ decksite = "python run.py decksite"
 maintenance = "python run.py maintenance"
 scraper = "python run.py scraper"
 modo-bugs = "python run.py modo-bugs"
+price-grabber = "python run.py price-grabber"
+srv-price = "python run.py srv-price"
 lint = "python dev.py lint"
 test = "python dev.py test"
 

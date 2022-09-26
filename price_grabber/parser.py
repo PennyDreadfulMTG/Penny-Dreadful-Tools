@@ -28,12 +28,14 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
     for line in s.splitlines():
         if line.count('|') != 7:
             raise InvalidDataException('Bad line (mtgotraders): {line}'.format(line=line))
-        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|')  # pylint: disable=unused-variable
+        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|')
         in_stock_str = in_stock_str.replace('<br>', '')
         assert in_stock_str in ('Yes', 'No')
         in_stock = in_stock_str == 'Yes'
         if name.endswith('(a)') or name.endswith('(b)'):  # Guildgates
             name = name[:-4]
+        if name == 'Tura Kenner':
+            name = 'Tura Kennerüd, Skyknight'
         if float(p) <= card_price.MAX_PRICE_TIX and in_stock and not is_exceptional_name(name):
             details.append((name, p, mtgo_set))
     return [(name_lookup(name), p, mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]

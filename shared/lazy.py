@@ -1,9 +1,8 @@
 from typing import Callable, TypeVar, cast
 
 T = TypeVar('T')
-PropertyFunction = TypeVar('PropertyFunction', bound=Callable)
 
-def lazy_property(fn: PropertyFunction) -> PropertyFunction:
+def lazy_property(fn: Callable[[], T]) -> Callable[[], T]:
     """Decorator that makes a property lazy-evaluated.
     """
     attr_name = '_lazy_' + fn.__name__
@@ -12,4 +11,4 @@ def lazy_property(fn: PropertyFunction) -> PropertyFunction:
         if not hasattr(fn, attr_name):
             setattr(fn, attr_name, fn())
         return getattr(fn, attr_name)
-    return cast(PropertyFunction, _lazy_property)
+    return cast(Callable[[], T], _lazy_property)

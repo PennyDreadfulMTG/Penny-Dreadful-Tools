@@ -179,7 +179,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
         await insert_cards(new_date, sets, all_cards)
 
-async def insert_cards(new_date, sets, all_cards) -> None:
+async def insert_cards(new_date: datetime.datetime, sets: List[Dict[str, Any]], all_cards: List[CardDescription]) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.

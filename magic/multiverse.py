@@ -171,6 +171,15 @@ async def update_database_async(new_date: datetime.datetime) -> None:
     except Exception as e:
         print(f'Aborting database update because fetching from Scryfall failed: {e}')
         return
+    try:
+        await insert_cards(new_date, sets, all_cards)
+        configuration.last_good_bulk_data.value = download_uri
+    except Exception as e:
+        print(f'Failed to load current bulk data, using fallback: {e}')
+        all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
+        await insert_cards(new_date, sets, all_cards)
+
+async def insert_cards(new_date, sets, all_cards) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
@@ -191,7 +200,6 @@ async def update_database_async(new_date: datetime.datetime) -> None:
     db().execute('SET FOREIGN_KEY_CHECKS=1')  # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
     rebuild_cache()
     db().commit('update_database')
-    configuration.last_good_bulk_data.value = download_uri
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
 async def insert_cards_async(printings: List[CardDescription]) -> List[int]:

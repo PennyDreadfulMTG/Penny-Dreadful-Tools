@@ -19,6 +19,9 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 FORMAT_IDS: Dict[str, int] = {}
 
+# This is only a fallback
+KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township', 'Urza, Planeswalker']
+
 def init() -> bool:
     return asyncio.run(init_async())
 
@@ -395,7 +398,10 @@ def is_meld_result(p: CardDescription) -> bool:
     all_parts = p.get('all_parts')
     if all_parts is None or not p['layout'] == 'meld':
         return False
-    meld_result_name = next(part['name'] for part in all_parts if part['component'] == 'meld_result')
+    meld_result_name = next((part['name'] for part in all_parts if part['component'] == 'meld_result'), None)
+    if not meld_result_name:
+        # If we can't find the cannonical meld result, fall back to the part with no mana cost
+        meld_result_name = next(part['name'] for part in all_parts if part['name'] in KNOWN_MELDS)
     return p['name'] == meld_result_name
 
 def load_sets() -> Dict[str, int]:

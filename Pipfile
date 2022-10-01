@@ -13,6 +13,7 @@ price-grabber = "python run.py price-grabber"
 srv-price = "python run.py srv-price"
 lint = "python dev.py lint"
 test = "python dev.py test"
+init-cards = "python -c \"from magic import multiverse; multiverse.init()\""
 
 [dev-packages]
 flake8 = "==5.0.4"

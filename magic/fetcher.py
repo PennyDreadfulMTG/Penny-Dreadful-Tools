@@ -31,9 +31,12 @@ async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
     data = await fetch_tools.fetch_json_async(decksite_url('/api/achievements'))
     return {a['key']: a for a in data['achievements']}
 
-async def all_cards_async() -> Tuple[List[CardDescription], str]:
+async def all_cards_async(force_last_good: bool = False) -> Tuple[List[CardDescription], str]:
     download_uri = await bulk_data_uri()
-    response = await fetch_tools.fetch_json_async(download_uri)
+    if force_last_good:
+        response = None
+    else:
+        response = await fetch_tools.fetch_json_async(download_uri)
     if not isinstance(response, list):
         try:
             backup = configuration.last_good_bulk_data.value

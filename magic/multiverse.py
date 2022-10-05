@@ -20,7 +20,8 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: Dict[str, int] = {}
 
 # This is only a fallback
-KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township', 'Urza, Planeswalker']
+KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
+               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
 
 def init() -> bool:
     return asyncio.run(init_async())

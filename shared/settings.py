@@ -69,6 +69,8 @@ class Setting(Generic[T]):
         except FileNotFoundError:
             cfg = {}
         if key in os.environ:
+            if cfg.get(key, None) == os.environ[key]:
+                return cfg[key]
             cfg[key] = os.environ[key]
             print('CONFIG: {0}={1}'.format(key, cfg[key]))
             CONFIG.update({key: cfg[key]})

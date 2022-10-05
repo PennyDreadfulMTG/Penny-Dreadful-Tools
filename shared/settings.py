@@ -42,6 +42,10 @@ def with_config_file(namespace: Any) -> Generator[None, None, None]:
     yield
     assert ADDITIONAL_FILES.pop() == filename
 
+def save_cfg(cfg: Any) -> None:
+    with open('config.json', 'w') as fh:
+        fh.write(json.dumps(cfg, indent=4, sort_keys=True))
+
 class Setting(Generic[T]):
     def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str = None) -> None:
         self.key = key
@@ -69,8 +73,11 @@ class Setting(Generic[T]):
         except FileNotFoundError:
             cfg = {}
         if key in os.environ:
+            if cfg.get(key, None) == os.environ[key]:
+                return cfg[key]
             cfg[key] = os.environ[key]
             print('CONFIG: {0}={1}'.format(key, cfg[key]))
+            save_cfg(cfg)
             CONFIG.update({key: cfg[key]})
             return cfg[key]
         if key in cfg:
@@ -84,8 +91,7 @@ class Setting(Generic[T]):
             cfg[key] = cfg[key]()
 
         print('CONFIG: {0}={1}'.format(key, cfg[key]))
-        fh = open('config.json', 'w')
-        fh.write(json.dumps(cfg, indent=4, sort_keys=True))
+        save_cfg(cfg)
         return cfg[key]
 
     def set(self, value: T) -> T:
@@ -109,8 +115,7 @@ class Setting(Generic[T]):
             cfg[self.key] = value
 
         print('CONFIG: {0}={1}'.format(fullkey, cfg[self.key]))
-        fh = open(filename, 'w')
-        fh.write(json.dumps(cfg, indent=4, sort_keys=True))
+        save_cfg(cfg)
         return value
 
 

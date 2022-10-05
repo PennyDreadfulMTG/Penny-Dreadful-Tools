@@ -397,7 +397,7 @@ def meld_face_values(p: CardDescription, cards: Dict[str, int]) -> List[Dict[str
     all_parts = p.get('all_parts')
     if all_parts is None:
         raise InvalidArgumentException(f'Tried to insert_meld_result_faces on a card without all_parts: {p}')
-    front_face_names = [part['name'] for part in all_parts if part['component'] == 'meld_part']
+    front_face_names = [part['name'] for part in all_parts if part['component'] == 'meld_part' and part['name'] not in KNOWN_MELDS]
     card_ids = [cards[name] for name in front_face_names]
     for card_id in card_ids:
         values.append(single_face_value(p, card_id, 2))

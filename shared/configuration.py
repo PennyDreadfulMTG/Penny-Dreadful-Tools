@@ -7,7 +7,7 @@ import string
 from typing import Any, Dict, List, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException
-from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, StrSetting, fail
+from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, StrSetting, fail, save_cfg
 
 try:
     import dotenv
@@ -217,8 +217,7 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         raise InvalidArgumentException('No default or other configuration value available for {key}'.format(key=key))
 
     print('CONFIG: {0}={1}'.format(key, cfg[key]))
-    fh = open('config.json', 'w')
-    fh.write(json.dumps(cfg, indent=4, sort_keys=True))
+    save_cfg(cfg)
     return cfg[key]
 
 @overload
@@ -257,8 +256,7 @@ def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union
     CONFIG[fullkey] = value
 
     print('CONFIG: {0}={1}'.format(fullkey, cfg[key]))
-    fh = open(filename, 'w')
-    fh.write(json.dumps(cfg, indent=4, sort_keys=True))
+    save_cfg(cfg)
     return cfg[key]
 
 def server_name() -> str:

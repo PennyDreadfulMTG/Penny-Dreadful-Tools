@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d74b49919f4b0d8d62fd23e4655436133f44f92e4eca2df4ec9cdb83813e2a3b"
+            "sha256": "7e4e2b5c87745e00dd9f8343520cfd1e285d220e00d311798c57f2b2831746f2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1426,11 +1426,11 @@
         },
         "plumbum": {
             "hashes": [
-                "sha256:0bbf431e31da988405de2fb36c3226f09c0c9cdf69c8480f8997f4b94b7370a1",
-                "sha256:0d1bf908076bbd0484d16412479cb97d6843069ee19f99e267e11dd980040523"
+                "sha256:0f6b59c8a03bfcdddd1efc04a126062663348e892ce7ddef49ec60e47b9e2c09",
+                "sha256:f1da1f167a2afe731a85de3f56810f424926c0a1a8fd1999ceb2ef20b618246d"
             ],
             "index": "pypi",
-            "version": "==1.7.2"
+            "version": "==1.8.0"
         },
         "poeditor": {
             "hashes": [
@@ -2030,7 +2030,7 @@
                 "sha256:ee6acae74a2b91865910eef5e7de37dc6895ad96fa23603d1d27ea69df545015",
                 "sha256:ef3f72c9666bba2bab70d2a8b79f2c6d2c1a42a7f7e2b0ec83bb2f9e383950af"
             ],
-            "markers": "python_version < '3.11'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==1.14.1"
         },
         "yarl": {

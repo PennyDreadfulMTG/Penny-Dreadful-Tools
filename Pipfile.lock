@@ -1940,7 +1940,7 @@
                 "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
                 "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4'",
+            "markers": "python_version >= '3.6'",
             "version": "==1.26.12"
         },
         "vcrpy": {
@@ -2308,11 +2308,11 @@
         },
         "types-markdown": {
             "hashes": [
-                "sha256:7c5b2346873ae12d548de684a25920009f2446f0ea42ce8c5559eb9a3ac10072",
-                "sha256:7dd9fe8bd2645ec984f438b255f42b795507b5cd2a998cc1970ec13f443dc832"
+                "sha256:03c0904cf5886a7d8193e2f50bcf842afc89e0ab80f060f389f6c2635c65628f",
+                "sha256:b2333f6f4b8f69af83de359e10a097e4a3f14bbd6d2484e1829d9b0ec56fa0cb"
             ],
             "index": "pypi",
-            "version": "==3.4.2"
+            "version": "==3.4.2.1"
         },
         "types-markupsafe": {
             "hashes": [

@@ -2339,11 +2339,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:17d66e4b16e80ceae0787726f3a22288df7d3f9fdebeb091dc64b92c0e4ea09d",
-                "sha256:950b0f3d64ed5b03a3e29c1e38fe2be8371c933c8e97922d0352345336eb8af4"
+                "sha256:0c163b15d3e598e6cc7074a99ca9ec72b25dc1b446acc133b827667af0b7b09a",
+                "sha256:a8e1fe6a1b270fbfaf2553b20ad0f1316707cc320e596da903bb17d7373fed2d"
             ],
             "index": "pypi",
-            "version": "==2022.4.0.0"
+            "version": "==2022.5.0.0"
         },
         "types-redis": {
             "hashes": [

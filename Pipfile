@@ -100,7 +100,7 @@ sentry-sdk = {extras = ["flask"], version = "*"}
 pydantic = "*"
 pystache = {editable = true, git = "https://github.com/PennyDreadfulMTG/pystache"}
 fasteners = "*"
-naff = "==1.11.1"
+naff = "==1.12.0"
 tomli = "*"
 orjson = "*"
 traceback-with-variables = "*"

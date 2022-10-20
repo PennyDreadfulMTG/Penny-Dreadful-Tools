@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "febf7475ff36332dc581add596d29bdfd8b00fe5da3982d6bc8e79c880102650"
+            "sha256": "b493183c2f1399d8f9e746c74e13a2cd5ea5aed584c0134918297f5285383e07"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1582,11 +1582,11 @@
         },
         "pyhumps": {
             "hashes": [
-                "sha256:cadfffd84e8cf93cf5566ed351bbd0d5356e04ffc03de7d2aa262660c144b775",
-                "sha256:f554bc742138c01ef85176534a411b105c3e7b20133b3c68bd4e613dcb425241"
+                "sha256:6eec3741cf917009adb16f6b6b883429edb1c6286531bd9f3977ba41938b0a09",
+                "sha256:8cf9503f71be250a1ec2c0af997309e6360ad4daa343acd7faafde54cce36469"
             ],
             "index": "pypi",
-            "version": "==3.7.2"
+            "version": "==3.7.3"
         },
         "pyjwt": {
             "hashes": [
@@ -1940,7 +1940,7 @@
                 "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
                 "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4.0'",
             "version": "==1.26.12"
         },
         "vcrpy": {

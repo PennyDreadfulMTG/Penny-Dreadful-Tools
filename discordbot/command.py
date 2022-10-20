@@ -240,7 +240,7 @@ async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: st
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
     choices = [*set(choices)]
-    await ctx.send(choices=list(choices)[:20])  # type: ignore
+    await ctx.send(choices=list(choices)[:20])
 
 def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) -> PrefixedCommand:
     """

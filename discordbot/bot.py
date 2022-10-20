@@ -35,7 +35,7 @@ class Bot(Client):
             self.load_extension('naff.ext.debug_extension')
         self.sentry_token = configuration.get_optional_str('sentry_token')
         if self.sentry_token:
-            self.load_extension('naff.ext.sentry', token=self.sentry_token)  # type: ignore
+            self.load_extension('naff.ext.sentry', token=self.sentry_token)
         self.load_extension('discordbot.background')
 
     async def stop(self) -> None:

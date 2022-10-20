@@ -5,7 +5,7 @@ import os
 import re
 from typing import Dict, List, Optional, Tuple
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 from magic import card, fetcher, oracle
 from magic.models import Card, Printing
@@ -221,7 +221,8 @@ async def generate_discord_banner(names: List[str], background: str) -> str:
     file_path = await download_art_crop(c, hq_artcrops)
     if file_path:
         with Image.open(file_path) as img:
-            canvas.paste(img.resize((1920, 1080), Image.BICUBIC).crop((0, 0, 1920, 1080)))
+            img = ImageOps.fit(img, (1920, 1080))
+            canvas.paste(img)
 
     n = math.ceil(len(cards) / 2)
     x = 200

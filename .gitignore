@@ -52,3 +52,4 @@ whoosh_index/
 /src/pystache/
 /configs/*
 /.hypothesis/
+/.task.lock

@@ -56,7 +56,10 @@ def update_index(index: FileIndex, cards: List[Card]) -> None:
 def reindex() -> None:
     writer = WhooshWriter()
     cs = multiverse.get_all_cards()
-    for alias, name in fetcher.card_aliases():
+    for line in fetcher.card_aliases():
+        if not line:
+            continue
+        alias, name = line
         for c in cs:
             if c.name == name:
                 c.names.append(alias)

@@ -155,7 +155,9 @@ async def legal_cards_async(season: str = None) -> List[str]:
 
 async def mtgo_status() -> str:
     try:
-        return cast(str, (await fetch_tools.fetch_json_async('https://s3-us-west-2.amazonaws.com/s3-mtgo-greendot/status.json'))['status'])
+        json = await fetch_tools.fetch_json_async('https://census.daybreakgames.com/s:example/get/global/game_server_status?game_code=mtgo&c:limit=1000')
+        last_reported_state = json['game_server_status_list'][0]['last_reported_state']
+        return 'UP' if last_reported_state in ['high', 'medium', 'low'] else last_reported_state
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
@@ -166,17 +168,6 @@ async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
         return {}
     return data
 
-def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name: str = None) -> bool:
-    if webhook_id is None or webhook_token is None:
-        return False
-    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
-    fetch_tools.post(url, json_data={
-        'content': message,
-        'username': name,
-    })
-    return True
-
-# pylint: disable=unsubscriptable-object
 def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json', encoding='utf-8') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)

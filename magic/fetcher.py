@@ -155,7 +155,9 @@ async def legal_cards_async(season: str = None) -> List[str]:
 
 async def mtgo_status() -> str:
     try:
-        return cast(str, (await fetch_tools.fetch_json_async('https://s3-us-west-2.amazonaws.com/s3-mtgo-greendot/status.json'))['status'])
+        json = await fetch_tools.fetch_json_async('https://census.daybreakgames.com/s:example/get/global/game_server_status?game_code=mtgo&c:limit=1000')
+        last_reported_state = json['game_server_status_list'][0]['last_reported_state']
+        return 'UP' if last_reported_state in ['high', 'medium', 'low'] else last_reported_state
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 

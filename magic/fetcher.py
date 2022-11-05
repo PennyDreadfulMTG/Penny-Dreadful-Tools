@@ -168,17 +168,6 @@ async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
         return {}
     return data
 
-def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name: str = None) -> bool:
-    if webhook_id is None or webhook_token is None:
-        return False
-    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
-    fetch_tools.post(url, json_data={
-        'content': message,
-        'username': name,
-    })
-    return True
-
-# pylint: disable=unsubscriptable-object
 def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json', encoding='utf-8') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)

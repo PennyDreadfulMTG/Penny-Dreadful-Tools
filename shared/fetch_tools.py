@@ -147,7 +147,6 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
         s = s.replace('-split-', '//')
     return s
 
-# pylint: disable=R0913
 def post_discord_webhook(webhook_id: str,
                          webhook_token: str,
                          message: Optional[str] = None,

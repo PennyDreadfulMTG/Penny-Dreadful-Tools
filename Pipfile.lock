@@ -2329,11 +2329,11 @@
         },
         "types-python-dateutil": {
             "hashes": [
-                "sha256:3f4dbe465e7e0c6581db11fd7a4855d1355b78712b3f292bd399cd332247e9c0",
-                "sha256:e6e32ce18f37765b08c46622287bc8d8136dc0c562d9ad5b8fd158c59963d7a7"
+                "sha256:a313284df5ed3fd078303262edc0efde28998cd08e5061ef1ccc0bb5fef4d2da",
+                "sha256:ce6af1bdf0aca6b7dc8815a664f0e8b55da91ff7851102cf87c87178e7c8e7ec"
             ],
             "index": "pypi",
-            "version": "==2.8.19.2"
+            "version": "==2.8.19.3"
         },
         "types-pytz": {
             "hashes": [

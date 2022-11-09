@@ -670,6 +670,7 @@
         },
         "google-auth": {
             "hashes": [
+                "sha256:ccaa901f31ad5cbb562615eb8b664b3dd0bf5404a67618e642307f00613eda4d",
                 "sha256:f5d8701633bebc12e0deea4df8abd8aff31c28b355360597f7f2ee60f2e4d016"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
@@ -1241,7 +1242,7 @@
                 "sha256:f2f390aa4da44454db40a1f0201401f9036e8d578a25f01a6e237cea238337ef",
                 "sha256:f76025acc8e2114bb664294a07ede0727aa75d63a06d2fae96bf29a81747e4a7"
             ],
-            "markers": "python_version >= '3.8'",
+            "markers": "python_full_version >= '3.8.0'",
             "version": "==1.23.4"
         },
         "oauthlib": {
@@ -1345,7 +1346,7 @@
                 "sha256:eb7e8cf2cf11a2580088009b43de84cabbf6f5dae94ceb489f28dba01a17cb77",
                 "sha256:f340331a3f411910adfb4bbe46c2ed5872d9e473a783d7f14ecf49bc0869c594"
             ],
-            "markers": "python_version >= '3.8'",
+            "markers": "python_full_version >= '3.8.0'",
             "version": "==1.5.1"
         },
         "pillow": {
@@ -1938,7 +1939,7 @@
                 "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e",
                 "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4.0'",
             "version": "==1.26.12"
         },
         "vcrpy": {
@@ -2385,10 +2386,11 @@
         },
         "types-urllib3": {
             "hashes": [
-                "sha256:7b78e4304b4534a010cfef97d1a3f3ebff0fa7119b205d08a355266d7c4e8e22",
-                "sha256:a3a510db609b363670cc62edb76598b8270bd34d4eb2f6c9f088d0e7d8196d6b"
+                "sha256:1807b87b8ee1ae0226813ba2c52330eff20fb2bf6359b1de24df08eb3090e442",
+                "sha256:a188c24fc61a99658c8c324c8dd7419f5b91a0d89df004e5f576869122c1db55"
             ],
-            "version": "==1.26.25.2"
+            "index": "pypi",
+            "version": "==1.26.25.3"
         },
         "types-werkzeug": {
             "hashes": [

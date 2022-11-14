@@ -1,7 +1,7 @@
 import asyncio
 import functools
 import os
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
 from flask import Response, make_response, send_file
 

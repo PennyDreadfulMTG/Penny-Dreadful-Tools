@@ -1,4 +1,4 @@
-from typing import Optional, Iterable, List
+from typing import Iterable, List, Optional
 
 from decksite.data.person import Person
 from decksite.view import View

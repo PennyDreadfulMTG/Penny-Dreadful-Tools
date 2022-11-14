@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List, Set
+from typing import Dict, List, Optional, Set
 
 from magic import oracle, seasons
 from magic.database import db

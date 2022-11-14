@@ -52,7 +52,7 @@ def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
 def timezone(tzid: str) -> datetime.tzinfo:
     return pytz.timezone(tzid)
 
-def now(tz: Any = None) -> datetime.datetime:
+def now(tz: Optional[Any] = None) -> datetime.datetime:
     if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)

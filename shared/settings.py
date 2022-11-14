@@ -47,7 +47,7 @@ def save_cfg(cfg: Any) -> None:
         fh.write(json.dumps(cfg, indent=4, sort_keys=True))
 
 class Setting(Generic[T]):
-    def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str = None) -> None:
+    def __init__(self, key: str, default_value: T, configurable: bool = False, doc: Optional[str] = None) -> None:
         self.key = key
         self.default_value = default_value
         self.configurable = configurable

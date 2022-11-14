@@ -125,7 +125,7 @@ class Database():
     def release_lock(self, lock_id: str) -> None:
         self.execute('SELECT RELEASE_LOCK(%s)', [lock_id])
 
-    def value(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, default: Any = None, fail_on_missing: bool = False) -> Any:
+    def value(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, default: Optional[Any] = None, fail_on_missing: bool = False) -> Any:
         try:
             return self.values(sql, args)[0]
         except IndexError as c:

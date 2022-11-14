@@ -123,8 +123,8 @@ class DeckCheckForm(SignUpForm):
 class ReportForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 deck_id: int = None,
-                 person_id: int = None) -> None:
+                 deck_id: Optional[int] = None,
+                 person_id: Optional[int] = None) -> None:
         super().__init__(form)
 
         decks = active_decks()
@@ -158,8 +158,8 @@ class ReportForm(Form):
 class RetireForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 deck_id: int = None,
-                 discord_user: int = None) -> None:
+                 deck_id: Optional[int] = None,
+                 discord_user: Optional[int] = None) -> None:
         super().__init__(form)
         person_object = None
         if discord_user is not None:

@@ -5,15 +5,16 @@ from shared_web.decorators import fill_args
 from .. import APP, db
 from ..data import match
 from ..view import View
+from typing import Optional
 
 
 @APP.route('/formats/<format_name>/')
-def show_format(format_name: str = None) -> str:
+def show_format(format_name: Optional[str] = None) -> str:
     view = Matches(format_name=format_name)
     return view.page()
 
 @APP.route('/people/<person>/')
-def show_person(person: str = None) -> str:
+def show_person(person: Optional[str] = None) -> str:
     view = Matches(person=person)
     return view.page()
 
@@ -28,7 +29,7 @@ class Matches(View):
         return 'Matches'
 
     @fill_args('person', 'format_name')
-    def __init__(self, person: str = None, format_name: str = None) -> None:
+    def __init__(self, person: Optional[str] = None, format_name: Optional[str] = None) -> None:
         super().__init__()
         query = match.Match.query
         if person is not None:

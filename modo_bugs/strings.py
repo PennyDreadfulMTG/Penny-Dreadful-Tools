@@ -29,7 +29,7 @@ def strip_squarebrackets(title: str) -> str:
     title = re.sub(REGEX_CARDREF, get_name, title)
     return title
 
-def grouper(n: int, iterable: Iterable, fillvalue: Any = None) -> Iterable:
+def grouper(n: int, iterable: Iterable, fillvalue: Optional[Any] = None) -> Iterable:
     """grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"""
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args, fillvalue=fillvalue)

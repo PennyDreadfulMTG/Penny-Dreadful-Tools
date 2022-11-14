@@ -22,7 +22,7 @@ def bluebones_image(cards: List[Card]) -> str:
     c = '|'.join(c.name for c in cards)
     return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
 
-def scryfall_image(c: Card, version: str = '', face: str = None) -> str:
+def scryfall_image(c: Card, version: str = '', face: Optional[str] = None) -> str:
     if face == 'meld':
         name = c.names[1]
     elif ' // ' in c.name:
@@ -160,7 +160,7 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
         x_offset += image.size[0]
     new_image.save(out_filepath)
 
-async def generate_banner(names: List[str], background: str, v_crop: int = None) -> str:
+async def generate_banner(names: List[str], background: str, v_crop: Optional[int] = None) -> str:
     cards = [oracle.load_card(name) for name in names]
     hq_artcrops = fetcher.hq_artcrops()
     hq = False

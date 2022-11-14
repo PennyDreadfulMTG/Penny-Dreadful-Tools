@@ -1,6 +1,6 @@
 import datetime
 import sys
-from typing import List
+from typing import Optional, List
 
 import github
 from flask import url_for
@@ -16,7 +16,7 @@ from shared.container import Container
 from shared.database import sqlescape
 
 
-def all_news(start_date: datetime.datetime = None, end_date: datetime.datetime = None, max_items: int = sys.maxsize) -> List[Container]:
+def all_news(start_date: Optional[datetime.datetime] = None, end_date: Optional[datetime.datetime] = None, max_items: int = sys.maxsize) -> List[Container]:
     if start_date is None:
         start_date = dtutil.ts2dt(0)
     if end_date is None:
@@ -40,7 +40,7 @@ def all_news(start_date: datetime.datetime = None, end_date: datetime.datetime =
             break
     return results
 
-def load_news(start_date: datetime.datetime = None, end_date: datetime.datetime = None, max_items: int = sys.maxsize) -> List[Container]:
+def load_news(start_date: Optional[datetime.datetime] = None, end_date: Optional[datetime.datetime] = None, max_items: int = sys.maxsize) -> List[Container]:
     if start_date is None:
         start_date = dtutil.ts2dt(0)
     if end_date is None:

@@ -1,6 +1,6 @@
 import logging
 import traceback
-from typing import Any
+from typing import Optional, Any
 
 from naff import User
 from naff.client.errors import CommandException
@@ -11,7 +11,7 @@ from shared import settings
 
 
 class ConfigError(CommandException):
-    def __init__(self, scope: int, message: str = None, *args: Any) -> None:
+    def __init__(self, scope: int, message: Optional[str] = None, *args: Any) -> None:
         super().__init__(message, *args)
         self.scope = scope
 
@@ -39,7 +39,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
         raise ConfigError(configuring)
 
     with settings.with_config_file(configuring):
-        settings.SETTINGS[key].set(value)
+        settings.SETTINGS[key].set(value)  # type: ignore
 
 @configure.error
 async def configure_error(ctx: MtgContext, error: Exception) -> None:

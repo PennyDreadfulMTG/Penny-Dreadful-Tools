@@ -52,7 +52,7 @@ def edit_aliases() -> str:
 @APP.route('/admin/aliases/', methods=['POST'])
 @fill_form('person_id', 'alias')
 @auth.admin_required
-def post_aliases(person_id: int = None, alias: str = None) -> Union[str, wrappers.Response]:
+def post_aliases(person_id: Optional[int] = None, alias: Optional[str] = None) -> Union[str, wrappers.Response]:
     if person_id is not None and alias is not None and len(alias) > 0:
         ps.add_alias(person_id, alias)
     return edit_aliases()
@@ -169,7 +169,7 @@ def edit_news() -> str:
 @APP.route('/admin/news/', methods=['POST'])
 @fill_form('news_id', 'title', 'url')
 @auth.admin_required
-def post_news(news_id: int, title: str = None, url: str = None, date: str = None) -> wrappers.Response:
+def post_news(news_id: int, title: Optional[str] = None, url: Optional[str] = None, date: Optional[str] = None) -> wrappers.Response:
     if request.form.get('action') == 'delete':
         ns.delete(news_id)
     else:
@@ -210,7 +210,7 @@ def post_player_note(person_id: int, note: str) -> wrappers.Response:
 
 @APP.route('/admin/unlink/')
 @auth.admin_required
-def unlink(num_affected_people: Optional[int] = None, errors: List[str] = None) -> str:
+def unlink(num_affected_people: Optional[int] = None, errors: Optional[List[str]] = None) -> str:
     all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()

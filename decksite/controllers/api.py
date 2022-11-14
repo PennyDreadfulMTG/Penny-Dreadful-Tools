@@ -606,7 +606,7 @@ def post_reassign(deck_id: int, archetype_id: int) -> Response:
 @APP.route('/api/rule/update', methods=['POST'])
 @fill_form('rule_id')
 @auth.demimod_required
-def post_rule_update(rule_id: int = None) -> Response:
+def post_rule_update(rule_id: Optional[int] = None) -> Response:
     if rule_id is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
         success, msg = rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
         return return_json({'success': success, 'msg': msg})

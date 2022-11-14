@@ -66,7 +66,7 @@ def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
 def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: Optional[str] = None) -> List[Card]:
     return [copy_with_mode(oracle.load_card(c), mode, preferred_printing) for c in cards if c is not None]
 
-def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str = None) -> Card:
+def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: Optional[str] = None) -> Card:
     c = copy(oracle_card)
     c['mode'] = mode
     c['preferred_printing'] = preferred_printing

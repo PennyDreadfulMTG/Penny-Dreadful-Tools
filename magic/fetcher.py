@@ -134,7 +134,7 @@ def hq_artcrops() -> Dict[str, Tuple[str, int]]:
 if configuration.production.value:
     hq_artcrops = functools.lru_cache(hq_artcrops)  # These won't be changing in production, so avoid the IO cost of reading the file every time.
 
-async def legal_cards_async(season: str = None) -> List[str]:
+async def legal_cards_async(season: Optional[str] = None) -> List[str]:
     if season is None:
         url = 'legal_cards.txt'
     else:

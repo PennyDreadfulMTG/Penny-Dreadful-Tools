@@ -221,7 +221,7 @@ def preaggregate_head_to_head() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(achievements.preaggregate_achievements)
-def set_achievements(people: List[Person], season_id: int = None) -> None:
+def set_achievements(people: List[Person], season_id: Optional[int] = None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = achievements.load_query(people_by_id, season_id)
     results = [Container(r) for r in db().select(sql)]
@@ -237,7 +237,7 @@ def load_head_to_head_count(person_id: int, where: str = 'TRUE', season_id: Opti
     return db().value(sql)
 
 @retry_after_calling(preaggregate_head_to_head)
-def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: int = None) -> Sequence[Container]:
+def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: Optional[int] = None) -> Sequence[Container]:
     season_query = query.season_query(season_id)
     sql = f"""
         SELECT
@@ -311,7 +311,7 @@ def add_alias(person_id: int, alias: str) -> None:
     db().execute('INSERT INTO person_alias (person_id, alias) VALUES (%s, %s)', [person_id, alias])
     db().commit('add_alias')
 
-def load_notes(person_id: int = None) -> List[Container]:
+def load_notes(person_id: Optional[int] = None) -> List[Container]:
     where = f'subject_id = {person_id}' if person_id else 'TRUE'
     sql = """
         SELECT

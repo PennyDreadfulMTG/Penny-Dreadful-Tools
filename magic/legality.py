@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Optional, Dict, List, Set
 
 from magic import oracle, seasons
 from magic.database import db
@@ -10,7 +10,7 @@ FORMATS: Set[str] = set()
 def legal_in_format(d: Container, f: str) -> bool:
     return f in legal_formats(d, set([f]))
 
-def legal_formats(d: Container, formats_to_check: Set[str] = None, errors: Dict[str, Dict[str, Set[str]]] = None) -> Set[str]:
+def legal_formats(d: Container, formats_to_check: Optional[Set[str]] = None, errors: Optional[Dict[str, Dict[str, Set[str]]]] = None) -> Set[str]:
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS

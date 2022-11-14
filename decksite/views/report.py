@@ -7,7 +7,6 @@ from decksite.data.form import Form
 from decksite.views.league_form import LeagueForm
 
 
-# pylint: disable=no-self-use
 class Report(LeagueForm):
     def __init__(self, form: Form, person_id: Optional[int] = None) -> None:
         super().__init__(form)

@@ -1,7 +1,7 @@
 import asyncio
 import functools
 import os
-from typing import List, Tuple
+from typing import Optional, List, Tuple
 
 from flask import Response, make_response, send_file
 
@@ -42,7 +42,7 @@ def bannercss() -> Response:
 
 @APP.route('/banner/<int:seasonnum>.png')
 @APP.route('/banner/<int:seasonnum>_<int:crop>.png')
-def banner(seasonnum: int, crop: int = None) -> Response:
+def banner(seasonnum: int, crop: Optional[int] = None) -> Response:
     nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))

@@ -53,7 +53,7 @@ def add_signup() -> Response:
 @APP.route('/report/')
 @auth.load_person
 @fill_cookies('deck_id')
-def report(form: Optional[ReportForm] = None, deck_id: int = None) -> str:
+def report(form: Optional[ReportForm] = None, deck_id: Optional[int] = None) -> str:
     if form is None:
         form = ReportForm(request.form, deck_id, auth.person_id())
     view = Report(form, auth.person_id())
@@ -73,7 +73,7 @@ def add_report() -> Response:
 @APP.route('/retire/')
 @fill_cookies('deck_id')
 @auth.login_required
-def retire(form: Optional[RetireForm] = None, deck_id: int = None) -> str:
+def retire(form: Optional[RetireForm] = None, deck_id: Optional[int] = None) -> str:
     if form is None:
         form = RetireForm(request.form, deck_id, session.get('id'))
     view = Retire(form)

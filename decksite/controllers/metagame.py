@@ -146,7 +146,7 @@ def matchups() -> str:
     return view.page()
 
 
-def validate_deck_type(s: Optional[str], allowed_values: List[DeckType] = None) -> DeckType:
+def validate_deck_type(s: Optional[str], allowed_values: Optional[List[DeckType]] = None) -> DeckType:
     if not s:
         return DeckType.ALL
     try:

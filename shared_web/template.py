@@ -57,7 +57,7 @@ class CachedLoader(pystache.loader.Loader):
 # If you have already parsed a template, don't parse it again.
 class CachedRenderEngine(pystache.renderengine.RenderEngine):
     # pylint: disable=too-many-arguments
-    def __init__(self, literal: StringConverterFunction = None, escape: StringConverterFunction = None, resolve_context: Optional[Callable[[ContextStack, str], str]] = None, resolve_partial: Optional[StringConverterFunction] = None, to_str: Optional[Callable[[object], str]] = None) -> None:
+    def __init__(self, literal: Optional[StringConverterFunction] = None, escape: Optional[StringConverterFunction] = None, resolve_context: Optional[Callable[[ContextStack, str], str]] = None, resolve_partial: Optional[StringConverterFunction] = None, to_str: Optional[Callable[[object], str]] = None) -> None:
         super().__init__(literal, escape, resolve_context, resolve_partial, to_str)
         self.parsed_templates: Dict[str, pystache.parsed.ParsedTemplate] = {}
 

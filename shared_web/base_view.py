@@ -32,7 +32,7 @@ class BaseView:
     def prepare(self) -> None:
         pass
 
-    def commit_id(self, path: str = None) -> str:
+    def commit_id(self, path: Optional[str] = None) -> str:
         if not path:
             return current_app.config['commit-id']
         key = f'commit-id-{path}'

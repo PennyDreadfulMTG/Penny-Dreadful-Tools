@@ -100,7 +100,7 @@ async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], exp
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content
 
-def find_command(discordbot: Client, cmd: str, function_name: str = None) -> Optional[BaseCommand]:
+def find_command(discordbot: Client, cmd: str, function_name: Optional[str] = None) -> Optional[BaseCommand]:
     for command in discordbot.application_commands:
         if cmd == command.name.default:
             print(f'found command {command} - {command.callback}')

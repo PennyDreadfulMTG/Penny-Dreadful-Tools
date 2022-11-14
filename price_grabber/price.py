@@ -15,7 +15,7 @@ def info(card: Card, force: bool = False) -> Optional[PriceDataType]:
     cache()
     return info_cached(card)
 
-def info_cached(card: Card = None, name: str = None) -> Optional[PriceDataType]:
+def info_cached(card: Optional[Card] = None, name: Optional[str] = None) -> Optional[PriceDataType]:
     if name is None and card is not None:
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'

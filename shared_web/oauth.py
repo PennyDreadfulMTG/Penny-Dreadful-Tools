@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple
+from typing import Optional, List, Tuple
 
 from flask import session, url_for
 from requests_oauthlib import OAuth2Session
@@ -53,9 +53,9 @@ def add_to_guild() -> None:
         discord.put('/guilds/{guild}/members/{user}'.format(guild=configuration.get('guild_id'), user=session['discord_id']))
 
 
-def make_session(token: str = None,
-                 state: str = None,
-                 scope: List[str] = None) -> OAuth2Session:
+def make_session(token: Optional[str] = None,
+                 state: Optional[str] = None,
+                 scope: Optional[List[str]] = None) -> OAuth2Session:
     return OAuth2Session(
         client_id=OAUTH2_CLIENT_ID,
         token=token,

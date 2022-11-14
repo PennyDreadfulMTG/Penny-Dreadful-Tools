@@ -90,7 +90,7 @@ async def post_json_async(url: str, data: dict) -> Any:
 
 def post(url: str,
          data: Optional[Dict[str, str]] = None,
-         json_data: Any = None,
+         json_data: Optional[Any] = None,
          ) -> str:
     logger.info('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
@@ -150,9 +150,9 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
 def post_discord_webhook(webhook_id: str,
                          webhook_token: str,
                          message: Optional[str] = None,
-                         username: str = None,
-                         avatar_url: str = None,
-                         embeds: List[Dict[str, Any]] = None,
+                         username: Optional[str] = None,
+                         avatar_url: Optional[str] = None,
+                         embeds: Optional[List[Dict[str, Any]]] = None,
                          ) -> bool:
     if webhook_id is None or webhook_token is None:
         return False

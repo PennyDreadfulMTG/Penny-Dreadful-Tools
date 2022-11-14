@@ -1,3 +1,5 @@
+from typing import Optional
+
 from flask import request, url_for
 
 from shared_web.decorators import fill_args
@@ -5,7 +7,6 @@ from shared_web.decorators import fill_args
 from .. import APP, db
 from ..data import match
 from ..view import View
-from typing import Optional
 
 
 @APP.route('/formats/<format_name>/')

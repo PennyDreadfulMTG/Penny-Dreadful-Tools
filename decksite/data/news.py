@@ -1,6 +1,6 @@
 import datetime
 import sys
-from typing import Optional, List
+from typing import List, Optional
 
 import github
 from flask import url_for

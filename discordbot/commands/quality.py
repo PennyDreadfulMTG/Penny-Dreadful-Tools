@@ -1,4 +1,4 @@
-from typing import Optional, Annotated
+from typing import Annotated, Optional
 
 from naff.models import CMD_BODY, prefixed_command
 

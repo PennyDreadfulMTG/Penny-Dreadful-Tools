@@ -4,8 +4,8 @@ import os
 import re
 import sys
 from typing import Dict, List, Optional, Tuple
-import attrs
 
+import attrs
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 

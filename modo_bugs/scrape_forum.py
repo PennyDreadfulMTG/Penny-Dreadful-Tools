@@ -1,6 +1,8 @@
 import json
 import os
+
 from . import fetcher
+
 
 def main() -> None:
     known = {}

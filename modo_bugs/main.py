@@ -3,7 +3,7 @@ import os
 import subprocess
 from typing import List, Tuple
 
-from modo_bugs import scrape_announcements, scrape_bugblog, update, verification, scrape_forum
+from modo_bugs import scrape_announcements, scrape_bugblog, scrape_forum, update, verification
 from shared import configuration
 
 

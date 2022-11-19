@@ -7,17 +7,18 @@ from bs4 import BeautifulSoup, Comment
 from bs4.element import Tag
 from github.Issue import Issue
 
-from . import fetcher, repo, strings
+from . import repo, strings
 from .strings import BBT_REGEX, strip_squarebrackets
 
 logger = logging.getLogger(__name__)
 
 
 def main(changes: List[str]) -> None:
-    (link, new) = fetcher.find_bug_blog()
-    if new and link is not None:
-        scrape_bb(link)
-        changes.append('* New Bug Blog')
+    pass
+    # (link, new) = fetcher.find_bug_blog()
+    # if new and link is not None:
+    #     scrape_bb(link)
+    #     changes.append('* New Bug Blog')
 
 
 def scrape_bb(url: str) -> None:

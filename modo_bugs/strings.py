@@ -19,6 +19,7 @@ REGEX_BBCAT = r'^([\w ]+) ?(\([\w, ]+\))?'
 BAD_AFFECTS_REGEX = r'Affects: (\[Card Name\]\(, \[Second Card name\], etc\)\r?\n)\['
 
 FEEDBACK_LINK_REGEX = r'((http|https)\:\/\/)?feedback.wizards.com/forums/([a-zA-Z0-9\.\&\/\?\:@\-_=#])*'
+FORUM_LINK_REGEX = r'((http|https)\:\/\/)?forums.mtgo.com/index.php\?threads/([a-zA-Z0-9\.\&\/\?\:@\-_=#/])*'
 
 def remove_smartquotes(text: str) -> str:
     return text.replace('’', "'").replace('“', '"').replace('”', '"')
@@ -50,5 +51,5 @@ def get_body_field(body: str, field: str) -> Optional[str]:
     regex = r'^' + field + r': (.*)$'
     m = re.search(regex, body, re.MULTILINE)
     if m:
-        return m.group(1)
+        return m.group(1).strip()
     return None

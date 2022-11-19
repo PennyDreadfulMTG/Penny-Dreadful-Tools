@@ -16,7 +16,7 @@ def run(argv: Tuple[str]) -> None:
     os.chdir(wd)
     subprocess.run(['git', 'pull'], check=True)
     if not args:
-        args.extend(['scrape_bb', 'scrape_an', 'update', 'verify', 'commit'])
+        args.extend(['scrape_an', 'update', 'verify', 'commit'])
     logger.info('modo_bugs invoked with modes: ' + repr(args))
 
     changes: List[str] = []

@@ -86,7 +86,7 @@ def process_issue(issue: Issue) -> None:
         apply_screenshot_labels(issue)
     labels = [c.name for c in issue.labels]
     see_also = strings.get_body_field(issue.body, 'See Also')
-    feedback_link = strings.get_body_field(issue.body, 'Support Thread')
+    feedback_link = strings.get_body_field(issue.body, 'Forum Post')
     cards = get_affects(issue)
 
     if age < 5:
@@ -124,6 +124,8 @@ def process_issue(issue: Issue) -> None:
     else:
         cat = categories.pop()
 
+    process_forum(feedback_link, issue, labels)
+
     for card in cards:
         bannable = cat in BADCATS and 'Multiplayer' not in labels
         bug = {
@@ -132,7 +134,7 @@ def process_issue(issue: Issue) -> None:
             'category': cat,
             'last_updated': str(issue.updated_at),
             'pd_legal': card in pd_legal_cards(),
-            'bug_blog': 'From Bug Blog' in labels,
+            'bug_blog': False,
             'breaking': cat in BADCATS,
             'bannable': bannable,
             'url': issue.html_url,
@@ -140,6 +142,8 @@ def process_issue(issue: Issue) -> None:
         }
         if 'Multiplayer' in labels:
             bug['multiplayer_only'] = True
+        if 'Commander' in labels:
+            bug['commander_only'] = True
         if 'Collection' in labels:
             bug['cade_bug'] = True
         if 'Deck Building' in labels:
@@ -154,6 +158,24 @@ def process_issue(issue: Issue) -> None:
         bug['last_verified'] = VERIFICATION_BY_ISSUE.get(issue.number, None)
 
         ALL_BUGS.append(bug)
+
+def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str]) -> None:
+    if feedback_link is None:
+        return
+
+    status = fetcher.get_daybreak_label(feedback_link)
+    if status:
+        status = 'Daybreak: ' + status
+    else:
+        return
+
+    if not status in labels:
+        issue.add_to_labels(status)
+        labels.append(status)
+    for s in labels:
+        if s.startswith('Daybreak: ') and s != status:
+            issue.remove_from_labels(s)
+            labels.remove(s)
 
 def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[str]) -> None:
     expected = '<!-- Images --> '
@@ -229,6 +251,11 @@ def fix_user_errors(issue: Issue) -> None:
         if feedback_cap:
             body = re.sub(strings.FEEDBACK_LINK_REGEX, '', body)
             body = strings.set_body_field(body, 'Support Thread', feedback_cap.group(0))
+
+    if strings.get_body_field(issue.body, 'Forum Post') is None:
+        if forum_cap := re.search(strings.FORUM_LINK_REGEX):
+            body = re.sub(strings.FORUM_LINK_REGEX, '', body)
+            body = strings.set_body_field(body, 'Forum Post', forum_cap.group(0))
 
     # Push changes.
     if body != issue.body:

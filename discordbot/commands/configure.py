@@ -1,6 +1,6 @@
 import logging
 import traceback
-from typing import Optional, Any
+from typing import Any, Optional
 
 from naff import User
 from naff.client.errors import CommandException

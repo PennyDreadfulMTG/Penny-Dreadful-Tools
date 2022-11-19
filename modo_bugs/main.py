@@ -3,7 +3,7 @@ import os
 import subprocess
 from typing import List, Tuple
 
-from modo_bugs import scrape_announcements, scrape_bugblog, scrape_forum, update, verification
+from modo_bugs import scrape_announcements, scrape_forum, update, verification
 from shared import configuration
 
 
@@ -25,8 +25,6 @@ def run(argv: Tuple[str]) -> None:
     changes: List[str] = []
 
     try:
-        if 'scrape_bb' in args:
-            scrape_bugblog.main(changes)
         if 'scrape_an' in args:
             scrape_announcements.main(changes)
     except Exception as e:

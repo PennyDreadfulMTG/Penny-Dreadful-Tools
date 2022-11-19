@@ -89,6 +89,9 @@ def process_issue(issue: Issue) -> None:
     feedback_link = strings.get_body_field(issue.body, 'Forum Post')
     cards = get_affects(issue)
 
+    if feedback_link == 'https://forums.mtgo.com/index.php?threads/how-to-report-and-upvote-bugs.21/':
+        feedback_link = None
+
     if age < 5:
         check_for_invalid_card_names(issue, cards)
         update_issue_body(issue, cards, see_also)

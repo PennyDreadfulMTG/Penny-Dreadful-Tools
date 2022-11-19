@@ -27,7 +27,7 @@ def parse_header(h: Tag) -> None:
     txt = h.text
     if 'Downtime' in txt:
         parse_downtimes(h)
-    elif txt.startswith('Build Notes') or 'Change Log' in txt:
+    elif txt.startswith('Build Notes') or 'Change Log' in txt or 'PATCH NOTES' in txt:
         parse_build_notes(h)
 
 def parse_build_notes(h: Tag) -> None:

@@ -1,5 +1,7 @@
+import json
 import logging
 import os
+import re
 import sys
 from typing import Dict, List, Optional, Tuple
 
@@ -68,35 +70,51 @@ def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool
         return True
     return False
 
-def find_bug_blog() -> Tuple[Optional[str], bool]:
-    bug_blogs = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Bug Blog')]
-    if not bug_blogs:
-        return (None, False)
-    (title, link) = bug_blogs[0]
-    logger.info('Found: {0} ({1})'.format(title, link))
-    new = update_redirect('bug_blog', title.text, link)
-    return (link, new)
-
 def find_announcements() -> Tuple[Optional[str], bool]:
-    articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
+    articles = [a for a in get_article_archive() if is_announcement(a)]
     if not articles:
         return (None, False)
     (title, link) = articles[0]
     logger.info('Found: {0} ({1})'.format(title, link))
-    bn = 'Change Log' in fetch_tools.fetch(link)
-    new = update_redirect('announcements', title.text, link, has_build_notes=str(bn))
+    bn = 'PATCH NOTES' in fetch_tools.fetch(link)
+    new = update_redirect('announcements', title, link, has_build_notes=str(bn))
     return (link, new)
+
+def is_announcement(a: tuple[str, str]) -> bool:
+    if a[0].startswith('Magic Online Weekly Announcements'):
+        return True
+    if a[0].startswith('Magic Online Announcements'):
+        return True
+    return False
 
 def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
     title = a.find_all('h3')[0]
-    link = 'http://magic.wizards.com' + a.find_all('a')[0]['href']
+    link = 'https://www.mtgo.com' + a.find_all('a')[0]['href']
     return (title, link)
 
 @lazy.lazy_property
-def get_article_archive() -> List[Tuple[Tag, str]]:
+def get_article_archive() -> List[Tuple[str, str]]:
     try:
-        html = fetch_tools.fetch('https://magic.wizards.com/en/articles/archive/1586807')
+        html = fetch_tools.fetch('https://www.mtgo.com/archive')
     except fetch_tools.FetchException:
         html = fetch_tools.fetch('http://magic.wizards.com/en/articles/archive/')
     soup = BeautifulSoup(html, 'html.parser')
-    return [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
+    links = soup.find_all('a', class_='article-link')
+    if links:
+        return [parse_article_item_extended(a) for a in links]
+    scripts = soup.find_all('script')
+    findblob = re.compile(r'window.DGC.archive.articles = (.*?);', re.MULTILINE)
+    for s in scripts:
+        if (m := findblob.search(s.contents[0])):
+            blob = m.group(1)
+            j = json.loads(blob)
+            return [(p['title'], 'https://www.mtgo.com/news/' + p['pageName']) for p in j]
+    return []
+
+def get_daybreak_label(url: str) -> str | None:
+    html = fetch_tools.fetch(url)
+    soup = BeautifulSoup(html, 'html.parser')
+    label = soup.find('span', class_='label--primary')
+    if label:
+        return label.text
+    return None

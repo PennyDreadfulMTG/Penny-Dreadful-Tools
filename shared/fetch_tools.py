@@ -154,7 +154,7 @@ def post_discord_webhook(webhook_id: str,
                          avatar_url: Optional[str] = None,
                          embeds: Optional[List[Dict[str, Any]]] = None,
                          ) -> bool:
-    if webhook_id is None or webhook_token is None:
+    if not webhook_id or not webhook_token:
         return False
     url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(
         id=webhook_id, token=webhook_token)

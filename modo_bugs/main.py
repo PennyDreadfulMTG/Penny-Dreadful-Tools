@@ -3,11 +3,14 @@ import os
 import subprocess
 from typing import List, Tuple
 
-from modo_bugs import scrape_announcements, scrape_bugblog, update, verification
+from modo_bugs import scrape_announcements, scrape_bugblog, update, verification, scrape_forum
 from shared import configuration
 
 
 def run(argv: Tuple[str]) -> None:
+    configuration.bugs_webhook_id.get()
+    configuration.bugs_webhook_token.get()
+
     args = list(argv)
     logger = logging.getLogger(__name__)
     wd = configuration.get_str('modo_bugs_dir')
@@ -16,7 +19,7 @@ def run(argv: Tuple[str]) -> None:
     os.chdir(wd)
     subprocess.run(['git', 'pull'], check=True)
     if not args:
-        args.extend(['scrape_an', 'update', 'verify', 'commit'])
+        args.extend(['scrape_an', 'update', 'scrape_forum', 'verify', 'commit'])
     logger.info('modo_bugs invoked with modes: ' + repr(args))
 
     changes: List[str] = []
@@ -31,6 +34,8 @@ def run(argv: Tuple[str]) -> None:
 
     if 'update' in args:
         update.main()
+    if 'scrape_forum' in args:
+        scrape_forum.main()
     if 'verify' in args:
         verification.main()
     if 'commit' in args:

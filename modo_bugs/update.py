@@ -164,6 +164,7 @@ def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str])
         return
 
     status = fetcher.get_daybreak_label(feedback_link)
+    _status = status
     if status:
         status = 'Daybreak: ' + status
     else:
@@ -172,6 +173,7 @@ def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str])
     if not status in labels:
         issue.add_to_labels(status)
         labels.append(status)
+        issue.create_comment(f'Daybreak has labelled this bug as {_status}')
     for s in labels:
         if s.startswith('Daybreak: ') and s != status:
             issue.remove_from_labels(s)

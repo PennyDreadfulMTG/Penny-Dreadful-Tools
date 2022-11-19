@@ -253,7 +253,7 @@ def fix_user_errors(issue: Issue) -> None:
             body = strings.set_body_field(body, 'Support Thread', feedback_cap.group(0))
 
     if strings.get_body_field(issue.body, 'Forum Post') is None:
-        if forum_cap := re.search(strings.FORUM_LINK_REGEX):
+        if forum_cap := re.search(strings.FORUM_LINK_REGEX, body, re.I):
             body = re.sub(strings.FORUM_LINK_REGEX, '', body)
             body = strings.set_body_field(body, 'Forum Post', forum_cap.group(0))
 

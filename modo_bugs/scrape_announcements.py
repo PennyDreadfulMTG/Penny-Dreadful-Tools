@@ -48,14 +48,13 @@ def parse_build_notes(h: Tag) -> None:
         'description': '\n'.join(entries),
         'url': fetcher.find_announcements()[0],
     }
-    if configuration.bugs_webhook_id.value:
-        fetch_tools.post_discord_webhook(
-            configuration.bugs_webhook_id.value,
-            configuration.bugs_webhook_token.value,
-            embeds=[embed],
-            username='Magic Online Announcements',
-            avatar_url='https://magic.wizards.com/sites/mtg/files/styles/auth_small/public/images/person/wizards_authorpic_larger.jpg',
-        )
+    fetch_tools.post_discord_webhook(
+        configuration.bugs_webhook_id.value,
+        configuration.bugs_webhook_token.value,
+        embeds=[embed],
+        username='Magic Online Announcements',
+        avatar_url='https://magic.wizards.com/sites/mtg/files/styles/auth_small/public/images/person/wizards_authorpic_larger.jpg',
+    )
 
 def parse_downtimes(h: Tag) -> None:
     for n in h.next_elements:

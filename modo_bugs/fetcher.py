@@ -4,13 +4,21 @@ import os
 import re
 import sys
 from typing import Dict, List, Optional, Tuple
+import attrs
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from shared import fetch_tools, lazy
+from shared import configuration, fetch_tools, lazy
 
 logger = logging.getLogger(__name__)
+
+@attrs.define
+class ForumPost:
+    title: str
+    label: str | None
+    url: str
+    # votes: str
 
 def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
@@ -118,3 +126,39 @@ def get_daybreak_label(url: str) -> str | None:
     if label:
         return label.text
     return None
+
+def get_forum_posts(url: str) -> list[ForumPost]:
+    html = fetch_tools.fetch(url)
+    soup = BeautifulSoup(html, 'html.parser')
+    posts = []
+    threads = soup.find_all('div', class_='structItem--thread')
+    for p in threads:
+        post: Tag = p
+        label = None
+        # votes = post.find('span', class_='js-voteCount').text
+        title = post.find('div', class_='structItem-title')
+        t = title.find('a')
+        if t.attrs['href'].startswith('/index.php?forums/bug-reports.16'):
+            label = t.text
+            t = t.find_next_sibling('a')
+        url = 'https://forums.mtgo.com' + t.attrs['href']
+        name = t.text
+        posts.append(ForumPost(name, label, url))
+    return posts
+
+def forum_to_discord(post: ForumPost) -> None:
+    """Post to Discord webhook when new posts are flagged by Daybreak"""
+    print(f'New Forum Post:  {post}')
+    embed = {
+        'title': f'New forum post marked "{post.label}"',
+        'type': 'rich',
+        'description': f'{post.title}',
+        'url': post.url,
+    }
+    fetch_tools.post_discord_webhook(
+        configuration.bugs_webhook_id.value,
+        configuration.bugs_webhook_token.value,
+        embeds=[embed],
+        username='MTGO Forums',
+        avatar_url='https://magic.wizards.com/sites/mtg/files/styles/auth_small/public/images/person/wizards_authorpic_larger.jpg',
+    )

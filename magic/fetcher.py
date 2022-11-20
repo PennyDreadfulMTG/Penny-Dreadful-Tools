@@ -71,8 +71,6 @@ async def bugged_cards_async() -> Optional[List[Dict[str, Any]]]:
     except FetchException:
         print("WARNING: Couldn't fetch bugs")
         bugs = None
-    if bugs is None:
-        return None
     return bugs
 
 def card_aliases() -> List[List[str]]:
@@ -89,6 +87,14 @@ def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
         return dtutil.now(timezone).strftime('%l:%M %p')
     except ValueError:  # %l is not a univerally supported argument.  Fall back to %I on other platforms.
         return dtutil.now(timezone).strftime('%I:%M %p')
+
+async def daybreak_forums_async() -> Optional[dict[str, dict[str, Any]]]:
+    try:
+        bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/forums.json')
+    except FetchException:
+        print("WARNING: Couldn't fetch forums")
+        bugs = None
+    return bugs
 
 def decksite_url(path: str = '/') -> str:
     return site_url(configuration.get_str('decksite_protocol'), configuration.get_str('decksite_hostname'), configuration.get_int('decksite_port'), path)

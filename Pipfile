@@ -100,7 +100,7 @@ sentry-sdk = {extras = ["flask"], version = "*"}
 pydantic = "*"
 pystache = "*"
 fasteners = "*"
-naff = "==1.12.0"
+naff = "==2.0.0"
 tomli = "*"
 orjson = "*"
 traceback-with-variables = "*"

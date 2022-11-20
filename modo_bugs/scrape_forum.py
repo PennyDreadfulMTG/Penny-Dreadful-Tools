@@ -24,5 +24,10 @@ def main() -> None:
                 fetcher.forum_to_discord(p)
             known[p.url] = {'title': p.title, 'url': p.url, 'status': p.label, 'tracked': is_tracked}
 
+    for url, k in known.items():
+        if not k['tracked']:
+            if url in bugs:
+                k['tracked'] = True
+
     with open('forums.json', 'w') as fp:
         json.dump(known, fp, indent=2)

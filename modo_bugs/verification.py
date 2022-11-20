@@ -7,7 +7,7 @@ from . import repo
 
 
 def main() -> None:
-    manifest = requests.get('http://mtgoclientdepot.onlinegaming.wizards.com/MTGO.application')
+    manifest = requests.get('http://mtgo.patch.daybreakgames.com/patch/mtg/live/client/MTGO.application')
     tree = etree.fromstring(manifest.content)
     identity = tree.find('{urn:schemas-microsoft-com:asm.v1}assemblyIdentity')
     version = identity.attrib['version']

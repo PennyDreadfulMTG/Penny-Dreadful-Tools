@@ -102,7 +102,12 @@ async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], exp
 
 def find_command(discordbot: Client, cmd: str, function_name: Optional[str] = None) -> Optional[BaseCommand]:
     for command in discordbot.application_commands:
-        if cmd == command.name.default:
+        if isinstance(command.name, str):
+            name = command.name
+        else:
+            name = command.name.default
+
+        if cmd == name:
             print(f'found command {command} - {command.callback}')
             return command
     else:

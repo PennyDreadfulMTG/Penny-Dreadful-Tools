@@ -251,7 +251,11 @@ def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) ->
         if soft:
             await command.call_callback(command.callback, ctx)
 
-    return prefixed_command(command.name.default)(wrapper)
+    if isinstance(command.name, str):
+        name = command.name
+    else:
+        name = command.name.default
+    return prefixed_command(name)(wrapper)
 
 def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None, nag: bool = True) -> PrefixedCommand:
     """
@@ -266,7 +270,10 @@ def alias_message_command_to_slash_command(command: InteractionCommand, param: s
         await command.call_callback(command.callback, ctx)
 
     if name is None:
-        name = command.name.default
+        if isinstance(command.name, str):
+            name = command.name
+        else:
+            name = command.name.default
     return prefixed_command(name)(wrapper)
 
 class MtgMixin:

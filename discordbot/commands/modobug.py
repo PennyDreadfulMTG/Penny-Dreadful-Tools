@@ -25,16 +25,16 @@ class ModoBugs(Extension):
         if bugs:
             needs_testing = [b for b in bugs if b['last_verified'] is None]
             if needs_testing:
-                embeds.append(Embed('Needs Testing', '\n'.join(format_bug(b) for b in needs_testing[:5]), footer='Play a game with these cards, and use !stillbugged or !notbugged'))
+                embeds.append(Embed('Needs Testing', '\n'.join(format_bug(b) for b in needs_testing[:5]), footer='Play a game with these cards, and use !stillbugged or !notbugged'))  # type: ignore
 
             needs_reporting = [b for b in bugs if b['support_thread'] is None]
             if needs_reporting:
-                embeds.append(Embed('Needs Support Thread', '\n'.join(format_bug(b) for b in needs_reporting[:5]), footer='Check if the Daybreak Forums have a thread on this bug, and add a link to it'))
+                embeds.append(Embed('Needs Support Thread', '\n'.join(format_bug(b) for b in needs_reporting[:5]), footer='Check if the Daybreak Forums have a thread on this bug, and add a link to it'))  # type: ignore
 
         if forums:
             needs_issue = [p for p in forums.values() if not p['tracked']]
             if needs_issue:
-                embeds.append(Embed('Needs Issue', '\n'.join(format_post(p) for p in needs_issue[:5]), footer='Either Associate this thread with our issue, or make one'))
+                embeds.append(Embed('Needs Issue', '\n'.join(format_post(p) for p in needs_issue[:5]), footer='Either Associate this thread with our issue, or make one'))  # type: ignore
 
         await ctx.send(embeds=embeds)
 

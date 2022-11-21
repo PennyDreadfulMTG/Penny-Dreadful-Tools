@@ -3,7 +3,6 @@ import logging
 import subprocess
 from typing import Any, Dict, List, Optional, cast
 
-from github.GithubException import GithubException
 from naff import Client, listen
 from naff.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from naff.models import ActivityType, Guild, GuildText, Intents, Member, Role
@@ -198,14 +197,6 @@ class Bot(Client):
             #             message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
             #             await self.on_message(message)
             #             await reaction.message.delete()
-
-    async def on_error(self, source: str, error: Exception, *args: Any, **kwargs: Any) -> None:
-        await super().on_error(source, error, *args, **kwargs)
-        try:
-            content = [arg.content for arg in args if hasattr(arg, 'content')]  # The default string representation of a Message does not include the message content.
-            repo.create_issue(f'Bot error {source}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=error)
-        except GithubException as e:
-            logging.error('Github error\n%s', e)
 
 def init() -> None:
     client = Bot()

@@ -1,4 +1,4 @@
-from naff.models import slash_command, Extension, Embed
+from naff.models import Embed, Extension, slash_command
 
 from discordbot.command import MtgContext, MtgInteractionContext
 from magic import fetcher

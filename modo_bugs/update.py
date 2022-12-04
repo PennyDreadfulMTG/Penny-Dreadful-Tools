@@ -177,6 +177,11 @@ def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str])
         issue.add_to_labels(status)
         labels.append(status)
         issue.create_comment(f'Daybreak has labelled this bug as {_status}')
+        if status == 'Fixed':
+            issue.edit(state='closed')
+        if status == 'Not A Bug':
+            issue.edit(state='closed')
+
     for s in labels:
         if s.startswith('Daybreak: ') and s != status:
             issue.remove_from_labels(s)

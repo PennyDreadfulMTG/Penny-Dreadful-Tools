@@ -127,7 +127,7 @@ def get_daybreak_label(url: str) -> str | None:
         return label.text
     return None
 
-def get_forum_posts(url: str) -> list[ForumPost]:
+def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:
     html = fetch_tools.fetch(url)
     soup = BeautifulSoup(html, 'html.parser')
     posts = []
@@ -144,6 +144,11 @@ def get_forum_posts(url: str) -> list[ForumPost]:
         url = 'https://forums.mtgo.com' + t.attrs['href']
         name = t.text
         posts.append(ForumPost(name, label, url))
+    if all_pages:
+        next = soup.find('a', class_='pageNav-jump--next')
+        if next is not None:
+            url = 'https://forums.mtgo.com' + next.attrs['href']
+            posts.extend(get_forum_posts(url, True))
     return posts
 
 def forum_to_discord(post: ForumPost) -> None:

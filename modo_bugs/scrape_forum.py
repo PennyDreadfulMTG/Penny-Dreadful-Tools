@@ -13,7 +13,10 @@ def main() -> None:
     with open('bugs.json') as f:
         bugs = f.read()
 
-    posts = fetcher.get_forum_posts('https://forums.mtgo.com/index.php?forums/bug-reports.16/')
+    posts = fetcher.get_forum_posts('https://forums.mtgo.com/index.php?forums/bug-reports.16/', True)
+    checked = [p.url for p in posts]
+    bad = []
+    print(repr(checked))
     for p in posts:
         if p.label is not None:
             is_tracked = False
@@ -28,6 +31,14 @@ def main() -> None:
         if not k['tracked']:
             if url in bugs:
                 k['tracked'] = True
+        # print(url in checked)
+        if not url in checked:
+            k['status'] = fetcher.get_daybreak_label(url)
+            if k['status'] is None:
+                bad.append(url)
+
+    for url in bad:
+        del known[url]
 
     with open('forums.json', 'w') as fp:
         json.dump(known, fp, indent=2)

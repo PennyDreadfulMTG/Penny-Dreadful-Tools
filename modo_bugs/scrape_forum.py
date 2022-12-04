@@ -16,7 +16,6 @@ def main() -> None:
     posts = fetcher.get_forum_posts('https://forums.mtgo.com/index.php?forums/bug-reports.16/', True)
     checked = [p.url for p in posts]
     bad = []
-    print(repr(checked))
     for p in posts:
         if p.label is not None:
             is_tracked = False
@@ -31,7 +30,6 @@ def main() -> None:
         if not k['tracked']:
             if url in bugs:
                 k['tracked'] = True
-        # print(url in checked)
         if not url in checked:
             k['status'] = fetcher.get_daybreak_label(url)
             if k['status'] is None:

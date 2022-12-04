@@ -30,7 +30,7 @@ def main() -> None:
         if not k['tracked']:
             if url in bugs:
                 k['tracked'] = True
-        if not url in checked:
+        if not url in checked and k['status'] not in ['Fixed', 'Not A Bug']:
             k['status'] = fetcher.get_daybreak_label(url)
             if k['status'] is None:
                 bad.append(url)

@@ -5,7 +5,7 @@ import os
 import re
 from typing import Dict, List, Optional, Tuple
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 from magic import card, fetcher, oracle
 from magic.models import Card, Printing
@@ -146,7 +146,13 @@ async def download_image_async(cards: List[Card]) -> Optional[str]:
     return None
 
 def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
-    images = list(map(Image.open, in_filepaths))
+    try:
+        images = list(map(Image.open, in_filepaths))
+    except UnidentifiedImageError:
+        for f in in_filepaths:
+            os.remove(f)
+        return None
+
     for image in images:
         aspect_ratio = image.width / image.height
         image.thumbnail([aspect_ratio * 445, 445])

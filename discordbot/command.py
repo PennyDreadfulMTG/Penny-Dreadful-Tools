@@ -225,8 +225,8 @@ def slash_card_option(param: str = 'card') -> Callable:
 
 def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
     return {
-        'name': name or value,
-        'value': value,
+        'name': (name or value)[:100],
+        'value': value[:100],
     }
 
 async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: str) -> None:
@@ -240,7 +240,7 @@ async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: st
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
     choices = [*set(choices)]
-    await ctx.send(choices=list(choices)[:20])
+    await ctx.send(choices=list(make_choice(c) for c in choices[:20]))  # type: ignore
 
 def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) -> PrefixedCommand:
     """

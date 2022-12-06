@@ -1925,10 +1925,10 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:a03cf72f336929c9405f485dd90baef31a401776675f785f69a5a519f0b099ca",
-                "sha256:c957599502195ab98e90f0560466fa963f6a23373905e6d4e1772dbfaf1e44b7"
+                "sha256:2c2b4f756f79778074ce2d21f745aa737b12160d9f8dfa274f47a7287c7a2fee",
+                "sha256:ad60ccf01d626de9762224448f36c13e0660e863afd6dc11d979b3739a6c7d24"
             ],
-            "version": "==65.6.0.1"
+            "version": "==65.6.0.2"
         },
         "typing-extensions": {
             "hashes": [
@@ -2164,11 +2164,11 @@
         },
         "flake8-bugbear": {
             "hashes": [
-                "sha256:6ad0ab754507319060695e2f2be80e6d8977cfcea082293089a9226276bd825d",
-                "sha256:a6708608965c9e0de5fff13904fed82e0ba21ac929fe4896459226a797e11cd5"
+                "sha256:4cdb2c06e229971104443ae293e75e64c6107798229202fbe4f4091427a30ac0",
+                "sha256:b69a510634f8a9c298dfda2b18a8036455e6b19ecac4fe582e4d7a0abfa50a30"
             ],
             "index": "pypi",
-            "version": "==22.10.27"
+            "version": "==22.12.6"
         },
         "flake8-commas": {
             "hashes": [

@@ -1,9 +1,9 @@
 import datetime
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
 from flask import Blueprint, g, request, url_for
-from flask_babel import gettext, ngettext
+from flask_babel import gettext
 
 from magic import multiverse, oracle, seasons
 from shared import configuration, dtutil

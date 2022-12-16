@@ -6,6 +6,7 @@ from typing import Optional
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
 from werkzeug import wrappers
 from werkzeug.exceptions import InternalServerError
+import sentry_sdk
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite.cache import cached
@@ -74,6 +75,7 @@ def before_request() -> Optional[wrappers.Response]:
         return redirect(re.sub('/seasons/[^/]*', '', request.path))
     if request.path.startswith('/seasons/0'):
         return redirect(request.path.replace('/seasons/0', '/seasons/all'))
+    sentry_sdk.set_user({'id': auth.discord_id(), 'username': auth.mtgo_username(), 'ip_address': '{{auto}}'})
     g.p = perf.start()
     return None
 

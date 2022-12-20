@@ -61,7 +61,7 @@ def layouts() -> Dict[str, bool]:
         'modal_dfc': True,
         'normal': True,
         'planar': False,
-        'reversible_card': True,
+        'reversible_card': False,
         'saga': True,
         'scheme': False,
         'split': True,

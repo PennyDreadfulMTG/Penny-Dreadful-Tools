@@ -163,7 +163,7 @@ def process_issue(issue: Issue) -> None:
         ALL_BUGS.append(bug)
 
 def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str]) -> None:
-    if feedback_link is None:
+    if not feedback_link:
         return
 
     status = fetcher.get_daybreak_label(feedback_link)

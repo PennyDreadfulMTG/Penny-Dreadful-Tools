@@ -2,6 +2,7 @@ import time
 
 from decksite.data import archetype, deck
 
+DAILY = True
 
 def ad_hoc() -> None:
     archetypes = archetype.load_archetypes()

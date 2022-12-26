@@ -7,6 +7,7 @@ from shared import configuration, logger
 
 from . import validate_translations
 
+DAILY = True
 
 def run() -> None:
     api_key = configuration.get('poeditor_api_key')

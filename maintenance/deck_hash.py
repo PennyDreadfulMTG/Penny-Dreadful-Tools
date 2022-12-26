@@ -4,6 +4,7 @@ from decksite.data import deck
 from decksite.database import db
 from shared import redis_wrapper as redis
 
+DAILY = True
 
 def run() -> None:
     all_decks = deck.load_decks()

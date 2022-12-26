@@ -4,6 +4,8 @@ from decksite.data import elo, person
 from decksite.database import db
 from shared import logger
 
+DAILY = True
+
 PEOPLE: Dict[str, int] = {}
 
 def run() -> None:

@@ -3,6 +3,7 @@ from magic import seasons
 from shared import dtutil
 from shared.pd_exception import DoesNotExistException
 
+DAILY = True
 
 def run() -> None:
     existing = list(map(lambda s: s['number'], db().select('SELECT `number` FROM `season`;')))

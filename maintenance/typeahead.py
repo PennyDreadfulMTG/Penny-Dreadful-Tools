@@ -7,6 +7,7 @@ from decksite.data import archetype, person
 from magic import fetcher, oracle
 from shared import configuration
 
+DAILY = True
 REQUIRES_APP_CONTEXT = True
 
 def run() -> None:

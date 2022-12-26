@@ -4,6 +4,7 @@ import subprocess
 from shared import configuration
 from shared.pd_exception import InvalidArgumentException, OperationalException
 
+DAILY = True
 
 def run() -> None:
     """Make a 'safe' (no personal info) copy of the current prod db for download by devs."""

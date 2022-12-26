@@ -1,5 +1,6 @@
 from decksite.database import db
 
+DAILY = True
 
 def run() -> None:
     sql = """

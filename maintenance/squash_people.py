@@ -5,6 +5,8 @@ from shared.container import Container
 
 from . import elo
 
+DAILY = True
+
 USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username']
 
 # Find people with identical usernames across systems and squash them together.

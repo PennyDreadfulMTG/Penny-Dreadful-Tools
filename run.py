@@ -114,6 +114,10 @@ def task(args: List[str]) -> None:
             run_all_tasks(module)
         elif name == 'hourly':
             run_all_tasks(module, 'HOURLY')
+        elif name == 'daily':
+            run_all_tasks(module, 'DAILY')
+        elif name == 'weekly':
+            run_all_tasks(module, 'WEEKLY')
         else:
             s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
             use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)

@@ -36,7 +36,7 @@
     "@webpack-cli/migrate": "^1.1.2",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-loader": "^8.2.5",
+    "babel-loader": "^9.1.0",
     "babel-preset-stage-2": "^6.24.1",
     "css-loader": "^6.7.3",
     "eslint": "^8.31.0",

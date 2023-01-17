@@ -10,7 +10,7 @@ from typing import Any, List, Optional, Tuple
 import click
 from traceback_with_variables import activate_by_import  # noqa
 
-from shared import configuration, decorators
+from shared import configuration, decorators, sentry
 
 logging.basicConfig(level=logging.INFO)
 
@@ -95,6 +95,7 @@ def logsite() -> None:
 @click.argument('argv', nargs=-1)
 def modo_bugs(argv: Tuple[str]) -> None:
     from modo_bugs import main
+    sentry.init()
     main.run(argv)
 
 @decorators.interprocess_locked('.task.lock')
@@ -106,6 +107,7 @@ def task(args: List[str]) -> None:
         if module == 'scrapers':
             module = 'decksite.scrapers'
         name = args[1].replace('-', '_')
+        sentry.init()
         from magic import multiverse, oracle
         multiverse.init()
         if name != 'reprime_cache':

@@ -337,7 +337,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
+            "markers": "python_full_version >= '3.6.2' and python_full_version < '4.0.0'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -2040,17 +2040,17 @@
         },
         "types-docutils": {
             "hashes": [
-                "sha256:a024cada35f0c13cc45eb0b68a102719018a634013690b7fef723bcbfadbd1f1",
-                "sha256:be0a51ba1c7dd215d9d2df66d6845e63c1009b4bbf4c5beb87a0d9745cdba962"
+                "sha256:7be44dac1b160901308ac43762d5e89175105ed682092a3a1f08911d2573a470",
+                "sha256:ca3d2135484adb52dd042bbddbd6eddcbbda8c608ba3f5e5f908bd548ffcb399"
             ],
-            "version": "==0.19.1.1"
+            "version": "==0.19.1.2"
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:667597f0773464f0259524d349d37503bffefc9d0d3fae621e4493d2fd7b1602",
-                "sha256:fe89f2d15caee7015708bed8fb68ff578b4d96f9a64b6e2010dad42bb9cc82a6"
+                "sha256:300cbf37d59c12e6fc7adfccaf4539e04d9e7206a43526c8aa4501fa6339e072",
+                "sha256:5fb3fa8f86a8cfc3aaa371d1c318c9d5b19d09c6278ad6cef6ac9dd3fd48f0c4"
             ],
-            "version": "==65.7.0.1"
+            "version": "==65.7.0.2"
         },
         "typing-extensions": {
             "hashes": [
@@ -2205,7 +2205,7 @@
                 "sha256:ee6acae74a2b91865910eef5e7de37dc6895ad96fa23603d1d27ea69df545015",
                 "sha256:ef3f72c9666bba2bab70d2a8b79f2c6d2c1a42a7f7e2b0ec83bb2f9e383950af"
             ],
-            "markers": "python_version < '3.11'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==1.14.1"
         },
         "yarl": {
@@ -2651,11 +2651,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:0ae38633734990d019b80f5463dfa164ebd3581998ac8435f526da6fe4d598c3",
-                "sha256:b6a2fca8109f4fdba33052f11ed86102bddb2338519e1827387137fefc66a98b"
+                "sha256:61960554baca0008ae7e2db2bd3b322ca9a144d3e80ce270f5fb640817e40994",
+                "sha256:e67424525f84adfbeab7268a159d3c633862dafae15c5b19547ce1b55954f0a3"
             ],
             "index": "pypi",
-            "version": "==2.28.11.7"
+            "version": "==2.28.11.8"
         },
         "types-six": {
             "hashes": [

@@ -9,7 +9,6 @@ from shared import dtutil, recursive_update
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
-ROTATION_OFFSET = datetime.timedelta(days=7)  # We rotate seven days after a set is released.
 
 SEASONS = [
     'EMN', 'KLD',               # 2016
@@ -19,7 +18,7 @@ SEASONS = [
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
     'VOW', 'NEO', 'SNC', 'DMU',  # 2022
-    'BRO', 'ONE',                # 2023
+    'BRO', 'ONE', 'MOM',         # 2023
 ]
 
 OVERRIDES = {
@@ -32,6 +31,13 @@ OVERRIDES = {
         },
     },
 }
+
+def rotation_offset(code: str) -> datetime.timedelta:
+    if code not in SEASONS:
+        return datetime.timedelta(days=14)
+    if SEASONS.index(code) >= SEASONS.index('ONE'):
+        return datetime.timedelta(days=14)
+    return datetime.timedelta(days=7)
 
 
 @attr.s(auto_attribs=True, slots=True)
@@ -70,7 +76,7 @@ class RotationInfo():
     calculating: bool = False
 
     def validate(self) -> None:
-        if (self.next.enter_date_dt + ROTATION_OFFSET) > dtutil.now():
+        if (self.next.enter_date_dt + rotation_offset(self.next.code)) > dtutil.now():
             return
         if not self.calculating:
             self.recalculate()
@@ -83,7 +89,7 @@ class RotationInfo():
 
 def calc_next() -> SetInfo:
     try:
-        return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
+        return min([s for s in sets() if (s.enter_date_dt + rotation_offset(s.code)) > dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
     except ValueError:
         fake_enter_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90)
         fake_exit_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
@@ -94,7 +100,7 @@ def calc_next() -> SetInfo:
         return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
 
 def calc_prev() -> SetInfo:
-    return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
+    return max([s for s in sets() if (s.enter_date_dt + rotation_offset(s.code)) < dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
 
 
 @functools.lru_cache
@@ -135,10 +141,12 @@ def season_num(code_to_look_for: str) -> int:
         raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS))) from c
 
 def last_rotation() -> datetime.datetime:
-    return last_rotation_ex().enter_date_dt + ROTATION_OFFSET
+    s = last_rotation_ex()
+    return s.enter_date_dt + rotation_offset(s.code)
 
 def next_rotation() -> datetime.datetime:
-    return next_rotation_ex().enter_date_dt + ROTATION_OFFSET
+    s = next_rotation_ex()
+    return s.enter_date_dt + rotation_offset(s.code)
 
 def last_rotation_ex() -> SetInfo:
     rotation_info().validate()

@@ -34,8 +34,8 @@ if sys.stdout.encoding != 'utf-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)  # type: ignore
 
 def main() -> None:
-    if configuration.get('github_user') is None or configuration.get('github_password') is None:
-        print('Invalid Config')
+    if not configuration.get('github_user') or not configuration.get('github_password'):
+        print('Invalid Github Config')
         sys.exit(1)
 
     verification_numbers()
@@ -212,7 +212,13 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
         if '//' in c:
             pass
         elif not c in cardnames():
-            fail = True
+            total_cards, names, warnings = fetcher.search_scryfall(c)
+            if total_cards == 1:
+                body = issue.body.replace(c, names[0])
+                issue.edit(body=body)
+            else:
+                fail = True
+
     if fail and not 'Invalid Card Name' in labels:
         issue.add_to_labels('Invalid Card Name')
     elif not fail and 'Invalid Card Name' in labels:

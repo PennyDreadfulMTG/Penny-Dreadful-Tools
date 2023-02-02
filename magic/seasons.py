@@ -21,6 +21,10 @@ SEASONS = [
     'BRO', 'ONE', 'MOM',         # 2023
 ]
 
+NOT_SEASONS = [
+    'March of the Machine: The Aftermath', # Epilogue set, not rotation worthy
+]
+
 OVERRIDES = {
     'Dominaria': {  # Dominaria had a weird setcode in MTGO/Arena
         'mtgoCode': 'DAR',
@@ -113,6 +117,8 @@ def sets() -> List[SetInfo]:
 
     last = set_info[0]
     for s in set_info:
+        if s.name in NOT_SEASONS:
+            continue
         if s.enter_date_dt.timestamp() == 0:
             s.enter_date_dt = last.enter_date_dt + datetime.timedelta(days=90)
             print(f'guessing {s.name} enter date: {s.enter_date_dt}')

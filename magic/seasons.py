@@ -22,7 +22,7 @@ SEASONS = [
 ]
 
 NOT_SEASONS = [
-    'March of the Machine: The Aftermath', # Epilogue set, not rotation worthy
+    'March of the Machine: The Aftermath',  # Epilogue set, not rotation worthy
 ]
 
 OVERRIDES = {

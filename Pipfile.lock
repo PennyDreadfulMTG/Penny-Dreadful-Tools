@@ -2081,7 +2081,7 @@
                 "sha256:076907bf8fd355cde77728471316625a4d2f7e713c125f51953bb5b3eecf4f72",
                 "sha256:75edcdc2f7d85b137124a6c3c9fc3933cdeaa12ecb9a6a959f22797a0feca7e1"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
+            "markers": "python_version >= '3.6'",
             "version": "==1.26.14"
         },
         "uwsgidecorators": {
@@ -2643,11 +2643,11 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:802e893ad3f88e03d3a2feb0d23a715d60b0bb330bc598a52f1de237fc2547a5",
-                "sha256:b70829ca3401d3153d628e28d860070eff1b36b2fa3e5af3e583c1d167383cab"
+                "sha256:af621c36dbefb09226211a192454f57b8df0af9b0c27609d19a15101937e6d6c",
+                "sha256:cd6d34bf1511317cd4e47f9a5c24262b300bc6f3a83fcaee23a9068b19f44318"
             ],
             "index": "pypi",
-            "version": "==4.4.0.4"
+            "version": "==4.4.0.5"
         },
         "types-requests": {
             "hashes": [

@@ -5,6 +5,7 @@ from flask import Flask
 
 from magic import multiverse, oracle
 from price_grabber import price
+from shared import sentry
 from shared.serialization import extra_serializer
 
 SRV = Flask(__name__)
@@ -19,4 +20,5 @@ def cardprice(card: str) -> Optional[str]:
 def init() -> None:
     multiverse.init()
     oracle.init()
+    sentry.init()
     SRV.run(port=5800, host='0.0.0.0')

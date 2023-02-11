@@ -59,6 +59,7 @@ def profiler() -> None:
 @cli.command()
 def price_grabber() -> None:
     from price_grabber import price_grabber as grabber
+    sentry.init()
     grabber.run()
 
 @cli.command()
@@ -84,6 +85,7 @@ def maintenance(script: str) -> None:
 @cli.command()
 def rotation() -> None:
     from rotation_script import rotation_script
+    sentry.init()
     rotation_script.run()
 
 @cli.command()

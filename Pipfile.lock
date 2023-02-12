@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "96e9c2727e07628509bf200242de930df1214b071037cebec3c1277fe292fc31"
+            "sha256": "76a32ab7d467a82ba0f51b8458065e92800a96f6e13a6ca6ddb40018c5a499f5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -151,11 +151,11 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:23c718921acab5f08cbbbe9293967f1f8fec40c336d19cd75dc12a9ea31d2eb2",
-                "sha256:bd1aa4f9915c98e8aaebcd4e71930154d4e8c9aaf05d35ac0a63d1956091ae3f"
+                "sha256:0e0e3709d64fbffd3037e4ff403580550f14471fd3eaae9fa11cc9a5c7901153",
+                "sha256:a3cf9f02c53dd259144a7e8f3ccd75d67c9a8c716ef183e0c1f291bc5d7bb3cf"
             ],
             "index": "pypi",
-            "version": "==2.14.1"
+            "version": "==2.14.2"
         },
         "async-timeout": {
             "hashes": [
@@ -498,7 +498,7 @@
                 "sha256:fc1464c97579da9f3ab16763c32e5c5d5bb5fa1ec7ce509a4ca6108b61b84fab",
                 "sha256:fd7dc0e6812b799a34f6d12fcb1000539098c249c8da54f3566c6a6461d0dbad"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==1.0.7"
         },
         "coverage": {
@@ -1431,7 +1431,7 @@
                 "sha256:f64bb98ac59b3ea3bf74b02f13836eb2e24e48e0ab0145bbda646295769bd780",
                 "sha256:f9006288bcf4895917d02583cf3411f98631275bc67cce355a7f39f8c14338fa"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==1.24.2"
         },
         "oauthlib": {
@@ -1530,7 +1530,7 @@
                 "sha256:e474390e60ed609cec869b0da796ad94f420bb057d86784191eefc62b65819ae",
                 "sha256:f76d097d12c82a535fda9dfe5e8dd4127952b45fea9b0276cb30cca5ea313fbc"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==1.5.3"
         },
         "pillow": {
@@ -2291,7 +2291,7 @@
                 "sha256:ee6acae74a2b91865910eef5e7de37dc6895ad96fa23603d1d27ea69df545015",
                 "sha256:ef3f72c9666bba2bab70d2a8b79f2c6d2c1a42a7f7e2b0ec83bb2f9e383950af"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
+            "markers": "python_version < '3.11'",
             "version": "==1.14.1"
         },
         "yarl": {

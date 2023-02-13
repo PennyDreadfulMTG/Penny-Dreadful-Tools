@@ -2167,7 +2167,7 @@
                 "sha256:076907bf8fd355cde77728471316625a4d2f7e713c125f51953bb5b3eecf4f72",
                 "sha256:75edcdc2f7d85b137124a6c3c9fc3933cdeaa12ecb9a6a959f22797a0feca7e1"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==1.26.14"
         },
         "uwsgidecorators": {
@@ -2702,10 +2702,11 @@
         },
         "types-pyopenssl": {
             "hashes": [
-                "sha256:2e95f9a667d5eeb0af699196f857f7d23d5b4d642437bd37355bc13a87e9f4ae",
-                "sha256:ea7e5d06f9190a1cb013ad4b13d48896e5cd1e785c04491f38b206d1bc4b8dc1"
+                "sha256:6ca54d593f8b946f9570f9ed7457c41da3b518feff5e344851941a6209bea62b",
+                "sha256:847ab17a16475a882dc29898648a6a35ad0d3e11a5bba5aa8ab2f3435a8647cb"
             ],
-            "version": "==23.0.0.2"
+            "index": "pypi",
+            "version": "==23.0.0.3"
         },
         "types-python-dateutil": {
             "hashes": [

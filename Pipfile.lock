@@ -423,7 +423,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
+            "markers": "python_version < '4' and python_full_version >= '3.6.2'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -2707,11 +2707,11 @@
         },
         "types-python-dateutil": {
             "hashes": [
-                "sha256:4a6f4cc19ce4ba1a08670871e297bf3802f55d4f129e6aa2443f540b6cf803d2",
-                "sha256:cfb7d31021c6bce6f3362c69af6e3abb48fe3e08854f02487e844ff910deec2a"
+                "sha256:316c6b107d055bbd06324b71362e6104102220e6988aa4a388550aa3a8ad5d06",
+                "sha256:6b44741d3e79b2f2ba595f6bfa96f1a5091a00703848547efb3bc5b71df3cf9d"
             ],
             "index": "pypi",
-            "version": "==2.8.19.6"
+            "version": "==2.8.19.8"
         },
         "types-pytz": {
             "hashes": [

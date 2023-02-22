@@ -2290,7 +2290,7 @@
                 "sha256:ee6acae74a2b91865910eef5e7de37dc6895ad96fa23603d1d27ea69df545015",
                 "sha256:ef3f72c9666bba2bab70d2a8b79f2c6d2c1a42a7f7e2b0ec83bb2f9e383950af"
             ],
-            "markers": "python_version < '3.11'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==1.14.1"
         },
         "yarl": {
@@ -2716,11 +2716,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:1d024c1805b7a5d6899d236b7d5ee468cdd2093b70209640379eb80be593c453",
-                "sha256:58010bb1d6f7ba7284fba264b3bc9c2480ab586201e25128ed2aadea4c298b33"
+                "sha256:40ca448a928d566f7d44ddfde0066e384f7ffbd4da2778e42a4570eaca572446",
+                "sha256:487d3e8e9f4071eec8081746d53fa982bbc05812e719dcbf2ebf3d55a1a4cd28"
             ],
             "index": "pypi",
-            "version": "==2022.7.1.1"
+            "version": "==2022.7.1.2"
         },
         "types-redis": {
             "hashes": [

@@ -60,6 +60,8 @@ class Database():
                 return (0, [])  # We don't care if an INSERT IGNORE INTO didn't do anything.
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
         except MySQLdb.Error as e:
+            if e.args[0] == 2006:
+                self.connect()
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
 
     def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:

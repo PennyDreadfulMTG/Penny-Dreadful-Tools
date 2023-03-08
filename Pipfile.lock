@@ -2146,7 +2146,7 @@
                 "sha256:076907bf8fd355cde77728471316625a4d2f7e713c125f51953bb5b3eecf4f72",
                 "sha256:75edcdc2f7d85b137124a6c3c9fc3933cdeaa12ecb9a6a959f22797a0feca7e1"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
             "version": "==1.26.14"
         },
         "uwsgidecorators": {
@@ -2731,11 +2731,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:15b24f0ca13b7c2ec6448ec4d96e8691899525989e53802e99bc5b4c2574382f",
-                "sha256:7b6a60ef6b46bc954903fc588161c09183b7a33ee5ebfba556174fa649f4c1e0"
+                "sha256:9ce4eb910e694ab0f94400361994c44c2186e0b62cef09095a8e4c92ce011e4f",
+                "sha256:d7f74db8ca79f9620107465ce9ddf8c0d2bffd45461f719f14c1479cdaf2d2a9"
             ],
             "index": "pypi",
-            "version": "==1.16.21.6"
+            "version": "==1.16.21.7"
         },
         "types-toml": {
             "hashes": [

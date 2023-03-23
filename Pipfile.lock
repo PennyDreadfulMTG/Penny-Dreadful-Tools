@@ -410,7 +410,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
+            "markers": "python_full_version >= '3.6.2' and python_full_version < '4.0.0'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -485,7 +485,7 @@
                 "sha256:fc1464c97579da9f3ab16763c32e5c5d5bb5fa1ec7ce509a4ca6108b61b84fab",
                 "sha256:fd7dc0e6812b799a34f6d12fcb1000539098c249c8da54f3566c6a6461d0dbad"
             ],
-            "markers": "python_version >= '3.8'",
+            "markers": "python_full_version >= '3.8.0'",
             "version": "==1.0.7"
         },
         "coverage": {
@@ -696,7 +696,7 @@
                 "sha256:85245aa2fd4cf502a643c9a9a2b5a393703e150a6eaacc3e0e84bb448053f061",
                 "sha256:e2d9f10337c9e3b17f9bce17a60a16a885a7d23b59b7f45ce07ea643e5580439"
             ],
-            "markers": "python_version >= '3.8'",
+            "markers": "python_full_version >= '3.8.0'",
             "version": "==4.39.2"
         },
         "freezegun": {
@@ -1446,7 +1446,7 @@
                 "sha256:f64bb98ac59b3ea3bf74b02f13836eb2e24e48e0ab0145bbda646295769bd780",
                 "sha256:f9006288bcf4895917d02583cf3411f98631275bc67cce355a7f39f8c14338fa"
             ],
-            "markers": "python_version >= '3.8'",
+            "markers": "python_full_version >= '3.8.0'",
             "version": "==1.24.2"
         },
         "oauthlib": {
@@ -1550,7 +1550,7 @@
                 "sha256:e474390e60ed609cec869b0da796ad94f420bb057d86784191eefc62b65819ae",
                 "sha256:f76d097d12c82a535fda9dfe5e8dd4127952b45fea9b0276cb30cca5ea313fbc"
             ],
-            "markers": "python_version >= '3.8'",
+            "markers": "python_full_version >= '3.8.0'",
             "version": "==1.5.3"
         },
         "pillow": {
@@ -2317,7 +2317,7 @@
                 "sha256:fbec11614dba0424ca72f4e8ba3c420dba07b4a7c206c8c8e4e73f2e98f4c559",
                 "sha256:fd69666217b62fa5d7c6aa88e507493a34dec4fa20c5bd925e4bc12fce586639"
             ],
-            "markers": "python_version < '3.11'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
             "version": "==1.15.0"
         },
         "yarl": {
@@ -2750,11 +2750,11 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:54964b1b18b7c868c543011eafab7aafd3d57e5285075ae1b574288535d93b4e",
-                "sha256:f3243339702cde2966e21f7fc34f8e9be1b55b407e8242ba204a42360f248678"
+                "sha256:7c1d5fdb0a2d5fd92eac37ce382fdb47d99a69889e7d6c2bc4479148ac646c73",
+                "sha256:f23415e448ca25ec5028c24fdf3717a13f0c905eb1933733e8a8a7d4952f6908"
             ],
             "index": "pypi",
-            "version": "==4.5.2.0"
+            "version": "==4.5.3.0"
         },
         "types-requests": {
             "hashes": [

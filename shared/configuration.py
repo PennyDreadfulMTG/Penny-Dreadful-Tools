@@ -115,6 +115,7 @@ DEFAULTS: Dict[str, Any] = {
     'rotation_hype_channel_id': '207281932214599682',
     'scratch_dir': '.',
     'sentry_token': None,
+    'sentry_monitorslug_rotation_script': None,
     'slow_fetch': 10.0,
     'slow_page': 10.0,
     'slow_query': 5.0,

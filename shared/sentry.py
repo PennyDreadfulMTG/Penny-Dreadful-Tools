@@ -1,7 +1,10 @@
+from typing import Callable
+from pyparsing import Any
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from shared import configuration
 import logging
+from sentry_sdk import crons
 
 
 def sentry_filter(event, hint):  # type: ignore
@@ -24,3 +27,6 @@ def init() -> None:
             )
         except Exception as c:  # pylint: disable=broad-except
             logging.error(c)
+
+def monitor(task_name: str) -> Callable[..., Any]:
+    return crons.monitor(configuration.get_optional_str('sentry_monitorslug_' + task_name))

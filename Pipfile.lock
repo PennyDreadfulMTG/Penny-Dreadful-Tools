@@ -162,7 +162,7 @@
                 "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15",
                 "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"
             ],
-            "markers": "python_version < '3.11'",
+            "markers": "python_version >= '3.6'",
             "version": "==4.0.2"
         },
         "attrs": {
@@ -410,7 +410,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4' and python_full_version >= '3.6.2'",
+            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -2722,7 +2722,6 @@
                 "sha256:9dacec020a3484ef5e4ea4bd9d403a981765b80821d5a40b790b2ba2f09d58db",
                 "sha256:acc153718bff497e8f6ca3beecb5ea7a3087c796e40d569fded8bafbfca73605"
             ],
-            "index": "pypi",
             "version": "==23.1.0.0"
         },
         "types-python-dateutil": {
@@ -2735,11 +2734,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:40ca448a928d566f7d44ddfde0066e384f7ffbd4da2778e42a4570eaca572446",
-                "sha256:487d3e8e9f4071eec8081746d53fa982bbc05812e719dcbf2ebf3d55a1a4cd28"
+                "sha256:a6cca439e1f87be0ce745181543b58587f4e685d6b14627255dced68004ba05e",
+                "sha256:eec7c806220776cde7b2fb20371853ddd0d14fa7544ca3c6862433ade37469df"
             ],
             "index": "pypi",
-            "version": "==2022.7.1.2"
+            "version": "==2023.2.0.0"
         },
         "types-redis": {
             "hashes": [

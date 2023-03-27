@@ -162,7 +162,7 @@
                 "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15",
                 "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"
             ],
-            "markers": "python_version < '3.11'",
+            "markers": "python_version >= '3.6'",
             "version": "==4.0.2"
         },
         "attrs": {
@@ -2734,11 +2734,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:a6cca439e1f87be0ce745181543b58587f4e685d6b14627255dced68004ba05e",
-                "sha256:eec7c806220776cde7b2fb20371853ddd0d14fa7544ca3c6862433ade37469df"
+                "sha256:2dd8a7667740e89ced9da99e4749327bde4c1d78b45c5c38217a296f4564b2b6",
+                "sha256:9422758e1d506fa4b75bc3679b5cbc9ce218696a9178788464b074ff6b986e0a"
             ],
             "index": "pypi",
-            "version": "==2023.2.0.0"
+            "version": "==2023.2.0.1"
         },
         "types-redis": {
             "hashes": [

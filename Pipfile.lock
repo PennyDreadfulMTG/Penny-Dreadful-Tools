@@ -2774,11 +2774,11 @@
         },
         "types-typed-ast": {
             "hashes": [
-                "sha256:3a4b18e4312249d6a667d215d2c1a4060efce5fc4c4807b27b75c85896787a90",
-                "sha256:fdec308ed991c267969c12e31f2d4a8eb527540a3833a72eb0bd479b2554f360"
+                "sha256:01edb7d635565fd27657a7e88c3cf204282e19a1fda4278b04eb4c7744a21de9",
+                "sha256:9543b5863db97b412a2b1d5f407c908336365a0bad304d64e8328a769f48c230"
             ],
             "index": "pypi",
-            "version": "==1.5.8.5"
+            "version": "==1.5.8.6"
         },
         "types-urllib3": {
             "hashes": [

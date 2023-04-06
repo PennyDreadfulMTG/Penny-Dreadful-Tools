@@ -14,7 +14,8 @@ rotation = "python run.py rotation"
 srv-price = "python run.py srv-price"
 lint = "python dev.py lint"
 test = "python dev.py test"
-init-cards = "python -c \"from magic import multiverse; multiverse.init()\""
+init-cards = "python run.py init-cards"
+# init-cards = "python -c \"from magic import multiverse; multiverse.init()\""
 
 [dev-packages]
 flake8 = "==6.0.0"

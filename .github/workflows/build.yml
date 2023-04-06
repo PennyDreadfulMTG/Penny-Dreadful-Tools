@@ -62,6 +62,7 @@ jobs:
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync --dev; fi
     - uses: PennyDreadfulMTG/setup-linters@main
+    - run: pipenv run init-cards
     - name: Run pytest
       run: |
         pipenv run pytest

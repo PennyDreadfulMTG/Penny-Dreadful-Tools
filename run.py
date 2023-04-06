@@ -100,6 +100,13 @@ def modo_bugs(argv: Tuple[str]) -> None:
     sentry.init()
     main.run(argv)
 
+@cli.command()
+def init_cards() -> None:
+    from magic import multiverse
+    success = multiverse.init()
+    sys.exit(0 if success else 1)
+
+
 @decorators.interprocess_locked('.task.lock')
 def task(args: List[str]) -> None:
     try:

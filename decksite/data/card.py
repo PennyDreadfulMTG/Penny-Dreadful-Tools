@@ -34,11 +34,73 @@ def load_card(name: str, tournament_only: bool = False, season_id: Optional[int]
     return c
 
 def preaggregate() -> None:
-    preaggregate_card()
+    preaggregate_card2()
     preaggregate_card_archetype()
     preaggregate_card_person()
     preaggregate_unique()
     preaggregate_trailblazer()
+
+def preaggregate_card2() -> None:
+    table = '_card_stats'
+    table_creation_sql = f"""
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            name VARCHAR(190) NOT NULL,
+            season_id INT NOT NULL,
+            num_decks INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            perfect_runs INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            tournament_top8s INT NOT NULL,
+            deck_type ENUM('league', 'tournament', 'other') NOT NULL,
+            PRIMARY KEY (season_id, name, deck_type),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+    """
+    preaggregation_sql = """
+        INSERT INTO _new{table} (
+            name,
+            season_id,
+            num_decks,
+            wins,
+            losses,
+            draws,
+            perfect_runs,
+            tournament_wins,
+            tournament_top8s,
+            deck_type
+        )
+        SELECT
+            card AS name,
+            season.season_id,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(dsum.wins), 0) AS wins,
+            IFNULL(SUM(dsum.losses), 0) AS losses,
+            IFNULL(SUM(dsum.draws), 0) AS draws,
+            SUM(CASE WHEN dsum.wins >= 5 AND dsum.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
+        FROM
+            deck AS d
+        INNER JOIN
+            -- Eiliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
+            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
+        {competition_join}
+        {season_join}
+        {nwdl_join}
+        WHERE
+            season.season_id = {{season_id}}
+        GROUP BY
+            card,
+            season.season_id,
+            ct.name
+    """.format(table=table,
+               competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join())
+    preaggregation.preaggregate2(table, table_creation_sql, preaggregation_sql)
 
 def preaggregate_card() -> None:
     table = '_card_stats'

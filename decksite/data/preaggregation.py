@@ -9,6 +9,7 @@ def preaggregate(table: str, sql: str) -> None:
         db().get_lock(lock_key, 60 * 5)
     except DatabaseException as e:
         logger.warning(f'Not preaggregating {table} because of {e}')
+    db().execute('SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED')
     db().execute(f'DROP TABLE IF EXISTS _new{table}')
     db().execute(sql)
     db().execute(f'DROP TABLE IF EXISTS _old{table}')

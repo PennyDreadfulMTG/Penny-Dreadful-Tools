@@ -20,7 +20,7 @@ from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard,
                               prepare_people)
 from decksite.views import DeckEmbed
 from find import search as card_search
-from magic import oracle, rotation, seasons, tournaments
+from magic import layout, oracle, rotation, seasons, tournaments
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
@@ -231,7 +231,7 @@ def cardfeed_api() -> Response:
         rank = ranks.get(c.name)
         name = c.name
         # Scryfall requested this naming convention for these layouts even though that is not our standard for them.
-        if c.layout in ('adventure', 'flip', 'modal_dfc', 'transform'):
+        if send_scryfall_two_names(c.layout):
             name = ' // '.join(c.names)
         os.append({'name': name, 'rank': rank, 'legal': bool(c.pd_legal)})
     r = {'cards': os}
@@ -756,3 +756,6 @@ def pagination(args: Dict[str, str]) -> Tuple[int, int, str]:
         return query.pagination(args)
     except InvalidArgumentException as e:
         raise BadRequest from e
+
+def send_scryfall_two_names(lo: str) -> bool:
+    return lo in layout.has_two_names() and lo not in layout.has_meld_back()

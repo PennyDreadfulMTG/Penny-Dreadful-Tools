@@ -17,6 +17,7 @@ import feedparser
 import pytz
 from mypy_extensions import TypedDict
 
+from magic import layout
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools
@@ -228,8 +229,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
     def get_frontside(scr_card: Dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
-        # not sure how to handle meld cards
-        if scr_card['layout'] in ['transform', 'flip', 'adventure', 'modal_dfc']:
+        if scr_card['layout'] in layout.has_two_names() and not scr_card['layout'] in layout.uses_two_names() and not scr_card['layout'] in layout.has_meld_back():
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]

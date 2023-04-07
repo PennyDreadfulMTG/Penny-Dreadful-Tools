@@ -4,14 +4,12 @@ import json
 import os
 from typing import Any, Dict, List, Optional, Set, Union
 
-from github.GithubException import GithubException
-
-from magic import card, database, fetcher, mana, seasons
+from magic import card, database, fetcher, layout, mana, seasons
 from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db
 from magic.models import Card
-from shared import configuration, dtutil, repo
+from shared import configuration, dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -44,48 +42,6 @@ async def init_async() -> bool:
             return True
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
-    return False
-
-def layouts() -> Dict[str, bool]:
-    return {
-        'adventure': True,
-        'art_series': False,
-        'augment': False,
-        'class': True,
-        'double_faced_token': False,
-        'emblem': False,
-        'flip': True,
-        'host': False,
-        'leveler': True,
-        'meld': True,
-        'modal_dfc': True,
-        'normal': True,
-        'planar': False,
-        'reversible_card': False,
-        'saga': True,
-        'scheme': False,
-        'split': True,
-        'token': False,
-        'transform': True,
-        'vanguard': False,
-    }
-
-def playable_layouts() -> List[str]:
-    return [layout for layout, playable in layouts().items() if playable]
-
-def is_playable_layout(layout: str) -> bool:
-    v = layouts().get(layout)
-    if v is not None:
-        return v
-    cache_key = 'missing_layout_logged'
-    if not hasattr(is_playable_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
-        try:
-            warning = f'Did not recognize layout `{layout}` – need to add it'
-            print(warning)
-            repo.create_issue(warning, 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
-        except GithubException:
-            pass  # We tried. Not gonna break the world because we couldn't log it.
-        setattr(is_playable_layout, cache_key, [])  # The other half of the hack.
     return False
 
 def cached_base_query(where: str = '(1 = 1)') -> str:
@@ -244,7 +200,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
 
     for p in printings:
         try:
-            if not valid_layout(p):
+            if p.get('layout') not in layout.uses_canonical_namespace():
                 continue
 
             if p.get('type_line') == 'Card':
@@ -314,11 +270,6 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         'printing': printing_values,
         'card_legality': card_legality_values,
     }
-
-def valid_layout(p: CardDescription) -> bool:
-    # Exclude art_series because they have the same name as real cards and that breaks things.
-    # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
-    return p['layout'] not in ['art_series', 'token']
 
 def face_colors(p: CardDescription) -> Set[str]:
     colors = set()

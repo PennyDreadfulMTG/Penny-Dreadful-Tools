@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, cast
 
-from magic import mana
+from magic import layout, mana
 from shared import dtutil
 from shared.container import Container
 
@@ -17,7 +17,7 @@ class Card(Container):
             self.names = [self.name]
 
     def is_double_sided(self) -> bool:
-        return self.layout in ['transform', 'meld', 'modal_dfc']
+        return self.layout in layout.has_two_faces()
 
     def is_creature(self) -> bool:
         return 'Creature' in self.type_line

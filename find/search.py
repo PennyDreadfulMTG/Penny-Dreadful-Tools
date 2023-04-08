@@ -3,7 +3,7 @@ from typing import Dict, Generator, Iterable, List, Optional, Set, Union
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
-from magic import card, mana, multiverse, seasons
+from magic import card, mana, layout, multiverse, seasons
 from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
 from magic.models import Card
@@ -368,9 +368,7 @@ def init_value_lookup() -> None:
             VALUE_LOOKUP['color_identity'] = d
 
 def is_subquery(subquery_name: str) -> str:
-    if subquery_name == 'split':
-        return "(c.layout = 'split' OR c.layout = 'aftermath')"
-    if subquery_name in multiverse.layouts().keys():
+    if subquery_name in layout.all_layouts():
         return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
     if subquery_name == 'spikey':
         # This is a pretty egregious hardcoding of 426 card names but I really don't want to call Scryfall from here.

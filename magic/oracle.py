@@ -1,6 +1,6 @@
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from magic import card, mana, multiverse, seasons, whoosh_write
+from magic import card, layout, mana, multiverse, seasons, whoosh_write
 from magic.abc import CardDescription
 from magic.database import db
 from magic.models import Card, Printing
@@ -180,7 +180,7 @@ def if_todays_prices(out: bool = True) -> List[Card]:
         AND c.name in (SELECT name FROM `{prices_database}`.cache WHERE week {compare} 0.5)
         AND c.layout IN ({layouts})
     """.format(not_clause=not_clause, format=current_format, prices_database=configuration.get('prices_database'),
-               compare=compare, layouts=', '.join([sqlescape(layout) for layout in multiverse.playable_layouts()]))
+               compare=compare, layouts=', '.join([sqlescape(lo) for lo in layout.playable_layouts()]))
 
     rs = db().select(multiverse.cached_base_query(where=where))
     cards = [Card(r) for r in rs]

@@ -4,7 +4,7 @@ from typing import List
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import FileIndex, create_in, open_dir
 
-from magic import fetcher, multiverse
+from magic import fetcher, layout, multiverse
 from magic.models import Card
 from magic.whoosh_constants import WhooshConstants
 
@@ -32,7 +32,7 @@ def update_index(index: FileIndex, cards: List[Card]) -> None:
     writer = index.writer()
     # We exclude tokens here because they can have the exact same name as cards.
     # We exclude emblems here to stop them showing up as
-    cards = [c for c in cards if multiverse.is_playable_layout(c.layout)]
+    cards = [c for c in cards if layout.is_playable_layout(c.layout)]
     for card in cards:
         names = card.names
         if card.name not in names:

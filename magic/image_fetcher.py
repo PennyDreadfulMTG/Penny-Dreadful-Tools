@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageOps, UnidentifiedImageError
 
-from magic import card, fetcher, oracle
+from magic import card, fetcher, layout, oracle
 from magic.models import Card, Printing
 from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape
@@ -104,9 +104,9 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
         if c.is_double_sided():
             paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
             await fetch_tools.store_async(scryfall_image(c, version=version), paths[0])
-            if c.layout == 'transform' or c.layout == 'modal_dfc':
+            if c.layout in layout.has_single_back():
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='back'), paths[1])
-            if c.layout == 'meld':
+            if c.layout in layout.has_meld_back():
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='meld'), paths[1])
             if (fetch_tools.acceptable_file(paths[0]) and fetch_tools.acceptable_file(paths[1])):
                 save_composite_image(paths, filepath)

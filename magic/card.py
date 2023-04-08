@@ -5,6 +5,8 @@ from typing import Dict, List, Optional, Tuple
 
 from mypy_extensions import TypedDict
 
+from magic import layout
+
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 ColumnDescription = TypedDict('ColumnDescription', {
     'type': str,
@@ -232,34 +234,38 @@ def card_bug_properties() -> TableDescription:
     return props
 
 def name_query(column: str = 'face_name') -> str:
+    uses_two_names_layouts = ', '.join(f"'{lo}'" for lo in layout.uses_two_names())
     return """
         CASE
-        WHEN layout = 'transform' OR layout = 'flip' OR layout = 'meld' OR layout = 'adventure' OR layout = 'modal_dfc' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
-        ELSE
+        WHEN layout IN ({uses_two_names_layouts}) THEN
             GROUP_CONCAT({column} ORDER BY position SEPARATOR ' // ' )
+        ELSE
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
         END
-    """.format(column=column, table='{table}')
+    """.format(uses_two_names_layouts=uses_two_names_layouts, column=column, table='{table}')
 
 def cmc_query() -> str:
+    sums_cmc_layouts = ', '.join(f"'{lo}'" for lo in layout.sums_cmc())
     return """
         CASE
-        WHEN layout = 'split' THEN
+        WHEN layout IN ({sums_cmc_layouts}) THEN
             SUM(CASE WHEN `{table}`.cmc IS NOT NULL THEN `{table}`.cmc ELSE 0 END)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
         END
-    """
+    """.format(sums_cmc_layouts=sums_cmc_layouts, table='{table}')
 
 def mana_cost_query() -> str:
+    has_two_mana_costs = ', '.join(f"'{lo}'" for lo in layout.has_two_mana_costs())
     return """
         CASE
-        WHEN layout = 'flip' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
-        ELSE
+        WHEN layout IN ({has_two_mana_costs}) THEN
             GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|')
+        ELSE
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
+
         END
-    """
+    """.format(has_two_mana_costs=has_two_mana_costs, table='{table}', column='{column}')
 
 def type_query() -> str:
     return """

@@ -12,10 +12,11 @@ from naff.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelT
                          File, InteractionCommand, InteractionContext, Member, Message,
                          OptionTypes, PrefixedCommand, PrefixedContext, User, prefixed_command,
                          slash_option)
+import whoosh
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
-from magic import card, card_price, fetcher, image_fetcher, oracle
+from magic import card, card_price, fetcher, image_fetcher, oracle, whoosh_write
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
@@ -32,7 +33,11 @@ HELP_GROUPS: Set[str] = set()
 
 @lazy_property
 def searcher() -> WhooshSearcher:
-    return WhooshSearcher()
+    try:
+        return WhooshSearcher()
+    except whoosh.index.EmptyIndexError:  # Whoosh hasn't been initialized yet!
+        whoosh_write.reindex()
+        return WhooshSearcher()
 
 async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.

@@ -4,7 +4,7 @@ import os
 from collections import Counter
 from typing import Dict, List, Optional, Tuple
 
-from magic import fetcher, multiverse, oracle, seasons
+from magic import fetcher, layout, oracle, seasons
 from magic.models import Card
 from shared import configuration, dtutil
 from shared import redis_wrapper as redis
@@ -103,7 +103,7 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
     if c is None:
         # raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
         return None
-    if not multiverse.is_playable_layout(c.layout):
+    if not layout.is_playable_layout(c.layout):
         return None
     percent = round(round(hits / runs, 2) * 100)
     if remaining_runs == 0:

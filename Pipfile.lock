@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6750e94fa14e5aed9e690afcfd4d1aaa33fcd7df7c984c1c3aa0ee2c7bd6965a"
+            "sha256": "45065ab4badfcca1f5160e7df3de931f4467d7e4f726660c70d3da034e6b6c1b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -680,11 +680,11 @@
         },
         "flask-sqlalchemy": {
             "hashes": [
-                "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912",
-                "sha256:f12c3d4cc5cc7fdcc148b9527ea05671718c3ea45d50c7e732cceb33f574b390"
+                "sha256:2764335f3c9d7ebdc9ed6044afaf98aae9fa50d7a074cef55dde307ec95903ec",
+                "sha256:add5750b2f9cd10512995261ee2aa23fab85bd5626061aa3c564b33bb4aa780a"
             ],
             "index": "pypi",
-            "version": "==2.5.1"
+            "version": "==3.0.3"
         },
         "fonttools": {
             "hashes": [
@@ -1930,11 +1930,11 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:092888f3abf7a2ea78f0bfcefc3e0465caee2b6f0efb26f538ccc60f95dca179",
-                "sha256:99c15556a23621be9f18c2955f7ce63321713bf1c0ad396b27b61399bac5f458"
+                "sha256:052dff5069c6f0d836ee014323576824a9b40836fc003fb12489a1f19c60a3c9",
+                "sha256:c6c6946f8c927adb00af1c5ab6921df38775b2199b9003816d5935a1310352d5"
             ],
             "index": "pypi",
-            "version": "==1.21.1"
+            "version": "==1.22.1"
         },
         "setuptools": {
             "hashes": [
@@ -2666,11 +2666,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:4cf6e323e856c779fbe8815bb977a5bf5d6c5034713e4c17ff2a9a20610f5b27",
-                "sha256:c86f4a955d943d2457120dbe719df24ef0924e11177164d10a0373cf311d7b4d"
+                "sha256:c6cf08e120ca9f0dc4fa4e32c3f953c3fba222bcc1db6b97695bce8da1ba9864",
+                "sha256:dec781054324a70ba64430ae9e62e7e9c8e4618c185a5cb3f87a6738251b5a31"
             ],
             "index": "pypi",
-            "version": "==2.29.0.0"
+            "version": "==2.30.0.0"
         },
         "types-six": {
             "hashes": [

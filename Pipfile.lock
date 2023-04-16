@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fbcb1f280e872b58d196535c93380e8d75ddb6a035bdb38c979d28b15a0a6cc3"
+            "sha256": "ff0ea832b93a364fb0b455ff2ec0462675baec8ea999b33423968cd03360b599"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -409,7 +409,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4' and python_full_version >= '3.6.2'",
+            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -2107,11 +2107,11 @@
         },
         "sqlalchemy-utils": {
             "hashes": [
-                "sha256:4c7098d4857d5cad1248bf7cd940727aecb75b596a5574b86a93b37079929520",
-                "sha256:af803089a7929803faeb6173b90f29d1a67ad02f1d1e732f40b054a8eb3c7370"
+                "sha256:894cce255eea0bcc4fdcff628af30219d24a325526011586dd7f1e3d9dfebba0",
+                "sha256:986b4140f7740ff37244f6ed9182e8c997caa334150773de5932009b2490fb50"
             ],
             "index": "pypi",
-            "version": "==0.40.0"
+            "version": "==0.41.0"
         },
         "titlecase": {
             "hashes": [

@@ -125,7 +125,7 @@ def prizes_by_finish(c: Competition) -> Prizes:
         pz = prize_by_finish(c, finish)
         if not pz:
             break
-        prizes.append({'finish': p.ordinal(finish), 'prize': pz})
+        prizes.append({'finish': p.ordinal(str(finish)), 'prize': pz})
         finish += 1
     return prizes
 

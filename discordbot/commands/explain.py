@@ -11,7 +11,7 @@ from discordbot.command import MtgContext
 from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
 
-num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
+num_tournaments = inflect.engine().number_to_words(str(len(tournaments.all_series_info())))
 explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
     'archetype': (
         """

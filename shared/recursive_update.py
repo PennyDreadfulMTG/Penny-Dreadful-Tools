@@ -11,7 +11,7 @@ def rupdate(base: MutableMapping[K, V], new_data: Mapping[K, V]) -> MutableMappi
         if isinstance(v, collections.abc.Mapping):
             base[k] = rupdate(base.get(k, {}), v)
         elif base.get(k) == v:
-            warnings.warn(UserWarning(f'Overriding identical value {k}={v}'))
+            warnings.warn(UserWarning(f'Overriding identical value {k}={v}'), stacklevel=2)
         else:
             base[k] = v
     return base

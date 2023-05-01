@@ -2,7 +2,7 @@ import math
 from typing import List, Optional, Tuple
 
 from naff import Client
-from naff.models import Extension, OptionTypes, prefixed_command, slash_command, slash_option
+from naff.models import Extension, OptionTypes, slash_command, slash_option
 
 from discordbot.command import MtgInteractionContext, migrate_to_slash_command
 from magic import tournaments

@@ -201,6 +201,8 @@ def preaggregate_season_archetype_card_count() -> None:
             dc.card,
             d.archetype_id,
             season.season_id
+        ORDER BY
+            NULL
     """
     preaggregation.preaggregate(table, sql)
 

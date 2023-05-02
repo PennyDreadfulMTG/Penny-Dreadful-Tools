@@ -182,6 +182,8 @@ def preaggregate_card_person() -> None:
             d.person_id,
             season.season_id,
             ct.name
+        ORDER BY
+            NULL -- Tell the database that we don't need the results back in the GROUP BY order, any order will do.
     """.format(table=table,
                competition_join=query.competition_join(),
                season_join=query.season_join(),

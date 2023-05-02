@@ -167,6 +167,8 @@ def preaggregate_season_card_count() -> None:
         GROUP BY
             dc.card,
             season.season_id
+        ORDER BY
+            NULL
     """
     preaggregation.preaggregate(table, sql)
 

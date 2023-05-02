@@ -324,6 +324,8 @@ def preaggregate_archetype_card_count() -> None:
         GROUP BY
             dc.card,
             d.archetype_id
+        ORDER BY
+            NULL
     """
     preaggregation.preaggregate(table, sql)
 

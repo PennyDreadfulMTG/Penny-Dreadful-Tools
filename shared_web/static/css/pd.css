@@ -199,6 +199,7 @@ footer a:hover {
 .card-lists {
     font-size: 0.75rem;
 }
+
 .card-lists li {
     list-style-type: none;
 }
@@ -257,6 +258,7 @@ For more information see #5215.
     font-weight: normal;
     font-style: normal;
 }
+
 /*
 
 Numbers
@@ -1215,9 +1217,11 @@ Site Header
 header {
     position: relative;
 }
+
 header * {
   position: relative;
 }
+
 header:before {
     background-size: cover;
     content: "";
@@ -1228,6 +1232,7 @@ header:before {
     top: 0;
     width: 100%;
 }
+
 header.season-all:before {
     background-image: url("/banner/0.png");
 }
@@ -1255,15 +1260,19 @@ Although z-index is way more complicated than this (google for "stacking context
 header, nav, main, footer {
     position: relative;
 }
+
 header {
     z-index: 40;
 }
+
 nav {
     z-index: 30;
 }
+
 main {
     z-index: 20;
 }
+
 footer {
     z-index: 10;
 }
@@ -1637,7 +1646,7 @@ form {
 
 button, form, input, select, textarea {
     color: inherit;
-    font-family: main-text;
+    font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: inherit;
 }
 
@@ -2023,6 +2032,7 @@ Fix the width of the column to prevent the table "jump"-ing around the screen as
 td.archetype-description {
     max-width: 26em;
 }
+
 /* Ajax links for the "Edit Rules" page */
 .reassign {
     cursor: pointer;
@@ -2109,9 +2119,11 @@ Season Symbols
     margin-right: 0.178em;
     vertical-align: -0.1em; /* None of the standard keyword values for vertical-align successfully line up the text and the image center. */
 }
+
 .ss {
     margin-right: 0.317rem;
 }
+
 /* Here we mix our text with their symbol rather than using their font so we require different behavior. */
 .seasonchooser i.ss {
     vertical-align: text-top;
@@ -2209,6 +2221,7 @@ Video
     padding-bottom: 56.25%; /* 16:9 */
     position: relative;
 }
+
 .video-wrapper iframe {
     height: 100%;
     left: 0;
@@ -2328,7 +2341,7 @@ Charts
     border: 0.05rem solid #999;
     color: #f9f9f9;
     display: block;
-    font-family: main-text;
+    font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: normal;
     padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metagame.LEFT_PADDING. */
     text-shadow: 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000;
@@ -2436,421 +2449,467 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 }
 
 .tpd-tooltip {
-  position: absolute;
+    position: absolute;
 }
 
 /* Fix for CSS frameworks that don't keep the use of box-sizing: border-box
    within their own namespace */
 .tpd-tooltip {
-  box-sizing: content-box;
+    box-sizing: content-box;
 }
+
 .tpd-tooltip [class^="tpd-"] {
-  box-sizing: inherit;
+    box-sizing: inherit;
 }
 
 /* Content */
 .tpd-content-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  float: left;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    float: left;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
+
 .tpd-content-spacer,
 .tpd-content-relative,
 .tpd-content-relative-padder {
-  float: left;
-  position: relative;
+    float: left;
+    position: relative;
 }
+
 .tpd-content-relative {
-  width: 100%;
+    width: 100%;
 }
 
 .tpd-content {
-  float: left;
-  clear: both;
-  position: relative;
-  padding: 10px;
-  font-size: 11px;
-  line-height: 16px;
-  color: #fff;
-  box-sizing: border-box !important;
+    float: left;
+    clear: both;
+    position: relative;
+    padding: 10px;
+    font-size: 11px;
+    line-height: 16px;
+    color: #fff;
+    box-sizing: border-box !important;
 }
+
 .tpd-has-inner-close .tpd-content-relative .tpd-content {
-  padding-right: 0 !important;
+    padding-right: 0 !important;
 }
+
 .tpd-tooltip .tpd-content-no-padding {
-  padding: 0 !important;
+    padding: 0 !important;
 }
 
 /* Skin */
 .tpd-skin {
-  position: absolute;
-  top: 0;
-  left: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .tpd-frames {
-  position: absolute;
-  top: 0;
-  left: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
+
 .tpd-frames .tpd-frame {
-  float: left;
-  width: 100%;
-  height: 100%;
-  clear: both;
-  display: none;
+    float: left;
+    width: 100%;
+    height: 100%;
+    clear: both;
+    display: none;
 }
 
 .tpd-visible-frame-top .tpd-frame-top {
-  display: block;
+    display: block;
 }
+
 .tpd-visible-frame-bottom .tpd-frame-bottom {
-  display: block;
+    display: block;
 }
+
 .tpd-visible-frame-left .tpd-frame-left {
-  display: block;
+    display: block;
 }
+
 .tpd-visible-frame-right .tpd-frame-right {
-  display: block;
+    display: block;
 }
 
 .tpd-backgrounds {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  -webkit-transform-origin: 0 0;
-  transform-origin: 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
 }
+
 .tpd-background-shadow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    pointer-events: none;
 }
+
 .tpd-no-shadow .tpd-skin .tpd-background-shadow {
-  box-shadow: none !important;
+    box-shadow: none !important;
 }
 
 .tpd-background-box {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
 }
+
 /* only the top background box should be shown when not using a stem */
 .tpd-no-stem .tpd-background-box,
 .tpd-no-stem .tpd-shift-stem {
-  display: none;
+    display: none;
 }
+
 .tpd-no-stem .tpd-background-box-top {
-  display: block;
+    display: block;
 }
 
 .tpd-background-box-shift,
 .tpd-background-box-shift-further {
-  position: relative;
-  float: left;
-  width: 100%;
-  height: 100%;
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 100%;
 }
+
 .tpd-background {
-  border-radius: 10px;
-  float: left;
-  clear: both;
-  background: none;
-  -webkit-background-clip: padding-box; /* Safari */
-  background-clip: padding-box; /* IE9+, Firefox 4+, Opera, Chrome */
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ); /* opacity here bugs out in firefox, .tpd-background-content should have no opacity if this opacity is less than 1 */
+    border-radius: 10px;
+    float: left;
+    clear: both;
+    background: none;
+    -webkit-background-clip: padding-box; /* Safari */
+    background-clip: padding-box; /* IE9+, Firefox 4+, Opera, Chrome */
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(
+        255,
+        255,
+        255,
+        0.1
+    ); /* opacity here bugs out in firefox, .tpd-background-content should have no opacity if this opacity is less than 1 */
 }
+
 .tpd-background-loading {
-  display: none;
+    display: none;
 }
+
 /* no radius */
 .tpd-no-radius,
-  .tpd-skin,
-  .tpd-frames,
-  .tpd-frame,
-  .tpd-backgrounds,
-  .tpd-background {
-  border-radius: 0;
+.tpd-skin,
+.tpd-frames,
+.tpd-frame,
+.tpd-backgrounds,
+.tpd-background {
+    border-radius: 0;
 }
+
 .tpd-background-title {
-  float: left;
-  clear: both;
-  width: 100%;
-  background-color: #282828;
+    float: left;
+    clear: both;
+    width: 100%;
+    background-color: #282828;
 }
+
 .tpd-background-content {
-  float: left;
-  clear: both;
-  width: 100%;
-  background-color: #282828;
+    float: left;
+    clear: both;
+    width: 100%;
+    background-color: #282828;
 }
+
 .tpd-background-border-hack {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-style: solid;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-style: solid;
 }
 
 .tpd-background-box-top {
-  top: 0;
+    top: 0;
 }
+
 .tpd-background-box-bottom {
-  bottom: 0;
+    bottom: 0;
 }
+
 .tpd-background-box-left {
-  left: 0;
+    left: 0;
 }
+
 .tpd-background-box-right {
-  right: 0;
+    right: 0;
 }
 
 /* Skin / Stems */
 .tpd-shift-stem {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
 }
+
 .tpd-shift-stem-side {
-  position: absolute;
+    position: absolute;
 }
+
 .tpd-frame-top .tpd-shift-stem-side,
 .tpd-frame-bottom .tpd-shift-stem-side {
-  width: 100%;
+    width: 100%;
 }
+
 .tpd-frame-left .tpd-shift-stem-side,
 .tpd-frame-right .tpd-shift-stem-side {
-  height: 100%;
+    height: 100%;
 }
 
 .tpd-stem {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden; /* shows possible invalid sub-px rendering */
-  width: 16px; /* best cross browser stem: width = 2 x height (90deg angle) */
-  height: 8px;
-  margin-left: 3px; /* space from the side */
-  margin-top: 2px; /* space between target and stem */
-  -webkit-transform-origin: 0 0;
-  transform-origin: 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* shows possible invalid sub-px rendering */
+    width: 16px; /* best cross browser stem: width = 2 x height (90deg angle) */
+    height: 8px;
+    margin-left: 3px; /* space from the side */
+    margin-top: 2px; /* space between target and stem */
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
 }
+
 /* remove margins once we're done measuring */
 .tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset {
-  margin: 0 !important;
+    margin: 0 !important;
 }
 
 .tpd-stem-spacer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
+
 .tpd-stem-reset .tpd-stem-spacer {
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .tpd-stem-point {
-  width: 100px;
-  position: absolute;
-  top: 0;
-  left: 50%;
+    width: 100px;
+    position: absolute;
+    top: 0;
+    left: 50%;
 }
+
 .tpd-stem-downscale,
 .tpd-stem-transform {
-  float: left;
-  width: 100%;
-  height: 100%;
-  -webkit-transform-origin: 0 0;
-  transform-origin: 0 0;
-  position: relative;
+    float: left;
+    width: 100%;
+    height: 100%;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    position: relative;
 }
 
 .tpd-stem-side {
-  width: 50%;
-  height: 100%;
-  float: left;
-  position: relative;
-  overflow: hidden;
+    width: 50%;
+    height: 100%;
+    float: left;
+    position: relative;
+    overflow: hidden;
 }
+
 .tpd-stem-side-inversed {
-  -webkit-transform: scale(-1, 1);
-  transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    transform: scale(-1, 1);
 }
+
 .tpd-stem-triangle {
-  width: 0;
-  height: 0;
-  border-bottom-style: solid;
-  border-left-color: transparent;
-  border-left-style: solid;
-  position: absolute;
-  top: 0;
-  left: 0;
+    width: 0;
+    height: 0;
+    border-bottom-style: solid;
+    border-left-color: transparent;
+    border-left-style: solid;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
+
 .tpd-stem-border {
-  width: 20px;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  background-color: #fff; /* will become transparent */
-  border-right-color: #fff;
-  border-right-style: solid;
-  border-right-width: 0;
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    background-color: #fff; /* will become transparent */
+    border-right-color: #fff;
+    border-right-style: solid;
+    border-right-width: 0;
 }
 
 .tpd-stem-border-corner {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  height: 100%;
-  border-right-style: solid;
-  border-right-width: 0;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 100%;
+    border-right-style: solid;
+    border-right-width: 0;
 }
 
 /* fixes rendering issue in IE */
 .tpd-stem * {
-  z-index: 0;
-  zoom: 1;
+    z-index: 0;
+    zoom: 1;
 }
 
 /* used by IE < 9 */
 .tpd-stem-border-center-offset,
 .tpd-stem-border-center-offset-inverse {
-  float: left;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-.tpd-stem-notransform {
-  float: left;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.tpd-stem-notransform .tpd-stem-border {
-  height: 100%;
-  position: relative;
-  float: left;
-  top: 0;
-  left: 0;
-  margin: 0;
-}
-.tpd-stem-notransform .tpd-stem-border-center {
-  position: absolute;
-}
-.tpd-stem-notransform .tpd-stem-border-corner {
-  background: #fff;
-  border: 0;
-  top: auto;
-  left: auto;
-}
-.tpd-stem-notransform .tpd-stem-border-center,
-.tpd-stem-notransform .tpd-stem-triangle {
-  height: 0;
-  border: 0;
-  left: 50%;
+    float: left;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
-/* transformations for left/right/bottom */
+.tpd-stem-notransform {
+    float: left;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.tpd-stem-notransform .tpd-stem-border {
+    height: 100%;
+    position: relative;
+    float: left;
+    top: 0;
+    left: 0;
+    margin: 0;
+}
+
+.tpd-stem-notransform .tpd-stem-border-center {
+    position: absolute;
+}
+
+.tpd-stem-notransform .tpd-stem-border-corner {
+    background: #fff;
+    border: 0;
+    top: auto;
+    left: auto;
+}
+
+.tpd-stem-notransform .tpd-stem-border-center,
+.tpd-stem-notransform .tpd-stem-triangle {
+    height: 0;
+    border: 0;
+    left: 50%;
+}
+
 .tpd-stem-transform-left {
-  -webkit-transform: rotate(-90deg) scale(-1, 1);
-  transform: rotate(-90deg) scale(-1, 1);
+    -webkit-transform: rotate(-90deg) scale(-1, 1);
+    transform: rotate(-90deg) scale(-1, 1);
 }
+
 .tpd-stem-transform-right {
-  -webkit-transform: rotate(90deg) translate(0, -100%);
-  transform: rotate(90deg) translate(0, -100%);
+    -webkit-transform: rotate(90deg) translate(0, -100%);
+    transform: rotate(90deg) translate(0, -100%);
 }
+
 .tpd-stem-transform-bottom {
-  -webkit-transform: scale(1, -1) translate(0, -100%);
-  transform: scale(1, -1) translate(0, -100%);
+    -webkit-transform: scale(1, -1) translate(0, -100%);
+    transform: scale(1, -1) translate(0, -100%);
 }
 
 /* Resets while measuring content */
 .tpd-tooltip-measuring {
-  top: 0;
-  left: 0;
-  position: absolute;
-  max-width: 100%;
-  width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    max-width: 100%;
+    width: 100%;
 }
+
 .tpd-tooltip-measuring .tpd-skin,
 .tpd-tooltip-measuring .tpd-spinner {
-  display: none;
+    display: none;
 }
 
 .tpd-tooltip-measuring .tpd-content-wrapper,
 .tpd-tooltip-measuring .tpd-title-wrapper {
-  display: block;
+    display: block;
 }
 
 /* Links */
 .tpd-tooltip a,
 .tpd-tooltip a:hover {
-  color: #808080;
-  text-decoration: underline;
+    color: #808080;
+    text-decoration: underline;
 }
+
 .tpd-tooltip a:hover {
-  color: #6c6c6c;
+    color: #6c6c6c;
 }
 
 /* large */
 .tpd-size-large .tpd-content,
 .tpd-size-large .tpd-title {
-  padding: 10px;
-  font-size: 13px;
-  line-height: 18px;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 18px;
 }
+
 .tpd-size-large .tpd-background {
-  border-radius: 8px;
+    border-radius: 8px;
 }
+
 .tpd-size-large .tpd-stem {
-  width: 18px;
-  height: 9px;
-  margin-left: 7px;
-  margin-top: 2px; /* space between target and stem */
+    width: 18px;
+    height: 9px;
+    margin-left: 7px;
+    margin-top: 2px; /* space between target and stem */
 }
+
 .tpd-size-large.tpd-no-radius .tpd-stem {
-  margin-left: 10px;
+    margin-left: 10px;
 }
+
 .tpd-size-large .tpd-close {
-  margin: 5px 2px 5px 2px;
+    margin: 5px 2px 5px 2px;
 }
+
 .tpd-size-large .tpd-spinner {
-  width: 54px;
-  height: 38px;
+    width: 54px;
+    height: 38px;
 }
+
 .tpd-size-large .tpd-spinner-spin {
-  margin: 9px 0 0 17px;
+    margin: 9px 0 0 17px;
 }
+
 .tpd-size-large .tpd-spinner-spin,
 .tpd-size-large .tpd-spinner-spin:after {
-  width: 20px;
-  height: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 /* Skins */
@@ -2858,29 +2917,35 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 .tpd-skin-dark .tpd-content,
 .tpd-skin-dark .tpd-title,
 .tpd-skin-dark .tpd-close {
-  color: #fff;
+    color: #fff;
 }
+
 .tpd-skin-dark .tpd-background-content,
 .tpd-skin-dark .tpd-background-title {
-  background-color: #282828;
+    background-color: #282828;
 }
+
 .tpd-skin-dark .tpd-background {
-  border-width: 1px;
-  border-color: rgba(255, 255, 255, 0.1);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.1);
 }
+
 /* line below the title */
 .tpd-skin-dark .tpd-title-wrapper {
-  border-bottom: 1px solid #404040;
+    border-bottom: 1px solid #404040;
 }
+
 /* spinner */
 .tpd-skin-dark .tpd-spinner-spin {
-  border-color: rgba(255, 255, 255, 0.2);
-  border-left-color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-left-color: #fff;
 }
+
 /* links */
 .tpd-skin-dark a {
-  color: #ccc;
+    color: #ccc;
 }
+
 .tpd-skin-dark a:hover {
-  color: #c0c0c0;
+    color: #c0c0c0;
 }

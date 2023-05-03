@@ -2070,7 +2070,7 @@ Search
     background-color: #eee;
 }
 
-/* Prevent weird double border from the javsacript making this transparent and overlaying two inputs. */
+/* Prevent weird double border from the javascript making this transparent and overlaying two inputs. */
 .tt-input {
     background-color: #f9f9f9 !important;
 }

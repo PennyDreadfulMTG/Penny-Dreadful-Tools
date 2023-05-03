@@ -372,44 +372,6 @@ def retire_deck(d: Deck) -> None:
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 
-def load_latest_league_matches() -> List[Container]:
-    competition_id = active_league().id
-    where = 'dm.deck_id IN (SELECT id FROM deck WHERE competition_id = {competition_id})'.format(competition_id=competition_id)
-    return load_matches(where=where)
-
-def load_matches(where: str = 'TRUE') -> List[Container]:
-    sql = """
-        SELECT m.date, m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games, mtgo_id
-        FROM `match` AS m
-        INNER JOIN deck_match AS dm ON m.id = dm.match_id
-        WHERE {where}
-        GROUP BY m.id
-        ORDER BY m.date DESC
-    """.format(where=where)
-    matches = [Container(m) for m in db().select(sql)]
-    for m in matches:
-        m.date = dtutil.ts2dt(m.date)
-        deck_ids = m.deck_ids.split(',')
-        games = m.games.split(',')
-        m.left_id = deck_ids[0]
-        m.left_games = int(games[0])
-        try:
-            m.right_id = deck_ids[1]
-            m.right_games = int(games[1])
-        except IndexError:
-            m.right_id = None
-            m.right_games = 0
-        if m.left_games > m.right_games:
-            m.winner = m.left_id
-            m.loser = m.right_id
-        elif m.right_games > m.left_games:
-            m.winner = m.right_id
-            m.loser = m.left_id
-        else:
-            m.winner = None
-            m.loser = None
-    return matches
-
 def first_runs() -> List[Container]:
     sql = """
         SELECT

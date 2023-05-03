@@ -1691,12 +1691,6 @@ input[type=radio] {
     margin-left: 0;
 }
 
-button {
-    appearance: button;
-    -moz-appearance: button;
-    -webkit-appearance: button;
-}
-
 button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok, .form-field {
     margin-left: 12rem;
 }
@@ -1875,42 +1869,12 @@ div.loading {
     width: 0.75em;
     margin: 0 auto;
     position: relative;
-    -webkit-animation: rotation .6s infinite linear;
-    -moz-animation: rotation .6s infinite linear;
-    -o-animation: rotation .6s infinite linear;
     animation: rotation .6s infinite linear;
     border-left: 0.05rem solid #999;
     border-right: 0.05rem;
     border-bottom: 0.05rem;
     border-top: 0.05rem;
     border-radius: 100%;
-}
-
-@-webkit-keyframes rotation {
-    from {
-        -webkit-transform: rotate(0deg);
-    }
-    to {
-        -webkit-transform: rotate(359deg);
-    }
-}
-
-@-moz-keyframes rotation {
-    from {
-        -moz-transform: rotate(0deg);
-    }
-    to {
-        -moz-transform: rotate(359deg);
-    }
-}
-
-@-o-keyframes rotation {
-    from {
-        -o-transform: rotate(0deg);
-    }
-    to {
-        -o-transform: rotate(359deg);
-    }
 }
 
 @keyframes rotation {
@@ -2560,8 +2524,8 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   left: 0;
   width: 100%;
   height: 100%;
-  -webkit-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 .tpd-background-shadow {
   position: absolute;
@@ -2690,8 +2654,8 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   height: 8px;
   margin-left: 3px; /* space from the side */
   margin-top: 2px; /* space between target and stem */
-  -webkit-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 /* remove margins once we're done measuring */
 .tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset {
@@ -2720,8 +2684,8 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   float: left;
   width: 100%;
   height: 100%;
-  -webkit-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
   position: relative;
 }
 

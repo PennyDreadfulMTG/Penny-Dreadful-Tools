@@ -85,7 +85,7 @@ def replace_day_with_ordinal(s: str) -> str:
 
 def day2ordinal(m: Match) -> str:
     p = inflect.engine()
-    return p.ordinal(m.group(1))
+    return p.ordinal(str(int(m.group(1))))
 
 
 IntervalsType = Dict[str, Tuple[Optional[int], int, Optional[int]]]

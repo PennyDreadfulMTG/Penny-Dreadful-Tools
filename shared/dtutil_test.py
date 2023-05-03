@@ -110,3 +110,8 @@ def test_round_value_appropriately() -> None:
     assert dtutil.round_value_appropriately(29, 1, 60, 30) == 29
     assert dtutil.round_value_appropriately(6 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 6
     assert dtutil.round_value_appropriately(7 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 7
+
+def test_display_date_with_date_and_year() -> None:
+    dt = datetime.datetime(2023, 5, 6)
+    tz = dtutil.GATHERLING_TZ
+    assert dtutil.display_date_with_date_and_year(dt, tz) == 'May 6th'

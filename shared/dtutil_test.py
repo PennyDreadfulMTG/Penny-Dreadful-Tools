@@ -89,9 +89,9 @@ def test_rounding() -> None:
     assert dtutil.display_time(86400) == '1 day'
     assert dtutil.display_time(0, 2) == 'now'
 
-def test_round_up_preceeding_unit() -> None:
+def test_round_up_preceding_unit() -> None:
     results = [(1, 'hours'), (59, 'minutes'), (59, 'seconds')]
-    dtutil.round_up_preceeding_unit(results)
+    dtutil.round_up_preceding_unit(results)
     assert results == [(2, 'hours'), (0, 'minutes'), (0, 'seconds')]
 
 def test_display_time() -> None:

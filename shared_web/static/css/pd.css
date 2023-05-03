@@ -2068,7 +2068,6 @@ Search
 
 .tt-suggestion:hover, .tt-cursor {
     background-color: #eee;
-    color:;
 }
 
 /* Prevent weird double border from the javsacript making this transparent and overlaying two inputs. */

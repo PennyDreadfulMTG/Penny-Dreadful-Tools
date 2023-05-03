@@ -85,7 +85,7 @@ def replace_day_with_ordinal(s: str) -> str:
 
 def day2ordinal(m: Match) -> str:
     p = inflect.engine()
-    return p.ordinal(m.group(1))
+    return p.ordinal(str(int(m.group(1))))
 
 
 IntervalsType = Dict[str, Tuple[Optional[int], int, Optional[int]]]
@@ -109,11 +109,11 @@ def display_time(seconds: float, granularity: int = 2) -> str:
     for unit, details in intervals.items():
         max_units, seconds_per_unit, rounding_threshold = details
         if len(result) < granularity:  # We don't want to consider rounding up yet.
-            value = int(seconds // seconds_per_unit)  # floor preceeding units, int just to please typing
+            value = int(seconds // seconds_per_unit)  # floor preceding units, int just to please typing
         else:
             value = round_value_appropriately(seconds, seconds_per_unit, max_units, rounding_threshold)
-            if value == max_units and seconds < (value * seconds_per_unit):  # rounding off bumped us up to one of the *preceeding* unit.
-                result = round_up_preceeding_unit(result)
+            if value == max_units and seconds < (value * seconds_per_unit):  # rounding off bumped us up to one of the *preceding* unit.
+                result = round_up_preceding_unit(result)
                 seconds -= value * seconds_per_unit
                 value = 0
         if value > 0 or result:  # Either we have the first significant value or we're recording each level because we already did.
@@ -129,9 +129,9 @@ def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: Op
         return max_units
     return value
 
-def round_up_preceeding_unit(result: ResultsType) -> ResultsType:
+def round_up_preceding_unit(result: ResultsType) -> ResultsType:
     intervals = get_intervals()
-    # Send the rounding up back up the chain until we find a value that does not need the previous value rounding up.
+    # Send the rounding-up back up the chain until we find a value that does not need the previous value rounding up.
     for i in range(1, len(result) + 1):
         prev_value, prev_unit = result[-i]
         result[-i] = (prev_value + 1, prev_unit)

@@ -89,9 +89,9 @@ def test_rounding() -> None:
     assert dtutil.display_time(86400) == '1 day'
     assert dtutil.display_time(0, 2) == 'now'
 
-def test_round_up_preceeding_unit() -> None:
+def test_round_up_preceding_unit() -> None:
     results = [(1, 'hours'), (59, 'minutes'), (59, 'seconds')]
-    dtutil.round_up_preceeding_unit(results)
+    dtutil.round_up_preceding_unit(results)
     assert results == [(2, 'hours'), (0, 'minutes'), (0, 'seconds')]
 
 def test_display_time() -> None:
@@ -110,3 +110,8 @@ def test_round_value_appropriately() -> None:
     assert dtutil.round_value_appropriately(29, 1, 60, 30) == 29
     assert dtutil.round_value_appropriately(6 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 6
     assert dtutil.round_value_appropriately(7 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 7
+
+def test_display_date_with_date_and_year() -> None:
+    tz = dtutil.GATHERLING_TZ
+    dt = datetime.datetime(2023, 5, 6, tzinfo=tz)
+    assert dtutil.display_date_with_date_and_year(dt, tz) == 'May 6th'

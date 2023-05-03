@@ -61,7 +61,7 @@ abbr {
 
 Typography
 
-See also Headings, Links, Lists, and most everything else in this file. The typograpy IS the design!
+See also Headings, Links, Lists, and most everything else in this file. The typography IS the design!
 
 We use the Perfect Fourth (1.333) as the basis of our typography.
 http://www.modularscale.com/?1&em&1.333 will show you bigger and smaller options.
@@ -216,7 +216,7 @@ Symbols provided by our main font are:
     → U+2192 RIGHT-POINTING ARROW (paginate right)
     ← U+2190 LEFT-POINTING ARROW (paginate left)
     ↑ U+2191 UPWARDS ARROW (currently hitting in rotation, external links)
-    ↓ U+2193 DOWNARDS ARROW (currently missing in rotation)
+    ↓ U+2193 DOWNWARDS ARROW (currently missing in rotation)
 
 The characters included in our subsetted font are:
 
@@ -227,7 +227,7 @@ The characters included in our subsetted font are:
     ⑤ U+2464 CIRCLED DIGIT FIVE (league fifth place)
     ⑥ U+2465 CIRCLED DIGIT SIX (league sixth place)
     ⑦ U+2466 CIRCLED DIGIT SEVEN (league seventh place)
-    ⑧ U+2467 CIRCLED DIGIT EIGHT (losing quarterfinalist, league eighth place)
+    ⑧ U+2467 CIRCLED DIGIT EIGHT (losing quarter-finalist, league eighth place)
     ⑯ U+246F CIRCLED NUMBER SIXTEEN (pd500/kick off top 16)
     Ⓣ U+24C9 CIRCLED CAPITAL LETTER T (kick off top 32 finish)
     ⇅ U+21C5 UPWARDS ARROW LEFT OF DOWNWARDS ARROW (sort column)
@@ -399,7 +399,7 @@ footer {
         top: 0;
     }
     header {
-        padding-top: 2rem; /* Shift the whole page down to accomodate the status-bar at the top. */
+        padding-top: 2rem; /* Shift the whole page down to accommodate the status-bar at the top. */
     }
 }
 
@@ -953,7 +953,7 @@ th.angled .inner {
 }
 
 .matchup-grid {
-    padding-right: 5rem; /* Accomodate the angled headers so we don't get a scroll bar on small (early season) matchup grids. See #5991. */
+    padding-right: 5rem; /* Accommodate the angled headers so we don't get a scroll bar on small (early season) matchup grids. See #5991. */
 }
 
 /*
@@ -1049,7 +1049,7 @@ Menu items can have submenus. At wider widths these are "mega menus" that stretc
         display: block;
         height: 0;
         left: 50%;
-        margin-left: -1.333em; /* Equal to border-left/border-right, to compenstate for *starting* at left 50% instead of centering there. */
+        margin-left: -1.333em; /* Equal to border-left/border-right, to compensate for *starting* at left 50% instead of centering there. */
         opacity: 0;
         position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
         transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
@@ -1172,7 +1172,7 @@ Mobile Menu
 
     .current + .submenu-container {
         display: block;
-        bottom: 3.825rem /* 0.75rem (padding-top 15) + 1rem (icon font-size) * 1.33 (line-height 27) + 0.75rem (label font-size) * 1.33 (line-height 20) + 0.75rem (paddding-bottom) 15 + 0 (hide the border don't accommodate it) with some slight adjustments for browser rounding. */
+        bottom: 3.825rem /* 0.75rem (padding-top 15) + 1rem (icon font-size) * 1.33 (line-height 27) + 0.75rem (label font-size) * 1.33 (line-height 20) + 0.75rem (padding-bottom) 15 + 0 (hide the border don't accommodate it) with some slight adjustments for browser rounding. */
     }
 
     .submenu-container li a {
@@ -1227,88 +1227,11 @@ header:before {
     position: absolute;
     top: 0;
     width: 100%;
-    background-image: attr(data-banner url);
 }
 header.season-all:before {
     background-image: url("/banner/0.png");
 }
 
-/* header.season-1:before {
-    background-image: url("/banner/1.png");
-}
-
-header.season-2:before {
-    background-image: url("/banner/2.png");
-}
-
-header.season-3:before {
-    background-image: url("/banner/3.png");
-}
-
-header.season-4:before {
-    background-image: url("/banner/4.png");
-}
-
-header.season-5:before {
-    background-image: url("/banner/5.png");
-}
-
-header.season-6:before {
-    background-image: url("/banner/6.png");
-}
-
-header.season-7:before {
-    background-image: url("/banner/7.png");
-}
-
-header.season-8:before {
-    background-image: url("/banner/8.png");
-}
-
-header.season-9:before {
-    background-image: url("/banner/9.png");
-}
-
-header.season-10:before {
-    background-image: url("/banner/10.png");
-}
-
-header.season-11:before {
-    background-image: url("/banner/11.png");
-}
-header.season-12:before {
-    background-image: url("/banner/12.png");
-}
-header.season-13:before {
-    background-image: url("/banner/13.png");
-}
-header.season-14:before {
-    background-image: url("/banner/14.png");
-}
-header.season-15:before {
-    background-image: url("/banner/15.png");
-}
-header.season-16:before {
-    background-image: url("/banner/16.png");
-}
-header.season-17:before {
-    background-image: url("/banner/17.png");
-}
-header.season-18:before {
-    background-image: url("/banner/18.png");
-}
-header.season-19:before {
-    background-image: url("/banner/19.png");
-}
-header.season-20:before {
-    background-image: url("/banner/20.png");
-}
-header.season-21:before {
-    background-image: url("/banner/21.png");
-}
-header.season-22:before {
-    background-image: url("/banner/22.png");
-} */
 /*
 
 z-index
@@ -1327,7 +1250,7 @@ Although z-index is way more complicated than this (google for "stacking context
 
 */
 
-/* Create separate stacking contexts for each top-level element in the page by positioning them and giving them approximately sensisble z-index values.
+/* Create separate stacking contexts for each top-level element in the page by positioning them and giving them approximately sensible z-index values.
    See https://www.sitepoint.com/managing-css-stacking-contexts-hostile-environment/ */
 header, nav, main, footer {
     position: relative;
@@ -1768,12 +1691,6 @@ input[type=radio] {
     margin-left: 0;
 }
 
-button {
-    appearance: button;
-    -moz-appearance: button;
-    -webkit-appearance: button;
-}
-
 button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok, .form-field {
     margin-left: 12rem;
 }
@@ -1952,42 +1869,12 @@ div.loading {
     width: 0.75em;
     margin: 0 auto;
     position: relative;
-    -webkit-animation: rotation .6s infinite linear;
-    -moz-animation: rotation .6s infinite linear;
-    -o-animation: rotation .6s infinite linear;
     animation: rotation .6s infinite linear;
     border-left: 0.05rem solid #999;
     border-right: 0.05rem;
     border-bottom: 0.05rem;
     border-top: 0.05rem;
     border-radius: 100%;
-}
-
-@-webkit-keyframes rotation {
-    from {
-        -webkit-transform: rotate(0deg);
-    }
-    to {
-        -webkit-transform: rotate(359deg);
-    }
-}
-
-@-moz-keyframes rotation {
-    from {
-        -moz-transform: rotate(0deg);
-    }
-    to {
-        -moz-transform: rotate(359deg);
-    }
-}
-
-@-o-keyframes rotation {
-    from {
-        -o-transform: rotate(0deg);
-    }
-    to {
-        -o-transform: rotate(359deg);
-    }
 }
 
 @keyframes rotation {
@@ -2043,7 +1930,7 @@ Search
 /* The js uses position:absolute and left:0 to place these in relation to the search input. But we are right-aligned so the fixed spot is the top-right corner. */
 .tt-hint, .tt-menu {
     right: 0 !important; /* Position in the correct place. */
-    left: auto !important; /* Undo the js's inline style. */
+    left: auto !important; /* Undo the javascript's inline style. */
 }
 
 .tt-menu {
@@ -2068,10 +1955,9 @@ Search
 
 .tt-suggestion:hover, .tt-cursor {
     background-color: #eee;
-    color:;
 }
 
-/* Prevent weird double border from the javsacript making this transparent and overlaying two inputs. */
+/* Prevent weird double border from the javascript making this transparent and overlaying two inputs. */
 .tt-input {
     background-color: #f9f9f9 !important;
 }
@@ -2226,7 +2112,7 @@ Season Symbols
 .ss {
     margin-right: 0.317rem;
 }
-/* Here we mix our text with their symbol rather than using their font so we require differrent behavior. */
+/* Here we mix our text with their symbol rather than using their font so we require different behavior. */
 .seasonchooser i.ss {
     vertical-align: text-top;
 }
@@ -2350,14 +2236,14 @@ Achievements
 
 .achievement-category .more-info {
     border-top: 0.05rem solid #ccc;
-    display: none; /* The detail slideout starts hidden so you can see more achievements at a glance. */
+    display: none; /* The detail slide-out starts hidden so you can see more achievements at a glance. */
     padding-bottom: 1rem;
     padding-top: 1rem;
 }
 
 .achievement-bar {
     cursor: pointer;
-    position: relative; /* We are going to overlay a bunch of spans in here to show a bar chart of how many players have this acheivement and other dettails. */
+    position: relative; /* We are going to overlay a bunch of spans in here to show a bar chart of how many players have this achievement and other details. */
 }
 
 .achievement-bar span {
@@ -2444,7 +2330,7 @@ Charts
     display: block;
     font-family: main-text;
     font-variant-numeric: normal;
-    padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metgame.LEFT_PADDING. */
+    padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metagame.LEFT_PADDING. */
     text-shadow: 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000;
     text-transform: none;
     white-space: nowrap;
@@ -2638,8 +2524,8 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   left: 0;
   width: 100%;
   height: 100%;
-  -webkit-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 .tpd-background-shadow {
   position: absolute;
@@ -2698,11 +2584,11 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   display: none;
 }
 /* no radius */
-.tpd-no-radius
-  .tpd-skin
-  .tpd-frames
-  .tpd-frame
-  .tpd-backgrounds
+.tpd-no-radius,
+  .tpd-skin,
+  .tpd-frames,
+  .tpd-frame,
+  .tpd-backgrounds,
   .tpd-background {
   border-radius: 0;
 }
@@ -2763,13 +2649,13 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   position: absolute;
   top: 0;
   left: 0;
-  overflow: hidden; /* shows possible invalid subpx rendering */
+  overflow: hidden; /* shows possible invalid sub-px rendering */
   width: 16px; /* best cross browser stem: width = 2 x height (90deg angle) */
   height: 8px;
   margin-left: 3px; /* space from the side */
   margin-top: 2px; /* space between target and stem */
-  -webkit-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 /* remove margins once we're done measuring */
 .tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset {
@@ -2798,8 +2684,8 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
   float: left;
   width: 100%;
   height: 100%;
-  -webkit-transform-origin: 0% 0%;
-  transform-origin: 0% 0%;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
   position: relative;
 }
 

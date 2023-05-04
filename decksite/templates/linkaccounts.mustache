@@ -17,7 +17,7 @@
         <form method="post">
             <div>
                 <label for="mtgo_username">{{_ Magic Online Username}}</label>
-                <input {{#form.errors.mtgo_username}}class="error"{{/form.errors.mtgo_username}} type="none" name="mtgo_username" id="mtgo_username" value="{{person.mtgo_username}}" disabled='true'>
+                <input {{#form.errors.mtgo_username}}class="error"{{/form.errors.mtgo_username}} type="text" name="mtgo_username" id="mtgo_username" value="{{person.mtgo_username}}" disabled='true'>
                 <div class="error">{{form.errors.mtgo_username}}</div>
                 <label for="to_username">{{_ TappedOut Username}}</label>
                 <input {{#form.errors.to_username}}class="error"{{/form.errors.to_username}} type="text" name="to_username" id="to_username" value="{{form.to_username}}" {{#disable_to}}disabled='true'{{/disable_to}}>

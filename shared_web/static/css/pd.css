@@ -1650,12 +1650,42 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
+/* Override the default appearance of selects because they are so ugly on Safari. See #8123. */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+    background-position: right 0.2rem center;
+    background-size: 0.4rem 0.5rem;
+    background-repeat: no-repeat;
+    padding-right: 1rem; /* To accommodate the arrows. */
+}
+
 header input {
     color: #502828;
 }
 
 button, main input, select, textarea, .uploader-label, .instructions {
     width: 20rem;
+}
+
+
+button, input, form label, select, textarea {
+    box-sizing: border-box; /* Ignore padding when sizing so we can get elements the same height more easily. */
+    margin-top: 1rem;
+}
+
+textarea, input[type=text], select {
+    background-color: #fff; /* System controls get to be true white. */
+}
+
+button {
+    background-color: #eee;
+}
+
+textarea, input[type=text], select, .inline select, button {
+    padding: 0.1em 0.4rem 0.1em 0.4rem;
 }
 
 table input {
@@ -1666,14 +1696,14 @@ input[type=checkbox] {
     width: 1rem;
 }
 
-input[disabled=true] {
+/* Make disabled inputs look like normal text, not like an editable form field. */
+input[type=text][disabled=true] {
+    background-color: #f9f9f9;
     border: none;
-    background: none;
 }
 
-button, input, form label, select, textarea {
-    box-sizing: border-box; /* Ignore padding when sizing so we can get elements the same height more easily. */
-    margin-top: 1rem;
+input[type=text], button {
+    border: 0.05rem solid #999;
 }
 
 input[type=number] {
@@ -1746,7 +1776,6 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     height: 1.1rem; /* Nonstandard height because of the padding the browser adds. */
     font-size: 0.75rem;
     line-height: 1.2; /* Nonstandard line-height because of nonstandard height. */
-    padding: 0;
 }
 
 .inline select {

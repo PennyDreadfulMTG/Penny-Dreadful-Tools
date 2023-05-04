@@ -759,7 +759,7 @@ tr.wide td, tr.wide th {
 }
 
 tr.wide+tr td {
-    border-top: 0.05rem #999 solid;
+    border-top: 0.05rem solid #999;
 }
 
 tr.wide td.wide {
@@ -998,7 +998,7 @@ Some pages still send giant tables of data but logsite and deck table have pagin
 }
 
 .pagination .page-size {
-    border: 0.05rem #ccc solid;
+    border: 0.05rem solid #ccc;
     text-align: center;
 }
 

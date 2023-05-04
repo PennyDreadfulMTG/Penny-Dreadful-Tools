@@ -1645,6 +1645,7 @@ form {
 }
 
 button, form, input, select, textarea {
+    accent-color: #502828;
     color: inherit;
     font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: inherit;

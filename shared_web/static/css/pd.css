@@ -1651,6 +1651,10 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
+textarea, input[type=text], select, .inline select, button {
+    padding: 0.1em 0.4rem 0.1em 0.4rem;
+}
+
 /* Override the default appearance of selects because they are so ugly on Safari. See #8123. */
 select {
     appearance: none;
@@ -1683,10 +1687,6 @@ textarea, input[type=text], select {
 
 button {
     background-color: #eee;
-}
-
-textarea, input[type=text], select, .inline select, button {
-    padding: 0.1em 0.4rem 0.1em 0.4rem;
 }
 
 table input {

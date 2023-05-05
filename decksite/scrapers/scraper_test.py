@@ -3,6 +3,7 @@ import vcr
 
 from decksite import APP
 from decksite.scrapers import mtggoldfish
+from decksite.testutil import with_test_db
 from shared import configuration
 
 TEST_VCR = vcr.VCR(
@@ -10,6 +11,7 @@ TEST_VCR = vcr.VCR(
     path_transformer=vcr.VCR.ensure_suffix('.yaml'),
 )
 
+@with_test_db
 @pytest.mark.functional
 @pytest.mark.goldfish
 @pytest.mark.external

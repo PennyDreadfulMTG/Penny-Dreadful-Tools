@@ -198,7 +198,8 @@ def cards2_api() -> Response:
         {
             'page': <int>,
             'objects': [<card>],
-            'total': <int>
+            'total': <int>,
+            'message': <str>,
         }
     """
     order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
@@ -208,11 +209,11 @@ def cards2_api() -> Response:
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
-    additional_where = query.card_search_where(q) if q else 'TRUE'
+    additional_where, message = query.card_search_where(q) if q else ('TRUE', '')
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
     total = card.load_cards_count(additional_where=additional_where, archetype_id=archetype_id, person_id=person_id, season_id=season_id)
-    r = {'page': page, 'total': total, 'objects': cs}
+    r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp

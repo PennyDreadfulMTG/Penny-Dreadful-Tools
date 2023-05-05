@@ -808,6 +808,16 @@ div.live {
     margin-bottom: 1em; /* Same as `main table`'s margin-bottom so that top table extras are the same distance from the table as the pagination at the bottom. */
 }
 
+.live .table-header .message {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    flex-grow: 1; /* The message can take up all the space that the search box and the pageSize dropdown do not. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* It's only ever allowed to be one line. */
+    width: 0; /* We don't want this element to make the table wider than it would otherwise be. */
+}
+
 /*
 
 Force a consistent size of each column in react tables otherwise things "jump" as you paginate.
@@ -1651,7 +1661,8 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
-textarea, input[type=text], select, button {
+/* .message has the same padding as form elements here because it is text that appears on a line with two of them. */
+textarea, input[type=text], select, button, .live .table-header .message {
     padding: 0.1em 0.4rem 0.1em 0.4rem;
 }
 

@@ -225,7 +225,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     if 'c' in colors and len(colors) > 1:
         raise InvalidValueException('A card cannot be colorless and colored')
     if 'm' in colors and len(colors) > 1:
-        raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term}' instead")
+        raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term.replace('m', '')}' instead")
     if operator == ':' and subtable == 'color_identity':
         operator = '<='
     required: Set[str] = set()
@@ -331,7 +331,7 @@ def value_lookup(table: str, value: str) -> Union[int, str]:
     if table in VALUE_LOOKUP and value in VALUE_LOOKUP[table]:
         return VALUE_LOOKUP[table][value]
     if table in VALUE_LOOKUP:
-        raise InvalidValueException(f"Invalid value '{value}' for {table} {VALUE_LOOKUP}")
+        raise InvalidValueException(f"Invalid value '{value}' for {table}")
     return value
 
 def init_value_lookup() -> None:

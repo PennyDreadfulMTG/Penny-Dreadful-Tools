@@ -230,12 +230,13 @@ def archetype_where(archetype_id: int) -> str:
 def card_where(name: str) -> str:
     return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))
 
-def card_search_where(q: str) -> str:
+# Returns two values, a SQL WHERE clause and a message about that clause (possibly an error message) suitable for display.
+def card_search_where(q: str) -> Tuple[str, str]:
     try:
         cs = search.search(q)
-        return 'TRUE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')'
-    except search.InvalidSearchException:
-        return 'TRUE'  # Do not apply malformed queries. Future improvement: ignore invalid parts and match the valid parts.
+        return 'FALSE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')', ''
+    except search.InvalidSearchException as e:
+        return 'FALSE', str(e)
 
 def tournament_only_clause() -> str:
     return "ct.name = 'Gatherling'"

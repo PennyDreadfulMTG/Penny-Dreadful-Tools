@@ -20,7 +20,9 @@ export class Table extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            error: "",
             loadedOnce: false,
+            message: "",
             objects: [],
             page: 0,
             pageSize: parseInt(props.pageSize, 10),
@@ -72,26 +74,16 @@ export class Table extends React.Component {
             .then(
                 (response) => {
                     if (params.q === this.state.q) { // Don't update the table if this isn't the latest query.
-                        this.setState({"objects": response.data.objects, "total": response.data.total, "loadedOnce": true}); PD.initTables();
+                        this.setState({"objects": response.data.objects, "total": response.data.total, "error": "", "message": response.data.message, "loadedOnce": true}); PD.initTables();
                     }
                 },
-                (error) => { this.setState({ error }); }
+                (error) => { this.setState({"objects": [], "total": 0,  "error": error.message, "message": "", "loadedOnce": true }); }
             );
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    renderError(error) {
-        return (
-            <p className="error">Unable to load: {error}</p>
-        );
     }
 
     render() {
         if (this.state.objects.length === 0 && !this.state.loadedOnce) {
             return <div className="loading"><span className="spinner"></span> <span className="text">Loading…</span></div>;
-        }
-        if (this.state.error) {
-            return this.renderError(JSON.stringify(this.state.error));
         }
         const { objects } = this.state;
         const pageSizeChanged = (e) => {
@@ -121,6 +113,14 @@ export class Table extends React.Component {
                             : null
                         }
                     </span>
+                    { this.state.error
+                        ? <span className="message error" title={this.state.error}>{this.state.error}</span>
+                        : null
+                    }
+                    { this.state.message
+                        ? <span className="message" title={this.state.message}>{this.state.message}</span>
+                        : null
+                    }
                     <span>
                         { this.state.total > 20
                             ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>

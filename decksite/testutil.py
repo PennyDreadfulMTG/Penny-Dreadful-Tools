@@ -1,25 +1,20 @@
 from functools import wraps
+from typing import Any, Callable
 
 from decksite import database
 from decksite.database import db
 from shared import configuration
 
 
-def with_test_db(test) -> None: # BAKERT return type
+def with_test_db(test: Callable) -> Callable:
     @wraps(test)
-    def wrapper(*args, **kwargs):
-        name = configuration.get_str('decksite_test_database')
-        configuration.CONFIG['decksite_database'] = name
-        db().execute(f'DROP DATABASE IF EXISTS {name}')
-        db().execute(f'CREATE DATABASE {name}')
-        db().execute(f'USE {name}')
+    def wrapper(*args: Any, **kwargs: Any) -> None:
+        db_name = configuration.get_str('decksite_test_database')
+        configuration.CONFIG['decksite_database'] = db_name
+        db().execute(f'DROP DATABASE IF EXISTS {db_name}')
+        db().execute(f'CREATE DATABASE {db_name}')
+        db().execute(f'USE {db_name}')
         database.setup()
-        test()
+        test(*args, **kwargs)
+        db().execute(f'DROP DATABASE IF EXISTS {db_name}')
     return wrapper
-
-    name = configuration.get_str('decksite_test_database')
-    configuration.CONFIG['decksite_database'] = name
-    db().execute(f'DROP DATABASE IF EXISTS {name}')
-    db().execute(f'CREATE DATABASE {name}')
-    db().execute(f'USE {name}')
-    database.setup()

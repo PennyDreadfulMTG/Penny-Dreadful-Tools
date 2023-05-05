@@ -3,7 +3,6 @@ from flask_babel import gettext
 from decksite.views.decklist_form import DecklistForm
 
 
-# pylint: disable=no-self-use
 class DeckCheck(DecklistForm):
     def page_title(self) -> str:
         return 'Deck Check'

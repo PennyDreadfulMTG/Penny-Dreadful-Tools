@@ -12,7 +12,6 @@ LEFT_PADDING = 2
 TOTAL_HEIGHT = 20000
 
 
-# pylint: disable=no-self-use
 class Metagame(View):
     def __init__(self, archetypes: List[Archetype], tournament_only: bool, key_cards: Dict[int, str]) -> None:
         super().__init__()

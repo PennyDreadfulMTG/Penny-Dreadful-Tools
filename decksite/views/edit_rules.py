@@ -8,7 +8,6 @@ from magic.models import Deck
 from shared.container import Container
 
 
-# pylint: disable=no-self-use, too-many-instance-attributes, too-many-arguments
 class EditRules(View):
     def __init__(self,
                  num_classified: int,

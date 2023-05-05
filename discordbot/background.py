@@ -111,8 +111,6 @@ class BackgroundTasks(Extension):
 
         if diff <= 14400:
             embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
-            # See #2809.
-            # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
             await self.tournament_reminders_channel.send(embed=embed)
 
         if diff <= 300:

@@ -9,9 +9,7 @@ from shared.container import Container
 from shared.pd_exception import DoesNotExistException
 
 
-# pylint: disable=no-self-use, too-many-instance-attributes
 class Archetype(View):
-    # pylint: disable=too-many-arguments
     def __init__(self,
                  archetype: archs.Archetype,
                  archetypes: List[archs.Archetype],

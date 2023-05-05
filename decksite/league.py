@@ -25,7 +25,6 @@ class Status(Enum):
     CLOSED = 0
     OPEN = 1
 
-# pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class SignUpForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,

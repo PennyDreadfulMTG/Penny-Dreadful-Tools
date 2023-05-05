@@ -4,7 +4,6 @@ from decksite.view import View
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
 class Banners(View):
     def __init__(self, cards: List[Container]) -> None:
         super().__init__()

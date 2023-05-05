@@ -4,7 +4,6 @@ from decksite.view import View
 from magic import oracle
 
 
-# pylint: disable=no-self-use
 class Bugs(View):
     def __init__(self) -> None:
         super().__init__()

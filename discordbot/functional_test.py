@@ -25,7 +25,7 @@ class ContextForTests(Context, MtgMixin):
     content_parameters: str
     id = random.randint(111111111111111111, 999999999999999999)
 
-    async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
+    async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None:
         self.sent = True
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()

@@ -11,7 +11,6 @@ from shared.pd_exception import (DatabaseConnectionRefusedException, DatabaseExc
 
 ValidSqlArgumentDescription = Any
 
-# pylint: disable=too-many-instance-attributes
 class Database():
     def __init__(self, db: str) -> None:
         warnings.filterwarnings('error', category=MySQLdb.Warning)

@@ -7,7 +7,6 @@ from decksite.view import View
 from magic.models import Card
 
 
-# pylint: disable=no-self-use, too-many-instance-attributes
 class Cards(View):
     def __init__(self, cards: List[Card], tournament_only: bool = False, query: str = '') -> None:
         super().__init__()

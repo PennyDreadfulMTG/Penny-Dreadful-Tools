@@ -5,7 +5,6 @@ from magic.models import Deck
 from shared import dtutil
 
 
-# pylint: disable=no-self-use
 class EditMatches(View):
     def __init__(self, competition_id: int, decks: Sequence[Deck]) -> None:
         super().__init__()

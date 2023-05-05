@@ -12,7 +12,6 @@ from markdown.treeprocessors import Treeprocessor
 from pystache.common import TemplateNotFoundError
 from pystache.context import ContextStack
 
-# pylint: disable=cyclic-import,unused-import
 if TYPE_CHECKING:
     from shared_web.base_view import BaseView
 
@@ -56,7 +55,6 @@ class CachedLoader(pystache.loader.Loader):
 
 # If you have already parsed a template, don't parse it again.
 class CachedRenderEngine(pystache.renderengine.RenderEngine):
-    # pylint: disable=too-many-arguments
     def __init__(self, literal: Optional[StringConverterFunction] = None, escape: Optional[StringConverterFunction] = None, resolve_context: Optional[Callable[[ContextStack, str], str]] = None, resolve_partial: Optional[StringConverterFunction] = None, to_str: Optional[Callable[[object], str]] = None) -> None:
         super().__init__(literal, escape, resolve_context, resolve_partial, to_str)
         self.parsed_templates: Dict[str, pystache.parsed.ParsedTemplate] = {}
@@ -67,7 +65,6 @@ class CachedRenderEngine(pystache.renderengine.RenderEngine):
         return self.parsed_templates[template].render(self, context_stack)
 
 # Localization Shim
-# pylint: disable=protected-access
 def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pystache.parsed.ParsedTemplate:
     new_template = pystache.parsed.ParsedTemplate()
     for node in parsed_template._parse_tree:
@@ -94,20 +91,17 @@ class _GettextNode():
         return pystache.parser._format(self)
 
     def render(self, engine: pystache.renderengine.RenderEngine, context: ContextStack) -> str:
-        s = gettext(self.key)  # The key is populated in messages.pot via generate_translations.py - pylint: disable=translation-of-non-string
+        s = gettext(self.key)  # The key is populated in messages.pot via generate_translations.py
 
         def lookup(match: Match) -> str:
             return engine.fetch_string(context, match.group(1))
         s = re.sub(r'\{([a-z_]+)\}', lookup, s)
         return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
 
-# pylint: disable=no-self-use
 class NoParaTagProcessor(Treeprocessor):
     def run(self, root: etree.Element) -> None:
         root[0].tag = 'string'
 
-# pylint: disable=no-self-use, invalid-name
 class NoParaTagsExtension(Extension):
-    # pylint: disable=arguments-differ
     def extendMarkdown(self, md: Markdown) -> None:
         md.treeprocessors.register(NoParaTagProcessor(), 'noparatag', -50)

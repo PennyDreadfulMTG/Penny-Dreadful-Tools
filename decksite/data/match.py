@@ -14,7 +14,6 @@ from shared.database import sqlescape
 from shared.pd_exception import TooFewItemsException
 
 
-# pylint: disable=too-many-arguments
 def insert_match(dt: datetime.datetime,
                  left_id: int,
                  left_games: int,

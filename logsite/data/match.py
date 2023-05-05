@@ -10,7 +10,6 @@ from shared import dtutil
 from .. import db
 from ..db import DB as fsa
 
-# pylint: disable=no-member
 
 class Match(fsa.Model):  # type: ignore
     __tablename__ = 'match'

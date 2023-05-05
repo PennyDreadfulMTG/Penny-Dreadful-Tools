@@ -13,7 +13,6 @@ from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
 
-# pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
     def __init__(self, d: deck.Deck, person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
         super().__init__()

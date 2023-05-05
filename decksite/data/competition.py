@@ -12,7 +12,6 @@ from shared.container import Container
 from shared.database import sqlescape
 
 
-# pylint: disable=too-many-arguments
 def get_or_insert_competition(start_date: datetime.datetime,
                               end_date: datetime.datetime,
                               name: str,

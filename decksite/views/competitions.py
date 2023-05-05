@@ -4,7 +4,6 @@ from decksite.view import View
 from magic.models import Competition
 
 
-# pylint: disable=no-self-use
 class Competitions(View):
     def __init__(self, competitions: List[Competition]) -> None:
         super().__init__()

@@ -4,7 +4,6 @@ from decksite.data.person import Person
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class Unlink(View):
     def __init__(self, people: Iterable[Person], num_affected_people: Optional[int] = None, errors: Optional[List[str]] = None) -> None:
         super().__init__()

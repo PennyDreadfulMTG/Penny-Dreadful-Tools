@@ -140,12 +140,10 @@ class Achievement:
             cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
             if cls.key in [c.key for c in cls.all_achievements]:
                 logger.warning(f"Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
-            # pylint can't determine that we have verified cls.key to be a str
-            if cls.key[-7:] == '_detail':  # pylint: disable=unsubscriptable-object
+            if cls.key[-7:] == '_detail':
                 logger.warning(f"Achievement key {cls.key} should not end with the string '_detail'.")
             cls.all_achievements.append(cls())
 
-    # pylint: disable=no-self-use, unused-argument
     def display(self, p: Person) -> str:
         return ''
 
@@ -248,7 +246,6 @@ class Achievement:
 
         return leaderboard if len(leaderboard) > 0 else None
 
-    # pylint: disable=no-self-use
     def leaderboard_heading(self) -> str:
         return ''
 
@@ -310,7 +307,7 @@ class TournamentOrganizer(Achievement):
         return f'Earned by {len(self.hosts)} players{clarification}.'
 
     @retry_after_calling(preaggregate_achievements)
-    def percent(self, season_id: Optional[int] = None) -> float:  # pylint: disable=unused-argument
+    def percent(self, season_id: Optional[int] = None) -> float:
         sql = 'SELECT COUNT(*) AS mnum FROM _achievements'
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])

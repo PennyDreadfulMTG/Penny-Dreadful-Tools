@@ -2,7 +2,6 @@ from decksite.view import View
 from magic import tournaments
 
 
-# pylint: disable=no-self-use
 class TournamentHosting(View):
     def __init__(self) -> None:
         super().__init__()

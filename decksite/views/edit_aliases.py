@@ -5,7 +5,6 @@ from decksite.view import View
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
 class EditAliases(View):
     def __init__(self, aliases: List[Container], all_people: Sequence[Person]) -> None:
         super().__init__()

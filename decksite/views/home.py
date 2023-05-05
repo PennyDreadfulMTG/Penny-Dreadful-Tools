@@ -10,7 +10,6 @@ from shared import dtutil
 from shared.container import Container
 
 
-# pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
     def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card], matches_stats: Dict[str, int]) -> None:
         super().__init__()

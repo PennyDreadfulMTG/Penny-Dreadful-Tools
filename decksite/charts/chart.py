@@ -5,7 +5,6 @@ from typing import Dict
 import matplotlib as mpl
 
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
-# pylint: disable=wrong-import-position
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -47,7 +46,7 @@ def image(path: str, costs: Dict[str, int]) -> str:
     xs = [costs.get(k, 0) for k in ys]
     sns.set_style('white')
     sns.set(font='Concourse C3', font_scale=3)
-    g = sns.barplot(x=ys, y=xs, palette=['#cccccc'] * len(ys))  # pylint: disable=no-member
+    g = sns.barplot(x=ys, y=xs, palette=['#cccccc'] * len(ys))
     g.axes.yaxis.set_ticklabels([])
     rects = g.patches
     sns.set(font='Concourse C3', font_scale=2)

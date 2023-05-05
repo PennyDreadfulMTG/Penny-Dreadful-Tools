@@ -5,7 +5,6 @@ from magic import rotation, seasons
 from shared import configuration, dtutil
 
 
-# pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
     def __init__(self) -> None:
         super().__init__()

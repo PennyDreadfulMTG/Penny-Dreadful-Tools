@@ -41,7 +41,6 @@ def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
 def parse_rfc3339(s: str) -> datetime.datetime:
-    # pylint: disable=protected-access
     struct = feedparser.datetimes._parse_date(s)
     return ts2dt(int(timegm(struct)))
 

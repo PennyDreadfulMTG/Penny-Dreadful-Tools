@@ -2,7 +2,6 @@ from decksite.league import Status
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class EditLeague(View):
     def __init__(self, status: Status) -> None:
         super().__init__()

@@ -1,5 +1,5 @@
 import subprocess
-from distutils.dist import Distribution  # pylint: disable=no-name-in-module,import-error
+from distutils.dist import Distribution
 from typing import Any, Dict, Generator, List
 
 import pystache
@@ -48,7 +48,6 @@ def exitcode() -> int:
                 return max(int(added), int(deleted)) - 1
     return 0
 
-# pylint: disable=protected-access, unused-argument
 def extract_mustache(fileobj: Any, keywords: List[str], comment_tags: List[str], options: Dict[str, str]) -> Generator:
     """Extract messages from mustache files.
 

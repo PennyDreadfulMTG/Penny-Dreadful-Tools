@@ -6,7 +6,6 @@ import pytest
 from shared_web import template
 
 
-# pylint: disable=protected-access
 @pytest.mark.parametrize('module', ['decksite', 'logsite'])
 def test_render_name(module: str) -> None:
     template.__SEARCHPATH.clear()

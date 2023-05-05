@@ -4,7 +4,6 @@ from decksite.data.person import Person
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class Ban(View):
     def __init__(self, people: Iterable[Person], success: Optional[bool]) -> None:
         super().__init__()

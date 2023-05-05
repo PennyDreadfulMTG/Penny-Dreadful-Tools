@@ -20,7 +20,6 @@ def db() -> Database:
     return ctx.database
 
 def setup_in_app_context() -> None:
-    # pylint: disable=import-outside-toplevel
     from decksite import APP
     with APP.app_context():
         setup()

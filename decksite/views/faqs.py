@@ -1,7 +1,6 @@
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class Faqs(View):
     def __init__(self) -> None:
         super().__init__()

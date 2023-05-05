@@ -7,7 +7,6 @@ from decksite.deck_type import DeckType
 from decksite.view import View
 
 
-# pylint: disable=no-self-use, too-many-instance-attributes
 class Archetypes(View):
     def __init__(self, archetypes: List[archs.Archetype], tournament_only: bool = False) -> None:
         super().__init__()

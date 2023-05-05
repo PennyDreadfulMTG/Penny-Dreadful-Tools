@@ -26,7 +26,7 @@ class Google(Extension):
 
         try:
             service = build('customsearch', 'v1', developerKey=api_key)
-            res = service.cse().list(q=query, cx=cse_id, num=1).execute()  # pylint: disable=no-member
+            res = service.cse().list(q=query, cx=cse_id, num=1).execute()
             if 'items' in res:
                 r = res['items'][0]
                 s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])

@@ -8,7 +8,6 @@ from decksite.views.decklist_form import DecklistForm
 from magic.models import Deck
 
 
-# pylint: disable=no-self-use
 class SignUp(DecklistForm):
     def __init__(self, form: Form, is_closed: bool, person_id: Optional[int], d: Optional[Deck]) -> None:
         super().__init__(form, person_id)

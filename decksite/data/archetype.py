@@ -21,7 +21,6 @@ class Archetype(Container, NodeMixin):
 
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
-# pylint: disable=attribute-defined-outside-init
 def load_archetype(archetype: Union[int, str], season_id: Optional[int] = None, tournament_only: bool = False) -> Archetype:
     try:
         archetype_id = int(archetype)

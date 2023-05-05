@@ -6,7 +6,6 @@ from shared import dtutil
 from shared.container import Container
 
 
-# pylint: disable=too-many-instance-attributes
 class Deck(Container):
     def __init__(self, params: Dict[str, Any]) -> None:
         super().__init__()

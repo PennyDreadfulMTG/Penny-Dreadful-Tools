@@ -6,7 +6,6 @@ from decksite.view import View
 from .. import APP
 
 
-# pylint: disable=no-self-use
 class AboutPdm(View):
     def __init__(self) -> None:
         super().__init__()

@@ -30,7 +30,6 @@ from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
-# pylint: disable=no-self-use
 
 SearchItem = Dict[str, str]
 

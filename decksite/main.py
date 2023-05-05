@@ -96,7 +96,7 @@ def teardown_request(_: Optional[BaseException]) -> None:
 
 def init(debug: bool = True, port: Optional[int] = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
-    APP.logger.setLevel(logging.INFO)  # pylint: disable=no-member,no-name-in-module
+    APP.logger.setLevel(logging.INFO)
     APP.config['SESSION_COOKIE_SECURE'] = False  # Allow cookies over HTTP when running locally.
     APP.run(host='0.0.0.0', debug=debug, port=port)
 

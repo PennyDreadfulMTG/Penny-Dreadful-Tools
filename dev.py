@@ -50,7 +50,7 @@ def lint() -> None:
 
 def do_lint() -> None:
     """
-    Invoke Pylint with our preferred options
+    Invoke linter with our preferred options
     """
     print('>>>> Running flake8')
     pipenv = local['pipenv']

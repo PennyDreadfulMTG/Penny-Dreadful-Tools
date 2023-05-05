@@ -10,7 +10,6 @@ def about() -> str:
     view = About()
     return view.page()
 
-# pylint: disable=no-self-use
 class About(View):
     def page_title(self) -> str:
         return gettext('About')

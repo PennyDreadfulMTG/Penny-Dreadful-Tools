@@ -22,7 +22,6 @@ if configuration.mysql_passwd.value:
 if configuration.oauth2_client_secret.value:
     REDACTED_STRINGS.add(configuration.oauth2_client_secret.value)
 
-# pylint: disable=too-many-locals
 def create_issue(content: str,
                  author: str,
                  location: str = 'Discord',

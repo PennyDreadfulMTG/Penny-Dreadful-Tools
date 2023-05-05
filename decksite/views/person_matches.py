@@ -5,7 +5,6 @@ from decksite.view import View
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
 class PersonMatches(View):
     def __init__(self, person: ps.Person, matches: List[Container]) -> None:
         super().__init__()

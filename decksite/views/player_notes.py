@@ -6,7 +6,6 @@ from shared import dtutil
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
 class PlayerNotes(View):
     def __init__(self, notes: Iterable[Container], people: Iterable[Person]) -> None:
         super().__init__()

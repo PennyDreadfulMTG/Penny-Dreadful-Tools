@@ -9,7 +9,6 @@ from decksite.view import View
 from magic.models import Deck
 
 
-# pylint: disable=no-self-use,too-many-instance-attributes
 class EditArchetypes(View):
     def __init__(self, archetypes: List[Archetype], search_results: List[Deck], q: str, notq: str) -> None:
         super().__init__()

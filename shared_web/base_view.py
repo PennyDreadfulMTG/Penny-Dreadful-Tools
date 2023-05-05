@@ -6,7 +6,6 @@ from flask import current_app, make_response, url_for, wrappers
 from . import template
 
 
-# pylint: disable=no-self-use, too-many-public-methods
 class BaseView:
     def __init__(self) -> None:
         super().__init__()
@@ -50,7 +49,6 @@ class BaseView:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))
 
     def tooltips_url(self) -> Optional[str]:
-        # pylint: disable=no-member
         if not hasattr(self, 'cards'):
             return None
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())

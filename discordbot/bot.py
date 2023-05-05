@@ -68,18 +68,6 @@ class Bot(Client):
         if token:
             repo.REDACTED_STRINGS.add(token)
 
-    # async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
-    #     # pylint: disable=unused-argument
-    #     # If we're the only one left in a voice chat, leave the channel
-    #     guild = getattr(after.channel, 'guild', None)
-    #     if guild is None:
-    #         return
-    #     voice = guild.voice_client
-    #     if voice is None or not voice.is_connected():
-    #         return
-    #     if len(voice.channel.voice_members) == 1:
-    #         await voice.disconnect()
-
     async def on_member_add(self, event: MemberAdd) -> None:
         member: Member = event.member
         if member.bot:
@@ -188,16 +176,6 @@ class Bot(Client):
                 return
             if c > 0 and reaction.emoji.name == '❎':
                 await reaction.message.delete()
-            # elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
-            #     async with reaction.message.channel.typing():
-            #         search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)
-            #         if search:
-            #             previous_command, suggestions = search.group(1, 2)
-            #             card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji] - 1]
-            #             # pylint: disable=protected-access
-            #             message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
-            #             await self.on_message(message)
-            #             await reaction.message.delete()
 
 def init() -> None:
     client = Bot()

@@ -1,10 +1,12 @@
-from typing import Callable
-from pyparsing import Any
-import sentry_sdk
-from sentry_sdk.integrations.flask import FlaskIntegration
-from shared import configuration
 import logging
+from typing import Callable
+
+import sentry_sdk
+from pyparsing import Any
 from sentry_sdk import crons
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+from shared import configuration
 
 
 def sentry_filter(event, hint):  # type: ignore

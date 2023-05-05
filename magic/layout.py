@@ -5,6 +5,7 @@ from github.GithubException import GithubException
 
 from shared import repo
 
+
 @dataclass
 class Layout:
     playable: bool = True

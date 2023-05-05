@@ -3,10 +3,10 @@ import os
 import re
 from typing import Optional
 
+import sentry_sdk
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
 from werkzeug import wrappers
 from werkzeug.exceptions import InternalServerError
-import sentry_sdk
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite.cache import cached

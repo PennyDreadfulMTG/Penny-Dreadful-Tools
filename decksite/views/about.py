@@ -8,7 +8,6 @@ from magic import legality, oracle, seasons
 from magic.models import Card, Deck
 
 
-# pylint: disable=no-self-use
 class About(View):
     def __init__(self, src: Optional[str], last_season_tournament_winners: List[Deck]) -> None:
         super().__init__()

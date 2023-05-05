@@ -24,7 +24,6 @@ def matches() -> str:
     view = Matches()
     return view.page()
 
-# pylint: disable=no-self-use
 class Matches(View):
     def page_title(self) -> str:
         return 'Matches'

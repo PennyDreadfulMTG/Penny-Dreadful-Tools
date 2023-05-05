@@ -8,7 +8,6 @@
 .cache/
 .coverage
 .mypy_cache
-.pylintrc.tmp
 .pytest_cache/
 .vs/
 .vscode/*

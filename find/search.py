@@ -402,7 +402,6 @@ def is_subquery(subquery_name: str) -> str:
     query = '({0})'.format(query)
     return query
 
-# pylint: disable=stop-iteration-return
 def intersperse(iterable: Iterable, delimiter: str) -> Generator:
     it = iter(iterable)
     yield next(it)

@@ -3,7 +3,6 @@ import random
 from .error import ErrorView
 
 
-# pylint: disable=no-self-use
 class InternalServerError(ErrorView):
     def __init__(self, exception: Exception) -> None:
         super().__init__()

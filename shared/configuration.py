@@ -107,7 +107,6 @@ DEFAULTS: Dict[str, Any] = {
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'poeditor_api_key': None,
     'prices_database': 'prices',
-    'pylint_threads': 4,
     'redis_db': 0,
     'redis_host': 'localhost',
     'redis_port': 6379,

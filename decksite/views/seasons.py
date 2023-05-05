@@ -6,7 +6,6 @@ from magic import oracle
 from shared import dtutil
 
 
-# pylint: disable=no-self-use
 class Seasons(View):
     def __init__(self, stats: Dict[int, Dict[str, Union[int, datetime.datetime]]]) -> None:
         super().__init__()

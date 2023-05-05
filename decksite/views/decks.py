@@ -1,7 +1,6 @@
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class Decks(View):
     def __init__(self, league_only: bool = False) -> None:
         super().__init__()

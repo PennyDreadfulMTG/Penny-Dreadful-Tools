@@ -19,7 +19,6 @@ class WhooshWriter():
         ix = create_in(WhooshConstants.index_dir, self.schema)
         update_index(ix, cards)
 
-    # pylint: disable=no-self-use
     def update_card(self, card: Card) -> None:
         ix = open_dir(WhooshConstants.index_dir)
         update_index(ix, [card])

@@ -1,4 +1,4 @@
-from .printing import Printing  # isort:skip # pylint: disable=wrong-import-position
+from .printing import Printing  # isort:skip
 from .card import Card
 from .cardref import CardRef
 from .competition import Competition

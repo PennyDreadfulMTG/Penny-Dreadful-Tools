@@ -268,7 +268,6 @@ def load_cards_count(additional_where: str = 'TRUE', archetype_id: Optional[int]
     sql = f'SELECT COUNT(DISTINCT name) AS n FROM {table} WHERE ({where}) AND ({additional_where}) AND ({season_query})'
     return int(db().value(sql))
 
-# pylint: disable=too-many-arguments
 @retry_after_calling(preaggregate)
 def load_cards(
         additional_where: str = 'TRUE',

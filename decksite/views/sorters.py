@@ -5,7 +5,6 @@ from decksite.view import View
 from shared import dtutil
 
 
-# pylint: disable=no-self-use
 class Sorters(View):
     def __init__(self, sorters: Iterable[Person]) -> None:
         super().__init__()

@@ -4,7 +4,6 @@ from decksite.data.person import Person
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class People(View):
     def __init__(self) -> None:
         super().__init__()

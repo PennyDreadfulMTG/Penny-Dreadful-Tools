@@ -16,7 +16,6 @@ def show_match(match_id: int) -> str:
     view = Match(match.get_match(match_id))
     return view.page()
 
-# pylint: disable=no-self-use,too-many-instance-attributes
 class Match(View):
     def __init__(self, viewed_match: match.Match) -> None:
         super().__init__()

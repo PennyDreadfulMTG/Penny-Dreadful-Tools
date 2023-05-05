@@ -10,7 +10,6 @@ from shared.container import Container
 from shared.pd_exception import AlreadyExistsException
 
 
-# pylint: disable=no-self-use,too-many-instance-attributes
 class LinkAccounts(View):
     def __init__(self) -> None:
         super().__init__()

@@ -16,7 +16,6 @@ CACHE = SimpleCache()
 def cached() -> Callable:
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
 
-# pylint: disable=too-many-arguments
 def cached_impl(cacheable: bool = False,
                 must_revalidate: bool = True,
                 client_only: bool = True,

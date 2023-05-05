@@ -11,7 +11,6 @@ from shared import dtutil
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
 class Prizes(View):
     def __init__(self, competitions: List[Competition], first_runs: List[Person]) -> None:
         super().__init__()

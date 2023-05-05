@@ -25,7 +25,7 @@ def init() -> None:
                 traces_sample_rate=0.001,
                 before_send=sentry_filter,
             )
-        except Exception as c:  # pylint: disable=broad-except
+        except Exception as c:
             logging.error(c)
 
 def monitor(task_name: str) -> Callable[..., Any]:

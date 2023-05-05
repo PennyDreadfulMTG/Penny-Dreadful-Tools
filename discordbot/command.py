@@ -133,7 +133,6 @@ async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str
         await send(channel, '{author}: No matches.'.format(author=author.mention))
     return None
 
-# pylint: disable=too-many-arguments
 async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:

@@ -9,7 +9,6 @@ from whoosh.query import And, FuzzyTerm, Or, Term
 from magic.whoosh_constants import WhooshConstants
 
 
-# pylint: disable=unused-variable
 class SearchResult():
     def __init__(
             self,

@@ -8,7 +8,6 @@ from magic.models import Deck
 from shared import dtutil
 
 
-# pylint: disable=no-self-use
 class PD500(View):
     def __init__(self, tournament_winning_decks: List[Deck]) -> None:
         super().__init__()

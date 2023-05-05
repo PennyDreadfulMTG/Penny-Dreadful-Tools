@@ -3,7 +3,6 @@ from decksite.data.form import Form
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class LeagueForm(View):
     def __init__(self, form: Form) -> None:
         super().__init__()

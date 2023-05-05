@@ -8,7 +8,6 @@ from magic import whoosh_write
 from magic.whoosh_search import WhooshSearcher
 
 
-# pylint: disable=unused-variable
 @pytest.mark.functional
 class WhooshSearchTest(unittest.TestCase):
     @classmethod

@@ -13,7 +13,6 @@ from magic import oracle, seasons
 from magic.models import Card
 
 
-# pylint: disable=no-self-use,too-many-instance-attributes,too-many-arguments
 class Person(View):
     def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
         super().__init__()

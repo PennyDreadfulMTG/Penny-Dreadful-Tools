@@ -8,8 +8,6 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 
 from . import APP
 
-# pylint: disable=no-member
-
 DB = SQLAlchemy(APP)
 MIGRATE = Migrate(APP, DB)
 

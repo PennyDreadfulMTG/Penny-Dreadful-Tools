@@ -176,7 +176,6 @@ async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
     return [c['id'] for c in values['card']]
 
 async def determine_values_async(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
-    # pylint: disable=too-many-locals
     cards: Dict[str, int] = {}
     card_values: List[Dict[str, Any]] = []
     face_values: List[Dict[str, Any]] = []
@@ -369,7 +368,7 @@ def load_sets() -> Dict[str, int]:
 
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
-    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])  # pylint: disable=invalid-sequence-index
+    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])  #
     sql += ') VALUES ('
     sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['scryfall'])
     sql += ')'
@@ -385,7 +384,6 @@ async def update_sets_async() -> dict:
     return load_sets()
 
 def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int) -> Dict[str, Any]:
-    # pylint: disable=too-many-locals
     if not card_id or not set_id:
         raise InvalidDataException(f'Cannot insert printing without card_id and set_id: {card_id}, {set_id}, {p}')
     result: Dict[str, Any] = {}

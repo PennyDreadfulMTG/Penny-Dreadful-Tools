@@ -8,7 +8,6 @@ from shared.container import Container
 from ..base_view import BaseView
 
 
-# pylint: disable=no-self-use
 class ErrorView(BaseView):
     def __init__(self) -> None:
         super().__init__()

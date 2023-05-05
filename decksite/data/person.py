@@ -19,7 +19,6 @@ def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None)
 def load_person_by_discord_id(discord_id: int, season_id: Optional[int] = None) -> Person:
     return load_person(f'p.discord_id = {discord_id}', season_id=season_id)
 
-# pylint: disable=invalid-name
 def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Person:
     # It would probably be better if this method did not exist but for now it's required by the API.
     # The problem is that Magic Online usernames can be integers so we cannot be completely unambiguous here.
@@ -45,17 +44,14 @@ def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Pe
         return load_person_by_discord_id(int(person), season_id=season_id)
     return load_person_by_mtgo_username(person, season_id=season_id)
 
-# pylint: disable=invalid-name
 def maybe_load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
     if discord_id is None:
         return None
     return guarantee.at_most_one(load_people(f'p.discord_id = {discord_id}'))
 
-# pylint: disable=invalid-name
 def maybe_load_person_by_tappedout_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.tappedout_username = {username}'.format(username=sqlescape(username))))
 
-# pylint: disable=invalid-name
 def maybe_load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 

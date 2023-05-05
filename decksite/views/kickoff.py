@@ -5,7 +5,6 @@ from magic import tournaments
 from shared import dtutil
 
 
-# pylint: disable=no-self-use
 class KickOff(View):
     def __init__(self) -> None:
         super().__init__()

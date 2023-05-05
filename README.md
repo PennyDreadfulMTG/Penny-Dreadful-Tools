@@ -29,8 +29,6 @@ View individual subdirectories for details
 
 **price_grabber** builds a database of card prices.
 
-**pylint_monolith** is for our custom extensions to pylint.
-
 **rotation_script** is for the script that handles Penny Dreadful rotation (card legality changes each season).
 
 **shared** contains a bunch of general purpose helper classes. Things that could be used in any project.

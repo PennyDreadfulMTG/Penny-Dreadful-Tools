@@ -39,7 +39,6 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'legal_cards_url': Optional[str],
 }, total=False)
 
-# pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
 class View(BaseView):
     def __init__(self) -> None:
         super().__init__()

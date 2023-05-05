@@ -5,7 +5,6 @@ from magic.models import Competition as Comp
 from shared import dtutil
 
 
-# pylint: disable=no-self-use, too-many-instance-attributes
 class Competition(View):
     def __init__(self, competition: Comp) -> None:
         super().__init__()

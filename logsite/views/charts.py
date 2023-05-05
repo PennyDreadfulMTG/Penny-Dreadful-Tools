@@ -17,7 +17,6 @@ def charts() -> str:
     view = Charts()
     return view.page()
 
-# pylint: disable=no-self-use
 class Charts(View):
     def page_title(self) -> str:
         return gettext('Stats')

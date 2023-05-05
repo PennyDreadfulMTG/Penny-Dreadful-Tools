@@ -62,7 +62,7 @@ def run() -> None:
     try:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
         fetch_tools.fetch(url)
-    except Exception as c:  # pylint: disable=broad-except
+    except Exception as c:
         print(c, flush=True)
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
@@ -180,15 +180,11 @@ https://pennydreadfulmagic.com/admin/rotation/
             checklist += '- [x] run post_rotation\n'
         else:
             failed = True
-    except Exception:  # pylint: disable=broad-except
+    except Exception:
         failed = True
     if failed:
         checklist += '- [ ] run post_rotation\n'
 
-    # try:
-    #     print('Updating Gatherling...', flush=True)
-    #     fetch_tools.post('https://gatherling.com/util/updateDefaultFormats.php')
-    # except fetch_tools.FetchException:
     checklist += '- [ ] Update Gatherling legal cards list\n'
 
     for path in ['/etc/uwsgi/vassals/decksite.ini', '/home/discord/vassals/decksite.ini']:

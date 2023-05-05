@@ -76,7 +76,6 @@ def load_decks(where: str = 'TRUE',
         decks.append(decks_by_id[row['id']])
     return decks
 
-# pylint: disable=attribute-defined-outside-init,too-many-arguments
 def load_decks_query(columns: str,
                      where: str = 'TRUE',
                      group_by: Optional[str] = None,

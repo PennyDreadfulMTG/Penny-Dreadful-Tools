@@ -4,7 +4,6 @@ from decksite.view import View
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
 class Achievements(View):
     def __init__(self, achievements: List[Container]) -> None:
         super().__init__()

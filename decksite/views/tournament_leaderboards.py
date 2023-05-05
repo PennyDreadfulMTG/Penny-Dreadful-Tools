@@ -3,7 +3,6 @@ from typing import Any, Dict, List
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
 class TournamentLeaderboards(View):
     def __init__(self, series: List[Dict[str, Any]]) -> None:
         super().__init__()

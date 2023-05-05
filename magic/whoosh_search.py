@@ -115,7 +115,7 @@ class WhooshSearcher():
         exact = None
         prefix_as_whole_word = []
         other_prefixed = []
-        if self.trie.has_key(query):  # noqa
+        if self.trie.has_key(query):
             exact = self.trie.get(query)
         if self.trie.has_subtrie(query):
             matches = self.trie.values(query)[(1 if exact else 0):]

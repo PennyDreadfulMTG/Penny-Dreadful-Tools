@@ -18,7 +18,7 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}
     port=configuration.mysql_port.value,
     db=configuration.get('logsite_database'))
 
-from . import db, stats, api, views  # isort:skip # noqa
+from . import db, stats, api, views  # isort:skip # noqa: F401
 
 def __create_schema() -> None:
     engine = create_engine(APP.config['SQLALCHEMY_DATABASE_URI'])

@@ -55,7 +55,7 @@ def do_lint() -> None:
     print('>>>> Running flake8')
     pipenv = local['pipenv']
     try:
-        pipenv['run', 'python', '-m', 'flake8'] & FG  # noqa
+        pipenv['run', 'python', '-m', 'flake8'] & FG
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 
@@ -63,7 +63,7 @@ def do_lint() -> None:
 @cli.command()
 def stylefix() -> None:
     autopep = local['autopep8']
-    autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG  # noqa
+    autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG
 
 @cli.command()
 @click.argument('argv', nargs=-1)
@@ -162,9 +162,9 @@ def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
     pipenv = local['pipenv']
     if fix:
-        pipenv['run', 'isort', '.'] & FG  # noqa
+        pipenv['run', 'isort', '.'] & FG
     else:
-        pipenv['run', 'isort', '.', '--check'] & FG  # noqa
+        pipenv['run', 'isort', '.', '--check'] & FG
 
 @cli.command()
 def reset_db() -> None:
@@ -361,7 +361,7 @@ def repip() -> None:
             if remote > installed:
                 pipenv = local['pipenv']
                 try:
-                    pipenv['install', f'{name}=={remote}'] & FG  # noqa
+                    pipenv['install', f'{name}=={remote}'] & FG
                 except ProcessExecutionError as e:
                     sys.exit(e.retcode)
 

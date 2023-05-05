@@ -109,23 +109,22 @@ def unit(argv: List[str]) -> None:
     do_unit(argv)
 
 def do_unit(argv: List[str]) -> None:
-    runtests(argv, 'not functional and not perf', True)
+    runtests(argv, 'not functional and not perf')
 
 @cli.command()
 @click.argument('argv', nargs=-1)
 def test(argv: List[str]) -> None:
-    runtests(argv, '', False)
+    runtests(argv, '')
 
-def runtests(argv: Iterable[str], m: str, mark: bool) -> None:
+def runtests(argv: Iterable[str], m: str) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
     args = list(argv)
-    if mark:
-        if args and not args[0].startswith('-'):
-            to_find = args.pop(0)
-            args.extend(find_files(to_find, 'py'))
-        args.extend(['-x', '-m', m])
+    if args and not args[0].startswith('-'):
+        to_find = args.pop(0)
+        args.extend(find_files(to_find, 'py'))
+    args.extend(['-x', '-m', m])
 
     argstr = ' '.join(args)
     print(f'>>>> Running tests with "{argstr}"')

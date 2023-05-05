@@ -20,5 +20,3 @@ per-file-ignores =
     rotation_script/*:T201
     shared/*:T201
     *_test.py:T201
-    #Q000 is for double-quotes
-    discordbot/commands/debug.py:Q000

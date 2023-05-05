@@ -117,14 +117,12 @@ def test(argv: List[str]) -> None:
     runtests(argv, '')
 
 def runtests(argv: Iterable[str], m: str) -> None:
-    """
-    Literally just prepare the DB and then invoke pytest.
-    """
-    args = list(argv)
-    if args and not args[0].startswith('-'):
-        to_find = args.pop(0)
-        args.extend(find_files(to_find, 'py'))
-    args.extend(['-x', '-m', m])
+    args = []
+    for arg in list(argv):
+        args.extend(find_files(arg, 'py'))
+    args.extend(['-x'])
+    if m:
+        args.extend(['-m', m])
 
     argstr = ' '.join(args)
     print(f'>>>> Running tests with "{argstr}"')

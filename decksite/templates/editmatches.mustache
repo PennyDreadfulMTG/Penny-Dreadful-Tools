@@ -3,7 +3,7 @@
     <form method="post">
         <select name="left_id">
             {{#decks}}
-                <option value="{{id}}" class="person">{{person}} ({{name}}, {{display_date}}, {{id}})</option>
+                <option value="{{id}}" class="person">{{person}} ({{name}}, {{display_date}}, {{id}}{{#retired}}, Retired{{/retired}}, {{wins}}–{{losses}})</option>
             {{/decks}}
         </select>
         <input type="number" name="left_games">

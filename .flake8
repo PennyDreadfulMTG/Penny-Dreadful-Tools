@@ -24,5 +24,4 @@ per-file-ignores =
     discordbot/commands/debug.py:Q000
     #F401 is about unused imports.
     # We have a lot of violations, but this PR is already massive, so I'm gonna ignore the decksite ones and come back to them later
-    decksite/*:F401
     logsite/*:F401

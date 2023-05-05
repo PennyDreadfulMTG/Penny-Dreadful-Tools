@@ -51,3 +51,5 @@ from .tournament_hosting import TournamentHosting
 from .tournament_leaderboards import TournamentLeaderboards
 from .tournaments import Tournaments
 from .unlink import Unlink
+
+__all__ = ['About', 'AboutPdm', 'Achievements', 'Admin', 'AdminRetire', 'Archetype', 'Archetypes', 'Ban', 'Banners', 'Bugs', 'Card', 'Cards', 'CommunityGuidelines', 'Competition', 'Competitions', 'ContactUs', 'Deck', 'DeckEmbed', 'DeckCheck', 'Decks', 'EditAliases', 'EditArchetypes', 'EditLeague', 'EditMatches', 'EditNews', 'EditRules', 'Faqs', 'Home', 'KickOff', 'LeagueForm', 'LeagueInfo', 'LinkAccounts', 'Matchups', 'Metagame', 'PD500', 'People', 'Person', 'PersonAchievements', 'PersonMatches', 'PlayerNotes', 'Prizes', 'Report', 'Resources', 'Retire', 'Rotation', 'RotationChanges', 'RotationChecklist', 'Seasons', 'SignUp', 'Sorters', 'TournamentHosting', 'TournamentLeaderboards', 'Tournaments', 'Unlink']

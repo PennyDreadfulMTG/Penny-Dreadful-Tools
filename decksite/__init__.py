@@ -105,5 +105,5 @@ except DatabaseException as e:
     oracle.init()
 
 from decksite.controllers import admin  # isort:skip
-from .data import deck  # isort:skip
+from .data import deck  # isort:skip # noqa: F401
 APP.config['menu'] = build_menu

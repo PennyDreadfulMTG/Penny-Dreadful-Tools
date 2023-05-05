@@ -3,7 +3,6 @@ from typing import List
 import pytest
 
 from find import search
-from find.search import InvalidValueException
 from magic import seasons
 from magic.database import db
 
@@ -48,12 +47,20 @@ def test_types() -> None:
     s = 't:goblin -t:creature'
     do_functional_test(s, ['Tarfire', 'Warren Weirding'], ['Goblin Bombardment', 'Lightning Bolt', 'Skirk Prospector'])
 
+    s = 't:pw'
+    do_functional_test(s, ['Ugin, the Spirit Dragon', 'Kaya, Ghost Assassin'], ["Bloodchief's Thirst", 'Invasion of Azgol'])
+    s = 't:/pw/'
+    do_functional_test(s, [], ['Ugin, the Spirit Dragon'])
+
 @pytest.mark.functional
 def test_card_text() -> None:
     s = 'o:draw o:creature'
     do_functional_test(s, ['Edric, Spymaster of Trest', 'Grim Backwoods', 'Mystic Remora'], ['Ancestral Recall', 'Honor of the Pure'])
     s = 'o:"~ enters the battlefield tapped"'
     do_functional_test(s, ['Arcane Sanctum', 'Diregraf Ghoul', 'Golgari Guildgate'], ['Tarmogoyf'])
+
+    s = 'fo:/sacrifice ~ .* all/'
+    do_functional_test(s, ['Coercive Portal', 'Planar Collapse'], ['Tomb of Urami', 'Viscera Seer'])
 
 @pytest.mark.functional
 def test_mana_costs() -> None:
@@ -75,9 +82,17 @@ def test_mana_costs() -> None:
     # s = 'devotion:{u/b}{u/b}{u/b}'
     # do_functional_test(s, ['Ashemnoor Gouger', 'Niv-Mizzet Parun', 'Omniscience', 'Phrexian Obliterator', 'Progenitus'], ['Cunning Nightbonger', 'Watery Grave'])
 
-    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8618
     # s = 'produces=wu'
     # do_functional_test(s, ['Azorius Signet', 'Celestial Colonnade'], ['Birds of Paradise', 'Teferi, Time Raveler'])
+
+    # s = 'produces:rc'
+    # do_functional_test(s, ['Aether Hub', 'Ramunap Ruins', 'The Seedcore', 'Talisman of Creativity', 'Grinning Ignus', 'Lithoform Blight'], ["Arcum's Astrolabe", 'Sulfur Falls', 'Birds of Paradise', 'Simian Spirit Guide', 'Pentad Prism'])
+    # s = 'produces:c'
+    # do_functional_test(s, ['Aether Hub', 'Channel', 'Talisman of Creativity', 'Thaumatic Compass', 'Worn Powerstone', 'Boreal Druid', 'Catacomb Sifter', 'Grand Architect'], ['Thran Portal', "Arcum's Astrolabe", 'Burst Lightning', 'Chromatic Star'])
+    # s = 'produces>g'
+    # do_functional_test(s, ['Aether Hub', "Arcum's Astrolabe", 'Birds of Paradise', "Llanowar Wastes", 'Lotus Bloom', 'Pentad Prism', 'Opulent Palace', 'Vivid Marsh', 'Servant of the Conduit', 'Song of Freyalise', "Mirari's Wake", 'Gruul Signet'], ['Thran Portal', 'Ramunap Ruins', 'Rofellos, Llanowar Emissary'])
+    # s = 'produces>'
+    # do_functional_test(s, [], ['Forest'])
 
 @pytest.mark.functional
 def test_power_toughness_and_loyalty() -> None:
@@ -106,6 +121,8 @@ def test_spells_permanents_and_effects() -> None:
     do_functional_test(s, ['Aven Riftwatcher', 'Bound in Silence'], ['Brutal Suppression', 'Mirror Entity'])
     s = 'is:vanilla'
     do_functional_test(s, ['Grizzly Bears', 'Isamaru, Hound of Konda'], ['Giant Spider', 'Lightning Bolt', 'Tarmogoyf'])
+    s = 'is:spell'
+    do_functional_test(s, ['Brainstorm', 'Invasion of Alara', 'Necropotence', 'Grizzly Bears'], ['Dungeon of the Mad Mage', 'Thran Portal', "Adriana's Valor"])
 
 # … Extra Cards and Funny Cards …
 
@@ -168,6 +185,51 @@ def test_negating_conditions() -> None:
     do_functional_test(s, [], [])
 
 # Regular Expressions
+
+def test_regular_expressions() -> None:
+    s = 'fo:/unclosed'
+    with pytest.raises(search.InvalidSearchException):
+        do_test(s, '')
+
+@pytest.mark.functional
+def test_regular_expressions_functional() -> None:
+    # Creatures that tap with no other payment
+    s = r't:creature o:/^{T}:/'
+    # Blackbloom Rogue here is dubious, but it is in Scryfall results.
+    do_functional_test(s, ['Birds of Paradise', 'Mother of Runes', 'Blackbloom Rogue', 'Kazandu Tuskcaller'], ['Sunken Ruins', 'Monastery Swiftspear', 'Timeless Dragon', 'Ponder', "Arcum's Astrolabe"])
+
+    # We don't support scryfall regx extensions yet. See https://scryfall.com/docs/regular-expressions
+    # Instants that provide +X/+X effects
+    # s = r't:instant o:/\spp/'
+    # do_functional_test(s, ['Slip Out the Back', 'Invigorate', 'Status // Statue', 'Rites of Initiation'], ['Counterspell', "Mishra's Factory", 'Dream Trawler', 'Cranial Plating', 'Rise and Shine'])
+
+    # Card names with “izzet” but not words like “mizzet”
+    s = r'name:/\bizzet\b/'
+    do_functional_test(s, ['Izzet Boilerworks', 'Ral, Izzet Viceroy'], ['Niv-Mizzet, Parun', 'Gitaxian Probe'])
+
+    # https://scryfall.com/docs/regular-expressions
+
+    # We don't currently support 'ft'
+    # Cards that mention orcs, but not other words like sORCery or ORChard
+    # s = r'o:/\b(orc|orcs)\b/ or name:/\b(orc|orcs)\b/ or ft:/\b(orc|orcs)\b/'
+    # do_functional_test(s, ['Icatian Scout', 'Dire Fleet Captain', 'Orcish Captain'], ['Simic Guildgate', 'Foul Orchard', 'Knight of the White Orchid', 'Black Lotus'])
+    s = r'o:/\b(orc|orcs)\b/ or name:/\b(orc|orcs)\b/'
+    do_functional_test(s, ['Orcish Captain', 'Dwarven Soldier'], ['Icatian Scout', 'Dire Fleet Captain', 'Simic Guildgate', 'Foul Orchard', 'Knight of the White Orchid', 'Black Lotus'])
+
+    # The Thingling cycle
+    s = r'name:/^[^\s]+ling$/ t:shapeshifter'
+    do_functional_test(s, ['Aetherling', 'Thornling'], ['Nameless Inversion', 'Changeling Outcast', 'Fling', 'Quickling'])
+
+    # You can use forward slashes // instead of quotes with the type://, t:// oracle://, o://, flavor://, ft://, and name:// keywords to match those parts of a card using regular expressions.
+    # ~ An automatic alias for the current card name or “this spell” if the card mentions itself.
+    # \sm Short-hand for any mana symbol
+    # \sc Short-hand for any colored mana symbol
+    # \ss Short-hand for any card symbol
+    # \smr Short-hand for any repeated mana symbol. For example, {G}{G} matches \smr
+    # \spt Short-hand for a X/X power/toughness expression
+    # \spp  Short-hand for a +X/+X power/toughness expression
+    # \smm  Short-hand for a -X/-X power/toughness expression
+
 # Exact Names
 
 @pytest.mark.functional
@@ -227,12 +289,8 @@ def test_only_multicolored() -> None:
     do_test('c:m', '(c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) >= 2))')
 
 def test_multicolored_with_other_colors() -> None:
-    found = False
-    try:
+    with pytest.raises(search.InvalidValueException):
         do_test('c:bm', '')
-    except InvalidValueException:
-        found = True
-    assert found
 
 @pytest.mark.functional
 def test_multicolored_coloridentity_functional() -> None:
@@ -299,23 +357,15 @@ def test_color_exclusively2() -> None:
     do_test('c!rg', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
 
 def test_colorless_with_color() -> None:
-    found = False
-    try:
+    with pytest.raises(search.InvalidValueException):
         do_test('c:cr', '')
-    except InvalidValueException:
-        found = True
-    assert found
 
 def test_colorless_exclusivity() -> None:
     do_test('c!c', '(c.id NOT IN (SELECT card_id FROM card_color))')
 
 def test_colorless_exclusivity2() -> None:
-    found = False
-    try:
+    with pytest.raises(search.InvalidValueException):
         do_test('c!cr', '')
-    except InvalidValueException:
-        found = True
-    assert found
 
 @pytest.mark.functional
 def test_multiple_colors_functional() -> None:
@@ -397,16 +447,12 @@ def test_bad_or() -> None:
     do_test('orgg', "(name LIKE '%%orgg%%')")
 
 def test_or_without_args() -> None:
-    try:
-        do_test('or GG', "(name LIKE '%%or gg%%')")
-    except search.InvalidSearchException:
-        pass
+    with pytest.raises(search.InvalidSearchException):
+        do_test('or GG', '')
 
 def test_not_without_args() -> None:
-    try:
-        do_test('c:r NOT', 'Expected InvalidSearchException')
-    except search.InvalidSearchException:
-        pass
+    with pytest.raises(search.InvalidSearchException):
+        do_test('c:r NOT', '')
 
 def test_or_with_args() -> None:
     do_test('AA or GG', "(name LIKE '%%aa%%') OR (name LIKE '%%gg%%')")
@@ -459,6 +505,9 @@ def test_complex() -> None:
 
 def test_is_hybrid() -> None:
     do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")
+
+def test_is_hybrid_functional() -> None:
+    do_functional_test('is:hybrid c:w', ['Spectral Procession', 'Figure of Destiny'], ['Shadow of Doubt', 'Isamaru, Hound of Konda'])
 
 def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")

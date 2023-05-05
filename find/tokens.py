@@ -26,11 +26,14 @@ class Token:
     def value(self) -> str:
         return self.val
 
+    def is_regex(self) -> bool:
+        return False
+
     def __str__(self) -> str:
         return self.value()
 
     def __repr__(self) -> str:
-        return self.value()
+        return str(self)
 
 
 class BooleanOperator(Token):
@@ -64,7 +67,7 @@ class Criterion(Token):
 
 class Key(Token):
     # Strict substrings of other operators must appear later in the list.
-    values = ['coloridentity', 'fulloracle', 'commander', 'supertype', 'toughness', 'identity', 'playable', 'edition', 'subtype', 'loyalty', 'format', 'oracle', 'rarity', 'color', 'legal', 'power', 'super', 'mana', 'text', 'type', 'cmc', 'loy', 'pow', 'set', 'sub', 'tou', 'cid', 'ci', 'fo', 'id', 'mv', 'c', 'e', 'f', 'm', 'r', 's', 'o', 't', 'is', 'p']
+    values = ['coloridentity', 'fulloracle', 'commander', 'supertype', 'toughness', 'identity', 'playable', 'produces', 'edition', 'subtype', 'loyalty', 'format', 'oracle', 'rarity', 'color', 'legal', 'power', 'super', 'mana', 'name', 'text', 'type', 'cmc', 'loy', 'pow', 'set', 'sub', 'tou', 'cid', 'ci', 'fo', 'id', 'mv', 'c', 'e', 'f', 'm', 'r', 's', 'o', 't', 'is', 'p']
 
 
 class Operator(Token):
@@ -76,3 +79,14 @@ class String(Token):
     @classmethod
     def find(cls, chars: str) -> str:
         return chars
+
+    def __str__(self) -> str:
+        return '"' + self.val + '"'
+
+
+class Regex(String):
+    def is_regex(self) -> bool:
+        return True
+
+    def __str__(self) -> str:
+        return '/' + self.val + '/'

@@ -146,16 +146,6 @@ class Bot(Client):
             await member.remove_roles(remove)
             await member.add_roles(expected)
 
-    # async def on_guild_join(self, server: Guild) -> None:
-    #     for channel in server.channels:
-    #         if isinstance(channel, GuildText):
-    #             try:
-    #                 await channel.send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
-    #                 await channel.send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
-    #                 return
-    #             except Exception:  # noqa
-    #                 pass
-
     @listen()
     async def on_message_reaction_add(self, event: MessageReactionAdd) -> None:
         for i in range(len(event.message.reactions)):

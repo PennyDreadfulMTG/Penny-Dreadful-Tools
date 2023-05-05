@@ -191,7 +191,7 @@ class BackgroundTasks(Extension):
         return IntervalTrigger(timer)
 
     async def prepare_league_end(self) -> None:
-        if not isinstance(self.tournament_reminders_channel, GuildText):
+        if not hasattr(self, 'tournament_reminders_channel') or not isinstance(self.tournament_reminders_channel, GuildText):
             logging.warning('tournament channel could not be found')
             return
         self.background_task_league_end.start()

@@ -297,8 +297,6 @@ def promo_explanation() -> Tuple[str, Dict[str, str]]:
         'Barbarian Ring',
         'Buried Alive',
         'Crystal Vein',
-        'Eureka',
-        'Figure of Destiny',
         'Lake of the Dead',
     ]
     legal_cheap_promos = [c for c in oracle.load_cards(have_cheap_promos) if c.pd_legal]

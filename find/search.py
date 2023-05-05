@@ -3,7 +3,7 @@ from typing import Dict, Generator, Iterable, List, Optional, Set, Union
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
-from magic import card, mana, layout, multiverse, seasons
+from magic import card, layout, mana, multiverse, seasons
 from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
 from magic.models import Card

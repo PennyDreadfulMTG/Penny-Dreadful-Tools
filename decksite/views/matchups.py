@@ -1,4 +1,4 @@
-from typing import Dict, List, Mapping, Optional, Union
+from typing import List, Mapping, Optional, Union
 
 from decksite.data.archetype import Archetype
 from decksite.data.person import Person

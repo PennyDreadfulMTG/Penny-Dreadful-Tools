@@ -1,6 +1,5 @@
 import html
 import sys
-from collections import Counter
 from typing import Any, Dict, List, Optional, Union, cast
 
 import inflect
@@ -14,7 +13,7 @@ from werkzeug.routing import BuildError
 from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
 from decksite.deck_type import DeckType
-from magic import card_price, legality, oracle, seasons, tournaments
+from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
 from shared import dtutil
 from shared.container import Container

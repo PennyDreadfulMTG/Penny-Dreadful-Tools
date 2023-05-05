@@ -1,6 +1,3 @@
-from typing import Sequence
-
-from decksite.data.person import Person
 from decksite.view import View
 
 

@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 from flask import url_for
 
-from decksite.data import archetype, deck, query
+from decksite.data import deck, query
 from decksite.data.top import Top
 from decksite.database import db
 from magic.models import Competition

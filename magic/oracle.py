@@ -79,7 +79,7 @@ def legal_cards(force: bool = False) -> List[str]:
     return LEGAL_CARDS
 
 def get_printings(generalized_card: Card) -> List[Printing]:
-    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
+    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code, s.name AS set_name ' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
         + ' WHERE card_id = %s '

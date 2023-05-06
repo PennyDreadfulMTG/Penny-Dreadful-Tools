@@ -20,7 +20,7 @@ class Flavour(Extension):
 
 def flavor_text(c: Card) -> str:
     for printing in oracle.get_printings(c):
-        if c.preferred_printing is not None and c.preferred_printing != printing.set_code:
+        if c.preferred_printing is not None and c.preferred_printing.lower() != printing.set_code.lower() and c.preferred_printing.lower() != printing.set_name.lower():
             continue
         if printing.flavor is not None:
             return '\n' + printing.flavor + '\n-**' + oracle.get_set(printing.set_id).name + '**'

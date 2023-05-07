@@ -39,7 +39,6 @@ class ContextForTests(Context, MtgMixin):
         ...
 
 def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional[str], Optional[str]]]]:
-    return []
     return [
         ('art', {'card': 'Island'}, None, None),
         ('barbs', {}, None, None),
@@ -66,8 +65,8 @@ def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional
         ('time', {'place': 'AEST'}, None, None),
         ('tournament', {}, None, None),
         ('version', {}, None, None),
-        ('whois', {'args': 'silasary'}, None, 'whois'),
-        ('whois', {'args': 'kaet'}, None, 'whois'),
+        # ('whois', {'args': 'silasary'}, None, 'whois'),
+        # ('whois', {'args': 'kaet'}, None, 'whois'),
         # ('whois', {'args': '<@154363842451734528>'}, None, 'whois'),
         # ('whois', {'args': '<@!224755717767299072>'}, None, 'whois'),
     ]

@@ -133,11 +133,8 @@ def test_invalid_color() -> None:
     d = Container({'original_name': 'PD',
                    'archetype_name': 'Control',
                    'colors': ['U', 'X']})
-    try:
+    with pytest.raises(InvalidDataException):
         deck_name.normalize(d)
-        raise AssertionError
-    except InvalidDataException:
-        assert True
 
 def test_canonicalize_colors() -> None:
     assert deck_name.canonicalize_colors([]) == set()

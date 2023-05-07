@@ -27,11 +27,8 @@ def test_valid_name() -> None:
     assert oracle.valid_name('torrent sculptor') == 'Torrent Sculptor'
     assert oracle.valid_name('Torrent Sculptor // Flamethrower Sonata') == 'Torrent Sculptor'
     assert oracle.valid_name('Torrent Sculptor/Flamethrower Sonata') == 'Torrent Sculptor'
-    try:
+    with pytest.raises(InvalidDataException):
         oracle.valid_name('Definitely // Not a Card /')
-        raise AssertionError
-    except InvalidDataException:
-        assert True
 
 def test_load_cards() -> None:
     cards = oracle.load_cards(['Think Twice', 'Swamp'])

@@ -8,11 +8,8 @@ from magic import database, mana
 def test_simple() -> None:
     do_test('U', ['U'])
     do_test('{U}', ['U'])
-    try:
+    with pytest.raises(mana.InvalidManaCostException):
         do_test('Not a mana symbol sequence', [])
-        raise AssertionError
-    except mana.InvalidManaCostException:
-        assert True
 
 def test_twobrid() -> None:
     do_test('2/W2/W2/W', ['2/W', '2/W', '2/W'])

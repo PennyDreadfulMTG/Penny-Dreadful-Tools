@@ -1,4 +1,5 @@
 import re
+import sys
 import time
 
 from bs4 import BeautifulSoup
@@ -33,7 +34,8 @@ def scrape(limit: int = 1) -> None:
                 msg = f'Got {e} trying to find a created_date in {d}, {raw_deck}'
                 logger.error(msg)
                 raise InvalidDataException(msg) from e
-            time.sleep(5)
+            if 'pytest' not in sys.modules:
+                time.sleep(5)
             d.cards = scrape_decklist(d)
             err = vivify_or_error(d)
             if err:

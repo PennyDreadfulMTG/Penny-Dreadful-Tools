@@ -34,11 +34,5 @@
         <script defer src="/static/js/tipped.min.js"></script> {{* The latest, open source (pro) version of Tipped is not on any CDN. }}
         <script defer src="{{js_url}}"></script>
         <script defer src="{{bundle_url}}"></script> {{* React components use pd.js but not vice versa so load this after *}}
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'UA-109131120-1');
-        </script>
     </body>
 </html>

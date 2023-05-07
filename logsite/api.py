@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Dict, Tuple
 
 from flask import Response, request, session

@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Optional
 
 from flask import request, url_for

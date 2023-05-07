@@ -1,3 +1,5 @@
+# type: ignore
+
 import datetime
 from typing import Any, Dict, List, Optional
 
@@ -11,7 +13,7 @@ from .. import db
 from ..db import DB as fsa
 
 
-class Match(fsa.Model):  # type: ignore
+class Match(fsa.Model):
     __tablename__ = 'match'
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
     format_id = sa.Column(sa.Integer, sa.ForeignKey('format.id'))

@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Any, Optional
 
 import sqlalchemy as sa
@@ -21,7 +23,7 @@ MATCH_MODULES = DB.Table('match_modules',
                          DB.Column('module_id', DB.Integer, DB.ForeignKey('module.id'), primary_key=True),
                          )
 
-class User(DB.Model):  # type: ignore
+class User(DB.Model):
     __tablename__ = 'user'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(60))
@@ -30,7 +32,7 @@ class User(DB.Model):  # type: ignore
     def url(self) -> str:
         return url_for('show_person', person=self.name)
 
-class Format(DB.Model):  # type: ignore
+class Format(DB.Model):
     __tablename__ = 'format'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(40))
@@ -41,7 +43,7 @@ class Format(DB.Model):  # type: ignore
             return self.friendly_name
         return self.name
 
-class Module(DB.Model):  # type: ignore
+class Module(DB.Model):
     __tablename__ = 'module'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(50))

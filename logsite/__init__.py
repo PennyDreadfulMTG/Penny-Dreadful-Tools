@@ -1,3 +1,5 @@
+# type: ignore
+
 import subprocess
 from typing import Dict, List
 

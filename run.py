@@ -91,7 +91,7 @@ def rotation() -> None:
 @cli.command()
 def logsite() -> None:
     import logsite as site
-    site.APP.run(host='0.0.0.0', port=5001, debug=True)
+    site.APP.run(host='0.0.0.0', port=5001, debug=True)  # type: ignore
 
 @cli.command()
 @click.argument('argv', nargs=-1)

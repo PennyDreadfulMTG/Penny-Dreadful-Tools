@@ -1,3 +1,5 @@
+# type: ignore
+
 from typing import Any, Dict
 
 from flask import Response

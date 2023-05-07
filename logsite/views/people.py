@@ -1,3 +1,5 @@
+# type ignore
+
 from flask import url_for
 from sqlalchemy import column, text
 

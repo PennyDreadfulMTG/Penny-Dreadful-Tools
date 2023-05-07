@@ -6,7 +6,7 @@ from .. import db
 from ..db import DB as fsa
 
 
-class TournamentInfo(fsa.Model):  # type: ignore
+class TournamentInfo(fsa.Model):
     __tablename__ = 'match_tournament'
     id = sa.Column(sa.Integer, primary_key=True)
     match_id = sa.Column(sa.Integer, sa.ForeignKey('match.id'), nullable=False)
@@ -23,7 +23,7 @@ class TournamentInfo(fsa.Model):  # type: ignore
         }
 
 
-class Tournament(fsa.Model):  # type: ignore
+class Tournament(fsa.Model):
     __tablename__ = 'tournament'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(length=200), unique=True, index=True)

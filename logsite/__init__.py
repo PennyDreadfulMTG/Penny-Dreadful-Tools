@@ -45,4 +45,5 @@ def build_menu() -> List[Dict[str, str]]:
 
 APP.config['menu'] = build_menu
 
-__create_schema()
+with APP.app_context():
+    __create_schema()

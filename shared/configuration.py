@@ -119,7 +119,6 @@ DEFAULTS: Dict[str, Any] = {
     'slow_page': 10.0,
     'slow_query': 5.0,
     'slow_bot_start': 30,
-    'test_vcr_record_mode': 'new_episodes',  # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
     'to_password': '',
     'to_username': '',
     'tournament_channel_id': '334220558159970304',

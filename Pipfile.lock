@@ -409,7 +409,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
+            "markers": "python_full_version >= '3.6.2' and python_full_version < '4.0.0'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -2665,11 +2665,11 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:7979ce406cd7b4a0093b10a377e5060c5c890e8463cd1ef50423c1669efbc075",
-                "sha256:b6f7e44aae1a79732f694cb6df6093e38361382d2be03780460684ef59745d62"
+                "sha256:0193d0522cccd6d46e9e17b811c30fc407e1800e0381da0e95f5c9239bdca58b",
+                "sha256:569b9795618c95d5f8fad2156dceb622614162761b4382892b99c519c378f776"
             ],
             "index": "pypi",
-            "version": "==4.5.4.2"
+            "version": "==4.5.5.1"
         },
         "types-requests": {
             "hashes": [

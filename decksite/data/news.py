@@ -7,7 +7,7 @@ from flask import url_for
 
 from decksite.data import deck
 from decksite.database import db
-from magic import fetcher
+from magic import fetcher, seasons
 from magic.models import Deck
 from shared import dtutil, logger
 from shared import redis_wrapper as redis
@@ -18,7 +18,7 @@ from shared.database import sqlescape
 
 def all_news(start_date: Optional[datetime.datetime] = None, end_date: Optional[datetime.datetime] = None, max_items: int = sys.maxsize) -> List[Container]:
     if start_date is None:
-        start_date = dtutil.ts2dt(0)
+        start_date = seasons.last_rotation()
     if end_date is None:
         end_date = dtutil.now()
     news: List[Container] = []

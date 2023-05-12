@@ -10,7 +10,6 @@ class Competition(View):
         super().__init__()
         self.competition = competition
         self.competitions = [self.competition]
-        self.decks = competition.decks
         self.hide_source = True
         self.has_external_source = competition.type != 'League'
         if competition.type == 'League':

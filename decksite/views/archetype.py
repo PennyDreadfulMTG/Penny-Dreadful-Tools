@@ -13,7 +13,7 @@ from shared.pd_exception import DoesNotExistException
 
 Matchups = TypedDict('Matchups', {
     'is_matchups': bool,
-    'archetypes': List[archs.Archetype]
+    'archetypes': List[archs.Archetype],
 })
 
 class Archetype(View):

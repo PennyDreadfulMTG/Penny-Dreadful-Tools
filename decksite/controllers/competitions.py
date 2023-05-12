@@ -18,7 +18,7 @@ def competitions() -> str:
 @APP.route('/competitions/<competition_id>/')
 @cached()
 def competition(competition_id: int) -> str:
-    view = Competition(comp.load_competition(competition_id))
+    view = Competition(comp.load_competition(competition_id, should_load_decks=False))
     return view.page()
 
 @APP.route('/tournaments/')

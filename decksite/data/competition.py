@@ -39,8 +39,8 @@ def get_or_insert_competition(start_date: datetime.datetime,
     db().commit('insert_competition')
     return competition_id
 
-def load_competition(competition_id: int) -> Competition:
-    return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)), should_load_decks=True))
+def load_competition(competition_id: int, should_load_decks: bool = True) -> Competition:
+    return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)), should_load_decks=should_load_decks))
 
 def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = '', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
     sql = """

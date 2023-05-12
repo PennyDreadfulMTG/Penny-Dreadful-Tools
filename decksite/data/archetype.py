@@ -1,4 +1,3 @@
-import sys
 from typing import Dict, List, Optional, Union
 
 import titlecase
@@ -8,7 +7,6 @@ from anytree.iterators import PreOrderIter
 from decksite.data import deck, preaggregation, query
 from decksite.database import db
 from magic.models import Competition
-from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
@@ -21,7 +19,7 @@ class Archetype(Container, NodeMixin):
 
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
-def load_archetype(archetype: Union[int, str], season_id: Optional[int] = None, tournament_only: bool = False) -> Archetype:
+def load_archetype(archetype: Union[int, str]) -> Archetype:
     try:
         archetype_id = int(archetype)
     except ValueError as c:
@@ -30,49 +28,10 @@ def load_archetype(archetype: Union[int, str], season_id: Optional[int] = None, 
         archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(name, '-', ' ') = %s", [name_without_dashes])
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name)) from c
-    where = query.archetype_where(archetype_id)
-    if tournament_only:
-        where = '({where}) AND ({tournament_only_clause})'.format(where=where, tournament_only_clause=query.tournament_only_clause())
-    archetypes = load_archetypes(where=where, merge=True, season_id=season_id)
-    arch = guarantee.exactly_one(archetypes, 'archetypes') if archetypes else Archetype()
-    # Because load_archetypes loads the root archetype and all below merged the id and name might not be those of the root archetype. Overwrite.
+    arch = Archetype()
     arch.id = int(archetype_id)
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
-    if len(archetypes) == 0:
-        arch.decks = []
     return arch
-
-def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: Optional[int] = None) -> List[Archetype]:
-    decks = deck.load_decks(where, season_id=season_id)
-    archetypes: Dict[str, Archetype] = {}
-    for d in decks:
-        if d.archetype_id is None:
-            continue
-        key = 'merge' if merge else d.archetype_id
-        archetype = archetypes.get(key, Archetype())
-        archetype.id = d.archetype_id
-        archetype.name = d.archetype_name
-
-        archetype.decks = archetype.get('decks', []) + [d]
-        archetype.wins = archetype.get('wins', 0) + (d.get('wins') or 0)
-        archetype.losses = archetype.get('losses', 0) + (d.get('losses') or 0)
-        archetype.draws = archetype.get('draws', 0) + (d.get('draws') or 0)
-
-        if d.get('finish') == 1:
-            archetype.tournament_wins = archetype.get('tournament_wins', 0) + 1
-        if (d.get('finish') or sys.maxsize) <= 8:
-            archetype.top8s = archetype.get('top8s', 0) + 1
-            archetype.perfect_runs = archetype.get('perfect_runs', 0) + 1
-        archetypes[key] = archetype
-    archetype_list = list(archetypes.values())
-    return archetype_list
-
-def load_archetypes_deckless_for(archetype_id: int, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
-    archetypes = load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
-    for a in archetypes:
-        if int(a.id) == int(archetype_id):
-            return list(a.ancestors) + [a] + list(a.descendants)
-    return list()
 
 def add(name: str, parent: int, description: str) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])
@@ -140,7 +99,7 @@ def base_archetypes_data(c: Competition) -> Dict[str, int]:
     return c.base_archetype_data
 
 def rebuild_archetypes() -> None:
-    archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}
+    archetypes_by_id = {a.id: a for a in load_archetypes()}
     for k, v in archetypes_by_id.items():
         p = v
         while p.parent is not None:
@@ -500,7 +459,7 @@ def load_matchups(where: str = 'TRUE', archetype_id: Optional[int] = None, perso
     return [Container(m) for m in db().select(sql)]
 
 @retry_after_calling(preaggregate)
-def load_archetypes_deckless(order_by: Optional[str] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
+def load_archetypes(order_by: Optional[str] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
     if person_id:
         table = '_arch_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))

@@ -41,7 +41,7 @@ class Deck(View):
                 m.display_round = display_round(m)
         self.deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x.card))
         self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x.card))
-        self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
+        self.archetypes = archetype.load_archetypes(order_by='a.name')
         self.edit_archetype_url = url_for('edit_archetypes')
         self.legal_formats = d.legal_formats
         self.is_in_current_run = d.is_in_current_run()

@@ -62,7 +62,7 @@ def post_aliases(person_id: Optional[int] = None, alias: Optional[str] = None) -
 def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', notq: str = '') -> wrappers.Response:
     if search_results is None:
         search_results = []
-    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
+    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), search_results, q, notq)
     return view.response()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
@@ -101,7 +101,7 @@ def post_archetypes() -> wrappers.Response:
 def edit_rules() -> wrappers.Response:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
-    archetypes = archs.load_archetypes_deckless(order_by='a.name')
+    archetypes = archs.load_archetypes(order_by='a.name')
     view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
     return view.response()
 

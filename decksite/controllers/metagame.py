@@ -103,8 +103,8 @@ def parse_card_name(name: str) -> str:
 def archetypes(deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
-    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
-    view = Archetypes(deckless_archetypes, tournament_only=tournament_only)
+    all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
+    view = Archetypes(all_archetypes, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
@@ -115,10 +115,10 @@ def archetypes(deck_type: Optional[str] = None) -> str:
 def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id, tournament_only=tournament_only)
-    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id, tournament_only=tournament_only)
+    a = archs.load_archetype(archetype_id.replace('+', ' '))
+    all_archetypes = archs.load_archetypes(season_id=season_id)
     archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
-    view = Archetype(a, deckless_archetypes, archetype_matchups, tournament_only=tournament_only, season_id=season_id)
+    view = Archetype(a, all_archetypes, archetype_matchups, tournament_only=tournament_only)
     return view.page()
 
 
@@ -136,7 +136,7 @@ def matchups() -> str:
     season_str = request.args.get('season_id')
     season_id = int(season_str) if season_str else None
     results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else {}
-    matchup_archetypes = archs.load_archetypes_deckless()
+    matchup_archetypes = archs.load_archetypes()
     matchup_archetypes.sort(key=lambda a: a.name)
     matchup_people = list(ps.load_people(where='p.mtgo_username IS NOT NULL'))
     matchup_people.sort(key=lambda p: p.name)

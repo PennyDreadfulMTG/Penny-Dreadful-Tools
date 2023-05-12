@@ -14,34 +14,25 @@ class Archetype(View):
                  archetype: archs.Archetype,
                  archetypes: List[archs.Archetype],
                  matchups: List[Container],
-                 season_id: int,
                  tournament_only: bool = False,
                  ) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
         self.archetype = next(a for a in archetypes if a.id == archetype.id) if archetypes else archetype
-        self.archetype.decks = archetype.decks
-        # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
         self.tournament_only = self.hide_source = tournament_only
-        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
         matchups_by_id = {m.id: m for m in matchups}
-        for m in matchup_archetypes:
-            # Overwite totals with vs-archetype specific details. Wipe out if there are none.
+        for m in archetypes:
             m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
-        # Prepare the second archetype tree manually becuase its archetypes don't have the standard name.
-        for m in matchup_archetypes:
-            self.prepare_archetype(m, matchup_archetypes)
-        # Storing this in matchups_container like this lets us include two different archetype trees on the same page without collision.
         self.matchups_container = [{
             'is_matchups': True,
-            'archetypes': matchup_archetypes,
+            'archetypes': archetypes,
         }]
         self.show_seasons = True
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
-        self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.archetype.decks)
+        self.show_archetype = len(self.archetype.children) > 0
         self.show_archetype_tree = len(self.archetypes) > 0
 
     def og_title(self) -> str:

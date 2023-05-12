@@ -19,7 +19,10 @@ class Archetype(View):
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
-        self.archetype = next(a for a in archetypes if a.id == archetype.id) if archetypes else archetype
+        try:
+            self.archetype = next(a for a in archetypes if a.id == archetype.id)
+        except StopIteration:
+            self.archetype = archetype
         self.archetypes = archetypes
         self.tournament_only = self.hide_source = tournament_only
         matchups_by_id = {m.id: m for m in matchups}

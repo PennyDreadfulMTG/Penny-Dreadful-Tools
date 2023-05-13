@@ -21,7 +21,7 @@ from shared.pd_exception import InvalidDataException
 def latest_decks(season_id: Optional[Union[str, int]] = None) -> List[Deck]:
     return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
 
-def recent_decks_for_person(person_id: int):
+def recent_decks_for_person(person_id: int) -> List[Deck]:
     return load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
 
 def load_deck(deck_id: int) -> Deck:

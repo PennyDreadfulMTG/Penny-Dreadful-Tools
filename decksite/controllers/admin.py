@@ -11,17 +11,13 @@ from decksite.data import archetype as archs
 from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import match as ms
-from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
-from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague,
-                            EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
-                            RotationChecklist, Sorters, Unlink)
+from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague, EditMatches, EditRules, PlayerNotes, Prizes, RotationChecklist, Sorters, Unlink)
 from magic.models import Deck
 from shared import dtutil
 from shared import redis_wrapper as redis
-from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 from shared_web.decorators import fill_form
 
@@ -157,26 +153,6 @@ def post_matches() -> wrappers.Response:
     elif request.form.get('action') == 'add':
         ms.insert_match(dtutil.now(), left_id, left_games, right_id, right_games, None, None, None)
     return redirect(url_for('edit_matches'))
-
-@APP.route('/admin/news/')
-@auth.admin_required
-def edit_news() -> str:
-    new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'url': ''})
-    news_items = [new_item] + ns.load_news()
-    view = EditNews(news_items)
-    return view.page()
-
-@APP.route('/admin/news/', methods=['POST'])
-@fill_form('news_id', 'title', 'url')
-@auth.admin_required
-def post_news(news_id: int, title: Optional[str] = None, url: Optional[str] = None, date: Optional[str] = None) -> wrappers.Response:
-    if request.form.get('action') == 'delete':
-        ns.delete(news_id)
-    else:
-        if date is not None and title is not None and url is not None:
-            date_dt = dtutil.parse(date, dtutil.FORM_FORMAT, dtutil.WOTC_TZ)
-            ns.add_or_update_news(news_id, date_dt, title, url)
-    return redirect(url_for('edit_news'))
 
 @APP.route('/admin/prizes/')
 def prizes() -> str:

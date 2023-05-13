@@ -10,11 +10,10 @@ from decksite.data.achievements import Achievement
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic import oracle, seasons
-from magic.models import Card
 
 
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, archetypes: List[Archetype], all_archetypes: List[Archetype], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
         super().__init__()
         self.all_archetypes = all_archetypes
         self.person = person
@@ -23,7 +22,6 @@ class Person(View):
         self.has_decks = len(person.decks) > 0
         self.archetypes = archetypes
         self.hide_person = True
-        self.cards = cards
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('.achievements')
@@ -63,7 +61,7 @@ class Person(View):
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0
         self.unique_cards = oracle.load_cards(your_cards['unique'])
         self.has_unique_cards = len(self.unique_cards) > 0
-        self.cards += self.trailblazer_cards + self.unique_cards
+        self.cards = self.trailblazer_cards + self.unique_cards
         self.seasons_active: List[Dict[str, object]] = []
         self.setup_active_seasons(seasons_active)
 

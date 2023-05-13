@@ -6,16 +6,9 @@ from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import archetype as archs
-from decksite.data import card as cs
-from decksite.data import deck as ds
-from decksite.data import matchup as mus
-from decksite.data import person as ps
-from decksite.data import playability
-from decksite.data import season as ss
+from decksite.data import archetype as archs, card as cs, deck as ds, match, matchup as mus, person as ps, playability, season as ss
 from decksite.deck_type import DeckType
-from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
-                            Seasons)
+from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons)
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
@@ -46,7 +39,8 @@ def metagame(deck_type: Optional[str] = None) -> str:
 @auth.load_person
 def deck(deck_id: int) -> str:
     d = ds.load_deck(deck_id)
-    view = Deck(d, auth.person_id(), auth.discord_id())
+    ms = match.load_matches_by_deck(d)
+    view = Deck(d, ms, auth.person_id(), auth.discord_id())
     return view.page()
 
 @APP.route('/seasons/')
@@ -135,7 +129,7 @@ def matchups() -> str:
             enemy[k] = v
     season_str = request.args.get('season_id')
     season_id = int(season_str) if season_str else None
-    results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else {}
+    results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else None
     matchup_archetypes = archs.load_archetypes()
     matchup_archetypes.sort(key=lambda a: a.name)
     matchup_people = list(ps.load_people(where='p.mtgo_username IS NOT NULL'))

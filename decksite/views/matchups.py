@@ -1,18 +1,16 @@
 from typing import List, Mapping, Optional, Union
 
 from decksite.data.archetype import Archetype
+from decksite.data.matchup import MatchupResults
 from decksite.data.person import Person
 from decksite.view import View
-from magic.models import Card, Deck
+from magic.models import Card
 
 
 class Matchups(View):
-    def __init__(self, hero: Mapping[str, Union[str, int]], enemy: Mapping[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Mapping[str, Union[str, int, List[int], List[Deck]]]) -> None:
+    def __init__(self, hero: Mapping[str, Union[str, int]], enemy: Mapping[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Optional[MatchupResults]) -> None:
         super().__init__()
         self.results = results
-        if results:
-            self.results['num_decks'] = len(results['hero_deck_ids'])  # type: ignore
-            self.results['win_percent'] = str(round((results['wins'] / (results['wins'] + results['losses'])) * 100, 1)) if results.get('wins') else ''  # type: ignore
         self.criteria = [
             {'name': 'Decks Matching…', 'prefix': 'hero_', 'choices': hero},
             {'name': '… versus …', 'prefix': 'enemy_', 'choices': enemy},
@@ -23,15 +21,15 @@ class Matchups(View):
             c['people'] = [{'mtgo_username': p.mtgo_username.lower(), 'id': p.id, 'selected': str(c['choices'].get('person_id')) == str(p.id)} for p in people]  # type: ignore
             c['cards'] = [{'name': card.name, 'selected': c['choices'].get('card') == card.name} for card in cards]  # type: ignore
         self.seasons = [{'season_id': s['num'] or '', 'name': s['name'], 'selected': str(season_id) == str(s['num'])} for s in [self.all_seasons()[-1]] + self.all_seasons()[:-1]]
-        self.decks = results.get('hero_decks', [])  # type: ignore
+        self.decks = results.hero_decks if results and results.hero_decks else []
         self.show_decks = len(self.decks) > 0
-        self.matches = results.get('matches', [])
-        self.show_matches = False
+        self.matches = results.matches if results and results.matches else []
+        self.show_matches = len(self.matches) > 0
+        self.hero_summary = summary_text(hero, archetypes, people)
+        self.enemy_summary = summary_text(enemy, archetypes, people)
+        self.season_summary = f'Season {season_id}' if season_id else 'All Time'
+        self.show_hero = True  # We should show both players in the list of matches, not just "opponent".
         self.search_season_id = season_id
-        if self.results:
-            self.hero_summary = summary_text(hero, archetypes, people)
-            self.enemy_summary = summary_text(enemy, archetypes, people)
-            self.season_summary = f'Season {season_id}' if season_id else 'All Time'
 
     def show_legal_seasons(self) -> bool:
         return not self.search_season_id

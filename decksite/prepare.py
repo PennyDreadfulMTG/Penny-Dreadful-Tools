@@ -9,6 +9,7 @@ from magic import fetcher, oracle, seasons
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
+from shared.pd_exception import InvalidDataException
 
 # Take 'raw' items from the database and decorate them for use and display.
 
@@ -135,7 +136,7 @@ def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
             entry.position = chr(9311 + entry.finish)  # ①, ②, ③, …
         entry.url = url_for('.person', person_id=entry.person_id)
 
-def prepare_matches(ms: Sequence[Container]) -> None:
+def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
     for m in ms:
         if m.get('date'):
             m.display_date = dtutil.display_date(m.date)
@@ -146,10 +147,28 @@ def prepare_matches(ms: Sequence[Container]) -> None:
             m.deck_url = url_for('deck', deck_id=m.deck_id)
         if m.get('opponent'):
             m.opponent_url = url_for('.person', mtgo_username=m.opponent)
+        else:
+            m.opponent = 'BYE'
+            m.opponent_url = False
         if m.get('opponent_deck_id'):
             m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
+        else:
+            m.opponent_deck_url = False
         if m.get('mtgo_id'):
             m.log_url = fetcher.logsite_url('/match/{id}/'.format(id=m.get('mtgo_id')))
+        if show_rounds:
+            m.display_round = display_round(m)
+
+def display_round(m: Container) -> str:
+    if not m.get('elimination'):
+        return m.round
+    if int(m.elimination) == 8:
+        return 'QF'
+    if int(m.elimination) == 4:
+        return 'SF'
+    if int(m.elimination) == 2:
+        return 'F'
+    raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
 
 def set_stars_and_top8(d: Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:

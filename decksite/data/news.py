@@ -21,8 +21,8 @@ def all_news(ds: List[Deck], start_date: Optional[datetime.datetime] = None, end
     news: List[Container] = []
     news += tournament_winners(ds, max_items)
     news += perfect_league_runs(ds, max_items)
-    news += code_merges(start_date, end_date, max_items)
-    news += subreddit(start_date, end_date, max_items)
+    news += code_merges(start_date, end_date, max_items, allow_fetch=False)
+    news += subreddit(start_date, end_date, max_items, allow_fetch=False)
     news = sorted(news, key=lambda item: item.date, reverse=True)
     results = []
     for item in news:
@@ -50,29 +50,34 @@ def perfect_league_runs(ds: List[Deck], max_items: int = sys.maxsize) -> List[Co
 def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'
 
-def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
+def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize, force_refresh: bool = False, allow_fetch: bool = True) -> List[Container]:
     try:
-        merges = redis.get_container_list('decksite:news:merges')
-        if merges is None:
-            merges = [Container({'date': dtutil.UTC_TZ.localize(pull.merged_at), 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [label.name for label in pull.as_issue().labels]]
-            redis.store('decksite:news:merges', merges, ex=3600)
-        else:
+        merges = []
+        if not force_refresh:
+            merges = redis.get_container_list('decksite:news:merges') or []
             for merge in merges:
                 merge.date = dtutil.ts2dt(merge.date)
+        if merges or not allow_fetch:
+            return merges
+        merges = [Container({'date': dtutil.UTC_TZ.localize(pull.merged_at), 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [label.name for label in pull.as_issue().labels]]
+        redis.store('decksite:news:merges', merges, ex=7200)
         return merges
     except ConnectionError:
+        logger.warning('ConnectionError talking to GitHub for merges')
         return []
     except github.BadCredentialsException:
-        logger.warning('Bad GitHub credentials')
+        logger.warning('Bad GitHub credentials talking to GitHub for merges')
         return []
 
-def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
+def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize, force_refresh: bool = False, allow_fetch: bool = True) -> List[Container]:
     try:
         redis_key = 'decksite:news:subreddit'
-        items = redis.get_container_list(redis_key)
-        if items:
+        items = []
+        if not force_refresh:
+            items = redis.get_container_list(redis_key) or []
             for item in items:
                 item.date = dtutil.ts2dt(item.date)
+        if items or not allow_fetch:
             return items
         feed = fetcher.subreddit()
         items = []
@@ -85,7 +90,8 @@ def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_it
             items.append(item)
             if len(items) >= max_items:
                 break
-        redis.store(redis_key, items, ex=3600)
+        redis.store(redis_key, items, ex=7200)
         return items
     except ConnectionError:
+        logger.warning('ConnectionError talking to reddit')
         return []

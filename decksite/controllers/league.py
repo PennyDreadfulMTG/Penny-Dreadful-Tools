@@ -6,7 +6,7 @@ from werkzeug import wrappers
 from decksite import APP, auth
 from decksite import league as lg
 from decksite.cache import cached
-from decksite.data import deck as ds
+from decksite.data import deck as ds, match
 from decksite.data import person as ps
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import LeagueInfo, Report, Retire, SignUp
@@ -76,7 +76,10 @@ def add_report() -> Response:
 def retire(form: Optional[RetireForm] = None, deck_id: Optional[int] = None) -> str:
     if form is None:
         form = RetireForm(request.form, deck_id, session.get('id'))
-    view = Retire(form)
+    ms = []
+    if len(form.decks) == 1:
+        ms = match.load_matches_by_deck(form.decks[0])
+    view = Retire(form, ms)
     return view.page()
 
 

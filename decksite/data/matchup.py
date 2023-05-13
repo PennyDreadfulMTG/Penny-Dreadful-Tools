@@ -1,11 +1,32 @@
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 from decksite.data import deck, match, query
 from decksite.database import db
+from magic.models import Deck
 from shared import guarantee
+from shared.container import Container
 
+@dataclass
+class MatchupResults:
+    hero_deck_ids: List[int]
+    enemy_deck_ids: List[int]
+    match_ids: List[int]
+    wins: int
+    draws: int
+    losses: int
+    hero_decks: List[Deck]
+    matches: List[Container]
 
-def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: Optional[int] = None) -> Dict[str, Union[str, int, List[int]]]:
+    @property
+    def num_decks(self) -> int:
+        return len(self.hero_deck_ids)
+
+    @property
+    def win_percent(self) -> str:
+        return str(round((self.wins / (self.wins + self.losses)) * 100, 1)) if (self.wins + self.losses) > 0 else ''
+
+def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: Optional[int] = None) -> MatchupResults:
     where = 'TRUE'
     prefix = None
     args: List[Union[str, int]] = []
@@ -46,10 +67,16 @@ def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: Optional[int
         WHERE
             {where}
     """
-    results = guarantee.exactly_one(db().select(sql, args))
-    results['hero_deck_ids'] = results['hero_deck_ids'].split(',') if results['hero_deck_ids'] else []
-    results['hero_decks'] = deck.load_decks('d.id IN (' + ', '.join(results['hero_deck_ids']) + ')') if results['hero_deck_ids'] else []
-    results['enemy_deck_ids'] = results['enemy_deck_ids'].split(',') if results['enemy_deck_ids'] else []
-    results['match_ids'] = results['match_ids'].split(',') if results['match_ids'] else []
-    results['matches'] = match.load_matches(where='m.id IN (' + ', '.join(results['match_ids']) + ')') if results['match_ids'] else []
-    return results
+    rs = guarantee.exactly_one(db().select(sql, args))
+    hero_deck_ids = rs['hero_deck_ids'].split(',') if rs['hero_deck_ids'] else []
+    match_ids = rs['match_ids'].split(',') if rs['match_ids'] else []
+    return MatchupResults(
+        hero_deck_ids=hero_deck_ids,
+        hero_decks=deck.load_decks('d.id IN (' + ', '.join(hero_deck_ids) + ')') if hero_deck_ids else [],
+        enemy_deck_ids=rs['enemy_deck_ids'].split(',') if rs['enemy_deck_ids'] else [],
+        match_ids=rs['match_ids'].split(',') if rs['match_ids'] else [],
+        matches=match.load_matches(where='m.id IN (' + ', '.join(match_ids) + ')', order_by='m.date DESC, m.round DESC') if match_ids else [],
+        wins=rs['wins'],
+        draws=rs['draws'],
+        losses=rs['losses'],
+    )

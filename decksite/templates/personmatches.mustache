@@ -3,6 +3,7 @@
     <table>
         <thead>
             <tr>
+                {{#show_hero}}<th>Person</th>{{/show_hero}}
                 <th>Deck</th>
                 <th>Opponent</th>
                 <th>Opponent's Deck</th>
@@ -15,6 +16,7 @@
         <tbody>
             {{#matches}}
                 <tr>
+                    {{#show_hero}}<td><a href="{{person_url}}">{{person}}</a></td>{{/show_hero}}
                     <td><a href="{{deck_url}}">{{deck_name}}</a></td>
                     <td><a href="{{opponent_url}}">{{opponent}}</a></td>
                     <td>

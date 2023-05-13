@@ -4,41 +4,20 @@ import inflect
 import titlecase
 from flask import session, url_for
 
-from decksite import prepare
-from decksite.data import deck, match
 from decksite.view import View
 from magic import card, oracle
-from shared import dtutil, fetch_tools
+from magic.models import Deck as DeckModel
+from shared import fetch_tools
 from shared.container import Container
-from shared.pd_exception import InvalidDataException
 
 
 class Deck(View):
-    def __init__(self, d: deck.Deck, person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
+    def __init__(self, d: DeckModel, matches: List[Container], person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
         super().__init__()
         self.deck = d
-        prepare.prepare_deck(self.deck)
+        self.decks = [self.deck]
         self.cards = d.all_cards()
-        self.matches = match.load_matches_by_deck(d, should_load_decks=True)
-        for m in self.matches:
-            m.display_date = dtutil.display_date(m.date)
-            if m.opponent:
-                m.opponent_url = url_for('.person', mtgo_username=m.opponent)
-            else:
-                m.opponent = 'BYE'
-                m.opponent_url = False
-            if m.opponent_deck_id:
-                m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
-            else:
-                m.opponent_deck_url = False
-            if m.opponent_deck and m.opponent_deck.is_in_current_run():
-                m.opponent_deck_name = '(Active League Run)'
-            elif m.opponent_deck:
-                m.opponent_deck_name = m.opponent_deck.name
-            else:
-                m.opponent_deck_name = '-'
-            if self.has_rounds():
-                m.display_round = display_round(m)
+        self.matches = matches
         self.deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x.card))
         self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x.card))
         self.edit_archetype_url = url_for('edit_archetypes')
@@ -47,12 +26,6 @@ class Deck(View):
         self.person_id = person_id
         self.discord_id = discord_id
         self.is_deck_page = True
-
-    def has_matches(self) -> bool:
-        return len(self.matches) > 0
-
-    def has_rounds(self) -> bool:
-        return self.has_matches() and self.matches[0].get('round')
 
     def og_title(self) -> str:
         return self.deck.name if self.public() else '(Active League Run)'
@@ -124,7 +97,7 @@ class Deck(View):
             return False
         return True
 
-    def cardhoarder_url(self) -> str:  # This should be a Deck, but we can't import it from here.
+    def cardhoarder_url(self) -> str:
         d = self.deck
         cs: Dict[str, int] = {}
         for entry in d.maindeck + d.sideboard:
@@ -132,17 +105,6 @@ class Deck(View):
             cs[name] = cs.get(name, 0) + entry['n']
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
         return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetch_tools.escape(deck_s))
-
-def display_round(m: Container) -> str:
-    if not m.get('elimination'):
-        return m.round
-    if int(m.elimination) == 8:
-        return 'QF'
-    if int(m.elimination) == 4:
-        return 'SF'
-    if int(m.elimination) == 2:
-        return 'F'
-    raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
 
 class DeckEmbed(Deck):
     pass

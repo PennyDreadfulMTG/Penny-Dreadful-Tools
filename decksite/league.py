@@ -32,9 +32,9 @@ class SignUpForm(Form):
                  mtgo_username: Optional[str]) -> None:
         super().__init__(form)
         if person_id is not None:
-            ps = person.load_person_by_id(person_id)
+            ds = deck.recent_decks_for_person(person_id)
             self.recent_decks: List[Dict[str, Any]] = []
-            for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
+            for d in ds:
                 recent_deck = {'name': d['name'], 'main': [], 'sb': []}
                 for c in d.maindeck:
                     recent_deck['main'].append('{n} {c}'.format(n=c['n'], c=c['name']))

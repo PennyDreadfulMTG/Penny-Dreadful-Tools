@@ -135,6 +135,7 @@ def task(args: List[str]) -> None:
             exitcode = None
             if use_app_context:
                 from decksite.main import APP
+                APP.logger.setLevel(logging.INFO)  # Override app setting of WARN.
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 with APP.app_context():
                     exitcode = call(args, s)

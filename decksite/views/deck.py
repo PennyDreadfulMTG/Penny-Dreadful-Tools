@@ -4,6 +4,7 @@ import inflect
 import titlecase
 from flask import session, url_for
 
+from decksite import prepare
 from decksite.view import View
 from magic import card, oracle
 from magic.models import Deck as DeckModel
@@ -15,7 +16,7 @@ class Deck(View):
     def __init__(self, d: DeckModel, matches: List[Container], person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
         super().__init__()
         self.deck = d
-        self.decks = [self.deck]
+        prepare.prepare_deck(self.deck)
         self.cards = d.all_cards()
         self.matches = matches
         self.deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x.card))

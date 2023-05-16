@@ -109,7 +109,7 @@ def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '))
-    all_archetypes = archs.load_archetypes(season_id=season_id)
+    all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
     archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
     view = Archetype(a, all_archetypes, archetype_matchups, tournament_only=tournament_only)
     return view.page()

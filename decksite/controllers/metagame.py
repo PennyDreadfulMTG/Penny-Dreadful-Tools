@@ -65,8 +65,7 @@ def cards(deck_type: Optional[str] = None) -> str:
     query = request.args.get('fq')
     if query is None:
         query = ''
-    all_cards = cs.load_cards(season_id=get_season_id(), tournament_only=tournament_only)
-    view = Cards(all_cards, query=query, tournament_only=tournament_only)
+    view = Cards(query=query, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/cards/<path:name>/')

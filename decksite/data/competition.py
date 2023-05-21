@@ -221,3 +221,10 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
     """
     entries = [Container(r) for r in db().select(sql)]
     return entries
+
+def set_doorprize(competition_name: str, winner: str) -> None:
+    sql = """
+        INSERT INTO doorprize (competition_name, winner_name)
+        VALUES (%s, %s)
+        """
+    db().execute(sql, [competition_name, winner])

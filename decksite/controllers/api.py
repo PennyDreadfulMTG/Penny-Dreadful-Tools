@@ -519,7 +519,6 @@ class League(Resource):
         if not pdbot:
             lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
         return lg
-
 @APP.api.route('/seasoncodes')
 class SeasonCodes(Resource):
     def get(self) -> List[str]:
@@ -578,6 +577,15 @@ def drop(person: str) -> Response:
     league.retire_deck(run)
     result = {'success': True}
     return return_json(result)
+
+@APP.route('/api/doorprize', methods=['POST'])
+def doorprize() -> Response:
+    error = validate_api_key()
+    if error:
+        return error
+
+    comp.set_doorprize(request.form['event'], request.form['winner'])
+    return return_json({'success': True})
 
 @APP.route('/api/rotation/clear_cache')
 def rotation_clear_cache() -> Response:

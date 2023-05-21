@@ -2,6 +2,7 @@
 
 GRANT ALL PRIVILEGES ON cards.* TO 'pennydreadful'@'%';
 GRANT ALL PRIVILEGES ON decksite.* TO 'pennydreadful'@'%';
+GRANT ALL PRIVILEGES ON decksite_test.* TO 'pennydreadful'@'%';
 GRANT ALL PRIVILEGES ON pdlogs.* TO 'pennydreadful'@'%';
 GRANT ALL PRIVILEGES ON prices.* TO 'pennydreadful'@'%';
 GRANT CREATE ON *.* TO 'pennydreadful'@'%';

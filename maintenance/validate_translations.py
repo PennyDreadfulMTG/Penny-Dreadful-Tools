@@ -43,7 +43,7 @@ def validate_string(message: Message, catalog: Catalog) -> None:
 
 def has_missing_var(english: str, string: str) -> Optional[str]:
     for m in re.findall(r'\{\w+\}', english):
-        if not m in string:
+        if m not in string:
             return 'Variable {m} missing from translation'.format(m=m)
     nums = len(re.findall('%\\(num\\)d', english))
     if len(re.findall('%\\(num\\)d', string)) != nums:

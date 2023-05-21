@@ -18,7 +18,7 @@ SEASONS = [
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
     'VOW', 'NEO', 'SNC', 'DMU',  # 2022
-    'BRO', 'ONE', 'MOM',         # 2023
+    'BRO', 'ONE', 'MOM', 'WOE',  # 2023
 ]
 
 NOT_SEASONS = [

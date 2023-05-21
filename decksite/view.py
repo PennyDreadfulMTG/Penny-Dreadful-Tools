@@ -62,6 +62,7 @@ class View(BaseView):
         self.is_home_page = False
         self.show_filters_toggle = False
         self.tournament_rounds_info: List[Dict[str, Union[int, str]]] = []
+        self.matches: List[Container] = []
 
     def season_id(self) -> int:
         return get_season_id()
@@ -178,6 +179,12 @@ class View(BaseView):
     def show_legal_seasons(self) -> bool:
         return get_season_id() == 0
 
+    def has_matches(self) -> bool:
+        return len(self.matches) > 0
+
+    def has_rounds(self) -> bool:
+        return self.has_matches() and self.matches[0].get('round')
+
     def prepare(self) -> None:
         self.prepare_decks()
         self.prepare_cards()
@@ -235,7 +242,7 @@ class View(BaseView):
             self.legal_formats = list(map(add_season_num, sorted(self.legal_formats, key=legality.order_score)))  # type: ignore
 
     def prepare_matches(self) -> None:
-        prepare.prepare_matches(getattr(self, 'matches', []))
+        prepare.prepare_matches(getattr(self, 'matches', []), self.has_rounds())
 
     def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])

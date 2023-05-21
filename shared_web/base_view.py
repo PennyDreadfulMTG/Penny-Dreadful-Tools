@@ -9,7 +9,8 @@ from . import template
 class BaseView:
     def __init__(self) -> None:
         super().__init__()
-        self.content = ''
+        self.content: str = ''
+        self.has_cards: bool = False
 
     def home_url(self) -> str:
         return url_for('home')
@@ -49,7 +50,7 @@ class BaseView:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))
 
     def tooltips_url(self) -> Optional[str]:
-        if not hasattr(self, 'cards'):
+        if not self.has_cards and not hasattr(self, 'cards'):
             return None
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 

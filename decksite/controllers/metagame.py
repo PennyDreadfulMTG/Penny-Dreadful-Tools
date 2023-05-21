@@ -6,16 +6,9 @@ from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import archetype as archs
-from decksite.data import card as cs
-from decksite.data import deck as ds
-from decksite.data import matchup as mus
-from decksite.data import person as ps
-from decksite.data import playability
-from decksite.data import season as ss
+from decksite.data import archetype as archs, card as cs, deck as ds, match, matchup as mus, person as ps, playability, season as ss
 from decksite.deck_type import DeckType
-from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
-                            Seasons)
+from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons)
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
@@ -46,7 +39,8 @@ def metagame(deck_type: Optional[str] = None) -> str:
 @auth.load_person
 def deck(deck_id: int) -> str:
     d = ds.load_deck(deck_id)
-    view = Deck(d, auth.person_id(), auth.discord_id())
+    ms = match.load_matches_by_deck(d)
+    view = Deck(d, ms, auth.person_id(), auth.discord_id())
     return view.page()
 
 @APP.route('/seasons/')
@@ -71,8 +65,7 @@ def cards(deck_type: Optional[str] = None) -> str:
     query = request.args.get('fq')
     if query is None:
         query = ''
-    all_cards = cs.load_cards(season_id=get_season_id(), tournament_only=tournament_only)
-    view = Cards(all_cards, query=query, tournament_only=tournament_only)
+    view = Cards(query=query, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/cards/<path:name>/')
@@ -103,8 +96,8 @@ def parse_card_name(name: str) -> str:
 def archetypes(deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
-    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
-    view = Archetypes(deckless_archetypes, tournament_only=tournament_only)
+    all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
+    view = Archetypes(all_archetypes, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
@@ -115,10 +108,10 @@ def archetypes(deck_type: Optional[str] = None) -> str:
 def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id, tournament_only=tournament_only)
-    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id, tournament_only=tournament_only)
+    a = archs.load_archetype(archetype_id.replace('+', ' '))
+    all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
     archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
-    view = Archetype(a, deckless_archetypes, archetype_matchups, tournament_only=tournament_only, season_id=season_id)
+    view = Archetype(a, all_archetypes, archetype_matchups, tournament_only=tournament_only)
     return view.page()
 
 
@@ -135,8 +128,8 @@ def matchups() -> str:
             enemy[k] = v
     season_str = request.args.get('season_id')
     season_id = int(season_str) if season_str else None
-    results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else {}
-    matchup_archetypes = archs.load_archetypes_deckless()
+    results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else None
+    matchup_archetypes = archs.load_archetypes()
     matchup_archetypes.sort(key=lambda a: a.name)
     matchup_people = list(ps.load_people(where='p.mtgo_username IS NOT NULL'))
     matchup_people.sort(key=lambda p: p.name)

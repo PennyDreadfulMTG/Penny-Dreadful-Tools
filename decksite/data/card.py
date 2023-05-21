@@ -1,4 +1,3 @@
-import sys
 from typing import List, Optional
 
 from decksite.data import deck, preaggregation, query
@@ -10,28 +9,6 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
-
-def load_card(name: str, tournament_only: bool = False, season_id: Optional[int] = None) -> Card:
-    c = guarantee.exactly_one(oracle.load_cards([name]))
-    deck_where = query.card_where(name)
-    if tournament_only:
-        deck_where = f"({deck_where}) AND (ct.name <> 'League')"
-    c.decks = deck.load_decks(deck_where, season_id=season_id)
-    c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
-    for d in c.decks:
-        c.wins += d.get('wins', 0)
-        c.losses += d.get('losses', 0)
-        c.draws += d.get('draws', 0)
-        c.tournament_wins += 1 if d.get('finish') == 1 else 0
-        c.tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
-        c.perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
-    if c.wins or c.losses:
-        c.win_percent = round((c.wins / (c.wins + c.losses)) * 100, 1)
-    else:
-        c.win_percent = ''
-    c.num_decks = len(c.decks)
-    c.played_competitively = c.wins or c.losses or c.draws
-    return c
 
 def preaggregate() -> None:
     preaggregate_card()
@@ -318,7 +295,19 @@ def load_cards(
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])
+        c.played_competitively = c.wins or c.draws or c.losses
     return cs
+
+@retry_after_calling(preaggregate_card)
+def load_card(name: str, tournament_only: bool = False, season_id: Optional[int] = None) -> Card:
+    c = guarantee.at_most_one(load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only))
+    if c:
+        return c
+    c = oracle.load_card(name)
+    c.num_decks = c.wins = c.losses = c.draws = c.record = c.tournament_wins = c.tournament_top8s = 0
+    c.played_competitively = False
+    c.win_percent = ''
+    return c
 
 @retry_after_calling(preaggregate_unique)
 def unique_cards_played(person_id: int) -> List[str]:

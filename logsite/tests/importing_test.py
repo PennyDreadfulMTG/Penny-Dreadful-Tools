@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from .. import importing
 from ..data.match import Match
 from logsite import APP
@@ -11,16 +13,19 @@ def import_log(match_id: int) -> Match:
         lines = fhandle.readlines()
         return importing.import_log(lines, match_id)
 
+@pytest.mark.functional
 def test_import_league() -> None:
     with APP.app_context():
         import_log(201109942)
 
+@pytest.mark.functional
 def test_import_tourney() -> None:
     with APP.app_context():
         local = import_log(201088400)
         assert local.is_tournament
         assert local.tournament is not None
 
+@pytest.mark.functional
 def test_import_switcheroo() -> None:
     with APP.app_context():
         local = import_log(198379247)

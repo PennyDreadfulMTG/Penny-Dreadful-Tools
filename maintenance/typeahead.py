@@ -16,7 +16,7 @@ def run() -> None:
 
 def archetypes() -> List[Dict[str, str]]:
     urls = []
-    archs = archetype.load_archetypes_deckless()
+    archs = archetype.load_archetypes()
     for a in archs:
         urls.append({'name': a.name, 'type': 'Archetype', 'url': url_for('archetype', archetype_id=a.name)})
     return urls

@@ -682,7 +682,7 @@ def person_notes(person_id: int) -> Response:
 def deck_embed(deck_id: int) -> Response:
     # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
     d = deck.load_deck(deck_id)
-    view = DeckEmbed(d, None, None)
+    view = DeckEmbed(d, [], None, None)
     width = 1200
     height = 500
     embed = {

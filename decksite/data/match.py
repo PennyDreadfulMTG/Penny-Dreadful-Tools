@@ -10,7 +10,6 @@ from magic.models import Deck
 from shared import dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.container import Container
-from shared.database import sqlescape
 from shared.pd_exception import TooFewItemsException
 
 
@@ -44,9 +43,9 @@ def insert_match(dt: datetime.datetime,
 def load_match(match_id: int, deck_id: int) -> Container:
     return guarantee.exactly_one(load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}'))
 
-def load_matches_by_deck(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:
+def load_matches_by_deck(d: deck.Deck) -> List[Container]:
     where = f'd.id = {d.id}'
-    return load_matches(where=where, season_id=None, should_load_decks=should_load_decks)
+    return load_matches(where=where, season_id=None)
 
 def load_matches_by_person(person_id: int, season_id: Optional[int] = None) -> List[Container]:
     where = f'd.person_id = {person_id}'
@@ -86,7 +85,7 @@ def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = N
     """
     return int(db().value(sql))
 
-def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, should_load_decks: bool = False, show_active_deck_names: bool = False) -> List[Container]:
+def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, show_active_deck_names: bool = False) -> List[Container]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')
     competition_join = query.competition_join()
@@ -145,16 +144,10 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
         {limit}
     """
     matches = [Container(r) for r in db().select(sql)]
-    decks = []
-    if should_load_decks:
-        opponents = [m.opponent_deck_id for m in matches if m.opponent_deck_id is not None]
-        if len(opponents) > 0:
-            decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(deck_id)) for deck_id in opponents])))
-    decks_by_id = {d.id: d for d in decks}
-    setup_matches(should_load_decks, show_active_deck_names, decks_by_id, matches)
+    setup_matches(show_active_deck_names, matches)
     return matches
 
-def setup_matches(should_load_decks: bool, show_active_deck_names: bool, decks_by_id: Dict[int, Deck], matches: Sequence[Container]) -> None:
+def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) -> None:
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
         m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
@@ -162,10 +155,6 @@ def setup_matches(should_load_decks: bool, show_active_deck_names: bool, decks_b
             m.competition_url = url_for('competition', competition_id=m.competition_id)
         if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'
-        if should_load_decks and m.opponent_deck_id is not None and decks_by_id.get(m.opponent_deck_id):
-            m.opponent_deck = decks_by_id[m.opponent_deck_id]
-        elif should_load_decks:
-            m.opponent_deck = None
 
 def stats() -> Dict[str, int]:
     sql = """

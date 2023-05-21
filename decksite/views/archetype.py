@@ -1,4 +1,6 @@
+import copy
 from typing import Any, List
+from mypy_extensions import TypedDict
 
 from flask import url_for
 
@@ -9,39 +11,41 @@ from shared.container import Container
 from shared.pd_exception import DoesNotExistException
 
 
+Matchups = TypedDict('Matchups', {
+    'is_matchups': bool,
+    'archetypes': List[archs.Archetype],
+})
+
 class Archetype(View):
     def __init__(self,
                  archetype: archs.Archetype,
                  archetypes: List[archs.Archetype],
                  matchups: List[Container],
-                 season_id: int,
                  tournament_only: bool = False,
                  ) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
-        self.archetype = next(a for a in archetypes if a.id == archetype.id) if archetypes else archetype
-        self.archetype.decks = archetype.decks
-        # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
-        self.archetypes = archetypes
-        self.tournament_only = self.hide_source = tournament_only
-        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
-        matchups_by_id = {m.id: m for m in matchups}
-        for m in matchup_archetypes:
-            # Overwite totals with vs-archetype specific details. Wipe out if there are none.
-            m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
-        # Prepare the second archetype tree manually becuase its archetypes don't have the standard name.
-        for m in matchup_archetypes:
-            self.prepare_archetype(m, matchup_archetypes)
-        # Storing this in matchups_container like this lets us include two different archetype trees on the same page without collision.
-        self.matchups_container = [{
+        self.archetype = archetype
+        self.archetypes = []
+        for a in archetypes:
+            if a.id == archetype.id:
+                self.archetype = a
+                self.archetypes = list(a.ancestors) + [a] + list(a.descendants)
+                break
+        self.matchups: Matchups = {
             'is_matchups': True,
-            'archetypes': matchup_archetypes,
-        }]
+            'archetypes': copy.deepcopy(archetypes),  # Take a copy of the archetypes, so we can update their stats without interfering with the other section.
+        }
+        matchups_by_id = {m.id: m for m in matchups}
+        for m in self.matchups['archetypes']:
+            m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
+        for m in self.matchups['archetypes']:
+            self.prepare_archetype(m, self.matchups['archetypes'], tournament_only)
+        self.tournament_only = self.hide_source = tournament_only
         self.show_seasons = True
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
-        self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.archetype.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 
     def og_title(self) -> str:

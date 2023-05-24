@@ -1,4 +1,4 @@
-FROM mariadb
+FROM mariadb:10.11
 
 RUN apt-get update; apt-get install -y curl dos2unix
 COPY ./*.sql ./*.sh /docker-entrypoint-initdb.d/

@@ -634,7 +634,7 @@ def hide_intro() -> Response:
     r.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 * 60 * 24 * 365 * 10)
     return r
 
-@APP.route('/api/status/')
+@APP.route('/api/status')
 @auth.load_person
 def person_status() -> Response:
     username = auth.mtgo_username()
@@ -673,7 +673,7 @@ def key_cards(season_num: int) -> Response:
     return return_json({'data': data})
 
 
-@APP.route('/api/admin/people/<int:person_id>/notes/')
+@APP.route('/api/admin/people/<int:person_id>/notes')
 @auth.admin_required_no_redirect
 def person_notes(person_id: int) -> Response:
     return return_json({'notes': ps.load_notes(person_id)})

@@ -15,6 +15,7 @@ from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
 from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague, EditMatches, EditRules, PlayerNotes, Prizes, RotationChecklist, Sorters, Unlink)
+from decksite.views.archetype_search import ArchetypeSearch
 from magic.models import Deck
 from shared import dtutil
 from shared import redis_wrapper as redis
@@ -55,10 +56,8 @@ def post_aliases(person_id: Optional[int] = None, alias: Optional[str] = None) -
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
-def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', notq: str = '') -> wrappers.Response:
-    if search_results is None:
-        search_results = []
-    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), search_results, q, notq)
+def edit_archetypes(q: str = '', notq: str = '') -> wrappers.Response:
+    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq)
     return view.response()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
@@ -90,7 +89,10 @@ def post_archetypes() -> wrappers.Response:
             archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
-    return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
+    if search_results:
+        view = ArchetypeSearch(archs.load_archetypes(order_by='a.name'), search_results, request.form.get('q', ''), request.form.get('notq', ''))
+        return view.response()
+    return edit_archetypes(request.form.get('q', ''), request.form.get('notq', ''))
 
 @APP.route('/admin/rules/')
 @auth.demimod_required

@@ -332,7 +332,7 @@ PD.initSignupDeckChooser = function() {
 };
 
 PD.initPersonalization = function() {
-    $.get("/api/status/", function(data) {
+    $.get("/api/status", function(data) {
         var text = "";
         if (data.discord_id) {
             text += "You are logged in";
@@ -374,7 +374,7 @@ PD.initPersonNotes = function() {
     var i, personId = $(".person-notes").data("person_id");
     // Only do the work if we're on a page that should show the notes.
     if (personId) {
-        $.get("/api/admin/people/" + personId + "/notes/", function(data) {
+        $.get("/api/admin/people/" + personId + "/notes", function(data) {
             if (data.notes.length > 0) {
                 let s = "<article>";
                 for (i = 0; i < data.notes.length; i++) {

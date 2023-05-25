@@ -330,7 +330,7 @@ def seasonized_url(season_id: Union[int, str]) -> str:
         return url_for(cast(str, request.endpoint))
 
 def add_season_num(f: str) -> str:
-    if not 'Penny Dreadful ' in f:
+    if 'Penny Dreadful ' not in f:
         return f
     code = f.replace('Penny Dreadful ', '')
     num = seasons.season_num(code)

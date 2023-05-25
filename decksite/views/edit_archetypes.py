@@ -6,11 +6,10 @@ from decksite import prepare
 from decksite.data import archetype, deck, rule
 from decksite.data.archetype import Archetype
 from decksite.view import View
-from magic.models import Deck
 
 
 class EditArchetypes(View):
-    def __init__(self, archetypes: List[Archetype], search_results: List[Deck], q: str, notq: str) -> None:
+    def __init__(self, archetypes: List[Archetype], q: str, notq: str) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)
@@ -30,10 +29,6 @@ class EditArchetypes(View):
                         d.archetypes.append(a)
             d.show_add_rule_prompt = d.similarity == '100%' and not d.get('rule_archetype_name')
         self.edit_rules_url = url_for('edit_rules')
-        self.has_search_results = len(search_results) > 0
-        self.search_results = search_results
-        for d in self.search_results:
-            prepare.prepare_deck(d)
         self.query = q
         self.notquery = notq
 

@@ -99,41 +99,6 @@
         <input type="hidden" name="find_conflicts" value="true"></input>
         <button type="submit" name="conflicts">Search for Conflicts</button>
     </form>
-
-    {{#has_search_results}}
-        <form method="post" class="inline">
-            <table id="search-results" data-toggle="checkboxes" data-range="true">
-                <thead>
-                    <tr>
-                        <th>Colors</th>
-                        <th>Name</th>
-                        <th>Archetype</th>
-                        <th>
-                            <a href="#search-results" data-toggle="checkboxes" data-action="check">☑</a> |
-                            <a href="#search-results" data-toggle="checkboxes" data-action="uncheck">☐</a>
-                        </th>
-                        <th>Season</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#search_results}}
-                        <tr>
-                            <td>{{{colors_safe}}}</td>
-                            <td title="{{decklist}}"><a href="{{url}}">{{name}}</a></td>
-                            <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
-                            <td><input type="checkbox" name="deck_id" value="{{id}}"></td>
-                            <td>
-                                {{#has_legal_format}}
-                                    {{{legal_icons}}}
-                                {{/has_legal_format}}
-                            </td>
-                        </tr>
-                    {{/search_results}}
-            </table>
-            {{> archetypedropdown}}
-            <button type="submit">Reassign</button>
-        </form>
-    {{/has_search_results}}
 </section>
 <section>
     <h2>All Archetypes</h2>

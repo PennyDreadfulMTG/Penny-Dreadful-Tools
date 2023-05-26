@@ -44,10 +44,6 @@ def buildpy() -> None:
 def buildjs() -> None:
     builddotpy.buildjs()
 
-@cli.command()
-def lint() -> None:
-    do_lint()
-
 def do_lint() -> None:
     """
     Invoke linter with our preferred options
@@ -59,16 +55,15 @@ def do_lint() -> None:
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 
+@cli.command()
+def lint() -> None:
+    do_lint()
+
 
 @cli.command()
 def stylefix() -> None:
     autopep = local['autopep8']
     autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG
-
-@cli.command()
-@click.argument('argv', nargs=-1)
-def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
-    do_mypy(argv, strict, typeshedding)
 
 def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
@@ -105,16 +100,35 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def unit(argv: List[str]) -> None:
-    do_unit(argv)
-
-def do_unit(argv: List[str]) -> None:
-    runtests(argv, 'not functional and not perf')
+def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
+    do_mypy(argv, strict, typeshedding)
 
 @cli.command()
-@click.argument('argv', nargs=-1)
-def test(argv: List[str]) -> None:
-    runtests(argv, '')
+def upload_coverage() -> None:
+    try:
+        print('>>>> Upload coverage')
+        from shared import fetch_tools
+        fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
+        python3 = local['python3']
+        python3['-m', 'coverage', 'xml', '-i']
+        bash = local['bash']
+        bash['codecov.sh'] & FG
+        # Sometimes the coverage uploader has issues.  Just fail silently, it's not that important
+    except ProcessExecutionError as e:
+        print(e)
+    except fetch_tools.FetchException as e:
+        print(e)
+
+def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None) -> List[str]:
+    paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
+    paths = [p for p in paths if 'logsite_migrations' not in p]
+    if file_extension:
+        paths = [p for p in paths if p.endswith(file_extension)]
+    if needle:
+        paths = [p for p in paths if needle in os.path.basename(p)]
+    if exclude:
+        paths = [p for p in paths if p not in exclude]
+    return paths
 
 def runtests(argv: Iterable[str], m: str) -> None:
     args = []
@@ -134,26 +148,18 @@ def runtests(argv: Iterable[str], m: str) -> None:
     if code:
         sys.exit(code)
 
-@cli.command()
-def upload_coverage() -> None:
-    try:
-        print('>>>> Upload coverage')
-        from shared import fetch_tools
-        fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
-        python3 = local['python3']
-        python3['-m', 'coverage', 'xml', '-i']
-        bash = local['bash']
-        bash['codecov.sh'] & FG
-        # Sometimes the coverage uploader has issues.  Just fail silently, it's not that important
-    except ProcessExecutionError as e:
-        print(e)
-    except fetch_tools.FetchException as e:
-        print(e)
+def do_unit(argv: List[str]) -> None:
+    runtests(argv, 'not functional and not perf')
 
 @cli.command()
-@click.option('--fix', is_flag=True, default=False)
-def sort(fix: bool = False) -> None:
-    do_sort(fix)
+@click.argument('argv', nargs=-1)
+def unit(argv: List[str]) -> None:
+    do_unit(argv)
+
+@cli.command()
+@click.argument('argv', nargs=-1)
+def test(argv: List[str]) -> None:
+    runtests(argv, '')
 
 def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
@@ -162,6 +168,11 @@ def do_sort(fix: bool) -> None:
         pipenv['run', 'isort', '.'] & FG
     else:
         pipenv['run', 'isort', '.', '--check'] & FG
+
+@cli.command()
+@click.option('--fix', is_flag=True, default=False)
+def sort(fix: bool = False) -> None:
+    do_sort(fix)
 
 @cli.command()
 def reset_db() -> None:
@@ -175,9 +186,40 @@ def reset_db() -> None:
     magic.database.db().nuke_database()
 
 @cli.command()
-@click.argument('argv', nargs=-1)
-def safe_push(argv: List[str]) -> None:
-    do_safe_push(argv)
+def dev_db() -> None:
+    # reset_db()
+    print('>>>> Downloading dev db')
+    import requests
+    import gzip
+    import decksite.database
+    r = requests.get('https://pennydreadfulmagic.com/static/dev-db.sql.gz')
+    r.raise_for_status()
+    with open('dev-db.sql.gz', 'wb') as f:
+        f.write(r.content)
+    with gzip.open('dev-db.sql.gz', 'rb') as f:
+        c = f.read()
+        sql = c.decode()
+        for stmt in sql.split(';'):
+            if stmt.strip() != '':
+                decksite.database.db().execute(stmt)
+
+def do_push() -> None:
+    print('>>>> Pushing')
+    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
+
+def stash_if_any() -> str:
+    print('>>>> Stashing local changes')
+    label = 'dev-py-stash-at-' + str(time.time())
+    subprocess.check_call(['git', 'stash', 'save', '--include-untracked', label])
+    return label
+
+def pop_if_any(label: str) -> None:
+    print('>>>> Checking for stashed changes')
+    output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
+    if label in str(output):
+        print('>>>> Popping stashed changes')
+        subprocess.call(['git', 'stash', 'pop'])
 
 def do_safe_push(argv: List[str]) -> None:
     label = stash_if_any()
@@ -188,18 +230,13 @@ def do_safe_push(argv: List[str]) -> None:
     pop_if_any(label)
 
 @cli.command()
-def push() -> None:
-    do_push()
-
-def do_push() -> None:
-    print('>>>> Pushing')
-    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
-    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
+@click.argument('argv', nargs=-1)
+def safe_push(argv: List[str]) -> None:
+    do_safe_push(argv)
 
 @cli.command()
-@click.argument('argv', nargs=-1)
-def pull_request(argv: List[str]) -> None:
-    do_pull_request(argv)
+def push() -> None:
+    do_push()
 
 def do_pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
@@ -209,9 +246,9 @@ def do_pull_request(argv: List[str]) -> None:
         subprocess.check_call(['gh', 'pr', 'create'])
 
 @cli.command()
-@click.option('--fix', is_flag=True, default=False)
-def jslint(fix: bool = False) -> None:
-    do_jslint(fix)
+@click.argument('argv', nargs=-1)
+def pull_request(argv: List[str]) -> None:
+    do_pull_request(argv)
 
 def do_jslint(fix: bool) -> None:
     print('>>>> Linting javascript')
@@ -220,6 +257,11 @@ def do_jslint(fix: bool) -> None:
     if fix:
         cmd.append('--fix')
     subprocess.check_call(cmd + files, shell=ON_WINDOWS)
+
+@cli.command()
+@click.option('--fix', is_flag=True, default=False)
+def jslint(fix: bool = False) -> None:
+    do_jslint(fix)
 
 @cli.command()
 def jsfix() -> None:
@@ -254,19 +296,6 @@ def branch(args: List[str]) -> None:
     subprocess.check_call(['git', 'checkout', '-b', branch_name])
     pop_if_any(label)
 
-def stash_if_any() -> str:
-    print('>>>> Stashing local changes')
-    label = 'dev-py-stash-at-' + str(time.time())
-    subprocess.check_call(['git', 'stash', 'save', '--include-untracked', label])
-    return label
-
-def pop_if_any(label: str) -> None:
-    print('>>>> Checking for stashed changes')
-    output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
-    if label in str(output):
-        print('>>>> Popping stashed changes')
-        subprocess.call(['git', 'stash', 'pop'])
-
 # If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
 # This cleans up for you. With the newer better behavior of --include-untracked this should now be unncessary.
 @cli.command()
@@ -282,15 +311,19 @@ def popclean() -> None:
             os.remove(f)
         subprocess.check_call(['git', 'stash', 'pop'])
 
+def do_check(argv: List[str]) -> None:
+    do_mypy(argv)
+    do_lint()
+    do_jslint(fix=False)
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def check(argv: List[str]) -> None:
     do_check(argv)
 
-def do_check(argv: List[str]) -> None:
-    do_mypy(argv)
-    do_lint()
-    do_jslint(fix=False)
+def do_full_check(argv: List[str]) -> None:
+    do_sort(False)
+    do_check(argv)
 
 # `full-check` differs from `check` in that it additionally checks import sorting.
 # This is not strictly necessary because a bot will follow up any PR with another PR to correct import sorting.
@@ -301,27 +334,12 @@ def do_check(argv: List[str]) -> None:
 def full_check(argv: List[str]) -> None:
     do_full_check(argv)
 
-def do_full_check(argv: List[str]) -> None:
-    do_sort(False)
-    do_check(argv)
-
 @cli.command()
 @click.argument('argv', nargs=-1)
 def release(argv: List[str]) -> None:
     do_full_check([])
     do_safe_push([])
     do_pull_request(argv)
-
-def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None) -> List[str]:
-    paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
-    paths = [p for p in paths if 'logsite_migrations' not in p]
-    if file_extension:
-        paths = [p for p in paths if p.endswith(file_extension)]
-    if needle:
-        paths = [p for p in paths if needle in os.path.basename(p)]
-    if exclude:
-        paths = [p for p in paths if p not in exclude]
-    return paths
 
 @cli.command()
 def swagger() -> None:

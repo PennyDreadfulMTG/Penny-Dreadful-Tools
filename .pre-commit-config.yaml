@@ -22,3 +22,4 @@ repos:
     hooks:
         - id: autoflake
           args: [--remove-all-unused-imports, --in-place, --ignore-init-module-imports]
+          exclude: wsgi$

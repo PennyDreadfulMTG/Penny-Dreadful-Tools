@@ -108,7 +108,7 @@ freezegun = "*"
 werkzeug = "==2.3.4"
 uwsgidecorators-fallback = "*"
 celery = {extras = ["redis"], version = "*"}
-urllib3 = "==1.26.15"
+urllib3 = "==1.26.16"
 discord-typings = "==0.5.1"
 
 [requires]

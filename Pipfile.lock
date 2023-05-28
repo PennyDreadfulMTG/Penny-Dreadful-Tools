@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c6f0eaf5819655e36f5a21bd3be59587ed796b322dd46937065fe04c8a302430"
+            "sha256": "b57042e29d106cf3e8e7114f9ec5b375c774a16987cbe388fe9306e5549ac806"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -161,7 +161,7 @@
                 "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15",
                 "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"
             ],
-            "markers": "python_full_version <= '3.11.2'",
+            "markers": "python_version >= '3.6'",
             "version": "==4.0.2"
         },
         "attrs": {
@@ -409,7 +409,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_version < '4.0' and python_full_version >= '3.6.2'",
+            "markers": "python_version < '4' and python_full_version >= '3.6.2'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -800,11 +800,11 @@
         },
         "google-api-python-client": {
             "hashes": [
-                "sha256:0f320190ab9d5bd2fdb0cb894e8e53bb5e17d4888ee8dc4d26ba65ce378409e2",
-                "sha256:3ca4e93821f4e9ac29b91ab0d9df168b42c8ad0fb8bff65b8c2ccb2d462b0464"
+                "sha256:29b52232b159be72a79890b6d9f703cf6d8ebbec0ef6371c5670c1abeca5a9f9",
+                "sha256:bbea5869877c822d12d318943833d988497b3a18b9ca2386967118074db676f3"
             ],
             "index": "pypi",
-            "version": "==2.86.0"
+            "version": "==2.87.0"
         },
         "google-auth": {
             "hashes": [
@@ -1929,7 +1929,7 @@
                 "sha256:90260d9058e514786967344d0ef75fa8727eed8a7d2e43ce9f4bcf1b536174f7",
                 "sha256:e38464a49c6c85d7f1351b0126661487a7e0a14a50f1675ec50eb34d4f20ef21"
             ],
-            "markers": "python_version >= '3.6' and python_version < '4.0'",
+            "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==4.9"
         },
         "seaborn": {

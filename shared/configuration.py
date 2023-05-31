@@ -128,8 +128,8 @@ DEFAULTS: Dict[str, Any] = {
     'whoosh_index_dir': 'whoosh_index',
     # Dreadrise top-level URL. used for dreadrise-based searches.
     # the first variable is used for requests, the second variable is used for links displayed to user
-    'dreadrise_url': 'https://dreadrise.wizzerinus.tk',
-    'dreadrise_public_url': 'https://dreadrise.wizzerinus.tk',
+    'dreadrise_url': 'https://penny.dreadrise.xyz',
+    'dreadrise_public_url': 'https://penny.dreadrise.xyz',
 }
 
 def get_optional_str(key: str) -> Optional[str]:

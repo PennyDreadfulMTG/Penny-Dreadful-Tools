@@ -105,7 +105,7 @@ tomli = "*"
 orjson = "*"
 traceback-with-variables = "*"
 freezegun = "*"
-werkzeug = "==2.3.4"
+werkzeug = "==2.3.5"
 uwsgidecorators-fallback = "*"
 celery = {extras = ["redis"], version = "*"}
 urllib3 = "==1.26.16"

@@ -47,6 +47,7 @@ LAYOUTS: dict[str, Layout] = {
     'modal_dfc': Layout(has_two_names=True, has_single_back=True, has_two_mana_costs=True),
     'normal': Layout(),
     'planar': Layout(playable=False),
+    'prototype': Layout(),
     # We don't quite tell the truth about 'reversible_card'. These cards DO have canonical namespace names.
     # But including them alongside their identically-named non-reversible originals causes duplicates to get added to the db which breaks things.
     # We may need to do better here if a layout:reversible_card is ever released that doesn't already exist in another playable form.

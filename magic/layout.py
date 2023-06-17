@@ -94,13 +94,16 @@ def is_playable_layout(layout: str) -> bool:
     lo = LAYOUTS.get(layout)
     if lo is not None:
         return lo.playable
+    report_missing_layout(layout)
+    return False
+
+def report_missing_layout(layout: str) -> None:
     cache_key = 'missing_layout_logged'
-    if not hasattr(is_playable_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
+    if not hasattr(report_missing_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
         try:
             warning = f'Did not recognize layout `{layout}` – need to add it'
             print(warning)
             repo.create_issue(warning, 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
         except GithubException:
             pass  # We tried. Not gonna break the world because we couldn't log it.
-        setattr(is_playable_layout, cache_key, [])  # The other half of the hack.
-    return False
+        setattr(report_missing_layout, cache_key, [])  # The other half of the hack.

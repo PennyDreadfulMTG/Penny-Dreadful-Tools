@@ -470,7 +470,7 @@
                 "sha256:ed614aea8462735e7d70141374bd7650afd1c3f3cb0c2dbbcbe44e14331bf002",
                 "sha256:fb3b7d9e6243bfa1efb93ccfe64ec610d85cfe5aec2c25f97fbbd2e58b531256"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==1.1.0"
         },
         "coverage": {
@@ -718,7 +718,7 @@
                 "sha256:eb52c10fda31159c22c7ed85074e05f8b97da8773ea461706c273e31bcbea836",
                 "sha256:ec468c022d09f1817c691cf884feb1030ef6f1e93e3ea6831b0d8144c06480d1"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==4.40.0"
         },
         "freezegun": {
@@ -1072,7 +1072,7 @@
                 "sha256:48ee589e8833126fd01ceaa08f8a2041334e9f5894e5763c8486a550454551e9",
                 "sha256:fbd7572d92c0bf71c112a6b45163153dea5a7b6a701ec16b568c27d0fd2370f2"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==5.3.1"
         },
         "lazy-object-proxy": {
@@ -1563,7 +1563,7 @@
                 "sha256:e69140bc2d29a8556f55445c15f5794490852af3de0f609a24003ef174528b79",
                 "sha256:f908a77cbeef9bbd646bd4b81214cbef9ac3dda4181d5092a4aa9797d1bc7774"
             ],
-            "markers": "python_full_version >= '3.8.0'",
+            "markers": "python_version >= '3.8'",
             "version": "==2.0.2"
         },
         "pillow": {
@@ -2666,10 +2666,11 @@
         },
         "types-pyopenssl": {
             "hashes": [
-                "sha256:43e307e8dfb3a7a8208a19874ca060305f460c529d4eaca8a2669ea89499f244",
-                "sha256:ba803a99440b0c2e9ab4e197084aeefc55bdfe8a580d367b2aa4210810a21240"
+                "sha256:0568553f104466f1b8e0db3360fbe6770137d02e21a1a45c209bf2b1b03d90d4",
+                "sha256:beeb5d22704c625a1e4b6dc756355c5b4af0b980138b702a9d9f932acf020903"
             ],
-            "version": "==23.2.0.0"
+            "index": "pypi",
+            "version": "==23.2.0.1"
         },
         "types-python-dateutil": {
             "hashes": [

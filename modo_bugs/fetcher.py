@@ -124,6 +124,9 @@ def get_daybreak_label(url: str) -> str | None:
     label = soup.find('span', class_='label--primary')
     if label:
         return label.text
+    label = soup.find('span', class_='label--accent')
+    if label:
+        return label.text
     return None
 
 def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:

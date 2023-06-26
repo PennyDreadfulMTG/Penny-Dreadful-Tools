@@ -199,6 +199,10 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
 
     for p in printings:
         try:
+            if p.get('layout') not in layout.all_layouts():
+                layout.report_missing_layout(p.get('layout'))
+                continue
+
             if p.get('layout') not in layout.uses_canonical_namespace():
                 continue
 

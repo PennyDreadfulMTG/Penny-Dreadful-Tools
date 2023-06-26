@@ -2,7 +2,6 @@
 Interprets decklists of various formats, and converts it into a usable structure
 """
 import re
-import xml
 from xml.sax import SAXException
 from typing import Any, Dict, Tuple
 

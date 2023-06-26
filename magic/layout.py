@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from github.GithubException import GithubException
 
@@ -97,7 +97,7 @@ def is_playable_layout(layout: str) -> bool:
     report_missing_layout(layout)
     return False
 
-def report_missing_layout(layout: str) -> None:
+def report_missing_layout(layout: Optional[str]) -> None:
     cache_key = 'missing_layout_logged'
     if not hasattr(report_missing_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
         try:

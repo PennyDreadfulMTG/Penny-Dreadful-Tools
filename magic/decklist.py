@@ -2,7 +2,7 @@
 Interprets decklists of various formats, and converts it into a usable structure
 """
 import re
-import xml
+from xml.sax import SAXException
 from typing import Any, Dict, Tuple
 
 import untangle
@@ -95,7 +95,7 @@ def parse_xml(s: str) -> DecklistType:
             section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
             d[section][c['Name']] = d[section].get(c['Name'], 0) + int(c['Quantity'])
         return d
-    except xml.sax.SAXException as e:
+    except SAXException as e:
         raise InvalidDataException(e) from e
     except AttributeError as e:
         raise InvalidDataException(e) from e  # Not valid MTGO .deck format

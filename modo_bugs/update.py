@@ -98,10 +98,15 @@ def process_issue(issue: Issue) -> None:
 
     pd_legal = ([True for c in cards if c in pd_legal_cards()] or [False])[0]
 
-    if pd_legal and not 'Affects PD' in labels:
+    if pd_legal and 'Affects PD' not in labels:
         issue.add_to_labels('Affects PD')
     elif not pd_legal and 'Affects PD' in labels:
         issue.remove_from_labels('Affects PD')
+
+    if not feedback_link and 'Needs Forum Post' not in labels:
+        issue.add_to_labels('Needs Forum Post')
+    elif feedback_link and 'Needs Forum Post' in labels:
+        issue.remove_from_labels('Needs Forum Post')
 
     msg = issue.title
 
@@ -173,7 +178,7 @@ def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str])
     else:
         return
 
-    if not status in labels:
+    if status not in labels:
         issue.add_to_labels(status)
         labels.append(status)
         issue.create_comment(f'Daybreak has labelled this bug as {_status}')
@@ -219,7 +224,7 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
             else:
                 fail = True
 
-    if fail and not 'Invalid Card Name' in labels:
+    if fail and 'Invalid Card Name' not in labels:
         issue.add_to_labels('Invalid Card Name')
     elif not fail and 'Invalid Card Name' in labels:
         issue.remove_from_labels('Invalid Card Name')

@@ -45,6 +45,7 @@ LAYOUTS: dict[str, Layout] = {
     'leveler': Layout(),
     'meld': Layout(has_two_names=True, has_meld_back=True),
     'modal_dfc': Layout(has_two_names=True, has_single_back=True, has_two_mana_costs=True),
+    'mutate': Layout(),
     'normal': Layout(),
     'planar': Layout(playable=False),
     'prototype': Layout(),

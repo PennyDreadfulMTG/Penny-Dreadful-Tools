@@ -1,14 +1,22 @@
+import functools
+from typing import Optional
+from github import Github
+from github.Repository import Repository
 from naff.models import Embed, Extension, slash_command, Button
 
 from discordbot import command
 from discordbot.command import MtgContext, MtgInteractionContext
 from magic import fetcher
 from magic.models import Card
-from shared import fetch_tools
-from modo_bugs import repo
+from shared import configuration, fetch_tools
+from shared.pd_exception import OperationalException
+from shared.types import BugData, ForumData
 
 
 class ModoBugs(Extension):
+    """Commands for interacting with the modo-bugs repository."""
+    blacklist: set[tuple[str, str]] = set()
+
     @slash_command('modo-bug')
     async def modobug(self) -> None:
         """Our Magic Online Bug Tracker."""
@@ -45,6 +53,7 @@ class ModoBugs(Extension):
     @modobug.subcommand('queue')
     async def queue(self, ctx: MtgInteractionContext) -> None:
         """Triage unmapped forum threads"""
+        await ctx.defer()
         bugs = await fetcher.bugged_cards_async()
         forums = await fetcher.daybreak_forums_async()
         if not bugs or not forums:
@@ -54,7 +63,8 @@ class ModoBugs(Extension):
                 for f in forums.values():
                     if f['tracked']:
                         continue
-
+                    if (b['url'], f['url']) in self.blacklist:
+                        continue
                     if b['card'] in f['title']:
                         e = Embed(b['description'], b['url'] + '\n\n' + f['url'] + f'  [{f["status"]}]')
                         yes = Button(label='These are the same issue', emoji='✅', style=3)
@@ -64,12 +74,12 @@ class ModoBugs(Extension):
                         await msg.edit(components=[])
                         pressed = on_pressed.ctx
                         if yes.custom_id == pressed.custom_id:
-                            issue = repo.get_repo().get_issue(b['issue_number'])
+                            issue = get_repo().get_issue(b['issue_number'])
                             if issue is None:
                                 continue
                             issue.edit(body=issue.body + '\n\n' + f['url'])
                         elif no.custom_id == pressed.custom_id:
-                            pass
+                            self.blacklist.add((b['url'], f['url']))
 
 
     # @modobug.subcommand('still-bugged')
@@ -90,15 +100,28 @@ class ModoBugs(Extension):
     buglink.autocomplete('card')(command.autocomplete_card)  # type: ignore
 
 
-def format_bug(bug: dict[str, str]) -> str:
+def format_bug(bug: BugData) -> str:
     return f'[{bug["description"]}]({bug["url"]})'
 
-def format_post(post: dict[str, str]) -> str:
+def format_post(post: ForumData) -> str:
     return f'[{post["title"]}]({post["url"]})'
 
-def valid_thread(post: dict[str, str]) -> bool:
+def valid_thread(post: ForumData) -> bool:
     if post['tracked']:
         return False
     if post['status'] in ['Fixed', 'Not A Bug']:
         return False
     return True
+
+@functools.lru_cache
+def get_github() -> Optional[Github]:
+    if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
+        return None
+    return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
+
+@functools.lru_cache
+def get_repo() -> Repository:
+    gh = get_github()
+    if gh is not None:
+        return gh.get_repo('PennyDreadfulMTG/modo-bugs')
+    raise OperationalException

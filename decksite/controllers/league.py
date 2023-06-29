@@ -6,7 +6,8 @@ from werkzeug import wrappers
 from decksite import APP, auth
 from decksite import league as lg
 from decksite.cache import cached
-from decksite.data import deck as ds, match
+from decksite.data import deck as ds
+from decksite.data import match
 from decksite.data import person as ps
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import LeagueInfo, Report, Retire, SignUp

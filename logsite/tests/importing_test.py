@@ -2,9 +2,10 @@ import os
 
 import pytest
 
+from logsite import APP
+
 from .. import importing
 from ..data.match import Match
-from logsite import APP
 
 
 def import_log(match_id: int) -> Match:

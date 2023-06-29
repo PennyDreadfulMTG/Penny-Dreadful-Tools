@@ -14,7 +14,9 @@ from decksite.data import match as ms
 from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
-from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague, EditMatches, EditRules, PlayerNotes, Prizes, RotationChecklist, Sorters, Unlink)
+from decksite.views import (Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague,
+                            EditMatches, EditRules, PlayerNotes, Prizes, RotationChecklist,
+                            Sorters, Unlink)
 from decksite.views.archetype_search import ArchetypeSearch
 from magic.models import Deck
 from shared import dtutil

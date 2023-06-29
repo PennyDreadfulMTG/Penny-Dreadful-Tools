@@ -7,6 +7,7 @@ from magic.models import Deck
 from shared import guarantee
 from shared.container import Container
 
+
 @dataclass
 class MatchupResults:
     hero_deck_ids: List[int]

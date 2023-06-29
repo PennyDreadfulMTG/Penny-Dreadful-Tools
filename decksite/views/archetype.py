@@ -1,15 +1,14 @@
 import copy
 from typing import Any, List
-from mypy_extensions import TypedDict
 
 from flask import url_for
+from mypy_extensions import TypedDict
 
 from decksite.data import archetype as archs
 from decksite.deck_type import DeckType
 from decksite.view import View
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException
-
 
 Matchups = TypedDict('Matchups', {
     'is_matchups': bool,

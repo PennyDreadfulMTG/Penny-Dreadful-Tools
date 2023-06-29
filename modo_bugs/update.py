@@ -11,6 +11,7 @@ from github.Issue import Issue
 
 from shared import configuration
 from shared.lazy import lazy_property
+from shared.types import BugData
 
 from . import fetcher, repo, strings
 from .strings import BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX, REGEX_CARDREF
@@ -26,7 +27,7 @@ def pd_legal_cards() -> List[str]:
     return requests.get('http://pdmtgo.com/legal_cards.txt').text.split('\n')
 
 
-ALL_BUGS: List[Dict] = []
+ALL_BUGS: List[BugData] = []
 
 VERIFICATION_BY_ISSUE: Dict[int, str] = {}
 
@@ -136,17 +137,19 @@ def process_issue(issue: Issue) -> None:
 
     for card in cards:
         bannable = cat in BADCATS and 'Multiplayer' not in labels
-        bug = {
+        bug: BugData = {
             'card': card,
             'description': msg,
             'category': cat,
             'last_updated': str(issue.updated_at),
+            'issue_number': issue.number,
             'pd_legal': card in pd_legal_cards(),
             'bug_blog': False,
             'breaking': cat in BADCATS,
             'bannable': bannable,
             'url': issue.html_url,
             'support_thread': feedback_link,
+            'last_verified': VERIFICATION_BY_ISSUE.get(issue.number, None),
         }
         if 'Multiplayer' in labels:
             bug['multiplayer_only'] = True
@@ -162,8 +165,6 @@ def process_issue(issue: Issue) -> None:
             bug['help_wanted'] = True
         elif age > 60:
             bug['help_wanted'] = True
-
-        bug['last_verified'] = VERIFICATION_BY_ISSUE.get(issue.number, None)
 
         ALL_BUGS.append(bug)
 

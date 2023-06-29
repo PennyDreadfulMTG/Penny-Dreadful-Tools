@@ -10,12 +10,11 @@ import os
 import re
 from collections import OrderedDict
 from time import sleep
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Tuple, TypedDict, Union, cast
 from urllib import parse
 
 import feedparser
 import pytz
-from mypy_extensions import TypedDict
 
 from magic import layout
 from magic.abc import CardDescription, PriceDataType
@@ -26,6 +25,7 @@ from shared.container import Container
 from shared.fetch_tools import FetchException
 from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
                                  NotConfiguredException, TooFewItemsException)
+from shared.types import BugData, ForumData
 
 
 async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
@@ -66,7 +66,7 @@ async def bulk_data_uri() -> str:
     else:
         raise FetchException('Unable to find Default Cards')
 
-async def bugged_cards_async() -> Optional[List[Dict[str, Any]]]:
+async def bugged_cards_async() -> Optional[List[BugData]]:
     try:
         bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     except FetchException:
@@ -89,7 +89,7 @@ def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
     except ValueError:  # %l is not a univerally supported argument.  Fall back to %I on other platforms.
         return dtutil.now(timezone).strftime('%I:%M %p')
 
-async def daybreak_forums_async() -> Optional[dict[str, dict[str, Any]]]:
+async def daybreak_forums_async() -> Optional[dict[str, ForumData]]:
     try:
         bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/forums.json')
     except FetchException:
@@ -337,25 +337,22 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
 
-WISDateType = TypedDict('WISDateType', {
-    'exact': str,
-    'rough': str,
-})
+class WISDateType(TypedDict):
+    exact: str
+    rough: str
 
-WISSetInfoType = TypedDict('WISSetInfoType', {
-    'name': str,
-    'code': str,
-    'codename': str,
-    'mtgoCode': str,
-    'symbol': str,
-    'enterDate': WISDateType,
-    'exitDate': WISDateType,
-})
+class WISSetInfoType(TypedDict):
+    name: str
+    code: str
+    codename: str
+    mtgoCode: str
+    symbol: str
+    enterDate: WISDateType
+    exitDate: WISDateType
 
-WISSchemaType = TypedDict('WISSchemaType', {
-    'deprecated': bool,
-    'sets': List[WISSetInfoType],
-})
+class WISSchemaType(TypedDict):
+    deprecated: bool
+    sets: List[WISSetInfoType]
 
 def whatsinstandard() -> WISSchemaType:
     # if you're here to hack data because WIS isn't correct, use magic.seasons.OVERRIDES instead

@@ -22,7 +22,7 @@ def main() -> None:
             if p.url in bugs:
                 is_tracked = True
 
-            if not p.url in known and not is_tracked:
+            if p.url not in known and not is_tracked:
                 fetcher.forum_to_discord(p)
             known[p.url] = {'title': p.title, 'url': p.url, 'status': p.label, 'tracked': is_tracked}
 
@@ -30,7 +30,7 @@ def main() -> None:
         if not k['tracked']:
             if url in bugs:
                 k['tracked'] = True
-        if not url in checked and k['status'] not in ['Fixed', 'Not A Bug']:
+        if url not in checked and k['status'] not in ['Fixed', 'Not A Bug', 'No Fix Planned']:
             k['status'] = fetcher.get_daybreak_label(url)
             if k['status'] is None:
                 bad.append(url)

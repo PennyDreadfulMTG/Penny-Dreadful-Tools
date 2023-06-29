@@ -1,10 +1,11 @@
-from naff.models import Embed, Extension, slash_command
+from naff.models import Embed, Extension, slash_command, Button
 
 from discordbot import command
 from discordbot.command import MtgContext, MtgInteractionContext
 from magic import fetcher
 from magic.models import Card
 from shared import fetch_tools
+from modo_bugs import repo
 
 
 class ModoBugs(Extension):
@@ -40,6 +41,36 @@ class ModoBugs(Extension):
                 embeds.append(Embed('Needs Issue', '\n'.join(format_post(p) for p in needs_issue[:5]), footer='Either Associate this thread with our issue, or make one'))
 
         await ctx.send(embeds=embeds)
+
+    @modobug.subcommand('queue')
+    async def queue(self, ctx: MtgInteractionContext) -> None:
+        """Triage unmapped forum threads"""
+        bugs = await fetcher.bugged_cards_async()
+        forums = await fetcher.daybreak_forums_async()
+        if not bugs or not forums:
+            return
+        for b in bugs:
+            if b['support_thread'] is None:
+                for f in forums.values():
+                    if f['tracked']:
+                        continue
+
+                    if b['card'] in f['title']:
+                        e = Embed(b['description'], b['url'] + '\n\n' + f['url'] + f'  [{f["status"]}]')
+                        yes = Button(label='These are the same issue', emoji='✅', style=3)
+                        no = Button(label='These are different issues', emoji='❌', style=4)
+                        msg = await ctx.send(embed=e, components=[yes, no])
+                        on_pressed = await self.bot.wait_for_component(msg, components=[yes, no], timeout=None)
+                        await msg.edit(components=[])
+                        pressed = on_pressed.ctx
+                        if yes.custom_id == pressed.custom_id:
+                            issue = repo.get_repo().get_issue(b['issue_number'])
+                            if issue is None:
+                                continue
+                            issue.edit(body=issue.body + '\n\n' + f['url'])
+                        elif no.custom_id == pressed.custom_id:
+                            pass
+
 
     # @modobug.subcommand('still-bugged')
     # async def still(self, ctx: MtgInteractionContext) -> None:

@@ -82,7 +82,6 @@ class ModoBugs(Extension):
                         elif no.custom_id == pressed.custom_id:
                             self.blacklist.add((b['url'], f['url']))
 
-
     # @modobug.subcommand('still-bugged')
     # async def still(self, ctx: MtgInteractionContext) -> None:
     #     """Report updated bugs"""

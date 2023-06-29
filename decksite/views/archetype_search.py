@@ -1,11 +1,11 @@
 from typing import List
 
-
 from decksite import prepare
 from decksite.data import archetype
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Deck
+
 
 class ArchetypeSearch(View):
     def __init__(self, archetypes: List[Archetype], search_results: List[Deck], q: str, notq: str) -> None:

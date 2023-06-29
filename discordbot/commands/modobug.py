@@ -1,8 +1,9 @@
 import functools
 from typing import Optional
+
 from github import Github
 from github.Repository import Repository
-from naff.models import Embed, Extension, slash_command, Button
+from naff.models import Button, Embed, Extension, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext, MtgInteractionContext

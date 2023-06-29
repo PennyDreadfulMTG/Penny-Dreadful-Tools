@@ -6,9 +6,17 @@ from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, deck as ds, match, matchup as mus, person as ps, playability, season as ss
+from decksite.data import archetype as archs
+from decksite.data import card as cs
+from decksite.data import deck as ds
+from decksite.data import match
+from decksite.data import matchup as mus
+from decksite.data import person as ps
+from decksite.data import playability
+from decksite.data import season as ss
 from decksite.deck_type import DeckType
-from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons)
+from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
+                            Seasons)
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 

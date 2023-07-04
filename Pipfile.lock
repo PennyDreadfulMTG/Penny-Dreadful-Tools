@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3cd3eb846b7ef1b1575672819be6e5f9512ff4e4ddb2988ac80eab73af485b53"
+            "sha256": "044e67feb437d9ec30b1baf08cfa276a8e1a5c437b6a65697b676b582f7d9f99"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -940,11 +940,11 @@
         },
         "inflect": {
             "hashes": [
-                "sha256:518088ef414a4e15df70e6bcb40d021da4d423cc6c2fd4c0cad5500d39f86627",
-                "sha256:5a005e0c9afe152cc95d552a59b8b0c19efc51823405b43d89e984f0c33bc243"
+                "sha256:63da9325ad29da81ec23e055b41225795ab793b4ecb483be5dc1fa363fd4717e",
+                "sha256:9544afed6182176e43955c44b1acdaed30f9b2b56c16d1fc5b222d98218b546e"
             ],
             "index": "pypi",
-            "version": "==6.2.0"
+            "version": "==7.0.0"
         },
         "iniconfig": {
             "hashes": [
@@ -1667,11 +1667,11 @@
         },
         "prompt-toolkit": {
             "hashes": [
-                "sha256:23ac5d50538a9a38c8bde05fecb47d0b403ecd0662857a86f886f798563d5b9b",
-                "sha256:45ea77a2f7c60418850331366c81cf6b5b9cf4c7fd34616f733c5427e6abbb1f"
+                "sha256:04505ade687dc26dc4284b1ad19a83be2f2afe83e7a828ace0c72f3a1df72aac",
+                "sha256:9dffbe1d8acf91e3de75f3b544e4842382fc06c6babe903ac9acb74dc6e08d88"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==3.0.38"
+            "version": "==3.0.39"
         },
         "protobuf": {
             "hashes": [
@@ -2072,10 +2072,10 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:cc00e09ba8f535362cbe1ea8b8407d15d14b59c57f4190cceaf61a9e57616446",
-                "sha256:fc958b4123b155ffc069a66d3af5fe6c1f9d0600c35c0c8444b2ab4147112641"
+                "sha256:a0454ea7ad0711f63a602caa87929003a83cab89224ae1506ed44bb5be8fe7d7",
+                "sha256:cc5acbc464b106104899e9b9eb4955dd47e854753c8d4ee2ce697eaf0f4d74e1"
             ],
-            "version": "==68.0.0.0"
+            "version": "==68.0.0.1"
         },
         "typing-extensions": {
             "hashes": [

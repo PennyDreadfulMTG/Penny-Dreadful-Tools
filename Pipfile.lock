@@ -2811,11 +2811,11 @@
         },
         "types-markdown": {
             "hashes": [
-                "sha256:0930057bea0a534e06bbc021d57520720ad2a65b363612614ab0599cc7f606a9",
-                "sha256:c23a8a4dd9313539a446ba3dc673a6a920d79580c406de10a5c85a16733890a7"
+                "sha256:11e3558d50e3bc1e3f52f3fe073788f4ab917a829374fb354476221c700629e8",
+                "sha256:543ff3027fda21c3149780bf835a721cd094c5729e9a87725f180569c960bff8"
             ],
             "index": "pypi",
-            "version": "==3.4.2.9"
+            "version": "==3.4.2.10"
         },
         "types-markupsafe": {
             "hashes": [

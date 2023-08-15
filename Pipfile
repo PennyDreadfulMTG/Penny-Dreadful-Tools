@@ -93,7 +93,7 @@ Flask-SQLAlchemy = "==3.0.5"
 Markdown = "==3.4.4"
 Pillow = "==10.0.0"
 PyGithub = "==1.59.1"
-SQLAlchemy = "==2.0.19"
+SQLAlchemy = "==2.0.20"
 SQLAlchemy-Utils = "==0.41.1"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}

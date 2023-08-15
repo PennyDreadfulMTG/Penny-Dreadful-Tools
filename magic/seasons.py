@@ -37,9 +37,7 @@ OVERRIDES = {
 }
 
 def rotation_offset(code: str) -> datetime.timedelta:
-    if code not in SEASONS:
-        return datetime.timedelta(days=14)
-    if SEASONS.index(code) >= SEASONS.index('ONE'):
+    if code == 'ONE':
         return datetime.timedelta(days=14)
     return datetime.timedelta(days=7)
 

@@ -37,7 +37,7 @@ OVERRIDES = {
 }
 
 def rotation_offset(code: str) -> datetime.timedelta:
-    if code == 'ONE':
+    if code in ['ONE', 'MOM']:
         return datetime.timedelta(days=14)
     return datetime.timedelta(days=7)
 

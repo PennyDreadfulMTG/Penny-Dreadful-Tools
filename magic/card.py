@@ -129,7 +129,7 @@ def set_properties() -> TableDescription:
 
 def printing_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'system_id', 'flavor', 'artist', 'number', 'watermark', 'reserved', 'card_id', 'set_id', 'rarity_id']:
+    for k in ['id', 'system_id', 'flavor', 'artist', 'number', 'watermark', 'reserved', 'card_id', 'set_id', 'rarity_id', 'flavor_name']:
         props[k] = copy.deepcopy(BASE)
     for k in ['id', 'system_id', 'artist', 'card_id', 'set_id']:
         props[k]['nullable'] = False
@@ -177,6 +177,20 @@ def card_type_properties(typetype: str) -> TableDescription:
     props['card_id']['type'] = INTEGER
     props['card_id']['foreign_key'] = ('card', 'id')
     props['card_id']['unique_with'] = [typetype]
+    return props
+
+def card_flavor_name_properties() -> TableDescription:
+    props = {}
+    for k in ['id', 'card_id', 'flavor_name']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    for k in ['id', 'card_id']:
+        props[k]['scryfall'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['card_id']['type'] = INTEGER
+    props['card_id']['foreign_key'] = ('card', 'id')
+    props['card_id']['unique_with'] = ['flavor_name']
     return props
 
 def format_properties() -> TableDescription:

@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import json
 import os
+import re
 from typing import Any, Dict, List, Optional, Set, Union
 
 from magic import card, database, fetcher, layout, mana, seasons
@@ -218,7 +219,8 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             if p.get('layout') not in layout.uses_canonical_namespace():
                 continue
 
-            if p.get('type_line') == 'Card':
+            # Exclude "Card"s which is a whole group of weird things, and also any tokens that have a playable layout.
+            if re.search(r'\b(token|card)\b', p.get('type_line', ''), re.IGNORECASE):
                 continue
 
             rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]

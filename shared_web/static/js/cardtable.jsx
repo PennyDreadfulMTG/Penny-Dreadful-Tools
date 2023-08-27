@@ -1,6 +1,6 @@
 import { Table, renderCard, renderRecord, renderWinPercent } from "./table";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 const renderHeaderRow = (table) => (
     <tr>
@@ -63,7 +63,8 @@ const renderRow = (table, card) => (
                 showSearch={true}
                 reloadCards={true}
                 {...e.dataset}
+
             />;
-        render(table, e);
+        createRoot(e).render(table);
     }
 });

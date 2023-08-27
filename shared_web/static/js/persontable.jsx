@@ -1,6 +1,6 @@
 import { Table, renderRecord, renderWinPercent } from "./table";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 const renderHeaderRow = (table) => (
     <tr>
@@ -65,6 +65,6 @@ const renderRow = (table, person) => (
                 showSearch={true}
                 {...e.dataset}
             />;
-        render(table, e);
+        createRoot(e).render(table);
     }
 });

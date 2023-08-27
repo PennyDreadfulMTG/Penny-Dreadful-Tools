@@ -179,7 +179,7 @@ def regex_pattern(pattern: str) -> str:
     return '(?:^| )(?:mono[ -]?)?({pattern})(?: |$)'.format(pattern=pattern)
 
 def standardize_color_string(s: str) -> str:
-    colors = re.sub('mono|/|-', '', s, re.IGNORECASE).strip().lower()
+    colors = re.sub('mono|/|-', '', s, flags=re.IGNORECASE).strip().lower()
     for k in COLOR_COMBINATIONS:
         find = k.lower()
         colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))

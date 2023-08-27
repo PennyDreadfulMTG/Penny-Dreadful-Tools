@@ -61,7 +61,7 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
         await ctx.post_cards(cards, ctx.author)
 
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
-    to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.
+    to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, flags=re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.
     if scryfall_compatability_mode:
         queries = re.findall(r'(?<!\[)\[([^\]]*)\](?!\])', to_scan)  # match [card] but not [[card]]
     else:

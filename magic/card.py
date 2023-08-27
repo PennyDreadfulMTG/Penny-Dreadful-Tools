@@ -61,7 +61,7 @@ def base_query_lite_properties() -> TableDescription:
 
 def base_query_specific_properties() -> TableDescription:
     props = {}
-    for k in ['legalities', 'names', 'pd_legal', 'bugs']:
+    for k in ['legalities', 'names', 'pd_legal', 'bugs', 'flavor_names']:
         props[k] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
     props['names']['query'] = "GROUP_CONCAT(face_name ORDER BY position SEPARATOR '|') AS names"
@@ -71,6 +71,8 @@ def base_query_specific_properties() -> TableDescription:
     props['bugs']['query'] = 'pd_legal'
     props['bugs']['type'] = TEXT
     props['bugs']['query'] = 'bugs'
+    props['flavor_names']['type'] = TEXT
+    props['flavor_names']['query'] = 'flavor_names'
     return props
 
 def card_properties() -> TableDescription:
@@ -129,7 +131,7 @@ def set_properties() -> TableDescription:
 
 def printing_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'system_id', 'flavor', 'artist', 'number', 'watermark', 'reserved', 'card_id', 'set_id', 'rarity_id']:
+    for k in ['id', 'system_id', 'flavor', 'artist', 'number', 'watermark', 'reserved', 'card_id', 'set_id', 'rarity_id', 'flavor_name']:
         props[k] = copy.deepcopy(BASE)
     for k in ['id', 'system_id', 'artist', 'card_id', 'set_id']:
         props[k]['nullable'] = False
@@ -177,6 +179,20 @@ def card_type_properties(typetype: str) -> TableDescription:
     props['card_id']['type'] = INTEGER
     props['card_id']['foreign_key'] = ('card', 'id')
     props['card_id']['unique_with'] = [typetype]
+    return props
+
+def card_flavor_name_properties() -> TableDescription:
+    props = {}
+    for k in ['id', 'card_id', 'flavor_name']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    for k in ['id', 'card_id']:
+        props[k]['scryfall'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['card_id']['type'] = INTEGER
+    props['card_id']['foreign_key'] = ('card', 'id')
+    props['card_id']['unique_with'] = ['flavor_name']
     return props
 
 def format_properties() -> TableDescription:

@@ -19,6 +19,9 @@ def init(force: bool = False) -> None:
     if len(CARDS_BY_NAME) == 0 or force:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
+        for c in load_cards_with_flavor_names():
+            for fn in c.flavor_names.split('|'):
+                CARDS_BY_NAME[fn] = c
 
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
@@ -38,7 +41,7 @@ def valid_name(name: str) -> str:
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
 def load_card(name: str) -> Card:
-    return CARDS_BY_NAME.get(name, load_cards([name])[0])
+    return CARDS_BY_NAME.get(name) or load_cards([name])[0]
 
 def load_cards(names: Optional[Iterable[str]] = None, where: Optional[str] = None) -> List[Card]:
     if names == []:
@@ -62,6 +65,11 @@ def load_cards(names: Optional[Iterable[str]] = None, where: Optional[str] = Non
 
 def cards_by_name() -> Dict[str, Card]:
     return CARDS_BY_NAME
+
+def load_cards_with_flavor_names() -> List[Card]:
+    sql = multiverse.cached_base_query('c.flavor_names IS NOT NULL')
+    rs = db().select(sql)
+    return [Card(r) for r in rs]
 
 def bugged_cards() -> List[Card]:
     sql = multiverse.cached_base_query('bugs IS NOT NULL')

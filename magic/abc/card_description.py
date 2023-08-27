@@ -1,4 +1,5 @@
 from typing import Any, Dict, List
+from typing_extensions import NotRequired
 
 from mypy_extensions import TypedDict
 
@@ -31,6 +32,7 @@ CardDescription = TypedDict('CardDescription', {
     'toughness': str,
     'type_line': str,
     'watermark': str,
+    'flavor_name': NotRequired[str],
 
     # …and parts we don't. Some of these are typed other than str because of the usage in mutliverse_test which uses real data from Scryfall.
     'arena_id': str,

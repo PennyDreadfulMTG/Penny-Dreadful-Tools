@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import json
 import os
+import re
 from typing import Any, Dict, List, Optional, Set, Union
 
 from magic import card, database, fetcher, layout, mana, seasons
@@ -85,6 +86,15 @@ def base_query(where: str = '(1 = 1)') -> str:
             GROUP BY
                 cb.card_id
         ) AS bugs ON u.id = bugs.card_id
+        LEFT JOIN (
+            SELECT
+                fn.card_id,
+                GROUP_CONCAT(fn.flavor_name SEPARATOR '|') AS flavor_names
+            FROM
+                card_flavor_name AS fn
+            GROUP BY
+                fn.card_id
+        ) AS fn ON fn.card_id = u.id
         WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
         GROUP BY u.id
     """.format(
@@ -146,6 +156,7 @@ async def insert_cards(new_date: datetime.datetime, sets: List[Dict[str, Any]], 
     db().execute('DELETE FROM card_bug')
     db().execute('DELETE FROM face')
     db().execute('DELETE FROM printing')
+    db().execute('DELETE FROM card_flavor_name')
     db().execute('DELETE FROM card')
     db().execute('DELETE FROM `set`')
     for s in sets:
@@ -167,6 +178,7 @@ async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
         insert_many('card_color', card.card_color_properties(), values['card_color'])
         insert_many('card_color_identity', card.card_color_properties(), values['card_color_identity'])
     insert_many('printing', card.printing_properties(), values['printing'])
+    insert_many('card_flavor_name', card.card_flavor_name_properties(), values['flavor_name'])
     insert_many('face', card.face_properties(), values['face'], ['position'])
     if values['card_legality']:
         insert_many('card_legality', card.card_legality_properties(), values['card_legality'], ['legality'])
@@ -177,6 +189,7 @@ async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
 
 async def determine_values_async(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
     cards: Dict[str, int] = {}
+    flavor_names: dict[str, int] = {}
     card_values: List[Dict[str, Any]] = []
     face_values: List[Dict[str, Any]] = []
     meld_result_printings: List[CardDescription] = []
@@ -206,7 +219,8 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             if p.get('layout') not in layout.uses_canonical_namespace():
                 continue
 
-            if p.get('type_line') == 'Card':
+            # Exclude "Card"s which is a whole group of weird things, and also any tokens that have a playable layout.
+            if re.search(r'\b(token|card)\b', p.get('type_line', ''), re.IGNORECASE):
                 continue
 
             rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
@@ -226,6 +240,8 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             if p['name'] in cards:
                 card_id = cards[p['name']]
                 printing_values.append(printing_value(p, card_id, set_id, rarity_id))
+                if p.get('flavor_name'):
+                    flavor_names[p['flavor_name']] = card_id
                 continue
 
             card_id = next_card_id
@@ -258,12 +274,16 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
 
             cards[p['name']] = card_id
             printing_values.append(printing_value(p, card_id, set_id, rarity_id))
+            if p.get('flavor_name'):
+                flavor_names[p['flavor_name']] = card_id
         except Exception as e:
             print(f'Exception `{e}` while importing card: {repr(p)}')
             raise InvalidDataException() from e
 
     for p in meld_result_printings:
         face_values += meld_face_values(p, cards)
+
+    flavor_name_values = [{'card_id': card_id, 'flavor_name': flavor_name} for flavor_name, card_id in flavor_names.items()]
 
     return {
         'card': card_values,
@@ -272,6 +292,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         'face': face_values,
         'printing': printing_values,
         'card_legality': card_legality_values,
+        'flavor_name': flavor_name_values,
     }
 
 def face_colors(p: CardDescription) -> Set[str]:
@@ -400,6 +421,7 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['number'] = p.get('collector_number')
     result['watermark'] = p.get('watermark')
     result['reserved'] = 1 if p.get('reserved') else 0  # replace True and False with 1 and 0
+    result['flavor_name'] = p.get('flavor_name')
     return result
 
 async def set_legal_cards_async(season: Optional[str] = None) -> None:

@@ -46,7 +46,7 @@ async def fetch_async(url: str) -> str:
         async with aiohttp.ClientSession() as aios:
             response = await aios.get(url)
             return await response.text()
-    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError, aiohttp.ClientConnectorError) as e:
         raise FetchException(e) from e
 
 async def post_async_with_json(url: str, data: dict) -> str:

@@ -20,6 +20,16 @@
             ]
         },
         {
+            "name": "Run: Init Cards",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "init-cards"
+            ],
+            "stopOnEntry": true
+        },
+        {
             "name": "Run: Decksite",
             "type": "python",
             "request": "launch",

@@ -10,7 +10,7 @@ from shared.database import Database, get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 107
+SCHEMA_VERSION = 108
 DATABASE = Container()
 
 def db() -> Database:
@@ -56,6 +56,8 @@ def setup() -> None:
     sql = create_table_def('card_supertype', card.card_type_properties('supertype'))
     db().execute(sql)
     sql = create_table_def('card_subtype', card.card_type_properties('subtype'))
+    db().execute(sql)
+    sql = create_table_def('card_flavor_name', card.card_flavor_name_properties())
     db().execute(sql)
     sql = create_table_def('format', card.format_properties())
     db().execute(sql)

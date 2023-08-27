@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "./table";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 const renderHeaderRow = (table) => (
     <tr>
@@ -58,6 +58,6 @@ const renderRow = (table, entry) => (
                 searchPrompt="MTGO username"
                 {...e.dataset}
             />;
-        render(table, e);
+        createRoot(e).render(table);
     }
 });

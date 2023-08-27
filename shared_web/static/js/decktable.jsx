@@ -1,6 +1,6 @@
 import { Table, renderRecord } from "./table";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 const renderHeaderRow = (table) => (
     <tr>
@@ -98,6 +98,6 @@ const renderRow = (table, deck) => (
                 showSearch={false}
                 {...e.dataset}
             />;
-        render(table, e);
+        createRoot(e).render(table);
     }
 });

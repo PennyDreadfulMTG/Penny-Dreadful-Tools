@@ -85,6 +85,15 @@ def base_query(where: str = '(1 = 1)') -> str:
             GROUP BY
                 cb.card_id
         ) AS bugs ON u.id = bugs.card_id
+        LEFT JOIN (
+            SELECT
+                fn.card_id,
+                GROUP_CONCAT(fn.flavor_name SEPARATOR '|') AS flavor_names
+            FROM
+                card_flavor_name AS fn
+            GROUP BY
+                fn.card_id
+        ) AS fn ON fn.card_id = u.id
         WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
         GROUP BY u.id
     """.format(

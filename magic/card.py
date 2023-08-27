@@ -61,7 +61,7 @@ def base_query_lite_properties() -> TableDescription:
 
 def base_query_specific_properties() -> TableDescription:
     props = {}
-    for k in ['legalities', 'names', 'pd_legal', 'bugs']:
+    for k in ['legalities', 'names', 'pd_legal', 'bugs', 'flavor_names']:
         props[k] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
     props['names']['query'] = "GROUP_CONCAT(face_name ORDER BY position SEPARATOR '|') AS names"
@@ -71,6 +71,9 @@ def base_query_specific_properties() -> TableDescription:
     props['bugs']['query'] = 'pd_legal'
     props['bugs']['type'] = TEXT
     props['bugs']['query'] = 'bugs'
+    props['flavor_names']['type'] = TEXT
+    props['flavor_names']['query'] = "flavor_names"
+
     return props
 
 def card_properties() -> TableDescription:

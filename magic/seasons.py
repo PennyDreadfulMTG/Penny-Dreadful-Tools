@@ -11,14 +11,14 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
 SEASONS = [
-    'EMN', 'KLD',               # 2016
+    'EMN', 'KLD',                # 2016
     'AER', 'AKH', 'HOU', 'XLN',  # 2017
     'RIX', 'DOM', 'M19', 'GRN',  # 2018
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX', 'AFR', 'MID',  # 2121
     'VOW', 'NEO', 'SNC', 'DMU',  # 2022
-    'BRO', 'ONE', 'MOM', 'WOE',  # 2023
+    'BRO', 'ONE', 'MOM', 'WOE', 'LCI',  # 2023
 ]
 
 NOT_SEASONS = [

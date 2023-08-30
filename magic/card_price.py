@@ -26,7 +26,7 @@ def card_price_string(card: Card, short: bool = False) -> str:
                     s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
                 s += ')'
             age = dtutil.dt2ts(dtutil.now()) - p['time']
-            if age > 60 * 60 * 2:
+            if age > 60 * 60 * 6:
                 s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
         except TypeError as e:
             print(f'Unable to get price info string from {p} because of {e}')

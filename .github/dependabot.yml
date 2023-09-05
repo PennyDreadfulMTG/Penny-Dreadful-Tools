@@ -13,9 +13,9 @@ updates:
     timezone: Australia/Sydney
   open-pull-requests-limit: 10
   groups:
-  babel:
-    patterns:
-    - "@babel*"
+    babel:
+      patterns:
+      - "@babel*"
 - package-ecosystem: pip
   directory: "/"
   schedule:

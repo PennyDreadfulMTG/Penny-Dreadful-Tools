@@ -30,6 +30,16 @@
             "stopOnEntry": true
         },
         {
+            "name": "Run: Price-grabber",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "args": [
+                "price-grabber"
+            ],
+            "stopOnEntry": true
+        },
+        {
             "name": "Run: Decksite",
             "type": "python",
             "request": "launch",

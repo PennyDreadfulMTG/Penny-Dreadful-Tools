@@ -63,6 +63,9 @@ def name_lookup(name: str) -> str:
             rs = db().select(multiverse.base_query())
             for row in rs:
                 CARDS[card.canonicalize(row['name'])] = row['name']
+                if row['flavor_names']:
+                    for fn in row['flavor_names'].split('|'):
+                        CARDS[card.canonicalize(fn)] = row['name']
     except DatabaseException:
         tb = traceback.format_exc()
         print(tb)

@@ -16,7 +16,7 @@ async def hype(ctx: MtgContext) -> None:
     if until_rotation < datetime.timedelta(7) and last_run_time is not None:
         msg = await rotation.rotation_hype_message(True)
     if msg:
-        await ctx.send(msg, flags=MessageFlags.EPHEMERAL)
+        await ctx.send(msg)
     else:
         await ctx.send(f'{ctx.author.mention}: No rotation hype message.', flags=MessageFlags.EPHEMERAL)
 

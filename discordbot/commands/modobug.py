@@ -3,7 +3,7 @@ from typing import Optional
 
 from github import Github
 from github.Repository import Repository
-from naff.models import Button, Embed, Extension, slash_command
+from interactions.models import Button, Embed, Extension, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext, MtgInteractionContext
@@ -19,7 +19,7 @@ class ModoBugs(Extension):
     blacklist: set[tuple[str, str]] = set()
 
     @slash_command('modo-bug')
-    async def modobug(self) -> None:
+    async def modobug(self, _ctx: MtgInteractionContext) -> None:
         """Our Magic Online Bug Tracker."""
 
     @modobug.subcommand('report')

@@ -3,10 +3,11 @@ import importlib
 import inspect
 import logging
 from os import path
-from typing import Optional
+from typing import Optional, cast
 
-from naff import Client
-from naff.models import Extension, InteractionCommand, PrefixedCommand, SendableContext
+from interactions import Client, SlashContext
+from interactions.models import Extension, InteractionCommand
+from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedInjectedClient, PrefixedContext
 
 from discordbot import command
 from magic.models import Card
@@ -34,19 +35,20 @@ def scaleless_load(bot: Client, module: str) -> bool:
                 bot.add_interaction(obj)
                 n += 1
             elif isinstance(obj, PrefixedCommand):
-                bot.add_prefixed_command(obj)
+                botp = cast(PrefixedInjectedClient, bot)
+                botp.prefixed.add_command(obj)
                 n += 1
             elif isinstance(obj, Extension):
                 logging.warning(f'{module} is an Extension, but it doesnt have a setup method')
                 obj(bot)  # type: ignore
                 n += 1
     except Exception:
-        pass
+        raise
     return n > 0
 
 class CardConverter:
     @classmethod
-    async def convert(cls, ctx: SendableContext, argument: str) -> Optional[Card]:
+    async def convert(cls, ctx: PrefixedContext | SlashContext, argument: str) -> Optional[Card]:
         try:
             result, mode, printing = command.results_from_queries([argument])[0]
             if result.has_match() and not result.is_ambiguous():

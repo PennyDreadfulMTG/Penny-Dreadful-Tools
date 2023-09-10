@@ -1,4 +1,4 @@
-from naff.models import File, slash_command
+from interactions.models import File, slash_command
 
 from discordbot import emoji
 from discordbot.command import MtgContext, slash_card_option

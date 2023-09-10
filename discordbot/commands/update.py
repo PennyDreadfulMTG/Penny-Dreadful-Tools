@@ -1,5 +1,5 @@
-from naff import Client
-from naff.models import Extension, check, is_owner, slash_command
+from interactions import Client
+from interactions.models import Extension, check, is_owner, slash_command
 
 from discordbot.command import MtgContext
 from magic import multiverse, oracle, whoosh_write

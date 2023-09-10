@@ -1,13 +1,13 @@
 import random
 
-from naff.models import OptionTypes, slash_command, slash_option
+from interactions.models import OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import oracle
 
 
 @slash_command('random-card')
-@slash_option('number', 'How many cards?', OptionTypes.INTEGER)
+@slash_option('number', 'How many cards?', OptionType.INTEGER)
 async def randomcard(ctx: MtgContext, number: int = 1) -> None:
     """A random PD legal card.
 `!random X` X random PD legal cards."""

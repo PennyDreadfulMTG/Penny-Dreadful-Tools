@@ -1,7 +1,8 @@
 import logging
 import re
 
-from naff.models import OptionTypes, prefixed_command, slash_command, slash_option
+from interactions.models import OptionType, slash_command, slash_option
+from interactions.ext.prefixed_commands import prefixed_command
 
 from discordbot.command import MtgContext
 from discordbot.shared import guild_id
@@ -12,7 +13,7 @@ from shared.settings import with_config_file
 
 
 @slash_command('time')
-@slash_option('place', 'Where are you checking the time?', OptionTypes.STRING, required=True)
+@slash_option('place', 'Where are you checking the time?', OptionType.STRING, required=True)
 async def time(ctx: MtgContext, place: str) -> None:
     """Current time in location."""
     if not place:

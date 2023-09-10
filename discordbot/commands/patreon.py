@@ -1,4 +1,4 @@
-from naff.models import slash_command
+from interactions.models import slash_command
 
 from discordbot.command import MtgContext
 

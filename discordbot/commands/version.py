@@ -1,8 +1,8 @@
 import subprocess
 from importlib.metadata import version as _v
 
-from naff import Timestamp
-from naff.models import Embed, slash_command
+from interactions import Timestamp
+from interactions.models import Embed, slash_command
 
 from discordbot.command import MtgContext
 from magic import database
@@ -18,6 +18,6 @@ async def version(ctx: MtgContext) -> None:
     embed.add_field('Commit age', Timestamp.fromtimestamp(int(age)))
     scryfall = Timestamp.fromdatetime(database.last_updated())
     embed.add_field('Scryfall last updated', scryfall)
-    snekver = _v('naff')
-    embed.add_field('naff version', snekver)
+    snekver = _v('interactions.py')
+    embed.add_field('interactions version', snekver)
     await ctx.send(embed=embed)

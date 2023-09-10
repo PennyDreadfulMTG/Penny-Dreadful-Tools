@@ -1,8 +1,8 @@
 import re
 from typing import Dict, Optional
 
-from naff.client import Client
-from naff.models import PartialEmoji
+from interactions.client import Client
+from interactions.models import PartialEmoji
 
 from magic import rotation, seasons
 from magic.models import Card

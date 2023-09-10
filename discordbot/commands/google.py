@@ -1,8 +1,8 @@
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from naff.client import Client
-from naff.models import Extension, OptionTypes, slash_command, slash_option
-from naff.models.discord.enums import MessageFlags
+from interactions.client import Client
+from interactions.models import Extension, OptionType, slash_command, slash_option
+from interactions.models.discord.enums import MessageFlags
 
 from discordbot import command
 from discordbot.command import MtgContext
@@ -11,7 +11,7 @@ from shared import configuration
 
 class Google(Extension):
     @slash_command('google')
-    @slash_option('query', 'Search terms', OptionTypes.STRING, required=True)
+    @slash_option('query', 'Search terms', OptionType.STRING, required=True)
     async def google(self, ctx: MtgContext, query: str) -> None:
         """Google search"""
         api_key = configuration.cse_api_key.value

@@ -2,11 +2,11 @@
 Debug stuff
 """
 
-from naff import Extension, prefixed_command
-from naff.client import Client
-from naff.client.errors import CommandCheckFailure, ExtensionLoadException
-from naff.models import PrefixedContext, check, is_owner
-
+from interactions import Extension
+from interactions.client import Client
+from interactions.client.errors import CommandCheckFailure, ExtensionLoadException
+from interactions.models import check, is_owner
+from interactions.ext.prefixed_commands import prefixed_command, PrefixedContext
 
 class PDDebug(Extension):
     @prefixed_command('regrow')  # type: ignore
@@ -35,7 +35,7 @@ class PDDebug(Extension):
     @prefixed_command('enable_debugger')  # type: ignore
     @check(is_owner())
     async def enable_debugger(self, ctx: PrefixedContext) -> None:
-        self.bot.load_extension('naff.ext.debug_extension')
+        self.bot.load_extension('interactions.ext.debug_extension')
         await self.bot.synchronise_interactions()
         await ctx.send('Enabled')
 

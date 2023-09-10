@@ -2,9 +2,9 @@ import logging
 import traceback
 from typing import Any, Optional
 
-from naff import User
-from naff.client.errors import CommandException
-from naff.models import slash_command
+from interactions import User
+from interactions.client.errors import CommandException
+from interactions.models import slash_command
 
 from discordbot.command import MtgContext
 from shared import settings

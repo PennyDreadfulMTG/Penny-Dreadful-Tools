@@ -4,11 +4,11 @@ import logging
 import os
 import sys
 
-from naff import MISSING, Absent, Client, Extension, listen
-from naff.client.errors import Forbidden
-from naff.client.utils import timestamp_converter
-from naff.models.discord import Embed, GuildText, ScheduledEventType
-from naff.models.naff.tasks import IntervalTrigger, Task
+from interactions import MISSING, Absent, Client, Extension, listen
+from interactions.client.errors import Forbidden
+from interactions.client.utils import timestamp_converter
+from interactions.models.discord import Embed, GuildText, ScheduledEventType
+from interactions.models.internal.tasks import IntervalTrigger, Task
 
 from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
 from shared import configuration, dtutil, fetch_tools, redis_wrapper, repo

@@ -3,9 +3,10 @@ import logging
 import subprocess
 from typing import Any, Dict, List, Optional, cast
 
-from naff import Client, listen
-from naff.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
-from naff.models import ActivityType, Guild, GuildText, Intents, Member, Role
+from interactions import Client, listen
+from interactions.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
+from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
+from interactions.ext import prefixed_commands
 
 import discordbot.commands
 from discordbot import command
@@ -23,19 +24,20 @@ class Bot(Client):
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
-        intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES | Intents.GUILD_MESSAGE_CONTENT)
+        intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES | Intents.MESSAGE_CONTENT)
 
-        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, default_prefix='!',
-                         prefixed_context=command.MtgMessageContext, interaction_context=command.MtgInteractionContext,
+        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True,
+                         interaction_context=command.MtgInteractionContext,
                          **kwargs)
+        prefixed_commands.setup(self, prefixed_context=command.MtgMessageContext, default_prefix='!')
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
-            self.load_extension('naff.ext.debug_extension')
-            self.load_extension('naff.ext.jurigged')
+            self.load_extension('interactions.ext.debug_extension')
+            self.load_extension('interactions.ext.jurigged')
         self.sentry_token = configuration.get_optional_str('sentry_token')
         if self.sentry_token:
-            self.load_extension('naff.ext.sentry', token=self.sentry_token)
+            self.load_extension('interactions.ext.sentry', token=self.sentry_token)
         self.load_extension('discordbot.background')
 
     async def stop(self) -> None:

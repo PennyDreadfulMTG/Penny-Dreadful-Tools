@@ -1,8 +1,8 @@
 import math
 from typing import List, Optional, Tuple
 
-from naff import Client
-from naff.models import Extension, OptionTypes, slash_command, slash_option
+from interactions import Client
+from interactions.models import Extension, OptionType, slash_command, slash_option
 
 from discordbot.command import MtgInteractionContext, migrate_to_slash_command
 from magic import tournaments
@@ -17,17 +17,17 @@ class Swiss(Extension):
     @slash_option(
         name='num_players',
         description='number of players in the event',
-        opt_type=OptionTypes.INTEGER,
+        opt_type=OptionType.INTEGER,
         required=True)
     @slash_option(
         name='num_rounds',
         description='number of rounds of Swiss',
-        opt_type=OptionTypes.INTEGER,
+        opt_type=OptionType.INTEGER,
         required=False)
     @slash_option(
         name='top_n',
         description='number of players who make it to the elimination round (ie: Top N)',
-        opt_type=OptionTypes.INTEGER,
+        opt_type=OptionType.INTEGER,
         required=False)
     async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
         """Display the record need to reach the elimination rounds for a given tournament"""

@@ -3,8 +3,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pytest
 from _pytest.mark.structures import ParameterSet
-from naff import Client
-from naff.models import BaseCommand, Context, Guild
+from interactions import Client
+from interactions.models import BaseCommand, Context, Guild
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin

@@ -1,7 +1,8 @@
 import os
 import pathlib
 
-from naff.models import File, prefixed_command, slash_command
+from interactions.models import File, slash_command
+from interactions.ext.prefixed_commands import prefixed_command
 
 from discordbot.command import MtgContext
 

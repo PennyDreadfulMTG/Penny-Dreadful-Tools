@@ -1,5 +1,6 @@
-from naff.models import CMD_BODY, OptionTypes, prefixed_command
-from naff.models.naff.application_commands import auto_defer, slash_command, slash_option
+from interactions.models import OptionType
+from interactions.models import auto_defer, slash_command, slash_option
+from interactions.ext.prefixed_commands import prefixed_command
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext, MtgMessageContext
 from magic import fetcher, oracle
@@ -7,7 +8,7 @@ from shared import fetch_tools
 
 
 @slash_command('scry')  # type: ignore
-@slash_option('query', 'A scryfall query', OptionTypes.STRING, required=True)
+@slash_option('query', 'A scryfall query', OptionType.STRING, required=True)
 @auto_defer()
 async def search(ctx: MtgContext, query: str) -> None:
     """Card search using Scryfall."""
@@ -17,7 +18,7 @@ async def search(ctx: MtgContext, query: str) -> None:
     await ctx.post_cards(cards, ctx.author, more_results_link(query, how_many))
 
 @prefixed_command('scry')
-async def m_scry(ctx: MtgMessageContext, args: CMD_BODY) -> None:
+async def m_scry(ctx: MtgMessageContext, *, args: str) -> None:
     ctx.kwargs['query'] = args
     await search.call_callback(search.callback, ctx)
 

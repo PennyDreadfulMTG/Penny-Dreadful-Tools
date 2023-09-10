@@ -2,9 +2,10 @@ import textwrap
 from typing import Dict, Optional, Tuple
 
 import inflect
-from naff.client import Client
-from naff.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionTypes, prefixed_command,
+from interactions.client import Client
+from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType,
                          slash_command, slash_option)
+from interactions.ext.prefixed_commands import prefixed_command
 
 from discordbot import command
 from discordbot.command import MtgContext
@@ -246,7 +247,7 @@ class ExplainCog(Extension):
     @slash_option(
         name='thing',
         description='Thing to be explained',
-        opt_type=OptionTypes.STRING,
+        opt_type=OptionType.STRING,
         required=False,
         choices=[command.make_choice(x.lower()) for x in keys])
     async def explain(self, ctx: MtgContext, thing: Optional[str] = None) -> None:

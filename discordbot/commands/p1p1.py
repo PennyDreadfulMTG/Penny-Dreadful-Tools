@@ -1,6 +1,6 @@
 import random
 
-from naff.models import Buckets, max_concurrency, slash_command
+from interactions.models import Buckets, max_concurrency, slash_command
 
 from discordbot.command import MtgInteractionContext
 from magic import image_fetcher, oracle

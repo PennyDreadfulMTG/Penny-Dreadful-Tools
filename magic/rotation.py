@@ -55,14 +55,17 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
         return (0, 0, [])
     with open(fs[-1], 'r') as f:
         latest_list = f.read().splitlines()
+    cs = oracle.cards_by_name()
     for filename in fs:
         for line in get_file_contents(filename):
             line = text.sanitize(line)
-            lines.append(line.strip())
+            line = line.strip()
+            if c := cs.get(line):
+                line = c.name
+            lines.append(line)
     scores = Counter(lines).most_common()
     runs = scores[0][1]
     runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
-    cs = oracle.cards_by_name()
     cards = []
     card_names_by_status: Dict[str, List[str]] = {}
     for name, hits in scores:

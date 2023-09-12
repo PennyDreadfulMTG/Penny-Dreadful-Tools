@@ -189,12 +189,13 @@ async def scryfall_last_updated_async() -> datetime.datetime:
         raise InvalidDataException('Scryfall data is not JSON') from e
     raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
-def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str]]:
+def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, list[str], list[CardDescription]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion.
+       third member is a list of the full card data of said cards.
        Supply exhaustive=True to instead retrieve the full list (potentially very slow)."""
     if query == '':
-        return False, []
+        return False, [], []
     redis_key = f'scryfall:query:{query}:' + ('exhaustive' if exhaustive else 'nonexhaustive')
     cached = redis.get_list(redis_key)
     result_data: List[Dict]
@@ -212,9 +213,9 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
                     print(c)
             if 'code' in result_json.keys():  # The API returned an error
                 if result_json['status'] == 404:  # No cards found
-                    return False, []
+                    return False, [], []
                 print('Error fetching scryfall data:\n', result_json)
-                return False, []
+                return False, [], []
             for warning in result_json.get('warnings', []):  # scryfall-provided human-readable warnings
                 print(warning)  # Why aren't we displaying these to the user?
             result_data += result_json['data']
@@ -233,7 +234,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    return total_cards, result_cardnames
+    return total_cards, result_cardnames, result_data
 
 async def dreadrise_count_cards(query: str) -> Tuple[int, Optional[str]]:
     """

@@ -198,7 +198,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, list[str
         return False, [], []
     redis_key = f'scryfall:query:{query}:' + ('exhaustive' if exhaustive else 'nonexhaustive')
     cached = redis.get_list(redis_key)
-    result_data: List[Dict]
+    result_data: List[CardDescription]
     if cached:
         total_cards, result_data = int(cached[0]), cached[1]
     else:
@@ -227,7 +227,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, list[str
         redis.store(redis_key, [total_cards, result_data], ex=3600)
     result_data.sort(key=lambda x: x['legalities']['penny'])
 
-    def get_frontside(scr_card: Dict) -> str:
+    def get_frontside(scr_card: CardDescription) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         if scr_card['layout'] in layout.has_two_names() and not scr_card['layout'] in layout.uses_two_names() and not scr_card['layout'] in layout.has_meld_back():

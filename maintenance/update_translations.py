@@ -32,10 +32,10 @@ def run() -> None:
 
     # Compile .po files into .mo files
     validate_translations.ad_hoc()
-    compiler = compile_catalog()
+    compiler = compile_catalog()  # type: ignore
     compiler.directory = os.path.join('shared_web', 'translations')
-    compiler.domain = ['messages']
-    compiler.run()
+    compiler.domain = 'messages'
+    compiler.run()  # type: ignore
     # hack for English - We need an empty folder so that Enlish shows up in the 'Known Languages' list.
     path = os.path.join('shared_web', 'translations', 'en', 'LC_MESSAGES')
     if not os.path.exists(path):

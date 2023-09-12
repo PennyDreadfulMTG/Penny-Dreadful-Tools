@@ -11,7 +11,7 @@ from shared import fetch_tools
 @auto_defer()
 async def search(ctx: MtgContext, query: str) -> None:
     """Card search using Scryfall."""
-    how_many, cardnames = fetcher.search_scryfall(query)
+    how_many, cardnames, _results = fetcher.search_scryfall(query)
     cbn = oracle.cards_by_name()
     cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
     await ctx.post_cards(cards, ctx.author, more_results_link(query, how_many))

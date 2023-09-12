@@ -5,6 +5,8 @@ from typing import Optional
 from babel.messages import pofile
 from babel.messages.catalog import Catalog, Message
 
+from shared.pd_exception import InvalidDataException
+
 
 def ad_hoc() -> None:
     for directory, _, files in os.walk(os.path.join('shared_web', 'translations')):
@@ -24,11 +26,14 @@ def validate_pofile(path: str) -> None:
         pofile.write_po(f, catalog)
 
 def validate_string(message: Message, catalog: Catalog) -> None:
+    if not isinstance(message.id, str):
+        raise InvalidDataException('Unexpected id type: {0}'.format(repr(message.id)))
+
     if isinstance(message.string, str):
         warning = has_missing_var(message.id, message.string)
         if warning:
             error(message, catalog, warning)
-    else:
+    elif isinstance(message.string, list):
         for x in range(len(message.string)):
             s = message.string[x]
             try:
@@ -39,6 +44,8 @@ def validate_string(message: Message, catalog: Catalog) -> None:
             if warning:
                 error(message, catalog, warning)
                 return
+    else:
+        raise InvalidDataException('Unexpected string type: {0}'.format(repr(message.string)))
 
 
 def has_missing_var(english: str, string: str) -> Optional[str]:

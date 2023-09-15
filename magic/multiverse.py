@@ -22,13 +22,13 @@ FORMAT_IDS: Dict[str, int] = {}
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
                'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
 
-def init() -> bool:
-    return asyncio.run(init_async())
+def init(force: bool = False) -> bool:
+    return asyncio.run(init_async(force))
 
-async def init_async() -> bool:
+async def init_async(force: bool = False) -> bool:
     try:
         last_updated = await fetcher.scryfall_last_updated_async()
-        if last_updated > database.last_updated():
+        if last_updated > database.last_updated() or force:
             if configuration.prevent_cards_db_updates.get():
                 print('Not updating cards db because prevent_cards_db_updates is True')
                 return False
@@ -119,6 +119,15 @@ def base_query_lite() -> str:
             ORDER BY
                 f.card_id, f.position
         ) AS u
+        LEFT JOIN (
+            SELECT
+                fn.card_id,
+                GROUP_CONCAT(fn.flavor_name SEPARATOR '|') AS flavor_names
+            FROM
+                card_flavor_name AS fn
+            GROUP BY
+                fn.card_id
+        ) AS fn ON fn.card_id = u.id
         GROUP BY u.id
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()),
@@ -459,6 +468,12 @@ async def set_legal_cards_async(season: Optional[str] = None) -> None:
         if row['name'] in new_list:
             legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
                                                                           card_id=row['id']))
+        elif row['flavor_names']:
+            for fn in row['flavor_names'].split('|'):
+                if fn in new_list:
+                    legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
+                                                                                  card_id=row['id']))
+                    break
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
              VALUES {values}""".format(values=', '.join(legal_cards))
 

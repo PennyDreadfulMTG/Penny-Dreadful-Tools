@@ -22,13 +22,13 @@ FORMAT_IDS: Dict[str, int] = {}
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
                'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
 
-def init() -> bool:
-    return asyncio.run(init_async())
+def init(force: bool = False) -> bool:
+    return asyncio.run(init_async(force))
 
-async def init_async() -> bool:
+async def init_async(force: bool = False) -> bool:
     try:
         last_updated = await fetcher.scryfall_last_updated_async()
-        if last_updated > database.last_updated():
+        if last_updated > database.last_updated() or force:
             if configuration.prevent_cards_db_updates.get():
                 print('Not updating cards db because prevent_cards_db_updates is True')
                 return False

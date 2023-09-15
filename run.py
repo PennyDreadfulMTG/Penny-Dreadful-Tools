@@ -104,6 +104,7 @@ def modo_bugs(argv: Tuple[str]) -> None:
 def init_cards() -> None:
     from magic import multiverse
     success = multiverse.init()
+    multiverse.rebuild_cache()
     sys.exit(0 if success else 1)
 
 

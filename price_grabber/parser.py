@@ -52,6 +52,8 @@ def repair_name(name: str) -> str:
         name = 'Pang Tong, "Young Phoenix"'
     elif name.endswith(' - Sketch'):
         name = name[:-9]
+    elif name == 'Sticker Goblin':
+        name = '_____ Goblin'
     return name
 
 def is_exceptional_name(name: str) -> bool:

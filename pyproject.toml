@@ -32,4 +32,3 @@ select = [
 "modo_bugs/*" = ["T201"]
 "run.py" = ["T201"]
 "analysis/*" = ["T201"]
-

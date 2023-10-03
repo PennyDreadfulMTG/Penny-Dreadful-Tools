@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Optional
 
 from interactions.ext.prefixed_commands import prefixed_command
 

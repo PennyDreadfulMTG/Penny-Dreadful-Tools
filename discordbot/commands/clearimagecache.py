@@ -8,7 +8,7 @@ from discordbot.command import MtgContext
 from shared import configuration
 
 
-@slash_command('clearimagecache')  # type: ignore
+@slash_command('clearimagecache')
 @check(is_owner())
 async def clearimagecache(ctx: MtgContext) -> None:
     """Deletes all the cached images.  Use sparingly"""

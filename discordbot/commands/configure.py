@@ -39,7 +39,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
         raise ConfigError(configuring)
 
     with settings.with_config_file(configuring):
-        settings.SETTINGS[key].set(value)
+        settings.SETTINGS[key].set(value)  # type: ignore
 
 @configure.error
 async def configure_error(ctx: MtgContext, error: Exception) -> None:

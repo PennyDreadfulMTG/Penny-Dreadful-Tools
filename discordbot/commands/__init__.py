@@ -41,7 +41,7 @@ def scaleless_load(bot: Client, module: str) -> bool:
                 n += 1
             elif isinstance(obj, Extension):
                 logging.warning(f'{module} is an Extension, but it doesnt have a setup method')
-                obj(bot)  # type: ignore
+                obj(bot)
                 n += 1
     except Exception:
         raise

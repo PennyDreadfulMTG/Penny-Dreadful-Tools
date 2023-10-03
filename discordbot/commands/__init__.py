@@ -6,8 +6,9 @@ from os import path
 from typing import Optional, cast
 
 from interactions import Client, SlashContext
+from interactions.ext.prefixed_commands import (PrefixedCommand, PrefixedContext,
+                                                PrefixedInjectedClient)
 from interactions.models import Extension, InteractionCommand
-from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedInjectedClient, PrefixedContext
 
 from discordbot import command
 from magic.models import Card

@@ -5,8 +5,8 @@ from typing import Any, Dict, List, Optional, cast
 
 from interactions import Client, listen
 from interactions.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
-from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
 from interactions.ext import prefixed_commands
+from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
 
 import discordbot.commands
 from discordbot import command

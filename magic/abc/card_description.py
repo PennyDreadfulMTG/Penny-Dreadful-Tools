@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
-from typing_extensions import NotRequired
 
 from mypy_extensions import TypedDict
+from typing_extensions import NotRequired
 
 SetCode = str
 

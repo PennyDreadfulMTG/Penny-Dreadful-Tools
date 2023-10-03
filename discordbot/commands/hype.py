@@ -1,7 +1,7 @@
 import datetime
 
-from interactions.models import MessageFlags, slash_command
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import MessageFlags, slash_command
 
 from discordbot.command import MtgContext
 from magic import rotation, seasons

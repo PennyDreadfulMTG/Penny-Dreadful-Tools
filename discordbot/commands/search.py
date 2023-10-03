@@ -1,13 +1,12 @@
-from interactions.models import OptionType
-from interactions.models import auto_defer, slash_command, slash_option
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import OptionType, auto_defer, slash_command, slash_option
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext, MtgMessageContext
 from magic import fetcher, oracle
 from shared import fetch_tools
 
 
-@slash_command('scry')  # type: ignore
+@slash_command('scry')
 @slash_option('query', 'A scryfall query', OptionType.STRING, required=True)
 @auto_defer()
 async def search(ctx: MtgContext, query: str) -> None:

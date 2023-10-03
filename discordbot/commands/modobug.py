@@ -97,7 +97,7 @@ class ModoBugs(Extension):
         msg = '<{base_url}?utf8=%E2%9C%93&q=is%3Aissue+%22{name}%22>'.format(base_url=base_url, name=fetch_tools.escape(card.name))
         await ctx.send(msg)
 
-    buglink.autocomplete('card')(command.autocomplete_card)  # type: ignore
+    buglink.autocomplete('card')(command.autocomplete_card)
 
 
 def format_bug(bug: BugData) -> str:

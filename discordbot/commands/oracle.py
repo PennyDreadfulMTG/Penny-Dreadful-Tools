@@ -13,7 +13,7 @@ class Oracle(Extension):
         """Oracle text of a card."""
         await ctx.single_card_text(card, oracle_text)
 
-    oracle.autocomplete('card')(autocomplete_card)  # type: ignore
+    oracle.autocomplete('card')(autocomplete_card)
 
     m_o = command.alias_message_command_to_slash_command(oracle, name='o')
 

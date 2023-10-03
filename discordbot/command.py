@@ -9,10 +9,10 @@ import attr
 import whoosh
 from interactions import Client
 from interactions.client.errors import Forbidden
-from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType, Extension, DM, DMGroup,
-                         File, InteractionCommand, InteractionContext, Member, Message,
-                         OptionType, User, slash_option)
-from interactions.ext.prefixed_commands import PrefixedCommand, prefixed_command, PrefixedContext
+from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, prefixed_command
+from interactions.models import (DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType,
+                                 DMGroup, Extension, File, InteractionCommand, InteractionContext,
+                                 Member, Message, OptionType, User, slash_option)
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
@@ -244,7 +244,7 @@ async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: st
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
     choices = [*set(choices)]
-    await ctx.send(choices=list(make_choice(c) for c in choices[:20]))  # type: ignore
+    await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
 
 def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) -> PrefixedCommand:
     """

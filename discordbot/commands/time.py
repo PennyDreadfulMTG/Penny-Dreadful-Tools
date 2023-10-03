@@ -1,8 +1,8 @@
 import logging
 import re
 
-from interactions.models import OptionType, slash_command, slash_option
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from discordbot.shared import guild_id

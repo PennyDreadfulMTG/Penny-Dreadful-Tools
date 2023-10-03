@@ -3,9 +3,9 @@ from typing import Dict, Optional, Tuple
 
 import inflect
 from interactions.client import Client
-from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType,
-                         slash_command, slash_option)
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command,
+                                 slash_option)
 
 from discordbot import command
 from discordbot.command import MtgContext

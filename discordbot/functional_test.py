@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pytest
 from _pytest.mark.structures import ParameterSet
 from interactions import Client
-from interactions.models import BaseCommand, Context, Guild
+from interactions.models import BaseCommand, BaseContext, Guild
 
 from discordbot.bot import Bot
 from discordbot.command import MtgMixin
@@ -17,7 +17,7 @@ def discordbot() -> Bot:
     bot.cache.guild_cache[207281932214599682] = Guild(client=bot, id=207281932214599682, name='PDM', owner_id=154363842451734528, preferred_locale='en-US')
     return bot
 
-class ContextForTests(Context, MtgMixin):
+class ContextForTests(BaseContext, MtgMixin):
     sent = False
     sent_args = False
     sent_file = False

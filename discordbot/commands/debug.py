@@ -5,11 +5,12 @@ Debug stuff
 from interactions import Extension
 from interactions.client import Client
 from interactions.client.errors import CommandCheckFailure, ExtensionLoadException
+from interactions.ext.prefixed_commands import PrefixedContext, prefixed_command
 from interactions.models import check, is_owner
-from interactions.ext.prefixed_commands import prefixed_command, PrefixedContext
+
 
 class PDDebug(Extension):
-    @prefixed_command('regrow')  # type: ignore
+    @prefixed_command('regrow')
     @check(is_owner())
     async def regrow(self, ctx: PrefixedContext, module: str) -> None:
         try:
@@ -32,7 +33,7 @@ class PDDebug(Extension):
             return
         raise
 
-    @prefixed_command('enable_debugger')  # type: ignore
+    @prefixed_command('enable_debugger')
     @check(is_owner())
     async def enable_debugger(self, ctx: PrefixedContext) -> None:
         self.bot.load_extension('interactions.ext.debug_extension')

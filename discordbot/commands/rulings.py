@@ -1,6 +1,5 @@
 from interactions.client import Client
-from interactions.models import Extension
-from interactions.models import auto_defer, slash_command
+from interactions.models import Extension, auto_defer, slash_command
 
 from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic import fetcher
@@ -9,14 +8,14 @@ from shared import fetch_tools
 
 
 class Rulings(Extension):
-    @slash_command('rulings')  # type: ignore
+    @slash_command('rulings')
     @slash_card_option()
     @auto_defer()
     async def rulings(self, ctx: MtgContext, card: Card) -> None:
         """Rulings for a card."""
         await ctx.single_card_text(card, card_rulings)
 
-    rulings.autocomplete('card')(autocomplete_card)  # type: ignore
+    rulings.autocomplete('card')(autocomplete_card)
 
 def card_rulings(c: Card) -> str:
     raw_rulings = fetcher.rulings(c.name)

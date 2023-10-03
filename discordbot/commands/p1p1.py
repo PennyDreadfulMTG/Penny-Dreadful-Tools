@@ -6,7 +6,7 @@ from discordbot.command import MtgInteractionContext
 from magic import image_fetcher, oracle
 
 
-@slash_command('p1p1')  # type: ignore
+@slash_command('p1p1')
 @max_concurrency(Buckets.GUILD, 1)
 async def p1p1(ctx: MtgInteractionContext) -> None:
     """`!p1p1` Summon a pack 1, pick 1 game."""

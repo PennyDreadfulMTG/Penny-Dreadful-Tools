@@ -1,7 +1,7 @@
 
 from interactions.client.client import Client
-from interactions.models import Extension, slash_command
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import Extension, slash_command
 
 from discordbot.command import MtgContext, migrate_to_slash_command
 from magic import fetcher, tournaments

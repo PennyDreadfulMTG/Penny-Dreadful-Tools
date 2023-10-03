@@ -20,7 +20,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
     if isinstance(ctx.author, User):
         await ctx.send("Can't configure DMs right now, sorry")
         return
-    if not ctx.author.guild_permissions.manage_channels:
+    if not ctx.author.guild_permissions.MANAGE_CHANNELS:
         await ctx.send("You don't have permsssion to configure this server.")
         return
     if scope == 'channel':

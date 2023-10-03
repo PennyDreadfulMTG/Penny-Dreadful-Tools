@@ -7,7 +7,7 @@ from shared import configuration
 
 
 class Update(Extension):
-    @slash_command('update')  # type: ignore
+    @slash_command('update')
     @check(is_owner())
     async def update(self, ctx: MtgContext) -> None:
         """Forces an update to legal cards and bugs."""

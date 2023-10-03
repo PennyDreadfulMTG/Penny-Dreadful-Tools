@@ -1,6 +1,6 @@
 from interactions import Client
-from interactions.models import Extension, slash_command
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import Extension, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext, autocomplete_card, slash_card_option

@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
-from interactions.models import TYPE_MESSAGEABLE_CHANNEL, BaseContext, GuildText, InteractionContext
+from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, BaseContext, GuildText,
+                                 InteractionContext)
 
 
 def guild_id(ctx: Union[BaseContext, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optional[int]:

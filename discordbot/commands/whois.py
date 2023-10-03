@@ -2,8 +2,8 @@ import re
 from typing import Any, Dict
 
 from interactions import Client
-from interactions.models import Extension, OptionType, User, slash_command, slash_option
 from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import Extension, OptionType, User, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import fetcher

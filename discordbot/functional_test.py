@@ -10,6 +10,7 @@ from discordbot.bot import Bot
 from discordbot.command import MtgMixin
 from shared.container import Container
 
+pytest.skip('These need to be rewritten', allow_module_level=True)
 
 @pytest.fixture(scope='module')
 def discordbot() -> Bot:

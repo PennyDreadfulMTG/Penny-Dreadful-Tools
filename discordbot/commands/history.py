@@ -1,7 +1,8 @@
 from typing import Dict
 
-from naff import Client
-from naff.models import Extension, prefixed_command, slash_command
+from interactions import Client
+from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import Extension, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext

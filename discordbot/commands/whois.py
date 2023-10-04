@@ -1,8 +1,9 @@
 import re
 from typing import Any, Dict
 
-from naff import Client
-from naff.models import Extension, OptionTypes, User, prefixed_command, slash_command, slash_option
+from interactions import Client
+from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import Extension, OptionType, User, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from magic import fetcher
@@ -23,13 +24,13 @@ class Whois(Extension):
         await ctx.send(msg)
 
     @slash_command('whois', sub_cmd_name='mtgo', sub_cmd_description='Info about a MTGO player')
-    @slash_option('username', 'The username of the MTGO player', OptionTypes.STRING, required=True)
+    @slash_option('username', 'The username of the MTGO player', OptionType.STRING, required=True)
     async def whois_mtgo(self, ctx: MtgContext, username: str) -> None:
         msg = await whois_mtgo(username)
         await ctx.send(msg)
 
     @whois_mtgo.subcommand(sub_cmd_name='discord', sub_cmd_description='Info about a Discord user')
-    @slash_option('mention', 'The mention of the Discord user', OptionTypes.USER, required=True)
+    @slash_option('mention', 'The mention of the Discord user', OptionType.USER, required=True)
     async def whois_discord(self, ctx: MtgContext, mention: User) -> None:
         msg = await whois_discord(mention)
         await ctx.send(msg)

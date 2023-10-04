@@ -1,16 +1,15 @@
 import re
 from typing import Dict, Optional
 
-from naff.models.naff.application_commands import (OptionTypes, auto_defer, slash_command,
-                                                   slash_option)
+from interactions.models.internal import OptionType, auto_defer, slash_command, slash_option
 
 from discordbot.command import MtgInteractionContext, roughly_matches
 from magic import fetcher
 from shared import fetch_tools
 
 
-@slash_command('resources')  # type: ignore
-@slash_option('resource', 'Your query', OptionTypes.STRING)
+@slash_command('resources')
+@slash_option('resource', 'Your query', OptionType.STRING)
 @auto_defer()
 async def resources(ctx: MtgInteractionContext, resource: Optional[str]) -> None:
     """Useful pages related to `args`."""

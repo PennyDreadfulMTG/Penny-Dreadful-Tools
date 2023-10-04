@@ -1,5 +1,6 @@
 
-from naff import Client, Extension, prefixed_command
+from interactions import Client, Extension
+from interactions.ext.prefixed_commands import prefixed_command
 
 from discordbot.command import MtgMessageContext
 

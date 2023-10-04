@@ -7,12 +7,12 @@ from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
 import whoosh
-from naff import CMD_BODY, DM, Client, DMGroup
-from naff.client.errors import Forbidden
-from naff.models import (TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelTypes, Extension,
-                         File, InteractionCommand, InteractionContext, Member, Message,
-                         OptionTypes, PrefixedCommand, PrefixedContext, User, prefixed_command,
-                         slash_option)
+from interactions import Client
+from interactions.client.errors import Forbidden
+from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, prefixed_command
+from interactions.models import (DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType,
+                                 DMGroup, Extension, File, InteractionCommand, InteractionContext,
+                                 Member, Message, OptionType, User, slash_option)
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
@@ -43,7 +43,7 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
     if 'gatherer.wizards.com' in ctx.message.content.lower():
         return
-    compat = False and ctx.channel.type == ChannelTypes.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
+    compat = False and ctx.channel.type == ChannelType.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
     queries = parse_queries(ctx.message.content, compat)
     if len(queries) > 0:
         try:
@@ -213,7 +213,7 @@ def slash_card_option(param: str = 'card') -> Callable:
             name=param,
             description='Name of a Card',
             required=True,
-            opt_type=OptionTypes.STRING,
+            opt_type=OptionType.STRING,
             autocomplete=False,
         )(func)
 
@@ -227,7 +227,7 @@ def slash_card_option(param: str = 'card') -> Callable:
 
 #     return wrapper
 
-def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
+def make_choice(value: str, name: Optional[str] = None) -> Dict[str, Union[int, float, str]]:
     return {
         'name': (name or value)[:100],
         'value': value[:100],
@@ -244,7 +244,7 @@ async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: st
     choices.extend(results.other_prefixed)
     choices.extend(results.fuzzy)
     choices = [*set(choices)]
-    await ctx.send(choices=list(make_choice(c) for c in choices[:20]))  # type: ignore
+    await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
 
 def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) -> PrefixedCommand:
     """
@@ -266,11 +266,11 @@ def alias_message_command_to_slash_command(command: InteractionCommand, param: s
     This is a horrible hack.  Use it if a slash command takes one multiword argument
     """
 
-    async def wrapper(_scale: Extension, ctx: MtgMessageContext, body: CMD_BODY) -> None:
+    async def wrapper(_scale: Extension, ctx: MtgMessageContext) -> None:
         if nag:
             await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
 
-        ctx.kwargs[param] = body
+        ctx.kwargs[param] = ctx.content_parameters
         await command.call_callback(command.callback, ctx)
 
     if name is None:

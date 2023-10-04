@@ -1,5 +1,5 @@
-# from naff.models.checks import is_owner
-from naff.models import prefixed_command  # ,check
+# from interactions.models.checks import is_owner
+from interactions.ext.prefixed_commands import prefixed_command
 
 from discordbot.command import MtgContext
 from shared import redis_wrapper

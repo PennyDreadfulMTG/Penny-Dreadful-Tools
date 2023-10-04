@@ -1,7 +1,7 @@
 from typing import Optional
 
-from naff import Client, Extension
-from naff.models import OptionTypes, slash_command, slash_option
+from interactions import Client, Extension
+from interactions.models import OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from shared import repo
@@ -9,8 +9,8 @@ from shared import repo
 
 class Bug(Extension):
     @slash_command('bug')
-    @slash_option('title', 'One sentence description of the issue', OptionTypes.STRING, required=True)
-    @slash_option('body', 'More info', OptionTypes.STRING)
+    @slash_option('title', 'One sentence description of the issue', OptionType.STRING, required=True)
+    @slash_option('body', 'More info', OptionType.STRING)
     async def bug(self, ctx: MtgContext, title: str, body: Optional[str] = None) -> None:
         """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `/modobug`."""
         text = title
@@ -23,8 +23,8 @@ class Bug(Extension):
             await ctx.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
 
     @slash_command('gbug')
-    @slash_option('title', 'One sentence description of the issue', OptionTypes.STRING, required=True)
-    @slash_option('body', 'More info', OptionTypes.STRING)
+    @slash_option('title', 'One sentence description of the issue', OptionType.STRING, required=True)
+    @slash_option('body', 'More info', OptionType.STRING)
     async def gatherlingbug(self, ctx: MtgContext, title: str, body: Optional[str] = None) -> None:
         """Report a Gatherling bug."""
         text = title

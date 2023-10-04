@@ -1,14 +1,14 @@
 import glob
 import os
 
-from naff import check, is_owner
-from naff.models import slash_command
+from interactions import check, is_owner
+from interactions.models import slash_command
 
 from discordbot.command import MtgContext
 from shared import configuration
 
 
-@slash_command('clearimagecache')  # type: ignore
+@slash_command('clearimagecache')
 @check(is_owner())
 async def clearimagecache(ctx: MtgContext) -> None:
     """Deletes all the cached images.  Use sparingly"""

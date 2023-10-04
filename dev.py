@@ -189,8 +189,10 @@ def reset_db() -> None:
 def dev_db() -> None:
     # reset_db()
     print('>>>> Downloading dev db')
-    import requests
     import gzip
+
+    import requests
+
     import decksite.database
     r = requests.get('https://pennydreadfulmagic.com/static/dev-db.sql.gz')
     r.raise_for_status()

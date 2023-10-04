@@ -1,0 +1,34 @@
+[tool.ruff]
+exclude = [
+    ".git",
+    "__pycache__",
+    "src",
+]
+ignore = [
+    "E402",
+    "E501",
+    "E713",
+]
+select = [
+    "E",
+    "F",
+    "T2",
+    "W",
+]
+
+[tool.ruff.per-file-ignores]
+"rotation_script/*" = ["T201"]
+"shared/*" = ["T201"]
+"maintenance/*" = ["T201"]
+"magic/*" = ["T201"]
+"price_grabber/*" = ["T201"]
+"dev.py" = ["T201"]
+"generate_readme.py" = ["T201"]
+"logsite/*" = ["T201"]
+"conftest.py" = ["T201"]
+"build.py" = ["T201"]
+"*_test.py" = ["T201"]
+"magic/multiverse.py" = ["T201"]
+"modo_bugs/*" = ["T201"]
+"run.py" = ["T201"]
+"analysis/*" = ["T201"]

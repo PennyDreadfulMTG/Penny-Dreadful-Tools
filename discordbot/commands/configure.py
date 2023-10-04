@@ -2,9 +2,9 @@ import logging
 import traceback
 from typing import Any, Optional
 
-from naff import User
-from naff.client.errors import CommandException
-from naff.models import slash_command
+from interactions import User
+from interactions.client.errors import CommandException
+from interactions.models import slash_command
 
 from discordbot.command import MtgContext
 from shared import settings
@@ -20,13 +20,13 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
     if isinstance(ctx.author, User):
         await ctx.send("Can't configure DMs right now, sorry")
         return
-    if not ctx.author.guild_permissions.manage_channels:
+    if not ctx.author.guild_permissions.MANAGE_CHANNELS:
         await ctx.send("You don't have permsssion to configure this server.")
         return
     if scope == 'channel':
         configuring = ctx.channel.id
     elif scope in ['server', 'guild']:
-        configuring = ctx.channel.guild.id
+        configuring = ctx.channel.guild.id  # type: ignore
     else:
         await ctx.send('You need to configure one of `server` or `channel`.')
         return
@@ -39,7 +39,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
         raise ConfigError(configuring)
 
     with settings.with_config_file(configuring):
-        settings.SETTINGS[key].set(value)
+        settings.SETTINGS[key].set(value)  # type: ignore
 
 @configure.error
 async def configure_error(ctx: MtgContext, error: Exception) -> None:

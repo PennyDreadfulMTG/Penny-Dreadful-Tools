@@ -1,7 +1,8 @@
 import os
 import pathlib
 
-from naff.models import File, prefixed_command, slash_command
+from interactions.ext.prefixed_commands import prefixed_command
+from interactions.models import File, slash_command
 
 from discordbot.command import MtgContext
 
@@ -13,4 +14,4 @@ async def mana(ctx: MtgContext) -> None:
         img = File(f)
         await ctx.send(file=img)
 
-m_mana = prefixed_command(mana.callback)  # type: ignore
+m_mana = prefixed_command('mana')(mana.callback)

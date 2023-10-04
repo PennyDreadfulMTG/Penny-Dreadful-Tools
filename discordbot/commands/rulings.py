@@ -1,6 +1,5 @@
-from naff.client import Client
-from naff.models import Extension
-from naff.models.naff.application_commands import auto_defer, slash_command
+from interactions.client import Client
+from interactions.models import Extension, auto_defer, slash_command
 
 from discordbot.command import MtgContext, autocomplete_card, slash_card_option
 from magic import fetcher
@@ -9,7 +8,7 @@ from shared import fetch_tools
 
 
 class Rulings(Extension):
-    @slash_command('rulings')  # type: ignore
+    @slash_command('rulings')
     @slash_card_option()
     @auto_defer()
     async def rulings(self, ctx: MtgContext, card: Card) -> None:

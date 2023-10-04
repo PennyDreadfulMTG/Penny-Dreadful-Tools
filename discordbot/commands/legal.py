@@ -1,5 +1,5 @@
-from naff import Client
-from naff.models import Extension, slash_command
+from interactions import Client
+from interactions.models import Extension, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext

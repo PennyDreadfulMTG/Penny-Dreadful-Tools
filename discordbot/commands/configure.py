@@ -26,7 +26,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
     if scope == 'channel':
         configuring = ctx.channel.id
     elif scope in ['server', 'guild']:
-        configuring = ctx.channel.guild.id
+        configuring = ctx.channel.guild.id  # type: ignore
     else:
         await ctx.send('You need to configure one of `server` or `channel`.')
         return

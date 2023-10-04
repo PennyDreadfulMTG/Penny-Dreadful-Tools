@@ -227,7 +227,7 @@ def slash_card_option(param: str = 'card') -> Callable:
 
 #     return wrapper
 
-def make_choice(value: str, name: Optional[str] = None) -> Dict[str, str]:
+def make_choice(value: str, name: Optional[str] = None) -> Dict[str, Union[int, float, str]]:
     return {
         'name': (name or value)[:100],
         'value': value[:100],

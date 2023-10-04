@@ -15,7 +15,7 @@ class Price(Extension):
         """Price information for a card."""
         await ctx.single_card_text(card, card_price.card_price_string)
 
-    price.autocomplete('card')(autocomplete_card)
+    price.autocomplete('card')(autocomplete_card)  # type: ignore
 
     m_price = command.migrate_to_slash_command(price)
     m_pr = prefixed_command('pr')(m_price.callback)

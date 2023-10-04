@@ -14,4 +14,4 @@ async def mana(ctx: MtgContext) -> None:
         img = File(f)
         await ctx.send(file=img)
 
-m_mana = prefixed_command(mana.callback)
+m_mana = prefixed_command('mana')(mana.callback)

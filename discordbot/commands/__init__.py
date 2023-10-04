@@ -39,10 +39,6 @@ def scaleless_load(bot: Client, module: str) -> bool:
                 botp = cast(PrefixedInjectedClient, bot)
                 botp.prefixed.add_command(obj)
                 n += 1
-            elif isinstance(obj, Extension):
-                logging.warning(f'{module} is an Extension, but it doesnt have a setup method')
-                obj(bot)
-                n += 1
     except Exception:
         raise
     return n > 0

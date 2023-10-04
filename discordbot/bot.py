@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import subprocess
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional
 
 from interactions import Client, listen
 from interactions.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
@@ -61,7 +61,7 @@ class Bot(Client):
         if event.message.channel is None:
             logging.warn(f'Got Message with no channel: {event.message}')
 
-        ctx = cast(command.MtgMessageContext, await self.get_context(event.message))  # Casting, because we overrode the base class
+        ctx = command.MtgMessageContext.from_message(self, event.message)
         await command.respond_to_card_names(ctx)
 
     @listen()

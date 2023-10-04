@@ -23,7 +23,7 @@ class Art(Extension):
             else:
                 await ctx.send('{author}: Could not get image.'.format(author=ctx.author.mention))
 
-    art.autocomplete('card')(command.autocomplete_card)
+    art.autocomplete('card')(command.autocomplete_card)  # type: ignore
 
     m_art = command.alias_message_command_to_slash_command(art)
 

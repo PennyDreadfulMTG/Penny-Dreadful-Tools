@@ -14,7 +14,7 @@ class Flavour(Extension):
         """Flavor text of a card"""
         await ctx.single_card_text(card, flavor_text)
 
-    flavor.autocomplete('card')(command.autocomplete_card)
+    flavor.autocomplete('card')(command.autocomplete_card)  # type: ignore
 
     m_flavor = command.alias_message_command_to_slash_command(flavor)
 

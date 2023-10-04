@@ -15,7 +15,7 @@ class Rulings(Extension):
         """Rulings for a card."""
         await ctx.single_card_text(card, card_rulings)
 
-    rulings.autocomplete('card')(autocomplete_card)
+    rulings.autocomplete('card')(autocomplete_card)  # type: ignore
 
 def card_rulings(c: Card) -> str:
     raw_rulings = fetcher.rulings(c.name)

@@ -58,6 +58,7 @@ def run() -> None:
     run_number = process(all_prices)
     if run_number == rotation.TOTAL_RUNS:
         make_final_list()
+        do_push()
 
     try:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
@@ -103,15 +104,19 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
     return n
 
 def make_final_list() -> None:
-    planes = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
-    bad_names = [p['name'] for p in planes]
+    _num, planes, _res = fetcher.search_scryfall('t:plane%20or%20t:phenomenon', True)
+    bad_names = planes
     bad_names.extend(BANNED_CARDS)
+    renames = prepare_flavornames()
+
     files = rotation.files()
     lines: List[str] = []
     for line in fileinput.input(files):
         line = text.sanitize(line)
         if line.strip() in bad_names:
             continue
+        if line.strip() in renames:
+            line = renames[line.strip()] + '\n'
         lines.append(line)
     scores = Counter(lines).most_common()
 
@@ -130,7 +135,18 @@ def make_final_list() -> None:
     h.write(''.join(final))
     h.close()
 
-    do_push()
+def prepare_flavornames() -> Dict[str, str]:
+    _num, _names, flavored = fetcher.search_scryfall('is:flavor_name', True)
+    renames = {}
+    for c in flavored:
+        if c['layout'] == 'reversible_card':
+            renames[c['card_faces'][0]['flavor_name']] = c['card_faces'][0]['name']
+            renames[c['card_faces'][1]['flavor_name']] = c['card_faces'][1]['name']
+        else:
+            # So far, we don't need to worry about DFCs with flavor names, as none are available on MTGO.
+            # In the future, we may need to adjust this code to match pricefiles
+            renames[c.get('flavor_name') or c['card_faces'][0].get('flavor_name')] = c['name']
+    return renames
 
 def do_push() -> None:
     print('Pushing to Github...', flush=True)

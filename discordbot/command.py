@@ -99,7 +99,7 @@ def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str, Op
 def complex_search(query: str) -> List[Card]:
     if query == '':
         return []
-    _, cardnames = fetcher.search_scryfall(query)
+    _num, cardnames, _results = fetcher.search_scryfall(query)
     cbn = oracle.cards_by_name()
     return [cbn[name] for name in cardnames if cbn.get(name) is not None]
 

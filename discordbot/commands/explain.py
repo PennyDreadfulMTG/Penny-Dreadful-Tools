@@ -209,6 +209,14 @@ explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
         """,
         {},
     ),
+    'draws': (
+        """
+        Penny Dreadful tournaments follow official Magic Online tournament rules and do not allow intentional draws, unlike some other player-run events.
+        """,
+        {
+            'More Tournament Info': fetcher.decksite_url('/tournaments/'),
+        },
+    ),
 }
 keys = sorted(explanations.keys())
 

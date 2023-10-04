@@ -3,7 +3,7 @@ import re
 import unicodedata
 from typing import Dict, List, Optional, Tuple
 
-from mypy_extensions import TypedDict
+from typing_extensions import TypedDict
 
 from magic import layout
 
@@ -57,6 +57,9 @@ def base_query_lite_properties() -> TableDescription:
     props['names'] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
     props['names']['query'] = "GROUP_CONCAT(face_name ORDER BY position SEPARATOR '|') AS names"
+    props['flavor_names'] = copy.deepcopy(BASE)
+    props['flavor_names']['type'] = TEXT
+    props['flavor_names']['query'] = 'flavor_names'
     return props
 
 def base_query_specific_properties() -> TableDescription:

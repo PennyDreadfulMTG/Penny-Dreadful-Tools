@@ -101,9 +101,11 @@ def modo_bugs(argv: Tuple[str]) -> None:
     main.run(argv)
 
 @cli.command()
-def init_cards() -> None:
+@click.option('--force', is_flag=True, help='Force a rebuild of the database')
+def init_cards(force: bool = False) -> None:
     from magic import multiverse
-    success = multiverse.init()
+    success = multiverse.init(force=force)
+    multiverse.rebuild_cache()
     sys.exit(0 if success else 1)
 
 

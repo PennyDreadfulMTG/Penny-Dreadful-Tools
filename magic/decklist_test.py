@@ -802,3 +802,28 @@ def test_maindeck_not_sideboard() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 0
+
+def test_vivify_universes_beyond() -> None:
+    s = """
+        4 Negan, the Cold-Blooded
+        56 Swamp
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    v = decklist.vivify(d)
+    assert v.maindeck[0].name == 'Malik, Grim Manipulator'
+    assert v.maindeck[0].n == 4
+    assert v.maindeck[1].name == 'Swamp'
+    assert v.maindeck[1].n == 56
+
+    s = """
+        4 Malik, Grim Manipulator
+        56 Swamp
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    v = decklist.vivify(d)
+    assert v.maindeck[0].name == 'Malik, Grim Manipulator'
+    assert v.maindeck[0].n == 4
+    assert v.maindeck[1].name == 'Swamp'
+    assert v.maindeck[1].n == 56

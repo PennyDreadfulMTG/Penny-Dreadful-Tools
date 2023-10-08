@@ -107,7 +107,10 @@ def vivify(decklist: DecklistType) -> Deck:
     for section in ['maindeck', 'sideboard']:
         for name, n in decklist.get(section, {}).items():
             try:
-                validated[section][oracle.valid_name(name)] = n
+                canonical_name = oracle.valid_name(name)
+                if validated[section].get(canonical_name):
+                    raise InvalidDataException(f'More than one entry for {canonical_name} in {section}')
+                validated[section][canonical_name] = n
             except InvalidDataException:
                 invalid_names.add(name)
     if invalid_names:

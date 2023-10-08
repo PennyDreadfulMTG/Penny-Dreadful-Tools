@@ -25,7 +25,7 @@ def init(force: bool = False) -> None:
 
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
-        return name
+        return CARDS_BY_NAME[name].name
     try:
         front = name[0:name.index('/')].strip()
     except ValueError:

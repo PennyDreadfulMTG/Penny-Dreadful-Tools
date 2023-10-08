@@ -39,7 +39,17 @@ PROFANITY_WHITELIST = [
     'weenie',
     'kill',
     'god',
-    'rape',
+    'hell',
+    'weed',
+]
+
+PROFANITY_BLACKLIST = [
+    'supremacia ariana',
+    'fisting',
+    'retarded',
+    'erection',
+    'hoe',
+    'hoes',
 ]
 
 ABBREVIATIONS = {
@@ -213,7 +223,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
 
 def remove_profanity(name: str) -> str:
     profanity.load_censor_words(whitelist_words=PROFANITY_WHITELIST)
-    profanity.add_censor_words(['supremacia ariana', 'fisting', 'retarded', 'erection'])
+    profanity.add_censor_words(PROFANITY_BLACKLIST)
     name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name)  # We just replaced profanity with a space so compress spaces.
     return name

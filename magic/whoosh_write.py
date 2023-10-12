@@ -3,6 +3,7 @@ from typing import List
 
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import FileIndex, create_in, open_dir
+from anyascii import anyascii
 
 from magic import fetcher, layout, multiverse
 from magic.models import Card
@@ -41,6 +42,9 @@ def update_index(index: FileIndex, cards: List[Card]) -> None:
         if card.name == 'Waste Land' or card.name == 'Bind // Liberate':
             # Skip a couple of CMB1 cards that counterfeit "real" cards.
             continue
+        asciiname = anyascii(card.name)
+        if asciiname != card.name:
+            names.append(asciiname)
         for name in names:
             document = {}
             document['id'] = card.id

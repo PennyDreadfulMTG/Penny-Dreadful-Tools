@@ -41,6 +41,8 @@ types-toml = "*"
 types-typed-ast = "*"
 pipfile = "*"
 types-freezegun = "*"
+fonttools = "*"
+brotli = "*"
 
 [packages]
 aiohttp = "*"

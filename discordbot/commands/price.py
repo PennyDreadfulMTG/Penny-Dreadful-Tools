@@ -17,7 +17,7 @@ class Price(Extension):
 
     price.autocomplete('card')(autocomplete_card)  # type: ignore
 
-    m_price = command.migrate_to_slash_command(price)
+    m_price = command.alias_message_command_to_slash_command(price)
     m_pr = prefixed_command('pr')(m_price.callback)
     m_p = prefixed_command('p')(m_price.callback)
 

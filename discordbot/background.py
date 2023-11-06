@@ -9,6 +9,7 @@ from interactions.client.errors import Forbidden
 from interactions.client.utils import timestamp_converter
 from interactions.models.discord import Embed, GuildText, ScheduledEventType
 from interactions.models.internal.tasks import IntervalTrigger, Task
+import requests
 
 from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
 from shared import configuration, dtutil, fetch_tools, redis_wrapper, repo
@@ -257,7 +258,31 @@ class BackgroundTasks(Extension):
 
     @Task.create(IntervalTrigger(hours=12))
     async def background_task_mos_premodern(self) -> None:
-        pass
+        def message(begin, end, league_number):
+            msg = ('Hello CPL players!\nThe current Premodern League '
+                'is "**Premodern Monthly League {league_number}**".\n\n'
+                '**The event will run from {begin} to {end}**.\n\n'
+                'You can register for this league by going to Gatherling.com '
+                '> Player CP > Active Events > Join League {league_number}.')
+            return msg.format(begin=begin.strftime('%m/%d'),
+                      end=end.strftime('%m/%d'),
+                      league_number=league_number)
+
+        the_date = datetime.date(2023, 11, 4)
+        league_length = 13 #the 14th day is counted, inclusively.
+        the_end = datetime.timedelta(days=league_length) + the_date
+
+        if datetime.date.today() > the_end:
+            the_date = datetime.date.today()
+            the_end = the_date + datetime.timedelta(days=league_length) + the_date
+        #Get league number from active events on gatherling.com.
+        r = requests.get('https://gatherling.com/api.php?action=active_events')
+        the_json = r.json()
+        league_number = 0
+        for k in the_json:
+            if k['series'] == "Pre-Modern Monthly League":
+                league_number = f"{k['season']}.{k['number']}"
+        await self.mos_premodern_channel.send(message(the_date, the_end, league_number))
 
 
 def setup(bot: Client) -> None:

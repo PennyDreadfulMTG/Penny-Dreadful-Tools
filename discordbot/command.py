@@ -348,13 +348,12 @@ class MtgMixin:
     async def post_nothing(self: 'MtgContext') -> None:  # type: ignore
         await post_nothing(self)
 
-@attr.define
+@attr.define(init=False)
 class MtgInteractionContext(InteractionContext, MtgMixin):
     pass
 
-@attr.define
+@attr.define(init=False)
 class MtgMessageContext(PrefixedContext, MtgMixin):
     pass
-
 
 MtgContext = Union[MtgMessageContext, MtgInteractionContext]

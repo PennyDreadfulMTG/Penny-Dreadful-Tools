@@ -352,8 +352,10 @@ class MtgMixin:
 class MtgInteractionContext(InteractionContext, MtgMixin):
     pass
 
+
 @attr.define(init=False)
 class MtgMessageContext(PrefixedContext, MtgMixin):
     pass
+
 
 MtgContext = Union[MtgMessageContext, MtgInteractionContext]

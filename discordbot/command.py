@@ -251,9 +251,10 @@ def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) ->
     Maintaining prefixed commands is painful and buggy.  Sometimes we just need to turn them off.
     """
     async def wrapper(_scale: Extension, ctx: MtgMessageContext) -> None:
-        await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
         if soft:
             await command.call_callback(command.callback, ctx)
+        else:
+            await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
 
     if isinstance(command.name, str):
         name = command.name
@@ -347,11 +348,12 @@ class MtgMixin:
     async def post_nothing(self: 'MtgContext') -> None:  # type: ignore
         await post_nothing(self)
 
-@attr.define
+@attr.define(init=False)
 class MtgInteractionContext(InteractionContext, MtgMixin):
     pass
 
-@attr.define
+
+@attr.define(init=False)
 class MtgMessageContext(PrefixedContext, MtgMixin):
     pass
 

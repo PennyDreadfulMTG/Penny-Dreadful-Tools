@@ -133,6 +133,11 @@ async def gatherling_whois(name: Optional[str] = None, discord_id: Optional[str]
     data = await fetch_tools.fetch_json_async(url)
     return Container(data)
 
+async def gatherling_active_events() -> List[Container]:
+    url = 'https://gatherling.com/api.php?action=active_events'
+    data: dict = await fetch_tools.fetch_json_async(url)
+    return [Container(d) for d in data.values()]
+
 def hq_artcrops() -> Dict[str, Tuple[str, int]]:
     with open('hq_artcrops.json') as f:
         return json.load(f)

@@ -27,6 +27,7 @@ class BackgroundTasks(Extension):
         await self.prepare_tournaments()
         await self.prepare_hype()
         await self.prepare_league_end()
+        await self.prepare_mos()
 
     @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
@@ -234,6 +235,57 @@ class BackgroundTasks(Extension):
         if timer < 300:
             timer = 300
         return IntervalTrigger(timer)
+
+    async def prepare_mos(self) -> None:
+        """
+        Reminders for the Magic Online Society discord.
+        """
+        tournament_channel_id = configuration.get_int('mos_premodern_channel_id')
+        if not tournament_channel_id:
+            logging.warning('mos_premodern channel is not configured')
+            return
+        try:
+            channel = await self.bot.fetch_channel(tournament_channel_id)
+        except Forbidden:
+            channel = None
+            configuration.write('mos_premodern_channel_id', 0)
+
+        if not isinstance(channel, GuildText):
+            logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
+            return
+        self.mos_premodern_channel = channel
+        self.background_task_mos_premodern.start()
+
+    @Task.create(IntervalTrigger(hours=12))
+    async def background_task_mos_premodern(self) -> None:
+        def message(begin: datetime.date, end: datetime.date, league_number: str) -> str:
+            msg = ('Hello CPL players!\nThe current Premodern League '
+                   'is "**Premodern Monthly League {league_number}**".\n\n'
+                   '**The event will run from {begin} to {end}**.\n\n'
+                   'You can register for this league by going to Gatherling.com '
+                   '> Player CP > Active Events > Join League {league_number}.')
+            return msg.format(begin=begin.strftime('%m/%d'),
+                              end=end.strftime('%m/%d'),
+                              league_number=league_number)
+
+        # Get league number from active events on gatherling.com.
+        the_json = await fetcher.gatherling_active_events()
+        league = None
+        for k in the_json:
+            if k['series'] == 'Pre-Modern Monthly League':
+                league = k
+                league_number = f"{k['season']}.{k['number']}"
+
+        if league is None:
+            logging.warning('No premodern league active')
+            return
+
+        the_date = dtutil.parse(league['start'], dtutil.GATHERLING_FORMAT, dtutil.GATHERLING_TZ).date()
+        league_length = 13  # The 14th day is counted, inclusively.
+        the_end = datetime.timedelta(days=league_length) + the_date
+
+        await self.mos_premodern_channel.send(message(the_date, the_end, league_number))
+
 
 def setup(bot: Client) -> None:
     BackgroundTasks(bot)

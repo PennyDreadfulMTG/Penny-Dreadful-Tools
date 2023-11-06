@@ -235,5 +235,30 @@ class BackgroundTasks(Extension):
             timer = 300
         return IntervalTrigger(timer)
 
+    async def prepare_mos(self) -> None:
+        """
+        Reminders for the Magic Online Society discord.
+        """
+        tournament_channel_id = configuration.get_int('mos_premodern_channel_id')
+        if not tournament_channel_id:
+            logging.warning('mos_premodern channel is not configured')
+            return
+        try:
+            channel = await self.bot.fetch_channel(tournament_channel_id)
+        except Forbidden:
+            channel = None
+            configuration.write('mos_premodern_channel_id', 0)
+
+        if not isinstance(channel, GuildText):
+            logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
+            return
+        self.mos_premodern_channel = channel
+        self.background_task_mos_premodern.start()
+
+    @Task.create(IntervalTrigger(hours=12))
+    async def background_task_mos_premodern(self) -> None:
+        pass
+
+
 def setup(bot: Client) -> None:
     BackgroundTasks(bot)

@@ -130,6 +130,7 @@ DEFAULTS: Dict[str, Any] = {
     # the first variable is used for requests, the second variable is used for links displayed to user
     'dreadrise_url': 'https://penny.dreadrise.xyz',
     'dreadrise_public_url': 'https://penny.dreadrise.xyz',
+    'mos_premodern_channel_id': '921967538907271258',
 }
 
 def get_optional_str(key: str) -> Optional[str]:

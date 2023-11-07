@@ -7,7 +7,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
 import whoosh
-from interactions import Client, global_autocomplete
+from interactions import Client, SlashContext, global_autocomplete
 from interactions.client.errors import Forbidden
 from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, prefixed_command
 from interactions.models import (DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType,
@@ -350,7 +350,7 @@ class MtgMixin:
         await post_nothing(self)
 
 @attr.define(init=False)
-class MtgInteractionContext(InteractionContext, MtgMixin):
+class MtgInteractionContext(SlashContext, MtgMixin):
     pass
 
 

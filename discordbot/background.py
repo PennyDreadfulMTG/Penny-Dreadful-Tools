@@ -272,7 +272,7 @@ class BackgroundTasks(Extension):
         the_json = await fetcher.gatherling_active_events()
         league = None
         for k in the_json:
-            if k['series'] == 'Pre-Modern Monthly League':
+            if k['series'] == 'Pre-Modern Monthly League' and k['mainstruct'] == 'League':
                 league = k
                 league_number = f"{k['season']}.{k['number']}"
 

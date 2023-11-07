@@ -40,6 +40,8 @@ class Bot(Client):
             self.load_extension('interactions.ext.sentry', token=self.sentry_token)
         self.load_extension('discordbot.background')
 
+        self.add_global_autocomplete(command.autocomplete_card)
+
     async def stop(self) -> None:
         await super().stop()
 

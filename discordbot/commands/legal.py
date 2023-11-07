@@ -13,8 +13,6 @@ class Legal(Extension):
         """Announce whether the specified card is legal or not."""
         await ctx.single_card_text(card, lambda c: '')
 
-    legal.autocomplete('card')(command.autocomplete_card)  # type: ignore
-
     m_legal = command.alias_message_command_to_slash_command(legal)
 
 def setup(bot: Client) -> None:

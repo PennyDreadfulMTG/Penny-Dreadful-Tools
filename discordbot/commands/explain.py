@@ -2,13 +2,13 @@ import textwrap
 from typing import Dict, Optional, Tuple
 
 import inflect
+from interactions import AutocompleteContext
 from interactions.client import Client
 from interactions.ext.prefixed_commands import prefixed_command
 from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command,
                                  slash_option)
 
-from discordbot import command
-from discordbot.command import MtgContext
+from discordbot.command import MtgContext, MtgMessageContext, make_choice
 from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
 
@@ -256,8 +256,8 @@ class ExplainCog(Extension):
         name='thing',
         description='Thing to be explained',
         opt_type=OptionType.STRING,
-        required=False,
-        choices=[command.make_choice(x.lower()) for x in keys])
+        required=True,
+        autocomplete=True)
     async def explain(self, ctx: MtgContext, thing: Optional[str] = None) -> None:
         """Answers for Frequently Asked Questions"""
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
@@ -289,8 +289,17 @@ class ExplainCog(Extension):
             s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
         await ctx.send(s)
 
-    async def reroute(self, ctx: MtgContext) -> None:
-        await ctx.send(f'{ctx.author.mention} Please use /explain')
+    @explain.autocomplete('thing')
+    async def autocomplete_thing(self, ctx: AutocompleteContext) -> None:
+        thing = ctx.input_text
+        if not thing:
+            await ctx.send(choices=list(make_choice(k) for k in keys[:20]))
+            return
+        choices = [k for k in keys if k.lower().startswith(thing.lower())]
+        await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
+
+    async def reroute(self, ctx: MtgMessageContext) -> None:
+        await self.explain.callback(ctx, ctx.content_parameters)
 
     m_explain = prefixed_command('explain')(reroute)
 

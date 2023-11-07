@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 
-from interactions import MISSING, Absent, Client, Extension, listen
+from interactions import MISSING, Absent, Client, Extension, TimeTrigger, listen
 from interactions.client.errors import Forbidden
 from interactions.client.utils import timestamp_converter
 from interactions.models.discord import Embed, GuildText, ScheduledEventType
@@ -256,7 +256,7 @@ class BackgroundTasks(Extension):
         self.mos_premodern_channel = channel
         self.background_task_mos_premodern.start()
 
-    @Task.create(IntervalTrigger(hours=12))
+    @Task.create(TimeTrigger(hour=12) | TimeTrigger(hour=0))
     async def background_task_mos_premodern(self) -> None:
         def message(begin: datetime.date, end: datetime.date, league_number: str) -> str:
             msg = ('Hello CPL players!\nThe current Premodern League '

@@ -7,7 +7,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 import attr
 import whoosh
-from interactions import Client
+from interactions import Client, global_autocomplete
 from interactions.client.errors import Forbidden
 from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, prefixed_command
 from interactions.models import (DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType,
@@ -214,7 +214,7 @@ def slash_card_option(param: str = 'card') -> Callable:
             description='Name of a Card',
             required=True,
             opt_type=OptionType.STRING,
-            autocomplete=False,
+            autocomplete=True,
         )(func)
 
     return wrapper
@@ -233,7 +233,8 @@ def make_choice(value: str, name: Optional[str] = None) -> Dict[str, Union[int, 
         'value': value[:100],
     }
 
-async def autocomplete_card(scale: Extension, ctx: AutocompleteContext, card: str) -> None:
+@global_autocomplete('card')
+async def autocomplete_card(ctx: AutocompleteContext, card: str) -> None:
     if not card:
         await ctx.send(choices=[])
         return

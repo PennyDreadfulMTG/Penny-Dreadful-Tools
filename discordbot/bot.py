@@ -27,7 +27,7 @@ class Bot(Client):
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES | Intents.MESSAGE_CONTENT)
 
         super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True,
-                         interaction_context=command.MtgInteractionContext,
+                         slash_context=command.MtgInteractionContext,
                          **kwargs)
         prefixed_commands.setup(self, prefixed_context=command.MtgMessageContext, default_prefix='!')
         self.achievement_cache: Dict[str, Dict[str, str]] = {}

@@ -20,7 +20,7 @@ def channel_id(ctx: Union[BaseContext, TYPE_MESSAGEABLE_CHANNEL, None]) -> Optio
         if ctx.channel is None:
             if isinstance(ctx, InteractionContext):
                 # Not sure why this happens
-                return ctx.data.get('channel_id')
+                return ctx.channel_id
             return None
         return ctx.channel.id
     return ctx.id

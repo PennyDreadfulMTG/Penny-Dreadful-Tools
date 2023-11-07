@@ -8,7 +8,7 @@ from interactions.ext.prefixed_commands import prefixed_command
 from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command,
                                  slash_option)
 
-from discordbot.command import MtgContext, make_choice
+from discordbot.command import MtgContext, MtgMessageContext, make_choice
 from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
 
@@ -298,7 +298,7 @@ class ExplainCog(Extension):
         choices = [k for k in keys if k.lower().startswith(thing.lower())]
         await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
 
-    async def reroute(self, ctx: MtgContext) -> None:
+    async def reroute(self, ctx: MtgMessageContext) -> None:
         await self.explain.callback(ctx, ctx.content_parameters)
 
     m_explain = prefixed_command('explain')(reroute)

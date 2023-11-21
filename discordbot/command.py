@@ -295,7 +295,9 @@ class MtgMixin:
             return
 
         not_pd = configuration.get_list('not_pd')
-        if str(self.channel.id) in not_pd:
+        if not self.channel:
+            pass  # Not sure how we got here, but it happened
+        elif str(self.channel.id) in not_pd:
             show_legality = False
         elif not isinstance(self.channel, (DM, DMGroup)) and str(self.channel.guild.id) in not_pd:
             show_legality = False

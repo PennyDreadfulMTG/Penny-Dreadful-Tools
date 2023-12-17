@@ -2343,10 +2343,11 @@
         },
         "wcwidth": {
             "hashes": [
-                "sha256:77f719e01648ed600dfa5402c347481c0992263b81a027344f3e1ba25493a704",
-                "sha256:8705c569999ffbb4f6a87c6d1b80f324bd6db952f5eb0b95bc07517f4c1813d4"
+                "sha256:f01c104efdf57971bcb756f054dd58ddec5204dd15fa31d6503ea57947d97c02",
+                "sha256:f26ec43d96c8cbfed76a5075dac87680124fa84e0855195a6184da9c187f133c"
             ],
-            "version": "==0.2.8"
+            "index": "pypi",
+            "version": "==0.2.12"
         },
         "werkzeug": {
             "hashes": [

@@ -44,7 +44,7 @@ types-freezegun = "*"
 
 [packages]
 aiohttp = "*"
-anytree = "==2.9.0"
+anytree = "==2.12.1"
 astroid = "==3.0.2"
 attrs = "==23.1.0"
 beautifulsoup4 = "==4.12.2"

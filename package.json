@@ -24,7 +24,7 @@
     "@babel/core": "^7.23.6",
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-react": "^7.23.3",
-    "axios": "^1.6.2",
+    "axios": "^1.6.3",
     "babel-preset-env": "^1.7.0",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1"

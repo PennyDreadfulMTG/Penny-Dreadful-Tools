@@ -21,8 +21,8 @@
     "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues"
   },
   "dependencies": {
-    "@babel/core": "^7.23.6",
-    "@babel/preset-env": "^7.23.6",
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.7",
     "@babel/preset-react": "^7.23.3",
     "axios": "^1.6.3",
     "babel-preset-env": "^1.7.0",

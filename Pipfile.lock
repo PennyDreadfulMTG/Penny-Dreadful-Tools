@@ -2842,11 +2842,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:1591a09430a3035326da5fdb71692d0b3cc36b25a440cc5929ca6241f3984705",
-                "sha256:746e6c25b8c48b3c8ab9efe7f68022839111de423d35ba4b206b88b12d75f233"
+                "sha256:3658c9e36e9cb003e522655b01b9ca39bd0db61b6383b3e7d0d10d14f873b338",
+                "sha256:c83908b4925583e973eb9971ef2bd60dbab647611e10e9cd588d2bef415bfe68"
             ],
             "index": "pypi",
-            "version": "==1.16.21.9"
+            "markers": "python_version >= '3.8'",
+            "version": "==1.16.21.20240106"
         },
         "types-toml": {
             "hashes": [

@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.7",
-    "@babel/preset-env": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
     "@babel/preset-react": "^7.23.3",
     "axios": "^1.6.5",
     "babel-preset-env": "^1.7.0",

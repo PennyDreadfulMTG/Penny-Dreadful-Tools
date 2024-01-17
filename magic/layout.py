@@ -37,6 +37,7 @@ LAYOUTS: dict[str, Layout] = {
     'adventure': Layout(has_two_names=True, has_two_mana_costs=True),
     'art_series': Layout(playable=False, uses_canonical_namespace=False),
     'augment': Layout(playable=False),
+    'case': Layout(),
     'class': Layout(),
     'double_faced_token': Layout(playable=False, has_two_names=True, has_single_back=True, uses_canonical_namespace=False),
     'emblem': Layout(playable=False),

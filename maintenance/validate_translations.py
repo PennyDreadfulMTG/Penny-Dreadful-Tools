@@ -26,7 +26,7 @@ def validate_pofile(path: str) -> None:
         pofile.write_po(f, catalog)
 
 def validate_string(message: Message, catalog: Catalog) -> None:
-    if not isinstance(message.id, str):
+    if not isinstance(message.id, (str, tuple)):
         raise InvalidDataException('Unexpected id type: {0}'.format(repr(message.id)))
 
     if isinstance(message.string, str):

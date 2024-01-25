@@ -48,6 +48,8 @@ def set_body_field(body: str, field: str, value: str) -> str:
     return f'{body}\n{line}'
 
 def get_body_field(body: str, field: str) -> Optional[str]:
+    if body is None:
+        return None
     regex = r'^' + field + r': (.*)$'
     m = re.search(regex, body, re.MULTILINE)
     if m:

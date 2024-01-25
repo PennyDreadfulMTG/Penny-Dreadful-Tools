@@ -26,7 +26,7 @@ def validate_pofile(path: str) -> None:
         pofile.write_po(f, catalog)
 
 def validate_string(message: Message, catalog: Catalog) -> None:
-    if not isinstance(message.id, str):
+    if not isinstance(message.id, (str, tuple)):
         raise InvalidDataException('Unexpected id type: {0}'.format(repr(message.id)))
 
     if isinstance(message.string, str):
@@ -48,7 +48,9 @@ def validate_string(message: Message, catalog: Catalog) -> None:
         raise InvalidDataException('Unexpected string type: {0}'.format(repr(message.string)))
 
 
-def has_missing_var(english: str, string: str) -> Optional[str]:
+def has_missing_var(english: str | tuple, string: str) -> Optional[str]:
+    if isinstance(english, tuple):
+        return None
     for m in re.findall(r'\{\w+\}', english):
         if m not in string:
             return 'Variable {m} missing from translation'.format(m=m)

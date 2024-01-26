@@ -28,13 +28,8 @@ def fetch() -> None:
             s = ftfy.fix_encoding(s)
             timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
             all_prices[url] = parser.parse_cardhoarder_prices(s)
-    url = configuration.get_str('mtgotraders_url')
-    if url:
-        s = fetch_tools.fetch(url)
-        timestamps.append(dtutil.dt2ts(dtutil.now()))
-        all_prices['mtgotraders'] = parser.parse_mtgotraders_prices(s)
     if not timestamps:
-        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.cardhoarder_urls.get(), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
+        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.cardhoarder_urls.get()), all_prices=all_prices))
     count = store(min(timestamps), all_prices)
     cleanup(count)
 

@@ -3,7 +3,6 @@ from typing import Any, Dict, List
 
 from dateutil.relativedelta import FR, relativedelta
 
-from decksite.data.person import Person
 from decksite.view import View
 from magic import tournaments
 from magic.models import Competition
@@ -12,7 +11,7 @@ from shared.container import Container
 
 
 class Prizes(View):
-    def __init__(self, competitions: List[Competition], first_runs: List[Person]) -> None:
+    def __init__(self, competitions: List[Competition]) -> None:
         super().__init__()
         self.weeks: List[Container] = []
         weeks = split_by_week(competitions)
@@ -27,13 +26,6 @@ class Prizes(View):
             body = '\n'.join([c.name for c in week.get('competitions', [])]) + '\n\n'
             body += '\n'.join(['{username} {prize}'.format(username=k, prize=prizes[k]) for k in sorted(prizes) if prizes[k] > 0])
             self.weeks.append(Container({'subject': subject, 'body': body, 'n': len(week.get('competitions', []))}))
-        self.months: List[Dict[str, Any]] = []
-        current_competition_id = None
-        for p in first_runs:
-            if current_competition_id != p.competition_id:
-                self.months.append({'competition_name': p.competition_name, 'people': []})
-                current_competition_id = p.competition_id
-            self.months[-1]['people'].append(p)
 
     def page_title(self) -> str:
         return 'Prizes'

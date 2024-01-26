@@ -371,48 +371,6 @@ def retire_deck(d: Deck) -> None:
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 
-def first_runs() -> List[Container]:
-    sql = """
-        SELECT
-            d.competition_id,
-            c.start_date AS `date`,
-            c.name AS competition_name,
-            p.mtgo_username
-        FROM
-            person AS p
-        INNER JOIN
-            deck AS d ON d.person_id = p.id
-        INNER JOIN
-            competition AS c ON c.id = d.competition_id
-        INNER JOIN
-            competition_series AS cs ON cs.id = c.competition_series_id
-        INNER JOIN (
-            SELECT
-                d.person_id,
-                MIN(c.start_date) AS start_date
-            FROM
-                deck AS d
-            INNER JOIN
-                competition AS c ON d.competition_id = c.id
-            INNER JOIN
-                competition_series AS cs ON cs.id = c.competition_series_id
-            INNER JOIN
-                deck_match AS dm ON dm.deck_id = d.id
-            WHERE
-                cs.competition_type_id IN ({league_competition_type_id})
-            GROUP BY
-                d.person_id
-            HAVING
-                COUNT(DISTINCT dm.match_id) >= 5
-        ) AS fr ON fr.person_id = p.id AND c.start_date = fr.start_date
-        GROUP BY
-            d.competition_id, p.id
-        ORDER BY
-            c.start_date DESC,
-            p.mtgo_username
-    """.format(league_competition_type_id=query.competition_type_id_select('League'))
-    return [Container(r) for r in db().select(sql)]
-
 def random_legal_deck() -> Optional[Deck]:
     where = 'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {current_season_num})'.format(current_season_num=seasons.current_season_num())
     having = '(d.competition_id NOT IN ({active_competition_id_query}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'.format(active_competition_id_query=active_competition_id_query())

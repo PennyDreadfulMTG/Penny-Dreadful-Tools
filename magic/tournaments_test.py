@@ -47,7 +47,7 @@ def test_kick_off_prizes() -> None:
     prizes = tournaments.kick_off_prizes()
     assert len(prizes) == 7
     assert prizes[2]['finish'] == '3rd–4th'
-    assert prizes[2]['prize'] == 15
+    assert prizes[2]['prize'] == 10
     assert prizes[5]['finish'] == '17th–24th'
     assert prizes[5]['prize'] == 2
 
@@ -69,7 +69,7 @@ def test_prizes_by_finish() -> None:
     prizes = tournaments.prizes_by_finish(COMPETITIONS['kick_off'])
     assert len(prizes) == 32
     assert prizes[2]['finish'] == '3rd'
-    assert prizes[2]['prize'] == 15
+    assert prizes[2]['prize'] == 10
     assert prizes[18]['finish'] == '19th'
     assert prizes[18]['prize'] == 2
     prizes = tournaments.prizes_by_finish(COMPETITIONS['normal'])
@@ -81,19 +81,19 @@ def test_prizes_by_finish() -> None:
 
 def test_prize() -> None:
     assert 10 == tournaments.prize(COMPETITIONS['pd500'], Deck({'finish': 12}))
-    assert 5 == tournaments.prize(COMPETITIONS['kick_off'], Deck({'finish': 15}))
+    assert 3 == tournaments.prize(COMPETITIONS['kick_off'], Deck({'finish': 15}))
     assert 3 == tournaments.prize(COMPETITIONS['normal'], Deck({'finish': 2}))
 
 def test_prize_by_finish() -> None:
     assert 10 == tournaments.prize_by_finish(COMPETITIONS['pd500'], 12)
-    assert 5 == tournaments.prize_by_finish(COMPETITIONS['kick_off'], 15)
+    assert 3 == tournaments.prize_by_finish(COMPETITIONS['kick_off'], 15)
     assert 3 == tournaments.prize_by_finish(COMPETITIONS['normal'], 2)
 
 def test_pd500_prize() -> None:
     assert 10 == tournaments.pd500_prize(12)
 
 def test_kick_off_prize() -> None:
-    assert 5 == tournaments.kick_off_prize(15)
+    assert 3 == tournaments.kick_off_prize(15)
 
 def test_normal_prize() -> None:
     assert 3 == tournaments.normal_prize(2)

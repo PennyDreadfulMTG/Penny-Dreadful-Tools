@@ -105,7 +105,7 @@ class Deck(View):
             name = entry.name
             cs[name] = cs.get(name, 0) + entry['n']
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
-        return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetch_tools.escape(deck_s))
+        return 'https://cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetch_tools.escape(deck_s))
 
 class DeckEmbed(Deck):
     pass

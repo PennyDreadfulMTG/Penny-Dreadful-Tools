@@ -11,7 +11,7 @@ from typing import Dict, List, Set
 import ftfy
 
 from magic import card_price, fetcher, rotation, seasons
-from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
+from price_grabber.parser import PriceListType, parse_cardhoarder_prices
 from shared import configuration, decorators, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared import repo, sentry, text
@@ -50,10 +50,6 @@ def run() -> None:
         s = fetch_tools.fetch(url)
         s = ftfy.fix_encoding(s)
         all_prices[url] = parse_cardhoarder_prices(s)
-    url = configuration.get_str('mtgotraders_url')
-    if url:
-        s = fetch_tools.fetch(url)
-        all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
 
     run_number = process(all_prices)
     if run_number == rotation.TOTAL_RUNS:

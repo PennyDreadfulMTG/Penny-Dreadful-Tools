@@ -102,7 +102,6 @@ DEFAULTS: Dict[str, Any] = {
     'logsite_database': 'pdlogs',
     'magic_database': 'cards',
     'modo_bugs_dir': 'modo_bugs_repo',
-    'mtgotraders_url': 'http://www.mtgotraders.com/pennydreadfull.php',
     'not_pd': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'poeditor_api_key': None,

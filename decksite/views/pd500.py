@@ -21,7 +21,7 @@ class PD500(View):
             display_time = dtutil.display_date_with_date_and_year(pd500_date)
             self.date_info_safe = f'The next Penny Dreadful 500 is on <time datetime="{pd500_date}" data-format="dddd MMMM Do LT z">{display_time}</time>'
         self.faqs_url = url_for('faqs')
-        self.cardhoarder_loan_url = 'https://www.cardhoarder.com/free-loan-program-faq'
+        self.cardhoarder_loan_url = 'https://cardhoarder.com/free-loan-program-faq'
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
         self.prizes = tournaments.pd500_prizes()

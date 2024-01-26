@@ -48,7 +48,6 @@ class View(BaseView):
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
-        self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
         self.is_person_page: Optional[bool] = None
         self.next_tournament_name = None
         self.next_tournament_time = None

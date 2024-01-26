@@ -161,8 +161,7 @@ def post_matches() -> wrappers.Response:
 @APP.route('/admin/prizes/')
 def prizes() -> str:
     tournaments_with_prizes = comp.tournaments_with_prizes()
-    first_runs = lg.first_runs()
-    view = Prizes(tournaments_with_prizes, first_runs)
+    view = Prizes(tournaments_with_prizes)
     return view.page()
 
 @APP.route('/admin/rotation/')

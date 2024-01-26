@@ -162,17 +162,28 @@ def pd500_prize(f: int) -> int:
         return 10
     return 0
 
+# Kick Off prizes changed for Season 32. You can't use this func to get accurate historical data. If you ever need that
+# you will have to complicate this function to understand that in seasons 1-7 there was no kick off and in seasons 18-31
+# the prizes were:
+#
+#   1st 25
+#   2nd 20
+#   3rd–4th 15
+#   5th–8th 10
+#   9th–16th    5
+#   17th–24th   2
+#   25th–32nd   1
 def kick_off_prize(f: int) -> int:
     if f == 1:
-        return 25
-    if f == 2:
         return 20
-    if f <= 4:
+    if f == 2:
         return 15
-    if f <= 8:
+    if f <= 4:
         return 10
+    if f <= 8:
+        return 7
     if f <= 16:
-        return 5
+        return 3
     if f <= 24:
         return 2
     if f <= 32:

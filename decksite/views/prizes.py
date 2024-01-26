@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from dateutil.relativedelta import FR, relativedelta
 

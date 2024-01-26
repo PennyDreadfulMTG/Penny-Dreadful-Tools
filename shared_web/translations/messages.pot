@@ -993,4 +993,3 @@ msgstr ""
 #: logsite/views/charts.py:22
 msgid "Stats"
 msgstr ""
-

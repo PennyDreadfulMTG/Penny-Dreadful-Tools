@@ -2894,11 +2894,12 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:1999a123a3dc0e39a2ef6d19f3f8584211de9e6a77fe7a0259f04a524e90a5cf",
-                "sha256:cc23d0192cd49c8f6bba44ee0c81e4586a8f30204970fc0894d209a6b08dab9a"
+                "sha256:33676a90bf04b19f92c33eec8581136bea2f35ddd12759e579a624a006fd387a",
+                "sha256:6ce76a9f8fd22bd39b01a59c35bfa2db39b60d11a2f77145e97b730de7e64fe0"
             ],
             "index": "pypi",
-            "version": "==2023.3.1.1"
+            "markers": "python_version >= '3.8'",
+            "version": "==2023.4.0.20240130"
         },
         "types-redis": {
             "hashes": [

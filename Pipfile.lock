@@ -826,11 +826,12 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:c424f9f271c7f55366254708e0d0383963a72376286018af0a04f322be843400",
-                "sha256:d1fc42e52aa4042ad812827b7aad858394e2bf73da8329af95ad8efa30bc886b"
+                "sha256:257e9e152cd18da0c6701113c122ade04dca04731e179fc5c7dca48e1396ec4c",
+                "sha256:7f668ffa3d5b9f3c6930407e5f5d691c05a376050a5a5fd772b9dc32e70a0c30"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==2.16.0"
+            "version": "==2.16.1"
         },
         "google-api-python-client": {
             "hashes": [

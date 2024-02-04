@@ -2923,12 +2923,12 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:33676a90bf04b19f92c33eec8581136bea2f35ddd12759e579a624a006fd387a",
-                "sha256:6ce76a9f8fd22bd39b01a59c35bfa2db39b60d11a2f77145e97b730de7e64fe0"
+                "sha256:9679eef0365db3af91ef7722c199dbb75ee5c1b67e3c4dd7bfbeb1b8a71c21a3",
+                "sha256:c93751ee20dfc6e054a0148f8f5227b9a00b79c90a4d3c9f464711a73179c89e"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==2023.4.0.20240130"
+            "version": "==2024.1.0.20240203"
         },
         "types-redis": {
             "hashes": [

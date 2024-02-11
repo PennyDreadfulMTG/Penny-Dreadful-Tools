@@ -2727,10 +2727,10 @@
         },
         "flake8-quotes": {
             "hashes": [
-                "sha256:6e26892b632dacba517bf27219c459a8396dcfac0f5e8204904c5a4ba9b480e1"
+                "sha256:aad8492fb710a2d3eabe68c5f86a1428de650c8484127e14c43d0504ba30276c"
             ],
             "index": "pypi",
-            "version": "==3.3.2"
+            "version": "==3.4.0"
         },
         "flake8-raise": {
             "hashes": [
@@ -2819,6 +2819,14 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==3.2.0"
+        },
+        "setuptools": {
+            "hashes": [
+                "sha256:385eb4edd9c9d5c17540511303e39a147ce2fc04bc55289c322b9e5904fe2c05",
+                "sha256:be1af57fc409f93647f2e8e4573a142ed38724b8cdd389706a867bb4efcf1e78"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==69.0.3"
         },
         "toml": {
             "hashes": [

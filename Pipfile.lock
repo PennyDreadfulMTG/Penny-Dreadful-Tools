@@ -589,10 +589,10 @@
         },
         "editorconfig": {
             "hashes": [
-                "sha256:57f8ce78afcba15c8b18d46b5170848c88d56fd38f05c2ec60dbbfcb8996e89e",
-                "sha256:6b0851425aa875b08b16789ee0eeadbd4ab59666e9ebe728e526314c4a2e52c1"
+                "sha256:24857fa1793917dd9ccf0c7810a07e05404ce9b823521c7dce22a4fb5d125f80"
             ],
-            "version": "==0.12.3"
+            "index": "pypi",
+            "version": "==0.12.4"
         },
         "emoji": {
             "hashes": [

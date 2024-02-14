@@ -197,7 +197,7 @@ async def rotation_hype_message(hype_command: bool) -> Optional[str]:
 
 # This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.
 def list_of_most_interesting(cs: List[Card]) -> str:
-    max_shown = 4
+    max_shown = 25
     if len(cs) > max_shown:
         return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
     return ', '.join(c.name for c in cs)

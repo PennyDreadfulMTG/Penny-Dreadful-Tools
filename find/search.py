@@ -20,6 +20,7 @@ UNQUOTED_STRING = 'unquoted_string'
 VALUE_LOOKUP: Dict[str, Dict[str, int]] = {}
 
 def search(query: str) -> List[Card]:
+    query = query.replace('“','"').replace('”','"')
     where = parse(tokenize(query))
     sql = """{base_query}
         ORDER BY pd_legal DESC, name

@@ -522,7 +522,7 @@ def test_is_checkland_functional() -> None:
 
 @pytest.mark.functional()
 def test_smart_quotes() -> None:
-    do_functional_test('o:“Art rampage”', ['Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental'])
+    do_functional_test('o:“Art rampage”', ['Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental'], [])
 
 @pytest.mark.functional
 def test_format_functional() -> None:

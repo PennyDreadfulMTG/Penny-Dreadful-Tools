@@ -234,7 +234,8 @@ def make_choice(value: str, name: Optional[str] = None) -> Dict[str, Union[int, 
     }
 
 @global_autocomplete('card')
-async def autocomplete_card(ctx: AutocompleteContext, card: str) -> None:
+async def autocomplete_card(ctx: AutocompleteContext) -> None:
+    card = ctx.kwargs.get('card')
     if not card:
         await ctx.send(choices=[])
         return

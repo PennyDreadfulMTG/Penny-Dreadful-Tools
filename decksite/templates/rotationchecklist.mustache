@@ -1,17 +1,14 @@
 <section>
+    <p>The rotation script now does almost everything automatically and should open a task in GitHub for the things that need to be done manually.</p>
+    <p>We do still need to do the following things by hand:</p>
     <ul>
-        <li>Copy legal_cards.txt to pdmtgo.com (S3). Manually set the metadata Content-Type=text/plain; charset=utf-8.</li>
-        <li>Run post_rotation task for decksite <code>python3 run.py maintenance post_rotation</code></li>
-        <li>Restart decksite <code>touch /etc/uwsgi/vassals/decksite.ini</code></li>
-        <li>Send <code>!suppresshype</code> to PDBot</li>
+        <li>Upload legal_cards.txt to S3</li>
+        <li>Upload {setcode}_legal_cards.txt to S3</li>
+        <li>Ping @Csuhta#3333 on their Discord for Scryfall in #red-phone</li>
+        <li>Email richard@mtggoldfish.com for MTG Goldfish</li>
         <li>Restart or update Discord Bot taking note of <a href="https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/5490">#5490</a></li>
         <li>Update <a href="http://www.gatherling.com/util/updateDefaultFormats.php">Gatherling</a> legal cards list</li>
         <li>Add any new (or newly-legal) DFCs to PDBot</li>
         <li>Remove any no-longer-game-breaking bugged cards from the Gatherling banned list, and add any new ones.</li>
-        <li>(Katelyn can update Scryfall but if not) ping @Csuhta#3333 on their Discord for Scryfall</li>
-        <li>Email richard@mtggoldfish.com for MTG Goldfish</li>
-        <li>Ping yeaGO on his wall at tappedout</li>
-        <li>Archive all the Run_XXX.txt files so that the next rotation will start running correctly</li>
-        <li>Call <code>!rotate</code> on the bot</li>
     </ul>
 </section>

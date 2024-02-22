@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "334cc84e18fdad414f6e6f52497b6d6616a60d0cddda55a98d5aacd80813c58f"
+            "sha256": "1ae547be839d0a3111882230b99685855a19526c261478129672c10d78aa9165"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -834,19 +834,18 @@
         },
         "google-api-python-client": {
             "hashes": [
-                "sha256:9d83b178496b180e058fd206ebfb70ea1afab49f235dd326f557513f56f496d5",
-                "sha256:ebf4927a3f5184096647be8f705d090e7f06d48ad82b0fa431a2fe80c2cbe182"
+                "sha256:84e43bdb58dd8d2301669513863996378ffe9a3bf6d23b5ccd4f1e021323dbeb",
+                "sha256:ff9ef7539eaf7e088a481b25d1af4704210b07863e1d51b5ee498b910a3a46a3"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==2.118.0"
+            "version": "==2.119.0"
         },
         "google-auth": {
             "hashes": [
                 "sha256:25141e2d7a14bfcba945f5e9827f98092716e99482562f15306e5b026e21aa72",
                 "sha256:34fc3046c257cedcf1622fc4b31fc2be7923d9b4d44973d481125ecc50d83885"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==2.28.1"
         },
@@ -1781,7 +1780,6 @@
                 "sha256:f1279ab38ecbfae7e456a108c5c0681e4956d5b1090027c1de0f934dfdb4b35c",
                 "sha256:f4f118245c4a087776e0a8408be33cf09f6c547442c00395fbfb116fac2f8ac2"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==4.25.3"
         },
@@ -2368,7 +2366,7 @@
                 "sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d",
                 "sha256:d0570876c61ab9e520d776c38acbbb5b05a776d3f9ff98a5c8fd5162a444cf19"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '3.8'",
             "version": "==2.2.1"
         },
         "wcwidth": {

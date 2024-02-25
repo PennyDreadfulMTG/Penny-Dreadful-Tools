@@ -947,11 +947,12 @@
         },
         "importlib-resources": {
             "hashes": [
-                "sha256:3893a00122eafde6894c59914446a512f728a0c1a45f9bb9b63721b6bacf0b4a",
-                "sha256:e8bf90d8213b486f428c9c39714b920041cb02c184686a3dee24905aaa8105d6"
+                "sha256:308abf8474e2dba5f867d279237cd4076482c3de7104a40b41426370e891549b",
+                "sha256:9a0a862501dc38b68adebc82970140c9e4209fc99601782925178f8386339938"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==6.1.1"
+            "version": "==6.1.2"
         },
         "inflect": {
             "hashes": [

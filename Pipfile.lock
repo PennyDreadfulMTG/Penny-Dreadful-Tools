@@ -1810,12 +1810,12 @@
         },
         "pydantic": {
             "hashes": [
-                "sha256:0b6a909df3192245cb736509a92ff69e4fef76116feffec68e93a567347bae6f",
-                "sha256:4fd5c182a2488dc63e6d32737ff19937888001e2a6d86e94b3f233104a5d1fa9"
+                "sha256:37a5432e54b12fecaa1049c5195f3d860a10e01bdfd24f1840ef14bd0d3aeab3",
+                "sha256:a09be1c3d28f3abe37f8a78af58284b236a92ce520105ddc91a6d29ea1176ba7"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==2.6.1"
+            "version": "==2.6.2"
         },
         "pydantic-core": {
             "hashes": [

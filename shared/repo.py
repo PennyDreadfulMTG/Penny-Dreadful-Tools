@@ -90,21 +90,21 @@ def create_issue(content: str,
         if secret and secret in body:
             body = body.replace(secret, 'REDACTED')
 
-    g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
-    git_repo = g.get_repo(repo_name)
-    if repo_name == 'PennyDreadfulMTG/perf-reports':
-        labels.append(location)
-        if exception:
-            labels.append(exception.__class__.__name__)
-    if issue_hash:
-        try:
-            issue = g.search_issues(issue_hash, repo=repo_name)[0]
-            labelstr = '; '.join(labels)
-            issue.create_comment(f'{title}\n\n{body}\n\nLabels: {labelstr}')
-            return issue
-        except IndexError:
-            pass
     try:
+        g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
+        git_repo = g.get_repo(repo_name)
+        if repo_name == 'PennyDreadfulMTG/perf-reports':
+            labels.append(location)
+            if exception:
+                labels.append(exception.__class__.__name__)
+        if issue_hash:
+            try:
+                issue = g.search_issues(issue_hash, repo=repo_name)[0]
+                labelstr = '; '.join(labels)
+                issue.create_comment(f'{title}\n\n{body}\n\nLabels: {labelstr}')
+                return issue
+            except IndexError:
+                pass
         issue = git_repo.create_issue(title=title, body=body, labels=labels)
         return issue
     except GithubException:
@@ -126,10 +126,10 @@ def get_pull_requests(start_date: datetime.datetime,
     gh_pass = configuration.get_optional_str('github_password')
     if gh_user is None or gh_pass is None:
         return []
-    g = Github(gh_user, gh_pass)
-    git_repo = g.get_repo(repo_name)
     pulls: List[PullRequest.PullRequest] = []
     try:
+        g = Github(gh_user, gh_pass)
+        git_repo = g.get_repo(repo_name)
         for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
             if not pull.merged_at:
                 continue

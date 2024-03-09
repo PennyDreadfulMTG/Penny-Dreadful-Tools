@@ -7,9 +7,7 @@ from shared import configuration, logger
 
 from . import validate_translations
 
-DAILY = True
-
-def run() -> None:
+def ad_hoc() -> None:
     api_key = configuration.get('poeditor_api_key')
     if api_key is None:
         logger.warning('Missing poeditor.com API key')

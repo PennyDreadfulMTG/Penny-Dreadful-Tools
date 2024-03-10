@@ -2323,12 +2323,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:99c1053920a6fa542b734c9ad61849c3993062f80963a4034771626528e192a0",
-                "sha256:ed5462cf8470831d1bdbf300e1eeea876040643bfc40b785109a5857fa7d3c3f"
+                "sha256:7801245ecaf371d24f1154924c8f1f0efdc53977339bf79886b5b10890af6478",
+                "sha256:fc0e1082f55c974611bce844b1e5beb2d1a895501f4a464e48305592a4268100"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==69.1.0.20240302"
+            "version": "==69.1.0.20240310"
         },
         "typing-extensions": {
             "hashes": [

@@ -2953,12 +2953,12 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:8a20171e088a0f7893aac490a5f7f37e9f53e14d6b762c5d55623bea022ee06f",
-                "sha256:a4ba49353e3f6b3fdb481ba6f8455917e8bc2a0b62b775d80833ec000508e5dc"
+                "sha256:47872893d65a38e282ee9f277a4ee50d1b28bd592040df7d1fdaffdf3779937d",
+                "sha256:b1c1b66abfb7fa79aae09097a811c4aa97130eb8831c60e47aee4ca344731ca5"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==2.31.0.20240310"
+            "version": "==2.31.0.20240311"
         },
         "types-six": {
             "hashes": [

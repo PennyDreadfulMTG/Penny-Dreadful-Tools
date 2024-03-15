@@ -4,7 +4,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 from flask import redirect, request, session, url_for
 from werkzeug import wrappers
 
-from decksite.data import person
+from decksite.data import person, permission
+from decksite.data.permission import Permission
 
 
 def login_required(f: Callable) -> Callable:
@@ -75,3 +76,14 @@ def login(p: person.Person) -> None:
 
 def hide_intro() -> bool:
     return session.get('hide_intro', False)
+
+def check_perms() -> None:
+    current_id = discord_id()
+    if not current_id:
+        return
+    changes = permission.permission_changes(current_id)
+    if not changes:
+        return
+    session['admin'] = Permission.ADMIN in changes
+    session['demimod'] = Permission.DEMIMOD in changes
+    permission.delete_changes(current_id)

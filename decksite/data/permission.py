@@ -13,7 +13,3 @@ def permission_changes(discord_id: int) -> Set[Permission]:
         return set()
     sql = 'SELECT permission FROM permission_changes WHERE discord_id = %s'
     return set(Permission(v) for v in db().values(sql, [discord_id]))
-
-def delete_changes(discord_id: int) -> None:
-    sql = 'DELETE FROM permission_changes WHERE discord_id = %s'
-    db().execute(sql, [discord_id])

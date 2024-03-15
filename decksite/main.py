@@ -70,6 +70,9 @@ def dev_db() -> wrappers.Response:
 
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:
+    simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt', '/charts/']
+    if not any(request.path.startswith(prefix) for prefix in simple_paths):
+        auth.check_perms()
     if not request.path.endswith('/'):
         return None  # Let flask do the redirect-routes-not-ending-in-slashes thing before we interfere with routing. Avoids #8277.
     if request.path.startswith('/seasons') and len(request.path) > len('/seasons/') and get_season_id() >= seasons.current_season_num():

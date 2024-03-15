@@ -86,4 +86,3 @@ def check_perms() -> None:
         return
     session['admin'] = Permission.ADMIN in changes
     session['demimod'] = Permission.DEMIMOD in changes
-    permission.delete_changes(current_id)

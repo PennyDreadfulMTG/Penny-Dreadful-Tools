@@ -7,6 +7,7 @@ from decksite.database import db
 class Permission(Enum):
     ADMIN = 'admin'
     DEMIMOD = 'demimod'
+    NONE = None
 
 def permission_changes(discord_id: int) -> Set[Permission]:
     if not discord_id:

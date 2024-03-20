@@ -2,8 +2,11 @@ from typing import Any
 
 from shared_web.flask_app import PDFlask
 
+from decksite.testutil import with_test_db
+
 
 class SmokeTester:
+    @with_test_db
     def __init__(self, app: PDFlask) -> None:
         self.test_client = app.test_client()
         # Propagate the exceptions to the test client

@@ -1,39 +1,59 @@
 monolith:
-  - ./*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./*
 
 decks:
-  - ./decksite/*
-  - ./decksite/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./decksite/*
+      - ./decksite/**/*
 
 logsite:
-  - ./logsite/*
-  - ./logsite/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./logsite/*
+      - ./logsite/**/*
 
 discord bot:
-  - ./discordbot/*
-  - ./discordbot/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./discordbot/*
+      - ./discordbot/**/*
 
 magic:
-  - ./magic/*
-  - ./magic/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./magic/*
+      - ./magic/**/*
 
 shared:
-  - ./shared/*
-  - ./shared/**/*
-  - ./shared_web/*
-  - ./shared_web/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./shared/*
+      - ./shared/**/*
+      - ./shared_web/*
+      - ./shared_web/**/*
 
 prices:
-  - ./price_grabber/*
-  - ./price_grabber/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./price_grabber/*
+      - ./price_grabber/**/*
 
 rotation:
-  - ./rotation/*
-  - ./rotation/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./rotation/*
+      - ./rotation/**/*
 
 maintenance:
-  - ./maintenance/*
-  - ./maintenance/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./maintenance/*
+      - ./maintenance/**/*
 
 tests:
-  - ./**/*_test.py
+  - changed-files:
+    - any-glob-to-any-file:
+      - ./**/*_test.py

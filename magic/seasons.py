@@ -19,7 +19,7 @@ SEASONS = [
     'KHM', 'STX', 'AFR', 'MID', 'VOW',  # 2121
     'NEO', 'SNC', 'DMU', 'BRO',         # 2022
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
-    'MKM', 'OTJ',
+    'MKM', 'OTJ', 'BLB',                # 2024
 ]
 
 NOT_SEASONS = [

@@ -15,9 +15,10 @@ def db() -> Database:
         ctx = request
     elif g:
         ctx = g
-    if not hasattr(ctx, 'database'):
-        ctx.database = get_database(configuration.get_str('decksite_database'))
-    return ctx.database
+    db_name = configuration.get_str('decksite_database')
+    if not hasattr(ctx, db_name):
+        setattr(ctx, db_name, get_database(db_name))
+    return getattr(ctx, db_name)
 
 def setup_in_app_context() -> None:
     from decksite import APP

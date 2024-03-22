@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from decksite import APP
+from decksite.main import APP
 from shared import configuration
 from shared_web.smoke import SmokeTester
 

@@ -60,7 +60,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel
-        if [ -f Pipfile ]; then pipenv sync --dev; fi
+        if [ -f Pipfile ]; then pipenv sync --dev --verbose; fi
     - uses: PennyDreadfulMTG/setup-linters@main
     - run: pipenv run init-cards
     - name: Run pytest

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4409564fea4cf82029e029672ea9665e0ebe3cf3eb2c458e4aef0d5e0352d7dc"
+            "sha256": "bb16fb7401aee464ea74846e3e75e02ad0543f1599a71a57d7d71bbb1e2c08b3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1958,12 +1958,12 @@
         },
         "requirements-parser": {
             "hashes": [
-                "sha256:53c82d0a7d71c3abcf700bd3332bd3ee11804c706be4145b898660afbeb6fb9e",
-                "sha256:f45dd1a54c1ed87d4b713015da0899669fcc19b4a31d65b892db5dc7bd64fd3b"
+                "sha256:33f1b1c668fa85df8c6a638c479ac743ea8541f5d8d56011591068757ce1a201",
+                "sha256:80569baa23b13cf0980fb2ceb5dc2e3b7ee05df203a26d83e3ed56c155c6597a"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.6' and python_version < '4.0'",
-            "version": "==0.6.0"
+            "markers": "python_version >= '3.7' and python_version < '4.0'",
+            "version": "==0.7.0"
         },
         "rpds-py": {
             "hashes": [
@@ -2097,6 +2097,14 @@
             ],
             "index": "pypi",
             "version": "==1.44.0"
+        },
+        "setuptools": {
+            "hashes": [
+                "sha256:0ff4183f8f42cd8fa3acea16c45205521a4ef28f73c6391d8a25e92893134f2e",
+                "sha256:c21c49fb1042386df081cb5d86759792ab89efca84cf114889191cd09aacc80c"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==69.2.0"
         },
         "sgmllib3k": {
             "hashes": [

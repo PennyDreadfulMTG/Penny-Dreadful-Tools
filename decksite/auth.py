@@ -86,3 +86,6 @@ def check_perms() -> None:
         return
     session['admin'] = Permission.ADMIN in changes
     session['demimod'] = Permission.DEMIMOD in changes
+
+def has_demimod() -> bool:
+    return session.get('admin') or session.get('demimod')

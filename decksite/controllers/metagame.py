@@ -48,7 +48,8 @@ def metagame(deck_type: Optional[str] = None) -> str:
 def deck(deck_id: int) -> str:
     d = ds.load_deck(deck_id)
     ms = match.load_matches_by_deck(d)
-    view = Deck(d, ms, auth.person_id(), auth.discord_id())
+    ars = archs.load_archetypes(order_by='a.name') if auth.has_demimod() else []
+    view = Deck(d, ms, auth.person_id(), auth.discord_id(), ars)
     return view.page()
 
 @APP.route('/seasons/')

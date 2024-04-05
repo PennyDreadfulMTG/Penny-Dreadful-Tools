@@ -5,6 +5,7 @@ import titlecase
 from flask import session, url_for
 
 from decksite import prepare
+from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic import card, oracle
 from magic.models import Deck as DeckModel
@@ -13,7 +14,7 @@ from shared.container import Container
 
 
 class Deck(View):
-    def __init__(self, d: DeckModel, matches: List[Container], person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
+    def __init__(self, d: DeckModel, matches: List[Container], person_id: Optional[int], discord_id: Optional[int], archetypes: List[Archetype]) -> None:
         super().__init__()
         self.deck = d
         prepare.prepare_deck(self.deck)
@@ -27,6 +28,8 @@ class Deck(View):
         self.person_id = person_id
         self.discord_id = discord_id
         self.is_deck_page = True
+        # To allow mods to change archetype from a dropdown on this page, will be empty for non-demimods
+        self.archetypes = archetypes
 
     def og_title(self) -> str:
         return self.deck.name if self.public() else '(Active League Run)'

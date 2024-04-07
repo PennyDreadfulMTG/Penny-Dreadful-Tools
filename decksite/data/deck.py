@@ -408,6 +408,8 @@ def prime_cache(d: Deck) -> None:
     color_sort = mana.sort_score(d.colors)
     set_legality(d)
     season_id = season.get_season_id(d.created_date)
+    # Populate season_id now that we know it because deck_name.normalize uses it.
+    d.season_id = season_id
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)
     # If this is a new deck we're going to make a new record. If it's an existing deck we might as well update a few things that might have changed implementation but should otherwise be static. But leave wins/draws/losses/active date alone.

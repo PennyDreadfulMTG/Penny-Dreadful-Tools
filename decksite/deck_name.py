@@ -33,6 +33,9 @@ WHITELIST = [
     'red and black jank',
     'black and green',
     'blue dreadnought + more red hate',
+    'netdecking: day 1',
+    'catch 22',
+    'clerks ii',
 ]
 
 PROFANITY_WHITELIST = [
@@ -71,10 +74,11 @@ def normalize(d: Deck) -> str:
         name = d.original_name
         name = name.lower()
         name = replace_space_alternatives(name)
-        name = remove_pd(name)
+        name = remove_pd(name, d.season_id)
+        name = remove_brackets(name)
+        name = remove_season(name, d.season_id)
         name = remove_extra_spaces(name)
         name = remove_hashtags(name)
-        name = remove_brackets(name)
         name = strip_leading_punctuation(name)
         name = remove_leading_deck(name)
         name = remove_extraneous_hyphens(name)
@@ -87,12 +91,14 @@ def normalize(d: Deck) -> str:
             pass
         else:
             name = remove_profanity(name)
-            name = add_colors_if_no_deckname(name, d.get('colors'))
+            name = normalize_version(name)
+            name = add_colors_if_no_deck_name(name, d.get('colors'))
             name = normalize_colors(name, d.get('colors'))
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
-        name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
+        name = lowercase_version_marker(name)
+        name = ucase_roman_numerals(name)
         name = correct_case_of_color_names(name)
         name = enforce_max_len(name)
         return name
@@ -106,22 +112,28 @@ def file_name(d: Deck) -> str:
     return safe_name.strip('-')
 
 def replace_space_alternatives(name: str) -> str:
-    name = re.sub(r'(\d)\.(\d)', r'\1TEMPORARYMARKER\2', name)
-    name = name.replace('_', ' ').replace('.', ' ')
-    return name.replace('TEMPORARYMARKER', '.')
+    name = name.replace('_', ' ')
+    # Preserve periods in semver versions but otherwise replace them
+    new_name = []
+    for i, char in enumerate(name):
+        if char == '.':
+            prev_char_is_digit = i > 0 and name[i - 1].isdigit()
+            next_char_is_digit = i < len(name) - 1 and name[i + 1].isdigit()
+            new_name.append(' ' if not (prev_char_is_digit and next_char_is_digit) else char)
+        else:
+            new_name.append(char)
+    return ''.join(new_name)
 
 def remove_extra_spaces(name: str) -> str:
     return re.sub(r'\s+', ' ', name)
 
-def remove_pd(name: str) -> str:
-    name = re.sub(r'(^| )[\[\(\{}]?pd ?-? ?S?[0-9]+[\]\)\}]?', '\\1', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(\{]?pd[hmstf]?[\]\)\}]?([ -]|$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(\{]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '\\1\\3', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(\{]?penny ?dreadful[\]\)\}]?( |$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(\{]?penny[\[\)\}]?( |$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
+def remove_pd(name: str, season_id: int) -> str:
+    name = re.sub(r'(^| )[\[({]?pd(?:[hmstf]|500|' + str(season_id) + r')?[])}]?([ -]|$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[({]?pd ?-?[])}]?', '\\1', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[({]?penny ?dreadful (sunday|monday|thursday)[])}]?( |$)', '\\1\\3', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[({]?penny ?dreadful[])}]?( |$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[({]?penny[])}]?( |$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'penny-', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(\{]?season ?[0-9]+[\]\)\}]?( |$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(\{]?S[0-9]+[\]\)\}]?', '\\1', name, flags=re.IGNORECASE).strip()
     return name
 
 def remove_hashtags(name: str) -> str:
@@ -129,7 +141,7 @@ def remove_hashtags(name: str) -> str:
     return name
 
 def remove_brackets(name: str) -> str:
-    return re.sub(r'\[[^\]]*\]', '', name).strip()
+    return re.sub(r'\[[^]]*]', '', name).strip()
 
 def expand_common_abbreviations(name: str) -> str:
     for abbreviation, expansion in ABBREVIATIONS.items():
@@ -202,10 +214,10 @@ def name_from_colors(colors: Set[str]) -> str:
             return name
     return 'colorless'
 
-def add_colors_if_no_deckname(name: str, colors: Set[str]) -> str:
-    if not name:
-        name = name_from_colors(colors).strip()
-    return name
+def add_colors_if_no_deck_name(name: str, colors: Set[str]) -> str:
+    if name:
+        return name
+    return name_from_colors(colors)
 
 def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
     if not name.replace('mono ', '') in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
@@ -228,12 +240,113 @@ def remove_profanity(name: str) -> str:
     name = re.sub(' +', ' ', name)  # We just replaced profanity with a space so compress spaces.
     return name
 
-def ucase_trailing_roman_numerals(name: str) -> str:
-    if not name:
-        raise ValueError('Asked to remove trailing roman numerals from an empty deck name')
-    last_word = name.split()[-1]
-    if re.search('^[ivx]+$', last_word):
-        name = re.sub('{last_word}$'.format(last_word=last_word), last_word.upper(), name)
+def remove_season(name: str, season_id: int) -> str:
+    # Whitelist here because we remove_season even from whitelisted deck names
+    if 'catch 22' in name.lower():
+        return name
+    name = _remove_season(r'(^|\W)[\[({]?(s|(season ?))' + str(season_id) + r'[])}]?\s*', name)
+    # If you're mentioning 1, 2 or 3 it could be for any reason but if you're mentioning 4+, AND it matches the season_id of your deck, you're probably referencing the current season.
+    if season_id >= 4:
+        name = _remove_season(r'(?:[\[({]|\b)' + str(season_id) + r'(?:[])}]|\b)', name)
+    return name
+
+def _remove_season(pattern: str, name: str) -> str:
+    season = re.search(pattern, name, flags=re.IGNORECASE)
+    # Exempt decks using season number like a version number – 'Red Deck Wins 30.2'
+    if season and not re.search(re.escape(season.group()) + r'\.\d', name):
+        return name.replace(season.group(), ' ').strip()
+    return name
+
+def normalize_version(name: str) -> str:
+    # Special exemption for 'bakert99 League Deck 1'-style names from Season 1. They don't need version-normalizing.
+    if re.search(r'League Deck \d', name, flags=re.IGNORECASE):
+        return name
+    # If they have numbers in two places in the deck separated by letters
+    # it's too likely to be something like '2 combos are better than 1'
+    # so don't make any alterations
+    if re.search(r'\d.*[a-uw-z,-].*\d', name, flags=re.IGNORECASE):
+        return name
+    name = normalize_parenthetical_versions(name)
+    patterns = [
+        r'(\W?)[\[({]?(?:v|ver|version|rev|mk) ?(\d[\.\d]*)(?:[])}]|\b)',  # Explicitly marked as a version
+        r'(\s)[\[({]?(\d[\.\d]*)[])}]?$',  # Number at end of name
+        r'(\s)[\[({]?(\d\.\d[\.\d]*)(?:[])}]|\b)',  # Dotted number somewhere in name
+    ]
+    for pattern in patterns:
+        version = re.search(pattern, name)
+        if not version:
+            continue
+        num = version.group(2)
+        if not is_semver(num):
+            continue
+        # Exclude some known uses of numbers if it's not a dotted number ('This deck is tier 3', 'Count to 10', and similar)
+        if '.' not in num and re.search(r'((tier|turn|to|till?|eason) ?)' + num, name):
+            continue
+        num = remove_semver_trailing_zeroes(num)
+        spacer = ' ' if version.group(1) != '-' else version.group(1)
+        name = replace_last(version.group(), spacer + 'v' + num, name).strip()
+    # Trailing roman numerals are versions, too.
+    roman_version = re.search(r'\s[\[({]?([ivx]+)[])}]?$', name, flags=re.IGNORECASE)
+    if roman_version:
+        num = parse_roman_sloppily(roman_version.group(1))
+        name = replace_last(roman_version.group(), ' v' + str(num), name)
+    return name
+
+
+# We have quite a lot of deck names like My Cool Deck (1) (2). Turn that into My Cool Deck 1.2 here
+def normalize_parenthetical_versions(name: str) -> str:
+    ending_parenthesized_nums = re.search(r'\((\d+)\)(?: ?\((\d+)\))*$', name)
+    if ending_parenthesized_nums:
+        nums = [num for num in ending_parenthesized_nums.groups() if num]
+        name = name.replace(ending_parenthesized_nums.group(), '.'.join(nums))
+    return name
+
+def is_semver(num: str) -> bool:
+    try:
+        parts = num.split('.')
+        if int(parts[0]) >= 100:
+            return False
+        # Looks more like a date than a version ('12.30')?
+        if len(parts) == 2 and len(parts[-1]) > 1 and parts[1][-1:] == '0':
+            return False
+        # Looks more like a price than a version ('0.02', '0.15')?
+        if len(parts) == 2 and parts[0] == '0' and len(parts[1]) == 2:
+            return False
+        # Validate that all parts of the semver are ints
+        [int(part) for part in parts]
+    except ValueError:
+        return False
+    return True
+
+def remove_semver_trailing_zeroes(s: str) -> str:
+    return remove_semver_trailing_zeroes(s[:-2]) if s.endswith('.0') else s
+
+# https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
+def replace_last(find: str, replace: str, subject: str) -> str:
+    return replace.join(subject.rsplit(find, 1))
+
+# Only allow I, V and X (anything higher than that is more likely to be a false positive). Allow invalid roman numerals like IIX for 8.
+def parse_roman_sloppily(raw: str) -> int:
+    mode, n = 'I', 0
+    for c in reversed(raw.upper()):
+        if c == 'I' and mode == 'I':
+            n += 1
+        elif c == 'I':
+            n -= 1
+        elif c == 'V' and mode in ['V', 'I']:
+            n += 5
+            mode = 'V'
+        elif c == 'V':
+            n -= 5
+        elif c == 'X':
+            n += 10
+            mode = 'X'
+    return n
+
+def ucase_roman_numerals(name: str) -> str:
+    numerals = re.search(r'\b([ivx]+)\b', name, flags=re.IGNORECASE)
+    if numerals:
+        name = name.replace(numerals.group(1), numerals.group(1).upper())
     return name
 
 def strip_leading_punctuation(name: str) -> str:
@@ -246,6 +359,9 @@ def remove_leading_deck(name: str) -> str:
 def remove_extraneous_hyphens(name: str) -> str:
     s = re.sub('^ ?- ?', '', name)
     return re.sub(' ?- ?$', '', s)
+
+def lowercase_version_marker(name: str) -> str:
+    return re.sub(r'V(\d[\\.\d]*)', r'v\1', name)
 
 def correct_case_of_color_names(name: str) -> str:
     for k in COLOR_COMBINATIONS:

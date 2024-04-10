@@ -1,8 +1,9 @@
+import datetime
 import html
 
 import inflect
 import titlecase
-from flask import url_for
+from flask import session, url_for
 
 from shared.pd_exception import DoesNotExistException
 
@@ -28,6 +29,9 @@ class Match(View):
         self.players_string = ' vs '.join([p.name for p in viewed_match.players])
         self.players_string_safe = ' vs '.join([player_link(p.name) for p in viewed_match.players])
         self.module_string = ', '.join([m.name for m in viewed_match.modules])
+        if viewed_match.start_time > datetime.datetime.now() - datetime.timedelta(days=1) and not session.get('admin'):
+            self.hidden = True
+            return
         if not viewed_match.games:
             self.no_games = True
             return

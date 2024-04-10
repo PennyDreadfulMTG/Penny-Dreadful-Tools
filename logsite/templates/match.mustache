@@ -1,28 +1,33 @@
-<div class="banner">
-    <div class="title">
-        <h1>{{{players_string_safe}}} ({{id}})</h1>
-        <div class="subtitle">{{format_name}}: "{{comment}}"</div>
-        <div class="subtitle">{{display_date}}</div>
+{{#hidden}}
+    <p>The match log will be available one day after the match.</p>
+{{/hidden}}
+{{^hidden}}
+    <div class="banner">
+        <div class="title">
+            <h1>{{{players_string_safe}}} ({{id}})</h1>
+            <div class="subtitle">{{format_name}}: "{{comment}}"</div>
+            <div class="subtitle">{{display_date}}</div>
+        </div>
+            <ul class="buttons">
+                <li><a title="" href="/export/{{id}}">Download</a></li>
+                {{#has_unexpected_third_game}}
+                    <li><a title="Match has an unexpected game 3" href="#">Switcheroo</a></li>
+                {{/has_unexpected_third_game}}
+                {{#is_tournament}}
+                    <li><a title="" href="#">Tournament Match</a></li>
+                {{/is_tournament}}
+            </ul>
     </div>
-        <ul class="buttons">
-            <li><a title="" href="/export/{{id}}">Download</a></li>
-            {{#has_unexpected_third_game}}
-                <li><a title="Match has an unexpected game 3" href="#">Switcheroo</a></li>
-            {{/has_unexpected_third_game}}
-            {{#is_tournament}}
-                <li><a title="" href="#">Tournament Match</a></li>
-            {{/is_tournament}}
-        </ul>
-</div>
-{{#no_games}}
-PDBot was interested by this match, but felt no need to join it.
-{{/no_games}}
-{{#game_one}}
+    {{#no_games}}
+    PDBot was interested by this match, but felt no need to join it.
+    {{/no_games}}
+    {{#game_one}}
+        {{> game_view}}
+    {{/game_one}}
+    {{#game_two}}
+        {{> game_view}}
+    {{/game_two}}
+    {{#game_three}}
+    {{/game_three}}
     {{> game_view}}
-{{/game_one}}
-{{#game_two}}
-    {{> game_view}}
-{{/game_two}}
-{{#game_three}}
-    {{> game_view}}
-{{/game_three}}
+{{/hidden}}

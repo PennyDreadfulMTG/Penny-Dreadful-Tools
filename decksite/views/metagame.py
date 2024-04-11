@@ -22,6 +22,8 @@ class Metagame(View):
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.metagame', deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
 
+        # We say '' for "no win percent" not a number or None, which can cause this page to error if we try to do math on ''. Let's just skip those instead.
+        archetypes = [a for a in archetypes if a.win_percent != '']
         self.archetypes = []
         total_matches_log = sum([math.log2(((a.wins or 0) + (a.losses or 0) + (a.draws or 0) + 1)) for a in archetypes])
         height = min(TOTAL_HEIGHT, len(archetypes) * 200)

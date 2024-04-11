@@ -2404,6 +2404,7 @@ Charts
 
 .variable-height-bar-chart {
     margin-top: 1rem;
+    overflow: hidden; /* Prevent a scrollbar if height is a fraction of a pixel taller than the container. */
     width: 100%;
 }
 

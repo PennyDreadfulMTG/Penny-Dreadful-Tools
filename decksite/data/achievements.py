@@ -315,6 +315,21 @@ class TournamentOrganizer(Achievement):
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         return None
 
+class Player(BooleanAchievement):
+    key = 'player'
+    title = 'Player'
+    description_safe = 'Play a league or tournament match.'
+    season_text = 'Played this season'
+    sql = "COUNT(CASE WHEN ct.name IN ('League', 'Gatherling') THEN 1 ELSE NULL END) > 0"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name IN ('League', 'Gatherling') THEN d.id ELSE NULL END)"
+    flags = ['hide_person']
+
+    @staticmethod
+    def alltime_text(n: int) -> str:
+        what = ngettext('1 season', '%(num)d different seasons', n)
+        return f'Played in {what}'
+
+
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
     title = 'Tournament Player'

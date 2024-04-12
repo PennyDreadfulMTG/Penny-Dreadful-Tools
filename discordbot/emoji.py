@@ -32,7 +32,7 @@ async def replace_emoji(text: str, client: Client) -> str:
     if text is None:
         return ''
     output = text
-    symbols = re.findall(r'\{([A-Z0-9/]{1,3})\}', text)
+    symbols = re.findall(r'{([A-Z0-9/]+)}', text)
     for symbol in symbols:
         name = symbol
         name = name.replace('/', '')

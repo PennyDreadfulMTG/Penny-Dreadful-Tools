@@ -32,7 +32,7 @@
                         <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
                         <td class="comma-list" title="{{archetypes_from_rules_names}}">
                             {{#archetypes_from_rules}}
-                                <span><a href="{{archetype_url}}">{{archetype_name}}</a></span>
+                                <span><a href="{{archetype_url}}">{{archetype_name}} ({{rule_id}})</a></span>
                             {{/archetypes_from_rules}}
                         </td>
                     </tr>
@@ -61,7 +61,7 @@
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
                         <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
-                        <td><a href="{{rule_archetype_url}}">{{rule_archetype_name}}</a></td>
+                        <td><a title="{{rule_archetype_name}} ({{rule_id}})" href="{{rule_archetype_url}}">{{rule_archetype_name}} ({{rule_id}})</a></td>
                         <td>
                             <a class="reassign" data-deck_id="{{id}}" data-rule_archetype_id="{{rule_archetype_id}}">Reassign to {{rule_archetype_name}}</a>
                         </td>

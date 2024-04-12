@@ -78,6 +78,7 @@ def mistagged_decks() -> List[Deck]:
     sql = """
             SELECT
                 deck_id,
+                rule_id,
                 rule_archetype.id AS rule_archetype_id,
                 rule_archetype.name AS rule_archetype_name,
                 tagged_archetype.name AS tagged_archetype_name
@@ -100,13 +101,13 @@ def mistagged_decks() -> List[Deck]:
             """
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):
-        rule_archetypes[r.deck_id] = (r.rule_archetype_id, r.rule_archetype_name)
+        rule_archetypes[r.deck_id] = (r.rule_id, r.rule_archetype_id, r.rule_archetype_name)
     if not rule_archetypes:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in rule_archetypes)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
-        d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
+        d.rule_id, d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
 
 @retry_after_calling(cache_all_rules)
@@ -114,6 +115,7 @@ def doubled_decks() -> List[Deck]:
     sql = """
         SELECT
             deck_id,
+            GROUP_CONCAT(rule_id) AS rule_ids,
             GROUP_CONCAT(archetype_id) AS archetype_ids,
             GROUP_CONCAT(archetype_name SEPARATOR '|') AS archetype_names
         FROM
@@ -125,15 +127,15 @@ def doubled_decks() -> List[Deck]:
         """
     archetypes_from_rules: Dict[int, List[Container]] = {}
     for r in [Container(row) for row in db().select(sql)]:
-        matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'))
-        archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name}) for archetype_id, archetype_name in matching_archetypes]
+        matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'), r.rule_ids.split(','))
+        archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name, 'rule_id': rule_id}) for archetype_id, archetype_name, rule_id in matching_archetypes]
     if not archetypes_from_rules:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in archetypes_from_rules)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
-        d.archetypes_from_rules_names = ', '.join(a.archetype_name for a in archetypes_from_rules[d.id])
+        d.archetypes_from_rules_names = ', '.join(f'{a.archetype_name} ({a.rule_id})' for a in archetypes_from_rules[d.id])
     return result
 
 @retry_after_calling(cache_all_rules)

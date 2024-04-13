@@ -130,7 +130,7 @@ blockquote {
     margin-bottom: 1rem;
 }
 
-.notice a {
+.notice p {
     background: #eee;
     display: block;
     font-size: 1.333rem;

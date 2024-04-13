@@ -1,19 +1,16 @@
-from collections import Counter
 from typing import List, Optional, Sequence, Union
 
 from flask import g, session, url_for
 
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import fetcher, oracle, seasons
+from magic import fetcher, seasons
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
 # Take 'raw' items from the database and decorate them for use and display.
-
-NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
 def prepare_cards(cs: List[Card], tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
     for c in cs:
@@ -30,24 +27,6 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: Optional[Uni
     set_legal_icons(c)
     if c.get('num_decks') is not None:
         c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
-
-    c.has_decks = len(c.get('decks', [])) > 0
-    if not c.has_decks:
-        c.has_most_common_cards = False
-        return
-
-    counter = Counter()  # type: ignore
-    for d in c.get('decks', []):
-        for c2 in d.maindeck:
-            if not c2.card.type_line.startswith('Basic') and not c2['name'] == c.name:
-                counter[c2['name']] += c2['n']
-    most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
-    c.most_common_cards = []
-    cs = oracle.cards_by_name()
-    for v in most_common_cards:
-        prepare_card(cs[v[0]], tournament_only)
-        c.most_common_cards.append(cs[v[0]])
-    c.has_most_common_cards = len(c.most_common_cards) > 0
 
 def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
     c.url = url_for_card(c, tournament_only, season_id)

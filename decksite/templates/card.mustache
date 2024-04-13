@@ -7,14 +7,6 @@
 {{#played_competitively}}
     {{> stats}}
 {{/played_competitively}}
-{{#has_most_common_cards}}
-    <section>
-        <h2>Most Commonly Played With</h2>
-        <ul>
-            {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
-        </ul>
-    </section>
-{{/has_most_common_cards}}
 {{> legal}}
 <section>
     <h2>Decks containing {{name}}</h2>

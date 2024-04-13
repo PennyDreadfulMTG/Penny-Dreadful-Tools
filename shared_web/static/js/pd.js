@@ -227,7 +227,8 @@ PD.initRuleForms = function() {
             type: "POST",
             url,
             data: form.serialize(), // serializes the form's elements.
-            success: PD.afterRuleUpdate
+            success: PD.afterRuleUpdate,
+            error: PD.ruleUpdateFailure
         });
         return false;
     });
@@ -236,7 +237,13 @@ PD.initRuleForms = function() {
 PD.afterRuleUpdate = function(data) {
     if (data.success) {
         window.location = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
+    } else {
+        alert(data.msg); // eslint-disable-line no-alert
     }
+};
+
+PD.ruleUpdateFailure = function(_xhr, textStatus, errorThrown) {
+    alert(textStatus + " " + errorThrown); // eslint-disable-line no-alert
 };
 
 PD.loadDeck = function() {

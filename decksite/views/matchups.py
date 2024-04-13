@@ -31,7 +31,7 @@ class Matchups(View):
         self.show_hero = True  # We should show both players in the list of matches, not just "opponent".
         self.search_season_id = season_id
 
-    def show_legal_seasons(self) -> bool:
+    def show_season_icon(self) -> bool:
         return not self.search_season_id
 
     def page_title(self) -> str:

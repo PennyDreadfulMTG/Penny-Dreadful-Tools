@@ -175,7 +175,7 @@ class View(BaseView):
     def tournaments_info_url(self) -> str:
         return url_for('tournaments')
 
-    def show_legal_seasons(self) -> bool:
+    def show_season_icon(self) -> bool:
         return get_season_id() == 0
 
     def has_matches(self) -> bool:

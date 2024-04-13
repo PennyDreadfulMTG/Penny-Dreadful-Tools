@@ -49,15 +49,13 @@
                                 <input type="checkbox" name="deck_id" value="{{ id }}">
                             </td>
                             <td>
-                                {{#has_legal_format}}
-                                    {{{ legal_icons }}}
-                                {{/has_legal_format}}
+                                {{{ season_icon }}}
                             </td>
                         </tr>
                     {{/search_results}}
                 </tbody>
             </table>
-            {{ > archetypedropdown }}
+            {{> archetypedropdown }}
             <button type="submit">Reassign</button>
         </form>
     {{/has_search_results}}

@@ -41,6 +41,8 @@ pd_server_id = IntSetting('pd_server_id', 207281932214599682)
 # === Magic ===
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
 card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
+# Path to list of is:spikey cards.
+is_spikey_file = StrSetting('is_spikey_file', './.is-spikey.txt')
 # Block Scryfall updates when things are broken
 prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
 

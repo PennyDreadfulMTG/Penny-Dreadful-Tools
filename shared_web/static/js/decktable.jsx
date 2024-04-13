@@ -29,7 +29,7 @@ const renderHeaderRow = (table) => (
             : <th className="c top8" onClick={table.sort.bind(table, "top8", "ASC")}>Top 8</th>
         }
         <th className="date" onClick={table.sort.bind(table, "date", "DESC")}>Date</th>
-        { table.props.showLegalSeasons
+        { table.props.showSeasonIcon
             ? <th onClick={table.sort.bind(table, "season", "DESC")}>Season</th>
             : null
         }
@@ -80,8 +80,8 @@ const renderRow = (table, deck) => (
         <td className="date">
             {deck.displayDate}
         </td>
-        { table.props.showLegalSeasons
-            ? <td dangerouslySetInnerHTML={{__html: deck.legalIcons}}></td>
+        { table.props.showSeasonIcon
+            ? <td dangerouslySetInnerHTML={{__html: deck.seasonIcon}}></td>
             : null
         }
     </tr>

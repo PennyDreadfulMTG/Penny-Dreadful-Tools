@@ -237,7 +237,7 @@ Table.propTypes = {
     "searchPrompt": PropTypes.string,
     "seasonId": PropTypes.string,
     "showArchetype": PropTypes.string,
-    "showLegalSeasons": PropTypes.string,
+    "showSeasonIcon": PropTypes.string,
     "showOmw": PropTypes.string,
     "showSearch": PropTypes.bool,
     "tournamentOnly": PropTypes.string

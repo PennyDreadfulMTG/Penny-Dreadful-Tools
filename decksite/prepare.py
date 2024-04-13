@@ -87,6 +87,7 @@ def prepare_deck(d: Deck) -> None:
     d.has_legal_format = len(d.legal_formats) > 0
     d.pd_legal = season_name in d.legal_formats
     d.non_pd_legal_formats = {f for f in d.legal_formats if season_name not in f}
+    set_season_icon(d)
     set_legal_icons(d)
     if session.get('admin') or session.get('demimod') or not d.is_in_current_run():
         d.decklist = str(d)
@@ -195,12 +196,18 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
 
+def set_season_icon(d: Deck) -> None:
+    code = seasons.season_code(d.season_id)
+    d.season_icon = season_icon_link(code)
+
 def set_legal_icons(o: Union[Card, Deck]) -> None:
     o.legal_icons = ''
-    sets = seasons.SEASONS
     pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
-    pd_formats.sort(key=lambda code: -sets.index(code))
+    pd_formats.sort(key=lambda code: -seasons.SEASONS.index(code))
     for code in pd_formats:
-        color = 'rare' if code in seasons.current_season_name() else 'common'
-        n = sets.index(code.upper()) + 1
-        o.legal_icons += f'<a href="/seasons/{n}/"><i class="ss ss-{code.lower()} ss-{color} ss-grad">S{n}</i></a>'
+        o.legal_icons += season_icon_link(code)
+
+def season_icon_link(code: str) -> str:
+    color = 'rare' if code in seasons.current_season_name() else 'common'
+    n = seasons.SEASONS.index(code.upper()) + 1
+    return f'<a href="/seasons/{n}/"><i class="ss ss-{code.lower()} ss-{color} ss-grad">S{n}</i></a>'

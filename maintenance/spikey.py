@@ -10,4 +10,4 @@ def run() -> None:
     if n < 482:  # 482 was the count of is:spikey when I wrote this in April 2024. Just a little sanity check.
         raise Exception(f"There were only {n} is:spikey results so I'm not going to overwrite the file")
     with open(configuration.is_spikey_file.get(), 'w') as f:
-        f.write("\n".join(names) + "\n")
+        f.write('\n'.join(names) + '\n')

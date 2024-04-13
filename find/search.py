@@ -393,7 +393,7 @@ def is_subquery(subquery_name: str) -> str:
         return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
     if subquery_name == 'spikey':
         names = spikey_names()
-        return "(name = " + ' OR name = '.join(sqlescape(name) for name in names) + ')'
+        return '(name = ' + ' OR name = '.join(sqlescape(name) for name in names) + ')'
     if subquery_name == 'vanilla':
         return "(oracle_text = '')"
     if subquery_name == 'hybrid':

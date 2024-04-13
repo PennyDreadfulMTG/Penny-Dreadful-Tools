@@ -15,7 +15,7 @@ from decksite.data import archetype, competition
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
-from shared import dtutil
+from shared import dtutil, logger
 from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
@@ -136,9 +136,17 @@ class View(BaseView):
             season = ' - Season {n}'.format(n=get_season_id())
         return '{page_title}{season} – pennydreadfulmagic.com'.format(page_title=self.page_title(), season=season)
 
-    # Sitewide notice in a banner at the top of every page, for very important things only!
+    # Site-wide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:
         now = dtutil.now(dtutil.GATHERLING_TZ)
+        if now > tournaments.pd500_date():
+            cs = competition.load_competitions("ct.name = 'Gatherling' AND c.name LIKE '%%Penny Dreadful 500%%'", season_id=seasons.current_season_num(), should_load_decks=True)
+            if len(cs) != 1 or not cs[0].decks or cs[0].decks[0].finish != 1:
+                logger.warning('Wanted to display the PD500 winner but could not because of unexpected data')
+                return ''
+            c, d = cs[0], cs[0].decks[0]
+            prepare.prepare_deck(d)
+            return template.render_name('pd500winner', d | c)
         if tournaments.is_pd500_week(now):
             date = dtutil.display_date_with_date_and_year(tournaments.pd500_date())
             return template.render_name('pd500notice', {'url': url_for('pd500'), 'date': date})

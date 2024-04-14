@@ -1,3 +1,5 @@
+import pytest
+
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
@@ -10,9 +12,5 @@ def test_sqlescape() -> None:
     assert sqlescape(6, force_string=True) == "'6'"
     assert sqlescape(6, force_string=True) != 6
     assert sqlescape('this\\one') == "'this\\\\one'"
-    found = False
-    try:
+    with pytest.raises(InvalidArgumentException):
         sqlescape({})
-    except InvalidArgumentException:
-        found = True
-    assert found

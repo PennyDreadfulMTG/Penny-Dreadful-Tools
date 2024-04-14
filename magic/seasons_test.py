@@ -19,6 +19,10 @@ def test_season_id() -> None:
         seasons.season_id(999)
     with pytest.raises(DoesNotExistException):
         seasons.season_id('ISD')
+    with pytest.raises(DoesNotExistException):
+        seasons.season_id(-999)
+    with pytest.raises(DoesNotExistException):
+        seasons.season_id(-10)
     assert seasons.season_id('HOU') == 5
     assert seasons.season_id('hou') == 5
     assert seasons.season_id('ALL') == 'all'

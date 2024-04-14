@@ -176,6 +176,8 @@ def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 
         return current_season_num()
     try:
         n = int(v)
+        if n < 0:
+            raise DoesNotExistException(f'Invalid season id {n}')
         if SEASONS[n - 1]:
             return n
     except (ValueError, IndexError):

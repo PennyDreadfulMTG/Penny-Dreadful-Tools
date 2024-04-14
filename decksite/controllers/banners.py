@@ -59,6 +59,7 @@ def discord_banner() -> Response:
     return send_file(os.path.abspath(path))
 
 @APP.route('/api/banner')
+@APP.route('/api/banner/')
 def banner_json() -> Response:
     cardnames, background = banner_cards(get_season_id())
     return return_json({

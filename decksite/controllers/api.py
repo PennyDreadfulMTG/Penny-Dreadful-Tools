@@ -109,6 +109,7 @@ ROTATION_DETAILS = APP.api.model('RotationDetails', {
     'friendly_diff': fields.String(),
 })
 
+@APP.route('/api/decks')
 @APP.route('/api/decks/')
 def decks_api() -> Response:
     """
@@ -146,6 +147,7 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.api.route('/decks/updated')
 @APP.api.route('/decks/updated/')
 class UpdatedDecks(Resource):
     @APP.api.marshal_with(DECKS)
@@ -179,6 +181,7 @@ class UpdatedDecks(Resource):
         prepare_decks(ds)
         return {'page': page, 'total': total, 'objects': ds}
 
+@APP.route('/api/cards2')
 @APP.route('/api/cards2/')
 def cards2_api() -> Response:
     """
@@ -218,6 +221,7 @@ def cards2_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/cardfeed')
 @APP.route('/api/cardfeed/')
 def cardfeed_api() -> Response:
     """
@@ -236,6 +240,7 @@ def cardfeed_api() -> Response:
     r = {'cards': os}
     return return_camelized_json(r)
 
+@APP.route('/api/people')
 @APP.route('/api/people/')
 def people_api() -> Response:
     """
@@ -269,6 +274,7 @@ def people_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/h2h')
 @APP.route('/api/h2h/')
 def h2h_api() -> Response:
     """
@@ -305,6 +311,7 @@ def h2h_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/leaderboards')
 @APP.route('/api/leaderboards/')
 def leaderboards_api() -> Response:
     """
@@ -350,6 +357,7 @@ def leaderboards_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/matches')
 @APP.route('/api/matches/')
 def matches_api() -> Response:
     """
@@ -391,6 +399,7 @@ def matches_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/archetypes')
 @APP.route('/api/archetypes/')
 def archetypes_api() -> Response:
     """
@@ -408,6 +417,7 @@ def archetypes_api() -> Response:
     r = {'total': len(data), 'objects': data}
     return return_camelized_json(r)
 
+@APP.route('/api/rotation/cards')
 @APP.route('/api/rotation/cards/')
 def rotation_cards_api() -> Response:
     """
@@ -461,12 +471,14 @@ def rotation_cards_api() -> Response:
     return resp
 
 @APP.api.route('/decks/<int:deck_id>')
+@APP.api.route('/decks/<int:deck_id>/')
 class LoadDeck(Resource):
     @APP.api.marshal_with(DECK)
     def get(self, deck_id: int) -> Deck:
         return deck.load_deck(deck_id)
 
 @APP.api.route('/randomlegaldeck')
+@APP.api.route('/randomlegaldeck/')
 class LoadRandomDeck(Resource):
     @APP.api.marshal_with(DECK)
     def get(self) -> Optional[Deck]:
@@ -478,6 +490,7 @@ class LoadRandomDeck(Resource):
         return blob
 
 @APP.api.route('/rotation')
+@APP.api.route('/rotation/')
 class Rotation(Resource):
     @APP.api.marshal_with(ROTATION_DETAILS)
     def get(self) -> Dict[str, Any]:
@@ -492,6 +505,7 @@ class Rotation(Resource):
         return result
 
 @APP.route('/api/competitions')
+@APP.route('/api/competitions/')
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
@@ -507,10 +521,12 @@ def competitions_api() -> Response:
     return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')
+@APP.route('/api/competitions/<competition_id>/')
 def competition_api(competition_id: int) -> Response:
     return return_json(comp.load_competition(competition_id))
 
 @APP.api.route('/league')
+@APP.api.route('/league/')
 class League(Resource):
     @APP.api.marshal_with(COMPETITION)
     def get(self) -> comp.Competition:
@@ -520,11 +536,13 @@ class League(Resource):
             lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
         return lg
 @APP.api.route('/seasoncodes')
+@APP.api.route('/seasoncodes/')
 class SeasonCodes(Resource):
     def get(self) -> List[str]:
         return seasons.SEASONS[:seasons.current_season_num()]
 
 @APP.route('/api/person/<person>')
+@APP.route('/api/person/<person>/')
 @fill_args('season_id')
 def person_api(person: str, season_id: int = -1) -> Response:
     if season_id == -1:
@@ -537,6 +555,7 @@ def person_api(person: str, season_id: int = -1) -> Response:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
 @APP.route('/api/person/<person>/decks')
+@APP.route('/api/person/<person>/decks/')
 @fill_args('season_id')
 def person_decks_api(person: str, season_id: int = 0) -> Response:
     p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
@@ -547,6 +566,7 @@ def person_decks_api(person: str, season_id: int = 0) -> Response:
     return return_json(blob)
 
 @APP.route('/api/league/run/<person>')
+@APP.route('/api/league/run/<person>/')
 def league_run_api(person: str) -> Response:
     decks = league.active_decks_by(person)
     if len(decks) == 0:
@@ -563,6 +583,7 @@ def league_run_api(person: str) -> Response:
     return return_json(run)
 
 @APP.route('/api/league/drop/<person>', methods=['POST'])
+@APP.route('/api/league/drop/<person>/', methods=['POST'])
 def drop(person: str) -> Response:
     error = validate_api_key()
     if error:
@@ -579,6 +600,7 @@ def drop(person: str) -> Response:
     return return_json(result)
 
 @APP.route('/api/doorprize', methods=['POST'])
+@APP.route('/api/doorprize/', methods=['POST'])
 def doorprize() -> Response:
     error = validate_api_key()
     if error:
@@ -588,21 +610,25 @@ def doorprize() -> Response:
     return return_json({'success': True})
 
 @APP.route('/api/rotation/clear_cache')
+@APP.route('/api/rotation/clear_cache/')
 def rotation_clear_cache() -> Response:
     rotation.clear_redis()
     rotation.rotation_redis_store()
     return return_json({'success': True})
 
 @APP.route('/api/cards')
+@APP.route('/api/cards/')
 def cards_api() -> Response:
     blob = {'cards': card.load_cards()}
     return return_json(blob)
 
 @APP.route('/api/card/<card>')
+@APP.route('/api/card/<card>/')
 def card_api(c: str) -> Response:
     return return_json(oracle.load_card(c))
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
+@APP.route('/api/archetype/reassign/', methods=['POST'])
 @auth.demimod_required
 @fill_form('deck_id', 'archetype_id')
 def post_reassign(deck_id: int, archetype_id: int) -> Response:
@@ -611,6 +637,7 @@ def post_reassign(deck_id: int, archetype_id: int) -> Response:
     return return_json({'success': True, 'deck_id': deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])
+@APP.route('/api/rule/update/', methods=['POST'])
 @fill_form('rule_id')
 @auth.demimod_required
 def post_rule_update(rule_id: Optional[int] = None) -> Response:
@@ -619,15 +646,18 @@ def post_rule_update(rule_id: Optional[int] = None) -> Response:
         return return_json({'success': success, 'msg': msg})
     return return_json({'success': False, 'msg': 'Required keys not found'})
 
+@APP.route('/api/sitemap')
 @APP.route('/api/sitemap/')
 def sitemap() -> Response:
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and len(rule.arguments) == 0]
     return return_json({'urls': urls})
 
+@APP.route('/api/intro')
 @APP.route('/api/intro/')
 def intro() -> Response:
     return return_json(not request.cookies.get('hide_intro', False) and not auth.hide_intro())
 
+@APP.route('/api/intro', methods=['POST'])
 @APP.route('/api/intro/', methods=['POST'])
 def hide_intro() -> Response:
     r = Response(response='')
@@ -635,6 +665,7 @@ def hide_intro() -> Response:
     return r
 
 @APP.route('/api/status')
+@APP.route('/api/status/')
 @auth.load_person
 def person_status() -> Response:
     username = auth.mtgo_username()
@@ -668,12 +699,14 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
     return run
 
 @APP.route('/api/key_cards/<int:season_num>')
+@APP.route('/api/key_cards/<int:season_num>/')
 def key_cards(season_num: int) -> Response:
     data = playability.key_cards(season_num)
     return return_json({'data': data})
 
 
 @APP.route('/api/admin/people/<int:person_id>/notes')
+@APP.route('/api/admin/people/<int:person_id>/notes/')
 @auth.admin_required_no_redirect
 def person_notes(person_id: int) -> Response:
     return return_json({'notes': ps.load_notes(person_id)})
@@ -696,23 +729,27 @@ def deck_embed(deck_id: int) -> Response:
     return return_json(embed)
 
 @APP.route('/api/test_500')
+@APP.route('/api/test_500/')
 def trigger_test_500() -> Response:
     if configuration.production.value:
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
     raise TooManyItemsException
 
 @APP.route('/api/achievements')
+@APP.route('/api/achievements/')
 def all_achievements() -> Response:
     data = {}
     data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
     return return_json(data)
 
 @APP.route('/api/tournaments')
+@APP.route('/api/tournaments/')
 def all_tournaments() -> Response:
     data = {}
     data['tournaments'] = (tournaments.all_series_info())
     return return_json(data)
 
+@APP.route('/api/search')
 @APP.route('/api/search/')
 def search() -> Response:
     init_search_cache()

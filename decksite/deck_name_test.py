@@ -285,6 +285,8 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('Red deck wins 3.4.22', 'Red Deck Wins v3.4.22', [], None, 23),
     ('count to 20', 'Count to 20', [], None, 23),
     ('delver🚮 (v2)', 'Delver🚮 v2', [], None, 23),
+    ('librarians', 'Librarians', ['U'], 'Mono Blue Librarians', 32),
+    ('trying to fit in', 'Trying to Fit In', ['U', 'R'], 'Izzet Twin', 32),
 ]
 def test_replace_space_alternatives() -> None:
     assert deck_name.replace_space_alternatives('3.1.2') == '3.1.2'

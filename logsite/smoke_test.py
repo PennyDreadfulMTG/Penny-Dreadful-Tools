@@ -18,4 +18,3 @@ def test_home() -> None:
 def test_some_pages() -> None:
     for path in ['/', '/about/', '/matches/', '/people/', '/recent.json', '/stats.json']:
         smoke_tester.response_test(path, 200)
-    assert False

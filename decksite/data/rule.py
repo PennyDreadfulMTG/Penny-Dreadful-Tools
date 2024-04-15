@@ -1,5 +1,6 @@
 from decksite.data import card, deck, preaggregation
 from decksite.database import db
+from magic import oracle
 from magic.decklist import parse_line
 from magic.models import Deck
 from shared import logger
@@ -239,11 +240,13 @@ def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, 
     db().execute(sql, [rule_id])
     for n, c in inc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, TRUE)'
-        db().execute(sql, [rule_id, c, n])
+        db().execute(sql, [rule_id, oracle.valid_name(c), n])
     for n, c in exc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
-        db().execute(sql, [rule_id, c, n])
+        db().execute(sql, [rule_id, oracle.valid_name(c), n])
     sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
+    if not inc and not exc:
+        db().execute('DELETE FROM rule WHERE id = %s', [rule_id])
     db().execute(sql)
     db().commit('update_rule_cards')
 

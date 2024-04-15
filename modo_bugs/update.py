@@ -1,6 +1,7 @@
 import codecs
 import datetime
 import json
+import logging
 import re
 import sys
 import urllib.parse
@@ -171,7 +172,11 @@ def process_forum(feedback_link: str | None, issue: Issue, labels: list[str]) ->
     if not feedback_link:
         return
 
-    status = fetcher.get_daybreak_label(feedback_link)
+    try:
+        status = fetcher.get_daybreak_label(feedback_link)
+    except requests.RequestException as e:
+        logging.exception(e)
+        status = None
     _status = status
     if status:
         status = 'Daybreak: ' + status

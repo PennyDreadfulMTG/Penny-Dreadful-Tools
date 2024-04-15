@@ -10,31 +10,27 @@ from magic.models import Deck
 from shared.pd_exception import InvalidDataException
 
 WHITELIST = [
-    '#justnayathings',
-    'blue burn',  # deck_id = 24089
-    "bob's r us",
-    'gg con',
-    'happy b day adriana',
+    '#JustNayaThings',
+    "Bob's R Us",
+    'Happy B DAY Adriana',
     'basically rakdos version of burn',
-    's15 is a meme',
-    'i will make combo work in season 15',
-    'b u r n',
-    'r e a n i m a t o r',
-    'meme deck for #general',
-    'i will make combo work in season 15',
-    's15 is a meme',
-    'blue man group',
-    'no green jeskai asc',
-    'ub or not ub? that is the question',
-    'rakdos aggro but with green instead of black',
-    'the world is so black and white nowadays',
-    'fix the gargadon bug me angy',
-    'red and black jank',
-    'black and green',
-    'blue dreadnought + more red hate',
-    'netdecking: day 1',
-    'catch 22',
-    'clerks ii',
+    'I WILL Make Combo Work in Season 15',
+    'B U R N',
+    'R E A N I M A T O R',
+    'Meme Deck for #General',  # The capitalized #General here is removed in normalize in somewhat awkward fashion.
+    'UB or Not UB? That Is the Question',
+    'Rakdos Aggro but With Green Instead of Black',
+    'The World Is So Black and White Nowadays',
+    'Fix the Gargadon Bug Me Angy',
+    'Red and Black Jank',
+    'Black and Green',
+    'Blue Dreadnought + More Red Hate',
+    'Netdecking: Day 1',
+    'Catch 22',
+    'Clerks II',
+    'Blue Man Group',
+    'No Green Jeskai Ascendancy',
+    'Orzhov Tokens 1.1: Not Even Sure if I Need the Black',
 ]
 
 PROFANITY_WHITELIST = [
@@ -50,20 +46,21 @@ PROFANITY_BLACKLIST = [
     'fisting',
     'retarded',
     'erection',
+    'erections',
     'hoe',
     'hoes',
 ]
 
 ABBREVIATIONS = {
-    'rdw': 'red deck wins',
-    'ww': 'white weenie',
-    'muc': 'mono blue control',
-    'mbc': 'mono black control',
-    'yore-tiller': 'wubr',
-    'glint-eye': 'ubrg',
-    'dune-brood': 'brgw',
-    'ink-treader': 'rgwu',
-    'witch-maw': 'gwub',
+    'rdw': 'Red Deck Wins',
+    'ww': 'White Weenie',
+    'muc': 'Mono Blue Control',
+    'mbc': 'Mono Black Control',
+    'yore-tiller': 'WUBR',
+    'glint-eye': 'UBRG',
+    'dune-brood': 'BRGW',
+    'ink-treader': 'RGWU',
+    'witch-maw': 'GWUB',
 }
 
 MAX_NAME_LEN = 100
@@ -71,7 +68,11 @@ MAX_NAME_LEN = 100
 def normalize(d: Deck) -> str:
     try:
         name = d.original_name
-        name = name.lower()
+        if whitelisted(name):
+            return name
+        name = titlecase.titlecase(name)
+        if whitelisted(name):
+            return name.replace('#General', '#general')
         name = replace_space_alternatives(name)
         name = remove_pd(name, d.season_id)
         name = remove_brackets(name)
@@ -175,9 +176,9 @@ def normalize_colors(name: str, colors: list[str]) -> str:
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
-    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)] and word != 'colorless':
-        name = f'mono {name}'
-    return name.strip()
+    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not any(abbrev for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev.lower())) and word.lower() != 'colorless':
+        name = f'Mono {name}'
+    return re.sub(' +', ' ', name.strip())
 
 # Don't let things like 'BRRR' and 'UWU' match [WUBRG]+ searches.
 def is_true_match(color_word: str) -> bool:
@@ -219,7 +220,7 @@ def add_colors_if_no_deck_name(name: str, colors: set[str]) -> str:
     return name_from_colors(colors)
 
 def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
-    if not name.replace('mono ', '') in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
+    if not name.replace('Mono ', '') in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
         return name
     archetype_contains_color_name = False
     for k in COLOR_COMBINATIONS:
@@ -230,7 +231,7 @@ def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
     return new_name + archetype
 
 def remove_mono_if_not_first_word(name: str) -> str:
-    return re.sub('(.+) mono ', '\\1 ', name)
+    return re.sub('(.+) mono ', '\\1 ', name, flags=re.IGNORECASE)
 
 def remove_profanity(name: str) -> str:
     profanity.load_censor_words(whitelist_words=PROFANITY_WHITELIST)
@@ -272,14 +273,14 @@ def normalize_version(name: str) -> str:
         r'(\s)[\[({]?(\d\.\d[\.\d]*)(?:[])}]|\b)',  # Dotted number somewhere in name
     ]
     for pattern in patterns:
-        version = re.search(pattern, name)
+        version = re.search(pattern, name, re.IGNORECASE)
         if not version:
             continue
         num = version.group(2)
         if not is_semver(num):
             continue
         # Exclude some known uses of numbers if it's not a dotted number ('This deck is tier 3', 'Count to 10', and similar)
-        if '.' not in num and re.search(r'((tier|turn|to|till?|eason) ?)' + num, name):
+        if '.' not in num and re.search(r'((tier|turn|to|till?|eason) ?)' + num, name, re.IGNORECASE):
             continue
         num = remove_semver_trailing_zeroes(num)
         spacer = ' ' if version.group(1) != '-' else version.group(1)

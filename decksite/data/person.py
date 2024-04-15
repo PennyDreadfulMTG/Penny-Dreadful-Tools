@@ -326,7 +326,6 @@ def load_notes(person_id: Optional[int] = None) -> List[Container]:
         WHERE
             {where}
         ORDER BY
-            s.id,
             pn.created_date DESC
     """.format(creator_query=query.person_query('c'), subject_query=query.person_query('s'), where=where)
     notes = [Container(r) for r in db().select(sql)]

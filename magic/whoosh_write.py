@@ -1,9 +1,9 @@
 import os
 from typing import List
 
+from anyascii import anyascii
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import FileIndex, create_in, open_dir
-from anyascii import anyascii
 
 from magic import fetcher, layout, multiverse
 from magic.models import Card

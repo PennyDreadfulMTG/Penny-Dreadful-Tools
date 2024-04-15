@@ -1,8 +1,8 @@
 from enum import Enum
-
 from typing import Set
 
 from decksite.database import db
+
 
 class Permission(Enum):
     ADMIN = 'admin'

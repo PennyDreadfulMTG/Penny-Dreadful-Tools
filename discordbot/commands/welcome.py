@@ -1,8 +1,9 @@
 from interactions.models import slash_command
 
 from discordbot.command import MtgContext
-from magic import oracle, image_fetcher
+from magic import image_fetcher, oracle
 from magic.models import Card
+
 
 @slash_command('welcome')
 async def welcome(ctx: MtgContext) -> None:

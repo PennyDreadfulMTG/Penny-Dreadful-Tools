@@ -9,7 +9,7 @@ from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType
                                  slash_option)
 
 from discordbot.command import MtgContext, MtgMessageContext, make_choice
-from magic import card_price, fetcher, oracle, tournaments, rotation
+from magic import card_price, fetcher, oracle, rotation, tournaments
 from shared import configuration
 
 num_tournaments = inflect.engine().number_to_words(str(len(tournaments.all_series_info())))

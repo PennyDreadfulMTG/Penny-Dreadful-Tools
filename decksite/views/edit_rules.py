@@ -26,6 +26,8 @@ class EditRules(View):
         self.overlooked_decks = overlooked_decks[0:10]
         self.rules = rules
         self.archetypes = archetypes
+        archetypes_with_rules = {rule.archetype_id for rule in rules}
+        self.leaf_nodes_with_no_rule = ', '.join(archetype.name for archetype in archetypes if not archetype.children and archetype.id not in archetypes_with_rules)
         self.rules.sort(key=lambda c: c.archetype_name)
         for r in self.rules:
             r.included_cards_s = '\n'.join('{n} {card}'.format(n=entry['n'], card=entry['card']) for entry in r.included_cards)

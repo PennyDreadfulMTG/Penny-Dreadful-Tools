@@ -165,9 +165,9 @@ def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
     pipenv = local['pipenv']
     if fix:
-        pipenv['run', 'isort', '.'] & FG
+        pipenv['run', 'isort', '.', '--skip=node_modules'] & FG
     else:
-        pipenv['run', 'isort', '.', '--check'] & FG
+        pipenv['run', 'isort', '.', '--check', '--skip=node_modules'] & FG
 
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)

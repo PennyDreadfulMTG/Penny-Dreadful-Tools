@@ -2,9 +2,9 @@ import os
 from itertools import chain
 from os.path import basename
 
+from fontTools import subset
 from fontTools.ttLib import TTFont
 from fontTools.unicode import Unicode
-from fontTools import subset
 
 from decksite.database import db
 

@@ -44,7 +44,7 @@ def admin_home() -> wrappers.Response:
 @auth.admin_required
 def edit_aliases() -> str:
     aliases = ps.load_aliases()
-    all_people = ps.load_people(order_by='p.name')
+    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = EditAliases(aliases, all_people)
     return view.page()
 
@@ -173,7 +173,7 @@ def rotation_checklist() -> str:
 @auth.admin_required
 def player_notes() -> str:
     notes = ps.load_notes()
-    all_people = ps.load_people(order_by='p.name')
+    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = PlayerNotes(notes, all_people)
     return view.page()
 

@@ -9,7 +9,7 @@ from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType
                                  slash_option)
 
 from discordbot.command import MtgContext, MtgMessageContext, make_choice
-from magic import card_price, fetcher, oracle, tournaments
+from magic import card_price, fetcher, oracle, rotation, tournaments
 from shared import configuration
 
 num_tournaments = inflect.engine().number_to_words(str(len(tournaments.all_series_info())))
@@ -179,7 +179,7 @@ explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
     ),
     'speculation': (
         """
-        Please don't buy unconfirmed cards (marked ❓ during rotation), you may prevent them from becoming legal..
+        Please don't buy unconfirmed cards (marked ❓ during rotation), you may prevent them from becoming legal.
         """,
         {},
     ),
@@ -278,12 +278,14 @@ class ExplainCog(Extension):
             else:
                 explanation = explanations[word]
 
-            s = '{text}\n'.format(text=textwrap.dedent(explanation[0]))
+            s = textwrap.dedent(explanation[0])
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(
                 things=', '.join(sorted(keys)))
             await ctx.send(usage)
             return
+        if word == 'rotation' and rotation.in_rotation():
+            s += textwrap.dedent(explanations['speculation'][0]).strip()
         for k in sorted(explanation[1].keys()):
             s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
         await ctx.send(s)

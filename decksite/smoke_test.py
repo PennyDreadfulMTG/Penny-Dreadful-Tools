@@ -3,7 +3,6 @@ import pytest
 from decksite.main import APP
 from shared_web.smoke import SmokeTester
 
-
 smoke_tester = SmokeTester(APP)
 
 @pytest.mark.functional

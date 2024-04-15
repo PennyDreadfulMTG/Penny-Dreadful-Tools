@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 from flask import redirect, request, session, url_for
 from werkzeug import wrappers
 
-from decksite.data import person, permission
+from decksite.data import permission, person
 from decksite.data.permission import Permission
 
 

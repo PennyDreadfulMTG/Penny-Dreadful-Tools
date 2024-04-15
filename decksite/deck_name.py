@@ -231,7 +231,7 @@ def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
     return new_name + archetype
 
 def remove_mono_if_not_first_word(name: str) -> str:
-    return re.sub('(.+) mono ', '\\1 ', name, re.IGNORECASE)
+    return re.sub('(.+) mono ', '\\1 ', name, flags=re.IGNORECASE)
 
 def remove_profanity(name: str) -> str:
     profanity.load_censor_words(whitelist_words=PROFANITY_WHITELIST)

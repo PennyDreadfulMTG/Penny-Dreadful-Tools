@@ -9,6 +9,7 @@ class PersonAchievements(View):
     def __init__(self, person: ps.Person, achievements: List[Container]) -> None:
         super().__init__()
         self.person = person
+        self.is_person_page = True
         self.achievements = achievements
         self.show_seasons = True
         self.decks = []

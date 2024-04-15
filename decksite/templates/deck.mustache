@@ -56,12 +56,14 @@
 {{> legal}}
 <section class="admin demimod">
     <h2>Admin</h2>
-        <p>
-            <p>Original name: <span class="deck-name">{{original_name}}</span></p>
+        <p>Original name: <span class="deck-name">{{original_name}}</span></p>
+        <div>
+            Change archetype:
             <form class="inline" method="post" action="{{edit_archetype_url}}">
                 <input type="hidden" name="deck_id" value="{{id}}">
                 {{> archetypedropdown}}
                 <button type="submit">Assign</button>
             </form>
-        </p>
+        </div>
+
 </section>

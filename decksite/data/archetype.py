@@ -37,7 +37,7 @@ def add(name: str, parent: int, description: str) -> None:
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:
         sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
-    sql += f'({archetype_id}, {archetype_id}, {0})'
+    sql += f'({archetype_id}, {archetype_id}, 0)'
     db().execute(sql)
 
 def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: bool = True, similarity: int | None = None) -> None:

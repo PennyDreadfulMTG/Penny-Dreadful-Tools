@@ -1,5 +1,3 @@
-from typing import Optional
-
 from flask import url_for
 
 from decksite.data.form import Form
@@ -7,7 +5,7 @@ from decksite.views.league_form import LeagueForm
 
 
 class DecklistForm(LeagueForm):
-    def __init__(self, form: Form, person_id: Optional[int]) -> None:
+    def __init__(self, form: Form, person_id: int | None) -> None:
         super().__init__(form)
         self.person_id = person_id
         self.classify_illegal_cards()

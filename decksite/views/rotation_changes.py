@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Sequence
+from typing import Any
+from collections.abc import Sequence
 
 from flask import url_for
 
@@ -8,9 +9,9 @@ from magic.models import Card
 
 
 class RotationChanges(View):
-    def __init__(self, cards_in: Sequence[Card], cards_out: Sequence[Card], playability: Dict[str, float], speculation: bool = False, query: str = '') -> None:
+    def __init__(self, cards_in: Sequence[Card], cards_out: Sequence[Card], playability: dict[str, float], speculation: bool = False, query: str = '') -> None:
         super().__init__()
-        self.sections: List[Dict[str, Any]] = []
+        self.sections: list[dict[str, Any]] = []
         self.cards = list(cards_in) + list(cards_out)
         entries_in = [{'name': c.name, 'card': c, 'interestingness': rotation.interesting(playability, c, speculation)} for c in cards_in]
         entries_out = [{'name': c.name, 'card': c, 'interestingness': rotation.interesting(playability, c, speculation, new=False)} for c in cards_out]

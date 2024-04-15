@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from find import search
@@ -407,8 +405,8 @@ def test_hybrid_phyrexian_mana() -> None:
 #     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
 
 def test_uppercase() -> None:
-    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=seasons.current_season_name())])
-    do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', [f'{seasons.current_season_name()}%%'])
+    do_test('F:pd', f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))")
 
 def test_subtype() -> None:
     do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%%warrior%%'))")
@@ -545,7 +543,7 @@ def test_is_spikey() -> None:
     assert 'Balance' in where
     assert "name = 'Yawgmoth''s Will'" in where
 
-def do_functional_test(query: str, yes: List[str], no: List[str]) -> None:
+def do_functional_test(query: str, yes: list[str], no: list[str]) -> None:
     results = search.search(query)
     found = [c.name for c in results]
     for name in yes:
@@ -556,5 +554,5 @@ def do_functional_test(query: str, yes: List[str], no: List[str]) -> None:
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))
     if where != expected:
-        print('\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}'.format(query=query, expected=expected, actual=where))
+        print(f'\nQuery: {query}\nExpected: {expected}\n  Actual: {where}')
     assert expected == where

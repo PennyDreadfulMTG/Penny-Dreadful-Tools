@@ -1,6 +1,8 @@
 import re
 import xml.etree.ElementTree as etree
-from typing import TYPE_CHECKING, Callable, Dict, List, Match, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Callable
+from re import Match
 
 import flask
 import pystache
@@ -15,13 +17,13 @@ from pystache.context import ContextStack
 if TYPE_CHECKING:
     from shared_web.base_view import BaseView
 
-__SEARCHPATH: List[str] = []
+__SEARCHPATH: list[str] = []
 
 StringConverterFunction = Optional[Callable[[str], str]]
 
 def render_name(template: str, *context: ContextStack) -> str:
     try:
-        renderer = CachedRenderer(search_dirs=['{0}/templates'.format(flask.current_app.name), 'shared_web/templates'])
+        renderer = CachedRenderer(search_dirs=[f'{flask.current_app.name}/templates', 'shared_web/templates'])
     except TemplateNotFoundError:
         renderer = CachedRenderer(search_dirs=__SEARCHPATH)
     return renderer.render_name(template, *context)
@@ -44,22 +46,22 @@ class CachedRenderer(pystache.Renderer):
 # A custom loader that acts exactly as the default loader but only loads a given file once to speed up repeated use of partials.
 # This will stop us loading record.mustache from disk 16,000 times on /cards/ for example.
 class CachedLoader(pystache.loader.Loader):
-    def __init__(self, file_encoding: Optional[str] = None, extension: Optional[Union[str, bool]] = None, to_unicode: Optional[StringConverterFunction] = None, search_dirs: Optional[List[str]] = None) -> None:
+    def __init__(self, file_encoding: str | None = None, extension: str | bool | None = None, to_unicode: StringConverterFunction | None = None, search_dirs: list[str] | None = None) -> None:
         super().__init__(file_encoding, extension, to_unicode, search_dirs)
-        self.templates: Dict[str, str] = {}
+        self.templates: dict[str, str] = {}
 
-    def read(self, path: str, encoding: Optional[str] = None) -> str:
+    def read(self, path: str, encoding: str | None = None) -> str:
         if self.templates.get(path) is None:
             self.templates[path] = super().read(path, encoding)
         return self.templates[path]
 
 # If you have already parsed a template, don't parse it again.
 class CachedRenderEngine(pystache.renderengine.RenderEngine):
-    def __init__(self, literal: Optional[StringConverterFunction] = None, escape: Optional[StringConverterFunction] = None, resolve_context: Optional[Callable[[ContextStack, str], str]] = None, resolve_partial: Optional[StringConverterFunction] = None, to_str: Optional[Callable[[object], str]] = None) -> None:
+    def __init__(self, literal: StringConverterFunction | None = None, escape: StringConverterFunction | None = None, resolve_context: Callable[[ContextStack, str], str] | None = None, resolve_partial: StringConverterFunction | None = None, to_str: Callable[[object], str] | None = None) -> None:
         super().__init__(literal, escape, resolve_context, resolve_partial, to_str)
-        self.parsed_templates: Dict[str, pystache.parsed.ParsedTemplate] = {}
+        self.parsed_templates: dict[str, pystache.parsed.ParsedTemplate] = {}
 
-    def render(self, template: str, context_stack: ContextStack, delimiters: Optional[Tuple[str, str]] = None) -> str:
+    def render(self, template: str, context_stack: ContextStack, delimiters: tuple[str, str] | None = None) -> str:
         if self.parsed_templates.get(template) is None:
             self.parsed_templates[template] = insert_gettext_nodes(pystache.parser.parse(template, delimiters))
         return self.parsed_templates[template].render(self, context_stack)

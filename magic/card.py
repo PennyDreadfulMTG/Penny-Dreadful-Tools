@@ -1,25 +1,23 @@
 import copy
 import re
 import unicodedata
-from typing import Dict, List, Optional, Tuple
 
 from typing_extensions import TypedDict
 
 from magic import layout
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
-ColumnDescription = TypedDict('ColumnDescription', {
-    'type': str,
-    'nullable': bool,
-    'primary_key': bool,
-    'query': str,
-    'scryfall': bool,
-    'foreign_key': Optional[Tuple[str, str]],
-    'default': Optional[str],
-    'unique': bool,
-    'unique_with': Optional[List[str]],
-})
-TableDescription = Dict[str, ColumnDescription]
+class ColumnDescription(TypedDict):
+    type: str
+    nullable: bool
+    primary_key: bool
+    query: str
+    scryfall: bool
+    foreign_key: tuple[str, str] | None
+    default: str | None
+    unique: bool
+    unique_with: list[str] | None
+TableDescription = dict[str, ColumnDescription]
 
 MAX_LEN_TEXT = 21845
 MAX_LEN_VARCHAR = 190
@@ -29,7 +27,7 @@ DATE = 'INTEGER'
 INTEGER = 'INTEGER'
 REAL = 'REAL'
 TEXT = 'LONGTEXT'
-VARCHAR = 'VARCHAR({n})'.format(n=MAX_LEN_VARCHAR)
+VARCHAR = f'VARCHAR({MAX_LEN_VARCHAR})'
 
 BASE: ColumnDescription = {
     'type': VARCHAR,
@@ -105,10 +103,10 @@ def face_properties() -> TableDescription:
     props['id']['primary_key'] = True
     props['id']['query'] = '`{table}`.`{column}` AS face_id'
     props['cmc']['type'] = REAL
-    props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
-    props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
-    props['mana_cost']['query'] = """{mana_cost_query} AS mana_cost""".format(mana_cost_query=mana_cost_query())
-    props['type_line']['query'] = """{type_query} AS type_line""".format(type_query=type_query())
+    props['name']['query'] = f"""{name_query()} AS name"""
+    props['cmc']['query'] = f"""{cmc_query()} AS cmc"""
+    props['mana_cost']['query'] = f"""{mana_cost_query()} AS mana_cost"""
+    props['type_line']['query'] = f"""{type_query()} AS type_line"""
     for k in ['oracle_text']:
         props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
         props[k]['type'] = TEXT
@@ -292,7 +290,7 @@ def type_query() -> str:
     """
 
 def unaccent(s: str) -> str:
-    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
 
 def canonicalize(name: str) -> str:
     if name.find('/') >= 0 and name.find('//') == -1:

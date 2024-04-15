@@ -1,5 +1,5 @@
 import random
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import pytest
 from _pytest.mark.structures import ParameterSet
@@ -22,11 +22,11 @@ class ContextForTests(BaseContext, MtgMixin):
     sent = False
     sent_args = False
     sent_file = False
-    content: Optional[str] = None
+    content: str | None = None
     content_parameters: str
     id = random.randint(111111111111111111, 999999999999999999)
 
-    async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None:
+    async def send(self, content: str | None = None, *args: Any, **kwargs: Any) -> None:
         self.sent = True
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()
@@ -39,7 +39,7 @@ class ContextForTests(BaseContext, MtgMixin):
     async def defer(self) -> None:
         ...
 
-def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional[str], Optional[str]]]]:
+def get_params() -> list[ParameterSet | tuple[str, dict[str, Any], str | None, str | None]]:
     return [
         ('art', {'card': 'Island'}, None, None),
         ('barbs', {}, None, None),
@@ -76,7 +76,7 @@ def get_params() -> List[Union[ParameterSet, Tuple[str, dict[str, Any], Optional
 @pytest.mark.functional
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content, function_name', get_params())
-async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], expected_content: str, function_name: str) -> None:
+async def test_command(discordbot: Client, cmd: str, kwargs: dict[str, Any], expected_content: str, function_name: str) -> None:
     command = find_command(discordbot, cmd, function_name)
     assert command is not None
     print(f'command: {command}')
@@ -100,7 +100,7 @@ async def test_command(discordbot: Client, cmd: str, kwargs: Dict[str, Any], exp
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content
 
-def find_command(discordbot: Client, cmd: str, function_name: Optional[str] = None) -> Optional[BaseCommand]:
+def find_command(discordbot: Client, cmd: str, function_name: str | None = None) -> BaseCommand | None:
     for command in discordbot.application_commands:
         if isinstance(command.name, str):
             name = command.name

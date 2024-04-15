@@ -1,6 +1,5 @@
 # type: ignore
 
-from typing import Dict, Tuple
 
 from flask import Response, request, session
 
@@ -68,7 +67,7 @@ def upload() -> Response:
 
 @APP.route('/export/<match_id>')
 @APP.route('/export/<match_id>/')
-def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
+def export(match_id: int) -> tuple[str, int, dict[str, str]]:
     local = match.get_match(match_id)
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,
@@ -77,12 +76,12 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
         players=','.join([p.name for p in local.players]))
     n = 1
     for g in local.games:
-        text += '== Game {n} ({id}) ==\n'.format(n=n, id=g.id)
+        text += f'== Game {n} ({g.id}) ==\n'
         n = n + 1
         text += g.sanitized_log().strip()
         text += '\n\n'
     text = text.replace('\n', '\r\n')
     return (text, 200, {
         'Content-type': 'text/plain; charset=utf-8',
-        'Content-Disposition': 'attachment; filename={match_id}.txt'.format(match_id=match_id),
+        'Content-Disposition': f'attachment; filename={match_id}.txt',
     })

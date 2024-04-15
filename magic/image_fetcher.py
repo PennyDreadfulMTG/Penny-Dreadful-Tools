@@ -3,7 +3,6 @@ import hashlib
 import math
 import os
 import re
-from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageOps, UnidentifiedImageError
 
@@ -15,14 +14,14 @@ from shared.fetch_tools import FetchException, escape
 if not os.path.exists(configuration.get_str('image_dir')):
     os.makedirs(configuration.get_str('image_dir'), exist_ok=True)
 
-def basename(cards: List[Card]) -> str:
+def basename(cards: list[Card]) -> str:
     return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) + (c.get('preferred_printing', '') or '') for c in cards)
 
-def bluebones_image(cards: List[Card]) -> str:
+def bluebones_image(cards: list[Card]) -> str:
     c = '|'.join(c.name for c in cards)
-    return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
+    return f'http://magic.bluebones.net/proxies/index2.php?c={escape(c)}'
 
-def scryfall_image(c: Card, version: str = '', face: Optional[str] = None) -> str:
+def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
     if face == 'meld':
         name = c.names[1]
     elif ' // ' in c.name:
@@ -33,31 +32,31 @@ def scryfall_image(c: Card, version: str = '', face: Optional[str] = None) -> st
     if p is not None:
         u = f'https://api.scryfall.com/cards/{p.set_code}/{p.number}?format=image'
     else:
-        u = 'https://api.scryfall.com/cards/named?exact={c}&format=image'.format(c=escape(name))
+        u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
     if version:
-        u += '&version={v}'.format(v=escape(version))
+        u += f'&version={escape(version)}'
     if face and face != 'meld':
-        u += '&face={f}'.format(f=escape(face))
+        u += f'&face={escape(face)}'
     return u
 
 def mci_image(printing: Printing) -> str:
-    return 'http://magiccards.info/scans/en/{code}/{number}.jpg'.format(code=printing.set_code.lower(), number=printing.number)
+    return f'http://magiccards.info/scans/en/{printing.set_code.lower()}/{printing.number}.jpg'
 
-def gatherer_image(printing: Printing) -> Optional[str]:
+def gatherer_image(printing: Printing) -> str | None:
     multiverse_id = printing.multiverseid
     if multiverse_id and int(multiverse_id) > 0:
         return 'https://image.deckbrew.com/mtg/multiverseid/' + str(multiverse_id) + '.jpg'
     return None
 
-def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
+def download_bluebones_image(cards: list[Card], filepath: str) -> bool:
     print('Trying to get image for {cards}'.format(cards=', '.join(c.name for c in cards)))
     try:
         fetch_tools.store(bluebones_image(cards), filepath)
     except FetchException as e:
-        print('Error: {e}'.format(e=e))
+        print(f'Error: {e}')
     return fetch_tools.acceptable_file(filepath)
 
-async def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
+async def download_scryfall_image(cards: list[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(c.name for c in cards)
     print(f'Trying to get scryfall images for {card_names}')
     image_filepaths = []
@@ -71,7 +70,7 @@ async def download_scryfall_image(cards: List[Card], filepath: str, version: str
         save_composite_image(image_filepaths, filepath)
     return fetch_tools.acceptable_file(filepath)
 
-async def download_art_crop(c: Card, hq_data: Dict[str, Tuple[str, int]]) -> Optional[str]:
+async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]]) -> str | None:
     if hq_data is None:
         hq_data = await fetcher.hq_artcrops()
     if c.name in hq_data:
@@ -83,7 +82,7 @@ async def download_art_crop(c: Card, hq_data: Dict[str, Tuple[str, int]]) -> Opt
             return file_path
     return await download_scryfall_art_crop(c)
 
-async def download_scryfall_art_crop(c: Card) -> Optional[str]:
+async def download_scryfall_art_crop(c: Card) -> str | None:
     file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
     if not fetch_tools.acceptable_file(file_path):
         await download_scryfall_card_image(c, file_path, version='art_crop')
@@ -91,7 +90,7 @@ async def download_scryfall_art_crop(c: Card) -> Optional[str]:
         return file_path
     return None
 
-async def download_scryfall_png(c: Card) -> Optional[str]:
+async def download_scryfall_png(c: Card) -> str | None:
     file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
     if not fetch_tools.acceptable_file(file_path):
         await download_scryfall_card_image(c, file_path, version='png')
@@ -113,10 +112,10 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
         else:
             await fetch_tools.store_async(scryfall_image(c, version=version), filepath)
     except FetchException as e:
-        print('Error: {e}'.format(e=e))
+        print(f'Error: {e}')
     return fetch_tools.acceptable_file(filepath)
 
-def determine_filepath(cards: List[Card], prefix: str = '', ext: str = '.jpg') -> str:
+def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.jpg') -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -126,7 +125,7 @@ def determine_filepath(cards: List[Card], prefix: str = '', ext: str = '.jpg') -
     return f'{directory}/{prefix}{filename}'
 
 
-def download_image(cards: List[Card]) -> Optional[str]:
+def download_image(cards: list[Card]) -> str | None:
     event_loop = None
     try:
         event_loop = asyncio.get_event_loop()
@@ -135,7 +134,7 @@ def download_image(cards: List[Card]) -> Optional[str]:
         asyncio.set_event_loop(event_loop)
     return event_loop.run_until_complete(download_image_async(cards))
 
-async def download_image_async(cards: List[Card]) -> Optional[str]:
+async def download_image_async(cards: list[Card]) -> str | None:
     filepath = determine_filepath(cards)
     if fetch_tools.acceptable_file(filepath):
         return filepath
@@ -145,7 +144,7 @@ async def download_image_async(cards: List[Card]) -> Optional[str]:
         return filepath
     return None
 
-def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
+def save_composite_image(in_filepaths: list[str], out_filepath: str) -> None:
     try:
         images = list(map(Image.open, in_filepaths))
     except UnidentifiedImageError:
@@ -166,7 +165,7 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
         x_offset += image.size[0]
     new_image.save(out_filepath)
 
-async def generate_banner(names: List[str], background: str, v_crop: Optional[int] = None) -> str:
+async def generate_banner(names: list[str], background: str, v_crop: int | None = None) -> str:
     cards = [oracle.load_card(name) for name in names]
     hq_artcrops = fetcher.hq_artcrops()
     hq = False
@@ -210,7 +209,7 @@ async def generate_banner(names: List[str], background: str, v_crop: Optional[in
     canvas.save(out_filepath)
     return out_filepath
 
-async def generate_discord_banner(names: List[str], background: str) -> str:
+async def generate_discord_banner(names: list[str], background: str) -> str:
     cards = [oracle.load_card(name) for name in names]
     hq_artcrops = fetcher.hq_artcrops()
     hq = False

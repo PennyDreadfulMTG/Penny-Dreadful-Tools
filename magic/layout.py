@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Optional
 
 from github.GithubException import GithubException
 
@@ -62,34 +61,34 @@ LAYOUTS: dict[str, Layout] = {
     'vanguard': Layout(playable=False),
 }
 
-def all_layouts() -> List[str]:
+def all_layouts() -> list[str]:
     return list(LAYOUTS.keys())
 
-def playable_layouts() -> List[str]:
+def playable_layouts() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.playable]
 
-def has_two_names() -> List[str]:
+def has_two_names() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_two_names]
 
-def uses_two_names() -> List[str]:
+def uses_two_names() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.uses_two_names]
 
-def has_single_back() -> List[str]:
+def has_single_back() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_single_back]
 
-def has_meld_back() -> List[str]:
+def has_meld_back() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_meld_back]
 
-def has_two_faces() -> List[str]:
+def has_two_faces() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_two_faces]
 
-def sums_cmc() -> List[str]:
+def sums_cmc() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.sums_cmc]
 
-def has_two_mana_costs() -> List[str]:
+def has_two_mana_costs() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_two_mana_costs]
 
-def uses_canonical_namespace() -> List[str]:
+def uses_canonical_namespace() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.uses_canonical_namespace]
 
 def is_playable_layout(layout: str) -> bool:
@@ -99,7 +98,7 @@ def is_playable_layout(layout: str) -> bool:
     report_missing_layout(layout)
     return False
 
-def report_missing_layout(layout: Optional[str]) -> None:
+def report_missing_layout(layout: str | None) -> None:
     cache_key = 'missing_layout_logged'
     if not hasattr(report_missing_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
         try:

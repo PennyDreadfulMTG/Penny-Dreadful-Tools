@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from decksite.data import competition, deck, top
 from magic import decklist
@@ -12,7 +12,7 @@ def disabled() -> None:
         tournament(c)
 
 
-def tournament(comp: Dict[str, Any]) -> None:
+def tournament(comp: dict[str, Any]) -> None:
     comp = fetch_tools.fetch_json(comp['url'])
     dt = dtutil.ts2dt(comp['start_date'])
     de = dtutil.ts2dt(comp['end_date'])

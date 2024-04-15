@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Iterable, List, Optional, Union
+from collections.abc import Iterable
 
 import build as builddotpy
 from run import wait_for_db
@@ -65,7 +65,7 @@ def stylefix() -> None:
     autopep = local['autopep8']
     autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG
 
-def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
+def do_mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
@@ -100,7 +100,7 @@ def do_mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
+def mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -> None:
     do_mypy(argv, strict, typeshedding)
 
 @cli.command()
@@ -119,7 +119,7 @@ def upload_coverage() -> None:
     except fetch_tools.FetchException as e:
         print(e)
 
-def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None) -> List[str]:
+def find_files(needle: str = '', file_extension: str = '', exclude: list[str] | None = None) -> list[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
     paths = [p for p in paths if 'logsite_migrations' not in p]
     if file_extension:
@@ -148,17 +148,17 @@ def runtests(argv: Iterable[str], m: str) -> None:
     if code:
         sys.exit(code)
 
-def do_unit(argv: List[str]) -> None:
+def do_unit(argv: list[str]) -> None:
     runtests(argv, 'not functional and not perf')
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def unit(argv: List[str]) -> None:
+def unit(argv: list[str]) -> None:
     do_unit(argv)
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def test(argv: List[str]) -> None:
+def test(argv: list[str]) -> None:
     runtests(argv, '')
 
 def do_sort(fix: bool) -> None:
@@ -223,7 +223,7 @@ def pop_if_any(label: str) -> None:
         print('>>>> Popping stashed changes')
         subprocess.call(['git', 'stash', 'pop'])
 
-def do_safe_push(argv: List[str]) -> None:
+def do_safe_push(argv: list[str]) -> None:
     label = stash_if_any()
     print('>>>> Rebasing branch on master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
@@ -233,14 +233,14 @@ def do_safe_push(argv: List[str]) -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def safe_push(argv: List[str]) -> None:
+def safe_push(argv: list[str]) -> None:
     do_safe_push(argv)
 
 @cli.command()
 def push() -> None:
     do_push()
 
-def do_pull_request(argv: List[str]) -> None:
+def do_pull_request(argv: list[str]) -> None:
     print('>>>> Pull request')
     try:
         subprocess.check_call(['hub', 'pull-request', *argv])
@@ -249,7 +249,7 @@ def do_pull_request(argv: List[str]) -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def pull_request(argv: List[str]) -> None:
+def pull_request(argv: list[str]) -> None:
     do_pull_request(argv)
 
 def do_jslint(fix: bool) -> None:
@@ -284,7 +284,7 @@ def watch() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def branch(args: List[str]) -> None:
+def branch(args: list[str]) -> None:
     """Make a branch based off of current (remote) master with all your local changes preserved (but not added)."""
     if not args:
         print('Usage: dev.py branch <branch_name>')
@@ -313,17 +313,17 @@ def popclean() -> None:
             os.remove(f)
         subprocess.check_call(['git', 'stash', 'pop'])
 
-def do_check(argv: List[str]) -> None:
+def do_check(argv: list[str]) -> None:
     do_mypy(argv)
     do_lint()
     do_jslint(fix=False)
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def check(argv: List[str]) -> None:
+def check(argv: list[str]) -> None:
     do_check(argv)
 
-def do_full_check(argv: List[str]) -> None:
+def do_full_check(argv: list[str]) -> None:
     do_sort(False)
     do_check(argv)
 
@@ -333,12 +333,12 @@ def do_full_check(argv: List[str]) -> None:
 # This adds 4s to the 18s run time of `check` on my laptop.
 @cli.command()
 @click.argument('argv', nargs=-1)
-def full_check(argv: List[str]) -> None:
+def full_check(argv: list[str]) -> None:
     do_full_check(argv)
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def release(argv: List[str]) -> None:
+def release(argv: list[str]) -> None:
     do_full_check([])
     do_safe_push([])
     do_pull_request(argv)
@@ -368,7 +368,7 @@ def repip() -> None:
     default = reqs.data['default']
     for i in default.items():
         name: str = i[0]
-        val: Union[str, dict] = i[1]
+        val: str | dict = i[1]
         if isinstance(val, dict) and 'git' in val.keys():
             print('> ' + repr(i))
             installed = version.Version(_v(name))

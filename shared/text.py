@@ -1,5 +1,4 @@
 import html
-from typing import List
 
 
 def sanitize(s: str) -> str:
@@ -10,7 +9,7 @@ def sanitize(s: str) -> str:
         pass
     return html.unescape(s)
 
-def unambiguous_prefixes(words: List[str]) -> List[str]:
+def unambiguous_prefixes(words: list[str]) -> list[str]:
     prefixes = []
     for w in words:
         for i in range(1, len(w)):

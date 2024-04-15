@@ -1,7 +1,7 @@
 # type: ignore
 
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pytz
 import sqlalchemy as sa
@@ -41,10 +41,10 @@ class Match(fsa.Model):
     def host(self) -> db.User:
         return self.players[0]
 
-    def other_players(self) -> List[db.User]:
+    def other_players(self) -> list[db.User]:
         return self.players[1:]
 
-    def other_player_names(self) -> List[str]:
+    def other_player_names(self) -> list[str]:
         return [p.name for p in self.other_players()]
 
     def set_times(self, start_time: int, end_time: int) -> None:
@@ -52,12 +52,12 @@ class Match(fsa.Model):
         self.end_time = dtutil.ts2dt(end_time)
         db.commit()
 
-    def start_time_aware(self) -> Optional[datetime.datetime]:
+    def start_time_aware(self) -> datetime.datetime | None:
         if self.start_time is None:
             return None
         return pytz.utc.localize(self.start_time)
 
-    def end_time_aware(self) -> Optional[datetime.datetime]:
+    def end_time_aware(self) -> datetime.datetime | None:
         if self.end_time is None:
             return None
         return pytz.utc.localize(self.end_time)
@@ -68,7 +68,7 @@ class Match(fsa.Model):
             return ''
         return dtutil.display_date(start)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             'id': self.id,
             'format': self.format.get_name(),
@@ -82,7 +82,7 @@ class Match(fsa.Model):
             'html_url': url_for('show_match', match_id=self.id, _external=True),
         }
 
-def create_match(match_id: int, format_name: str, comment: str, modules: List[str], players: List[str]) -> Match:
+def create_match(match_id: int, format_name: str, comment: str, modules: list[str], players: list[str]) -> Match:
     format_id = db.get_or_insert_format(format_name).id
     local = Match(id=match_id, format_id=format_id, comment=comment)
     modules = [db.get_or_insert_module(mod) for mod in modules]

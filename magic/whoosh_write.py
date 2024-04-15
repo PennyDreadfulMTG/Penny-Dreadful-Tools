@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 from anyascii import anyascii
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
@@ -14,8 +13,8 @@ class WhooshWriter():
     def __init__(self) -> None:
         self.schema = Schema(id=NUMERIC(unique=True, stored=True), canonical_name=STORED(), name=STORED(), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer, field_boost=100.0))
 
-    def rewrite_index(self, cards: List[Card]) -> None:
-        print('Rewriting index in {d}'.format(d=WhooshConstants.index_dir))
+    def rewrite_index(self, cards: list[Card]) -> None:
+        print(f'Rewriting index in {WhooshConstants.index_dir}')
         ensure_dir_exists(WhooshConstants.index_dir)
         ix = create_in(WhooshConstants.index_dir, self.schema)
         update_index(ix, cards)
@@ -28,7 +27,7 @@ def ensure_dir_exists(directory: str) -> None:
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def update_index(index: FileIndex, cards: List[Card]) -> None:
+def update_index(index: FileIndex, cards: list[Card]) -> None:
     writer = index.writer()
     # We exclude tokens here because they can have the exact same name as cards.
     # We exclude emblems here to stop them showing up as
@@ -68,7 +67,7 @@ def reindex() -> None:
                 c.names.append(alias)
     writer.rewrite_index(cs)
 
-def reindex_specific_cards(cs: List[Card]) -> None:
+def reindex_specific_cards(cs: list[Card]) -> None:
     writer = WhooshWriter()
     for c in cs:
         writer.update_card(c)

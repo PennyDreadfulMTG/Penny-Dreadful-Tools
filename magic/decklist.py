@@ -2,7 +2,7 @@
 Interprets decklists of various formats, and converts it into a usable structure
 """
 import re
-from typing import Any, Dict, Tuple
+from typing import Any
 from xml.sax import SAXException
 
 import untangle
@@ -11,10 +11,10 @@ from magic import oracle
 from magic.models import CardRef, Deck
 from shared.pd_exception import InvalidDataException
 
-SectionType = Dict[str, int]
-DecklistType = Dict[str, SectionType]
+SectionType = dict[str, int]
+DecklistType = dict[str, SectionType]
 
-def parse_line(line: str) -> Tuple[int, str]:
+def parse_line(line: str) -> tuple[int, str]:
     match = re.match(r'(?:SB: ?)?(\d+)\s+(.*)', line)
     if match is not None:
         n, name = match.groups()
@@ -38,8 +38,8 @@ def parse(s: str) -> DecklistType:
     s = s.lstrip().rstrip()
     if looks_doublespaced(s):
         s = remove_doublespacing(s)
-    maindeck: Dict[str, Any] = {}
-    sideboard: Dict[str, Any] = {}
+    maindeck: dict[str, Any] = {}
+    sideboard: dict[str, Any] = {}
     chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE | re.MULTILINE)
     if len(chunks) > 1 and (len(chunks[-1]) > 1 or len(chunks[-1][0]) > 0) or 'Sideboard' in s:
         for chunk in chunks[:-1]:
@@ -127,6 +127,6 @@ def unvivify(deck: Deck) -> DecklistType:
     decklist['sideboard'] = {c['name']: c['n'] for c in deck['sideboard']}
     return decklist
 
-def add_card(section: Dict[str, Any], n: int, name: str) -> None:
+def add_card(section: dict[str, Any], n: int, name: str) -> None:
     if n > 0:
         section[name] = n + section.get(name, 0)

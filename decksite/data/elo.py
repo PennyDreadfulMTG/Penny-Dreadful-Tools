@@ -25,10 +25,10 @@ def expected(elo1: int, elo2: int) -> float:
 def adjust_elo(winning_deck_id: int, losing_deck_id: int) -> None:
     if not losing_deck_id:
         return  # Intentional draws do not affect Elo.
-    winner = guarantee.exactly_one(person.load_people('p.id IN (SELECT person_id FROM deck WHERE id = {winning_deck_id})'.format(winning_deck_id=sqlescape(winning_deck_id))))
-    loser = guarantee.exactly_one(person.load_people('p.id IN (SELECT person_id FROM deck WHERE id = {losing_deck_id})'.format(losing_deck_id=sqlescape(losing_deck_id))))
+    winner = guarantee.exactly_one(person.load_people(f'p.id IN (SELECT person_id FROM deck WHERE id = {sqlescape(winning_deck_id)})'))
+    loser = guarantee.exactly_one(person.load_people(f'p.id IN (SELECT person_id FROM deck WHERE id = {sqlescape(losing_deck_id)})'))
     adj = adjustment(winner.elo or STARTING_ELO, loser.elo or STARTING_ELO)
-    sql = 'UPDATE person SET elo = IFNULL(elo, {starting_elo}) + %s WHERE id = %s'.format(starting_elo=sqlescape(STARTING_ELO))
+    sql = f'UPDATE person SET elo = IFNULL(elo, {sqlescape(STARTING_ELO)}) + %s WHERE id = %s'
     db().begin('per-match-elo-adjustment')
     logger.info(f'Elo (winner) {adj} {winner.id} {winner.mtgo_username} {winner.elo} {sql}')
     logger.info(f'Elo (loser) {-adj} {loser.id} {loser.mtgo_username} {loser.elo} {sql}')

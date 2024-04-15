@@ -1,23 +1,22 @@
 import html
 import re
 import traceback
-from typing import Dict, List, Tuple
 
 from magic import card, multiverse
 from magic.database import db
 from shared import logger
 from shared.pd_exception import DatabaseException, InvalidDataException
 
-PriceListType = List[Tuple[str, str, str]]
+PriceListType = list[tuple[str, str, str]]
 
-CARDS: Dict[str, str] = {}
+CARDS: dict[str, str] = {}
 
 
 def parse_cardhoarder_prices(s: str) -> PriceListType:
     details = []
     for line in s.splitlines()[2:]:  # Skipping date and header line.
         if line.count('\t') != 6:
-            raise InvalidDataException('Bad line (cardhoarder): {line}'.format(line=line))
+            raise InvalidDataException(f'Bad line (cardhoarder): {line}')
         _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')
         name = html.unescape(name.strip())
         name = repair_name(name)

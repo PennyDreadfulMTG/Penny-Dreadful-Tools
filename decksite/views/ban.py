@@ -1,11 +1,11 @@
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
 from decksite.data.person import Person
 from decksite.view import View
 
 
 class Ban(View):
-    def __init__(self, people: Iterable[Person], success: Optional[bool]) -> None:
+    def __init__(self, people: Iterable[Person], success: bool | None) -> None:
         super().__init__()
         self.people = [p for p in people if not p.banned]
         self.banned_people = [p for p in people if p.banned]

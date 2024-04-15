@@ -1,5 +1,3 @@
-from typing import Dict, Optional, Tuple, Union
-
 from decksite.deck_type import DeckType
 from find import search
 from shared.database import sqlescape
@@ -50,18 +48,18 @@ def competition_join() -> str:
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
-def season_query(season_id: Optional[Union[str, int]], column_name: str = 'season_id') -> str:
+def season_query(season_id: str | int | None, column_name: str = 'season_id') -> str:
     if season_id is None or season_id == 'all' or season_id == 0:
         return 'TRUE'
     try:
-        return '{column_name} = {season_id}'.format(column_name=column_name, season_id=int(season_id))
+        return f'{column_name} = {int(season_id)}'
     except ValueError as c:
-        raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id)) from c
+        raise InvalidArgumentException(f'No season with id `{season_id}`') from c
 
 def season_join() -> str:
     return 'LEFT JOIN deck_cache AS season ON d.id = season.deck_id'
 
-def decks_order_by(sort_by: Optional[str], sort_order: Optional[str], competition_id: Optional[str]) -> str:
+def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: str | None) -> str:
     if not sort_by and competition_id:
         sort_by = 'top8'
         sort_order = 'ASC'
@@ -97,7 +95,7 @@ def decks_order_by(sort_by: Optional[str], sort_order: Optional[str], competitio
     }
     return sort_options[sort_by] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
 
-def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+def cards_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'numDecks'
         sort_order = 'DESC'
@@ -116,7 +114,7 @@ def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
-def people_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+def people_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'numDecks'
         sort_order = 'DESC'
@@ -136,7 +134,7 @@ def people_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
-def head_to_head_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'numMatches'
         sort_order = 'DESC'
@@ -152,7 +150,7 @@ def head_to_head_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> 
     }
     return sort_options[sort_by] + f' {sort_order}, num_matches DESC, record, name'
 
-def leaderboard_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+def leaderboard_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'points'
         sort_order = 'DESC'
@@ -168,7 +166,7 @@ def leaderboard_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> s
     }
     return sort_options[sort_by] + f' {sort_order}, points DESC, wins DESC, person'
 
-def matches_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+def matches_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'date'
         sort_order = 'DESC'
@@ -186,7 +184,7 @@ def matches_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, person'
 
-def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
+def exclude_active_league_runs(except_person_id: int | None) -> str:
     clause = """
         d.retired
         OR
@@ -200,7 +198,7 @@ def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
         clause += f'OR d.person_id = {except_person_id}'
     return clause
 
-def decks_where(args: Dict[str, str], is_admin: bool, viewer_id: Optional[int]) -> str:
+def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> str:
     parts = ['TRUE']
     if not is_admin:
         parts.append(exclude_active_league_runs(viewer_id))
@@ -228,10 +226,10 @@ def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'
 
 def card_where(name: str) -> str:
-    return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))
+    return f'd.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(name)})'
 
 # Returns two values, a SQL WHERE clause and a message about that clause (possibly an error message) suitable for display.
-def card_search_where(q: str) -> Tuple[str, str]:
+def card_search_where(q: str) -> tuple[str, str]:
     try:
         cs = search.search(q)
         return 'FALSE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')', ''
@@ -244,7 +242,7 @@ def tournament_only_clause() -> str:
 def decks_updated_since(ts: int) -> str:
     return f'(q.changed_date > {ts} OR d.updated_date > {ts})'
 
-def pagination(args: Dict[str, str]) -> Tuple[int, int, str]:
+def pagination(args: dict[str, str]) -> tuple[int, int, str]:
     try:
         page_size = int(args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
         page = int(args.get('page', 0))

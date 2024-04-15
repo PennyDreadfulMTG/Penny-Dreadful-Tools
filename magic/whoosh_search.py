@@ -1,6 +1,6 @@
 import itertools
 import re
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import pygtrie
 from whoosh.index import open_dir
@@ -12,10 +12,10 @@ from magic.whoosh_constants import WhooshConstants
 class SearchResult():
     def __init__(
             self,
-            exact: Optional[str],
-            prefix_whole_word: List[str],
-            other_prefixed: List[Any],
-            fuzzy: List[Tuple[str, float]],
+            exact: str | None,
+            prefix_whole_word: list[str],
+            other_prefixed: list[Any],
+            fuzzy: list[tuple[str, float]],
     ) -> None:
         self.exact = [exact] if exact else []
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
@@ -33,7 +33,7 @@ class SearchResult():
             (len(self.prefix_whole_word) == 0 and len(self.other_prefixed) == 0 and len(self.fuzzy) > 1)
         ))
 
-    def get_best_match(self) -> Optional[str]:
+    def get_best_match(self) -> str | None:
         if not self.has_match() or self.is_ambiguous():
             return None
         if self.exact:
@@ -44,7 +44,7 @@ class SearchResult():
             return self.other_prefixed[0]
         return self.fuzzy[0]
 
-    def get_ambiguous_matches(self) -> List[str]:
+    def get_ambiguous_matches(self) -> list[str]:
         if not self.is_ambiguous():
             return []
         if has(self.prefix_whole_word):
@@ -53,7 +53,7 @@ class SearchResult():
             return self.other_prefixed
         return self.fuzzy
 
-    def get_all_matches(self) -> List[str]:
+    def get_all_matches(self) -> list[str]:
         if not self.has_match():
             return []
         return [r for r in itertools.chain(self.exact, self.prefix_whole_word, self.other_prefixed, self.fuzzy) if r is not None]
@@ -66,7 +66,7 @@ class SearchResult():
                 pass
 
     def __str__(self) -> str:
-        return '(exact: {e}, whole word: {r}, other prefixes: {o}, fuzzy: {f})'.format(e=self.exact, r=self.prefix_whole_word, o=self.other_prefixed, f=self.fuzzy)
+        return f'(exact: {self.exact}, whole word: {self.prefix_whole_word}, other prefixes: {self.other_prefixed}, fuzzy: {self.fuzzy})'
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -111,7 +111,7 @@ class WhooshSearcher():
             fuzzy = [(r['canonical_name'], r.score) for r in searcher.search(query, limit=40)]
         return SearchResult(exact, prefix_whole_word, other_prefixed, fuzzy)
 
-    def find_matches_by_prefix(self, query: str) -> Tuple[Optional[str], List[str], List[str]]:
+    def find_matches_by_prefix(self, query: str) -> tuple[str | None, list[str], list[str]]:
         exact = None
         prefix_as_whole_word = []
         other_prefixed = []
@@ -124,14 +124,14 @@ class WhooshSearcher():
             other_prefixed.extend(subword)
         return (exact, prefix_as_whole_word, other_prefixed)
 
-def has(elements: List[str]) -> bool:
+def has(elements: list[str]) -> bool:
     return bool(elements and len(elements) > 0)
 
 
-WordSubwordType = Tuple[List[str], List[str]]
+WordSubwordType = tuple[list[str], list[str]]
 
-def classify(matches: List[str], word: str) -> WordSubwordType:
-    regex = r'{w}( |,)'.format(w=word)
+def classify(matches: list[str], word: str) -> WordSubwordType:
+    regex = fr'{word}( |,)'
     acc: WordSubwordType = ([], [])  # Name this data structure.
     for match in matches:
         if re.match(regex, match.lower()):
@@ -145,7 +145,7 @@ def fuzzy_term(q: str, dist: int, field: str) -> Term:
         return Term(field, q)
     return FuzzyTerm(field, q, maxdist=dist, prefixlength=1)
 
-def prune_fuzzy_by_score(fuzzy: List[Tuple[str, float]]) -> List[str]:
+def prune_fuzzy_by_score(fuzzy: list[tuple[str, float]]) -> list[str]:
     if len(fuzzy) == 0:
         return []
     if len(fuzzy) == 1:

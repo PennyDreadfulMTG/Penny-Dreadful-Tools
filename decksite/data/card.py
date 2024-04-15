@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from decksite.data import deck, preaggregation, query
 from decksite.database import db
 from magic import oracle
@@ -231,10 +229,10 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards_count(additional_where: str = 'TRUE', archetype_id: Optional[int] = None, person_id: Optional[int] = None, season_id: Optional[int] = None) -> int:
+def load_cards_count(additional_where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None) -> int:
     if person_id:
         table = '_card_person_stats'
-        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        where = f'person_id = {sqlescape(person_id)}'
     elif archetype_id:
         table = '_card_archetype_stats'
         where = f'archetype_id = {archetype_id}'
@@ -250,14 +248,14 @@ def load_cards(
         additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',
         limit: str = '',
-        archetype_id: Optional[int] = None,
-        person_id: Optional[int] = None,
-        season_id: Optional[int] = None,
+        archetype_id: int | None = None,
+        person_id: int | None = None,
+        season_id: int | None = None,
         tournament_only: bool = False,
-) -> List[Card]:
+) -> list[Card]:
     if person_id:
         table = '_card_person_stats'
-        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        where = f'person_id = {sqlescape(person_id)}'
         group_by = 'person_id, name'
     elif archetype_id:
         table = '_card_archetype_stats'
@@ -299,7 +297,7 @@ def load_cards(
     return cs
 
 @retry_after_calling(preaggregate_card)
-def load_card(name: str, tournament_only: bool = False, season_id: Optional[int] = None) -> Card:
+def load_card(name: str, tournament_only: bool = False, season_id: int | None = None) -> Card:
     c = guarantee.at_most_one(load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only))
     if c:
         return c
@@ -310,7 +308,7 @@ def load_card(name: str, tournament_only: bool = False, season_id: Optional[int]
     return c
 
 @retry_after_calling(preaggregate_unique)
-def unique_cards_played(person_id: int) -> List[str]:
+def unique_cards_played(person_id: int) -> list[str]:
     sql = """
         SELECT
             card
@@ -322,7 +320,7 @@ def unique_cards_played(person_id: int) -> List[str]:
     return db().values(sql, [person_id])
 
 @retry_after_calling(preaggregate_trailblazer)
-def trailblazer_cards(person_id: int) -> List[str]:
+def trailblazer_cards(person_id: int) -> list[str]:
     sql = """
         SELECT
             card

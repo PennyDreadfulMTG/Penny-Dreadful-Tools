@@ -1,6 +1,5 @@
 import re
 from collections import OrderedDict
-from typing import List, Optional, Set
 
 import titlecase
 from better_profanity import profanity
@@ -103,7 +102,7 @@ def normalize(d: Deck) -> str:
         name = enforce_max_len(name)
         return name
     except ValueError as c:
-        raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d))) from c
+        raise InvalidDataException(f'Failed to normalize {repr(d)}') from c
 
 def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')
@@ -145,7 +144,7 @@ def remove_brackets(name: str) -> str:
 
 def expand_common_abbreviations(name: str) -> str:
     for abbreviation, expansion in ABBREVIATIONS.items():
-        name = re.sub('(^| ){abbrev}( |$)'.format(abbrev=abbreviation), '\\1{expansion}\\2'.format(expansion=expansion), name, flags=re.IGNORECASE).strip()
+        name = re.sub(f'(^| ){abbreviation}( |$)', f'\\1{expansion}\\2', name, flags=re.IGNORECASE).strip()
     return name
 
 def whitelisted(name: str) -> bool:
@@ -154,7 +153,7 @@ def whitelisted(name: str) -> bool:
             return True
     return False
 
-def normalize_colors(name: str, colors: List[str]) -> str:
+def normalize_colors(name: str, colors: list[str]) -> str:
     patterns = ['[WUBRG]+', '[WUBRG](/[WUBRG])*']
     patterns += ['(White|Blue|Black|Red|Green)([/-](White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
@@ -177,7 +176,7 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)] and word != 'colorless':
-        name = 'mono {name}'.format(name=name)
+        name = f'mono {name}'
     return name.strip()
 
 # Don't let things like 'BRRR' and 'UWU' match [WUBRG]+ searches.
@@ -186,11 +185,11 @@ def is_true_match(color_word: str) -> bool:
         return True
     return len(set(color_word)) == len(color_word)
 
-def canonicalize_colors(colors: List[str]) -> Set[str]:
-    color_words: Set[str] = set()
+def canonicalize_colors(colors: list[str]) -> set[str]:
+    color_words: set[str] = set()
     for color in colors:
         color_words.add(standardize_color_string(color))
-    canonical_colors: Set[str] = set()
+    canonical_colors: set[str] = set()
     for color in color_words:
         for name, symbols in COLOR_COMBINATIONS.items():
             if name == color:
@@ -198,7 +197,7 @@ def canonicalize_colors(colors: List[str]) -> Set[str]:
     return set(mana.order(canonical_colors))
 
 def regex_pattern(pattern: str) -> str:
-    return '(?:^| )(?:mono[ -]?)?({pattern})(?: |$)'.format(pattern=pattern)
+    return f'(?:^| )(?:mono[ -]?)?({pattern})(?: |$)'
 
 def standardize_color_string(s: str) -> str:
     colors = re.sub('mono|/|-', '', s, flags=re.IGNORECASE).strip().lower()
@@ -207,19 +206,19 @@ def standardize_color_string(s: str) -> str:
         colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))
     return name_from_colors(set(colors.upper()))
 
-def name_from_colors(colors: Set[str]) -> str:
+def name_from_colors(colors: set[str]) -> str:
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             return name
     return 'colorless'
 
-def add_colors_if_no_deck_name(name: str, colors: Set[str]) -> str:
+def add_colors_if_no_deck_name(name: str, colors: set[str]) -> str:
     if name:
         return name
     return name_from_colors(colors)
 
-def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
+def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
     if not name.replace('mono ', '') in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
         return name
     archetype_contains_color_name = False

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, cast
 
 from magic import layout, mana
 from shared import dtutil
@@ -6,7 +6,7 @@ from shared.container import Container
 
 
 class Card(Container):
-    def __init__(self, params: Dict[str, Any], predetermined_values: bool = False) -> None:
+    def __init__(self, params: dict[str, Any], predetermined_values: bool = False) -> None:
         super().__init__()
         for k in params.keys():
             if predetermined_values:
@@ -49,7 +49,7 @@ class Card(Container):
         return self.legalities.get(format_name) == 'Legal'
 
     @property
-    def colors(self) -> List[str]:
+    def colors(self) -> list[str]:
         colors = set()
         for cost in self.get('mana_cost') or ():
             card_symbols = mana.parse(cost)
@@ -58,7 +58,7 @@ class Card(Container):
             colors.update(cs['also'])
         return mana.order(colors)
 
-def determine_value(k: str, params: Dict[str, Any]) -> Any:
+def determine_value(k: str, params: dict[str, Any]) -> Any:
     v = params[k]
     if k in ('names', 'mana_cost'):
         return cast(str, v).split('|') if v is not None else None
@@ -68,7 +68,7 @@ def determine_value(k: str, params: Dict[str, Any]) -> Any:
         v = determine_bugs(cast(str, v))
     return v
 
-def determine_legalities(s: Optional[str]) -> Dict[str, str]:
+def determine_legalities(s: str | None) -> dict[str, str]:
     if s is None:
         return {}
     formats = s.split(',')
@@ -78,7 +78,7 @@ def determine_legalities(s: Optional[str]) -> Dict[str, str]:
         v[name] = status
     return v
 
-def determine_bugs(s: str) -> Optional[List[Dict[str, object]]]:
+def determine_bugs(s: str) -> list[dict[str, object]] | None:
     if s is None:
         return None
     bugs = s.split('_SEPARATOR_')

@@ -1,6 +1,8 @@
 import itertools
 import re
-from typing import Any, Iterable, List, Match, Optional
+from typing import Any
+from collections.abc import Iterable
+from re import Match
 
 METACATS = ['Cardset', 'Collection', 'Deck Building', 'Duel Scene', 'Leagues', 'Play Lobby', 'Trade']
 CATEGORIES = ['Advantageous', 'Disadvantageous', 'Game Breaking', 'Avoidable Game Breaking', 'Graphical', 'Non-Functional ability']
@@ -30,12 +32,12 @@ def strip_squarebrackets(title: str) -> str:
     title = re.sub(REGEX_CARDREF, get_name, title)
     return title
 
-def grouper(n: int, iterable: Iterable, fillvalue: Optional[Any] = None) -> Iterable:
+def grouper(n: int, iterable: Iterable, fillvalue: Any | None = None) -> Iterable:
     """grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"""
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args, fillvalue=fillvalue)
 
-def get_cards_from_string(item: str) -> List[str]:
+def get_cards_from_string(item: str) -> list[str]:
     cards = re.findall(REGEX_CARDREF, item)
     return cards
 
@@ -47,7 +49,7 @@ def set_body_field(body: str, field: str, value: str) -> str:
         return re.sub(regex, line, body, flags=re.MULTILINE)
     return f'{body}\n{line}'
 
-def get_body_field(body: str, field: str) -> Optional[str]:
+def get_body_field(body: str, field: str) -> str | None:
     if body is None:
         return None
     regex = r'^' + field + r': (.*)$'

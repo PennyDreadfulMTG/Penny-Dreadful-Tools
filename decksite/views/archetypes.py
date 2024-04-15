@@ -1,5 +1,3 @@
-from typing import List
-
 from flask import url_for
 
 from decksite.data import archetype as archs
@@ -8,7 +6,7 @@ from decksite.view import View
 
 
 class Archetypes(View):
-    def __init__(self, archetypes: List[archs.Archetype], tournament_only: bool = False) -> None:
+    def __init__(self, archetypes: list[archs.Archetype], tournament_only: bool = False) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.decks = []

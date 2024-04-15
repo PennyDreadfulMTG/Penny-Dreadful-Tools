@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence, Union
+from collections.abc import Sequence
 
 from flask import g, session, url_for
 
@@ -12,11 +12,11 @@ from shared.pd_exception import InvalidDataException
 
 # Take 'raw' items from the database and decorate them for use and display.
 
-def prepare_cards(cs: List[Card], tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
+def prepare_cards(cs: list[Card], tournament_only: bool = False, season_id: int | str | None = None) -> None:
     for c in cs:
         prepare_card(c, tournament_only, season_id)
 
-def prepare_card(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
+def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     season_name = seasons.current_season_name()
     prepare_card_urls(c, tournament_only, season_id)
     c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
@@ -28,7 +28,7 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: Optional[Uni
     if c.get('num_decks') is not None:
         c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
 
-def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> None:
+def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     c.url = url_for_card(c, tournament_only, season_id)
     c.img_url = url_for_image(c.name)
 
@@ -39,7 +39,7 @@ def url_for_image(name: str) -> str:
         g.url_cache['card_image'] = url_for('image', c='--cardname--')
     return g.url_cache['card_image'].replace('--cardname--', name)
 
-def url_for_card(c: Card, tournament_only: bool = False, season_id: Optional[Union[int, str]] = None) -> str:
+def url_for_card(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> str:
     if g.get('url_cache') is None:
         g.url_cache = {}
     if g.url_cache.get('card_page') is None:
@@ -49,7 +49,7 @@ def url_for_card(c: Card, tournament_only: bool = False, season_id: Optional[Uni
             g.url_cache['card_page'] = url_for('seasons.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
     return g.url_cache['card_page'].replace('--cardname--', c.name)
 
-def prepare_decks(ds: List[Deck]) -> None:
+def prepare_decks(ds: list[Deck]) -> None:
     for d in ds:
         prepare_deck(d)
 
@@ -66,18 +66,18 @@ def prepare_deck(d: Deck) -> None:
     d.display_date = dtutil.display_date(d.active_date)
     d.show_record = d.wins or d.losses or d.draws
     if d.competition_id:
-        d.competition_url = '/competitions/{id}/'.format(id=d.competition_id)
-    d.url = '/decks/{id}/'.format(id=d.id)
-    d.export_url = '/export/{id}/'.format(id=d.id)
-    d.cmc_chart_url = '/charts/cmc/{id}-cmc.png'.format(id=d.id)
+        d.competition_url = f'/competitions/{d.competition_id}/'
+    d.url = f'/decks/{d.id}/'
+    d.export_url = f'/export/{d.id}/'
+    d.cmc_chart_url = f'/charts/cmc/{d.id}-cmc.png'
     if d.is_in_current_run():
         d.active_safe = '<span class="active" title="Active in the current league">⊕</span>'
-        d.stars_safe = '{active} {stars}'.format(active=d.active_safe, stars=d.stars_safe).strip()
+        d.stars_safe = f'{d.active_safe} {d.stars_safe}'.strip()
         d.source_sort = '1'
     d.source_is_external = not d.source_name == 'League'
-    d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
+    d.comp_row_len = len(f'{d.competition_name} (Piloted by {d.person}')
     if d.get('archetype_id', None):
-        d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
+        d.archetype_url = f'/archetypes/{d.archetype_id}/'
     # We might be getting '43%'/'' from cache or '43'/None from the db. Cope with all possibilities.
     # It might be better to use display_omw and omw as separate properties rather than overwriting the numeric value.
     if d.get('omw') is None or d.omw == '':
@@ -148,7 +148,7 @@ def display_round(m: Container) -> str:
         return 'SF'
     if int(m.elimination) == 2:
         return 'F'
-    raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
+    raise InvalidDataException(f'Do not recognize round in {m}')
 
 def set_stars_and_top8(d: Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:
@@ -182,9 +182,9 @@ def set_stars_and_top8(d: Deck) -> None:
             d.stars_safe = ''
 
     if len(d.stars_safe) > 0:
-        d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
+        d.stars_safe = f'<span class="stars" title="Success Rating">{d.stars_safe}</span>'
 
-def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
+def colors_html(colors: list[str], colored_symbols: list[str]) -> str:
     total = len(colored_symbols)
     if total == 0:
         return '<span class="mana" style="width: 3rem"></span>'
@@ -193,14 +193,14 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
         n = colored_symbols.count(color)
         one_pixel_in_rem = 0.05  # See pd.css base font size for the derivation of this value.
         width = (3.0 - one_pixel_in_rem * len(colors)) / total * n
-        s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
+        s += f'<span class="mana mana-{color}" style="width: {width}rem"></span>'
     return s
 
 def set_season_icon(d: Deck) -> None:
     code = seasons.season_code(d.season_id)
     d.season_icon = season_icon_link(code)
 
-def set_legal_icons(o: Union[Card, Deck]) -> None:
+def set_legal_icons(o: Card | Deck) -> None:
     o.legal_icons = ''
     pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
     pd_formats.sort(key=lambda code: -seasons.SEASONS.index(code))

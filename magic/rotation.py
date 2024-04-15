@@ -2,7 +2,6 @@ import datetime
 import glob
 import os
 from collections import Counter
-from typing import Dict, List, Optional, Tuple
 
 from magic import fetcher, layout, oracle, seasons
 from magic.models import Card
@@ -13,7 +12,7 @@ from shared.pd_exception import InvalidDataException
 
 TOTAL_RUNS = 168
 
-def interesting(playability: Dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> Optional[str]:
+def interesting(playability: dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> str | None:
     if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
         return 'new'
     p = playability.get(c.name, 0)
@@ -29,16 +28,16 @@ def in_rotation() -> bool:
     until_rotation = seasons.next_rotation() - dtutil.now()
     return until_rotation < datetime.timedelta(7)
 
-def files() -> List[str]:
+def files() -> list[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))
 
-def last_run_time() -> Optional[datetime.datetime]:
+def last_run_time() -> datetime.datetime | None:
     try:
         return dtutil.ts2dt(int(os.path.getmtime(files()[-1])))
     except (IndexError, OSError):
         return None
 
-def read_rotation_files() -> Tuple[int, int, List[Card]]:
+def read_rotation_files() -> tuple[int, int, list[Card]]:
     runs_str = redis.get_str('decksite:rotation:summary:runs')
     runs_percent_str = redis.get_str('decksite:rotation:summary:runs_percent')
     cards = redis.get_list('decksite:rotation:summary:cards')
@@ -46,14 +45,14 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
         return int(runs_str), int(runs_percent_str), [Card(c, predetermined_values=True) for c in cards]
     return rotation_redis_store()
 
-def rotation_redis_store() -> Tuple[int, int, List[Card]]:
+def rotation_redis_store() -> tuple[int, int, list[Card]]:
     lines = []
     fs = files()
     if len(fs) == 0:
         if not os.path.isdir(os.path.expanduser(configuration.get_str('legality_dir'))):
             print('WARNING: Could not find legality_dir.')
         return (0, 0, [])
-    with open(fs[-1], 'r') as f:
+    with open(fs[-1]) as f:
         latest_list = f.read().splitlines()
     cs = oracle.cards_by_name()
     for filename in fs:
@@ -67,7 +66,7 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
     runs = scores[0][1]
     runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
     cards = []
-    card_names_by_status: Dict[str, List[str]] = {}
+    card_names_by_status: dict[str, list[str]] = {}
     for name, hits in scores:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
@@ -84,7 +83,7 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
         redis.sadd('decksite:rotation:summary:notlegal', *card_names_by_status['Not Legal'], ex=604800)
     return (runs, runs_percent, cards)
 
-def get_file_contents(file: str) -> List[str]:
+def get_file_contents(file: str) -> list[str]:
     key = f'decksite:rotation:file:{file}'
     contents = redis.get_list(key)
     if contents is not None:
@@ -99,7 +98,7 @@ def clear_redis(clear_files: bool = False) -> None:
     if clear_files:
         redis.clear(*redis.keys('decksite:rotation:file:*'))
 
-def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_list: List[str]) -> Optional[Card]:
+def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_list: list[str]) -> Card | None:
     remaining_runs = TOTAL_RUNS - runs
     hits_needed = max(round(TOTAL_RUNS / 2 - hits), 0)
     c = cs.get(name)
@@ -130,13 +129,13 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
     })
     return c
 
-def classify_by_status(c: Card, card_names_by_status: Dict[str, List[str]]) -> None:
+def classify_by_status(c: Card, card_names_by_status: dict[str, list[str]]) -> None:
     if not c.status in card_names_by_status:
         card_names_by_status[c.status] = []
     card_names_by_status[c.status].append(c.name)
 
 # Sort a list of cards with rotation information annotated by the specified field and sort order. Sorts in-place for speed.
-def rotation_sort(cs: List[Card], sort_by: Optional[str], sort_order: Optional[str]) -> None:
+def rotation_sort(cs: list[Card], sort_by: str | None, sort_order: str | None) -> None:
     if not sort_by:
         sort_by = 'hitsNeeded'
         sort_order = 'ASC'
@@ -167,7 +166,7 @@ def hits_needed_score(c: Card) -> int:
         return TOTAL_RUNS * 3 - c.hits
     raise InvalidDataException(f'Card status of `{c.status}` not recognized, did you pass a Card with rotation information?')
 
-async def rotation_hype_message(hype_command: bool) -> Optional[str]:
+async def rotation_hype_message(hype_command: bool) -> str | None:
     if not hype_command:
         clear_redis()
     runs, runs_percent, cs = read_rotation_files()
@@ -196,7 +195,7 @@ async def rotation_hype_message(hype_command: bool) -> Optional[str]:
     return s
 
 # This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.
-def list_of_most_interesting(cs: List[Card]) -> str:
+def list_of_most_interesting(cs: list[Card]) -> str:
     max_shown = 25
     if len(cs) > max_shown:
         return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'

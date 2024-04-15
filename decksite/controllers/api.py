@@ -1,7 +1,7 @@
 import datetime
 import json
 import sys
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -30,9 +30,9 @@ from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
-SearchItem = Dict[str, str]
+SearchItem = dict[str, str]
 
-SEARCH_CACHE: List[SearchItem] = []
+SEARCH_CACHE: list[SearchItem] = []
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
@@ -151,7 +151,7 @@ def decks_api() -> Response:
 @APP.api.route('/decks/updated/')
 class UpdatedDecks(Resource):
     @APP.api.marshal_with(DECKS)
-    def get(self) -> Dict[str, Any]:
+    def get(self) -> dict[str, Any]:
         """
         Grab a slice of finished sorted decks last updated after a certain point.
         Input:
@@ -481,7 +481,7 @@ class LoadDeck(Resource):
 @APP.api.route('/randomlegaldeck/')
 class LoadRandomDeck(Resource):
     @APP.api.marshal_with(DECK)
-    def get(self) -> Optional[Deck]:
+    def get(self) -> Deck | None:
         blob = league.random_legal_deck()
         if blob is None:
             APP.api.abort(404, 'No legal decks could be found')
@@ -493,7 +493,7 @@ class LoadRandomDeck(Resource):
 @APP.api.route('/rotation/')
 class Rotation(Resource):
     @APP.api.marshal_with(ROTATION_DETAILS)
-    def get(self) -> Dict[str, Any]:
+    def get(self) -> dict[str, Any]:
         now = dtutil.now()
         diff = seasons.next_rotation() - now
         result = {
@@ -538,7 +538,7 @@ class League(Resource):
 @APP.api.route('/seasoncodes')
 @APP.api.route('/seasoncodes/')
 class SeasonCodes(Resource):
-    def get(self) -> List[str]:
+    def get(self) -> list[str]:
         return seasons.SEASONS[:seasons.current_season_num()]
 
 @APP.route('/api/person/<person>')
@@ -640,7 +640,7 @@ def post_reassign(deck_id: int, archetype_id: int) -> Response:
 @APP.route('/api/rule/update/', methods=['POST'])
 @fill_form('rule_id')
 @auth.demimod_required
-def post_rule_update(rule_id: Optional[int] = None) -> Response:
+def post_rule_update(rule_id: int | None = None) -> Response:
     if rule_id is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
         success, msg = rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
         return return_json({'success': success, 'msg': msg})
@@ -690,7 +690,7 @@ def person_status() -> Response:
             r['league_end'] = dtutil.display_time(time_until_league_end / datetime.timedelta(seconds=1), granularity=2)
     return return_json(r)
 
-def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
+def guarantee_at_most_one_or_retire(decks: list[Deck]) -> Deck | None:
     try:
         run = guarantee.at_most_one(decks)
     except TooManyItemsException:
@@ -754,8 +754,8 @@ def all_tournaments() -> Response:
 def search() -> Response:
     init_search_cache()
     q = request.args.get('q', '').lower()
-    exact_matches: List[SearchItem] = []
-    fuzzy_matches: List[SearchItem] = []
+    exact_matches: list[SearchItem] = []
+    fuzzy_matches: list[SearchItem] = []
     if len(q) < 2:
         return return_json([])
     for item in SEARCH_CACHE:
@@ -784,7 +784,7 @@ def init_search_cache() -> None:
         for item in json.load(f):
             SEARCH_CACHE.append(item)
 
-def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[str] = None) -> Dict[str, Any]:
+def menu_item_to_search_item(menu_item: dict[str, Any], parent_name: str | None = None) -> dict[str, Any]:
     name = ''
     if parent_name:
         name += f'{parent_name} – '
@@ -795,7 +795,7 @@ def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[st
         url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}
 
-def pagination(args: Dict[str, str]) -> Tuple[int, int, str]:
+def pagination(args: dict[str, str]) -> tuple[int, int, str]:
     try:
         return query.pagination(args)
     except InvalidArgumentException as e:

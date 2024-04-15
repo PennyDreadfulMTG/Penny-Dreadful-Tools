@@ -1,5 +1,6 @@
 import datetime
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any
+from collections.abc import Sequence
 
 from flask import url_for
 
@@ -16,7 +17,7 @@ def get_or_insert_competition(start_date: datetime.datetime,
                               end_date: datetime.datetime,
                               name: str,
                               competition_series: str,
-                              url: Optional[str],
+                              url: str | None,
                               top_n: Top) -> int:
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
@@ -40,9 +41,9 @@ def get_or_insert_competition(start_date: datetime.datetime,
     return competition_id
 
 def load_competition(competition_id: int, should_load_decks: bool = True) -> Competition:
-    return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)), should_load_decks=should_load_decks))
+    return guarantee.exactly_one(load_competitions(f'c.id = {sqlescape(competition_id)}', should_load_decks=should_load_decks))
 
-def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = '', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
+def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = '', season_id: int | None = None, should_load_decks: bool | None = False) -> list[Competition]:
     sql = """
         SELECT
             c.id,
@@ -88,7 +89,7 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = ''
         load_decks(competitions)
     return competitions
 
-def load_decks(competitions: List[Competition]) -> None:
+def load_decks(competitions: list[Competition]) -> None:
     if not competitions:
         return
     competitions_by_id = {c.id: c for c in competitions}
@@ -99,7 +100,7 @@ def load_decks(competitions: List[Competition]) -> None:
     for d in decks:
         competitions_by_id[d.competition_id].decks.append(d)
 
-def tournaments_with_prizes() -> List[Competition]:
+def tournaments_with_prizes() -> list[Competition]:
     where = """
             cs.competition_type_id
         IN
@@ -111,7 +112,7 @@ def tournaments_with_prizes() -> List[Competition]:
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where, should_load_decks=True)
 
-def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+def series(season_id: int | None = None) -> list[dict[str, Any]]:
     competition_join = query.competition_join()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.season_id')
@@ -135,7 +136,7 @@ def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     """
     return [Container(r) for r in db().select(sql)]
 
-def load_leaderboard_count(where: str, season_id: Optional[Union[str, int]] = None) -> int:
+def load_leaderboard_count(where: str, season_id: str | int | None = None) -> int:
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.season_id')
     sql = f"""
@@ -163,7 +164,7 @@ def load_leaderboard_count(where: str, season_id: Optional[Union[str, int]] = No
     """
     return db().value(sql, [], 0)
 
-def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: Optional[Union[str, int]] = None) -> Sequence[Container]:
+def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: str | int | None = None) -> Sequence[Container]:
     person_query = query.person_query()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.season_id')

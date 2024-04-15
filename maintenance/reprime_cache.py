@@ -1,5 +1,5 @@
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from decksite.data import archetype, card, deck, person, playability, season
 from magic import multiverse, oracle

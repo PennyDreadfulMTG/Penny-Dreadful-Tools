@@ -1,5 +1,4 @@
 import subprocess
-from typing import Dict, List, Optional, Union
 
 from flask import current_app, make_response, url_for, wrappers
 
@@ -32,14 +31,14 @@ class BaseView:
     def prepare(self) -> None:
         pass
 
-    def commit_id(self, path: Optional[str] = None) -> str:
+    def commit_id(self, path: str | None = None) -> str:
         if not path:
             return current_app.config['commit-id']
         key = f'commit-id-{path}'
         commit = current_app.config.get(key, None)
         if commit is None:
             args = ['git', 'log', '--format="%H"', '-n', '1', path]
-            commit = subprocess.check_output(args, universal_newlines=True).strip('\n').strip('"')
+            commit = subprocess.check_output(args, text=True).strip('\n').strip('"')
             current_app.config[key] = commit
         return commit
 
@@ -49,7 +48,7 @@ class BaseView:
     def css_url(self) -> str:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))
 
-    def tooltips_url(self) -> Optional[str]:
+    def tooltips_url(self) -> str | None:
         if not self.has_cards and not hasattr(self, 'cards'):
             return None
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
@@ -63,5 +62,5 @@ class BaseView:
     def language_icon(self) -> str:
         return url_for('static', filename='images/language_icon.svg')
 
-    def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
+    def menu(self) -> list[dict[str, str | dict[str, str]]]:
         return current_app.config['menu']()

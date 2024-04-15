@@ -1,13 +1,12 @@
 import logging
 import os
 import subprocess
-from typing import List, Tuple
 
 from modo_bugs import scrape_announcements, scrape_forum, update, verification
 from shared import configuration
 
 
-def run(argv: Tuple[str]) -> None:
+def run(argv: tuple[str]) -> None:
     configuration.bugs_webhook_id.get()
     configuration.bugs_webhook_token.get()
 
@@ -22,7 +21,7 @@ def run(argv: Tuple[str]) -> None:
         args.extend(['scrape_an', 'update', 'scrape_forum', 'verify', 'commit'])
     logger.info('modo_bugs invoked with modes: ' + repr(args))
 
-    changes: List[str] = []
+    changes: list[str] = []
 
     try:
         if 'scrape_an' in args:

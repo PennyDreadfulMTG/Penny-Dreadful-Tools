@@ -1,5 +1,4 @@
 import math
-from typing import List, Optional, Tuple
 
 from interactions import Client
 from interactions.models import Extension, OptionType, slash_command, slash_option
@@ -29,7 +28,7 @@ class Swiss(Extension):
         description='number of players who make it to the elimination round (ie: Top N)',
         opt_type=OptionType.INTEGER,
         required=False)
-    async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
+    async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: int | None = None, top_n: int | None = None) -> None:
         """Display the record need to reach the elimination rounds for a given tournament"""
         if not num_players:
             await ctx.send(f'{ctx.author.mention}: Please provide the number of players.')
@@ -64,7 +63,7 @@ class Swiss(Extension):
 
     m_swiss = migrate_to_slash_command(swiss)
 
-def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:
+def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> tuple[list[int], str | None]:
     players_in_elimination_rounds = 2 ** num_elimination_rounds
     # Math from https://www.mtgsalvation.com/forums/magic-fundamentals/magic-general/325775-making-the-cut-in-swiss-tournaments
     base = num_players / (2 ** num_rounds)

@@ -1,5 +1,4 @@
 import os
-from typing import List, Optional, Tuple
 
 from flask import session, url_for
 from requests_oauthlib import OAuth2Session
@@ -12,7 +11,7 @@ TOKEN_URL = API_BASE_URL + '/oauth2/token'
 OAUTH2_CLIENT_ID = configuration.oauth2_client_id.value
 OAUTH2_CLIENT_SECRET = configuration.oauth2_client_secret.value
 
-def setup_authentication() -> Tuple[str, str]:
+def setup_authentication() -> tuple[str, str]:
     scope = ['identify', 'guilds']
     discord = make_session(scope=scope)
     return discord.authorization_url(AUTHORIZATION_BASE_URL)
@@ -45,7 +44,7 @@ def setup_session(url: str) -> None:
         else:
             wrong_guilds = True
     if wrong_guilds:
-        logger.warning('auth.py: unexpected discord response. Guilds: {g}'.format(g=guilds))
+        logger.warning(f'auth.py: unexpected discord response. Guilds: {guilds}')
 
 def add_to_guild() -> None:
     discord = make_session(token=session.get('oauth2_token'))
@@ -53,9 +52,9 @@ def add_to_guild() -> None:
         discord.put('/guilds/{guild}/members/{user}'.format(guild=configuration.get('guild_id'), user=session['discord_id']))
 
 
-def make_session(token: Optional[str] = None,
-                 state: Optional[str] = None,
-                 scope: Optional[List[str]] = None) -> OAuth2Session:
+def make_session(token: str | None = None,
+                 state: str | None = None,
+                 scope: list[str] | None = None) -> OAuth2Session:
     return OAuth2Session(
         client_id=OAUTH2_CLIENT_ID,
         token=token,

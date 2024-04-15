@@ -1,12 +1,10 @@
-from typing import Dict
-
 from decksite.data import elo, person
 from decksite.database import db
 from shared import logger
 
 DAILY = True
 
-PEOPLE: Dict[str, int] = {}
+PEOPLE: dict[str, int] = {}
 
 def run() -> None:
     sql = """
@@ -34,10 +32,10 @@ def run() -> None:
     for person_id, new_elo in sorted(PEOPLE.items(), key=lambda x: -x[1]):
         p = people_by_id[int(person_id)]
         if p.elo != new_elo:
-            logger.warning('{id} currently has Elo of {current_elo} and we are setting it to {new_elo}'.format(id=p.id, current_elo=p.elo, new_elo=new_elo))
+            logger.warning(f'{p.id} currently has Elo of {p.elo} and we are setting it to {new_elo}')
             db().execute(sql, [new_elo, p.id])
 
-def match(m: Dict[str, str]) -> None:
+def match(m: dict[str, str]) -> None:
     if ',' not in m['games']:
         return  # Ignore byes they don't affect Elo.
     if int(m['games'].split(',')[0]) == 2:

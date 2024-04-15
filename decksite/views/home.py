@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from flask import url_for
 from flask_babel import gettext
 
@@ -11,7 +9,7 @@ from shared.container import Container
 
 
 class Home(View):
-    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card], matches_stats: Dict[str, int]) -> None:
+    def __init__(self, news: list[Container], decks: list[Deck], cards: list[Card], matches_stats: dict[str, int]) -> None:
         super().__init__()
         self.setup_news(news)
         self.setup_decks(decks)
@@ -29,16 +27,16 @@ class Home(View):
             self.kick_off_date = dtutil.display_date_with_date_and_year(kick_off_date)
         self.is_home_page = True
 
-    def setup_news(self, news: List[Container]) -> None:
+    def setup_news(self, news: list[Container]) -> None:
         self.news = news
         self.has_news = len(news) > 0
 
-    def setup_decks(self, decks: List[Deck]) -> None:
+    def setup_decks(self, decks: list[Deck]) -> None:
         min_decks = 20
         tournament_id, league_id = None, None
-        tournament_decks: List[Deck] = []
-        league_decks: List[Deck] = []
-        latest_decks: List[Deck] = []
+        tournament_decks: list[Deck] = []
+        league_decks: list[Deck] = []
+        latest_decks: list[Deck] = []
         for d in decks:
             if d.source_name == 'Gatherling' and tournament_id is None:
                 tournament_id = d.competition_id
@@ -52,7 +50,7 @@ class Home(View):
                 latest_decks.append(d)
             if len(tournament_decks) >= 8 and len(league_decks) >= 8 and len(latest_decks) >= min_decks:
                 break
-        self.deck_tables: List[Dict] = []
+        self.deck_tables: list[dict] = []
         if league_decks:
             self.deck_tables.append(
                 {
@@ -84,7 +82,7 @@ class Home(View):
             )
         self.decks = league_decks + tournament_decks + latest_decks
 
-    def setup_cards(self, cards: List[Card]) -> None:
+    def setup_cards(self, cards: list[Card]) -> None:
         cards = [c for c in cards if 'Basic' not in c.type_line]
         self.top_cards = cards[0:8]
         self.has_top_cards = len(cards) > 0
@@ -100,11 +98,11 @@ class Home(View):
         self.rotation_msg = 'Rotation is in progress.'
         self.rotation_url = url_for('rotation')
 
-    def setup_stats(self, matches_stats: Dict[str, int]) -> None:
+    def setup_stats(self, matches_stats: dict[str, int]) -> None:
         # Human-friendly number formatting like "29,000".
         matches_stats_display = {}
         for k, v in matches_stats.items():
-            matches_stats_display[k] = '{:,}'.format(v) if v is not None else ''
+            matches_stats_display[k] = f'{v:,}' if v is not None else ''
         self.community_stats = [
             {
                 'header': 'League and Tournament Matches Played',

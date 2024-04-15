@@ -1,5 +1,3 @@
-from typing import Optional
-
 from flask import Response, make_response, redirect, request, session, url_for
 from werkzeug import wrappers
 
@@ -29,7 +27,7 @@ def current_league() -> wrappers.Response:
 @APP.route('/signup/')
 @auth.load_person
 @fill_cookies('deck_id')
-def signup(form: Optional[SignUpForm] = None, deck_id: Optional[int] = None) -> str:
+def signup(form: SignUpForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     d = ds.load_deck(deck_id) if deck_id else None
@@ -54,7 +52,7 @@ def add_signup() -> Response:
 @APP.route('/report/')
 @auth.load_person
 @fill_cookies('deck_id')
-def report(form: Optional[ReportForm] = None, deck_id: Optional[int] = None) -> str:
+def report(form: ReportForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = ReportForm(request.form, deck_id, auth.person_id())
     view = Report(form, auth.person_id())
@@ -74,7 +72,7 @@ def add_report() -> Response:
 @APP.route('/retire/')
 @fill_cookies('deck_id')
 @auth.login_required
-def retire(form: Optional[RetireForm] = None, deck_id: Optional[int] = None) -> str:
+def retire(form: RetireForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = RetireForm(request.form, deck_id, session.get('id'))
     ms = []

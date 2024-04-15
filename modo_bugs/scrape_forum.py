@@ -7,7 +7,7 @@ from . import fetcher
 def main() -> None:
     known = {}
     if os.path.exists('forums.json'):
-        with open('forums.json', 'r') as fp:
+        with open('forums.json') as fp:
             known = json.load(fp)
 
     with open('bugs.json') as f:

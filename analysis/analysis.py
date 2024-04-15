@@ -1,5 +1,4 @@
 import re
-from typing import List, Tuple
 
 from decksite.data import preaggregation, query
 from decksite.database import db as decksite_db
@@ -68,7 +67,7 @@ def preaggregate_played_person() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate_played_person)
-def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
+def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
     sql = """
         SELECT
             name,
@@ -122,7 +121,7 @@ def process_logs() -> None:
     sql += ', '.join('(' + ', '.join(str(sqlescape(v)) for v in vs) + ')' for vs in values)
     logsite_db().execute(sql)
 
-def next_ids() -> List[int]:
+def next_ids() -> list[int]:
     sql = """
         SELECT
             id AS game_id
@@ -142,7 +141,7 @@ def next_ids() -> List[int]:
     """
     return logsite_db().values(sql)
 
-def process_log(log: str) -> List[Tuple[str, str]]:
+def process_log(log: str) -> list[tuple[str, str]]:
     return re.findall(r'(\w+) (?:casts|plays) \[([^\]]+)\]', log, re.MULTILINE)
 
 def init() -> None:

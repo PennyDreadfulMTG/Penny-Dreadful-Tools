@@ -21,7 +21,7 @@ def card_rulings(c: Card) -> str:
     if len(comments) > 3:
         n = len(comments) - 2
         comments = comments[:2]
-        comments.append('And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>'.format(n=n, cardname=fetch_tools.escape(c.name)))
+        comments.append(f'And {n} others.  See <https://scryfall.com/search?q=%21%22{fetch_tools.escape(c.name)}%22#rulings>')
     return '\n'.join(comments) or 'No rulings available.'
 
 def setup(bot: Client) -> None:

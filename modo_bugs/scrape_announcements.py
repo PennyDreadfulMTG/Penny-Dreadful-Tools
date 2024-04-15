@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -10,7 +9,7 @@ from . import fetcher
 
 logger = logging.getLogger(__name__)
 
-def main(changes: List[str]) -> None:
+def main(changes: list[str]) -> None:
     (link, new) = fetcher.find_announcements()
     if new and link is not None:
         scrape(link)

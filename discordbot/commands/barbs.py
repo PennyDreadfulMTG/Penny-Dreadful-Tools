@@ -1,4 +1,3 @@
-
 from interactions import Client, Extension
 from interactions.ext.prefixed_commands import prefixed_command
 

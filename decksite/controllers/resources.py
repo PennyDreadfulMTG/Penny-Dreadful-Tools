@@ -1,5 +1,3 @@
-from typing import Optional
-
 from flask import Response, make_response, request
 
 from decksite import APP, SEASONS, auth, get_season_id
@@ -33,7 +31,7 @@ def bugs() -> str:
 
 @auth.load_person
 @APP.route('/deckcheck/')
-def deck_check(form: Optional[DeckCheckForm] = None) -> str:
+def deck_check(form: DeckCheckForm | None = None) -> str:
     if form is None:
         form = DeckCheckForm(
             request.form, auth.person_id(), auth.mtgo_username())
@@ -63,7 +61,7 @@ def rotation_changes() -> str:
 @SEASONS.route('/rotation/changes/files/<any(new,out):changes_type>/')
 def rotation_changes_files(changes_type: str) -> Response:
     changes = oracle.pd_rotation_changes(get_season_id())[0 if changes_type == 'new' else 1]
-    s = '\n'.join('4 {name}'.format(name=card.to_mtgo_format(c.name)) for c in changes)
+    s = '\n'.join(f'4 {card.to_mtgo_format(c.name)}' for c in changes)
     return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
 
 @APP.route('/rotation/speculation/')
@@ -81,7 +79,7 @@ def rotation_speculation() -> str:
 def rotation_speculation_files(changes_type: str) -> Response:
     out = changes_type != 'new'
     changes = oracle.if_todays_prices(out=out)
-    s = '\n'.join('4 {name}'.format(name=card.to_mtgo_format(c.name)) for c in changes)
+    s = '\n'.join(f'4 {card.to_mtgo_format(c.name)}' for c in changes)
     return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
 
 

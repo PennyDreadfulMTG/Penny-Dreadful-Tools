@@ -1,5 +1,3 @@
-from typing import List
-
 from decksite import prepare
 from decksite.data import archetype
 from decksite.data.archetype import Archetype
@@ -8,7 +6,7 @@ from magic.models import Deck
 
 
 class ArchetypeSearch(View):
-    def __init__(self, archetypes: List[Archetype], search_results: List[Deck], q: str, notq: str) -> None:
+    def __init__(self, archetypes: list[Archetype], search_results: list[Deck], q: str, notq: str) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)

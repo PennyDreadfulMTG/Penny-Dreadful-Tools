@@ -21,7 +21,7 @@ class Google(Extension):
             return
 
         if len(query) == 0:
-            await ctx.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=ctx.author.mention), flags=MessageFlags.EPHEMERAL)
+            await ctx.send(f'{ctx.author.mention}: No search term provided. Please type !google followed by what you would like to search.', flags=MessageFlags.EPHEMERAL)
             return
 
         try:
@@ -31,7 +31,7 @@ class Google(Extension):
                 r = res['items'][0]
                 s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
             else:
-                s = '{author}: Nothing found on Google.'.format(author=ctx.author.mention)
+                s = f'{ctx.author.mention}: Nothing found on Google.'
         except HttpError as e:
             if e.resp['status'] == '403':
                 s = 'We have reached the allowed limits of Google API'

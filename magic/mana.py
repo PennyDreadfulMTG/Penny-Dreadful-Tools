@@ -3,7 +3,7 @@ This module parses Mana Costs
 """
 import itertools
 import re
-from typing import Dict, Iterable, List, Sequence, Set, Tuple
+from collections.abc import Iterable, Sequence
 
 from shared.pd_exception import ParseException
 
@@ -16,7 +16,7 @@ MODIFIER = 'P'
 HALF = 'H'
 HYBRID = 'SPECIAL-HYBRID'
 
-def parse(s: str) -> List[str]:
+def parse(s: str) -> list[str]:
     tmp = ''
     tokens = []
     mode = START
@@ -37,7 +37,7 @@ def parse(s: str) -> List[str]:
                 tmp += c
                 mode = HALF
             else:
-                raise InvalidManaCostException('Symbol must start with {digit} or {color} or {x} or {half}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, x=X, half=HALF, c=c, s=s))
+                raise InvalidManaCostException(f'Symbol must start with {DIGIT} or {COLOR} or {X} or {HALF}, `{c}` found in `{s}`.')
         elif mode == DIGIT:
             if re.match(DIGIT, c):
                 tmp += c
@@ -49,7 +49,7 @@ def parse(s: str) -> List[str]:
                 tmp += c
                 mode = SLASH
             else:
-                raise InvalidManaCostException('Digit must be followed by {digit}, {color} or {slash}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, slash=SLASH, c=c, s=s))
+                raise InvalidManaCostException(f'Digit must be followed by {DIGIT}, {COLOR} or {SLASH}, `{c}` found in `{s}`.')
         elif mode == COLOR:
             if re.match(COLOR, c):
                 tokens.append(tmp)
@@ -59,7 +59,7 @@ def parse(s: str) -> List[str]:
                 tmp += c
                 mode = SLASH
             else:
-                raise InvalidManaCostException('Color must be followed by {color} or {slash}, `{c}` found in `{s}`.'.format(color=COLOR, slash=SLASH, c=c, s=s))
+                raise InvalidManaCostException(f'Color must be followed by {COLOR} or {SLASH}, `{c}` found in `{s}`.')
         elif mode == SLASH:
             if re.match(MODIFIER, c):
                 tokens.append(tmp + c)
@@ -69,14 +69,14 @@ def parse(s: str) -> List[str]:
                 tmp += c
                 mode = HYBRID
             else:
-                raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found in `{s}`.'.format(color=COLOR, modifier=MODIFIER, c=c, s=s))
+                raise InvalidManaCostException(f'Slash must be followed by {COLOR} or {MODIFIER}, `{c}` found in `{s}`.')
         elif mode == HALF:
             if re.match(COLOR, c):
                 tokens.append(tmp + c)
                 tmp = ''
                 mode = START
             else:
-                raise InvalidManaCostException('H must be followed by {color}, `{c}` found in `{s}`.'.format(color=COLOR, c=c, s=s))
+                raise InvalidManaCostException(f'H must be followed by {COLOR}, `{c}` found in `{s}`.')
         elif mode == HYBRID:  # Having an additional check after HYBRID for a second slash accomodates hybrid phyrexian mana like Tamiyo, Compleated Sage
             if re.match(SLASH, c):
                 tmp += c
@@ -99,19 +99,19 @@ def parse(s: str) -> List[str]:
                 tmp = c
                 mode = HALF
             else:
-                raise InvalidManaCostException('Hybrid must be followed by {slash} or {digit} or {color} or {x} or {half}, `{c}` found in `{s}`.'.format(slash=SLASH, digit=DIGIT, color=COLOR, x=X, half=HALF, c=c, s=s))
+                raise InvalidManaCostException(f'Hybrid must be followed by {SLASH} or {DIGIT} or {COLOR} or {X} or {HALF}, `{c}` found in `{s}`.')
     if tmp:
         tokens.append(tmp)
     return tokens
 
-def colors(symbols: List[str]) -> Dict[str, Set[str]]:
+def colors(symbols: list[str]) -> dict[str, set[str]]:
     return colors_from_colored_symbols(colored_symbols(symbols))
 
-def colors_from_colored_symbols(all_colored_symbols: Dict[str, List[str]]) -> Dict[str, Set[str]]:
+def colors_from_colored_symbols(all_colored_symbols: dict[str, list[str]]) -> dict[str, set[str]]:
     return {'required': set(all_colored_symbols['required']), 'also': set(all_colored_symbols['also'])}
 
-def colored_symbols(symbols: List[str]) -> Dict[str, List[str]]:
-    cs: Dict[str, List[str]] = {'required': [], 'also': []}
+def colored_symbols(symbols: list[str]) -> dict[str, list[str]]:
+    cs: dict[str, list[str]] = {'required': [], 'also': []}
     for symbol in symbols:
         if generic(symbol) or variable(symbol):
             pass
@@ -127,7 +127,7 @@ def colored_symbols(symbols: List[str]) -> Dict[str, List[str]]:
         elif colored(symbol):
             cs['required'].append(symbol)
         else:
-            raise InvalidManaCostException('Unrecognized symbol type: `{symbol}` in `{symbols}`'.format(symbol=symbol, symbols=symbols))
+            raise InvalidManaCostException(f'Unrecognized symbol type: `{symbol}` in `{symbols}`')
     return cs
 
 def cmc(mana_cost: str) -> float:
@@ -149,10 +149,10 @@ def cmc(mana_cost: str) -> float:
     return total
 
 def generic(symbol: str) -> bool:
-    return bool(re.match('^{digit}+$'.format(digit=DIGIT), symbol))
+    return bool(re.match(f'^{DIGIT}+$', symbol))
 
 def variable(symbol: str) -> bool:
-    return bool(re.match('^{x}$'.format(x=X), symbol))
+    return bool(re.match(f'^{X}$', symbol))
 
 def phyrexian(symbol: str) -> bool:
     return bool(re.match('^({color}/)?{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol))
@@ -161,22 +161,22 @@ def hybrid(symbol: str) -> bool:
     return bool(re.match('^{color}/{color}(/{modifier})?$'.format(color=COLOR, modifier=MODIFIER), symbol))
 
 def twobrid(symbol: str) -> bool:
-    return bool(re.match('^2/{color}$'.format(color=COLOR), symbol))
+    return bool(re.match(f'^2/{COLOR}$', symbol))
 
 def half(symbol: str) -> bool:
-    return bool(re.match('^{half}{color}$'.format(half=HALF, color=COLOR), symbol))
+    return bool(re.match(f'^{HALF}{COLOR}$', symbol))
 
 def colored(symbol: str) -> bool:
-    return bool(re.match('^{color}$'.format(color=COLOR), symbol))
+    return bool(re.match(f'^{COLOR}$', symbol))
 
 def has_x(mana_cost: str) -> bool:
     return len([symbol for symbol in parse(mana_cost) if variable(symbol)]) > 0
 
-def order(symbols: Iterable[str]) -> List[str]:
+def order(symbols: Iterable[str]) -> list[str]:
     permutations = itertools.permutations(symbols)
     return list(sorted(permutations, key=order_score)[0])
 
-def order_score(initial_symbols: Tuple[str, ...]) -> int:
+def order_score(initial_symbols: tuple[str, ...]) -> int:
     symbols = [symbol for symbol in initial_symbols if symbol not in ('C', 'S')]
     if not symbols:
         return 0

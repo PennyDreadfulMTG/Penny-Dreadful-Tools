@@ -2,7 +2,8 @@ import binascii
 import datetime
 import functools
 import os
-from typing import Any, Callable, Dict, List
+from typing import Any
+from collections.abc import Callable
 
 from cachelib.simple import SimpleCache
 from flask import make_response, request
@@ -28,7 +29,7 @@ def cached_impl(cacheable: bool = False,
     """
     def decorator(f: Callable) -> Callable:
         @functools.wraps(f)
-        def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Callable:
+        def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> Callable:
             cache_key = key.format(id=request.full_path, locale=localization.get_locale())  # include querystring
             cache_policy = ''
             if not cacheable:
@@ -56,7 +57,7 @@ def cached_impl(cacheable: bool = False,
                     actual_client_timeout = 7 * 24 * 60 * 60
                     actual_server_timeout = 7 * 24 * 60 * 60
 
-                cache_policy += ', max-age={client_timeout}'.format(client_timeout=actual_client_timeout)
+                cache_policy += f', max-age={actual_client_timeout}'
 
             headers = {}
             cache_policy = cache_policy.strip(',')

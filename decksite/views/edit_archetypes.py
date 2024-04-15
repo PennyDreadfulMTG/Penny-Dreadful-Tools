@@ -1,5 +1,3 @@
-from typing import List
-
 from flask import url_for
 
 from decksite import prepare
@@ -9,7 +7,7 @@ from decksite.view import View
 
 
 class EditArchetypes(View):
-    def __init__(self, archetypes: List[Archetype], q: str, notq: str) -> None:
+    def __init__(self, archetypes: list[Archetype], q: str, notq: str) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)

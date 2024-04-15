@@ -17,6 +17,8 @@ class ColumnDescription(TypedDict):
     default: str | None
     unique: bool
     unique_with: list[str] | None
+
+
 TableDescription = dict[str, ColumnDescription]
 
 MAX_LEN_TEXT = 21845

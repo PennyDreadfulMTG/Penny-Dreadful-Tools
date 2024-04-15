@@ -17,7 +17,7 @@ from shared.settings import with_config_file
 async def time(ctx: MtgContext, place: str) -> None:
     """Current time in location."""
     if not place:
-        await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))
+        await ctx.send(f'{ctx.author.mention}: No location provided. Please type !time followed by the location you want the time for.')
         return
     try:
         with with_config_file(guild_id(ctx.channel)), with_config_file(ctx.channel.id):
@@ -25,13 +25,13 @@ async def time(ctx: MtgContext, place: str) -> None:
         ts = fetcher.time(place, twentyfour)
         times_s = ''
         for t, zones in ts.items():
-            cities = sorted(set(re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones))
+            cities = sorted({re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones})
             times_s += '{cities}: {t}\n'.format(cities=', '.join(cities), t=t)
         await ctx.send(times_s)
     except NotConfiguredException:
         await ctx.send('The time command has not been configured.')
     except TooFewItemsException:
         logging.exception('Exception trying to get the time for %s.', place)
-        await ctx.send('{author}: Location not found.'.format(author=ctx.author.mention))
+        await ctx.send(f'{ctx.author.mention}: Location not found.')
 
 m_time = prefixed_command('time')(time.callback)

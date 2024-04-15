@@ -1,4 +1,4 @@
-from typing import List, Mapping, Optional, Union
+from collections.abc import Mapping
 
 from decksite.data.archetype import Archetype
 from decksite.data.matchup import MatchupResults
@@ -8,7 +8,7 @@ from magic.models import Card
 
 
 class Matchups(View):
-    def __init__(self, hero: Mapping[str, Union[str, int]], enemy: Mapping[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Optional[MatchupResults]) -> None:
+    def __init__(self, hero: Mapping[str, str | int], enemy: Mapping[str, str | int], season_id: int | None, archetypes: list[Archetype], people: list[Person], cards: list[Card], results: MatchupResults | None) -> None:
         super().__init__()
         self.results = results
         self.criteria = [
@@ -38,7 +38,7 @@ class Matchups(View):
         return 'Matchups Calculator'
 
 
-def summary_text(choices: Mapping[str, Union[str, int]], archetypes: List[Archetype], people: List[Person]) -> str:
+def summary_text(choices: Mapping[str, str | int], archetypes: list[Archetype], people: list[Person]) -> str:
     s = ''
     if choices.get('archetype_id'):
         s += next(a.name for a in archetypes if a.id == int(choices['archetype_id'])) + ', '

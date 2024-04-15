@@ -1,14 +1,12 @@
-from typing import List
-
 from decksite.view import View
 from shared.container import Container
 
 
 class Achievements(View):
-    def __init__(self, achievements: List[Container]) -> None:
+    def __init__(self, achievements: list[Container]) -> None:
         super().__init__()
         self.achievements = achievements
-        self.leaderboards: List[List[Container]] = []
+        self.leaderboards: list[list[Container]] = []
         for a in self.achievements:
             if a.leaderboard:
                 self.leaderboards.append(a.leaderboard)

@@ -1,8 +1,5 @@
-from typing import List
-
-
 class Token:
-    values: List[str] = []
+    values: list[str] = []
 
     @classmethod
     def match(cls, chars: str) -> bool:

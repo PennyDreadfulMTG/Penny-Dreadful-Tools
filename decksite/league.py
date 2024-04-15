@@ -3,7 +3,7 @@ import datetime
 import json
 import time
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 from flask import url_for
 from werkzeug.datastructures import ImmutableMultiDict
@@ -28,12 +28,12 @@ class Status(Enum):
 class SignUpForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 person_id: Optional[int],
-                 mtgo_username: Optional[str]) -> None:
+                 person_id: int | None,
+                 mtgo_username: str | None) -> None:
         super().__init__(form)
         if person_id is not None:
             ds = deck.recent_decks_for_person(person_id)
-            self.recent_decks: List[Dict[str, Any]] = []
+            self.recent_decks: list[dict[str, Any]] = []
             for d in ds:
                 recent_deck = {'name': d['name'], 'main': [], 'sb': []}
                 for c in d.maindeck:
@@ -44,14 +44,14 @@ class SignUpForm(Form):
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
         self.deck = Container()
-        self.card_errors: Dict[str, Set[str]] = {}
-        self.card_warnings: Dict[str, Set[str]] = {}
+        self.card_errors: dict[str, set[str]] = {}
+        self.card_warnings: dict[str, set[str]] = {}
 
     def do_validation(self) -> None:
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = 'Magic Online Username is required'
         elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
-            self.errors['mtgo_username'] = 'Magic Online Username is too long (max {n})'.format(n=card.MAX_LEN_VARCHAR)
+            self.errors['mtgo_username'] = f'Magic Online Username is too long (max {card.MAX_LEN_VARCHAR})'
         elif active_decks_by(self.mtgo_username):
             self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the retire page."
         elif person.is_banned(self.mtgo_username):
@@ -59,7 +59,7 @@ class SignUpForm(Form):
         if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
         elif len(self.name) > card.MAX_LEN_TEXT:
-            self.errors['name'] = 'Deck Name is too long (max {n})'.format(n=card.MAX_LEN_TEXT)
+            self.errors['name'] = f'Deck Name is too long (max {card.MAX_LEN_TEXT})'
         else:
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
@@ -89,7 +89,7 @@ class SignUpForm(Form):
             try:
                 self.cards = decklist.parse(self.decklist)
             except InvalidDataException as e:
-                self.errors['decklist'] = '{specific}. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
+                self.errors['decklist'] = f'{str(e)}. Try exporting from Magic Online as Text and pasting the result.'
 
     def vivify_deck(self) -> None:
         try:
@@ -98,7 +98,7 @@ class SignUpForm(Form):
             self.errors['decklist'] = str(e)
 
     def check_deck_legality(self) -> None:
-        errors: Dict[str, Dict[str, Set[str]]] = {}
+        errors: dict[str, dict[str, set[str]]] = {}
         season_name = seasons.current_season_name()
         if season_name not in legality.legal_formats(self.deck, None, errors):
             self.errors['decklist'] = ' '.join(errors.get(season_name, {}).pop('Legality_General', ['Not a legal deck']))
@@ -122,8 +122,8 @@ class DeckCheckForm(SignUpForm):
 class ReportForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 deck_id: Optional[int] = None,
-                 person_id: Optional[int] = None) -> None:
+                 deck_id: int | None = None,
+                 person_id: int | None = None) -> None:
         super().__init__(form)
 
         decks = active_decks()
@@ -157,8 +157,8 @@ class ReportForm(Form):
 class RetireForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 deck_id: Optional[int] = None,
-                 discord_user: Optional[int] = None) -> None:
+                 deck_id: int | None = None,
+                 discord_user: int | None = None) -> None:
         super().__init__(form)
         person_object = None
         if discord_user is not None:
@@ -185,11 +185,11 @@ def signup(form: SignUpForm) -> deck.Deck:
     form.name = form.name.strip()
     return deck.add_deck(form)
 
-def identifier(params: Dict[str, str]) -> str:
+def identifier(params: dict[str, str]) -> str:
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
-def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int], show_details: bool) -> List[Dict[str, Any]]:
+def deck_options(decks: list[deck.Deck], v: str, viewer_id: int | None, show_details: bool) -> list[dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
     r = []
@@ -197,14 +197,14 @@ def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int], show_
         r.append({'text': deck_option_text(d, viewer_id, show_details), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw})
     return r
 
-def deck_option_text(d: deck.Deck, viewer_id: Optional[int], show_details: bool) -> str:
+def deck_option_text(d: deck.Deck, viewer_id: int | None, show_details: bool) -> str:
     if d.person_id == viewer_id:
         return d.name
     elif show_details:
         return f'{d.person} ({d.name}, {d.id})'
     return d.person
 
-def active_decks(additional_where: str = 'TRUE') -> List[deck.Deck]:
+def active_decks(additional_where: str = 'TRUE') -> list[deck.Deck]:
     where = """
         d.id IN (
             SELECT
@@ -227,18 +227,18 @@ def active_decks(additional_where: str = 'TRUE') -> List[deck.Deck]:
             ({additional_where})
     """.format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
     decks = deck.load_decks(where)
-    return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
+    return sorted(decks, key=lambda d: f'{d.person.ljust(100)}{d.name}')
 
-def active_decks_by(mtgo_username: str) -> List[deck.Deck]:
-    return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username, force_string=True)))
+def active_decks_by(mtgo_username: str) -> list[deck.Deck]:
+    return active_decks(f'p.mtgo_username = {sqlescape(mtgo_username, force_string=True)}')
 
-def active_decks_by_person(person_id: int) -> List[deck.Deck]:
-    return active_decks('p.id = {id}'.format(id=person_id))
+def active_decks_by_person(person_id: int) -> list[deck.Deck]:
+    return active_decks(f'p.id = {person_id}')
 
 def report(form: ReportForm) -> bool:
     try:
-        db().get_lock('deck_id:{id}'.format(id=form.entry))
-        db().get_lock('deck_id:{id}'.format(id=form.opponent))
+        db().get_lock(f'deck_id:{form.entry}')
+        db().get_lock(f'deck_id:{form.opponent}')
 
         pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
 
@@ -267,7 +267,7 @@ def report(form: ReportForm) -> bool:
 
         for m in match.load_matches_by_deck(form):
             if int(form.opponent) == m.opponent_deck_id:
-                form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
+                form.errors['result'] = f'This match was reported as You {m.game_wins}–{m.game_losses} {m.opponent} {dtutil.display_date(m.date)}'
                 return False
 
         counts = deck.count_matches(form.entry, form.opponent)
@@ -297,10 +297,10 @@ def report(form: ReportForm) -> bool:
         form.errors['entry'] = 'Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later'
         return False
     finally:
-        db().release_lock('deck_id:{id}'.format(id=form.opponent))
-        db().release_lock('deck_id:{id}'.format(id=form.entry))
+        db().release_lock(f'deck_id:{form.opponent}')
+        db().release_lock(f'deck_id:{form.entry}')
 
-def winner_and_loser(params: Container) -> Tuple[Optional[int], Optional[int]]:
+def winner_and_loser(params: Container) -> tuple[int | None, int | None]:
     if params.entry_games > params.opponent_games:
         return (params.entry, params.opponent)
     if params.opponent_games > params.entry_games:
@@ -319,7 +319,7 @@ def active_competition_id_query() -> str:
         """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 def active_league(should_load_decks: bool = False) -> competition.Competition:
-    where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
+    where = f'c.id = ({active_competition_id_query()})'
     leagues = competition.load_competitions(where, should_load_decks=should_load_decks)
     if len(leagues) == 0:
         start_date = dtutil.now(tz=dtutil.WOTC_TZ)
@@ -341,7 +341,7 @@ def determine_end_of_league(start_date: datetime.datetime, next_rotation: dateti
         month = month - 12
     else:
         year = start_date.year
-    end_date_s = '{year}-{month}-01 00:00:00'.format(year=year, month=month)
+    end_date_s = f'{year}-{month}-01 00:00:00'
     end_date = dtutil.parse(end_date_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ).astimezone(dtutil.WOTC_TZ)
     if start_date < next_rotation < end_date:
         end_date = next_rotation
@@ -356,7 +356,7 @@ def determine_end_of_league(start_date: datetime.datetime, next_rotation: dateti
 def determine_league_name(start_date: datetime.datetime, end_date: datetime.datetime) -> str:
     local_start_date = start_date.replace(tzinfo=dtutil.UTC_TZ).astimezone(tz=dtutil.WOTC_TZ)
     local_end_date = end_date.replace(tzinfo=dtutil.UTC_TZ).astimezone(tz=dtutil.WOTC_TZ)
-    start_of_end_month_s = '{year}-{month}-01 00:00:00'.format(year=local_end_date.year, month=local_end_date.month)
+    start_of_end_month_s = f'{local_end_date.year}-{local_end_date.month}-01 00:00:00'
     start_of_end_month = dtutil.parse(start_of_end_month_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ).astimezone(dtutil.WOTC_TZ)
     first_month_duration = start_of_end_month - local_start_date
     second_month_duration = local_end_date - start_of_end_month
@@ -364,16 +364,16 @@ def determine_league_name(start_date: datetime.datetime, end_date: datetime.date
         key_date = local_start_date
     else:
         key_date = local_end_date
-    return 'League {MM} {YYYY}'.format(MM=calendar.month_name[key_date.month], YYYY=key_date.year)
+    return f'League {calendar.month_name[key_date.month]} {key_date.year}'
 
 def retire_deck(d: Deck) -> None:
     sql = 'UPDATE `deck` SET `retired` = 1, updated_date = UNIX_TIMESTAMP(NOW()) WHERE id = %s'
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 
-def random_legal_deck() -> Optional[Deck]:
-    where = 'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {current_season_num})'.format(current_season_num=seasons.current_season_num())
-    having = '(d.competition_id NOT IN ({active_competition_id_query}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'.format(active_competition_id_query=active_competition_id_query())
+def random_legal_deck() -> Deck | None:
+    where = f'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {seasons.current_season_num()})'
+    having = f'(d.competition_id NOT IN ({active_competition_id_query()}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'
     try:
         return deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]
     except IndexError:
@@ -381,7 +381,7 @@ def random_legal_deck() -> Optional[Deck]:
         return None
 
 def get_status() -> Status:
-    sql = 'SELECT is_locked FROM competition WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
+    sql = f'SELECT is_locked FROM competition WHERE id IN ({active_competition_id_query()})'
     is_locked = db().value(sql)
     return Status.CLOSED if is_locked else Status.OPEN
 

@@ -1,4 +1,3 @@
-from typing import Dict, Optional
 from urllib import parse
 
 from interactions.models import Embed, OptionType, slash_command, slash_option
@@ -13,7 +12,7 @@ link_domain = configuration.get_str('dreadrise_public_url')
 MAX_DECKS_SHOWN = 5
 MAX_DECKS_SHOWN_WITH_CONTINUATION = 3
 
-def format_deck(x: Dict) -> Dict:
+def format_deck(x: dict) -> dict:
     """Formats a deck object. Returns a dictionary with name and value."""
 
     name_fdict = dict(name=x['deck']['name'], wins=x['deck']['wins'], losses=x['deck']['losses'])
@@ -95,7 +94,7 @@ async def decks(ctx: MtgInteractionContext, query: str) -> None:
 @drc.subcommand('matchups')
 @slash_option('q1', 'The query for the first player', OptionType.STRING, required=True)
 @slash_option('q2', 'The query for the second player', OptionType.STRING, required=False)
-async def matchups(ctx: MtgInteractionContext, q1: str, q2: Optional[str]) -> None:
+async def matchups(ctx: MtgInteractionContext, q1: str, q2: str | None) -> None:
     """Matchup calculation using Dreadrise."""
     await ctx.defer()
     q2 = q2 or ''

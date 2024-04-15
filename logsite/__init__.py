@@ -1,7 +1,6 @@
 # type: ignore
 
 import subprocess
-from typing import Dict, List
 
 from flask import url_for
 from sqlalchemy import create_engine
@@ -34,7 +33,7 @@ APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
 APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
 
-def build_menu() -> List[Dict[str, str]]:
+def build_menu() -> list[dict[str, str]]:
     menu = [
         {'name': 'Home', 'url': url_for('home')},
         {'name': 'Matches', 'url': url_for('matches')},

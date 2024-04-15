@@ -1,5 +1,4 @@
 import datetime
-from typing import List, Tuple
 
 import flask
 
@@ -87,7 +86,7 @@ def setup() -> None:
     db().execute(sql)
     # Speed up innermost subselect in base_query.
     db().execute('CREATE INDEX idx_card_id_format_id ON card_legality (card_id, format_id, legality)')
-    db().execute('INSERT INTO db_version (version) VALUES ({0})'.format(SCHEMA_VERSION))
+    db().execute(f'INSERT INTO db_version (version) VALUES ({SCHEMA_VERSION})')
 
 # Drop the database so we can recreate it.
 def delete() -> None:
@@ -100,12 +99,12 @@ def column_def(name: str, prop: card.ColumnDescription) -> str:
     unique = 'UNIQUE' if prop['unique'] else ''
     return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
-def foreign_key_def(name: str, fk: Tuple[str, str]) -> str:
-    return 'FOREIGN KEY (`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
+def foreign_key_def(name: str, fk: tuple[str, str]) -> str:
+    return f'FOREIGN KEY (`{name}`) REFERENCES `{fk[0]}`(`{fk[1]}`)'
 
-def unique_constraint_def(name: str, cols: List[str]) -> str:
+def unique_constraint_def(name: str, cols: list[str]) -> str:
     cols = [name] + cols
-    return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
+    return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join(f'`{col}`' for col in cols))
 
 def create_table_def(name: str, props: card.TableDescription, from_query: str = '') -> str:
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('

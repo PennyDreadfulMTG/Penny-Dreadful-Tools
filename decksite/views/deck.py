@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import inflect
 import titlecase
@@ -14,7 +14,7 @@ from shared.container import Container
 
 
 class Deck(View):
-    def __init__(self, d: DeckModel, matches: List[Container], person_id: Optional[int], discord_id: Optional[int], archetypes: List[Archetype]) -> None:
+    def __init__(self, d: DeckModel, matches: list[Container], person_id: int | None, discord_id: int | None, archetypes: list[Archetype]) -> None:
         super().__init__()
         self.deck = d
         prepare.prepare_deck(self.deck)
@@ -43,7 +43,7 @@ class Deck(View):
             archetype_s = titlecase.titlecase(p.a(self.archetype_name))
         else:
             archetype_s = 'A'
-        description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person)
+        description = f'{archetype_s} deck by {self.person}'
         return description
 
     def oembed_url(self) -> str:
@@ -64,7 +64,7 @@ class Deck(View):
     def page_title(self) -> str:
         return self.deck.name if self.public() else '(Active League Run)'
 
-    def sections(self) -> List[Dict[str, Any]]:
+    def sections(self) -> list[dict[str, Any]]:
         sections = []
         if self.creatures():
             sections.append({'name': 'Creatures', 'entries': self.creatures(), 'num_entries': sum([c['n'] for c in self.creatures()])})
@@ -76,16 +76,16 @@ class Deck(View):
             sections.append({'name': 'Sideboard', 'entries': self.sideboard(), 'num_entries': sum([c['n'] for c in self.sideboard()])})
         return sections
 
-    def creatures(self) -> List[Dict[str, Any]]:
+    def creatures(self) -> list[dict[str, Any]]:
         return [entry for entry in self.deck.maindeck if entry.card.is_creature()]
 
-    def spells(self) -> List[Dict[str, Any]]:
+    def spells(self) -> list[dict[str, Any]]:
         return [entry for entry in self.deck.maindeck if entry.card.is_spell()]
 
-    def lands(self) -> List[Dict[str, Any]]:
+    def lands(self) -> list[dict[str, Any]]:
         return [entry for entry in self.deck.maindeck if entry.card.is_land()]
 
-    def sideboard(self) -> List[Dict[str, Any]]:
+    def sideboard(self) -> list[dict[str, Any]]:
         return self.deck.sideboard
 
     def public(self) -> bool:
@@ -103,12 +103,12 @@ class Deck(View):
 
     def cardhoarder_url(self) -> str:
         d = self.deck
-        cs: Dict[str, int] = {}
+        cs: dict[str, int] = {}
         for entry in d.maindeck + d.sideboard:
             name = entry.name
             cs[name] = cs.get(name, 0) + entry['n']
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
-        return 'https://cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetch_tools.escape(deck_s))
+        return f'https://cardhoarder.com/decks/upload?deck={fetch_tools.escape(deck_s)}'
 
 class DeckEmbed(Deck):
     pass

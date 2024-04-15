@@ -9,7 +9,7 @@ from ..data.match import Match
 
 
 def import_log(match_id: int) -> Match:
-    fname = '{path}/{filename}'.format(path=os.path.dirname(__file__), filename='{0}.txt'.format(match_id))
+    fname = '{path}/{filename}'.format(path=os.path.dirname(__file__), filename=f'{match_id}.txt')
     with open(fname) as fhandle:
         lines = fhandle.readlines()
         return importing.import_log(lines, match_id)

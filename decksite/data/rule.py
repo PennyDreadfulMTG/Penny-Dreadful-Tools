@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 from decksite.data import card, deck, preaggregation
 from decksite.database import db
 from magic.decklist import parse_line
@@ -9,24 +7,24 @@ from shared.container import Container
 from shared.decorators import retry_after_calling
 from shared.pd_exception import InvalidDataException
 
-IGNORE: List[str] = ['Commander', 'Unclassified']
+IGNORE: list[str] = ['Commander', 'Unclassified']
 
-def excluded_archetype_names() -> List[str]:
+def excluded_archetype_names() -> list[str]:
     return IGNORE
 
-def excluded_archetype_ids() -> List[int]:
+def excluded_archetype_ids() -> list[int]:
     if len(IGNORE) == 0:
         return []
     sql = 'SELECT id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
     return db().values(sql)
 
-def excluded_archetype_info() -> List[Container]:
+def excluded_archetype_info() -> list[Container]:
     if len(IGNORE) == 0:
         return []
     sql = 'SELECT name, id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
     return [Container(row) for row in db().select(sql)]
 
-def apply_rules_to_decks(decks: List[Deck]) -> None:
+def apply_rules_to_decks(decks: list[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {}
@@ -80,7 +78,7 @@ def num_classified_decks() -> int:
     return db().value(sql)
 
 @retry_after_calling(cache_all_rules)
-def mistagged_decks() -> List[Deck]:
+def mistagged_decks() -> list[Deck]:
     sql = """
             SELECT
                 deck_id,
@@ -117,7 +115,7 @@ def mistagged_decks() -> List[Deck]:
     return result
 
 @retry_after_calling(cache_all_rules)
-def doubled_decks() -> List[Deck]:
+def doubled_decks() -> list[Deck]:
     sql = """
         SELECT
             deck_id,
@@ -131,7 +129,7 @@ def doubled_decks() -> List[Deck]:
         HAVING
             COUNT(DISTINCT archetype_id) > 1
         """
-    archetypes_from_rules: Dict[int, List[Container]] = {}
+    archetypes_from_rules: dict[int, list[Container]] = {}
     for r in [Container(row) for row in db().select(sql)]:
         matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'), r.rule_ids.split(','))
         archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name, 'rule_id': rule_id}) for archetype_id, archetype_name, rule_id in matching_archetypes]
@@ -145,7 +143,7 @@ def doubled_decks() -> List[Deck]:
     return result
 
 @retry_after_calling(cache_all_rules)
-def overlooked_decks() -> List[Deck]:
+def overlooked_decks() -> list[Deck]:
     sql = """
             SELECT
                 deck.id as deck_id
@@ -173,7 +171,7 @@ def overlooked_decks() -> List[Deck]:
     return deck.load_decks(where=f'd.id IN ({ids_list})')
 
 @retry_after_calling(cache_all_rules)
-def load_all_rules() -> List[Container]:
+def load_all_rules() -> list[Container]:
     result = []
     result_by_id = {}
     sql = """
@@ -212,7 +210,7 @@ def add_rule(archetype_id: int) -> int:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     return db().insert(sql, [archetype_id])
 
-def update_cards_raw(rule_id: int, include: str, exclude: str) -> Tuple[bool, str]:
+def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
     inc = []
     exc = []
     for line in include.strip().splitlines():
@@ -233,7 +231,7 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> Tuple[bool, st
     return True, ''
 
 # @retry_after_calling(cache_all_rules)
-def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, str]]) -> None:
+def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, str]]) -> None:
     db().begin('update_rule_cards')
     sql = 'DELETE FROM _applied_rules WHERE rule_id = %s'
     db().execute(sql, [rule_id])

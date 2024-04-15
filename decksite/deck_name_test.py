@@ -1,12 +1,10 @@
-from typing import List, Optional, Tuple
-
 import pytest
 
 from decksite import deck_name
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
-TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
+TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control', 1),
     ('U/B Control', 'Dimir Control', ['U', 'B'], 'Control', 1),
     ('dimir Control', 'Dimir Control', ['U', 'B'], 'Control', 1),
@@ -349,7 +347,7 @@ def test_normalize_colors() -> None:
     assert deck_name.normalize_colors('Braids B', ['B']) == 'Braids Black'
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name,season_id', TESTDATA)
-def test_normalize(original_name: str, expected: str, colors: List[str], archetype_name: str, season_id: int) -> None:
+def test_normalize(original_name: str, expected: str, colors: list[str], archetype_name: str, season_id: int) -> None:
     d = Container({'original_name': original_name,
                    'archetype_name': archetype_name,
                    'colors': colors or [],

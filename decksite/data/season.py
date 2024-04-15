@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, List, Union
 
 from decksite.data import preaggregation, query
 from decksite.database import db
@@ -9,7 +8,7 @@ from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 from shared.pd_exception import InvalidDataException
 
-SEASONS: List[Container] = []
+SEASONS: list[Container] = []
 
 def get_season_id(dt: datetime.datetime) -> int:
     if len(SEASONS) == 0:
@@ -120,7 +119,7 @@ def preaggregate_season_stats() -> None:
     db().execute(f'INSERT INTO {table} VALUES {values_s}')
 
 @retry_after_calling(preaggregate_season_stats)
-def season_stats() -> Dict[int, Dict[str, Union[int, datetime.datetime]]]:
+def season_stats() -> dict[int, dict[str, int | datetime.datetime]]:
     sql = """
         SELECT
             season_id,

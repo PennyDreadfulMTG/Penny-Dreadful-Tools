@@ -1,5 +1,3 @@
-from typing import Optional
-
 from flask import url_for
 from flask_babel import gettext
 
@@ -9,7 +7,7 @@ from magic.models import Deck
 
 
 class SignUp(DecklistForm):
-    def __init__(self, form: Form, is_closed: bool, person_id: Optional[int], d: Optional[Deck]) -> None:
+    def __init__(self, form: Form, is_closed: bool, person_id: int | None, d: Deck | None) -> None:
         super().__init__(form, person_id)
         self.is_closed = is_closed
         if d and d.is_in_current_run():

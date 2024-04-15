@@ -1,6 +1,5 @@
 import datetime
 import functools
-from typing import List, Optional, Union
 
 import attr
 
@@ -107,7 +106,7 @@ def calc_prev() -> SetInfo:
 
 
 @functools.lru_cache
-def sets() -> List[SetInfo]:
+def sets() -> list[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
@@ -170,7 +169,7 @@ def message() -> str:
         return f'The next rotation is roughly {s} away'
     return f'The next rotation is in {s}'
 
-def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 'all') -> Optional[Union[int, str]]:
+def season_id(v: int | str, all_return_value: int | str | None = 'all') -> int | str | None:
     """From any value return the season id which is the integer representing the season, or all_return_value (default 'all') for all time."""
     if v is None:
         return current_season_num()
@@ -189,9 +188,9 @@ def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 
             return SEASONS.index(v.upper()) + 1
     except (ValueError, AttributeError):
         pass
-    raise DoesNotExistException("I don't know a season called {v}".format(v=v))
+    raise DoesNotExistException(f"I don't know a season called {v}")
 
-def season_code(v: Union[int, str]) -> str:
+def season_code(v: int | str) -> str:
     """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
     sid = season_id(v)
     if sid in ('all', 0, None):
@@ -199,15 +198,15 @@ def season_code(v: Union[int, str]) -> str:
     assert sid is not None  # For typechecking which can't understand the above if statement.
     return SEASONS[int(sid) - 1]
 
-def season_name(v: Union[int, str]) -> str:
+def season_name(v: int | str) -> str:
     """From any value return the person-friendly name of the season, or 'All Time' for all time."""
     sid = season_id(v)
     if sid in ('all', 0):
         return 'All Time'
-    return 'Season {num}'.format(num=sid)
+    return f'Season {sid}'
 
 def get_set_info(code: str) -> SetInfo:
     for setinfo in sets():
         if setinfo.code == code:
             return setinfo
-    raise DoesNotExistException('Could not find Set Info about {code}'.format(code=code))
+    raise DoesNotExistException(f'Could not find Set Info about {code}')

@@ -1,5 +1,5 @@
 import collections
-from typing import Dict, Generator, Iterable, List, Optional, Set, Union
+from collections.abc import Generator, Iterable
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, Regex, String, Token
@@ -18,9 +18,9 @@ REGEX = 'regex'
 QUOTED_STRING = 'quoted_string'
 UNQUOTED_STRING = 'unquoted_string'
 
-VALUE_LOOKUP: Dict[str, Dict[str, int]] = {}
+VALUE_LOOKUP: dict[str, dict[str, int]] = {}
 
-def search(query: str) -> List[Card]:
+def search(query: str) -> list[Card]:
     query = query.replace('“', '"').replace('”', '"')
     where = parse(tokenize(query))
     sql = """{base_query}
@@ -32,7 +32,7 @@ def search(query: str) -> List[Card]:
 # Cut a query string up into tokens and combine them in an Expression, recursively for subexpressisons. Or raise if string is malformed.
 def tokenize(s: str) -> Expression:
     s = s.lower()
-    tokens: Dict[int, List[Union[Expression, Token]]] = {0: []}
+    tokens: dict[int, list[Expression | Token]] = {0: []}
     chars = list(s)
     chars.append(' ')
     depth = 0
@@ -68,14 +68,14 @@ def tokenize(s: str) -> Expression:
                     string = [c]
                     mode = UNQUOTED_STRING
                 else:
-                    raise InvalidTokenException("Expected expression, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+                    raise InvalidTokenException(f"Expected expression, got '{c}' at character {i} in {s}")
             elif mode == EXPECT_OPERATOR:
                 if Operator.match(rest):
                     tokens[depth].append(Operator(rest))
                     mode = EXPECT_TERM
                     i += Operator.length(rest) - 1
                 else:
-                    raise InvalidTokenException("Expected operator, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+                    raise InvalidTokenException(f"Expected operator, got '{c}' at character {i} in {s}")
             elif mode == EXPECT_TERM:
                 if c == '"':
                     string = []
@@ -109,16 +109,16 @@ def tokenize(s: str) -> Expression:
                 else:
                     string.append(c)
             else:
-                raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+                raise InvalidModeException(f"Bad mode '{c}' at character {i} in {s}")
             i += 1
     except KeyError as e:
         raise InvalidSearchException(f'Invalid nesting in {s}') from e
     if mode == QUOTED_STRING:
-        raise InvalidSearchException('Reached end of expression without finding the end of a quoted string in {s}'.format(s=s))
+        raise InvalidSearchException(f'Reached end of expression without finding the end of a quoted string in {s}')
     if mode == REGEX:
         raise InvalidSearchException(f'Reached end of expression without finding the end of a regular expression in {s}')
     if depth != 0:
-        raise InvalidSearchException('Reached end of expression without finding enough closing parentheses in {s}'.format(s=s))
+        raise InvalidSearchException(f'Reached end of expression without finding enough closing parentheses in {s}')
     return Expression(tokens[0])
 
 # Parse an Expression into a SQL WHERE clause or raise if Expression is invalid.
@@ -139,7 +139,7 @@ def parse(expression: Expression) -> str:
                 raise InvalidSearchException('You cannot provide a key without both an operator and a value') from e
             i += 2
         elif cls == Expression:
-            s += '({token})'.format(token=parse(token))  # type: ignore
+            s += f'({parse(token)})'  # type: ignore
         elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT':  # type: ignore
             raise InvalidSearchException('You cannot start a search expression with a boolean operator')
         elif cls == BooleanOperator and i == len(tokens) - 1:
@@ -147,12 +147,12 @@ def parse(expression: Expression) -> str:
         elif cls == BooleanOperator:
             pass
         else:
-            raise InvalidTokenException("Invalid token '{token}' ({cls}) at character {i}".format(token=token, cls=cls, i=i))
+            raise InvalidTokenException(f"Invalid token '{token}' ({cls}) at character {i}")
         next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
         next_cls = next_token.__class__
         if cls == BooleanOperator:
             s = s.rstrip(' ')
-            s += ' {s} '.format(s=token.value())  # type: ignore
+            s += f' {token.value()} '  # type: ignore
         elif next_cls != BooleanOperator or next_token.value() == 'NOT':  # type: ignore
             s += ' AND '
         i += 1
@@ -211,23 +211,23 @@ def text_where(column: str, term: Token) -> str:
         operator = 'LIKE'
         escaped = sqllikeescape(q)
     if column == 'oracle_text' and '~' in escaped:
-        parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
+        parts = [f"'{text}'" for text in escaped.strip("'").split('~')]
         escaped = concat(intersperse(parts, 'name'))
     return f'({column} {operator} {escaped})'
 
-def subtable_where(subtable: str, value: str, operator: Optional[str] = None) -> str:
+def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:
     # Specialcase colorless because it has no entry in the color table.
     if (subtable in ['color', 'color_identity']) and value == 'c':
-        return '(c.id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
+        return f'(c.id NOT IN (SELECT card_id FROM card_{subtable}))'
     v = value_lookup(subtable, value)
     if str(v).isdigit():
-        column = '{subtable}_id'.format(subtable=subtable).replace('color_identity_id', 'color_id')
+        column = f'{subtable}_id'.replace('color_identity_id', 'color_id')
         operator = '=' if not operator else operator
     else:
         column = subtable
         v = sqllikeescape(v)  # type: ignore
         operator = 'LIKE' if not operator else operator
-    return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
+    return f'(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {v}))'
 
 def math_where(column: str, operator: str, term: str) -> str:
     if operator == ':':
@@ -248,8 +248,8 @@ def color_where(subtable: str, operator: str, term: str) -> str:
         raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term.replace('m', '')}' instead")
     if operator == ':' and subtable == 'color_identity':
         operator = '<='
-    required: Set[str] = set()
-    excluded: Set[str] = set()
+    required: set[str] = set()
+    excluded: set[str] = set()
     min_colors, max_colors = None, None
     if 'm' in colors:
         min_colors = 2
@@ -289,10 +289,10 @@ def set_where(name: str) -> str:
 def format_where(term: str) -> str:
     if term == 'pd' or term.startswith('penny'):
         term = seasons.current_season_name()
-    format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
+    format_id = db().value('SELECT id FROM format WHERE name LIKE %s', [f'{card.unaccent(term)}%%'])
     if format_id is None:
-        raise InvalidValueException("Invalid format '{term}'".format(term=term))
-    return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
+        raise InvalidValueException(f"Invalid format '{term}'")
+    return f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))"
 
 def rarity_where(operator: str, term: str) -> str:
     rarity_id = value_lookup('rarity', term)
@@ -300,24 +300,24 @@ def rarity_where(operator: str, term: str) -> str:
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
-    return '(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))'.format(operator=operator, rarity_id=rarity_id)
+    return f'(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))'
 
 def mana_where(operator: str, term: str) -> str:
     term = term.upper()
     try:
         symbols = mana.parse(term)  # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
-        symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+        symbols = [f'{{{symbol}}}' for symbol in symbols]
     except mana.InvalidManaCostException:
         symbols = [term]
     if operator == ':':
         d = collections.Counter(symbols)  # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
-        clause = ' AND '.join('mana_cost LIKE {symbol}'.format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
+        clause = ' AND '.join(f'mana_cost LIKE {sqllikeescape(symbol * n)}' for symbol, n in d.items())
     elif operator == '=':
-        joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)
-        clause = "mana_cost = '{joined}'".format(joined=joined)
+        joined = ''.join(f'{symbol}' for symbol in symbols)
+        clause = f"mana_cost = '{joined}'"
     else:
-        raise InvalidTokenException('mana expects `:` or `=` not `{operator}`. Did you want cmc?'.format(operator=operator))
-    return '({clause})'.format(clause=clause)
+        raise InvalidTokenException(f'mana expects `:` or `=` not `{operator}`. Did you want cmc?')
+    return f'({clause})'
 
 def playable_where(term: str) -> str:
     term = term.upper()
@@ -330,23 +330,23 @@ def playable_where(term: str) -> str:
     symbols_without_curlies.add('C')
     all_colors = ['W', 'U', 'B', 'R', 'G']
     # Phyrexian
-    symbols_without_curlies.update(['{c}/P'.format(c=c) for c in all_colors])
+    symbols_without_curlies.update([f'{c}/P' for c in all_colors])
     # Twobrid
-    symbols_without_curlies.update(['2/{c}'.format(c=c) for c in all_colors])
+    symbols_without_curlies.update([f'2/{c}' for c in all_colors])
     for color in colors:
         # Hybrid
-        symbols_without_curlies.update(['{color}/{other}'.format(color=color, other=other) for other in all_colors if other != color])
-        symbols_without_curlies.update(['{other}/{color}'.format(color=color, other=other) for other in all_colors if other != color])
+        symbols_without_curlies.update([f'{color}/{other}' for other in all_colors if other != color])
+        symbols_without_curlies.update([f'{other}/{color}' for other in all_colors if other != color])
     where = 'mana_cost'
     for symbol in symbols_without_curlies:
-        where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
-    return "{where} = ''".format(where=where)
+        where = f"REPLACE({where}, '{{{symbol}}}', '')"
+    return f"{where} = ''"
 
 
 # Look up the id of a value if we have a lookup table for it.
 # Raise if not found in that table.
 # Return 'value' back if we don't have a lookup table for this thing ('subtype', for example).
-def value_lookup(table: str, value: str) -> Union[int, str]:
+def value_lookup(table: str, value: str) -> int | str:
     if not VALUE_LOOKUP:
         init_value_lookup()
     if table in VALUE_LOOKUP and value in VALUE_LOOKUP[table]:
@@ -390,7 +390,7 @@ def init_value_lookup() -> None:
 
 def is_subquery(subquery_name: str) -> str:
     if subquery_name in layout.all_layouts():
-        return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
+        return f'(c.layout = {sqlescape(subquery_name)})'
     if subquery_name == 'spikey':
         names = spikey_names()
         return '(name = ' + ' OR name = '.join(sqlescape(name) for name in names) + ')'
@@ -419,14 +419,14 @@ def is_subquery(subquery_name: str) -> str:
     subqueries['manland'] = subqueries['creatureland']
     query = subqueries.get(subquery_name, '')
     if query == '':
-        raise InvalidSearchException('Did not recognize `{subquery_name}` as a value for `is:`'.format(subquery_name=subquery_name))
+        raise InvalidSearchException(f'Did not recognize `{subquery_name}` as a value for `is:`')
     query = parse(tokenize(query))
-    query = '({0})'.format(query)
+    query = f'({query})'
     return query
 
 def spikey_names() -> list[str]:
     try:
-        with open(configuration.is_spikey_file.get(), 'r') as f:
+        with open(configuration.is_spikey_file.get()) as f:
             names = [name.strip() for name in f.readlines()]
             if len(names) >= 426:
                 return names

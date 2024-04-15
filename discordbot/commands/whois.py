@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict
+from typing import Any
 
 from interactions import Client
 from interactions.ext.prefixed_commands import prefixed_command
@@ -52,7 +52,7 @@ async def whois_discord(user: User) -> str:
         msg = f"{user.mention} is **{person['name']}** on MTGO"
     return msg
 
-def not_found(person: Dict[str, Any]) -> bool:
+def not_found(person: dict[str, Any]) -> bool:
     return person is None or (person.get('error') is not None and person.get('code') == 'NOTFOUND')
 
 def setup(bot: Client) -> None:

@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 import pytest
 
@@ -34,7 +33,7 @@ def test_process() -> None:
     assert len(cs) == 1
     c = cs[0]
     assert len(c.decks) == len(event.decks)
-    finishes: Dict[int, int] = {}
+    finishes: dict[int, int] = {}
     for d in c.decks:
         finishes[d.finish] = finishes.get(d.finish, 0) + 1
     assert finishes[1] == 1

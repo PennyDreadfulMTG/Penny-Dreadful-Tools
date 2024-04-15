@@ -47,7 +47,7 @@ class People(View):
                 """)
                 p.formats = db.DB.session.query(column('name'), column('num_matches')).from_statement(stmt).params(pid=p.id).all()
                 if p.formats:
-                    p.fav_format = '{0} ({1} matches)'.format(p.formats[0][0], p.formats[0][1])
+                    p.fav_format = f'{p.formats[0][0]} ({p.formats[0][1]} matches)'
                 else:
                     p.fav_format = '⸺'
                 redis.store(key, {'fav_format': p.fav_format, 'num_matches': p.num_matches}, ex=3600)

@@ -1,12 +1,10 @@
-from typing import List
-
 from decksite.data import person as ps
 from decksite.view import View
 from shared.container import Container
 
 
 class PersonAchievements(View):
-    def __init__(self, person: ps.Person, achievements: List[Container]) -> None:
+    def __init__(self, person: ps.Person, achievements: list[Container]) -> None:
         super().__init__()
         self.person = person
         self.is_person_page = True

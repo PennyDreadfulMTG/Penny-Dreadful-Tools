@@ -1,6 +1,6 @@
 # type: ignore
 
-from typing import Any, Optional
+from typing import Any
 
 import sqlalchemy as sa
 from flask import url_for
@@ -60,7 +60,7 @@ def merge(item: Any) -> None:
 def delete(item: Any) -> None:
     return DB.session.delete(item)
 
-def get_format(name: str) -> Optional[Format]:
+def get_format(name: str) -> Format | None:
     return Format.query.filter_by(name=name).one_or_none()
 
 def get_or_insert_format(name: str) -> Format:

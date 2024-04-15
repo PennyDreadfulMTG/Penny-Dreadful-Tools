@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from collections.abc import Iterable, Sequence
 
 from magic import card, layout, mana, multiverse, seasons, whoosh_write
 from magic.abc import CardDescription
@@ -12,8 +12,8 @@ from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
-LEGAL_CARDS: List[str] = []
-CARDS_BY_NAME: Dict[str, Card] = {}
+LEGAL_CARDS: list[str] = []
+CARDS_BY_NAME: dict[str, Card] = {}
 
 def init(force: bool = False) -> None:
     if len(CARDS_BY_NAME) == 0 or force:
@@ -38,12 +38,12 @@ def valid_name(name: str) -> str:
         canonicalized = card.canonicalize(k)
         if canonicalized_name == canonicalized or canonicalized_front == canonicalized:
             return k
-    raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
+    raise InvalidDataException(f'Did not find any cards looking for `{name}`')
 
 def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name) or load_cards([name])[0]
 
-def load_cards(names: Optional[Iterable[str]] = None, where: Optional[str] = None) -> List[Card]:
+def load_cards(names: Iterable[str] | None = None, where: str | None = None) -> list[Card]:
     if names == []:
         return []
     if names:
@@ -56,27 +56,27 @@ def load_cards(names: Optional[Iterable[str]] = None, where: Optional[str] = Non
         names_clause = '(1 = 1)'
     if where is None:
         where = '(1 = 1)'
-    sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
+    sql = multiverse.cached_base_query(f'({where} AND {names_clause})')
     rs = db().select(sql)
     if setnames and len(setnames) != len(rs):
         missing = setnames.symmetric_difference([r['name'] for r in rs])
-        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rslen=len(rs), names=setnames, missing=missing))
+        raise TooFewItemsException(f'Expected `{len(setnames)}` and got `{len(rs)}` with `{setnames}`.  missing=`{missing}`')
     return [Card(r) for r in rs]
 
-def cards_by_name() -> Dict[str, Card]:
+def cards_by_name() -> dict[str, Card]:
     return CARDS_BY_NAME
 
-def load_cards_with_flavor_names() -> List[Card]:
+def load_cards_with_flavor_names() -> list[Card]:
     sql = multiverse.cached_base_query('c.flavor_names IS NOT NULL')
     rs = db().select(sql)
     return [Card(r) for r in rs]
 
-def bugged_cards() -> List[Card]:
+def bugged_cards() -> list[Card]:
     sql = multiverse.cached_base_query('bugs IS NOT NULL')
     rs = db().select(sql)
     return [Card(r) for r in rs]
 
-def legal_cards(force: bool = False) -> List[str]:
+def legal_cards(force: bool = False) -> list[str]:
     if len(LEGAL_CARDS) == 0 or force:
         db().execute('SET group_concat_max_len=100000')
         sql = 'SELECT name FROM _cache_card WHERE pd_legal'
@@ -86,7 +86,7 @@ def legal_cards(force: bool = False) -> List[str]:
             LEGAL_CARDS.append(name)
     return LEGAL_CARDS
 
-def get_printings(generalized_card: Card) -> List[Printing]:
+def get_printings(generalized_card: Card) -> list[Printing]:
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code, s.name AS set_name ' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
@@ -94,7 +94,7 @@ def get_printings(generalized_card: Card) -> List[Printing]:
     rs = db().select(sql, [generalized_card.id])
     return [Printing(r) for r in rs]
 
-def get_printing(generalized_card: Card, setcode: str) -> Optional[Printing]:
+def get_printing(generalized_card: Card, setcode: str) -> Printing | None:
     if setcode is None:
         return None
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
@@ -128,7 +128,7 @@ def deck_sort(c: Card) -> str:
     return s
 
 async def scryfall_import_async(name: str) -> bool:
-    sfcard = await fetch_tools.fetch_json_async('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
+    sfcard = await fetch_tools.fetch_json_async(f'https://api.scryfall.com/cards/named?fuzzy={name}')
     if sfcard['object'] == 'error':
         raise Exception
     try:
@@ -140,7 +140,7 @@ async def scryfall_import_async(name: str) -> bool:
         await add_cards_and_update_async([sfcard])
         return True
 
-def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
+def pd_rotation_changes(season_id: int) -> tuple[Sequence[Card], Sequence[Card]]:
     # It doesn't really make sense to do this for 'all' so just show current season in that case.
     if season_id == 0:
         season_id = seasons.current_season_num()
@@ -155,7 +155,7 @@ def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]
     return changes_between_formats(from_format_id, to_format_id)
 
 
-def changes_between_formats(f1: int, f2: int) -> Tuple[Sequence[Card], Sequence[Card]]:
+def changes_between_formats(f1: int, f2: int) -> tuple[Sequence[Card], Sequence[Card]]:
     return (query_diff_formats(f2, f1), query_diff_formats(f1, f2))
 
 def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
@@ -171,7 +171,7 @@ def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
     out = [Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])
 
-def if_todays_prices(out: bool = True) -> List[Card]:
+def if_todays_prices(out: bool = True) -> list[Card]:
     current_format = multiverse.get_format_id(f'Penny Dreadful {seasons.current_season_code()}')
     if out:
         not_clause = ''
@@ -193,7 +193,7 @@ def if_todays_prices(out: bool = True) -> List[Card]:
     cards = [Card(r) for r in rs]
     return sorted(cards, key=lambda card: card['name'])
 
-async def add_cards_and_update_async(printings: List[CardDescription]) -> None:
+async def add_cards_and_update_async(printings: list[CardDescription]) -> None:
     if not printings:
         return
     ids = await multiverse.insert_cards_async(printings)

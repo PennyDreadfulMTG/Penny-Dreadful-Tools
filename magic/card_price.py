@@ -1,5 +1,3 @@
-from typing import Optional
-
 from magic import fetcher
 from magic.models import Card
 from shared import dtutil
@@ -27,13 +25,13 @@ def card_price_string(card: Card, short: bool = False) -> str:
                 s += ')'
             age = dtutil.dt2ts(dtutil.now()) - p['time']
             if age > 60 * 60 * 7:
-                s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
+                s += f'\nWARNING: price information is {dtutil.display_time(age, 1)} old'
         except TypeError as e:
             print(f'Unable to get price info string from {p} because of {e}')
             return 'Price information is incomplete'
         return s
 
-    def format_price(p: Optional[str]) -> str:
+    def format_price(p: str | None) -> str:
         if p is None:
             return 'Unknown'
         dollars, cents = str(round(float(p), 2)).split('.')

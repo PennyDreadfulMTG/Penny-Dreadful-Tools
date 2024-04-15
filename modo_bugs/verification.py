@@ -12,7 +12,7 @@ def main() -> None:
     identity = tree.find('{urn:schemas-microsoft-com:asm.v1}assemblyIdentity')
     version = identity.attrib['version']
 
-    print('Current MTGO Version is {0}'.format(version))
+    print(f'Current MTGO Version is {version}')
 
     data = {'version': version}
     with open('mtgo_version.json', mode='w') as f:

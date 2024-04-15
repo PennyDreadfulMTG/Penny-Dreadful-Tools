@@ -1,6 +1,7 @@
 import json
 import math
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any
+from collections.abc import Sequence
 
 import titlecase
 from flask import url_for
@@ -13,7 +14,7 @@ from magic import oracle, seasons
 
 
 class Person(View):
-    def __init__(self, person: ps.Person, archetypes: List[Archetype], all_archetypes: List[Archetype], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, archetypes: list[Archetype], all_archetypes: list[Archetype], your_cards: dict[str, list[str]], seasons_active: Sequence[int], season_id: int | None) -> None:
         super().__init__()
         self.all_archetypes = all_archetypes
         self.person = person
@@ -26,7 +27,7 @@ class Person(View):
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('.achievements')
         self.person_achievements_url = url_for('.person_achievements', person_id=person.id)
-        colors: Dict[str, int] = {}
+        colors: dict[str, int] = {}
         for d in self.decks:
             for c in d.colors:
                 colors[c] = colors.get(c, 0) + 1
@@ -62,7 +63,7 @@ class Person(View):
         self.unique_cards = oracle.load_cards(your_cards['unique'])
         self.has_unique_cards = len(self.unique_cards) > 0
         self.cards = self.trailblazer_cards + self.unique_cards
-        self.seasons_active: List[Dict[str, object]] = []
+        self.seasons_active: list[dict[str, object]] = []
         self.setup_active_seasons(seasons_active)
 
     def __getattr__(self, attr: str) -> Any:

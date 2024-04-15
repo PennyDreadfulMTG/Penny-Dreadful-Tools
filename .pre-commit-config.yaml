@@ -23,3 +23,8 @@ repos:
         - id: autoflake
           args: [--remove-all-unused-imports, --in-place, --ignore-init-module-imports]
           exclude: wsgi$
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.2
+    hooks:
+    -   id: pyupgrade
+        args: [--py310-plus]

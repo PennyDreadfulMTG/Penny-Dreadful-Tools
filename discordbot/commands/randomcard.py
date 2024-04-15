@@ -15,7 +15,7 @@ async def randomcard(ctx: MtgContext, number: int = 1) -> None:
     if number < 1:
         number = 1
     elif number > 10:
-        additional_text = "{number}? Tsk. Here's ten.".format(number=number)
+        additional_text = f"{number}? Tsk. Here's ten."
         number = 10
     cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), number)]
     await ctx.post_cards(cards, None, additional_text)

@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-from typing import Optional
 
 import sentry_sdk
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
@@ -38,7 +37,7 @@ def export(deck_id: int) -> Response:
         if not session.get('admin') and (not auth.person_id() or auth.person_id() != d.person_id):
             abort(403)
     safe_name = deck_name.file_name(d)
-    return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
+    return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={safe_name}.txt'})
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id: int) -> Response:
@@ -69,7 +68,7 @@ def dev_db() -> wrappers.Response:
     return send_file(os.path.abspath(path), mimetype='application/gzip', as_attachment=True)
 
 @APP.before_request
-def before_request() -> Optional[wrappers.Response]:
+def before_request() -> wrappers.Response | None:
     simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt', '/charts/']
     if not any(request.path.startswith(prefix) for prefix in simple_paths):
         auth.check_perms()
@@ -93,12 +92,12 @@ def after_request(response: Response) -> Response:
     return response
 
 @APP.teardown_request
-def teardown_request(_: Optional[BaseException]) -> None:
+def teardown_request(_: BaseException | None) -> None:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     db().close()
 
-def init(debug: bool = True, port: Optional[int] = None) -> None:
+def init(debug: bool = True, port: int | None = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.logger.setLevel(logging.INFO)
     APP.config['SESSION_COOKIE_SECURE'] = False  # Allow cookies over HTTP when running locally.

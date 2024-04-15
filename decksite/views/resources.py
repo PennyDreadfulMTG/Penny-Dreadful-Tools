@@ -1,26 +1,20 @@
-from typing import List
-
-from mypy_extensions import TypedDict
+from typing import TypedDict
 
 from decksite.view import View
 from magic import fetcher
 
-ResourceDescription = TypedDict('ResourceDescription',
-                                {
-                                    'text': str,
-                                    'url': str,
-                                    'is_external': bool,
-                                })
-SectionDescription = TypedDict('SectionDescription',
-                               {
-                                   'title': str,
-                                   'items': List[ResourceDescription],
-                               })
+class ResourceDescription(TypedDict):
+    text: str
+    url: str
+    is_external: bool
+class SectionDescription(TypedDict):
+    title: str
+    items: list[ResourceDescription]
 
 class Resources(View):
-    def sections(self) -> List[SectionDescription]:
+    def sections(self) -> list[SectionDescription]:
         raw_resources = fetcher.resources()
-        sections: List[SectionDescription] = []
+        sections: list[SectionDescription] = []
         for title, raw_section in raw_resources.items():
             section: SectionDescription = {'title': title, 'items': []}
             sections.append(section)

@@ -1,5 +1,4 @@
 import os
-from typing import Set
 
 from discordbot import commands
 from discordbot.bot import Bot
@@ -50,7 +49,7 @@ def print_commands() -> str:
     bot = Bot()
     commands.setup(bot)
     text = ''
-    done: Set[str] = set()
+    done: set[str] = set()
     for c in bot.walk_commands():
         if not c.name in done:
             text += f'## {c.name}'

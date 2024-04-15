@@ -1,5 +1,5 @@
 import json
-from typing import Any, AnyStr, List, Optional, TypeVar
+from typing import Any, AnyStr, TypeVar
 
 import redis as redislib
 
@@ -8,7 +8,7 @@ from .container import Container
 from .serialization import extra_serializer
 
 
-def init() -> Optional[redislib.Redis]:
+def init() -> redislib.Redis | None:
     if not configuration.redis_enabled.value:
         return None
     instance = redislib.Redis(
@@ -28,7 +28,7 @@ REDIS = init()
 def enabled() -> bool:
     return REDIS is not None
 
-def _get(key: str, ex: Optional[int] = None) -> Optional[bytes]:
+def _get(key: str, ex: int | None = None) -> bytes | None:
     try:
         if REDIS is not None:
             blob = REDIS.get(key)
@@ -42,7 +42,7 @@ def _get(key: str, ex: Optional[int] = None) -> Optional[bytes]:
         pass
     return None
 
-def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
+def get_str(key: str, ex: int | None = None) -> str | None:
     if REDIS is not None:
         blob = _get(key, ex)
         if blob is not None:
@@ -51,7 +51,7 @@ def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
                 return val
     return None
 
-def get_bool(key: str, ex: Optional[int] = None) -> bool:
+def get_bool(key: str, ex: int | None = None) -> bool:
     if REDIS is not None:
         blob = _get(key, ex)
         if blob is None:
@@ -59,7 +59,7 @@ def get_bool(key: str, ex: Optional[int] = None) -> bool:
         return bool(json.loads(blob))
     return False
 
-def get_container(key: str, ex: Optional[int] = None) -> Optional[Container]:
+def get_container(key: str, ex: int | None = None) -> Container | None:
     if REDIS is not None:
         blob = _get(key, ex)
         if blob is not None:
@@ -68,7 +68,7 @@ def get_container(key: str, ex: Optional[int] = None) -> Optional[Container]:
                 return Container(val)
     return None
 
-def get_int(key: str, ex: Optional[int] = None) -> Optional[int]:
+def get_int(key: str, ex: int | None = None) -> int | None:
     if REDIS is not None:
         blob = _get(key, ex)
         if blob is not None:
@@ -77,7 +77,7 @@ def get_int(key: str, ex: Optional[int] = None) -> Optional[int]:
                 return val
     return None
 
-def get_list(key: str) -> Optional[List[Any]]:
+def get_list(key: str) -> list[Any] | None:
     if REDIS is not None:
         blob = _get(key)
         if blob is not None:
@@ -85,7 +85,7 @@ def get_list(key: str) -> Optional[List[Any]]:
             return val
     return None
 
-def get_container_list(key: str) -> Optional[List[Container]]:
+def get_container_list(key: str) -> list[Container] | None:
     if REDIS is not None:
         blob = _get(key)
         if blob is not None:
@@ -106,7 +106,7 @@ def store(key: str, val: T, **kwargs: Any) -> T:
             pass
     return val
 
-def increment(key: str, **kwargs: Any) -> Optional[int]:
+def increment(key: str, **kwargs: Any) -> int | None:
     if REDIS is not None:
         try:
             return REDIS.incr(key, **kwargs)
@@ -133,12 +133,12 @@ def expire(key: str, time: int) -> None:
         except redislib.exceptions.ConnectionError:
             pass
 
-def keys(pattern: str) -> List[bytes]:
+def keys(pattern: str) -> list[bytes]:
     if REDIS is not None:
         return REDIS.keys(pattern)
     return []
 
-def sadd(key: str, *values: Any, ex: Optional[int] = None) -> None:
+def sadd(key: str, *values: Any, ex: int | None = None) -> None:
     if REDIS is not None:
         REDIS.sadd(key, *values)
         if ex is not None:

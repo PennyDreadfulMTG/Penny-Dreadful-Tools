@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Union
 
 from decksite.data import deck, match, query
 from decksite.database import db
@@ -10,14 +9,14 @@ from shared.container import Container
 
 @dataclass
 class MatchupResults:
-    hero_deck_ids: List[int]
-    enemy_deck_ids: List[int]
-    match_ids: List[int]
+    hero_deck_ids: list[int]
+    enemy_deck_ids: list[int]
+    match_ids: list[int]
     wins: int
     draws: int
     losses: int
-    hero_decks: List[Deck]
-    matches: List[Container]
+    hero_decks: list[Deck]
+    matches: list[Container]
 
     @property
     def num_decks(self) -> int:
@@ -27,10 +26,10 @@ class MatchupResults:
     def win_percent(self) -> str:
         return str(round((self.wins / (self.wins + self.losses)) * 100, 1)) if (self.wins + self.losses) > 0 else ''
 
-def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: Optional[int] = None) -> MatchupResults:
+def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None = None) -> MatchupResults:
     where = 'TRUE'
     prefix = None
-    args: List[Union[str, int]] = []
+    args: list[str | int] = []
     if season_id:
         where += ' AND (season.season_id = %s)'
         args.append(season_id)

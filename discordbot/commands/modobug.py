@@ -1,5 +1,4 @@
 import functools
-from typing import Optional
 
 from github import Github
 from github.Repository import Repository
@@ -94,7 +93,7 @@ class ModoBugs(Extension):
         if card is None:
             await ctx.send(base_url)
             return
-        msg = '<{base_url}?utf8=%E2%9C%93&q=is%3Aissue+%22{name}%22>'.format(base_url=base_url, name=fetch_tools.escape(card.name))
+        msg = f'<{base_url}?utf8=%E2%9C%93&q=is%3Aissue+%22{fetch_tools.escape(card.name)}%22>'
         await ctx.send(msg)
 
 
@@ -112,7 +111,7 @@ def valid_thread(post: ForumData) -> bool:
     return True
 
 @functools.lru_cache
-def get_github() -> Optional[Github]:
+def get_github() -> Github | None:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
     return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))

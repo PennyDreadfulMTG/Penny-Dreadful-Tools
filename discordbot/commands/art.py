@@ -21,7 +21,7 @@ class Art(Extension):
             if success:
                 await ctx.send_image_with_retry(file_path)
             else:
-                await ctx.send('{author}: Could not get image.'.format(author=ctx.author.mention))
+                await ctx.send(f'{ctx.author.mention}: Could not get image.')
 
     m_art = command.alias_message_command_to_slash_command(art)
 

@@ -1,5 +1,4 @@
 import textwrap
-from typing import Dict, Optional, Tuple
 
 import inflect
 from interactions import AutocompleteContext
@@ -13,7 +12,7 @@ from magic import card_price, fetcher, oracle, rotation, tournaments
 from shared import configuration
 
 num_tournaments = inflect.engine().number_to_words(str(len(tournaments.all_series_info())))
-explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
+explanations: dict[str, tuple[str, dict[str, str]]] = {
     'archetype': (
         """
         Archetypes are manually reviewed by a human on an irregular basis.
@@ -226,7 +225,7 @@ explanations['tournaments'] = explanations['tournament']
 explanations['watching'] = explanations['spectating']
 explanations['spectate'] = explanations['spectating']
 
-reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
+reporting_explanations: dict[str, tuple[str, dict[str, str]]] = {
     'tournament': (
         """
         For tournaments PDBot is information-only, *both* players must report near the top of Player CP (or follow the link at the top of any Gatherling page).
@@ -257,7 +256,7 @@ class ExplainCog(Extension):
         opt_type=OptionType.STRING,
         required=True,
         autocomplete=True)
-    async def explain(self, ctx: MtgContext, thing: Optional[str] = None) -> None:
+    async def explain(self, ctx: MtgContext, thing: str | None = None) -> None:
         """Answers for Frequently Asked Questions"""
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if thing is None:
@@ -287,7 +286,7 @@ class ExplainCog(Extension):
         if word == 'rotation' and rotation.in_rotation():
             s += textwrap.dedent(explanations['speculation'][0]).strip()
         for k in sorted(explanation[1].keys()):
-            s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
+            s += f'{k}: <{explanation[1][k]}>\n'
         await ctx.send(s)
 
     @explain.autocomplete('thing')
@@ -310,7 +309,7 @@ def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
         return False
     return channel.id == tournament_channel_id
 
-def promo_explanation() -> Tuple[str, Dict[str, str]]:
+def promo_explanation() -> tuple[str, dict[str, str]]:
     explanation = 'Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies.'
     have_cheap_promos = [
         'Barbarian Ring',

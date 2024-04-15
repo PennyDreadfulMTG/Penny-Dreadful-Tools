@@ -1,6 +1,5 @@
 import re
 import subprocess
-from typing import List
 
 from shared import fetch_tools
 from shared.pd_exception import DoesNotExistException
@@ -13,8 +12,8 @@ def ad_hoc() -> None:
     write_dependencies(output)
     send_pr_if_updated()
 
-def get_dependencies() -> List[str]:
-    f = open('shared_web/jsdependencies.txt', 'r')
+def get_dependencies() -> list[str]:
+    f = open('shared_web/jsdependencies.txt')
     return [line.strip() for line in f.readlines()]
 
 def write_dependencies(s: str) -> None:

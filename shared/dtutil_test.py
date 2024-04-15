@@ -8,10 +8,10 @@ from shared import dtutil
 def test_ts2dt() -> None:
     epoch_seconds = 0
     dt = dtutil.ts2dt(epoch_seconds)
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '1970-01-01 00:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '1970-01-01 00:00:00 +0000'
     now = datetime.datetime.now(datetime.timezone.utc)
     dt = dtutil.ts2dt(int(now.timestamp()))
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '{:%Y-%m-%d %H:%M:%S %z}'.format(now)
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == f'{now:%Y-%m-%d %H:%M:%S %z}'
 
 def test_dt2ts() -> None:
     dt = timezone('UTC').localize(datetime.datetime.utcfromtimestamp(0))
@@ -28,23 +28,23 @@ def test_end_to_end() -> None:
 def test_parse() -> None:
     s = '1970-01-01 00:00:00'
     dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '1970-01-01 00:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '1970-01-01 00:00:00 +0000'
     s = '2016-01-01 00:00:00'
     dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2016-01-01 00:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2016-01-01 00:00:00 +0000'
     dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('America/Los_Angeles'))
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2016-01-01 08:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2016-01-01 08:00:00 +0000'
 
 def test_parse_rfc3339() -> None:
     s = '2002-10-02T10:00:00-05:00'
     dt = dtutil.parse_rfc3339(s)
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2002-10-02 15:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2002-10-02 15:00:00 +0000'
     s = '2002-10-02T15:00:00Z'
     dt = dtutil.parse_rfc3339(s)
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2002-10-02 15:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2002-10-02 15:00:00 +0000'
     s = '2002-10-02T15:00:00.05Z'
     dt = dtutil.parse_rfc3339(s)
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2002-10-02 15:00:00 +0000'
+    assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2002-10-02 15:00:00 +0000'
 
 def test_parse_to_ts() -> None:
     s = '1970-01-01 00:00:00'

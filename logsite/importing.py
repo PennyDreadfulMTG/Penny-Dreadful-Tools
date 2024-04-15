@@ -4,7 +4,6 @@ import glob
 import os
 import re
 import shutil
-from typing import List, Optional
 
 from shared import fetch_tools
 
@@ -25,7 +24,7 @@ def load_from_file() -> None:
             with open(fname) as fhandle:
                 lines = fhandle.readlines()
                 import_log(lines, match_id)
-            shutil.move(fname, 'import/processed/{0}.txt'.format(match_id))
+            shutil.move(fname, f'import/processed/{match_id}.txt')
             return
 
 def import_from_pdbot(match_id: int) -> None:
@@ -33,10 +32,10 @@ def import_from_pdbot(match_id: int) -> None:
     lines = fetch_tools.fetch(url).split('\n')
     import_log(lines, match_id)
 
-def import_log(lines: List[str], match_id: int) -> match.Match:
+def import_log(lines: list[str], match_id: int) -> match.Match:
     """Processes a log"""
     lines = [line.strip('\r\n') for line in lines]
-    APP.logger.info('importing {0}'.format(match_id))
+    APP.logger.info(f'importing {match_id}')
     local = import_header(lines, match_id)
     if local.has_unexpected_third_game is None:
         local.has_unexpected_third_game = False
@@ -44,7 +43,7 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
     while lines[0] != '':
         lines = lines[1:]
     game_id = 0
-    game_lines: List[str] = []
+    game_lines: list[str] = []
     for line in lines:
         m = re.match(REGEX_GAME_HEADER, line)
         gm = re.match(REGEX_GATHERLING, line)
@@ -62,12 +61,12 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
             game_lines.append(line)
         elif gm:
             tname = gm.group(1)
-            APP.logger.info('Gatherling Event: {0}'.format(tname))
+            APP.logger.info(f'Gatherling Event: {tname}')
             process_tourney_info(local, tname=tname)
             game_lines.append(line)
         elif gr:
             roundnum = gr.group(1)
-            APP.logger.info('Gatherling Round: {0}'.format(roundnum))
+            APP.logger.info(f'Gatherling Round: {roundnum}')
             process_tourney_info(local, roundnum=roundnum)
             game_lines.append(line)
         else:
@@ -75,7 +74,7 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
     game.insert_game(game_id, match_id, '\n'.join(game_lines))
     return local
 
-def import_header(lines: List[str], match_id: int) -> match.Match:
+def import_header(lines: list[str], match_id: int) -> match.Match:
     local = match.get_match(match_id)
     if local is None:
         format_name = lines[0]
@@ -85,7 +84,7 @@ def import_header(lines: List[str], match_id: int) -> match.Match:
         local = match.create_match(match_id, format_name, comment, modules, players)
     return local
 
-def process_tourney_info(local: match.Match, tname: Optional[str] = None, roundnum: Optional[str] = None) -> None:
+def process_tourney_info(local: match.Match, tname: str | None = None, roundnum: str | None = None) -> None:
     if tname:
         tourney = tournament.get_tournament(tname)
         if tourney is None:

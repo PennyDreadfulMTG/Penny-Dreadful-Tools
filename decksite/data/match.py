@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Optional, Sequence, Union
+from collections.abc import Sequence
 
 from flask import g, url_for
 
@@ -16,11 +16,11 @@ from shared.pd_exception import TooFewItemsException
 def insert_match(dt: datetime.datetime,
                  left_id: int,
                  left_games: int,
-                 right_id: Optional[int],
+                 right_id: int | None,
                  right_games: int,
-                 round_num: Optional[int] = None,
-                 elimination: Optional[int] = None,
-                 mtgo_match_id: Optional[int] = None) -> int:
+                 round_num: int | None = None,
+                 elimination: int | None = None,
+                 mtgo_match_id: int | None = None) -> int:
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     update_cache(left_id, left_games, right_games, dt=dt)
@@ -43,15 +43,15 @@ def insert_match(dt: datetime.datetime,
 def load_match(match_id: int, deck_id: int) -> Container:
     return guarantee.exactly_one(load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}'))
 
-def load_matches_by_deck(d: deck.Deck) -> List[Container]:
+def load_matches_by_deck(d: deck.Deck) -> list[Container]:
     where = f'd.id = {d.id}'
     return load_matches(where=where, season_id=None)
 
-def load_matches_by_person(person_id: int, season_id: Optional[int] = None) -> List[Container]:
+def load_matches_by_person(person_id: int, season_id: int | None = None) -> list[Container]:
     where = f'd.person_id = {person_id}'
     return load_matches(where=where, season_id=season_id)
 
-def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = None) -> int:
+def load_matches_count(where: str = 'TRUE', season_id: int | str | None = None) -> int:
     competition_join = query.competition_join()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.season_id')
@@ -85,7 +85,7 @@ def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = N
     """
     return int(db().value(sql))
 
-def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, show_active_deck_names: bool = False) -> List[Container]:
+def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> list[Container]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')
     competition_join = query.competition_join()
@@ -156,7 +156,7 @@ def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) ->
         if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'
 
-def stats() -> Dict[str, int]:
+def stats() -> dict[str, int]:
     sql = """
         SELECT
             SUM(CASE WHEN FROM_UNIXTIME(`date`) >= NOW() - INTERVAL 1 DAY THEN 1 ELSE 0 END) AS num_matches_today,
@@ -189,7 +189,7 @@ def update_games(match_id: int, deck_id: int, games: int) -> int:
     args = [games, match_id, deck_id]
     return db().execute(sql, args)
 
-def update_cache(deck_id: int, games: int, opponent_games: int, delete: Optional[bool] = False, dt: Optional[datetime.datetime] = None) -> None:
+def update_cache(deck_id: int, games: int, opponent_games: int, delete: bool | None = False, dt: datetime.datetime | None = None) -> None:
     if games > opponent_games:
         args = [1, 0, 0]
     elif opponent_games > games:
@@ -229,7 +229,7 @@ def delete_match(match_id: int) -> None:
     if rs:
         redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
-def winner(left_id: int, left_games: int, right_id: int, right_games: int) -> Optional[int]:
+def winner(left_id: int, left_games: int, right_id: int, right_games: int) -> int | None:
     if left_games > right_games:
         return left_id
     if right_games > left_id:

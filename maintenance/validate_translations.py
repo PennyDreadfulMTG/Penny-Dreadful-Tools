@@ -1,6 +1,5 @@
 import os
 import re
-from typing import Optional
 
 from babel.messages import pofile
 from babel.messages.catalog import Catalog, Message
@@ -27,7 +26,7 @@ def validate_pofile(path: str) -> None:
 
 def validate_string(message: Message, catalog: Catalog) -> None:
     if not isinstance(message.id, (str, tuple)):
-        raise InvalidDataException('Unexpected id type: {0}'.format(repr(message.id)))
+        raise InvalidDataException(f'Unexpected id type: {repr(message.id)}')
 
     if isinstance(message.string, str):
         warning = has_missing_var(message.id, message.string)
@@ -45,21 +44,21 @@ def validate_string(message: Message, catalog: Catalog) -> None:
                 error(message, catalog, warning)
                 return
     else:
-        raise InvalidDataException('Unexpected string type: {0}'.format(repr(message.string)))
+        raise InvalidDataException(f'Unexpected string type: {repr(message.string)}')
 
 
-def has_missing_var(english: str | tuple, string: str) -> Optional[str]:
+def has_missing_var(english: str | tuple, string: str) -> str | None:
     if isinstance(english, tuple):
         return None
     for m in re.findall(r'\{\w+\}', english):
         if m not in string:
-            return 'Variable {m} missing from translation'.format(m=m)
+            return f'Variable {m} missing from translation'
     nums = len(re.findall('%\\(num\\)d', english))
     if len(re.findall('%\\(num\\)d', string)) != nums:
         return 'Missing %(num)d'
     return None
 
 def error(message: Message, catalog: Catalog, warning: str) -> None:
-    print('Warning: {lang} {message} failed tests:\n... {str}\n... {warning}'.format(message=message.id, lang=catalog.locale, warning=warning, str=message.string))
+    print(f'Warning: {catalog.locale} {message.id} failed tests:\n... {message.string}\n... {warning}')
     # catalog.delete(message.id)
     catalog.add(message.id, message.string, flags=['fuzzy'])

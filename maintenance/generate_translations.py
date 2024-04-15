@@ -1,6 +1,7 @@
 import subprocess
 from distutils.dist import Distribution
-from typing import Any, Dict, Generator, List
+from typing import Any
+from collections.abc import Generator
 
 import pystache
 from babel.messages import frontend
@@ -48,7 +49,7 @@ def exitcode() -> int:
                 return max(int(added), int(deleted)) - 1
     return 0
 
-def extract_mustache(fileobj: Any, keywords: List[str], comment_tags: List[str], options: Dict[str, str]) -> Generator:
+def extract_mustache(fileobj: Any, keywords: list[str], comment_tags: list[str], options: dict[str, str]) -> Generator:
     """Extract messages from mustache files.
 
     :param fileobj: the file-like object the messages should be extracted

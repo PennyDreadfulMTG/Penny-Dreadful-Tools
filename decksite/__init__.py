@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, cast
 
 from flask import Blueprint, g, request, url_for
 from flask_babel import gettext
@@ -21,11 +21,11 @@ def get_season_id() -> int:
     return season_id
 
 @SEASONS.url_defaults
-def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
+def add_season_id(_endpoint: str, values: dict[str, Any]) -> None:
     values.setdefault('season_id', get_season_id())
 
 @SEASONS.url_value_preprocessor
-def pull_season_id(_endpoint: Optional[str], values: Optional[Dict[Any, Any]]) -> None:
+def pull_season_id(_endpoint: str | None, values: dict[Any, Any] | None) -> None:
     if values is None:
         return
     v = values.pop('season_id')
@@ -34,10 +34,10 @@ def pull_season_id(_endpoint: Optional[str], values: Optional[Dict[Any, Any]]) -
 
 APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
 
-def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
+def build_menu() -> list[dict[str, str | dict[str, str]]]:
     current_template = (request.endpoint or '').replace('seasons.', '')
     archetypes_badge = {'url': url_for('edit_archetypes'), 'text': '', 'badge_class': 'edit_archetypes'}
-    resources_submenu: List[Dict[str, str]] = []
+    resources_submenu: list[dict[str, str]] = []
     if (seasons.next_rotation() - dtutil.now()) < datetime.timedelta(7):
         resources_submenu.append({'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'})
     resources_submenu += [
@@ -89,7 +89,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         item['has_submenu'] = item.get('submenu') is not None
     return menu
 
-def setup_links(menu: List[Dict[str, Any]]) -> None:
+def setup_links(menu: list[dict[str, Any]]) -> None:
     for item in menu:
         if item.get('endpoint'):
             item['url'] = url_for(item.get('endpoint', ''))

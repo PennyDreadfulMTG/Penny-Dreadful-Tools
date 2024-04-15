@@ -1,5 +1,3 @@
-from typing import List
-
 from flask import url_for
 
 from decksite.view import View
@@ -9,9 +7,9 @@ from shared import dtutil
 
 
 class PD500(View):
-    def __init__(self, tournament_winning_decks: List[Deck]) -> None:
+    def __init__(self, tournament_winning_decks: list[Deck]) -> None:
         super().__init__()
-        people = set(d.person for d in tournament_winning_decks)
+        people = {d.person for d in tournament_winning_decks}
         self.people_with_byes = [{'person': person, 'url': url_for('.person', mtgo_username=person)} for person in people]
         self.people_with_byes = sorted(self.people_with_byes, key=lambda k: k['person'])
         pd500_date = tournaments.pd500_date()

@@ -1,7 +1,7 @@
 import os
 import subprocess
 import urllib
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any
 
 from flask import (Blueprint, Flask, Request, Response, redirect, request, send_from_directory,
                    session, url_for)
@@ -60,7 +60,7 @@ class PDFlask(Flask):
         self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
         self.register_blueprint(self.api_root)
 
-    def not_found(self, e: Exception) -> Union[Response, Tuple[str, int]]:
+    def not_found(self, e: Exception) -> Response | tuple[str, int]:
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
             return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
         referrer = ', referrer: ' + request.referrer if request.referrer else ''
@@ -70,11 +70,11 @@ class PDFlask(Flask):
         view = NotFound(e)
         return view.page(), 404
 
-    def internal_server_error(self, e: Exception) -> Union[Tuple[str, int], Response]:
+    def internal_server_error(self, e: Exception) -> tuple[str, int] | Response:
         log_exception(request, e)
         path = request.path
         try:
-            repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
+            repo.create_issue(f'500 error at {path}\n {e}', session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
         except GithubException:
             logger.error('Github error', e)
         if request.path.startswith('/api/'):
@@ -82,7 +82,7 @@ class PDFlask(Flask):
         view = InternalServerError(e)
         return view.page(), 500
 
-    def unauthorized(self, error: Optional[str] = None) -> str:
+    def unauthorized(self, error: str | None = None) -> str:
         view = Unauthorized(error)
         return view.page()
 
@@ -128,9 +128,9 @@ class PDFlask(Flask):
     def favicon(self, rest: str) -> Response:
         if not self.static_folder:
             raise DoesNotExistException
-        return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), 'favicon{rest}'.format(rest=rest))
+        return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), f'favicon{rest}')
 
-    def external_url_handler(self, error: Exception, endpoint: str, values: Dict[str, Any]) -> str:
+    def external_url_handler(self, error: Exception, endpoint: str, values: dict[str, Any]) -> str:
         """Looks up an external URL when `url_for` cannot build a URL."""
         url = self.lookup_external_url(endpoint, **values)
         if url is None:
@@ -140,7 +140,7 @@ class PDFlask(Flask):
         # url_for will use this result, instead of raising BuildError.
         return url
 
-    def lookup_external_url(self, endpoint: str, **values: Dict[str, Any]) -> Optional[str]:
+    def lookup_external_url(self, endpoint: str, **values: dict[str, Any]) -> str | None:
         if endpoint == 'card':  # The error pages make a /cards/<name> reference, but only decksite implements it.
             return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
         return None

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any
 
 from magic import oracle
 from magic.models import Card
@@ -7,14 +7,14 @@ from shared.container import Container
 
 
 class Deck(Container):
-    def __init__(self, params: Dict[str, Any]) -> None:
+    def __init__(self, params: dict[str, Any]) -> None:
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
         self.sorted = False
 
-    def all_cards(self) -> List[Card]:
-        cards: List[Card] = []
+    def all_cards(self) -> list[Card]:
+        cards: list[Card] = []
         for entry in self.maindeck + self.sideboard:
             cards += [entry.card] * entry['n']
         return cards

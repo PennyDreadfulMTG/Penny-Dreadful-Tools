@@ -1,6 +1,6 @@
 import logging
 import traceback
-from typing import Any, Optional
+from typing import Any
 
 from interactions import User
 from interactions.client.errors import CommandException
@@ -11,7 +11,7 @@ from shared import settings
 
 
 class ConfigError(CommandException):
-    def __init__(self, scope: int, message: Optional[str] = None, *args: Any) -> None:
+    def __init__(self, scope: int, message: str | None = None, *args: Any) -> None:
         super().__init__(message, *args)
         self.scope = scope
 

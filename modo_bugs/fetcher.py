@@ -3,7 +3,6 @@ import logging
 import os
 import re
 import sys
-from typing import Dict, List, Optional, Tuple
 
 import attrs
 from bs4 import BeautifulSoup
@@ -20,7 +19,7 @@ class ForumPost:
     url: str
     # votes: str
 
-def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
+def search_scryfall(query: str) -> tuple[int, list[str], list[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':
@@ -37,7 +36,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     result_data = result_json['data']
     result_data.sort(key=lambda x: x['legalities']['penny'])
 
-    def get_frontside(scr_card: Dict) -> str:
+    def get_frontside(scr_card: dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         if scr_card['layout'] in ['transform', 'flip', 'modal_dfc']:
@@ -46,16 +45,16 @@ def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return result_json['total_cards'], result_cardnames, result_json.get('warnings', [])
 
-def catalog_cardnames() -> List[str]:
+def catalog_cardnames() -> list[str]:
     result_json = fetch_tools.fetch_json('https://api.scryfall.com/catalog/card-names')
-    names: List[str] = result_json['data']
+    names: list[str] = result_json['data']
     for n in names:
         if ' // ' in n:
             names.extend(n.split(' // '))
     return names
 
 def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool:
-    text = '---\ntitle: {title}\nredirect_to:\n - {url}\n'.format(title=title, url=redirect)
+    text = f'---\ntitle: {title}\nredirect_to:\n - {redirect}\n'
     for key, value in kwargs.items():
         text += f'{key}: {value}\n'
     text = text + '---\n'
@@ -64,7 +63,7 @@ def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool
         bb_jekyl = open(fname, mode='w')
         bb_jekyl.write('')
         bb_jekyl.close()
-    bb_jekyl = open(fname, mode='r')
+    bb_jekyl = open(fname)
     orig = bb_jekyl.read()
     bb_jekyl.close()
     if orig != text:
@@ -77,12 +76,12 @@ def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool
         return True
     return False
 
-def find_announcements() -> Tuple[Optional[str], bool]:
+def find_announcements() -> tuple[str | None, bool]:
     articles = [a for a in get_article_archive() if is_announcement(a)]
     if not articles:
         return (None, False)
     (title, link) = articles[0]
-    logger.info('Found: {0} ({1})'.format(title, link))
+    logger.info(f'Found: {title} ({link})')
     bn = 'PATCH NOTES' in fetch_tools.fetch(link)
     new = update_redirect('announcements', title, link, has_build_notes=str(bn))
     return (link, new)
@@ -94,13 +93,13 @@ def is_announcement(a: tuple[str, str]) -> bool:
         return True
     return False
 
-def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
+def parse_article_item_extended(a: Tag) -> tuple[Tag, str]:
     title = a.find_all('h3')[0]
     link = 'https://www.mtgo.com' + a.find_all('a')[0]['href']
     return (title, link)
 
 @lazy.lazy_property
-def get_article_archive() -> List[Tuple[str, str]]:
+def get_article_archive() -> list[tuple[str, str]]:
     try:
         html = fetch_tools.fetch('https://www.mtgo.com/archive')
     except fetch_tools.FetchException:

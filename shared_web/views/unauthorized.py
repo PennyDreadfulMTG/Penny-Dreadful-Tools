@@ -1,10 +1,8 @@
-from typing import Optional
-
 from .error import ErrorView
 
 
 class Unauthorized(ErrorView):
-    def __init__(self, error: Optional[str]) -> None:
+    def __init__(self, error: str | None) -> None:
         super().__init__()
         if error:
             self.error = error

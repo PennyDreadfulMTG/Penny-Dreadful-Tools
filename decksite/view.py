@@ -1,13 +1,13 @@
 import html
 import sys
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, cast
 
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
 from flask import request, session, url_for
 from flask_babel import gettext, ngettext
-from mypy_extensions import TypedDict
+from typing import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare
@@ -20,38 +20,37 @@ from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
 
-SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
-    'name': str,
-    'code': str,
-    'code_lower': str,
-    'num': Optional[int],
-    'url': str,
-    'decks_url': str,
-    'league_decks_url': str,
-    'competitions_url': str,
-    'archetypes_url': str,
-    'people_url': str,
-    'cards_url': str,
-    'rotation_changes_url': str,
-    'tournament_leaderboards_url': str,
-    'legality_name': Optional[str],
-    'legal_cards_url': Optional[str],
-}, total=False)
+class SeasonInfoDescription(TypedDict, total=False):
+    name: str
+    code: str
+    code_lower: str
+    num: int | None
+    url: str
+    decks_url: str
+    league_decks_url: str
+    competitions_url: str
+    archetypes_url: str
+    people_url: str
+    cards_url: str
+    rotation_changes_url: str
+    tournament_leaderboards_url: str
+    legality_name: str | None
+    legal_cards_url: str | None
 
 class View(BaseView):
     def __init__(self) -> None:
         super().__init__()
         self.max_price_text = card_price.MAX_PRICE_TEXT
-        self.decks: List[Deck] = []
+        self.decks: list[Deck] = []
         self.active_runs_text: str = ''
         self.hide_active_runs = not session.get('admin', False)
         self.show_seasons: bool = False
-        self.legal_formats: Optional[List[str]] = None
+        self.legal_formats: list[str] | None = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
-        self.is_person_page: Optional[bool] = None
+        self.is_person_page: bool | None = None
         self.next_tournament_name = None
         self.next_tournament_time = None
-        self.tournaments: List[Container] = []
+        self.tournaments: list[Container] = []
         self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
         self.tournament_only: bool = False
@@ -60,8 +59,8 @@ class View(BaseView):
         self.has_external_source = False
         self.is_home_page = False
         self.show_filters_toggle = False
-        self.tournament_rounds_info: List[Dict[str, Union[int, str]]] = []
-        self.matches: List[Container] = []
+        self.tournament_rounds_info: list[dict[str, int | str]] = []
+        self.matches: list[Container] = []
 
     def season_id(self) -> int:
         return get_season_id()
@@ -75,8 +74,8 @@ class View(BaseView):
     def has_buttons(self) -> bool:
         return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source or self.show_filters_toggle
 
-    def all_seasons(self) -> List[SeasonInfoDescription]:
-        seasonlist: List[SeasonInfoDescription] = [{
+    def all_seasons(self) -> list[SeasonInfoDescription]:
+        seasonlist: list[SeasonInfoDescription] = [{
             'name': 'All Time',
             'code': 'all',
             'code_lower': 'all',
@@ -133,8 +132,8 @@ class View(BaseView):
         elif get_season_id() == 0:
             season = ' - All Time'
         else:
-            season = ' - Season {n}'.format(n=get_season_id())
-        return '{page_title}{season} – pennydreadfulmagic.com'.format(page_title=self.page_title(), season=season)
+            season = f' - Season {get_season_id()}'
+        return f'{self.page_title()}{season} – pennydreadfulmagic.com'
 
     # Site-wide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:
@@ -155,7 +154,7 @@ class View(BaseView):
             return template.render_name('kickoffnotice', {'url': url_for('kickoff'), 'date': date})
         return ''
 
-    def page_title(self) -> Optional[str]:
+    def page_title(self) -> str | None:
         pass
 
     def num_tournaments(self) -> str:
@@ -211,7 +210,7 @@ class View(BaseView):
 
     def prepare_competitions(self) -> None:
         for c in getattr(self, 'competitions', []):
-            c.competition_url = '/competitions/{id}/'.format(id=c.id)
+            c.competition_url = f'/competitions/{c.id}/'
             c.display_date = dtutil.display_date(c.start_date)
             c.competition_ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
@@ -220,7 +219,7 @@ class View(BaseView):
             try:
                 for k, v in archetype.base_archetypes_data(c).items():
                     if v > 0:
-                        title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
+                        title_safe += f'{v} {html.escape(k)}<br>'
             except KeyError:
                 archetype.rebuild_archetypes()
 
@@ -231,7 +230,7 @@ class View(BaseView):
         for a in getattr(self, 'archetypes', []):
             self.prepare_archetype(a, getattr(self, 'archetypes', []), self.tournament_only)
 
-    def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype], tournament_only: bool = False) -> None:
+    def prepare_archetype(self, a: archetype.Archetype, archetypes: list[archetype.Archetype], tournament_only: bool = False) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
         archetype_ids = {a.id for a in archetypes}
@@ -263,7 +262,7 @@ class View(BaseView):
             o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if active else ''
             o.decks = other
 
-    def babel_languages(self) -> List[Locale]:
+    def babel_languages(self) -> list[Locale]:
         return APP.babel.list_translations()
 
     def TT_HELP_TRANSLATE(self) -> str:
@@ -319,7 +318,7 @@ class View(BaseView):
             })
 
 
-def seasonized_url(season_id: Union[int, str]) -> str:
+def seasonized_url(season_id: int | str) -> str:
     if request.view_args is not None:
         args = request.view_args.copy()
     else:
@@ -330,7 +329,7 @@ def seasonized_url(season_id: Union[int, str]) -> str:
     else:
         args['season_id'] = season_id
         prefix = '' if cast(str, request.endpoint).startswith('seasons.') else 'seasons.'
-        endpoint = '{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint)
+        endpoint = f'{prefix}{request.endpoint}'
     try:
         return url_for(endpoint, **args)
     except BuildError:

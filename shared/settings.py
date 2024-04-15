@@ -3,14 +3,15 @@ import inspect
 import json
 import os
 from contextlib import contextmanager
-from typing import Any, Dict, Generator, Generic, List, Optional, TypeVar
+from typing import Any, Generic, Optional, TypeVar
+from collections.abc import Generator
 
 from shared.pd_exception import InvalidDataException
 
 SETTINGS = {}
 CONFIGURABLE_NAMES = []
-CONFIG: Dict[str, Any] = {}
-NS_CONFIG: Dict[str, Any] = {}
+CONFIG: dict[str, Any] = {}
+NS_CONFIG: dict[str, Any] = {}
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -47,7 +48,7 @@ def save_cfg(cfg: Any) -> None:
         fh.write(json.dumps(cfg, indent=4, sort_keys=True))
 
 class Setting(Generic[T]):
-    def __init__(self, key: str, default_value: T, configurable: bool = False, doc: Optional[str] = None) -> None:
+    def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str | None = None) -> None:
         self.key = key
         self.default_value = default_value
         self.configurable = configurable
@@ -76,7 +77,7 @@ class Setting(Generic[T]):
             if cfg.get(key, None) == os.environ[key]:
                 return cfg[key]
             cfg[key] = os.environ[key]
-            print('CONFIG: {0}={1}'.format(key, cfg[key]))
+            print(f'CONFIG: {key}={cfg[key]}')
             save_cfg(cfg)
             CONFIG.update({key: cfg[key]})
             return cfg[key]
@@ -90,7 +91,7 @@ class Setting(Generic[T]):
         if inspect.isfunction(cfg[key]):  # If default value is a function, call it.
             cfg[key] = cfg[key]()
 
-        print('CONFIG: {0}={1}'.format(key, cfg[key]))
+        print(f'CONFIG: {key}={cfg[key]}')
         save_cfg(cfg)
         return cfg[key]
 
@@ -114,7 +115,7 @@ class Setting(Generic[T]):
         else:
             cfg[self.key] = value
 
-        print('CONFIG: {0}={1}'.format(fullkey, cfg[self.key]))
+        print(f'CONFIG: {fullkey}={cfg[self.key]}')
         save_cfg(cfg)
         return value
 
@@ -160,7 +161,7 @@ class StrSetting(Setting[str]):
 class OptionalStrSetting(Setting[Optional[str]]):
     pass
 
-class ListSetting(Setting[List[U]]):
+class ListSetting(Setting[list[U]]):
     pass
 
 class IntSetting(Setting[int]):
@@ -183,4 +184,4 @@ class IntSetting(Setting[int]):
         return self.set(value)
 
 def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
-    return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))
+    return InvalidDataException(f'Expected a {expected_type} for {key}, got `{val}` ({type(val)})')

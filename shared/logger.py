@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List
+from typing import Any
 
 from flask import current_app, has_app_context
 from typing_extensions import Protocol
@@ -27,7 +27,7 @@ def logger() -> SupportsLogging:
         return current_app.logger
     return logging
 
-def fatal(*args: List[Any]) -> None:
+def fatal(*args: list[Any]) -> None:
     """Panic stations! Data is being irretrievably lost or other truly terrible things."""
     logger().fatal('\n'.join(map(str, args)))
 

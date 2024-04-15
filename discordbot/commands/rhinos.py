@@ -16,7 +16,7 @@ async def rhinos(ctx: MtgContext) -> None:
     og_rhino = oracle.cards_by_name()[rhino_name]
 
     def find_rhino(query: str) -> Card:
-        cards = complex_search('f:pd {0}'.format(query))
+        cards = complex_search(f'f:pd {query}')
         if len(cards) == 0:
             cards = complex_search(query)
         return random.choice(cards)

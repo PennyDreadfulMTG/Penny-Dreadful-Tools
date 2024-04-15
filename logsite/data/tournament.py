@@ -1,5 +1,3 @@
-from typing import Dict
-
 import sqlalchemy as sa
 
 from .. import db
@@ -14,7 +12,7 @@ class TournamentInfo(fsa.Model):
         'tournament.id'), nullable=False)
     round_num = sa.Column(sa.Integer)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         return {
             'id': self.id,
             'match_id': self.match_id,

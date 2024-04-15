@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, cast
 
 import titlecase
 from flask import make_response, redirect, request, session, url_for
@@ -25,7 +25,7 @@ from shared.pd_exception import InvalidArgumentException
 from shared_web.decorators import fill_form
 
 
-def admin_menu() -> List[Dict[str, str]]:
+def admin_menu() -> list[dict[str, str]]:
     m = []
     endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for endpoint in endpoints:
@@ -51,7 +51,7 @@ def edit_aliases() -> str:
 @APP.route('/admin/aliases/', methods=['POST'])
 @fill_form('person_id', 'alias')
 @auth.admin_required
-def post_aliases(person_id: Optional[int] = None, alias: Optional[str] = None) -> Union[str, wrappers.Response]:
+def post_aliases(person_id: int | None = None, alias: str | None = None) -> str | wrappers.Response:
     if person_id is not None and alias is not None and len(alias) > 0:
         ps.add_alias(person_id, alias)
     return edit_aliases()
@@ -65,7 +65,7 @@ def edit_archetypes(q: str = '', notq: str = '') -> wrappers.Response:
 @APP.route('/admin/archetypes/', methods=['POST'])
 @auth.demimod_required
 def post_archetypes() -> wrappers.Response:
-    search_results: List[Deck] = []
+    search_results: list[Deck] = []
     if request.form.get('deck_id') is not None:
         archetype_ids = request.form.getlist('archetype_id')
         # Adjust archetype_ids if we're assigning multiple decks to the same archetype.
@@ -90,7 +90,7 @@ def post_archetypes() -> wrappers.Response:
         if len(request.form.get('name', '')) > 0:
             archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
     else:
-        raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
+        raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/archetypes: {request.form}')
     if search_results:
         view = ArchetypeSearch(archs.load_archetypes(order_by='a.name'), search_results, request.form.get('q', ''), request.form.get('notq', ''))
         return view.response()
@@ -112,12 +112,12 @@ def post_rules() -> wrappers.Response:
         rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
         rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
     else:
-        raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
+        raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/rules: {request.form}')
     return edit_rules()
 
 @APP.route('/admin/retire/')
 @auth.admin_required
-def admin_retire_deck(form: Optional[RetireForm] = None) -> str:
+def admin_retire_deck(form: RetireForm | None = None) -> str:
     if form is None:
         form = RetireForm(request.form)
     view = AdminRetire(form)
@@ -189,7 +189,7 @@ def post_player_note(person_id: int, note: str) -> wrappers.Response:
 
 @APP.route('/admin/unlink/')
 @auth.admin_required
-def unlink(num_affected_people: Optional[int] = None, errors: Optional[List[str]] = None) -> str:
+def unlink(num_affected_people: int | None = None, errors: list[str] | None = None) -> str:
     all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()
@@ -211,7 +211,7 @@ def post_unlink() -> str:
 
 @APP.route('/admin/ban/')
 @auth.admin_required
-def ban(success: Optional[bool] = None) -> str:
+def ban(success: bool | None = None) -> str:
     all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Ban(all_people, success)
     return view.page()
@@ -254,5 +254,5 @@ def sorters() -> str:
     view = Sorters(ps.load_sorters())
     return view.page()
 
-def cast_int(param: Optional[Any]) -> int:
+def cast_int(param: Any | None) -> int:
     return int(cast(str, param))

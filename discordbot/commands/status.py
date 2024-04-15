@@ -8,4 +8,4 @@ from magic import fetcher
 async def status(ctx: MtgContext) -> None:
     """Status of Magic Online."""
     mtgo_status = await fetcher.mtgo_status()
-    await ctx.send('MTGO is {status}'.format(status=mtgo_status))
+    await ctx.send(f'MTGO is {mtgo_status}')

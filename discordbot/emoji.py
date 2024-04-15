@@ -1,5 +1,4 @@
 import re
-from typing import Dict, Optional
 
 from interactions.client import Client
 from interactions.models import PartialEmoji
@@ -8,9 +7,9 @@ from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
-CACHE: Dict[str, PartialEmoji] = {}
+CACHE: dict[str, PartialEmoji] = {}
 
-async def find_emoji(emoji: str, client: Client) -> Optional[PartialEmoji]:
+async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
     if res := CACHE.get(emoji):
         return res
 

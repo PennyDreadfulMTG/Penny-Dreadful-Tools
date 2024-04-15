@@ -1,7 +1,8 @@
 import functools
 import logging
 import os
-from typing import Any, Callable, Dict, List, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 import fasteners
 import six
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]], FuncType[T]]:
     def decorator(decorated_func: FuncType[T]) -> FuncType[T]:
         @functools.wraps(decorated_func)
-        def wrapper(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
+        def wrapper(*args: list[Any], **kwargs: dict[str, Any]) -> Any:
             try:
                 return decorated_func(*args, **kwargs)
             except DatabaseException as e:

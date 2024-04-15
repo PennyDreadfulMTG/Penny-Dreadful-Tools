@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Optional, cast
+from typing import cast
 
 from flask import url_for
 from flask_babel import gettext, ngettext
@@ -17,7 +17,7 @@ from shared.decorators import retry_after_calling
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
-def load_achievements(p: Optional[Person], season_id: Optional[int], with_detail: bool = False) -> List[Container]:
+def load_achievements(p: Person | None, season_id: int | None, with_detail: bool = False) -> list[Container]:
     achievements = []
     for a in Achievement.all_achievements:
         desc = Container({'title': a.title, 'description_safe': a.description_safe})
@@ -34,7 +34,7 @@ def load_achievements(p: Optional[Person], season_id: Optional[int], with_detail
         return achievements
     return sorted(achievements, key=lambda ad: -ad.percent)
 
-def load_query(people_by_id: Dict[int, Person], season_id: Optional[int]) -> str:
+def load_query(people_by_id: dict[int, Person], season_id: int | None) -> str:
     # keys have been normalised earlier but could still be reserved words
     columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
     return """
@@ -92,34 +92,34 @@ def preaggregate_query() -> str:
 # Abstract achievement classes
 
 class Achievement:
-    all_achievements: List['Achievement'] = []
+    all_achievements: list['Achievement'] = []
     in_db = True
-    key: Optional[str] = None
+    key: str | None = None
     title = ''
-    flags: List[str] = []
+    flags: list[str] = []
 
     @property
     def description_safe(self) -> str:
         return ''
 
     @property
-    def sql(self) -> Optional[str]:
+    def sql(self) -> str | None:
         return None
 
     @property
-    def with_sql(self) -> Optional[str]:
+    def with_sql(self) -> str | None:
         return None
 
     @property
-    def join_sql(self) -> Optional[str]:
+    def join_sql(self) -> str | None:
         return None
 
     @property
-    def detail_sql(self) -> Optional[str]:
+    def detail_sql(self) -> str | None:
         return None
 
     @property
-    def create_columns(self) -> Optional[str]:
+    def create_columns(self) -> str | None:
         if not self.in_db:
             return None
         if self.detail_sql is None:
@@ -127,7 +127,7 @@ class Achievement:
         return f'`{self.key}` INT NOT NULL, `{self.key}_detail` LONGTEXT DEFAULT NULL'
 
     @property
-    def select_columns(self) -> Optional[str]:
+    def select_columns(self) -> str | None:
         if not self.in_db:
             return None
         if self.detail_sql is None:
@@ -149,7 +149,7 @@ class Achievement:
 
     # Note: load_summary must be overridden if in_db=False!
     @retry_after_calling(preaggregate_achievements)
-    def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
+    def load_summary(self, season_id: int | None = None) -> str | None:
         season_condition = query.season_query(season_id)
         sql = f'SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 AND {season_condition}'
         for r in db().select(sql):
@@ -162,7 +162,7 @@ class Achievement:
         return None
 
     @retry_after_calling(preaggregate_achievements)
-    def percent(self, season_id: Optional[int] = None) -> float:
+    def percent(self, season_id: int | None = None) -> float:
         season_condition = query.season_query(season_id)
         sql = f'SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}'
         r = db().select(sql)[0]
@@ -172,7 +172,7 @@ class Achievement:
             return 0
 
     @retry_after_calling(preaggregate_achievements)
-    def detail(self, p: Person, season_id: Optional[int] = None) -> Optional[List[Deck]]:
+    def detail(self, p: Person, season_id: int | None = None) -> list[Deck] | None:
         if self.detail_sql is None:
             return None
         sql = """
@@ -192,7 +192,7 @@ class Achievement:
             result[f] = True
         return result
 
-    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
+    def leaderboard(self, season_id: int | None = None) -> list[Container] | None:
         season_condition = query.season_query(season_id)
         person_query = query.person_query()
         sql = f"""
@@ -279,7 +279,7 @@ class BooleanAchievement(Achievement):
         return ''
 
     # No point showing a leaderboard for these on single-season page because no-one can have more than 1
-    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
+    def leaderboard(self, season_id: int | None = None) -> list[Container] | None:
         if season_id == 0:
             return super().leaderboard(season_id=season_id)
         return None
@@ -301,18 +301,18 @@ class TournamentOrganizer(Achievement):
             return 'Tournament Run'
         return ''
 
-    def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
+    def load_summary(self, season_id: int | None = None) -> str | None:
         # We can't give per-season stats for this because they don't exist
         clarification = ' (all-time)' if season_id != 0 else ''
         return f'Earned by {len(self.hosts)} players{clarification}.'
 
     @retry_after_calling(preaggregate_achievements)
-    def percent(self, season_id: Optional[int] = None) -> float:
+    def percent(self, season_id: int | None = None) -> float:
         sql = 'SELECT COUNT(*) AS mnum FROM _achievements'
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
 
-    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
+    def leaderboard(self, season_id: int | None = None) -> list[Container] | None:
         return None
 
 class Player(BooleanAchievement):

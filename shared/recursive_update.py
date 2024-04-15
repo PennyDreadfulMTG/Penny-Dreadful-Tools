@@ -1,6 +1,7 @@
 import collections.abc
 import warnings
-from typing import Any, Mapping, MutableMapping, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Mapping, MutableMapping
 
 K = TypeVar('K')
 V = Any

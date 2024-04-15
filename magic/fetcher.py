@@ -10,7 +10,7 @@ import os
 import re
 from collections import OrderedDict
 from time import sleep
-from typing import Any, Dict, List, Literal, Optional, Tuple, TypedDict, Union, cast
+from typing import Any, Literal, TypedDict, cast
 from urllib import parse
 
 import feedparser
@@ -28,11 +28,11 @@ from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
 from shared.types import BugData, ForumData
 
 
-async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
+async def achievement_cache_async() -> dict[str, dict[str, str]]:
     data = await fetch_tools.fetch_json_async(decksite_url('/api/achievements'))
     return {a['key']: a for a in data['achievements']}
 
-async def all_cards_async(force_last_good: bool = False) -> Tuple[List[CardDescription], str]:
+async def all_cards_async(force_last_good: bool = False) -> tuple[list[CardDescription], str]:
     download_uri = await bulk_data_uri()
     if force_last_good:
         response = None
@@ -46,7 +46,7 @@ async def all_cards_async(force_last_good: bool = False) -> Tuple[List[CardDescr
             raise FetchException(f'Default Cards not in expected format. Got {response}') from c
     return response, download_uri
 
-async def all_sets_async() -> List[Dict[str, Any]]:
+async def all_sets_async() -> list[dict[str, Any]]:
     try:
         d = json.load(open('sets.json'))
     except FileNotFoundError:
@@ -54,7 +54,7 @@ async def all_sets_async() -> List[Dict[str, Any]]:
     assert not d['has_more']
     return d['data']
 
-async def banner_cards() -> Tuple[List[str], str]:
+async def banner_cards() -> tuple[list[str], str]:
     data = await fetch_tools.fetch_json_async(decksite_url('/api/banner'))
     return (data['cardnames'], data['background'])
 
@@ -66,7 +66,7 @@ async def bulk_data_uri() -> str:
     else:
         raise FetchException('Unable to find Default Cards')
 
-async def bugged_cards_async() -> Optional[List[BugData]]:
+async def bugged_cards_async() -> list[BugData] | None:
     try:
         bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     except FetchException:
@@ -74,12 +74,12 @@ async def bugged_cards_async() -> Optional[List[BugData]]:
         bugs = None
     return bugs
 
-def card_aliases() -> List[List[str]]:
+def card_aliases() -> list[list[str]]:
     with open(configuration.card_alias_file.get(), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
 def card_price(cardname: str) -> PriceDataType:
-    return fetch_tools.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
+    return fetch_tools.fetch_json('http://vorpald20.com:5800/{}/'.format(cardname.replace('//', '-split-')))
 
 def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
     if twentyfour:
@@ -89,7 +89,7 @@ def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
     except ValueError:  # %l is not a univerally supported argument.  Fall back to %I on other platforms.
         return dtutil.now(timezone).strftime('%I:%M %p')
 
-async def daybreak_forums_async() -> Optional[dict[str, ForumData]]:
+async def daybreak_forums_async() -> dict[str, ForumData] | None:
     try:
         bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/forums.json')
     except FetchException:
@@ -105,7 +105,7 @@ def logsite_url(path: str = '/') -> str:
 
 def site_url(protocol: str, hostname: str, port: int, path: str) -> str:
     if port != 80:
-        base = '{hostname}:{port}'.format(hostname=hostname, port=port)
+        base = f'{hostname}:{port}'
     else:
         base = hostname
     url = parse.urlunparse((protocol, base, path, '', '', ''))
@@ -115,7 +115,7 @@ def site_url(protocol: str, hostname: str, port: int, path: str) -> str:
 def downtimes() -> str:
     return fetch_tools.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
 
-def gatherling_deck_comments(d: Deck) -> List[str]:
+def gatherling_deck_comments(d: Deck) -> list[str]:
     url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
     s = fetch_tools.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
@@ -123,7 +123,7 @@ def gatherling_deck_comments(d: Deck) -> List[str]:
         return result.group(1).replace('<br />', '\n').split('\n')
     return []
 
-async def gatherling_whois(name: Optional[str] = None, discord_id: Optional[str] = None) -> Container:
+async def gatherling_whois(name: str | None = None, discord_id: str | None = None) -> Container:
     if discord_id:
         url = f'https://gatherling.com/api.php?action=whois&discordid={discord_id}'
     elif name:
@@ -133,12 +133,12 @@ async def gatherling_whois(name: Optional[str] = None, discord_id: Optional[str]
     data = await fetch_tools.fetch_json_async(url)
     return Container(data)
 
-async def gatherling_active_events() -> List[Container]:
+async def gatherling_active_events() -> list[Container]:
     url = 'https://gatherling.com/api.php?action=active_events'
     data: dict = await fetch_tools.fetch_json_async(url)
     return [Container(d) for d in data.values()]
 
-def hq_artcrops() -> Dict[str, Tuple[str, int]]:
+def hq_artcrops() -> dict[str, tuple[str, int]]:
     with open('hq_artcrops.json') as f:
         return json.load(f)
 
@@ -146,11 +146,11 @@ def hq_artcrops() -> Dict[str, Tuple[str, int]]:
 if configuration.production.value:
     hq_artcrops = functools.lru_cache(hq_artcrops)  # These won't be changing in production, so avoid the IO cost of reading the file every time.
 
-async def legal_cards_async(season: Optional[str] = None) -> List[str]:
+async def legal_cards_async(season: str | None = None) -> list[str]:
     if season is None:
         url = 'legal_cards.txt'
     else:
-        url = '{season}_legal_cards.txt'.format(season=season)
+        url = f'{season}_legal_cards.txt'
     encoding = 'utf-8'
     cached_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'legal_cards')
     if os.path.exists(os.path.join(cached_path, url)):
@@ -173,14 +173,14 @@ async def mtgo_status() -> str:
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
-async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
+async def person_data_async(person: str | int) -> dict[str, Any]:
     try:
-        data = await fetch_tools.fetch_json_async(decksite_url('/api/person/{0}'.format(person)))
+        data = await fetch_tools.fetch_json_async(decksite_url(f'/api/person/{person}'))
     except (FetchException, json.decoder.JSONDecodeError):
         return {}
     return data
 
-def resources() -> Dict[str, Dict[str, str]]:
+def resources() -> dict[str, dict[str, str]]:
     with open('decksite/resources.json', encoding='utf-8') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
@@ -194,7 +194,7 @@ async def scryfall_last_updated_async() -> datetime.datetime:
         raise InvalidDataException('Scryfall data is not JSON') from e
     raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
-def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, list[str], list[CardDescription]]:
+def search_scryfall(query: str, exhaustive: bool = False) -> tuple[int, list[str], list[CardDescription]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion.
        third member is a list of the full card data of said cards.
@@ -203,7 +203,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, list[str
         return False, [], []
     redis_key = f'scryfall:query:{query}:' + ('exhaustive' if exhaustive else 'nonexhaustive')
     cached = redis.get_list(redis_key)
-    result_data: List[CardDescription]
+    result_data: list[CardDescription]
     if cached:
         total_cards, result_data = int(cached[0]), cached[1]
     else:
@@ -241,7 +241,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, list[str
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return total_cards, result_cardnames, result_data
 
-async def dreadrise_count_cards(query: str) -> Tuple[int, Optional[str]]:
+async def dreadrise_count_cards(query: str) -> tuple[int, str | None]:
     """
         If the search succeeds, returns the number of results.
         If it doesn't, returns -1 and the error given by the engine.
@@ -285,11 +285,11 @@ async def dreadrise_search_decks(query: str, max_decks: int) -> dict:
 async def dreadrise_search_matchups(q1: str, q2: str, max_count: int) -> dict:
     return await dreadrise_search_json('/api/deck-search/matchups', max_count, q1=q1, q2=q2)
 
-def rulings(cardname: str) -> List[Dict[str, str]]:
-    card = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
+def rulings(cardname: str) -> list[dict[str, str]]:
+    card = fetch_tools.fetch_json(f'https://api.scryfall.com/cards/named?exact={cardname}')
     return fetch_tools.fetch_json(card['uri'] + '/rulings')['data']
 
-def sitemap() -> List[str]:
+def sitemap() -> list[str]:
     cached = redis.get_list('magic:fetcher:sitemap')
     if cached is not None:
         return cached
@@ -304,25 +304,25 @@ def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
     return feedparser.parse(url)
 
-def time(q: str, twentyfour: bool) -> Dict[str, List[str]]:
+def time(q: str, twentyfour: bool) -> dict[str, list[str]]:
     return times_from_timezone_code(q, twentyfour) if len(q) <= 4 else times_from_location(q, twentyfour)
 
-def times_from_timezone_code(q: str, twentyfour: bool) -> Dict[str, List[str]]:
+def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
     if not possibles:
         raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
-    results: Dict[str, List[str]] = {}
+    results: dict[str, list[str]] = {}
     for possible in possibles:
         timezone = dtutil.timezone(possible)
         t = current_time(timezone, twentyfour)
         results[t] = results.get(t, []) + [possible]
     return results
 
-def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
+def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
-    url = 'https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={api_key}&sensor=false'.format(q=fetch_tools.escape(q), api_key=api_key)
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={fetch_tools.escape(q)}&key={api_key}&sensor=false'
     info = fetch_tools.fetch_json(url)
     if 'error_message' in info:
         return info['error_message']
@@ -358,7 +358,7 @@ class WISSetInfoType(TypedDict):
 
 class WISSchemaType(TypedDict):
     deprecated: bool
-    sets: List[WISSetInfoType]
+    sets: list[WISSetInfoType]
 
 def whatsinstandard() -> WISSchemaType:
     # if you're here to hack data because WIS isn't correct, use magic.seasons.OVERRIDES instead

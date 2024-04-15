@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 from decksite.data import preaggregation, query
 from decksite.database import db
 from shared.container import Container
@@ -21,7 +19,7 @@ def preaggregate() -> None:
 
 # Map of archetype_id => cardname where cardname is the key card for that archetype for the supplied season, or all time if 0 supplied as season_id.
 @retry_after_calling(preaggregate)
-def key_cards(season_id: int) -> Dict[int, str]:
+def key_cards(season_id: int) -> dict[int, str]:
     if season_id:
         table = '_season_archetype_playability'
         where = f'p.season_id = {season_id}'
@@ -52,7 +50,7 @@ def key_cards(season_id: int) -> Dict[int, str]:
     return {r['archetype_id']: r['name'] for r in db().select(sql)}
 
 @retry_after_calling(preaggregate)
-def playability() -> Dict[str, float]:
+def playability() -> dict[str, float]:
     sql = """
         SELECT
             name,
@@ -63,7 +61,7 @@ def playability() -> Dict[str, float]:
     return {r['name']: r['playability'] for r in db().select(sql)}
 
 @retry_after_calling(preaggregate)
-def season_playability(season_id: int) -> List[Container]:
+def season_playability(season_id: int) -> list[Container]:
     # This is a temporary thing used to generate banners.
     # Feel free to replace it with something better.
     sql = f"""
@@ -80,7 +78,7 @@ def season_playability(season_id: int) -> List[Container]:
     return [Container(r) for r in db().select(sql)]
 
 @retry_after_calling(preaggregate)
-def rank() -> Dict[str, int]:
+def rank() -> dict[str, int]:
     sql = """
         SELECT
             name,

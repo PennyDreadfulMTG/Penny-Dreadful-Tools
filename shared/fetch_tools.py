@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import urllib.request
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import aiohttp
 import requests
@@ -13,7 +13,7 @@ from shared.pd_exception import OperationalException
 logger = logging.getLogger(__name__)
 
 
-def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False, session: Optional[requests.Session] = None) -> str:
+def fetch(url: str, character_encoding: str | None = None, force: bool = False, retry: bool = False, session: requests.Session | None = None) -> str:
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
@@ -58,14 +58,14 @@ async def post_async_with_json(url: str, data: dict) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
         raise FetchException(e) from e
 
-def fetch_json(url: str, character_encoding: Optional[str] = None, session: Optional[requests.Session] = None) -> Any:
+def fetch_json(url: str, character_encoding: str | None = None, session: requests.Session | None = None) -> Any:
     try:
         blob = fetch(url, character_encoding, session=session)
         if blob:
             return json.loads(blob)
         return None
     except json.decoder.JSONDecodeError as e:
-        logger.error('Failed to load JSON:\n{0}'.format(blob))
+        logger.error(f'Failed to load JSON:\n{blob}')
         raise FetchException(e) from e
 
 async def fetch_json_async(url: str) -> Any:
@@ -75,7 +75,7 @@ async def fetch_json_async(url: str) -> Any:
             return json.loads(blob)
         return None
     except json.decoder.JSONDecodeError:
-        logger.error('Failed to load JSON:\n{0}'.format(blob))
+        logger.error(f'Failed to load JSON:\n{blob}')
         raise
 
 async def post_json_async(url: str, data: dict) -> Any:
@@ -85,14 +85,14 @@ async def post_json_async(url: str, data: dict) -> Any:
             return json.loads(blob)
         return None
     except json.decoder.JSONDecodeError:
-        logger.error('Failed to load JSON:\n{0}'.format(blob))
+        logger.error(f'Failed to load JSON:\n{blob}')
         raise
 
 def post(url: str,
-         data: Optional[Dict[str, str]] = None,
-         json_data: Optional[Any] = None,
+         data: dict[str, str] | None = None,
+         json_data: Any | None = None,
          ) -> str:
-    logger.info('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
+    logger.info(f'POSTing to {url} with {data} / {json_data}')
     try:
         response = requests.post(url, data=data, json=json_data)
         return response.text
@@ -100,7 +100,7 @@ def post(url: str,
         raise FetchException(e) from e
 
 def store(url: str, path: str) -> requests.Response:
-    logger.info('Storing {url} in {path}'.format(url=url, path=path))
+    logger.info(f'Storing {url} in {path}')
     try:
         response = requests.get(url, stream=True)
         with open(path, 'wb') as fout:
@@ -114,7 +114,7 @@ def store(url: str, path: str) -> requests.Response:
 
 
 async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
-    logger.info('Async storing {url} in {path}'.format(url=url, path=path))
+    logger.info(f'Async storing {url} in {path}')
     try:
         async with aiohttp.ClientSession() as aios:
             response = await aios.get(url)
@@ -142,17 +142,17 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
     s = str_input
     if skip_double_slash:
         s = s.replace('//', '-split-')
-    s = urllib.parse.quote_plus(s.replace(u'Æ', 'AE')).lower()
+    s = urllib.parse.quote_plus(s.replace('Æ', 'AE')).lower()
     if skip_double_slash:
         s = s.replace('-split-', '//')
     return s
 
 def post_discord_webhook(webhook_id: str,
                          webhook_token: str,
-                         message: Optional[str] = None,
-                         username: Optional[str] = None,
-                         avatar_url: Optional[str] = None,
-                         embeds: Optional[List[Dict[str, Any]]] = None,
+                         message: str | None = None,
+                         username: str | None = None,
+                         avatar_url: str | None = None,
+                         embeds: list[dict[str, Any]] | None = None,
                          ) -> bool:
     if not webhook_id or not webhook_token:
         return False

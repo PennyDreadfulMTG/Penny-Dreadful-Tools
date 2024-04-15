@@ -105,7 +105,7 @@ def prepare_deck(d: Deck) -> None:
 def prepare_people(ps: Sequence[Person]) -> None:
     for p in ps:
         if p.get('mtgo_username'):
-            p.url = f'/people/{p.mtgo_username}/'
+            p.url = f'/people/{p.mtgo_username.lower()}/'
         else:
             p.url = f'/people/id/{p.id}/'
         p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)

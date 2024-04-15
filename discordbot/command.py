@@ -164,7 +164,7 @@ async def send_image_with_retry(channel: Union[PrefixedContext, InteractionConte
 
 async def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
     mana = await emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
-    mana = mana.replace('|', ' // ').strip(' // ')  # Strip leading/trailing // for lands (See #9147)
+    mana = mana.replace('|', ' // ').removeprefix(' // ').removesuffix(' // ')  # Strip leading/trailing // for lands (See #9147)
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
     if requested_card.get('mode', None) == '$':
         text = '{name} {legal} — {price}'.format(name=requested_card.name, price=card_price.card_price_string(requested_card), legal=legal)

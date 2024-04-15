@@ -10,7 +10,7 @@ from typing import Any
 import click
 from traceback_with_variables import activate_by_import  # noqa: F401
 
-from shared import configuration, decorators, sentry
+from shared import configuration, decorators, repo, sentry
 
 logging.basicConfig(level=logging.INFO)
 
@@ -96,9 +96,12 @@ def logsite() -> None:
 @cli.command()
 @click.argument('argv', nargs=-1)
 def modo_bugs(argv: tuple[str]) -> None:
-    from modo_bugs import main
-    sentry.init()
-    main.run(argv)
+    try:
+        from modo_bugs import main
+        sentry.init()
+        main.run(argv)
+    except Exception as e:
+        repo.create_issue(f'Exception running modo_bugs: {e}', 'modo-bugs', 'run.py', 'PennyDreadfulMTG/perf-reports', e)
 
 @cli.command()
 @click.option('--force', is_flag=True, help='Force a rebuild of the database')

@@ -35,6 +35,7 @@ class SmokeTester:
         with self.app.app_context():
             for rule in self.url_map.iter_rules():
                 rule_path = rule.rule
+                assert '//' not in rule_path
                 # Endpoints like "favicon.ico" and "robots.txt" should not have a trailing slash. Endpoints that serve files should not have a trailing slash. In some cases this makes them not work and in call cases it is ugly.
                 if '.' in rule_path or ':filename>' in rule_path or 'favicon' in rule_path or rule_path.endswith('/oembed') or rule_path == '/export/<match_id>':
                     assert not rule_path.endswith('/')

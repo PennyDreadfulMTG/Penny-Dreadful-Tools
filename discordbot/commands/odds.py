@@ -37,8 +37,9 @@ class Odds(Extension):
 
         def percent(f: float) -> float:
             return round(f * 100, 1)
+        card_s = 'card' if drawn == 1 else 'cards'
         copy_s = 'copy' if copies == 1 else 'copies'
-        s = f'{percent(1 - h.cdf(needed - 1))}% chance of {needed} or more ({percent(h.pmf(needed))}% of exactly {needed}) in {drawn} cards drawn from a {deck_size} card deck running {copies} {copy_s}'
+        s = f'{percent(1 - h.cdf(needed - 1))}% chance of {needed} or more ({percent(h.pmf(needed))}% of exactly {needed}) in {drawn} {card_s} drawn from a {deck_size} card deck running {copies} {copy_s}'
         await ctx.send(s)
 
 def setup(bot: Client) -> None:

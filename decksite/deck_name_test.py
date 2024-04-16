@@ -306,6 +306,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('white weenie', 'White Weenie', ['W'], 'White Weenie', 32),
     ('Teaching mystical erections', 'Teaching Mystical', ['U', 'B'], 'Dimir Control', 32),
     ('Teaching Mystical Erections', 'Teaching Mystical', ['U', 'B'], 'Dimir Control', 32),
+    ('Kiki-Titi', 'Kiki-Titi', ['U', 'R'], 'Izzet Twin', 32),
 ]
 
 def test_replace_space_alternatives() -> None:

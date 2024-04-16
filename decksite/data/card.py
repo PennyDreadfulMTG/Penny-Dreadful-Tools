@@ -301,7 +301,8 @@ def load_card(name: str, tournament_only: bool = False, season_id: int | None = 
     c = guarantee.at_most_one(load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only))
     if c:
         return c
-    c = oracle.load_card(name)
+    # If there is no card in the db for this name-tournament_only-season_id combo we fake one to show as a placeholder
+    c = Card(oracle.load_card(name), True)  # New Card, don't store these values in CARDS_BY_NAME copy
     c.num_decks = c.wins = c.losses = c.draws = c.record = c.tournament_wins = c.tournament_top8s = 0
     c.played_competitively = False
     c.win_percent = ''

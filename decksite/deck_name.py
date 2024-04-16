@@ -39,6 +39,7 @@ PROFANITY_WHITELIST = [
     'god',
     'hell',
     'weed',
+    'titi',
 ]
 
 PROFANITY_BLACKLIST = [

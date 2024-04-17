@@ -124,7 +124,7 @@ def process_issue(issue: Issue) -> None:
                     issue.edit(state='closed')
                     return
 
-        if not 'Unclassified' in labels:
+        if 'Unclassified' not in labels:
             issue.add_to_labels('Unclassified')
     elif 'Unclassified' in labels:
         print(f'Removing Unclassified from Issue #{issue.number}')
@@ -221,7 +221,7 @@ def check_for_invalid_card_names(issue: Issue, cards: list[str]) -> None:
     for c in cards:
         if '//' in c:
             pass
-        elif not c in cardnames():
+        elif c not in cardnames():
             total_cards, names, warnings = fetcher.search_scryfall(c)
             if total_cards == 1:
                 body = issue.body.replace(c, names[0])
@@ -310,12 +310,12 @@ def apply_screenshot_labels(issue: Issue) -> None:
     if 'clips.twitch.tv/' in issue.body:
         has_video = True
 
-    if has_screenshot and not 'Has Screenshot' in labels:
+    if has_screenshot and 'Has Screenshot' not in labels:
         issue.add_to_labels('Has Screenshot')
     if has_screenshot and 'Needs Screenshot' in labels:
         issue.remove_from_labels('Needs Screenshot')
 
-    if has_video and not 'Has Video' in labels:
+    if has_video and 'Has Video' not in labels:
         issue.add_to_labels('Has Video')
     if has_video and 'Needs Video' in labels:
         issue.remove_from_labels('Needs Video')

@@ -35,7 +35,7 @@ async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
     except ValueError as e:
         raise ConfigError(configuring) from e
 
-    if not key in settings.CONFIGURABLE_NAMES:
+    if key not in settings.CONFIGURABLE_NAMES:
         raise ConfigError(configuring)
 
     with settings.with_config_file(configuring):

@@ -51,7 +51,7 @@ def print_commands() -> str:
     text = ''
     done: set[str] = set()
     for c in bot.walk_commands():
-        if not c.name in done:
+        if c.name not in done:
             text += f'## {c.name}'
             if c.aliases:
                 aliases = ', '.join(c.aliases)

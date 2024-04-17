@@ -17,7 +17,7 @@ class TournamentInfo(fsa.Model):
             'id': self.id,
             'match_id': self.match_id,
             'tournament_id': self.tournament_id,
-            'rount_num': self.round_num,
+            'round_num': self.round_num,
         }
 
 

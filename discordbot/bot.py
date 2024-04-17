@@ -103,7 +103,7 @@ class Bot(Client):
                     streaming = True
             if not streaming and streaming_role in member.roles:
                 await member.remove_role(streaming_role)
-            elif streaming and not streaming_role in member.roles:
+            elif streaming and streaming_role not in member.roles:
                 await member.add_role(streaming_role)
         # Achievements
         if event.status in ['online', 'dnd']:
@@ -113,7 +113,7 @@ class Bot(Client):
         role = await get_role(member.guild, 'Linked Magic Online')
         data = None
         # Linked to PDM
-        if role is not None and not role in member.roles:
+        if role is not None and role not in member.roles:
             if data is None:
                 data = await fetcher.person_data_async(member.id)
             if data.get('id', None):

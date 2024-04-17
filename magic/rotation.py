@@ -130,7 +130,7 @@ def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_l
     return c
 
 def classify_by_status(c: Card, card_names_by_status: dict[str, list[str]]) -> None:
-    if not c.status in card_names_by_status:
+    if c.status not in card_names_by_status:
         card_names_by_status[c.status] = []
     card_names_by_status[c.status].append(c.name)
 

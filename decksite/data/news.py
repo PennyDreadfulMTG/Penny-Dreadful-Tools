@@ -58,7 +58,7 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
                 merge.date = dtutil.ts2dt(merge.date)
         if merges or not allow_fetch:
             return merges
-        merges = [Container({'date': dtutil.UTC_TZ.localize(pull.merged_at), 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [label.name for label in pull.as_issue().labels]]
+        merges = [Container({'date': dtutil.UTC_TZ.localize(pull.merged_at), 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if 'Not News' not in [label.name for label in pull.as_issue().labels]]
         redis.store('decksite:news:merges', merges, ex=7200)
         return merges
     except ConnectionError:

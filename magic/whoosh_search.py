@@ -27,11 +27,17 @@ class SearchResult():
         return bool(has(self.exact) or has(self.prefix_whole_word) or has(self.other_prefixed) or has(self.fuzzy))
 
     def is_ambiguous(self) -> bool:
-        return bool(not has(self.exact) and (
-            (len(self.prefix_whole_word) > 1) or
-            ((len(self.prefix_whole_word) == 0) and (len(self.other_prefixed) > 1)) or
-            (len(self.prefix_whole_word) == 0 and len(self.other_prefixed) == 0 and len(self.fuzzy) > 1)
-        ))
+        if has(self.exact):
+            return False
+        if len(self.prefix_whole_word) > 1:
+            return True
+        if len(self.prefix_whole_word) == 1:
+            return False
+        if len(self.other_prefixed) > 1:
+            return True
+        if len(self.other_prefixed) == 1:
+            return False
+        return len(self.fuzzy) > 1
 
     def get_best_match(self) -> str | None:
         if not self.has_match() or self.is_ambiguous():

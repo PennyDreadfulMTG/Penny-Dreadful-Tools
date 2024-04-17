@@ -210,9 +210,7 @@ class BackgroundTasks(Extension):
         if not league:
             return IntervalTrigger(minutes=5)
 
-        diff = round((dtutil.parse_rfc3339(league['end_date'])
-                     - datetime.datetime.now(tz=datetime.timezone.utc))
-                     / datetime.timedelta(seconds=1))
+        diff = round((dtutil.parse_rfc3339(league['end_date']) - datetime.datetime.now(tz=datetime.timezone.utc)) / datetime.timedelta(seconds=1))
 
         embed = Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
         if diff <= 60 * 60 * 24:

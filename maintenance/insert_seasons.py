@@ -8,7 +8,7 @@ DAILY = True
 def run() -> None:
     existing = list(map(lambda s: s['number'], db().select('SELECT `number` FROM `season`;')))
     for season, setcode in enumerate(seasons.SEASONS, start=1):
-        if not season in existing:
+        if season not in existing:
             try:
                 info = seasons.get_set_info(setcode)
             except DoesNotExistException as e:

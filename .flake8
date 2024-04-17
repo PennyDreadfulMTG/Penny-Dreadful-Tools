@@ -1,5 +1,5 @@
 [flake8]
-ignore = E501, E302, E402, E713, W504, W503
+ignore = E501, E302, E402, W504, W503
 exclude = .git,__pycache__,src
 
 per-file-ignores =

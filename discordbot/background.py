@@ -36,7 +36,7 @@ class BackgroundTasks(Extension):
             logging.warn('Could not find PD Guild')
             return
 
-        if not 'INVITE_SPLASH' in guild.features:
+        if 'INVITE_SPLASH' not in guild.features:
             logging.warn('Guild does not have INVITE_SPLASH feature')
             return
 
@@ -46,7 +46,7 @@ class BackgroundTasks(Extension):
         banner_img: Absent[str] = path
         splash_img: Absent[str] = path
 
-        if not 'BANNER' in guild.features or path == redis_wrapper.get_str('discordbot:bannerpath'):
+        if 'BANNER' not in guild.features or path == redis_wrapper.get_str('discordbot:bannerpath'):
             banner_img = MISSING
         else:
             redis_wrapper.store('discordbot:bannerpath', path)

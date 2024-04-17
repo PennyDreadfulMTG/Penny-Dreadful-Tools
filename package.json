@@ -34,7 +34,6 @@
     "@babel/preset-env": "^7.24.4",
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-stage-2": "^7.8.3",
-    "@webpack-cli/migrate": "^1.1.2",
     "babel-loader": "^9.1.3",
     "css-loader": "^7.1.1",
     "eslint": "^8.57.0",

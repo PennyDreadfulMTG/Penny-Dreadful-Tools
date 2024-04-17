@@ -9,6 +9,7 @@ from decksite.data import match
 from decksite.data import person as ps
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import LeagueInfo, Report, Retire, SignUp
+from shared.pd_exception import DoesNotExistException
 from shared_web.decorators import fill_cookies
 
 
@@ -30,7 +31,10 @@ def current_league() -> wrappers.Response:
 def signup(form: SignUpForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    d = ds.load_deck(deck_id) if deck_id else None
+    try:
+        d = ds.load_deck(deck_id) if deck_id else None
+    except DoesNotExistException:  # Handle the deck being deleted since we set a cookie, fixes #9419.
+        d = None
     view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id(), d)
     return view.page()
 

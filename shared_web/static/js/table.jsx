@@ -124,7 +124,7 @@ export class Table extends React.Component {
                     <span>
                         { this.state.total > 20
                             ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
-                                <select value={this.state.pageSize} onChange={pageSizeChanged.bind(this)}>
+                                <select className="page-size" value={this.state.pageSize} onChange={pageSizeChanged.bind(this)}>
                                     <option value="20">20</option>
                                     <option value="100">100</option>
                                 </select>

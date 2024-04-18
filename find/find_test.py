@@ -558,6 +558,10 @@ def test_is_checkland_functional() -> None:
     do_functional_test('is:checkland', ['Drowned Catacomb', 'Hinterland Harbor'], ['Savage Lands'])
 
 @pytest.mark.functional()
+def test_is_gainland_functional() -> None:
+    do_functional_test('is:gainland', ['Akoum Refuge', 'Dismal Backwater'], ['City of Brass', 'Glimmerpost'])
+
+@pytest.mark.functional()
 def test_smart_quotes() -> None:
     do_functional_test('o:“Art rampage”', ['Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental'], [])
 

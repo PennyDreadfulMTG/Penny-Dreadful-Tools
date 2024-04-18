@@ -398,6 +398,10 @@ def init_value_lookup() -> None:
             VALUE_LOOKUP['color_identity'] = d
 
 def is_subquery(subquery_name: str) -> str:
+    if subquery_name == 'dfc':
+        return "(c.layout IN ('transform', 'modal_dfc'))"
+    if subquery_name == 'mdfc':
+        subquery_name = 'modal_dfc'
     if subquery_name in layout.all_layouts():
         return f'(c.layout = {sqlescape(subquery_name)})'
     if subquery_name == 'spikey':

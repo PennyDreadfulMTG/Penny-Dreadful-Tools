@@ -1,4 +1,5 @@
 import collections
+import re
 from collections.abc import Generator, Iterable
 
 from find.expression import Expression
@@ -9,7 +10,7 @@ from magic.database import db
 from magic.models import Card
 from shared import configuration
 from shared.database import concat, sqlescape, sqllikeescape
-from shared.pd_exception import ParseException
+from shared.pd_exception import ParseException, DoesNotExistException
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -166,7 +167,9 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return color_where('color', operator.value(), term.value())
     if key.value() in ['coloridentity', 'commander', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
-    if key.value() in ['text', 'oracle', 'o', 'fulloracle', 'fo']:
+    if key.value() in ['oracle', 'o']:
+        return text_where('text', term, exclude_parenthetical=True)
+    if key.value() in ['fulloracle', 'fo']:
         return text_where('text', term)
     if key.value() == 'type' or key.value() == 't':
         return text_where('type_line', term)
@@ -196,7 +199,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return playable_where(term.value())
     raise InvalidCriterionException
 
-def text_where(column: str, term: Token) -> str:
+def text_where(column: str, term: Token, exclude_parenthetical: bool = False) -> str:
     q = term.value()
     if column == 'type_line' and q == 'pw' and not term.is_regex():
         q = 'planeswalker'
@@ -213,6 +216,8 @@ def text_where(column: str, term: Token) -> str:
     if column == 'oracle_text' and '~' in escaped:
         parts = [f"'{text}'" for text in escaped.strip("'").split('~')]
         escaped = concat(intersperse(parts, 'name'))
+    if exclude_parenthetical:
+        column = f"REGEXP_REPLACE({column}, '\\\\([^)]*\\\\)', '')"
     return f'({column} {operator} {escaped})'
 
 def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:
@@ -287,12 +292,16 @@ def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
 def format_where(term: str) -> str:
-    if term == 'pd' or term.startswith('penny'):
-        term = seasons.current_season_name()
-    format_id = db().value('SELECT id FROM format WHERE name LIKE %s', [f'{card.unaccent(term)}%%'])
-    if format_id is None:
+    season_code = parse_season(term) if term.startswith('pd') or term.startswith('penny') else None
+    if season_code == seasons.ALL:
+        format_ids = db().values("SELECT id FROM format WHERE name LIKE 'Penny Dreadful%%'")
+    else:
+        if season_code:
+            term = f'Penny Dreadful {season_code}'
+        format_ids = db().values('SELECT id FROM format WHERE name LIKE %s', [f'{card.unaccent(term)}%%'])
+    if not format_ids:
         raise InvalidValueException(f"Invalid format '{term}'")
-    return f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))"
+    return f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id IN ({', '.join(str(id) for id in format_ids)}) AND legality <> 'Banned'))"
 
 def rarity_where(operator: str, term: str) -> str:
     rarity_id = value_lookup('rarity', term)
@@ -441,6 +450,22 @@ def intersperse(iterable: Iterable, delimiter: str) -> Generator:
     for x in it:
         yield delimiter
         yield x
+
+def parse_season(term: str) -> str:
+    spaceless = term.replace(' ', '')
+    try:
+        m = re.match(r'(pd|penny)(dreadful)?(s|season)?(...|\d+)?$', spaceless)
+        if m and (m.group(3) is m.group(4) is None):
+            return seasons.current_season_code()
+        if not m:
+            raise ValueError
+        code = m.group(4)
+        if code == 'all':
+            return seasons.ALL
+        return seasons.season_code(int(code))
+    except (AttributeError, IndexError, ValueError, DoesNotExistException):
+        pass
+    raise InvalidValueException(f"Could not get a Penny Dreadful season from '{term}'")
 
 class InvalidSearchException(ParseException):
     pass

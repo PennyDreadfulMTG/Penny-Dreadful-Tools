@@ -1,5 +1,6 @@
 import datetime
 import glob
+import logging
 import os
 from collections import Counter
 
@@ -8,6 +9,7 @@ from magic.models import Card
 from shared import configuration, dtutil
 from shared import redis_wrapper as redis
 from shared import text
+from shared.fetch_tools import FetchException
 from shared.pd_exception import InvalidDataException
 
 TOTAL_RUNS = 168
@@ -194,9 +196,21 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
         s += f"<{fetcher.decksite_url('/rotation/')}>"
     return s
 
-# This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.
 def list_of_most_interesting(cs: list[Card]) -> str:
     max_shown = 25
+    redis_key = 'discordbot:rotation:cardranks'
+    ranks = redis.get_dict(redis_key)
+    if not ranks:
+        try:
+            ranks = {c.get('name'): c.get('rank') for c in fetcher.cardfeed()['cards']}
+            # Get all never-before-legal cards, give them a rank of 1 so they sort first
+            never_before_legal = {c.name: 1 for c in oracle.load_cards(where="c.id NOT IN (SELECT card_id FROM card_legality WHERE format_id IN (SELECT id FROM format WHERE name LIKE 'Penny Dreadful%%'))")}
+            ranks.update(never_before_legal)
+            redis.store(redis_key, ranks, ex=86400)
+        except FetchException as e:
+            logging.warning(f'Failed to fetch card ranks: {e}')
+    if ranks:
+        cs.sort(key=lambda c: (ranks.get(c.name) or 999999, c.name))
     if len(cs) > max_shown:
         return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
     return ', '.join(c.name for c in cs)

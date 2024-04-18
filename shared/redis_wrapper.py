@@ -85,6 +85,14 @@ def get_list(key: str) -> list[Any] | None:
             return val
     return None
 
+def get_dict(key: str) -> dict | None:
+    if REDIS is not None:
+        blob = _get(key)
+        if blob is not None:
+            return json.loads(blob)
+    return None
+
+
 def get_container_list(key: str) -> list[Container] | None:
     if REDIS is not None:
         blob = _get(key)

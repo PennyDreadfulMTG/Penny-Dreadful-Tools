@@ -257,7 +257,7 @@ PD.loadDeck = function() {
 };
 
 PD.initDoubleReportCheck = function () {
-    $(".content-report form button[type=submit]").click(function (event) {
+    $(".content-report form button[type=submit]").click(function () {
         const $form = $(".content-report form");
         const opponents = $form.data("opponents");
         const $selected = $form.find("[name=opponent] option:selected");

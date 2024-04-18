@@ -166,7 +166,9 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return color_where('color', operator.value(), term.value())
     if key.value() in ['coloridentity', 'commander', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
-    if key.value() in ['text', 'oracle', 'o', 'fulloracle', 'fo']:
+    if key.value() in ['oracle', 'o']:
+        return text_where('text', term, exclude_parenthetical=True)
+    if key.value() in ['fulloracle', 'fo']:
         return text_where('text', term)
     if key.value() == 'type' or key.value() == 't':
         return text_where('type_line', term)
@@ -196,7 +198,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return playable_where(term.value())
     raise InvalidCriterionException
 
-def text_where(column: str, term: Token) -> str:
+def text_where(column: str, term: Token, exclude_parenthetical: bool = False) -> str:
     q = term.value()
     if column == 'type_line' and q == 'pw' and not term.is_regex():
         q = 'planeswalker'
@@ -213,6 +215,8 @@ def text_where(column: str, term: Token) -> str:
     if column == 'oracle_text' and '~' in escaped:
         parts = [f"'{text}'" for text in escaped.strip("'").split('~')]
         escaped = concat(intersperse(parts, 'name'))
+    if exclude_parenthetical:
+        column = f"REGEXP_REPLACE({column}, '\\\\([^)]*\\\\)', '')"
     return f'({column} {operator} {escaped})'
 
 def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:

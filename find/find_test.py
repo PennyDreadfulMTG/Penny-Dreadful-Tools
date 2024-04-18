@@ -250,6 +250,19 @@ def test_nesting_conditions() -> None:
 # END Tests from https://scryfall.com/docs/syntax
 
 @pytest.mark.functional
+def test_oracle_and_fulloracle() -> None:
+    do_functional_test('o:"clue token"', ['Fae Offering'], ['Briarbridge Tracker', 'Black Lotus'])
+    do_functional_test('fo:"clue token"', ['Fae Offering', 'Briarbridge Tracker'], ['Black Lotus'])
+    do_functional_test('o:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
+    do_functional_test('fo:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
+
+@pytest.mark.functional
+def test_parentheses() -> None:
+    with pytest.raises(search.InvalidSearchException):
+        do_functional_test('(', [], [])
+    do_functional_test('"("', ["Erase (Not the Urza's Saga One)"], ['Fae Offering'])
+
+@pytest.mark.functional
 def test_edition_functional() -> None:
     do_functional_test('e:ktk', ['Flooded Strand', 'Treasure Cruise', 'Zurgo Helmsmasher'], ['Life from the Loam', 'Scalding Tarn', 'Zurgo Bellstriker'])
 
@@ -257,14 +270,15 @@ def test_edition() -> None:
     do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = 'ktk' OR code = 'ktk')))")
 
 def test_special_chars() -> None:
-    do_test('o:a_c%', "(oracle_text LIKE '%%a\\_c\\%%%%')")
+    do_test('o:a_c%', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%a\\_c\\%%%%')")
+
 
 @pytest.mark.functional
 def test_tilde_functional() -> None:
     do_functional_test('o:"sacrifice ~"', ['Abandoned Outpost', 'Black Lotus'], ['Cartel Aristocrat', 'Life from the Loam'])
 
 def test_tilde() -> None:
-    expected = "(oracle_text LIKE CONCAT('%%sacrifice ', name, '%%'))"
+    expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, '%%'))"
     do_test('o:"sacrifice ~"', expected)
 
 @pytest.mark.functional
@@ -272,7 +286,7 @@ def test_double_tilde_functional() -> None:
     do_functional_test('o:"sacrifice ~: ~ deals 2 damage to any target"', ['Blazing Torch', 'Inferno Fist'], ['Black Lotus', 'Cartel Aristocrat'])
 
 def test_double_tilde() -> None:
-    expected = "(oracle_text LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to any target%%'))"
+    expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to any target%%'))"
     do_test('o:"sacrifice ~: ~ deals 2 damage to any target"', expected)
 
 @pytest.mark.functional
@@ -422,14 +436,14 @@ def test_cmc() -> None:
     do_test('cmc=0', '(cmc IS NOT NULL AND cmc = 0)')
 
 def test_not_text() -> None:
-    do_test('o:haste -o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(oracle_text LIKE '%%haste%%') AND NOT (oracle_text LIKE '%%deathtouch%%') AND (oracle_text LIKE '%%trample%%') AND NOT (oracle_text LIKE '%%first strike%%') AND (oracle_text LIKE '%%lifelink%%')")
+    do_test('o:haste -o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%haste%%') AND NOT (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%deathtouch%%') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%trample%%') AND NOT (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%first strike%%') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
 
 @pytest.mark.functional
 def test_color_not_text_functional() -> None:
     do_functional_test('c:b -c:r o:trample', ['Abyssal Persecutor', 'Driven // Despair'], ['Child of Alara', 'Chromanticore'])
 
 def test_color_not_text() -> None:
-    do_test('c:b -c:r o:trample', "((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND NOT ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (oracle_text LIKE '%%trample%%')")
+    do_test('c:b -c:r o:trample', "((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND NOT ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%trample%%')")
 
 @pytest.mark.functional
 def test_color_functional() -> None:
@@ -456,7 +470,7 @@ def test_or_with_args() -> None:
     do_test('AA or GG', "(name LIKE '%%aa%%') OR (name LIKE '%%gg%%')")
 
 def test_text() -> None:
-    do_test('o:"target attacking"', "(oracle_text LIKE '%%target attacking%%')")
+    do_test('o:"target attacking"', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%target attacking%%')")
     do_test('fulloracle:"target attacking"', "(oracle_text LIKE '%%target attacking%%')")
 
 def test_name() -> None:
@@ -479,13 +493,13 @@ def test_power() -> None:
     do_test('t:wizard pow<2', "(type_line LIKE '%%wizard%%') AND (power IS NOT NULL AND power < 2)")
 
 def test_mana_with_other() -> None:
-    do_test('t:creature mana=WW o:lifelink', "(type_line LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (oracle_text LIKE '%%lifelink%%')")
+    do_test('t:creature mana=WW o:lifelink', "(type_line LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
 
 def test_mana_alone() -> None:
     do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")
 
 def test_or_and_parentheses() -> None:
-    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(oracle_text LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness > 2) OR (power IS NOT NULL AND power > 2)))")
+    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness > 2) OR (power IS NOT NULL AND power > 2)))")
 
 @pytest.mark.functional
 def test_not_color_functional() -> None:
@@ -508,7 +522,7 @@ def test_is_hybrid_functional() -> None:
     do_functional_test('is:hybrid c:w', ['Spectral Procession', 'Figure of Destiny'], ['Shadow of Doubt', 'Isamaru, Hound of Konda'])
 
 def test_is_commander() -> None:
-    do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")
+    do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")
 
 @pytest.mark.functional()
 def test_is_triland_functional() -> None:

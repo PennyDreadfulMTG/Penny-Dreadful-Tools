@@ -178,6 +178,10 @@ def test_format_legality() -> None:
     do_functional_test(s, ['Progenitus', 'Teferi, Temporal Archmage'], ['Forest', 'Nettle Sentinel', 'Rofellos, Llanowar Emissary'])
     # s = 'is:reserved'
     # do_functional_test(s, [], [])
+    # s = 'is:brawler'
+    # do_functional_test(s, [], [])
+    s = 'is:companion'
+    do_functional_test(s, ['Lurrus of the Dream-Den', 'Treizeci, Sun of Serra'], ["Bear's Companion", 'K-9, Mark 1'])
 
 # USD/EUR/TIX prices
 # Artist, Flavor Text and Watermark

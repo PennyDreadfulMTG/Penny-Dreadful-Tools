@@ -38,6 +38,8 @@ def test_season_code() -> None:
     assert seasons.season_code('hou') == 'HOU'
     assert seasons.season_code('ALL') == 'ALL'
     assert seasons.season_code('all') == 'ALL'
+    with pytest.raises(DoesNotExistException):
+        seasons.season_code(-1)
 
 def test_season_name() -> None:
     assert seasons.season_name(1) == 'Season 1'

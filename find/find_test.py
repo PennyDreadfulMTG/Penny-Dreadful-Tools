@@ -250,6 +250,15 @@ def test_nesting_conditions() -> None:
 # END Tests from https://scryfall.com/docs/syntax
 
 @pytest.mark.functional
+def test_past_seasons() -> None:
+    do_functional_test('f:pds1', ['Mother of Runes'], ['Necropotence'])
+    do_functional_test('f:pds5', ['Necropotence'], ['Mother of Runes'])
+    do_functional_test('f:pds1 OR f:pds31', ['Mother of Runes', 'Necropotence'], [])
+    do_functional_test('(f:pds1 OR f:pds31) -f:pds5', ['Mother of Runes'], ['Necropotence'])
+    do_functional_test('f:"penny dreadful all"', ['Mother of Runes', 'Necropotence'], ['Black Lotus'])
+    do_functional_test('f:"pdsall"', ['Mother of Runes', 'Necropotence'], ['Black Lotus'])
+
+@pytest.mark.functional
 def test_oracle_and_fulloracle() -> None:
     do_functional_test('o:"clue token"', ['Fae Offering'], ['Briarbridge Tracker', 'Black Lotus'])
     do_functional_test('fo:"clue token"', ['Fae Offering', 'Briarbridge Tracker'], ['Black Lotus'])
@@ -257,10 +266,10 @@ def test_oracle_and_fulloracle() -> None:
     do_functional_test('fo:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
 
 @pytest.mark.functional
-def test_parentheses() -> None:
+def test_parentheses_functional() -> None:
     with pytest.raises(search.InvalidSearchException):
         do_functional_test('(', [], [])
-    do_functional_test('"("', ["Erase (Not the Urza's Saga One)"], ['Fae Offering'])
+    do_functional_test('"("', ["Erase (Not the Urza's Legacy One)"], ['Fae Offering'])
 
 @pytest.mark.functional
 def test_edition_functional() -> None:
@@ -420,7 +429,7 @@ def test_hybrid_phyrexian_mana() -> None:
 
 def test_uppercase() -> None:
     pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', [f'{seasons.current_season_name()}%%'])
-    do_test('F:pd', f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))")
+    do_test('F:pd', f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id IN ({pd_id}) AND legality <> 'Banned'))")
 
 def test_subtype() -> None:
     do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%%warrior%%'))")
@@ -522,7 +531,7 @@ def test_is_hybrid_functional() -> None:
     do_functional_test('is:hybrid c:w', ['Spectral Procession', 'Figure of Destiny'], ['Shadow of Doubt', 'Isamaru, Hound of Konda'])
 
 def test_is_commander() -> None:
-    do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")
+    do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id IN (4) AND legality <> 'Banned')))")
 
 @pytest.mark.functional()
 def test_is_triland_functional() -> None:
@@ -556,6 +565,34 @@ def test_is_spikey() -> None:
     assert 'Attune with Aether' in where
     assert 'Balance' in where
     assert "name = 'Yawgmoth''s Will'" in where
+
+def test_parse_season() -> None:
+    assert search.parse_season('pdsall') == 'ALL'
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('pd nonsense')
+    assert search.parse_season('pd') == seasons.current_season_code()
+    assert search.parse_season('penny') == seasons.current_season_code()
+    with pytest.raises(search.InvalidValueException):
+        assert search.parse_season('pennyd') == seasons.current_season_code()
+    assert search.parse_season('pennydreadful') == seasons.current_season_code()
+    assert search.parse_season('penny dreadful') == seasons.current_season_code()
+    assert search.parse_season('pd0') == 'ALL'
+    assert search.parse_season('pds1') == 'EMN'
+    assert search.parse_season('pd 32') == 'MKM'
+    assert search.parse_season('penny dreadful season 32') == 'MKM'
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('pds999')
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('penny dreadful season -1')
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('pd s-999')
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('pdXXX')
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('foo')
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('foopd1')
+    assert search.parse_season('pd1') == 'EMN'
 
 def do_functional_test(query: str, yes: list[str], no: list[str]) -> None:
     results = search.search(query)

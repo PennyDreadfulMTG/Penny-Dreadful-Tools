@@ -7,6 +7,8 @@ from magic import fetcher
 from shared import dtutil, recursive_update
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
+ALL = 'ALL'
+
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
 SEASONS = [

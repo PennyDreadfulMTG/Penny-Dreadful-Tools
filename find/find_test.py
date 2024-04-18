@@ -110,6 +110,22 @@ def test_multi_faced_cards() -> None:
     do_functional_test(s, ['Hanweir Battlements', 'Hanweir Garrison'], ['Hanweir, the Writhing Township'])
     s = 'is:split'
     do_functional_test(s, ['Driven // Despair', 'Fire // Ice', 'Wear // Tear'], ['Budoka Gardener', 'Hanweir Garrison'])
+    s = 'is:flip'
+    do_functional_test(s, ['Budoka Gardener'], ['Hanweir Garrison', 'Fire // Ice'])
+    s = 'is:transform'
+    do_functional_test(s, ['Delver of Secrets', "Jace, Vryn's Prodigy"], ['Budoka Gardener', 'Hanweir Garrison', 'Fire // Ice'])
+    s = 'is:meld'
+    do_functional_test(s, ['Hanweir Garrison', 'Phyrexian Dragon Engine'], ['Budoka Gardener', 'Fire // Ice'])
+    s = 'is:leveler'
+    do_functional_test(s, ['Hexdrinker', 'Joraga Treespeaker'], ['Budoka Gardener', 'Fire // Ice'])
+    s = 'is:dfc'
+    do_functional_test(s, ['Delver of Secrets', 'Barkchannel Pathway'], ['Budoka Gardener', 'Fire // Ice'])
+    s = 'is:dfc -is:mdfc'
+    do_functional_test(s, ['Delver of Secrets'], ['Barkchannel Pathway'])
+    s = 'is:mdfc'
+    do_functional_test(s, ["Agadeem's Awakening", 'Bala Ged Recovery', 'Barkchannel Pathway'], ['Delver of Secrets', 'Budoka Gardener', 'Fire // Ice'])
+    s = 'is:mdfc AND is:dfc'
+    do_functional_test(s, ["Agadeem's Awakening", 'Bala Ged Recovery', 'Barkchannel Pathway'], ['Delver of Secrets', 'Budoka Gardener', 'Fire // Ice'])
 
 @pytest.mark.functional
 def test_spells_permanents_and_effects() -> None:
@@ -540,6 +556,10 @@ def test_is_triland_functional() -> None:
 @pytest.mark.functional()
 def test_is_checkland_functional() -> None:
     do_functional_test('is:checkland', ['Drowned Catacomb', 'Hinterland Harbor'], ['Savage Lands'])
+
+@pytest.mark.functional()
+def test_is_gainland_functional() -> None:
+    do_functional_test('is:gainland', ['Akoum Refuge', 'Dismal Backwater'], ['City of Brass', 'Glimmerpost'])
 
 @pytest.mark.functional()
 def test_smart_quotes() -> None:

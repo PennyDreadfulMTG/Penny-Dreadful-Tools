@@ -398,6 +398,10 @@ def init_value_lookup() -> None:
             VALUE_LOOKUP['color_identity'] = d
 
 def is_subquery(subquery_name: str) -> str:
+    if subquery_name == 'dfc':
+        return "(c.layout IN ('transform', 'modal_dfc'))"
+    if subquery_name == 'mdfc':
+        subquery_name = 'modal_dfc'
     if subquery_name in layout.all_layouts():
         return f'(c.layout = {sqlescape(subquery_name)})'
     if subquery_name == 'spikey':
@@ -412,7 +416,7 @@ def is_subquery(subquery_name: str) -> str:
         'checkland': 't:land fo:"unless you control a" fo:"} or {"',
         'creatureland': 't:land o:"becomes a"',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
-        'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',
+        'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life."',
         'painland': 't:land o:"~ deals 1 damage to you."',
         'permanent': 't:artifact OR t:creature OR t:enchantment OR t:land OR t:planeswalker',
         'slowland': """t:land o:"~ doesn't untap during your next untap step." """,

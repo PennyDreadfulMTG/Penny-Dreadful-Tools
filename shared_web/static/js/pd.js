@@ -5,6 +5,7 @@ window.PD = {};
 PD.init = function() {
     PD.initDismiss();
     PD.initMenu();
+    PD.initDoubleReportCheck();
     PD.initAchievements();
     PD.initTables();
     PD.initDetails();
@@ -253,6 +254,20 @@ PD.loadDeck = function() {
         $("textarea").val(event.target.result);
     };
     reader.readAsText(file);
+};
+
+PD.initDoubleReportCheck = function () {
+    $(".content-report form button[type=submit]").click(function () {
+        const $form = $(".content-report form");
+        const opponents = $form.data("opponents");
+        const $selected = $form.find("[name=opponent] option:selected");
+        const opponent = $selected.text();
+        const opponentDeckId = $selected.val();
+        if (opponents[opponent] && opponents[opponent].toString() !== opponentDeckId.toString()) {
+            return confirm("A match against " + opponent + " on another deck has already been reported. Did you play them again?");  // eslint-disable-line no-alert
+        }
+        return true;
+    });
 };
 
 PD.toggleDrawDropdown = function() {

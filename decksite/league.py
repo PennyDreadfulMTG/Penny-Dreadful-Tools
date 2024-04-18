@@ -132,6 +132,13 @@ class ReportForm(Form):
         else:
             entry_decks = decks
 
+        if len(entry_decks) == 1:
+            ms = match.load_matches_by_deck(entry_decks[0])
+            opponents = {m.opponent: m.opponent_deck_id for m in ms}
+        else:
+            opponents = {}
+        self.opponents = json.dumps(opponents)
+
         self.entry_options = deck_options(entry_decks, self.get('entry', deck_id), person_id, False)
         self.opponent_options = deck_options([d for d in decks if d.person_id != person_id], self.get('opponent', None), person_id, False)
         self.result_options = [

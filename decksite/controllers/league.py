@@ -65,7 +65,7 @@ def report(form: ReportForm | None = None, deck_id: int | None = None) -> str:
 
 @APP.route('/report/', methods=['POST'])
 def add_report() -> Response:
-    form = ReportForm(request.form)
+    form = ReportForm(request.form, person_id=auth.person_id())
     if form.validate() and lg.report(form):
         response = make_response(redirect(url_for('deck', deck_id=form.entry)))
         response.set_cookie('deck_id', form.entry)

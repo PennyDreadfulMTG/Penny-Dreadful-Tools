@@ -192,11 +192,13 @@ def test_format_legality() -> None:
 @pytest.mark.functional
 def test_negating_conditions() -> None:
     s = '-fire c:r t:instant'
-    do_functional_test(s, [], [])
+    do_functional_test(s, ['Abrade'], ['Cast Into the Fire'])
     s = 'o:changeling -t:creature'
-    do_functional_test(s, [], [])
-    s = 'not:reprint e:c16'
-    do_functional_test(s, [], [])
+    do_functional_test(s, ['Nameless Inversion'], ['Chameleon Colossus'])
+    # s = 'not:reprint e:c16'
+    # do_functional_test(s, [], [])
+    s = 'not:permanent c:b cmc=1 Dark'
+    do_functional_test(s,['Darkness', 'Dark Ritual'], ['Darkest Hour'])
 
 # Regular Expressions
 

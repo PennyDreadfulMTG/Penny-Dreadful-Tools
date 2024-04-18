@@ -195,6 +195,8 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return mana_where(operator.value(), term.value())
     if key.value() == 'is':
         return is_subquery(term.value())
+    if key.value() == 'not':
+        return f'NOT ({is_subquery(term.value())})'
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
     raise InvalidCriterionException

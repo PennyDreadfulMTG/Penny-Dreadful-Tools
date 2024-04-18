@@ -64,7 +64,7 @@ class Criterion(Token):
 
 class Key(Token):
     # Strict substrings of other operators must appear later in the list.
-    values = ['coloridentity', 'fulloracle', 'commander', 'supertype', 'toughness', 'identity', 'playable', 'produces', 'edition', 'subtype', 'loyalty', 'format', 'oracle', 'rarity', 'color', 'legal', 'power', 'super', 'mana', 'name', 'text', 'type', 'cmc', 'loy', 'pow', 'set', 'sub', 'tou', 'cid', 'ci', 'fo', 'id', 'mv', 'c', 'e', 'f', 'm', 'r', 's', 'o', 't', 'is', 'p']
+    values = ['coloridentity', 'fulloracle', 'commander', 'supertype', 'toughness', 'identity', 'playable', 'produces', 'edition', 'subtype', 'loyalty', 'format', 'oracle', 'rarity', 'color', 'legal', 'power', 'super', 'mana', 'name', 'text', 'type', 'cmc', 'loy', 'pow', 'set', 'sub', 'tou', 'cid', 'not', 'ci', 'fo', 'id', 'mv', 'c', 'e', 'f', 'm', 'r', 's', 'o', 't', 'is', 'p']
 
 
 class Operator(Token):

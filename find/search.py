@@ -195,6 +195,8 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return mana_where(operator.value(), term.value())
     if key.value() == 'is':
         return is_subquery(term.value())
+    if key.value() == 'not':
+        return f'NOT ({is_subquery(term.value())})'
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
     raise InvalidCriterionException
@@ -209,6 +211,7 @@ def text_where(column: str, term: Token, exclude_parenthetical: bool = False) ->
         column = 'oracle_text'
     if term.is_regex():
         operator = 'REGEXP'
+        q = replace_scryfall_regex_extensions(q)
         escaped = sqlescape('(?m)' + q)
     else:
         operator = 'LIKE'
@@ -243,6 +246,11 @@ def math_where(column: str, operator: str, term: str) -> str:
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     all_colors = {'w', 'u', 'b', 'r', 'g'}
+    try:
+        season_id = int(term)
+        return f'c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) {operator} {season_id})'
+    except ValueError:
+        pass
     if term in COLOR_COMBINATIONS_LOWER.keys():
         colors = set(COLOR_COMBINATIONS_LOWER[term])
     else:
@@ -412,24 +420,38 @@ def is_subquery(subquery_name: str) -> str:
     if subquery_name == 'hybrid':
         return "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))"
     subqueries = {
+        'bikeland': 't:land o:"Cycling {2}" ci=2',
+        'bounceland': 't:land (o:"When ~ enters the battlefield, return a land you control to its owner\'s hand" OR o:/When ~ enters the battlefield, sacrifice it unless you return an untapped .* you control to its owner\'s hand/)',
+        'canopyland': 'o:"{T}, Pay 1 life: Add" o:"{1}, {T}, Sacrifice ~: Draw a card."',
         'commander': 't:legendary (t:creature OR o:"~ can be your commander") f:commander',
         'checkland': 't:land fo:"unless you control a" fo:"} or {"',
-        'creatureland': 't:land o:"becomes a"',
-        'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
+        'companion': 'o:"Companion — "',
+        'creatureland': 't:land -t:creature o:/becomes? a.* creature/ -"Argoth, Sanctum of Nature" -o:/target .* becomes/',
+        'dual': 't:land ci=2 -o:/./',
+        'fastland': 't:land o:"enters the battlefield tapped unless you control two or fewer other lands." -t:gate',
+        'fetchland': 't:land o:/{T}, Pay 1 life, Sacrifice ~: Search your library for an? [a-z]+ or [a-z]+ card, put it onto the battlefield, then shuffle./',
+        'filterland': r't:land (o:/\sm, {T}: Add \sc\sc/ OR o:/\sm, {T}: Add five mana in any combination of colors./)',
         'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life."',
-        'painland': 't:land o:"~ deals 1 damage to you."',
+        'painland': r't:land o:/Add \{.\} or \{.\}. ~ deals 1 damage to you./ -o:"~ enters the battlefield tapped"',
         'permanent': 't:artifact OR t:creature OR t:enchantment OR t:land OR t:planeswalker',
-        'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
+        'scryland': 't:land "Temple of" o:"When ~ enters the battlefield, scry 1"',
+        'shadowland': "t:land o:/As ~ enters the battlefield, you may reveal an? [a-z]+ or [a-z]+ card from your hand. If you don't, ~ enters the battlefield tapped./",
+        'shockland': 't:land o:"As ~ enters the battlefield, you may pay 2 life. If you don\'t, it enters the battlefield tapped."',
+        'slowland': 't:land o:"~ enters the battlefield tapped unless you control two or more other lands."',
         # 205.2a The card types are artifact, battle, conspiracy, creature, dungeon, enchantment, instant, land, phenomenon, plane, planeswalker, scheme, sorcery, tribal, and vanguard. See section 3, “Card Types.”
         'spell': 't:artifact OR t:battle OR t:creature OR t:enchantment OR t:instant OR t:planeswalker OR t:sorcery',
-        'storageland': 'o:"storage counter"',
+        'storageland': 't:land o:"storage counter" (o:"You may choose not to untap ~ during your untap step." OR o:"{1}, {T}: Put a storage counter on ~")',
+        'tangoland': 't:land o:"~ enters the battlefield tapped unless you control two or more basic lands."',
         'triland': 't:land fo:": Add {" fo:"}, {" fo:"}, or {" fo:"enters the battlefield tapped" -fo:cycling',
     }
-    for k in list(subqueries.keys()):
-        if k.endswith('land'):
-            subqueries[k.replace('land', '')] = subqueries[k]
     subqueries['refuge'] = subqueries['gainland']
     subqueries['manland'] = subqueries['creatureland']
+    subqueries['bicycleland'] = subqueries['bikeland']
+    subqueries['cycleland'] = subqueries['bikeland']
+    subqueries['karoo'] = subqueries['bounceland']
+    subqueries['canland'] = subqueries['canopyland']
+    subqueries['battleland'] = subqueries['tangoland']
+    subqueries['snarl'] = subqueries['shadowland']
     query = subqueries.get(subquery_name, '')
     if query == '':
         raise InvalidSearchException(f'Did not recognize `{subquery_name}` as a value for `is:`')
@@ -470,6 +492,33 @@ def parse_season(term: str) -> str:
     except (AttributeError, IndexError, ValueError, DoesNotExistException):
         pass
     raise InvalidValueException(f"Could not get a Penny Dreadful season from '{term}'")
+
+def replace_scryfall_regex_extensions(q: str) -> str:
+    # Three char classes first because the other may be substrings of these …
+
+    # \smr Short-hand for any repeated mana symbol. For example, {G}{G} matches \smr
+    # q = q.replace(r'\smr', rf'({mana_symbol_pattern})\1')  # This \1 would mean neither we nor callers could ever use parens (for grouping, say) without noncapturing prefix before \smr. Might have to hardcode enumerate every combination?
+    # \smh Short-hand for any hybrid card symbol. Note that monocolor Phyrexian symbols aren’t considered hybrid.
+    q = q.replace(r'\smh', r'{[WUBRGP0-9]/[^P]}')
+    # \smp Short-hand for any Phyrexian card symbol, e.g. {P}, {W/P}, or {G/W/P}.
+    q = q.replace(r'\smp', r'{[WUBRGC/]*P}')
+    # \spt Short-hand for a X/X power/toughness expression
+    pt_pattern = r'([0-9]+|X)'
+    q = q.replace(r'\spt', f'{pt_pattern}/{pt_pattern}')
+    # \spp Short-hand for a +X/+X power/toughness expression
+    q = q.replace(r'\spp', rf'\+{pt_pattern}/\+{pt_pattern}')
+    # \smm Short-hand for a -X/-X power/toughness expression
+    q = q.replace(r'\smm', rf'-{pt_pattern}/-{pt_pattern}')
+
+    # … and then two char classes
+    # \sm # Short-hand for any mana symbol
+    mana_symbol_pattern = r'{([SWUBRGPCP0-9/]+)}'
+    q = q.replace(r'\sm', mana_symbol_pattern)
+    # \sc Short-hand for any colored mana symbol
+    q = q.replace(r'\sc', r'{[WUBRGP/]+}')
+    # \ss Short-hand for any card symbol
+    # q = q.replace(r'\ss', r'{[^}]+}')
+    return q
 
 class InvalidSearchException(ParseException):
     pass

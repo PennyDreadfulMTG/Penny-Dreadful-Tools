@@ -1,7 +1,7 @@
 import pytest
 
 from find import search
-from magic import seasons
+from magic import seasons, fetcher
 from magic.database import db
 
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.
@@ -191,7 +191,36 @@ def test_format_legality() -> None:
 # Tagger tags
 # Reprints
 # Languages
+
 # Shortcuts and Nicknames
+@pytest.mark.functional
+def test_shortcuts_and_nicknames() -> None:
+    # do_functional_test('is:colorshifted', [], [])
+    do_functional_test('is:bikeland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'], True)
+    do_functional_test('is:cycleland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'])
+    do_functional_test('is:bicycleland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'])
+    do_functional_test('is:bounceland', ['Dimir Aqueduct', 'Arid Archway', 'Dormant Volcano'], ['Mystic Gate'], True)
+    do_functional_test('is:karoo', ['Dimir Aqueduct', 'Arid Archway', 'Dormant Volcano'], ['Mystic Gate'])
+    do_functional_test('is:canopyland', ['Horizon Canopy', 'Fiery Islet'], ['City of Brass', 'Botanical Plaza', 'Scene of the Crime'], True)
+    do_functional_test('is:canland', ['Horizon Canopy', 'Fiery Islet'], ['City of Brass', 'Botanical Plaza', 'Scene of the Crime'])
+    do_functional_test('is:checkland', ['Drowned Catacomb', 'Hinterland Harbor'], ['Savage Lands'], True)
+    do_functional_test('is:dual', ['Plateau', 'Underground Sea'], ['Island', 'Overgrown Tomb'], True)
+    do_functional_test('is:fastland', ['Darkslick Shores'], ['Plains'], True)
+    do_functional_test('is:fetchland', ['Scalding Tarn', 'Flooded Strand'], ['City of Brass', 'Fiery Islet', 'Prismatic Vista'])
+    do_functional_test('is:filterland', ['Cascade Bluffs', 'Desolate Mire', 'Cascading Cataracts'], ['Tainted Wood'], True)
+    do_functional_test('is:gainland', ['Akoum Refuge', 'Dismal Backwater'], ['City of Brass', 'Glimmerpost'])
+    do_functional_test('is:painland', ['Brushland', 'Llanowar Wastes'], ['Cabal Pit', 'Elves of Deep Shadow', 'Caldera Lake'], True)
+    do_functional_test('is:scryland', ['Temple of Malady'], ['Fading Hope', 'Zhalfrin Void'], True)
+    do_functional_test('is:shadowland', ['Choked Estuary', 'Vineglimmer Snarl'], ['Secluded Glen', 'Counterbalance'], True)
+    do_functional_test('is:snarl', ['Choked Estuary', 'Vineglimmer Snarl'], ['Secluded Glen', 'Counterbalance'])
+    do_functional_test('is:shockland', ['Overgrown Tomb'], ['Boseiju, Who Shelters All', 'Tenacious Underdog'], True)
+    do_functional_test('is:slowland', ['Deathcap Glade', 'Shipwreck Marsh'], ['Lantern-Lit Cavern'], True)
+    do_functional_test('is:storageland', ['Bottomless Vault', 'Calciform Pools', 'Mage-Ring Network'], ['City of Shadows', 'Mercadian Bazaar', 'Storage Matrix'])
+    do_functional_test('is:creatureland', ['Treetop Village', 'Creeping Tar Pit', 'Restless Bivouac', "Mishra's Factory", 'Crawling Barrens'], ["Urza's Factory", "Thespian's Stage"], True)
+    do_functional_test('is:triland', ['Savage Lands'], ['Bant Charm', "Spara's Headquarters"])
+    do_functional_test('is:tangoland', ['Canopy Vista'], ['Glacial Fortress', 'Thran Portal', 'Blood Moon'], True)
+    do_functional_test('is:battleland', ['Canopy Vista'], ['Glacial Fortress', 'Thran Portal', 'Blood Moon'])
+    # do_functional_test('is:masterpiece, [], [])
 
 @pytest.mark.functional
 def test_negating_conditions() -> None:
@@ -202,7 +231,7 @@ def test_negating_conditions() -> None:
     # s = 'not:reprint e:c16'
     # do_functional_test(s, [], [])
     s = 'not:permanent c:b cmc=1 Dark'
-    do_functional_test(s,['Darkness', 'Dark Ritual'], ['Darkest Hour'])
+    do_functional_test(s, ['Darkness', 'Dark Ritual'], ['Darkest Hour'])
 
 # Regular Expressions
 
@@ -243,12 +272,22 @@ def test_regular_expressions_functional() -> None:
     # You can use forward slashes // instead of quotes with the type://, t:// oracle://, o://, flavor://, ft://, and name:// keywords to match those parts of a card using regular expressions.
     # ~ An automatic alias for the current card name or “this spell” if the card mentions itself.
     # \sm Short-hand for any mana symbol
+    do_functional_test(r'o:/\sm, {T}: Add/', ['Cascade Bluffs', "Arcum's Astrolabe", 'Azorius Signet'], ['Abundant Growth', 'Ancient Den'])
     # \sc Short-hand for any colored mana symbol
+    do_functional_test(r'o:/\sc, {T}: Add/', ['Cascade Bluffs'], ['Abundant Growth', 'Ancient Den', "Arcum's Astrolabe", 'Azorius Signet'])
     # \ss Short-hand for any card symbol
+    # do_functional_test(r'o:/\ss, {T}: Add/', ['Cascade Bluffs'],['Abundant Growth', 'Ancient Den', "Arcum's Astrolabe", 'Azorius Signet'])
     # \smr Short-hand for any repeated mana symbol. For example, {G}{G} matches \smr
+    # do_functional_test(r'o:Add /\smr/', ['Joraga Treespeaker'], ['Burning-Tree Emissary', 'Allosaurus Shepherd'])
     # \spt Short-hand for a X/X power/toughness expression
+    do_functional_test(r'o:/create an? \spt black and green/', ['Kin-Tree Invocation', 'Grakmaw, Skyclave Ravager', 'Creakwood Liege'], ['Restless Cottage', 'Pharika, God of Affliction'])
     # \spp  Short-hand for a +X/+X power/toughness expression
+    do_functional_test(r't:instant c<=gb cmc<=2 o:/gets \spp/', ['Giant Growth'], ['Nameless Inversion', 'Bile Blight'])
     # \smm  Short-hand for a -X/-X power/toughness expression
+    do_functional_test(r't:instant c<=gb cmc<=2 o:/gets \smm/', ['Darkblast'], ['Nameless Inversion', 'Giant Growth', 'Bile Blight'])
+    # \smp Short-hand for any Phyrexian card symbol, e.g. {P}, {W/P}, or {G/W/P}.
+    do_functional_test(r'rage fo:/\smp/', ['Rage Extractor'], ["Dragon's Rage Channeler", 'Rage Reflection'])
+
 
 # Exact Names
 
@@ -270,6 +309,13 @@ def test_nesting_conditions() -> None:
 
 
 # END Tests from https://scryfall.com/docs/syntax
+
+@pytest.mark.function
+def test_colors_with_ints() -> None:
+    do_functional_test('ci=5 t:legendary -t:creature', ['Genju of the Realm', 'Legacy Weapon'], ['Coalition Victory', 'Garth One-Eye'])
+    do_functional_test('c=5 t:legendary -t:creature', ['Genju of the Realm'], ['Coalition Victory', 'Garth One-Eye', 'Legacy Weapon'])
+    do_functional_test('ci<4 ci>1 t:instant cmc=2', ['Abrupt Decay', "Assassin's Trophy", 'Agony Warp', 'Ancient Grudge', 'Resounding Roar'], ['Abeyance'])
+    do_functional_test('c<4 c>1 t:instant cmc=2', ['Abrupt Decay', "Assassin's Trophy", 'Agony Warp'], ['Abeyance', 'Ancient Grudge', 'Resounding Roar'])
 
 @pytest.mark.functional
 def test_past_seasons() -> None:
@@ -556,18 +602,6 @@ def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id IN (4) AND legality <> 'Banned')))")
 
 @pytest.mark.functional()
-def test_is_triland_functional() -> None:
-    do_functional_test('is:triland', ['Savage Lands'], ['Bant Charm', "Spara's Headquarters"])
-
-@pytest.mark.functional()
-def test_is_checkland_functional() -> None:
-    do_functional_test('is:checkland', ['Drowned Catacomb', 'Hinterland Harbor'], ['Savage Lands'])
-
-@pytest.mark.functional()
-def test_is_gainland_functional() -> None:
-    do_functional_test('is:gainland', ['Akoum Refuge', 'Dismal Backwater'], ['City of Brass', 'Glimmerpost'])
-
-@pytest.mark.functional()
 def test_smart_quotes() -> None:
     do_functional_test('o:“Art rampage”', ['Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental'], [])
 
@@ -620,13 +654,18 @@ def test_parse_season() -> None:
         search.parse_season('foopd1')
     assert search.parse_season('pd1') == 'EMN'
 
-def do_functional_test(query: str, yes: list[str], no: list[str]) -> None:
+def do_functional_test(query: str, yes: list[str], no: list[str], check_scryfall: bool = False) -> None:
     results = search.search(query)
     found = [c.name for c in results]
     for name in yes:
         assert name in found
     for name in no:
         assert name not in found
+    if check_scryfall:
+        _, scryfall_names, _ = fetcher.search_scryfall(query)
+        print(scryfall_names)
+        print([c.name for c in results[:len(scryfall_names)]])
+        assert [c.name for c in results[:len(scryfall_names)]] == scryfall_names
 
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))

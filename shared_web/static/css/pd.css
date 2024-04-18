@@ -491,8 +491,6 @@ Color attributes are mostly found with their related structural elements in this
 
 */
 
-/* BAKERT we repalced some ccc but that isn't in our color scheme so check it works or intro medium-gray to scheme */
-
 :root {
     /* Site colors. (Names from http://coolors.co/) */
     --white: #f9f9f9; /* Snow */
@@ -517,6 +515,10 @@ Color attributes are mostly found with their related structural elements in this
     --text-over-images: var(--white);
     --toggle-off: var(--light-gray);
     --toggle-on: var(--dark-gray);
+    --menu-highlight-text: var(--dark-gray);
+    --submenu-background: var(--black);
+    --submenu-text: var(--white);
+    --submenu-text-hover: var(--dark-gray);
 
     /* Header and footer */
     --secondary-background: var(--dark-gray);
@@ -526,19 +528,6 @@ Color attributes are mostly found with their related structural elements in this
     /* Status bar, mobile menu and notice banner */
     --tertiary-background: var(--light-gray);
     --tertiary-text: var(--black);
-
-    /* BAKERT Comments made mention of this but is there anywhere that has acajou as the bg color? */
-    /*--tertiary-background: var(--black);*/
-    /*--tertiary-text: var(--light-gray);*/
-
-    /* BAKERT it's weird that the menu has its own colors not some more general tersm */
-    --menu-highlight-text: var(--dark-gray); /* BAKERT it's weired that highlight is dememph elsewhere */
-    --submenu-background: var(--black);
-    --submenu-text: var(--white);
-    --submenu-text-hover: var(--dark-gray);
-
-
-    /* BAKERT Mana box borders, menu text color on hover (all spanish-gray( */
 
     /* Colors of Magic (avoid using these to represent anything else). */
     --w-mana: #fffcda;
@@ -2438,7 +2427,7 @@ Charts
     font-family: main-text, "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: normal;
     padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metagame.LEFT_PADDING. */
-    text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.1rem var(--text-color), 0 0 0.1rem var(--text-color), 0 0 0.1rem var(--text-color);  /*  BAKERT it's not text tho, it's because-text-is-white bg color */
+    text-shadow: 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000;
     text-transform: none;
     white-space: nowrap;
 }

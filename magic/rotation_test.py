@@ -1,3 +1,5 @@
+import pytest
+
 from magic import rotation
 from magic.models import Card
 
@@ -109,3 +111,53 @@ def test_rotation_sort_func() -> None:
     assert cs[10].name == 'Murderous Cut'
     assert cs[11].name == 'Sylvan Library'
     assert cs[12].name == 'Wrenn and Six'
+
+@pytest.mark.functional
+def test_list_of_most_interesting() -> None:
+    never_before_legal_cards = [
+        Card({'name': 'Mox Jet'}),
+        Card({'name': 'Black Lotus'}),
+    ]
+    super_playable_card = Card({'name': 'Counterspell'})
+    somewhat_playable_card = Card({'name': 'Fling'})
+
+    s = rotation.list_of_most_interesting(never_before_legal_cards + [super_playable_card, somewhat_playable_card])
+    good_cards = 'Black Lotus, Mox Jet, Counterspell, Fling'
+    assert s == good_cards
+
+    garbage_cards = [
+        Card({'name': 'Zombie Goliath'}),
+        Card({'name': 'Wild Certaok'}),
+        Card({'name': 'Moss Monster'}),
+        Card({'name': 'Nessian Courser'}),
+        Card({'name': 'Nettle Swine'}),
+        Card({'name': 'Ogre Resister'}),
+        Card({'name': 'Python'}),
+        Card({'name': 'Redwood Treefolk'}),
+        Card({'name': 'Renegade Demon'}),
+        Card({'name': 'Russet Wolves'}),
+        Card({'name': 'Spined Wurm'}),
+        Card({'name': 'Thraben Purebloods'}),
+        Card({'name': 'Vampire Noble'}),
+        Card({'name': 'Undead Minotaur'}),
+        Card({'name': 'Vastwood Gorger'}),
+        Card({'name': 'Warpath Ghoul'}),
+        Card({'name': 'Colossodon Yearling'}),
+        Card({'name': 'Curio Vendor'}),
+        Card({'name': 'Devilthorn Fox'}),
+        Card({'name': 'Cyclops of One-Eyed Pass'}),
+        Card({'name': 'Fomori Nomad'}),
+        Card({'name': 'Hexplate Golem'}),
+        Card({'name': 'Jwari Scuttler'}),
+        Card({'name': 'Krovikan Scoundrel'}),
+    ]
+
+    cs = never_before_legal_cards + [super_playable_card, somewhat_playable_card] + garbage_cards
+    s = rotation.list_of_most_interesting(cs)
+    assert s.startswith(good_cards)
+    excess = len(cs) - 25
+    assert s.endswith(f'and {excess} more')
+    assert s.count(',') == 24
+    cs = never_before_legal_cards + [super_playable_card, somewhat_playable_card] + garbage_cards
+    s2 = rotation.list_of_most_interesting(cs)
+    assert s == s2

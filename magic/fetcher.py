@@ -81,6 +81,9 @@ def card_aliases() -> list[list[str]]:
 def card_price(cardname: str) -> PriceDataType:
     return fetch_tools.fetch_json('http://vorpald20.com:5800/{}/'.format(cardname.replace('//', '-split-')))
 
+def cardfeed() -> dict[str, list[dict[str, str | int | bool]]]:
+    return fetch_tools.fetch_json(decksite_url('/api/cardfeed'))
+
 def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
     if twentyfour:
         return dtutil.now(timezone).strftime('%H:%M')

@@ -294,7 +294,7 @@ class TournamentOrganizer(Achievement):
     description_safe = 'Run a tournament for the Penny Dreadful community.'
 
     def __init__(self) -> None:
-        self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
+        self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']] + ['chaosblackdoom']
 
     def display(self, p: Person) -> str:
         if p.name in self.hosts:

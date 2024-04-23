@@ -199,7 +199,7 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if sort_by == 'hitInLastRun' and sort_order == 'DESC':
         return f"IF(status = 'Not Legal', hits, 0) DESC, hits ASC, {order_by_rank}"
     if sort_by == 'rank':
-        return f"rank IS NULL {sort_order}, rank {sort_order}, IF(status = 'Legal', -hits, -{rotation.TOTAL_RUNS}), -hits {sort_order}"
+        return f"rank IS NULL {sort_order}, rank {sort_order}, IF(status = 'Legal', hits, {rotation.TOTAL_RUNS}) ASC, hits DESC"
     sort_options = {
         'name': 'name',
         'hits': 'hits',

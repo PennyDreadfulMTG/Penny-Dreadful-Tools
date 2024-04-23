@@ -1,5 +1,6 @@
 from decksite.deck_type import DeckType
 from find import search
+from magic import rotation
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
@@ -184,6 +185,28 @@ def matches_order_by(sort_by: str | None, sort_order: str | None) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, person'
 
+def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
+    if not sort_by:
+        sort_by = 'hitInLastRun'
+        sort_order = 'ASC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    order_by_rank = 'rank IS NULL ASC, rank ASC, name ASC'
+    if sort_by == 'hitInLastRun' and sort_order == 'ASC':
+        return f"IF(status = 'Legal', -hits, -{rotation.TOTAL_RUNS}) DESC, hits DESC, {order_by_rank}"
+    if sort_by == 'hitInLastRun' and sort_order == 'DESC':
+        return f"IF(status = 'Not Legal', hits, 0) DESC, hits ASC, {order_by_rank}"
+    if sort_by == 'rank':
+        return f"rank IS NULL {sort_order}, rank {sort_order}, IF(status = 'Legal', -hits, -{rotation.TOTAL_RUNS}), -hits {sort_order}"
+    sort_options = {
+        'name': 'name',
+        'hits': 'hits',
+        'hitsNeeded': 'hits_needed',
+    }
+    return sort_options[sort_by] + f' {sort_order}, {order_by_rank}'
+
 def exclude_active_league_runs(except_person_id: int | None) -> str:
     clause = """
         d.retired
@@ -232,7 +255,7 @@ def card_where(name: str) -> str:
 def card_search_where(q: str) -> tuple[str, str]:
     try:
         cs = search.search(q)
-        return 'FALSE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')', ''
+        return 'FALSE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(name) for name in cs) + ')', ''
     except search.InvalidSearchException as e:
         return 'FALSE', str(e)
 
@@ -252,3 +275,12 @@ def pagination(args: dict[str, str]) -> tuple[int, int, str]:
         raise InvalidArgumentException(f'Page size of {page_size} greater than maximum of {MAX_LIVE_TABLE_PAGE_SIZE}')
     start = page * page_size
     return page, page_size, f'LIMIT {start}, {page_size}'
+
+def ranks() -> str:
+    return """
+        SELECT
+            name,
+            ROW_NUMBER() OVER (ORDER BY playability DESC) as rank
+        FROM
+            _playability
+    """

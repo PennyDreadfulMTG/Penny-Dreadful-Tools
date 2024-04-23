@@ -10,7 +10,6 @@ from shared import configuration, dtutil
 from shared import redis_wrapper as redis
 from shared import text
 from shared.fetch_tools import FetchException
-from shared.pd_exception import InvalidDataException
 
 TOTAL_RUNS = 168
 
@@ -32,6 +31,16 @@ def in_rotation() -> bool:
 
 def files() -> list[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))
+
+# Will raise if what you pass is not a valid path to a Run_xxx.txt file.
+def run_number_from_path(path: str) -> int:
+    return int(os.path.basename(path).split('.')[0].split('_')[1])
+
+def last_run_number() -> int | None:
+    try:
+        return int(files()[-1].split('/')[-1].split('.')[0].split('_')[1])
+    except IndexError:
+        return None
 
 def last_run_time() -> datetime.datetime | None:
     try:
@@ -66,7 +75,7 @@ def rotation_redis_store() -> tuple[int, int, list[Card]]:
             lines.append(line)
     scores = Counter(lines).most_common()
     runs = scores[0][1]
-    runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
+    runs_percent = runs_percentage(runs)
     cards = []
     card_names_by_status: dict[str, list[str]] = {}
     for name, hits in scores:
@@ -109,11 +118,11 @@ def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_l
         return None
     if not layout.is_playable_layout(c.layout):
         return None
-    percent = round(round(hits / runs, 2) * 100)
+    percent = to_percent(hits / runs)
     if remaining_runs == 0:
         percent_needed = '0'
     else:
-        percent_needed = str(round(round(hits_needed / remaining_runs, 2) * 100))
+        percent_needed = str(to_percent(hits_needed / remaining_runs))
     if remaining_runs + hits < TOTAL_RUNS / 2:
         status = 'Not Legal'
     elif hits >= TOTAL_RUNS / 2:
@@ -135,38 +144,6 @@ def classify_by_status(c: Card, card_names_by_status: dict[str, list[str]]) -> N
     if c.status not in card_names_by_status:
         card_names_by_status[c.status] = []
     card_names_by_status[c.status].append(c.name)
-
-# Sort a list of cards with rotation information annotated by the specified field and sort order. Sorts in-place for speed.
-def rotation_sort(cs: list[Card], sort_by: str | None, sort_order: str | None) -> None:
-    if not sort_by:
-        sort_by = 'hitsNeeded'
-        sort_order = 'ASC'
-    else:
-        sort_by = str(sort_by)
-        sort_order = str(sort_order)
-    rev = sort_order == 'DESC'
-    cs.sort(key=lambda c: c.name)  # Let's have the cards in alphabetical order, everything else being equal.
-    sort_funcs = {
-        'hitInLastRun': lambda c: (c.hit_in_last_run, -hits_needed_score(c) if rev else hits_needed_score(c)),
-        'hits': lambda c: c.hits,
-        'name': lambda c: c.name,
-        'hitsNeeded': hits_needed_score,
-        'rank': lambda c: c.rank,
-    }
-    cs.sort(key=sort_funcs[sort_by], reverse=rev)
-
-# As both primary and secondary sort we want to be able to sort cards by:
-#     1. Can still be legal but are not yet confirmed, most hits first (to show the cards most likely to make it at the top).
-#     2. Confirmed legal, least hits first (to show the cards most likely to have made it in recently at the top).
-#     3. Confirmed not legal, most hits first (to show the cards that came closest to making it at the top).
-def hits_needed_score(c: Card) -> int:
-    if c.status == 'Undecided':
-        return TOTAL_RUNS - c.hits
-    if c.status == 'Legal':
-        return TOTAL_RUNS + c.hits
-    if c.status == 'Not Legal':
-        return TOTAL_RUNS * 3 - c.hits
-    raise InvalidDataException(f'Card status of `{c.status}` not recognized, did you pass a Card with rotation information?')
 
 async def rotation_hype_message(hype_command: bool) -> str | None:
     if not hype_command:
@@ -214,3 +191,9 @@ def list_of_most_interesting(cs: list[Card]) -> str:
     if len(cs) > max_shown:
         return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
     return ', '.join(c.name for c in cs)
+
+def runs_percentage(runs: int) -> int:
+    return to_percent(runs / TOTAL_RUNS)
+
+def to_percent(val: float) -> int:
+    return round(val * 100)

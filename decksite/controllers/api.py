@@ -1,6 +1,5 @@
 import datetime
 import json
-import sys
 from typing import Any, cast
 
 from flask import Response, request, session, url_for
@@ -14,18 +13,16 @@ from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import playability, query
+from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
-                              prepare_people)
+from decksite.prepare import prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
-from find import search as card_search
 from magic import layout, oracle, rotation, seasons, tournaments
-from magic.models import Deck
+from magic.models import Deck, Card
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
-                                 TooManyItemsException)
+from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
@@ -437,35 +434,16 @@ def rotation_cards_api() -> Response:
             'total': <int>
         }
     """
-    _, _, cs = rotation.read_rotation_files()
     q = request.args.get('q', '').lower()
-    search_results = None
-    try:
-        search_results = [c.name for c in card_search.search(q)] if q else None
-    except card_search.InvalidSearchException:
-        pass
-    if search_results is not None:
-        cs = [c for c in cs if c.name in search_results]
+    page, page_size, limit = pagination(request.args)
+    where, message = query.card_search_where(q) if q else ('TRUE', '')
     if not session.get('admin', False):
-        cs = [c for c in cs if c.status != 'Undecided']
-    # Now add rank to the cards, which only decksite knows not magic.rotation.
-    ranks = playability.rank()
-    for c in cs:
-        c.rank = ranks.get(c.name, 0 if c.never_legal() else sys.maxsize)
-        if c.rank == 0:
-            c.display_rank = 'NEW'
-        elif c.rank == sys.maxsize:
-            c.display_rank = '-'
-        else:
-            c.display_rank = str(c.rank)
-    rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
-    total = len(cs)
-    page, page_size, _ = pagination(request.args)
-    start = page * page_size
-    end = start + page_size
-    cs = cs[start:end]
+        where += " AND status <> 'Undecided'"
+    order_by = query.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    cs: list[Card] = rot.load_rotation(where=where, order_by=order_by, limit=limit)
     prepare_cards(cs)
-    r = {'page': page, 'total': total, 'objects': cs}
+    total = rot.load_rotation_count(where=where)
+    r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -614,6 +592,7 @@ def doorprize() -> Response:
 def rotation_clear_cache() -> Response:
     rotation.clear_redis()
     rotation.rotation_redis_store()
+    rot.force_cache_update()
     return return_json({'success': True})
 
 @APP.route('/api/cards')

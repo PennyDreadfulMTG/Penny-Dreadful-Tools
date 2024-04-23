@@ -57,7 +57,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
         else:
             s += ':no_entry_sign:'
         if rotation.in_rotation() and not no_rotation_hype:
-            rot_emoji = get_future_legality(c, legal)
+            rot_emoji = get_future_legality(c)
             s += rot_emoji
         if not legal and verbose and not rot_emoji:
             s += f' (not legal in {legality_format})'
@@ -66,7 +66,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
         s += ':lady_beetle:'
     return s
 
-def get_future_legality(c: Card, legal: bool) -> str:
+def get_future_legality(c: Card) -> str:
     out_emoji = '<:rotating_out:702545628882010183>'
     for status, symbol in {'undecided': ':question:', 'legal': '<:rotating_in:702545611597021204>', 'notlegal': out_emoji}.items():
         if redis.sismember(f'decksite:rotation:summary:{status}', c.name):

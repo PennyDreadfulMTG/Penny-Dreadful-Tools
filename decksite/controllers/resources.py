@@ -2,7 +2,7 @@ from flask import Response, make_response, request
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import playability
+from decksite.data import playability, rotation as rtn
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
 from magic import card, oracle
@@ -11,7 +11,8 @@ from magic import card, oracle
 @cached()
 @APP.route('/rotation/')
 def rotation() -> str:
-    view = Rotation()
+    runs, num_cards = rtn.load_rotation_summary()
+    view = Rotation(runs, num_cards)
     return view.page()
 
 

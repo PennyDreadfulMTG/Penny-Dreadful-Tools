@@ -79,13 +79,7 @@ def season_playability(season_id: int) -> list[Container]:
 
 @retry_after_calling(preaggregate)
 def rank() -> dict[str, int]:
-    sql = """
-        SELECT
-            name,
-            ROW_NUMBER() OVER (ORDER BY playability DESC) as rank
-        FROM
-            _playability
-    """
+    sql = query.ranks()
     return {r['name']: r['rank'] for r in db().select(sql)}
 
 def preaggregate_season_count() -> None:

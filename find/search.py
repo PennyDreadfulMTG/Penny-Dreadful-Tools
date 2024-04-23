@@ -7,7 +7,6 @@ from find.tokens import BooleanOperator, Criterion, Key, Operator, Regex, String
 from magic import card, layout, mana, multiverse, seasons
 from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
-from magic.models import Card
 from shared import configuration
 from shared.database import concat, sqlescape, sqllikeescape
 from shared.pd_exception import ParseException, DoesNotExistException
@@ -21,14 +20,12 @@ UNQUOTED_STRING = 'unquoted_string'
 
 VALUE_LOOKUP: dict[str, dict[str, int]] = {}
 
-def search(query: str) -> list[Card]:
+def search(query: str) -> set[str]:
     query = query.replace('“', '"').replace('”', '"')
     where = parse(tokenize(query))
-    sql = """{base_query}
-        ORDER BY pd_legal DESC, name
-    """.format(base_query=multiverse.cached_base_query(where))
-    rs = db().select(sql)
-    return [Card(r) for r in rs]
+    base_query = multiverse.cached_base_query(where)
+    sql = f'{base_query} ORDER BY NULL'
+    return {r['name'] for r in db().select(sql)}
 
 # Cut a query string up into tokens and combine them in an Expression, recursively for subexpressisons. Or raise if string is malformed.
 def tokenize(s: str) -> Expression:
@@ -424,7 +421,7 @@ def is_subquery(subquery_name: str) -> str:
         'bounceland': 't:land (o:"When ~ enters the battlefield, return a land you control to its owner\'s hand" OR o:/When ~ enters the battlefield, sacrifice it unless you return an untapped .* you control to its owner\'s hand/)',
         'canopyland': 'o:"{T}, Pay 1 life: Add" o:"{1}, {T}, Sacrifice ~: Draw a card."',
         'commander': 't:legendary (t:creature OR o:"~ can be your commander") f:commander',
-        'checkland': 't:land fo:"unless you control a" fo:"} or {"',
+        'checkland': 't:land ci=2 fo:/unless you control an? (Plains|Island|Swamp|Mountain|Forest)/',
         'companion': 'o:"Companion — "',
         'creatureland': 't:land -t:creature o:/becomes? a.* creature/ -"Argoth, Sanctum of Nature" -o:/target .* becomes/',
         'dual': 't:land ci=2 -o:/./',

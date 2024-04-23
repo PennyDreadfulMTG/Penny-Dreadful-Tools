@@ -655,17 +655,15 @@ def test_parse_season() -> None:
     assert search.parse_season('pd1') == 'EMN'
 
 def do_functional_test(query: str, yes: list[str], no: list[str], check_scryfall: bool = False) -> None:
-    results = search.search(query)
-    found = [c.name for c in results]
+    found = search.search(query)
     for name in yes:
         assert name in found
     for name in no:
         assert name not in found
     if check_scryfall:
         _, scryfall_names, _ = fetcher.search_scryfall(query)
-        print(scryfall_names)
-        print([c.name for c in results[:len(scryfall_names)]])
-        assert [c.name for c in results[:len(scryfall_names)]] == scryfall_names
+        expected = set(scryfall_names)
+        assert expected == found  # If you're getting a test failure here but your query isn't wrong, per se, it's because you're checking scryfall on something with too many results.
 
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))

@@ -45,7 +45,7 @@ async def init_async(force: bool = False) -> bool:
         print('Unable to connect to Scryfall.')
     return False
 
-def cached_base_query(where: str = '(1 = 1)') -> str:
+def cached_base_query(where: str = 'TRUE') -> str:
     return f'SELECT * FROM _cache_card AS c WHERE {where}'
 
 def base_query(where: str = '(1 = 1)') -> str:

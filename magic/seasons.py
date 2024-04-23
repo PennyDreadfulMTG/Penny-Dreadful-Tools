@@ -140,6 +140,9 @@ def current_season_num() -> int:
 def current_season_name() -> str:
     return f'Penny Dreadful {current_season_code()}'
 
+def next_season_num() -> int:
+    return current_season_num() + 1
+
 def season_num(code_to_look_for: str) -> int:
     try:
         return SEASONS.index(code_to_look_for) + 1

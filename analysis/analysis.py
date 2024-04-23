@@ -89,7 +89,6 @@ def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
             name IS NOT NULL
     """.format(season_query=query.season_query(season_id))
     cs = [Container(r) for r in decksite_db().select(sql, [person_id])]
-    print(len(cs))
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])

@@ -27,6 +27,12 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | 
     set_legal_icons(c)
     if c.get('num_decks') is not None:
         c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
+    if c.get('rank') == 0:
+        c.display_rank = 'NEW'
+    elif not c.get('rank'):
+        c.display_rank = '-'
+    else:
+        c.display_rank = str(c.rank)
 
 def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     c.url = url_for_card(c, tournament_only, season_id)

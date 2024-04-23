@@ -122,7 +122,7 @@ def cache_rotation() -> None:
             GREATEST(0, @hits_required - COUNT(*)) AS hits_needed,
             IF(@remaining_runs = 0, 0, ROUND((GREATEST(0, @hits_required - COUNT(*)) / @runs_remaining) * 100)) AS percent_needed,
             p.rank,
-            SUM(IF(number IN (SELECT MAX(number) FROM _rotation_runs), 1, 0)) AS hit_in_last_run,
+            SUM(IF(number IN (SELECT MAX(number) FROM rotation_runs), 1, 0)) AS hit_in_last_run,
             CASE
                 WHEN COUNT(*) >= @hits_required THEN 'Legal'
                 WHEN COUNT(*) + @total_runs - (SELECT MAX(number) FROM rotation_runs) >= @hits_required THEN 'Undecided'

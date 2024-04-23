@@ -12,6 +12,7 @@ class Rotation(View):
         self.num_cards = num_cards
         if runs > 0:
             self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(seasons.next_rotation(), 2)
+            self.has_cards = True
         else:
             self.rotation_msg = 'Rotation is ' + dtutil.display_date(seasons.next_rotation(), 2)
 

@@ -35,7 +35,7 @@ def test_determine_end_of_league() -> None:
     assert end_date == dtutil.parse('2018-07-31 23:59:59', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
 
     # We won't make a 0 seconds league, see #9216.
-    next_rotation = dtutil.parse('2021-10-01 00:00:00',  '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
+    next_rotation = dtutil.parse('2021-10-01 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
     with pytest.raises(InvalidArgumentException):
         league.determine_end_of_league(next_rotation, next_rotation)
 

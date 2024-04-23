@@ -9,6 +9,7 @@ from werkzeug.exceptions import BadRequest
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
 from decksite.data import card
+from decksite.data import clauses
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
@@ -115,6 +116,7 @@ def decks_api() -> Response:
     Grab a slice of results from a 0-indexed resultset of decks.
     Input:
         {
+            'achievementKey': <str?>,
             'archetypeId': <int?>,
             'cardName': <str?>,
             'competitionId': <int?>,
@@ -133,11 +135,11 @@ def decks_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
+    order_by = clauses.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
     page, page_size, limit = pagination(request.args)
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
-    where = query.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
+    where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
     total = deck.load_decks_count(where=where, season_id=season_id)
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
@@ -174,7 +176,7 @@ class UpdatedDecks(Resource):
         if timestamp < 1e9:
             raise InvalidArgumentException('Invalid timestamp!')
         page, page_size, limit = pagination(request.args)
-        where = '(' + query.decks_where(request.args, False, None) + ') AND ' + query.decks_updated_since(timestamp)
+        where = '(' + clauses.decks_where(request.args, False, None) + ') AND ' + clauses.decks_updated_since(timestamp)
         total = deck.load_decks_count(where=where, season_id=season)
         ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
         prepare_decks(ds)
@@ -204,14 +206,14 @@ def cards2_api() -> Response:
             'message': <str>,
         }
     """
-    order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     archetype_id = request.args.get('archetypeId') or None
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
-    additional_where, message = query.card_search_where(q) if q else ('TRUE', '')
+    additional_where, message = clauses.card_search_where(q) if q else ('TRUE', '')
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
     total = card.load_cards_count(additional_where=additional_where, archetype_id=archetype_id, person_id=person_id, season_id=season_id)
@@ -260,11 +262,11 @@ def people_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
-    where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
+    where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
     people = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people)
     total = ps.load_people_count(where=where, season_id=season_id)
@@ -295,12 +297,12 @@ def h2h_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     person_id = int(request.args.get('personId', 0))
     q = request.args.get('q', '').strip()
-    where = query.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
+    where = clauses.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
     entries = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
     for entry in entries:
         entry.opp_url = url_for('seasons.person', mtgo_username=entry.opp_mtgo_username, season_id=season_id)
@@ -333,10 +335,10 @@ def leaderboards_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
-    where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
+    where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
     try:
         competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
@@ -378,11 +380,11 @@ def matches_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
-    person_where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
-    opponent_where = query.text_match_where(query.person_query('o'), q) if q else 'TRUE'
+    person_where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
+    opponent_where = clauses.text_match_where(query.person_query('o'), q) if q else 'TRUE'
     where = f'({person_where} OR {opponent_where})'
     try:
         competition_id = int(request.args.get('competitionId', ''))
@@ -438,10 +440,10 @@ def rotation_cards_api() -> Response:
     """
     q = request.args.get('q', '').lower()
     page, page_size, limit = pagination(request.args)
-    where, message = query.card_search_where(q) if q else ('TRUE', '')
+    where, message = clauses.card_search_where(q) if q else ('TRUE', '')
     if not session.get('admin', False):
         where += " AND status <> 'Undecided'"
-    order_by = query.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     cs: list[Card] = rot.load_rotation(where=where, order_by=order_by, limit=limit)
     prepare_cards(cs)
     total = rot.load_rotation_count(where=where)
@@ -778,7 +780,7 @@ def menu_item_to_search_item(menu_item: dict[str, Any], parent_name: str | None 
 
 def pagination(args: dict[str, str]) -> tuple[int, int, str]:
     try:
-        return query.pagination(args)
+        return clauses.pagination(args)
     except InvalidArgumentException as e:
         raise BadRequest from e
 

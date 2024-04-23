@@ -1,17 +1,19 @@
-<section>
-    {{#achievements}}
-        {{#legend}}
-            <b>{{title}}</b>
+{{#achievements}}
+    {{#legend}}
+        <section>
+            <h2>{{title}}</h2>
             <p class="detail">
                 <span class="earned">🏆</span>
                 <span class="text">{{legend}}</span>
             </p>
             {{#detail}}
-                {{> decktable}}
+                {{> livedecktable}}
             {{/detail}}
-        {{/legend}}
-    {{/achievements}}
-    {{#no_achievements}}
-        No achievements earned.
-    {{/no_achievements}}
-</section>
+        </section>
+    {{/legend}}
+{{/achievements}}
+{{#no_achievements}}
+    <section>
+        <p>No achievements earned.</p>
+    </section>
+{{/no_achievements}}

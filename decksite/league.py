@@ -18,7 +18,7 @@ from shared import configuration, dtutil, fetch_tools, guarantee, logger
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, LockNotAcquiredException
+from shared.pd_exception import InvalidDataException, LockNotAcquiredException, InvalidArgumentException
 
 
 class Status(Enum):
@@ -339,6 +339,8 @@ def active_league(should_load_decks: bool = False) -> competition.Competition:
     return guarantee.exactly_one(leagues)
 
 def determine_end_of_league(start_date: datetime.datetime, next_rotation: datetime.datetime, lookahead: bool = True) -> datetime.datetime:
+    if start_date >= next_rotation:
+        raise InvalidArgumentException(f"You can't start a league on {start_date} if next rotation is on {next_rotation}")
     if start_date.day < 15:
         month = start_date.month + 1
     else:

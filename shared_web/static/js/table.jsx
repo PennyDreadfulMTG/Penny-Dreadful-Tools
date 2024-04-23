@@ -57,6 +57,7 @@ export class Table extends React.Component {
             deckType = "tournament";
         }
         const params = {
+            "achievementKey": this.props.achievementKey,
             "archetypeId": this.props.archetypeId,
             "cardName": this.props.cardName,
             "competitionId": this.props.competitionId,
@@ -218,6 +219,7 @@ export const renderCard = (card) => (
 // Most of these are PropTypes.string because they come (originally) from data-* on the HTML element so this isn't very good typechecking.
 // It would be nice to check what they "really" are.
 Table.propTypes = {
+    "achievementKey": PropTypes.string,
     "activeRunsText": PropTypes.string,
     "archetypeId": PropTypes.string,
     "cardName": PropTypes.string,

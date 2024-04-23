@@ -10,12 +10,6 @@ class PersonAchievements(View):
         self.is_person_page = True
         self.achievements = achievements
         self.show_seasons = True
-        self.decks = []
-        for a in achievements:
-            if a.detail is not None:
-                a.detail.hide_active_runs = True
-                self.prepare_active_runs(a.detail)
-                self.decks += a.detail.decks
         if len([a for a in achievements if a.legend]) == 0:
             self.no_achievements = True
 

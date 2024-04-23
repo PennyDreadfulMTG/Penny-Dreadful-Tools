@@ -2,6 +2,7 @@ import functools
 from collections.abc import Callable
 from typing import Any
 
+import decksite.data.clauses
 from decksite.data import preaggregation, query
 from decksite.database import db
 from magic import oracle, rotation, seasons
@@ -131,13 +132,13 @@ def cache_rotation() -> None:
         FROM
             rotation_runs AS rr
         LEFT JOIN
-            ({query.ranks()}) AS p ON rr.name = p.name
+            ({query.ranks_select()}) AS p ON rr.name = p.name
         WHERE
             rr.season_id = @next_season_id
         GROUP BY
             name
     """
-    where, msg = query.card_search_where('-f:pdall')
+    where, msg = decksite.data.clauses.card_search_where('-f:pdall')
     if msg:
         emsg = "Unexpected error generating card search where: '{msg}'"
         logger.error(emsg)

@@ -13,6 +13,7 @@ from magic.models import Deck
 from shared import logger
 from shared.container import Container
 from shared.decorators import retry_after_calling
+from shared.pd_exception import InvalidArgumentException
 
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
@@ -29,6 +30,7 @@ def load_achievements(p: Person | None, season_id: int | None, with_detail: bool
             desc.percent = a.percent(season_id=season_id)
             desc.leaderboard = a.leaderboard(season_id=season_id)
             desc.leaderboard_heading = a.leaderboard_heading()
+        desc.achievement_key = a.key
         achievements.append(desc)
     if with_detail:
         return achievements
@@ -48,6 +50,26 @@ def load_query(people_by_id: dict[int, Person], season_id: int | None) -> str:
         GROUP BY
             person_id
     """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
+
+def load_deck_ids(key: str, person_id: int | None, season_id: int | None) -> set[int]:
+    if key not in [a.key for a in Achievement.all_achievements]:
+        raise InvalidArgumentException(f"There is no achievement key '{key}'")
+    where = 'TRUE'
+    if person_id:
+        where += f' AND person_id = {int(person_id)}'
+    if season_id and int(season_id) > 0:
+        where += f' AND season_id = {int(season_id)}'
+    sql = f"""
+        SELECT
+            {key}_detail
+        FROM
+            _achievements
+        WHERE
+            {where}
+    """
+    if season_id and int(season_id) > 0:
+        sql += f'AND season_id = {season_id}'
+    return {int(num) for item in db().values(sql) if item is not None for num in item.split(',')}
 
 def preaggregate_achievements() -> None:
     preaggregation.preaggregate('_achievements', preaggregate_query())

@@ -626,6 +626,10 @@ def test_is_spikey() -> None:
     assert 'Balance' in where
     assert "name = 'Yawgmoth''s Will'" in where
 
+@pytest.mark.functional
+def test_is_outlaw() -> None:
+    do_functional_test('is:outlaw', ['Malcolm, Alluring Scoundrel', 'Shardless Agent', 'Faerie Vandal', 'Murderous Redcap', 'Faerie Dreamthief'], ['Ponder', 'Deep-Cavern Bat', 'Delver of Secrets'])
+
 def test_parse_season() -> None:
     assert search.parse_season('pdsall') == 'ALL'
     with pytest.raises(search.InvalidValueException):

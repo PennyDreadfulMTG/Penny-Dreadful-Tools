@@ -2,9 +2,9 @@ import ast
 import inspect
 import json
 import os
+from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any, Generic, Optional, TypeVar
-from collections.abc import Generator
 
 from shared.pd_exception import InvalidDataException
 

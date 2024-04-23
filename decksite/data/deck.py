@@ -1,7 +1,6 @@
 import hashlib
 import json
 import time
-
 from typing import TypedDict
 
 from decksite import deck_name

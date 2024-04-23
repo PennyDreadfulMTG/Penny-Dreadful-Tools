@@ -1,16 +1,16 @@
 import functools
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
-from decksite.data import query, preaggregation
+from decksite.data import preaggregation, query
 from decksite.database import db
 from magic import oracle, rotation, seasons
 from magic.models import Card
-from shared import logger, decorators
+from shared import decorators, logger
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import FuncType, T
-from shared.pd_exception import OperationalException, DatabaseException
+from shared.pd_exception import DatabaseException, OperationalException
 
 # A decksite-level cache of rotation information, primarily to make /rotation much faster.
 

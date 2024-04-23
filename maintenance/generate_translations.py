@@ -1,7 +1,7 @@
 import subprocess
+from collections.abc import Generator
 from distutils.dist import Distribution
 from typing import Any
-from collections.abc import Generator
 
 import pystache
 from babel.messages import frontend

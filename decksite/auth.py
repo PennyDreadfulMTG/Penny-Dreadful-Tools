@@ -1,6 +1,6 @@
+from collections.abc import Callable
 from functools import wraps
 from typing import Any
-from collections.abc import Callable
 
 from flask import redirect, request, session, url_for
 from werkzeug import wrappers

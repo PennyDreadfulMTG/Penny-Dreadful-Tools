@@ -1,8 +1,8 @@
 import re
 import xml.etree.ElementTree as etree
-from typing import TYPE_CHECKING, Optional
 from collections.abc import Callable
 from re import Match
+from typing import TYPE_CHECKING, Optional
 
 import flask
 import pystache

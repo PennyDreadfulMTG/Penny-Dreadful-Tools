@@ -1,7 +1,7 @@
 import json
 import math
-from typing import Any
 from collections.abc import Sequence
+from typing import Any
 
 import titlecase
 from flask import url_for

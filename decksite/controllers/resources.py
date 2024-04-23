@@ -2,7 +2,8 @@ from flask import Response, make_response, request
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import playability, rotation as rtn
+from decksite.data import playability
+from decksite.data import rotation as rtn
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
 from magic import card, oracle

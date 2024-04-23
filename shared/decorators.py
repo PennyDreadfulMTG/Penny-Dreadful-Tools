@@ -1,8 +1,8 @@
 import functools
 import logging
 import os
-from typing import Any, TypeVar
 from collections.abc import Callable
+from typing import Any, TypeVar
 
 import fasteners
 import six

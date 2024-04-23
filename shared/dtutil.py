@@ -2,8 +2,8 @@ import datetime
 import re
 from calendar import timegm
 from collections import OrderedDict
-from typing import Any, Optional
 from re import Match
+from typing import Any, Optional
 
 import feedparser
 import inflect

@@ -1,5 +1,5 @@
-from typing import TypeVar
 from collections.abc import Sequence
+from typing import TypeVar
 
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 

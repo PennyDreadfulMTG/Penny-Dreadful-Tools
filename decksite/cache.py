@@ -2,8 +2,8 @@ import binascii
 import datetime
 import functools
 import os
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 from cachelib.simple import SimpleCache
 from flask import make_response, request

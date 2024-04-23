@@ -1,6 +1,6 @@
 import warnings
-from typing import Any, cast
 from collections.abc import Iterable
+from typing import Any, cast
 
 import MySQLdb
 from MySQLdb import OperationalError

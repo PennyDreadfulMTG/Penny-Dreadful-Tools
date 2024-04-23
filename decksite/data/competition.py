@@ -1,6 +1,6 @@
 import datetime
-from typing import Any
 from collections.abc import Sequence
+from typing import Any
 
 from flask import url_for
 

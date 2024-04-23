@@ -2,9 +2,9 @@ import collections
 import datetime
 import logging
 import re
+from collections.abc import Callable, Sequence
 from copy import copy
 from typing import Union
-from collections.abc import Callable, Sequence
 
 import attr
 import whoosh

@@ -3,6 +3,7 @@ from typing import TypedDict
 from decksite.view import View
 from magic import fetcher
 
+
 class ResourceDescription(TypedDict):
     text: str
     url: str

@@ -1,8 +1,8 @@
 import itertools
 import re
-from typing import Any
 from collections.abc import Iterable
 from re import Match
+from typing import Any
 
 METACATS = ['Cardset', 'Collection', 'Deck Building', 'Duel Scene', 'Leagues', 'Play Lobby', 'Trade']
 CATEGORIES = ['Advantageous', 'Disadvantageous', 'Game Breaking', 'Avoidable Game Breaking', 'Graphical', 'Non-Functional ability']

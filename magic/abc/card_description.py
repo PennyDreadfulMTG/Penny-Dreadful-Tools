@@ -1,6 +1,5 @@
-from typing import Any
+from typing import Any, TypedDict
 
-from typing import TypedDict
 from typing_extensions import NotRequired
 
 SetCode = str

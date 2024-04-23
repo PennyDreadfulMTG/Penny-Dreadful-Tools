@@ -6,6 +6,7 @@ from typing_extensions import TypedDict
 
 from magic import layout
 
+
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 class ColumnDescription(TypedDict):
     type: str

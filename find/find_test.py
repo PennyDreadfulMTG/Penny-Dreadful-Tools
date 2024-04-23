@@ -1,7 +1,7 @@
 import pytest
 
 from find import search
-from magic import seasons, fetcher
+from magic import fetcher, seasons
 from magic.database import db
 
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.

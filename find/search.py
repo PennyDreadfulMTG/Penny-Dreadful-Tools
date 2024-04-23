@@ -9,7 +9,7 @@ from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
 from shared import configuration
 from shared.database import concat, sqlescape, sqllikeescape
-from shared.pd_exception import ParseException, DoesNotExistException
+from shared.pd_exception import DoesNotExistException, ParseException
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'

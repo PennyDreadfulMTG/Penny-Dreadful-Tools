@@ -1,6 +1,6 @@
 import time
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 from flask import current_app
 

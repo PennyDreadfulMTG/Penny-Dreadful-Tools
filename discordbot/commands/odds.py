@@ -1,8 +1,8 @@
 from interactions import Client
 from interactions.models import Extension, OptionType, slash_command, slash_option
+from scipy.stats import hypergeom
 
 from discordbot.command import MtgInteractionContext
-from scipy.stats import hypergeom
 
 
 class Odds(Extension):

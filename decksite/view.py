@@ -1,13 +1,12 @@
 import html
 import sys
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
 from flask import request, session, url_for
 from flask_babel import gettext, ngettext
-from typing import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare
@@ -19,6 +18,7 @@ from shared import dtutil, logger
 from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
+
 
 class SeasonInfoDescription(TypedDict, total=False):
     name: str

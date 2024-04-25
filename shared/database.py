@@ -7,8 +7,8 @@ from MySQLdb import OperationalError
 
 from shared import configuration, perf
 from shared.pd_exception import (DatabaseConnectionRefusedException, DatabaseException,
-                                 DatabaseMissingException, InvalidArgumentException,
-                                 LockNotAcquiredException, DatabaseNoSuchTableException)
+                                 DatabaseMissingException, DatabaseNoSuchTableException,
+                                 InvalidArgumentException, LockNotAcquiredException)
 
 ValidSqlArgumentDescription = Any
 

@@ -434,7 +434,7 @@ def preaggregate_playability() -> None:
             SUM(scc.num_decks) / SUM(sc.num_decks) AS playability
         FROM
             _legal_cards AS lc
-        INNER JOIN
+        LEFT JOIN
             _season_card_count AS scc ON lc.season_id = scc.season_id AND lc.name = scc.name
         INNER JOIN
             _season_count AS sc ON lc.season_id = sc.season_id

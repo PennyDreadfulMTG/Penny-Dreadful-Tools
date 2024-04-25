@@ -431,7 +431,7 @@ def preaggregate_playability() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             lc.name,
-            SUM(scc.num_decks) / SUM(sc.num_decks) AS playability
+            SUM(IFNULL(scc.num_decks, 0)) / SUM(sc.num_decks) AS playability
         FROM
             _legal_cards AS lc
         LEFT JOIN

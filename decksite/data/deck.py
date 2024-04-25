@@ -412,9 +412,9 @@ def prime_cache(d: Deck) -> None:
             deck_cache (deck_id, normalized_name, colors, colored_symbols, color_sort, legal_formats, wins, draws, losses, active_date, season_id)
         VALUES
             (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s
+        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s, season_id = %s
     """
-    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), season_id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s])
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), season_id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, season_id])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
 

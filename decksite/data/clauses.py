@@ -146,10 +146,21 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
         sort_order = str(sort_order)
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     order_by_rank = 'rank IS NULL ASC, rank ASC, name ASC'
-    if sort_by == 'hitInLastRun' and sort_order == 'ASC':
-        return f"IF(status = 'Legal', -hits, -{rotation.TOTAL_RUNS}) DESC, hits DESC, {order_by_rank}"
-    if sort_by == 'hitInLastRun' and sort_order == 'DESC':
-        return f"IF(status = 'Not Legal', hits, 0) DESC, hits ASC, {order_by_rank}"
+    if sort_by == 'hitInLastRun':
+        return f"""
+            CASE
+                WHEN status = 'Undecided' THEN 0
+                WHEN status = 'Legal' THEN 1
+                ELSE 2
+            END {sort_order},
+            CASE
+                WHEN status = 'Undecided' THEN -hits
+                WHEN status = 'Legal' THEN hits
+                ELSE hits
+            END {sort_order},
+            hit_in_last_run {sort_order},
+            {order_by_rank}
+        """
     if sort_by == 'rank':
         return f"rank IS NULL {sort_order}, rank {sort_order}, IF(status = 'Legal', hits, {rotation.TOTAL_RUNS}) ASC, hits DESC, name ASC"
     sort_options = {

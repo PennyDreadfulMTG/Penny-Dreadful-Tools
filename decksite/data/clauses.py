@@ -158,7 +158,7 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
                 WHEN status = 'Legal' THEN hits
                 ELSE hits
             END {sort_order},
-            hit_in_last_run {sort_order},
+            hit_in_last_run DESC,
             {order_by_rank}
         """
     if sort_by == 'rank':

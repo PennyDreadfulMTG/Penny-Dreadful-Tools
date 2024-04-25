@@ -8,8 +8,7 @@ from werkzeug.exceptions import BadRequest
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card
-from decksite.data import clauses
+from decksite.data import card, clauses
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps

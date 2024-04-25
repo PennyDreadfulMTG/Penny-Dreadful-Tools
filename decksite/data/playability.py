@@ -1,10 +1,15 @@
 from decksite.data import preaggregation, query
 from decksite.database import db
+from find import search
+from shared import logger
 from shared.container import Container
+from shared.database import sqlescape
 from shared.decorators import retry_after_calling
+from shared.pd_exception import DatabaseNoSuchTableException
 
 
 def preaggregate() -> None:
+    preaggregate_legal_cards()
     preaggregate_season_count()
     preaggregate_season_archetype_count()
     preaggregate_season_card_count()
@@ -82,6 +87,36 @@ def rank() -> dict[str, int]:
     sql = query.ranks_select()
     return {r['name']: r['rank'] for r in db().select(sql)}
 
+def preaggregate_legal_cards() -> None:
+    sql = 'SELECT number FROM season'
+    all_season_ids = set(db().values(sql))
+    sql = 'SELECT DISTINCT season_id FROM _legal_cards'
+    try:
+        found = set(db().values(sql))
+    except DatabaseNoSuchTableException:
+        logger.info("Didn't find _legal_cards so creating it")
+        sql = """
+                CREATE TABLE IF NOT EXISTS _legal_cards (
+                    season_id INT NOT NULL,
+                    name VARCHAR(190) NOT NULL,
+                    PRIMARY KEY (season_id, name)
+                ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+            """
+        db().execute(sql)
+        found = set()
+    missing = all_season_ids - found
+    if not missing:
+        return
+    for season_id in missing:
+        logger.info(f'Adding season {season_id} to _legal_cards')
+        try:
+            legal_cards = search.search(f'f:pd{season_id}')
+        except search.InvalidValueException as e:
+            logger.error(f'Not able to find the legal cards for season {season_id} so skipping', e)
+            continue
+        sql = 'INSERT INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in legal_cards)
+        db().execute(sql)
+
 def preaggregate_season_count() -> None:
     table = '_season_count'
     season_join = query.season_join()
@@ -141,7 +176,8 @@ def preaggregate_season_card_count() -> None:
             season_id INT,
             num_decks INT,
             PRIMARY KEY (name, season_id),
-            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            INDEX idx_name_season_id (name, season_id) -- This is crucial to the performance of the JOIN to _legal_cards we do when creating _playability
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,
@@ -394,13 +430,15 @@ def preaggregate_playability() -> None:
             PRIMARY KEY (name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            scc.name,
+            lc.name,
             SUM(scc.num_decks) / SUM(sc.num_decks) AS playability
         FROM
-            _season_card_count AS scc
+            _legal_cards AS lc
         INNER JOIN
-            _season_count AS sc ON scc.season_id = sc.season_id
+            _season_card_count AS scc ON lc.season_id = scc.season_id AND lc.name = scc.name
+        INNER JOIN
+            _season_count AS sc ON lc.season_id = sc.season_id
         GROUP BY
-            scc.name
+            lc.name;
     """
     preaggregation.preaggregate(table, sql)

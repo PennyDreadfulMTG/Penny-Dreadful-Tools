@@ -7,8 +7,8 @@ from MySQLdb import OperationalError
 
 from shared import configuration, perf
 from shared.pd_exception import (DatabaseConnectionRefusedException, DatabaseException,
-                                 DatabaseMissingException, InvalidArgumentException,
-                                 LockNotAcquiredException)
+                                 DatabaseMissingException, DatabaseNoSuchTableException,
+                                 InvalidArgumentException, LockNotAcquiredException)
 
 ValidSqlArgumentDescription = Any
 
@@ -60,6 +60,8 @@ class Database():
                 return (0, [])  # We don't care if an INSERT IGNORE INTO didn't do anything.
             raise DatabaseException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
         except MySQLdb.Error as e:
+            if e.args[0] == 1146:
+                raise DatabaseNoSuchTableException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
             if e.args[0] == 2006:
                 self.connect()
             raise DatabaseException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e

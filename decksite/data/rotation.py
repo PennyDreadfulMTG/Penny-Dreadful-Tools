@@ -60,8 +60,8 @@ def load_rotation_count(where: str = 'TRUE') -> int:
     try:
         return db().value(f'SELECT COUNT(*) FROM _rotation WHERE {where}')
     except DatabaseException as e:
-        logger.error("Failed to load rotation count", e)
-        return []
+        logger.error('Failed to load rotation count', e)
+        return 0
 
 
 def load_rotation_summary() -> tuple[int, int]:

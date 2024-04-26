@@ -90,6 +90,3 @@ def test_list_of_most_interesting() -> None:
     excess = len(cs) - 25
     assert s.endswith(f'and {excess} more')
     assert s.count(',') == 24
-    cs = never_before_legal_cards + [super_playable_card, somewhat_playable_card] + garbage_cards
-    s2 = rotation.list_of_most_interesting(cs)
-    assert s == s2

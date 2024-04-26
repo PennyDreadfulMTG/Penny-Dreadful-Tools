@@ -50,6 +50,7 @@ PROFANITY_BLACKLIST = [
     'erections',
     'hoe',
     'hoes',
+    'greasefag',
 ]
 
 ABBREVIATIONS = {

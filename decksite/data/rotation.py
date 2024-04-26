@@ -120,7 +120,7 @@ def cache_rotation() -> None:
         SELECT
             rr.name,
             COUNT(*) AS hits,
-            ROUND(ROUND(COUNT(*) / @runs_completed, 2) * 100) AS percent,
+            ROUND(COUNT(*) / @runs_completed * 100) AS percent,
             GREATEST(0, @hits_required - COUNT(*)) AS hits_needed,
             IF(@runs_remaining = 0, 0, ROUND((GREATEST(0, @hits_required - COUNT(*)) / @runs_remaining) * 100)) AS percent_needed,
             p.rank,

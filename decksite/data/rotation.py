@@ -15,8 +15,8 @@ from shared.pd_exception import DatabaseException, OperationalException
 
 # A decksite-level cache of rotation information, primarily to make /rotation much faster.
 
-# A decorator that skips execution of everything in this module if it's not currently rotation time.
-# To test all this stuff set always_show_rotation to True in config.json.
+# A decorator that skips execution of some things in this module if it's not currently rotation time.
+# To test this stuff set always_show_rotation to True in config.json.
 def if_not_in_rotation(val: T) -> Callable[[FuncType[T]], FuncType[T]]:
     def decorator(decorated_func: FuncType[T]) -> FuncType[T]:
         @functools.wraps(decorated_func)
@@ -27,7 +27,6 @@ def if_not_in_rotation(val: T) -> Callable[[FuncType[T]], FuncType[T]]:
         return wrapper
     return decorator
 
-@if_not_in_rotation([])
 def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> list[Card]:
     sql = f"""
         SELECT
@@ -57,12 +56,14 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
         c.update(cards[c.name])
     return cs
 
-@if_not_in_rotation(0)
 def load_rotation_count(where: str = 'TRUE') -> int:
-    return db().value(f'SELECT COUNT(*) FROM _rotation WHERE {where}')
+    try:
+        return db().value(f'SELECT COUNT(*) FROM _rotation WHERE {where}')
+    except DatabaseException as e:
+        logger.error('Failed to load rotation count', e)
+        return 0
 
 
-@if_not_in_rotation((0, 0))
 def load_rotation_summary() -> tuple[int, int]:
     sql = 'SELECT MAX(hits) AS runs, COUNT(*) AS num_cards FROM _rotation'
     try:

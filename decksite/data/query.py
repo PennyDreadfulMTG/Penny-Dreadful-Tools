@@ -60,7 +60,10 @@ def ranks_select() -> str:
     return """
         SELECT
             name,
-            ROW_NUMBER() OVER (ORDER BY playability DESC) AS rank
+            CASE
+                WHEN playability = 0 THEN NULL
+                ELSE ROW_NUMBER() OVER (ORDER BY playability DESC)
+            END AS rank
         FROM
             _playability
     """

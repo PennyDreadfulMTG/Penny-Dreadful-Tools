@@ -1,15 +1,16 @@
 <section>
     <p>{{rotation_msg}}</p>
     {{#runs}}
+        {{#note}}
+            <p>{{note}}</p>
+        {{/note}}
         <p>{{runs}} ({{runs_percent}}%) of {{total_runs}} runs completed. {{num_cards}} cards have hits.</p>
     {{/runs}}
+    {{#runs}}
+            <div
+                class="rotationtable"
+                data-page-size="{{page_size}}">
+            </div>
+            {{> rotationkey}}
+    {{/runs}}
 </section>
-{{#runs}}
-    <section>
-        <div
-            class="rotationtable"
-            data-page-size="{{page_size}}">
-        </div>
-        {{> rotationkey}}
-    </section>
-{{/runs}}

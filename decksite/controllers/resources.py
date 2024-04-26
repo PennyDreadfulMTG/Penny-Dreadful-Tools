@@ -6,14 +6,14 @@ from decksite.data import playability
 from decksite.data import rotation as rtn
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
-from magic import card, oracle
+from magic import card, oracle, rotation as rot
 
 
 @cached()
 @APP.route('/rotation/')
 def rotation() -> str:
     runs, num_cards = rtn.load_rotation_summary()
-    view = Rotation(runs, num_cards)
+    view = Rotation(rot.in_rotation(), runs, num_cards)
     return view.page()
 
 

@@ -16,7 +16,8 @@ class Bug(Extension):
             text += f'\n\n{body}'
         issue = repo.create_issue(text, str(ctx.author))
         if issue is None:
-            await ctx.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
+            msg = f'{ctx.author.mention}: Unable to create an issue. Please report at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>'
+            await ctx.send(msg)
         else:
             await ctx.send(f'Issue has been reported at <{issue.html_url}>')
 

@@ -31,6 +31,7 @@ WHITELIST = [
     'Blue Man Group',
     'No Green Jeskai Ascendancy',
     'Orzhov Tokens 1.1: Not Even Sure if I Need the Black',
+    'Happy Season 33!',
 ]
 
 PROFANITY_WHITELIST = [

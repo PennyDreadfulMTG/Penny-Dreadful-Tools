@@ -6,7 +6,8 @@ from decksite.data import playability
 from decksite.data import rotation as rtn
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
-from magic import card, oracle, rotation as rot
+from magic import card, oracle
+from magic import rotation as rot
 
 
 @cached()

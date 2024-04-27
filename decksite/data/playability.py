@@ -188,6 +188,9 @@ def preaggregate_season_card_count() -> None:
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
         {season_join}
+        -- Exclude cards that were not legal in the season, even if they are somehow in the database under that season. See #9121.
+        INNER JOIN
+            _legal_cards AS lc ON season.season_id = lc.season_id AND dc.card = lc.name
         WHERE
             NOT dc.sideboard
         AND
@@ -223,6 +226,9 @@ def preaggregate_season_archetype_card_count() -> None:
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
         {season_join}
+        -- Exclude cards that were not legal in the season, even if they are somehow in the database under that season. See #9121.
+        INNER JOIN
+            _legal_cards AS lc ON season.season_id = lc.season_id AND dc.card = lc.name
         WHERE
             NOT dc.sideboard
         AND

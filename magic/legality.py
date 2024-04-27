@@ -55,6 +55,8 @@ def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors
     elif card_count.values() and max(card_count.values()) > 1:
         add_error(errors, 'Commander', 'Legality_General', 'Deck is not Singleton.')
         formats_to_discard.add('Commander')
+        add_error(errors, 'Oathbreaker', 'Legality_General', 'Deck is not Singleton.')
+        formats_to_discard.add('Oathbreaker')
     for c in set(d.all_cards()):
         for f in formats_to_check:
             if f not in c.legalities.keys() or c.legalities[f] == 'Banned':

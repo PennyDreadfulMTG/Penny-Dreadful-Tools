@@ -24,7 +24,6 @@ def test_legal_formats() -> None:
     assert 'Legacy' not in formats
 
     d.maindeck = [CardRef('Swamp', 55), CardRef('Think Twice', 5)]
-    formats = legality.legal_formats(d)
     assert len(d.all_cards()) == 60
     assert len(legality.legal_formats(d)) == 0
 
@@ -32,9 +31,9 @@ def test_legal_formats() -> None:
     formats = legality.legal_formats(d)
     assert 'Legacy' in formats
     assert 'Modern' in formats
+    assert 'Oathbreaker' not in formats
 
     d.sideboard = [CardRef('Swamp', 15), CardRef('Think Twice', 1)]
-    formats = legality.legal_formats(d)
     assert len(legality.legal_formats(d)) == 0
 
     d.maindeck = [CardRef('Swamp', 56), CardRef('Fork', 4)]
@@ -42,6 +41,7 @@ def test_legal_formats() -> None:
     formats = legality.legal_formats(d)
     assert 'Legacy' in formats
     assert 'Modern' not in formats
+    assert 'Oathbreaker' not in formats
 
     d.maindeck = [CardRef('Swamp', 60)]
     d.sideboard = [CardRef('Swamp', 15)]

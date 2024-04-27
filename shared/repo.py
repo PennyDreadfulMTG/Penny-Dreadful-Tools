@@ -106,7 +106,8 @@ def create_issue(content: str,
                 pass
         issue = git_repo.create_issue(title=title, body=body, labels=labels)
         return issue
-    except GithubException:
+    except GithubException as e:
+        print(f'Problem creating issue: {e}', file=sys.stderr)
         return None
 
 def safe_data(data: dict[str, str]) -> dict[str, str]:

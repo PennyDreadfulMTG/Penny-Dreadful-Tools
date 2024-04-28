@@ -1528,12 +1528,16 @@ then
   echo "$yaml" >> "$upload_file"
 fi
 
+echo "upload file: $ft_network $network"
+
 if [ "$ft_network" == "1" ];
 then
   i="woff|eot|otf"  # fonts
   i="$i|gif|png|jpg|jpeg|psd"  # images
   i="$i|ptt|pptx|numbers|pages|md|txt|xlsx|docx|doc|pdf|csv"  # docs
   i="$i|.gitignore"  # supporting docs
+
+  echo "inner"
 
   if [ "$ft_html" != "1" ];
   then
@@ -1544,6 +1548,8 @@ then
   then
     i="$i|yml|yaml"
   fi
+
+  echo "$network $i $upload_file"
 
   echo "$network" | grep -vwE "($i)$" >> "$upload_file"
 fi

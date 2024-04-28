@@ -1835,7 +1835,7 @@ else
     say "${e}->${x}  Pinging Codecov"
     say "$url/upload/v4?$queryNoToken"
     # shellcheck disable=SC2086,2090
-    res=$(curl $curl_s -X POST $cacert \
+    res=$(curl -vvv $curl_s -X POST $cacert \
           --retry 5 --retry-delay 2 --connect-timeout 2 \
           -H 'X-Reduced-Redundancy: false' \
           -H 'X-Content-Type: application/x-gzip' \
@@ -1854,7 +1854,7 @@ else
       say "${s3target}"
 
       # shellcheck disable=SC2086
-      s3=$(curl -fiX PUT \
+      s3=$(curl -vvv -fiX PUT \
           --data-binary @"$upload_file.gz" \
           -H 'Content-Type: application/x-gzip' \
           -H 'Content-Encoding: gzip' \
@@ -1881,7 +1881,7 @@ else
   say "${e}==>${x} Uploading to Codecov"
 
   # shellcheck disable=SC2086,2090
-  res=$(curl -X POST $cacert \
+  res=$(curl -vvv -X POST $cacert \
         --data-binary @"$upload_file.gz" \
         --retry 5 --retry-delay 2 --connect-timeout 2 \
         -H 'Content-Type: text/plain' \

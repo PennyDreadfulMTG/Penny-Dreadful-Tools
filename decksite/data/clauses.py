@@ -2,6 +2,7 @@ from decksite.data import achievements
 from decksite.data.achievements import PerfectRunCrusher
 from decksite.data.query import person_query
 from decksite.deck_type import DeckType
+from decksite.tournament import CompetitionFlag
 from find import search
 from magic import rotation
 from shared.database import sqlescape
@@ -200,6 +201,9 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
         parts.append(f'd.person_id = {person_id}')
     if args.get('cardName'):
         parts.append(card_where(args.get('cardName', '')))
+    if args.get('competitionFlagId'):
+        competition_flag_id = CompetitionFlag(int(args.get('competitionFlagId', ''))).value
+        parts.append(f'c.competition_flag_id = {competition_flag_id} AND d.finish = 1')
     if args.get('competitionId'):
         competition_id = int(args.get('competitionId', ''))
         parts.append(f'c.id = {competition_id}')

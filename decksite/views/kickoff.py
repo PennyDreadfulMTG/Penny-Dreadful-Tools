@@ -1,5 +1,6 @@
 from flask import url_for
 
+from decksite.tournament import CompetitionFlag
 from decksite.view import View
 from magic import tournaments
 from shared import dtutil
@@ -19,6 +20,15 @@ class KickOff(View):
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
         self.prizes = tournaments.kick_off_prizes()
+
+        # Set up the "Past Winners" table
+        self.past_winners = {
+            'competition_flag_id': CompetitionFlag.KICK_OFF.value,
+            'season_id': 0,  # We want decks from all seasons, not the current season
+            'show_season_icon': True,
+            'hide_top8': True,
+            'show_archetype': True,
+        }
 
     def page_title(self) -> str:
         return 'The Season Kick Off'

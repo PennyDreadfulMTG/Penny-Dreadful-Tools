@@ -1,5 +1,5 @@
 from decksite.data import deck
-from magic.models import Deck, Card
+from magic.models import Card, Deck
 from shared.container import Container
 
 

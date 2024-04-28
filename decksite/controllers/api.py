@@ -119,6 +119,7 @@ def decks_api() -> Response:
             'archetypeId': <int?>,
             'cardName': <str?>,
             'competitionId': <int?>,
+            'competitionFlagId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,

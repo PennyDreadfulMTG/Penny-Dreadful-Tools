@@ -42,6 +42,7 @@ def load_query(people_by_id: dict[int, Person], season_id: int | None) -> str:
     return """
         SELECT
             person_id AS id,
+            season_id,
             {columns}
         FROM
             _achievements AS a
@@ -262,7 +263,7 @@ class Achievement:
         """
         leaderboard = []
         for row in db().select(sql):
-            c = Container(row)
+            c = Container(row | {'season_id': season_id})
             c.score = c.points
             leaderboard.append(c)
 

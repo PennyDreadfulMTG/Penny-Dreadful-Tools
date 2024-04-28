@@ -179,7 +179,8 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
             -- Points are complicated because tournaments count entries while leagues do not and leagues count 5-0s but tournaments do not.
             (CASE WHEN ct.name <> 'League' THEN COUNT(DISTINCT d.id) ELSE 0 END) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) + COUNT(DISTINCT CASE WHEN five_ohs.five_oh AND ct.name = 'League' THEN d.id ELSE NULL END) AS points,
-            ROW_NUMBER() OVER (ORDER BY points DESC, wins DESC, person) AS finish
+            ROW_NUMBER() OVER (ORDER BY points DESC, wins DESC, person) AS finish,
+            season.season_id
         FROM
             competition AS c
         INNER JOIN

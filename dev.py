@@ -112,7 +112,7 @@ def upload_coverage() -> None:
         python3 = local['python3']
         python3['-m', 'coverage', 'xml', '-i']
         bash = local['bash']
-        bash['codecov.sh'] & FG
+        bash['codecov.sh', '-v'] & FG
         # Sometimes the coverage uploader has issues.  Just fail silently, it's not that important
     except ProcessExecutionError as e:
         print(e)

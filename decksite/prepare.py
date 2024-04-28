@@ -65,9 +65,9 @@ def prepare_deck(d: Deck) -> None:
     if d.get('colors') is not None:
         d.colors_safe = colors_html(d.colors, d.colored_symbols)
     if d.get('mtgo_username'):
-        d.person_url = f'/people/{d.mtgo_username}/'
+        d.person_url = url_for('seasons.person', mtgo_username=d.mtgo_username, season_id=d.season_id)
     else:
-        d.person_url = f'/people/id/{d.person_id}/'
+        d.person_url = url_for('seasons.person', person_id=d.person_id, season_id=d.season_id)
     d.date_sort = dtutil.dt2ts(d.active_date)
     d.display_date = dtutil.display_date(d.active_date)
     d.show_record = d.wins or d.losses or d.draws
@@ -83,7 +83,7 @@ def prepare_deck(d: Deck) -> None:
     d.source_is_external = not d.source_name == 'League'
     d.comp_row_len = len(f'{d.competition_name} (Piloted by {d.person}')
     if d.get('archetype_id', None):
-        d.archetype_url = f'/archetypes/{d.archetype_id}/'
+        d.archetype_url = url_for('seasons.archetype', archetype_id=d.archetype_id, season_id=d.season_id)
     # We might be getting '43%'/'' from cache or '43'/None from the db. Cope with all possibilities.
     # It might be better to use display_omw and omw as separate properties rather than overwriting the numeric value.
     if d.get('omw') is None or d.omw == '':
@@ -120,7 +120,7 @@ def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
     for entry in leaderboard:
         if entry.get('finish', 9) <= 8:
             entry.position = chr(9311 + entry.finish)  # ①, ②, ③, …
-        entry.url = url_for('.person', person_id=entry.person_id)
+        entry.url = url_for('seasons.person', person_id=entry.person_id, season_id=entry.season_id)
 
 def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
     for m in ms:

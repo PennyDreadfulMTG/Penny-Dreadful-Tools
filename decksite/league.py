@@ -42,6 +42,7 @@ class SignUpForm(Form):
                 for c in d.sideboard:
                     recent_deck['sb'].append('{n} {c}'.format(n=c['n'], c=c['name']))
                 self.recent_decks.append({'name': d['name'], 'list': json.dumps(recent_deck)})
+            self.has_recent_decks = len(self.recent_decks) > 0
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
         self.deck = Container()

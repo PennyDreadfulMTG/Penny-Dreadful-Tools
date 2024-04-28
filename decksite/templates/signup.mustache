@@ -14,7 +14,7 @@
                 <input {{#form.errors.mtgo_username}}class="error"{{/form.errors.mtgo_username}} type="text" name="mtgo_username" id="mtgo_username" value="{{form.mtgo_username}}">
                 <div class="error">{{form.errors.mtgo_username}}</div>
             </div>
-            {{#person_id}}
+            {{#form.has_recent_decks}}
                 <div>
                     <label for="name">{{TT_YOUR_RECENT_DECKS}}</label>
                         <select id="signup_recent_decks">
@@ -24,7 +24,7 @@
                             {{/form.recent_decks}}
                         </select>
                 </div>
-            {{/person_id}}
+            {{/form.has_recent_decks}}
             <div>
                 <label for="name">{{TT_DECK_NAME}}</label>
                 <input {{#form.errors.name}}class="error"{{/form.errors.name}} type="text" name="name" id="name" value="{{form.name}}">

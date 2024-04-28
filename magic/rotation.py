@@ -189,8 +189,8 @@ def list_of_most_interesting(cs: list[Card]) -> str:
     if ranks:
         cs.sort(key=lambda c: (ranks.get(c.name) or 999999, c.name))
     if len(cs) > max_shown:
-        return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
-    return ', '.join(c.name for c in cs)
+        return ' • '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
+    return ' • '.join(c.name for c in cs)
 
 def runs_percentage(runs: int) -> int:
     return to_percent(runs / TOTAL_RUNS)

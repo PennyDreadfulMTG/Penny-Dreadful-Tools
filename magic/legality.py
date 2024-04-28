@@ -35,8 +35,9 @@ def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors
             add_error(errors, f, 'Legality_General', 'You have more than 15 cards in your sideboard.')
             formats_to_discard.add(f)
     if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) != 100:
-        add_error(errors, 'Commander', 'General', 'Incorrect deck size.')
-        formats_to_discard.add('Commander')
+        for fmt in {'Commander', 'Duel'}:
+            add_error(errors, fmt, 'General', 'Incorrect deck size.')
+            formats_to_discard.add(fmt)
     card_count: dict[str, int] = {}
     for c in d.all_cards():
         if not c.type_line.startswith('Basic ') and 'A deck can have any number of cards named' not in c.oracle_text:
@@ -53,10 +54,9 @@ def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors
                     add_error(errors, f, 'Legality_Too_Many', card)
                 formats_to_discard.add(f)
     elif card_count.values() and max(card_count.values()) > 1:
-        add_error(errors, 'Commander', 'Legality_General', 'Deck is not Singleton.')
-        formats_to_discard.add('Commander')
-        add_error(errors, 'Oathbreaker', 'Legality_General', 'Deck is not Singleton.')
-        formats_to_discard.add('Oathbreaker')
+        for fmt in {'Commander', 'Duel', 'Oathbreaker'}:
+            add_error(errors, fmt, 'Legality_General', 'Deck is not Singleton.')
+            formats_to_discard.add(fmt)
     for c in set(d.all_cards()):
         for f in formats_to_check:
             if f not in c.legalities.keys() or c.legalities[f] == 'Banned':

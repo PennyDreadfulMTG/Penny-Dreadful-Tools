@@ -1440,6 +1440,10 @@ echo "Looking at network"
 if [ "$ft_network" == "1" ];
 then
   say "${e}==>${x} Detecting git/mercurial file structure"
+  echo "git_root $git_root"
+  echo "git_ls_files_recurse_submodules_o $git_git_ls_files_recurse_submodules_o"
+  bakertout=$(cd "$git_root" && git ls-files $git_ls_files_recurse_submodules_o)
+  echo $bakertout
   network=$(cd "$git_root" && git ls-files $git_ls_files_recurse_submodules_o 2>/dev/null || hg locate 2>/dev/null || echo "")
   if [ "$network" = "" ];
   then

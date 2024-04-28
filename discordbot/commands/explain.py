@@ -319,7 +319,7 @@ def promo_explanation() -> tuple[str, dict[str, str]]:
     ]
     legal_cheap_promos = [c for c in oracle.load_cards(have_cheap_promos) if c.pd_legal]
     if len(legal_cheap_promos) > 0:
-        explanation += ' Affected cards include: ' + ', '.join(c.name for c in legal_cheap_promos)
+        explanation += ' Affected cards include: ' + ' • '.join(c.name for c in legal_cheap_promos)
     return (explanation, {})
 
 def setup(bot: Client) -> None:

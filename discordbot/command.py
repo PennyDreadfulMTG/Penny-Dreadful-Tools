@@ -326,7 +326,7 @@ class MtgMixin:
         if len(cards) == 1:
             text = await single_card_text_internal(self.bot, cards[0], legality_format)
         else:
-            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=(emoji.info_emoji(card, legality_format=legality_format)), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+            text = ' • '.join('{name} {legal} {price}'.format(name=card.name, legal=(emoji.info_emoji(card, legality_format=legality_format)), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
         if len(cards) > MAX_CARDS_SHOWN:
             image_file = None
         else:

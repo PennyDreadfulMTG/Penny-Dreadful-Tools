@@ -49,7 +49,7 @@ def gatherer_image(printing: Printing) -> str | None:
     return None
 
 def download_bluebones_image(cards: list[Card], filepath: str) -> bool:
-    print('Trying to get image for {cards}'.format(cards=', '.join(c.name for c in cards)))
+    print('Trying to get image for {cards}'.format(cards=' • '.join(c.name for c in cards)))
     try:
         fetch_tools.store(bluebones_image(cards), filepath)
     except FetchException as e:

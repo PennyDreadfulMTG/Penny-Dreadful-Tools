@@ -4,7 +4,7 @@ import os
 import random
 import re
 import string
-from typing import Any, Dict, List, Optional, Set, Union, overload
+from typing import Any, overload
 
 from shared.pd_exception import InvalidArgumentException
 from shared.settings import (CONFIG, BoolSetting, IntSetting, ListSetting, StrSetting, fail,
@@ -41,6 +41,8 @@ pd_server_id = IntSetting('pd_server_id', 207281932214599682)
 # === Magic ===
 # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
 card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
+# Path to list of is:spikey cards.
+is_spikey_file = StrSetting('is_spikey_file', './.is-spikey.txt')
 # Block Scryfall updates when things are broken
 prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
 
@@ -72,7 +74,7 @@ mysql_passwd = StrSetting('mysql_passwd', '')
 oauth2_client_id = StrSetting('oauth2_client_id', '')
 oauth2_client_secret = StrSetting('oauth2_client_secret', '')
 
-DEFAULTS: Dict[str, Any] = {
+DEFAULTS: dict[str, Any] = {
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
     # mysql database name.  Used by decksite tests.
@@ -132,7 +134,7 @@ DEFAULTS: Dict[str, Any] = {
     'mos_premodern_channel_id': '921967538907271258',
 }
 
-def get_optional_str(key: str) -> Optional[str]:
+def get_optional_str(key: str) -> str | None:
     val = get(key)
     if val is None:
         return None
@@ -146,7 +148,7 @@ def get_str(key: str) -> str:
         raise fail(key, val, str)
     return val
 
-def get_optional_int(key: str) -> Optional[int]:
+def get_optional_int(key: str) -> int | None:
     val = get(key)
     if val is None:
         return None
@@ -164,7 +166,7 @@ def get_int(key: str) -> int:
         raise fail(key, val, int)
     return val
 
-def get_float(key: str) -> Optional[float]:
+def get_float(key: str) -> float | None:
     val = get(key)
     if val is None:
         return None
@@ -179,7 +181,7 @@ def get_float(key: str) -> Optional[float]:
 
     raise fail(key, val, float)
 
-def get_list(key: str) -> List[str]:
+def get_list(key: str) -> list[str]:
     val = get(key)
     if val is None:
         return []
@@ -187,9 +189,9 @@ def get_list(key: str) -> List[str]:
         return val
     if isinstance(val, str):
         return val.split(',')
-    raise fail(key, val, List[str])
+    raise fail(key, val, list[str])
 
-def get(key: str) -> Optional[Union[str, List[str], int, float]]:
+def get(key: str) -> str | list[str] | int | float | None:
     if key in CONFIG:
         return CONFIG[key]
     subkey = RE_SUBKEY.match(key)
@@ -202,7 +204,7 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         cfg = {}
     if key in os.environ:
         cfg[key] = os.environ[key]
-        print('CONFIG: {0}={1}'.format(key, cfg[key]))
+        print(f'CONFIG: {key}={cfg[key]}')
         return cfg[key]
     if key in cfg:
         CONFIG.update(cfg)
@@ -214,9 +216,9 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         if inspect.isfunction(cfg[key]):  # If default value is a function, call it.
             cfg[key] = cfg[key]()
     else:
-        raise InvalidArgumentException('No default or other configuration value available for {key}'.format(key=key))
+        raise InvalidArgumentException(f'No default or other configuration value available for {key}')
 
-    print('CONFIG: {0}={1}'.format(key, cfg[key]))
+    print(f'CONFIG: {key}={cfg[key]}')
     save_cfg(cfg)
     return cfg[key]
 
@@ -233,10 +235,10 @@ def write(key: str, value: float) -> float:
     pass
 
 @overload
-def write(key: str, value: Set[str]) -> Set[str]:
+def write(key: str, value: set[str]) -> set[str]:
     pass
 
-def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union[str, List[str], Set[str], int, float]:
+def write(key: str, value: str | list[str] | set[str] | int | float) -> str | list[str] | set[str] | int | float:
     subkey = RE_SUBKEY.match(key)
     filename = 'config.json'
     fullkey = key
@@ -255,7 +257,7 @@ def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union
     cfg[key] = value
     CONFIG[fullkey] = value
 
-    print('CONFIG: {0}={1}'.format(fullkey, cfg[key]))
+    print(f'CONFIG: {fullkey}={cfg[key]}')
     save_cfg(cfg)
     return cfg[key]
 

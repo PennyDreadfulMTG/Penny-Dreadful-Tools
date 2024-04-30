@@ -1,7 +1,6 @@
-from typing import List
-
 from flask import url_for
 
+from decksite.tournament import CompetitionFlag
 from decksite.view import View
 from magic import tournaments
 from magic.models import Deck
@@ -9,9 +8,9 @@ from shared import dtutil
 
 
 class PD500(View):
-    def __init__(self, tournament_winning_decks: List[Deck]) -> None:
+    def __init__(self, tournament_winning_decks: list[Deck]) -> None:
         super().__init__()
-        people = set(d.person for d in tournament_winning_decks)
+        people = {d.person for d in tournament_winning_decks}
         self.people_with_byes = [{'person': person, 'url': url_for('.person', mtgo_username=person)} for person in people]
         self.people_with_byes = sorted(self.people_with_byes, key=lambda k: k['person'])
         pd500_date = tournaments.pd500_date()
@@ -25,6 +24,15 @@ class PD500(View):
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
         self.prizes = tournaments.pd500_prizes()
+
+        # Set up the "Past Winners" table
+        self.past_winners = {
+            'competition_flag_id': CompetitionFlag.PENNY_DREADFUL_500.value,
+            'season_id': 0,  # We want decks from all seasons, not the current season
+            'show_season_icon': True,
+            'hide_top8': True,
+            'show_archetype': True,
+        }
 
     def page_title(self) -> str:
         return 'The Penny Dreadful 500'

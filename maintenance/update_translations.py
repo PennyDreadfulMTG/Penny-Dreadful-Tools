@@ -7,6 +7,7 @@ from shared import configuration, logger
 
 from . import validate_translations
 
+
 def ad_hoc() -> None:
     api_key = configuration.get('poeditor_api_key')
     if api_key is None:
@@ -22,7 +23,7 @@ def ad_hoc() -> None:
             if not os.path.exists(path):
                 os.makedirs(path)
             pofile = os.path.join(path, 'messages.po')
-            logger.warning('Saving to {0}'.format(pofile))
+            logger.warning(f'Saving to {pofile}')
             if os.path.exists(pofile):
                 os.remove(pofile)
             client.export(project_id='162959', language_code=locale['code'],

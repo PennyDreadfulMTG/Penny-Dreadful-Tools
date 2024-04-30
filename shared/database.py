@@ -1,13 +1,14 @@
 import warnings
-from typing import Any, Dict, Iterable, List, Optional, Tuple, cast
+from collections.abc import Iterable
+from typing import Any, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
 from shared.pd_exception import (DatabaseConnectionRefusedException, DatabaseException,
-                                 DatabaseMissingException, InvalidArgumentException,
-                                 LockNotAcquiredException)
+                                 DatabaseMissingException, DatabaseNoSuchTableException,
+                                 InvalidArgumentException, LockNotAcquiredException)
 
 ValidSqlArgumentDescription = Any
 
@@ -19,7 +20,7 @@ class Database():
         self.port = configuration.mysql_port.value
         self.user = configuration.mysql_user.value
         self.passwd = configuration.mysql_passwd.value
-        self.open_transactions: List[str] = []
+        self.open_transactions: list[str] = []
         self.connect()
 
     def connect(self) -> None:
@@ -28,26 +29,26 @@ class Database():
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
             self.execute('SET NAMES utf8mb4')
             try:
-                self.execute('USE {db}'.format(db=self.name))
+                self.execute(f'USE {self.name}')
             except DatabaseException:
-                print('Creating database {db}'.format(db=self.name))
-                self.execute('CREATE DATABASE {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'.format(db=self.name))
-                self.execute('USE {db}'.format(db=self.name))
+                print(f'Creating database {self.name}')
+                self.execute(f'CREATE DATABASE {self.name} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')
+                self.execute(f'USE {self.name}')
         except MySQLdb.Error as c:
-            msg = 'Failed to initialize database in `{location}`'.format(location=self.name)
+            msg = f'Failed to initialize database in `{self.name}`'
             if c.args[0] in [2002, 2003]:
                 raise DatabaseConnectionRefusedException(msg) from c
             raise DatabaseException(msg) from c
 
-    def select(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
+    def select(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None) -> list[dict[str, ValidSqlArgumentDescription]]:
         [_, rows] = self.execute_anything(sql, args)
         return rows
 
-    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
+    def execute(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None) -> int:
         [n, _] = self.execute_anything(sql, args, False)
         return n
 
-    def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: bool = True) -> Tuple[int, List[Dict[str, ValidSqlArgumentDescription]]]:
+    def execute_anything(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None, fetch_rows: bool = True) -> tuple[int, list[dict[str, ValidSqlArgumentDescription]]]:
         if args is None:
             args = []
         try:
@@ -57,13 +58,15 @@ class Database():
                 return (0, [])  # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             if e.args[0] == 1062:
                 return (0, [])  # We don't care if an INSERT IGNORE INTO didn't do anything.
-            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
+            raise DatabaseException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
         except MySQLdb.Error as e:
+            if e.args[0] == 1146:
+                raise DatabaseNoSuchTableException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
             if e.args[0] == 2006:
                 self.connect()
-            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
+            raise DatabaseException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
 
-    def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:
+    def execute_with_reconnect(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None, fetch_rows: bool | None = False) -> tuple[int, list[ValidSqlArgumentDescription]]:
         result = None
         # Attempt to execute the query and reconnect 3 times, then give up
         for _ in range(3):
@@ -86,10 +89,10 @@ class Database():
                     raise
         else:
             # all attempts failed
-            raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
+            raise DatabaseException(f'Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps')
         return result
 
-    def insert(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
+    def insert(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None) -> int:
         self.execute(sql, args)
         return self.last_insert_rowid()
 
@@ -126,15 +129,15 @@ class Database():
     def release_lock(self, lock_id: str) -> None:
         self.execute('SELECT RELEASE_LOCK(%s)', [lock_id])
 
-    def value(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, default: Optional[Any] = None, fail_on_missing: bool = False) -> Any:
+    def value(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None, default: Any | None = None, fail_on_missing: bool = False) -> Any:
         try:
             return self.values(sql, args)[0]
         except IndexError as c:
             if fail_on_missing:
-                raise DatabaseMissingException('Failed to get a value from `{sql}` with `{args}'.format(sql=sql, args=args)) from c
+                raise DatabaseMissingException(f'Failed to get a value from `{sql}` with `{args}') from c
             return default
 
-    def values(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Any]:
+    def values(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None) -> list[Any]:
         rs = self.select(sql, args)
         return [list(row.values())[0] for row in rs]
 
@@ -174,11 +177,11 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
         if not backslashed_escaped:
             encodable = encodable.replace('\\', '\\\\')
         return "'{escaped}'".format(escaped=encodable.replace("'", "''").replace('%', '%%'))
-    raise InvalidArgumentException('Cannot sqlescape `{s}`'.format(s=s))
+    raise InvalidArgumentException(f'Cannot sqlescape `{s}`')
 
 def sqllikeescape(s: str) -> str:
     s = s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
-    return sqlescape('%{s}%'.format(s=s), backslashed_escaped=True)
+    return sqlescape(f'%{s}%', backslashed_escaped=True)
 
 def concat(parts: Iterable[str]) -> str:
     return 'CONCAT(' + ', '.join(parts) + ')'

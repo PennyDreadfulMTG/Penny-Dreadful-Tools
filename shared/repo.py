@@ -3,7 +3,6 @@ import hashlib
 import sys
 import textwrap
 import traceback
-from typing import Dict, List, Optional
 
 import traceback_with_variables
 from flask import request, session
@@ -26,8 +25,8 @@ def create_issue(content: str,
                  author: str,
                  location: str = 'Discord',
                  repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                 exception: Optional[BaseException] = None) -> Optional[Issue.Issue]:
-    labels: List[str] = []
+                 exception: BaseException | None = None) -> Issue.Issue | None:
+    labels: list[str] = []
     issue_hash = None
     if content is None or content == '':
         return None
@@ -37,7 +36,7 @@ def create_issue(content: str,
         body += '\n\n'
     else:
         title = content
-    body += 'Reported on {location} by {author}\n\n'.format(location=location, author=author)
+    body += f'Reported on {location} by {author}\n\n'
     if exception:
         body += '<details><summary>\n'
         body += exception.__class__.__name__ + '\n'
@@ -70,7 +69,7 @@ def create_issue(content: str,
             Referrer: {referrer}
             Request Data: {safe_data}
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
-        body += '\n'.join(['{k}: {v}'.format(k=k, v=v) for k, v in request.headers])
+        body += '\n'.join([f'{k}: {v}' for k, v in request.headers])
         body += '\n```\n\n</details>\n\n'
         ua = request.headers.get('User-Agent', '')
         if ua == 'pennydreadfulmagic.com cache renewer':
@@ -107,10 +106,11 @@ def create_issue(content: str,
                 pass
         issue = git_repo.create_issue(title=title, body=body, labels=labels)
         return issue
-    except GithubException:
+    except GithubException as e:
+        print(f'Problem creating issue: {e}', file=sys.stderr)
         return None
 
-def safe_data(data: Dict[str, str]) -> Dict[str, str]:
+def safe_data(data: dict[str, str]) -> dict[str, str]:
     safe = {}
     for k, v in data.items():
         if 'oauth' not in k.lower() and 'api_token' not in k.lower():
@@ -121,12 +121,12 @@ def get_pull_requests(start_date: datetime.datetime,
                       end_date: datetime.datetime,
                       max_pull_requests: int = sys.maxsize,
                       repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                      ) -> List[PullRequest.PullRequest]:
+                      ) -> list[PullRequest.PullRequest]:
     gh_user = configuration.get_optional_str('github_user')
     gh_pass = configuration.get_optional_str('github_password')
     if gh_user is None or gh_pass is None:
         return []
-    pulls: List[PullRequest.PullRequest] = []
+    pulls: list[PullRequest.PullRequest] = []
     try:
         g = Github(gh_user, gh_pass)
         git_repo = g.get_repo(repo_name)

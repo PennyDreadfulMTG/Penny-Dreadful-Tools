@@ -1,10 +1,8 @@
-from typing import Dict, List
-
 from decksite.view import View
 
 
 class Admin(View):
-    def __init__(self, admin_menu: List[Dict[str, str]]) -> None:
+    def __init__(self, admin_menu: list[dict[str, str]]) -> None:
         super().__init__()
         self.admin_menu = admin_menu
 

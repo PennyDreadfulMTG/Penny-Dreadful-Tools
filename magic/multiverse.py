@@ -3,7 +3,7 @@ import datetime
 import json
 import os
 import re
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any
 
 from magic import card, database, fetcher, layout, mana, seasons
 from magic.abc import CardDescription
@@ -16,7 +16,7 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
-FORMAT_IDS: Dict[str, int] = {}
+FORMAT_IDS: dict[str, int] = {}
 
 # This is only a fallback
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
@@ -45,8 +45,8 @@ async def init_async(force: bool = False) -> bool:
         print('Unable to connect to Scryfall.')
     return False
 
-def cached_base_query(where: str = '(1 = 1)') -> str:
-    return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
+def cached_base_query(where: str = 'TRUE') -> str:
+    return f'SELECT * FROM _cache_card AS c WHERE {where}'
 
 def base_query(where: str = '(1 = 1)') -> str:
     return """
@@ -100,8 +100,8 @@ def base_query(where: str = '(1 = 1)') -> str:
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()),
         format_id=get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True),
-        card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
-        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
+        card_props=', '.join(f'c.{name}' for name in card.card_properties()),
+        face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
 
 def base_query_lite() -> str:
@@ -131,8 +131,8 @@ def base_query_lite() -> str:
         GROUP BY u.id
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()),
-        card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
-        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']))
+        card_props=', '.join(f'c.{name}' for name in card.card_properties()),
+        face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']))
 
 
 async def update_database_async(new_date: datetime.datetime) -> None:
@@ -155,7 +155,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
         await insert_cards(new_date, sets, all_cards)
 
-async def insert_cards(new_date: datetime.datetime, sets: List[Dict[str, Any]], all_cards: List[CardDescription]) -> None:
+async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription]) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
@@ -179,7 +179,7 @@ async def insert_cards(new_date: datetime.datetime, sets: List[Dict[str, Any]], 
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
-async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
+async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
     values = await determine_values_async(printings, next_card_id)
     insert_many('card', card.card_properties(), values['card'], ['id'])
@@ -196,16 +196,16 @@ async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
     await update_bugged_cards_async()
     return [c['id'] for c in values['card']]
 
-async def determine_values_async(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
-    cards: Dict[str, int] = {}
+async def determine_values_async(printings: list[CardDescription], next_card_id: int) -> dict[str, list[dict[str, Any]]]:
+    cards: dict[str, int] = {}
     flavor_names: dict[str, int] = {}
-    card_values: List[Dict[str, Any]] = []
-    face_values: List[Dict[str, Any]] = []
-    meld_result_printings: List[CardDescription] = []
-    card_color_values: List[Dict[str, Any]] = []
-    card_color_identity_values: List[Dict[str, Any]] = []
-    printing_values: List[Dict[str, Any]] = []
-    card_legality_values: List[Dict[str, Any]] = []
+    card_values: list[dict[str, Any]] = []
+    face_values: list[dict[str, Any]] = []
+    meld_result_printings: list[CardDescription] = []
+    card_color_values: list[dict[str, Any]] = []
+    card_color_identity_values: list[dict[str, Any]] = []
+    printing_values: list[dict[str, Any]] = []
+    card_legality_values: list[dict[str, Any]] = []
     rarity_ids = {x['name']: x['id'] for x in db().select('SELECT id, name FROM rarity')}
     scryfall_to_internal_rarity = {
         'common': rarity_ids['Common'],
@@ -304,14 +304,14 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         'flavor_name': flavor_name_values,
     }
 
-def face_colors(p: CardDescription) -> Set[str]:
+def face_colors(p: CardDescription) -> set[str]:
     colors = set()
     for f in p.get('card_faces', []):
         for color in f.get('colors', []):
             colors.add(color)
     return colors
 
-def insert_many(table: str, properties: TableDescription, values: List[Dict[str, Any]], additional_columns: Optional[List[str]] = None) -> None:
+def insert_many(table: str, properties: TableDescription, values: list[dict[str, Any]], additional_columns: list[str] | None = None) -> None:
     columns = additional_columns or []
     columns += [k for k, v in properties.items() if v.get('foreign_key')]
     columns += [name for name, prop in properties.items() if prop['scryfall']]
@@ -344,10 +344,10 @@ async def update_pd_legality_async() -> None:
         if s == seasons.current_season_code():
             break
 
-def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Dict[str, Any]:
+def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> dict[str, Any]:
     if not card_id:
         raise InvalidDataException(f'Cannot insert a face without a card_id: {p}')
-    result: Dict[str, Any] = {}
+    result: dict[str, Any] = {}
     result['card_id'] = card_id
     result['name'] = p['name']  # always present in scryfall
     result['mana_cost'] = p['mana_cost']  # always present in scryfall
@@ -362,7 +362,7 @@ def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Di
     result['position'] = position
     return result
 
-def multiple_faces_values(p: CardDescription, card_id: int) -> List[Dict[str, Any]]:
+def multiple_faces_values(p: CardDescription, card_id: int) -> list[dict[str, Any]]:
     card_faces = p.get('card_faces')
     if card_faces is None:
         raise InvalidArgumentException(f'Tried to insert_card_faces on a card without card_faces: {p} ({card_id})')
@@ -376,7 +376,7 @@ def multiple_faces_values(p: CardDescription, card_id: int) -> List[Dict[str, An
         position += 1
     return face_values
 
-def meld_face_values(p: CardDescription, cards: Dict[str, int]) -> List[Dict[str, Any]]:
+def meld_face_values(p: CardDescription, cards: dict[str, int]) -> list[dict[str, Any]]:
     values = []
     all_parts = p.get('all_parts')
     if all_parts is None:
@@ -397,7 +397,7 @@ def is_meld_result(p: CardDescription) -> bool:
         meld_result_name = next(part['name'] for part in all_parts if part['name'] in KNOWN_MELDS)
     return p['name'] == meld_result_name
 
-def load_sets() -> Dict[str, int]:
+def load_sets() -> dict[str, int]:
     return {s['code']: int(s['id']) for s in db().select('SELECT id, code FROM `set`')}
 
 def insert_set(s: Any) -> int:
@@ -417,10 +417,10 @@ async def update_sets_async() -> dict:
             insert_set(s)
     return load_sets()
 
-def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int) -> Dict[str, Any]:
+def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int) -> dict[str, Any]:
     if not card_id or not set_id:
         raise InvalidDataException(f'Cannot insert printing without card_id and set_id: {card_id}, {set_id}, {p}')
-    result: Dict[str, Any] = {}
+    result: dict[str, Any] = {}
     result['card_id'] = card_id
     result['set_id'] = set_id
     result['rarity_id'] = rarity_id
@@ -433,11 +433,11 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['flavor_name'] = p.get('flavor_name')
     return result
 
-async def set_legal_cards_async(season: Optional[str] = None) -> None:
+async def set_legal_cards_async(season: str | None = None) -> None:
     if season is None:
         season = seasons.current_season_code()
 
-    new_list: Set[str] = set()
+    new_list: set[str] = set()
     try:
         new_list = set(await fetcher.legal_cards_async(season=season))
     except fetcher.FetchException:
@@ -456,7 +456,7 @@ async def set_legal_cards_async(season: Optional[str] = None) -> None:
     print(f'Setting Legal Cards for {season} ({format_id}) - {len(new_list)} cards')
 
     # In case we get windows line endings.
-    new_list = set(c.rstrip() for c in new_list)
+    new_list = {c.rstrip() for c in new_list}
 
     db().begin('set_legal_cards')
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
@@ -482,8 +482,8 @@ async def set_legal_cards_async(season: Optional[str] = None) -> None:
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):
-        print('Found {n} pd legal cards in the database but the list was {len} long'.format(n=n, len=len(new_list)))
-        sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
+        print(f'Found {n} pd legal cards in the database but the list was {len(new_list)} long')
+        sql = f'SELECT bq.name FROM ({base_query()}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'
         db_legal_list = [row['name'] for row in db().select(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
 
@@ -499,7 +499,7 @@ def rebuild_cache() -> None:
     db().execute('RENAME TABLE _cache_card TO _old_cache_card, _new_cache_card TO _cache_card')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
 
-def add_to_cache(ids: List[int]) -> None:
+def add_to_cache(ids: list[int]) -> None:
     if not ids:
         return
     values = ', '.join([str(id) for id in ids])
@@ -512,7 +512,7 @@ def database2json(propname: str) -> str:
         propname = 'id'
     return propname
 
-def date2int(s: str, name: str) -> Union[str, float]:
+def date2int(s: str, name: str) -> str | float:
     if name == 'released_at':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s
@@ -529,19 +529,19 @@ def get_format_id(name: str, allow_create: bool = False) -> int:
         db().execute('INSERT INTO format (name) VALUES (%s)', [name])
         FORMAT_IDS[name] = db().last_insert_rowid()
     if name not in FORMAT_IDS.keys():
-        raise InvalidArgumentException('Unknown format: {name}'.format(name=name))
+        raise InvalidArgumentException(f'Unknown format: {name}')
     return FORMAT_IDS[name]
 
 def get_format_id_from_season_id(season_id: int) -> int:
     season_code = seasons.SEASONS[int(season_id) - 1]
-    format_name = 'Penny Dreadful {f}'.format(f=season_code)
+    format_name = f'Penny Dreadful {season_code}'
     return get_format_id(format_name)
 
-def get_all_cards() -> List[Card]:
+def get_all_cards() -> list[Card]:
     rs = db().select(cached_base_query())
     return [Card(r) for r in rs]
 
-def supertypes(type_line: str) -> List[str]:
+def supertypes(type_line: str) -> list[str]:
     types = type_line.split('-')[0]
     possible_supertypes = ['Basic', 'Legendary', 'Ongoing', 'Snow', 'World']
     sts = []
@@ -550,7 +550,7 @@ def supertypes(type_line: str) -> List[str]:
             sts.append(possible)
     return sts
 
-def subtypes(type_line: str) -> List[str]:
+def subtypes(type_line: str) -> list[str]:
     if ' - ' not in type_line:
         return []
     return type_line.split(' - ')[1].split(' ')

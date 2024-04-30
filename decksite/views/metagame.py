@@ -1,5 +1,4 @@
 import math
-from typing import Dict, List, Tuple
 
 from flask import url_for
 
@@ -13,7 +12,7 @@ TOTAL_HEIGHT = 20000
 
 
 class Metagame(View):
-    def __init__(self, archetypes: List[Archetype], tournament_only: bool, key_cards: Dict[int, str]) -> None:
+    def __init__(self, archetypes: list[Archetype], tournament_only: bool, key_cards: dict[int, str]) -> None:
         super().__init__()
 
         self.decks = []
@@ -22,8 +21,10 @@ class Metagame(View):
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.metagame', deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
 
+        # We say '' for "no win percent" not a number or None, which can cause this page to error if we try to do math on ''. Let's just skip those instead.
+        archetypes = [a for a in archetypes if a.win_percent != '']
         self.archetypes = []
-        total_matches_log = sum([math.log2(((a.wins or 0) + (a.losses or 0) + (a.draws or 0) + 1)) for a in archetypes])
+        total_matches_log = sum([math.log2((a.wins or 0) + (a.losses or 0) + (a.draws or 0) + 1) for a in archetypes])
         height = min(TOTAL_HEIGHT, len(archetypes) * 200)
         for a in archetypes:
             card = key_cards.get(a.id)
@@ -52,7 +53,7 @@ class Metagame(View):
 # See https://stackoverflow.com/a/10029645/375262
 # See https://www.evanmiller.org/how-not-to-sort-by-average-rating.html
 # Expects win_rate as a fraction of 1 NOT a 0-100 scale percentage.
-def confidence_interval(win_rate: float, matches_played: int) -> Tuple[float, float]:
+def confidence_interval(win_rate: float, matches_played: int) -> tuple[float, float]:
     if matches_played == 0:
         return 0.0, 0.0
     n = float(matches_played)

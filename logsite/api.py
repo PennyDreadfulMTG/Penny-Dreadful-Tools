@@ -1,6 +1,5 @@
 # type: ignore
 
-from typing import Dict, Tuple
 
 from flask import Response, request, session
 
@@ -10,13 +9,13 @@ from . import APP, db, importing
 from .data import game, match
 
 
-@APP.route('/api/admin/')
 @APP.route('/api/admin')
+@APP.route('/api/admin/')
 def admin() -> Response:
     return return_json(session.get('admin'))
 
-@APP.route('/api/status/')
 @APP.route('/api/status')
+@APP.route('/api/status/')
 def person_status() -> Response:
     r = {
         'mtgo_username': session.get('mtgo_username'),
@@ -27,22 +26,27 @@ def person_status() -> Response:
     return return_json(r)
 
 @APP.route('/api/matchExists/<match_id>')
+@APP.route('/api/matchExists/<match_id>/')
 def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
 @APP.route('/api/person/<person>')
+@APP.route('/api/person/<person>/')
 def person_data(person: str) -> Response:
     return return_json(list(match.Match.query.filter(match.Match.players.any(db.User.name == person))))
 
 @APP.route('/api/match/<match_id>')
+@APP.route('/api/match/<match_id>/')
 def match_data(match_id: int) -> Response:
     return return_json(match.get_match(match_id))
 
 @APP.route('/api/game/<game_id>')
+@APP.route('/api/game/<game_id>/')
 def game_data(game_id: int) -> Response:
     return return_json(game.get_game(game_id))
 
 @APP.route('/api/upload', methods=['POST'])
+@APP.route('/api/upload/', methods=['POST'])
 def upload() -> Response:
     error = validate_api_key()
     if error:
@@ -62,7 +66,8 @@ def upload() -> Response:
     return return_json({'success': True})
 
 @APP.route('/export/<match_id>')
-def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
+@APP.route('/export/<match_id>/')
+def export(match_id: int) -> tuple[str, int, dict[str, str]]:
     local = match.get_match(match_id)
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,
@@ -71,12 +76,12 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
         players=','.join([p.name for p in local.players]))
     n = 1
     for g in local.games:
-        text += '== Game {n} ({id}) ==\n'.format(n=n, id=g.id)
+        text += f'== Game {n} ({g.id}) ==\n'
         n = n + 1
         text += g.sanitized_log().strip()
         text += '\n\n'
     text = text.replace('\n', '\r\n')
     return (text, 200, {
         'Content-type': 'text/plain; charset=utf-8',
-        'Content-Disposition': 'attachment; filename={match_id}.txt'.format(match_id=match_id),
+        'Content-Disposition': f'attachment; filename={match_id}.txt',
     })

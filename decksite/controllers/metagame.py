@@ -1,5 +1,4 @@
 import urllib.parse
-from typing import Dict, List, Optional
 
 from flask import redirect, request, url_for
 from werkzeug import wrappers
@@ -26,7 +25,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 @SEASONS.route('/decks/')
 @SEASONS.route('/decks/<any(tournament,league):deck_type>/')
 @cached()
-def decks(deck_type: Optional[str] = None) -> str:
+def decks(deck_type: str | None = None) -> str:
     league_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.LEAGUE]) == DeckType.LEAGUE
     view = Decks(league_only)
     return view.page()
@@ -36,7 +35,7 @@ def decks(deck_type: Optional[str] = None) -> str:
 @SEASONS.route('/metagame/')
 @SEASONS.route('/metagame/<any(tournament,league):deck_type>/')
 @cached()
-def metagame(deck_type: Optional[str] = None) -> str:
+def metagame(deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     disjoint_archetypes = archs.load_disjoint_archetypes(season_id=get_season_id(), tournament_only=tournament_only)
     key_cards = playability.key_cards(get_season_id())
@@ -69,7 +68,7 @@ def season() -> wrappers.Response:
 @SEASONS.route('/cards/')
 @SEASONS.route('/cards/<any(tournament,league):deck_type>/')
 @cached()
-def cards(deck_type: Optional[str] = None) -> str:
+def cards(deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     query = request.args.get('fq')
     if query is None:
@@ -82,7 +81,7 @@ def cards(deck_type: Optional[str] = None) -> str:
 @SEASONS.route('/cards/<path:name>/')
 @SEASONS.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @cached()
-def card(name: str, deck_type: Optional[str] = None) -> str:
+def card(name: str, deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     try:
         c = cs.load_card(parse_card_name(name), tournament_only=tournament_only, season_id=get_season_id())
@@ -102,7 +101,7 @@ def parse_card_name(name: str) -> str:
 @SEASONS.route('/archetypes/')
 @SEASONS.route('/archetypes/<any(tournament,league):deck_type>/')
 @cached()
-def archetypes(deck_type: Optional[str] = None) -> str:
+def archetypes(deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
@@ -114,7 +113,7 @@ def archetypes(deck_type: Optional[str] = None) -> str:
 @SEASONS.route('/archetypes/<archetype_id>/')
 @SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
-def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
+def archetype(archetype_id: str, deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '))
@@ -126,8 +125,8 @@ def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
 
 @APP.route('/matchups/')
 def matchups() -> str:
-    hero: Dict[str, str] = {}
-    enemy: Dict[str, str] = {}
+    hero: dict[str, str] = {}
+    enemy: dict[str, str] = {}
     for k, v in request.args.items():
         if k.startswith('hero_'):
             k = k.replace('hero_', '')
@@ -148,7 +147,7 @@ def matchups() -> str:
     return view.page()
 
 
-def validate_deck_type(s: Optional[str], allowed_values: Optional[List[DeckType]] = None) -> DeckType:
+def validate_deck_type(s: str | None, allowed_values: list[DeckType] | None = None) -> DeckType:
     if not s:
         return DeckType.ALL
     try:

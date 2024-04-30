@@ -1,12 +1,10 @@
-from typing import List, Tuple
-
 import pytest
 
 from discordbot import emoji
 from magic import oracle, seasons
 
 
-def emoji_params() -> List[Tuple]:
+def emoji_params() -> list[tuple]:
     return [
         ('Island', False, True, False, 'Penny Dreadful', ':white_check_mark:'),
         ('Black Lotus', True, True, False, 'Penny Dreadful', f':no_entry_sign: (not legal in {seasons.current_season_name()})'),

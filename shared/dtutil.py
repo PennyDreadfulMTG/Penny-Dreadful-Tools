@@ -2,7 +2,8 @@ import datetime
 import re
 from calendar import timegm
 from collections import OrderedDict
-from typing import Any, Dict, List, Match, Optional, Tuple
+from re import Match
+from typing import Any, Optional
 
 import feedparser
 import inflect
@@ -51,7 +52,7 @@ def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
 def timezone(tzid: str) -> datetime.tzinfo:
     return pytz.timezone(tzid)
 
-def now(tz: Optional[Any] = None) -> datetime.datetime:
+def now(tz: Any | None = None) -> datetime.datetime:
     if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
@@ -65,7 +66,7 @@ def form_date(dt: datetime.datetime, tz: Any) -> str:
 def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
     start = now()
     if (start - dt) > datetime.timedelta(365):
-        s = '{:%b %Y}'.format(dt.astimezone(WOTC_TZ))
+        s = f'{dt.astimezone(WOTC_TZ):%b %Y}'
         return replace_day_with_ordinal(s)
     if (start - dt) > datetime.timedelta(28):
         return display_date_with_date_and_year(dt)
@@ -73,10 +74,10 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
     diff = round(abs(start - dt).total_seconds())
     if diff == 0:
         return 'just now'
-    return '{duration} {suffix}'.format(duration=display_time(diff, granularity), suffix=suffix)
+    return f'{display_time(diff, granularity)} {suffix}'
 
 def display_date_with_date_and_year(dt: datetime.datetime, tz: Any = WOTC_TZ) -> str:
-    s = '{:%b _%d_}'.format(dt.astimezone(tz))
+    s = f'{dt.astimezone(tz):%b _%d_}'
     return replace_day_with_ordinal(s)
 
 def replace_day_with_ordinal(s: str) -> str:
@@ -87,8 +88,8 @@ def day2ordinal(m: Match) -> str:
     return p.ordinal(str(int(m.group(1))))
 
 
-IntervalsType = Dict[str, Tuple[Optional[int], int, Optional[int]]]
-ResultsType = List[Tuple[int, str]]
+IntervalsType = dict[str, tuple[Optional[int], int, Optional[int]]]
+ResultsType = list[tuple[int, str]]
 
 def get_intervals() -> IntervalsType:
     intervals: IntervalsType = OrderedDict()
@@ -120,7 +121,7 @@ def display_time(seconds: float, granularity: int = 2) -> str:
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])
 
-def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: Optional[int], rounding_threshold: Optional[int]) -> int:
+def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: int | None, rounding_threshold: int | None) -> int:
     if rounding_threshold is None or max_units is None:
         return round(seconds / seconds_per_unit)
     value = seconds // seconds_per_unit

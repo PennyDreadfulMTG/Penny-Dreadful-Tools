@@ -6,7 +6,6 @@ import pathlib
 import shutil
 import subprocess
 from collections import Counter
-from typing import Dict, List, Set
 
 import ftfy
 
@@ -39,7 +38,7 @@ def run() -> None:
 
     if n == 0 and TIME_UNTIL_ROTATION > datetime.timedelta(7):
         print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')
-        print('ETA: {t}'.format(t=dtutil.display_time(int(time_until.total_seconds()))))
+        print(f'ETA: {dtutil.display_time(int(time_until.total_seconds()))}')
         return
 
     if n == 0:
@@ -62,11 +61,11 @@ def run() -> None:
     except Exception as c:
         print(c, flush=True)
 
-def process(all_prices: Dict[str, PriceListType]) -> int:
-    seen_sets: Set[str] = set()
-    used_sets: Set[str] = set()
+def process(all_prices: dict[str, PriceListType]) -> int:
+    seen_sets: set[str] = set()
+    used_sets: set[str] = set()
 
-    hits: Set[str] = set()
+    hits: set[str] = set()
     for code in all_prices:
         prices = all_prices[code]
         for name, p, mtgo_set in prices:
@@ -81,7 +80,7 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
     return process_sets(seen_sets, used_sets, hits, ignored)
 
 
-def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> int:
+def process_sets(seen_sets: set[str], used_sets: set[str], hits: set[str], ignored: set[str]) -> int:
     files = rotation.files()
     n = len(files) + 1
     legality_dir = configuration.get_str('legality_dir')
@@ -94,9 +93,9 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
         line = card + '\n'
         h.write(line)
     h.close()
-    print('Run {n} completed, with {ccards} cards from {csets}/{tsets} sets'.format(n=n, ccards=len(hits), csets=len(used_sets), tsets=len(seen_sets)), flush=True)
-    print('Used:    {sets}'.format(sets=repr(used_sets)), flush=True)
-    print('Missed:  {sets}'.format(sets=repr(ignored)), flush=True)
+    print(f'Run {n} completed, with {len(hits)} cards from {len(used_sets)}/{len(seen_sets)} sets', flush=True)
+    print(f'Used:    {repr(used_sets)}', flush=True)
+    print(f'Missed:  {repr(ignored)}', flush=True)
     return n
 
 def make_final_list() -> None:
@@ -106,7 +105,7 @@ def make_final_list() -> None:
     renames = prepare_flavornames()
 
     files = rotation.files()
-    lines: List[str] = []
+    lines: list[str] = []
     for line in fileinput.input(files):
         line = text.sanitize(line)
         if line.strip() in bad_names:
@@ -116,7 +115,7 @@ def make_final_list() -> None:
         lines.append(line)
     scores = Counter(lines).most_common()
 
-    passed: List[str] = []
+    passed: list[str] = []
     for name, count in scores:
         if count >= rotation.TOTAL_RUNS / 2:
             passed.append(name)
@@ -125,13 +124,13 @@ def make_final_list() -> None:
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
-    print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)), flush=True)
+    print(f'Generated legal_cards.txt.  {len(passed)}/{len(scores)} cards.', flush=True)
     setcode = seasons.next_rotation_ex().mtgo_code
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
 
-def prepare_flavornames() -> Dict[str, str]:
+def prepare_flavornames() -> dict[str, str]:
     _num, _names, flavored = fetcher.search_scryfall('is:flavor_name', True)
     renames = {}
     for c in flavored:

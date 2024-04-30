@@ -1,5 +1,3 @@
-from typing import List
-
 from flask import url_for
 
 from decksite.data.archetype import Archetype
@@ -12,12 +10,12 @@ class EditRules(View):
     def __init__(self,
                  num_classified: int,
                  num_total: int,
-                 doubled_decks: List[Deck],
-                 mistagged_decks: List[Deck],
-                 overlooked_decks: List[Deck],
-                 rules: List[Container],
-                 archetypes: List[Archetype],
-                 excluded_archetype_info: List[Container]) -> None:
+                 doubled_decks: list[Deck],
+                 mistagged_decks: list[Deck],
+                 overlooked_decks: list[Deck],
+                 rules: list[Container],
+                 archetypes: list[Archetype],
+                 excluded_archetype_info: list[Container]) -> None:
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total
@@ -26,6 +24,8 @@ class EditRules(View):
         self.overlooked_decks = overlooked_decks[0:10]
         self.rules = rules
         self.archetypes = archetypes
+        archetypes_with_rules = {rule.archetype_id for rule in rules}
+        self.leaf_nodes_with_no_rule = ', '.join(archetype.name for archetype in archetypes if not archetype.children and archetype.id not in archetypes_with_rules)
         self.rules.sort(key=lambda c: c.archetype_name)
         for r in self.rules:
             r.included_cards_s = '\n'.join('{n} {card}'.format(n=entry['n'], card=entry['card']) for entry in r.included_cards)

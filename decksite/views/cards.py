@@ -1,4 +1,3 @@
-
 from flask import url_for
 
 from decksite.deck_type import DeckType

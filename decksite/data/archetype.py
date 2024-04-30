@@ -1,5 +1,3 @@
-from typing import Dict, List, Optional, Union
-
 import titlecase
 from anytree import NodeMixin
 from anytree.iterators import PreOrderIter
@@ -17,9 +15,9 @@ class Archetype(Container, NodeMixin):
     pass
 
 
-BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
+BASE_ARCHETYPES: dict[Archetype, Archetype] = {}
 
-def load_archetype(archetype: Union[int, str]) -> Archetype:
+def load_archetype(archetype: int | str) -> Archetype:
     try:
         archetype_id = int(archetype)
     except ValueError as c:
@@ -27,7 +25,7 @@ def load_archetype(archetype: Union[int, str]) -> Archetype:
         name_without_dashes = name.replace('-', ' ')
         archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(name, '-', ' ') = %s", [name_without_dashes])
         if not archetype_id:
-            raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name)) from c
+            raise DoesNotExistException(f'Did not find archetype with name of `{name}`') from c
     arch = Archetype()
     arch.id = int(archetype_id)
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
@@ -39,10 +37,10 @@ def add(name: str, parent: int, description: str) -> None:
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:
         sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
-    sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=archetype_id, descendant=archetype_id, depth=0)
+    sql += f'({archetype_id}, {archetype_id}, 0)'
     db().execute(sql)
 
-def assign(deck_id: int, archetype_id: int, person_id: Optional[int], reviewed: bool = True, similarity: Optional[int] = None) -> None:
+def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: bool = True, similarity: int | None = None) -> None:
     db().begin('assign_archetype')
     db().execute('INSERT INTO deck_archetype_change (changed_date, deck_id, archetype_id, person_id) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)', [deck_id, archetype_id, person_id])
     and_clause = '' if reviewed else 'AND reviewed is FALSE'
@@ -79,15 +77,15 @@ def rename(archetype_id: int, new_name: str) -> None:
 def update_description(archetype_id: int, description: str) -> None:
     db().execute('UPDATE archetype SET description = %s WHERE id = %s', [description, archetype_id])
 
-def base_archetypes() -> List[Archetype]:
+def base_archetypes() -> list[Archetype]:
     return [a for a in base_archetype_by_id().values() if a.parent is None]
 
-def base_archetype_by_id() -> Dict[Archetype, Archetype]:
+def base_archetype_by_id() -> dict[Archetype, Archetype]:
     if len(BASE_ARCHETYPES) == 0:
         rebuild_archetypes()
     return BASE_ARCHETYPES
 
-def base_archetypes_data(c: Competition) -> Dict[str, int]:
+def base_archetypes_data(c: Competition) -> dict[str, int]:
     base_archs_by_id = base_archetype_by_id()
     if not c.base_archetype_data:
         c.base_archetype_data = {a.name: 0 for a in base_archetypes()}
@@ -421,7 +419,7 @@ def preaggregate_matchups_person() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_matchups(where: str = 'TRUE', archetype_id: Optional[int] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Container]:
+def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Container]:
     if person_id:
         table = '_matchup_ps_stats'
         where = f'({where}) AND (mps.person_id = {person_id})'
@@ -459,10 +457,10 @@ def load_matchups(where: str = 'TRUE', archetype_id: Optional[int] = None, perso
     return [Container(m) for m in db().select(sql)]
 
 @retry_after_calling(preaggregate)
-def load_archetypes(order_by: Optional[str] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
+def load_archetypes(order_by: str | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Archetype]:
     if person_id:
         table = '_arch_person_stats'
-        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        where = f'person_id = {sqlescape(person_id)}'
         group_by = 'ars.person_id, a.id'
     else:
         table = '_arch_stats'
@@ -503,10 +501,10 @@ def load_archetypes(order_by: Optional[str] = None, person_id: Optional[int] = N
 
 # Load a list of all archetypes where archetypes categories do NOT include the stats of their children. Thus Aggro is only decks assigned directly to Aggro and does not include Red Deck Wins. See also load_archetypes that does it the other way.
 @retry_after_calling(preaggregate)
-def load_disjoint_archetypes(order_by: Optional[str] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
+def load_disjoint_archetypes(order_by: str | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Archetype]:
     if person_id:
         table = '_arch_disjoint_person_stats'
-        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        where = f'person_id = {sqlescape(person_id)}'
         group_by = 'ars.person_id, a.id'
     else:
         table = '_arch_disjoint_stats'
@@ -549,7 +547,7 @@ def load_disjoint_archetypes(order_by: Optional[str] = None, person_id: Optional
                order_by=order_by or 'TRUE')
     return archetype_list_from(sql, order_by is None)
 
-def archetype_list_from(sql: str, should_preorder: bool) -> List[Archetype]:
+def archetype_list_from(sql: str, should_preorder: bool) -> list[Archetype]:
     archetypes = [Archetype(a) for a in db().select(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
@@ -560,7 +558,7 @@ def archetype_list_from(sql: str, should_preorder: bool) -> List[Archetype]:
         archetypes = preorder(archetypes)
     return archetypes
 
-def preorder(archetypes: List[Archetype]) -> List[Archetype]:
+def preorder(archetypes: list[Archetype]) -> list[Archetype]:
     archs = []
     roots = [a for a in archetypes if a.is_root]
     for r in roots:
@@ -568,7 +566,7 @@ def preorder(archetypes: List[Archetype]) -> List[Archetype]:
             archs.append(a)
     return archs
 
-def load_archetype_tree() -> List[Dict]:
+def load_archetype_tree() -> list[dict]:
     sql = """
         SELECT a.name AS name, b.name AS ancestor
         FROM decksite.archetype AS a

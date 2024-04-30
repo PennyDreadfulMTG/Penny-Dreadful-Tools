@@ -1,7 +1,6 @@
-from typing import Dict, List, Tuple
-
 from decksite.data import card, deck, preaggregation
 from decksite.database import db
+from magic import oracle
 from magic.decklist import parse_line
 from magic.models import Deck
 from shared import logger
@@ -9,24 +8,24 @@ from shared.container import Container
 from shared.decorators import retry_after_calling
 from shared.pd_exception import InvalidDataException
 
-IGNORE: List[str] = ['Commander', 'Unclassified']
+IGNORE: list[str] = ['Commander', 'Unclassified']
 
-def excluded_archetype_names() -> List[str]:
+def excluded_archetype_names() -> list[str]:
     return IGNORE
 
-def excluded_archetype_ids() -> List[int]:
+def excluded_archetype_ids() -> list[int]:
     if len(IGNORE) == 0:
         return []
     sql = 'SELECT id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
     return db().values(sql)
 
-def excluded_archetype_info() -> List[Container]:
+def excluded_archetype_info() -> list[Container]:
     if len(IGNORE) == 0:
         return []
     sql = 'SELECT name, id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
     return [Container(row) for row in db().select(sql)]
 
-def apply_rules_to_decks(decks: List[Deck]) -> None:
+def apply_rules_to_decks(decks: list[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {}
@@ -36,18 +35,24 @@ def apply_rules_to_decks(decks: List[Deck]) -> None:
     sql = """
             SELECT
                 deck_id,
-                archetype_id,
-                archetype_name
+                GROUP_CONCAT(rule_id) AS rule_ids,
+                GROUP_CONCAT(archetype_id) AS archetype_ids,
+                GROUP_CONCAT(archetype_name) AS archetype_names
             FROM
                 ({apply_rules_query}) AS applied_rules
             GROUP BY
                 deck_id
             HAVING
-                COUNT(DISTINCT archetype_id) = 1
+                COUNT(DISTINCT archetype_id) >= 1
         """.format(apply_rules_query=apply_rules_query(f'deck_id IN ({id_list})'))
     for r in (Container(row) for row in db().select(sql)):
-        decks_by_id[r.deck_id].rule_archetype_id = r.archetype_id
-        decks_by_id[r.deck_id].rule_archetype_name = r.archetype_name
+        archetypes = {int(archetype_id): archetype_name for archetype_id, archetype_name in zip(r.archetype_ids.split(','), r.archetype_names.split(','))}
+        if len(archetypes) == 1:
+            decks_by_id[r.deck_id].rule_archetype_id, decks_by_id[r.deck_id].rule_archetype_name = archetypes.popitem()
+        elif len(archetypes) > 1:
+            decks_by_id[r.deck_id].rule_archetype_id = 0
+            decks_by_id[r.deck_id].rule_archetype_name = f'Bad rules ({r.rule_ids})'
+
 
 def cache_all_rules() -> None:
     table = '_applied_rules'
@@ -74,10 +79,11 @@ def num_classified_decks() -> int:
     return db().value(sql)
 
 @retry_after_calling(cache_all_rules)
-def mistagged_decks() -> List[Deck]:
+def mistagged_decks() -> list[Deck]:
     sql = """
             SELECT
                 deck_id,
+                rule_id,
                 rule_archetype.id AS rule_archetype_id,
                 rule_archetype.name AS rule_archetype_name,
                 tagged_archetype.name AS tagged_archetype_name
@@ -100,20 +106,21 @@ def mistagged_decks() -> List[Deck]:
             """
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):
-        rule_archetypes[r.deck_id] = (r.rule_archetype_id, r.rule_archetype_name)
+        rule_archetypes[r.deck_id] = (r.rule_id, r.rule_archetype_id, r.rule_archetype_name)
     if not rule_archetypes:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in rule_archetypes)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
-        d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
+        d.rule_id, d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
 
 @retry_after_calling(cache_all_rules)
-def doubled_decks() -> List[Deck]:
+def doubled_decks() -> list[Deck]:
     sql = """
         SELECT
             deck_id,
+            GROUP_CONCAT(rule_id) AS rule_ids,
             GROUP_CONCAT(archetype_id) AS archetype_ids,
             GROUP_CONCAT(archetype_name SEPARATOR '|') AS archetype_names
         FROM
@@ -123,21 +130,21 @@ def doubled_decks() -> List[Deck]:
         HAVING
             COUNT(DISTINCT archetype_id) > 1
         """
-    archetypes_from_rules: Dict[int, List[Container]] = {}
+    archetypes_from_rules: dict[int, list[Container]] = {}
     for r in [Container(row) for row in db().select(sql)]:
-        matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'))
-        archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name}) for archetype_id, archetype_name in matching_archetypes]
+        matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'), r.rule_ids.split(','))
+        archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name, 'rule_id': rule_id}) for archetype_id, archetype_name, rule_id in matching_archetypes]
     if not archetypes_from_rules:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in archetypes_from_rules)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
-        d.archetypes_from_rules_names = ', '.join(a.archetype_name for a in archetypes_from_rules[d.id])
+        d.archetypes_from_rules_names = ', '.join(f'{a.archetype_name} ({a.rule_id})' for a in archetypes_from_rules[d.id])
     return result
 
 @retry_after_calling(cache_all_rules)
-def overlooked_decks() -> List[Deck]:
+def overlooked_decks() -> list[Deck]:
     sql = """
             SELECT
                 deck.id as deck_id
@@ -165,7 +172,7 @@ def overlooked_decks() -> List[Deck]:
     return deck.load_decks(where=f'd.id IN ({ids_list})')
 
 @retry_after_calling(cache_all_rules)
-def load_all_rules() -> List[Container]:
+def load_all_rules() -> list[Container]:
     result = []
     result_by_id = {}
     sql = """
@@ -204,7 +211,7 @@ def add_rule(archetype_id: int) -> int:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     return db().insert(sql, [archetype_id])
 
-def update_cards_raw(rule_id: int, include: str, exclude: str) -> Tuple[bool, str]:
+def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
     inc = []
     exc = []
     for line in include.strip().splitlines():
@@ -225,7 +232,7 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> Tuple[bool, st
     return True, ''
 
 # @retry_after_calling(cache_all_rules)
-def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, str]]) -> None:
+def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, str]]) -> None:
     db().begin('update_rule_cards')
     sql = 'DELETE FROM _applied_rules WHERE rule_id = %s'
     db().execute(sql, [rule_id])
@@ -233,11 +240,13 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
     db().execute(sql, [rule_id])
     for n, c in inc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, TRUE)'
-        db().execute(sql, [rule_id, c, n])
+        db().execute(sql, [rule_id, oracle.valid_name(c), n])
     for n, c in exc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
-        db().execute(sql, [rule_id, c, n])
+        db().execute(sql, [rule_id, oracle.valid_name(c), n])
     sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
+    if not inc and not exc:
+        db().execute('DELETE FROM rule WHERE id = %s', [rule_id])
     db().execute(sql)
     db().commit('update_rule_cards')
 

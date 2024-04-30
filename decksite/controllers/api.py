@@ -1,7 +1,6 @@
 import datetime
 import json
-import sys
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -9,19 +8,19 @@ from werkzeug.exceptions import BadRequest
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card
+from decksite.data import card, clauses
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import playability, query
+from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
                               prepare_people)
 from decksite.views import DeckEmbed
-from find import search as card_search
 from magic import layout, oracle, rotation, seasons, tournaments
-from magic.models import Deck
+from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
@@ -30,9 +29,9 @@ from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
-SearchItem = Dict[str, str]
+SearchItem = dict[str, str]
 
-SEARCH_CACHE: List[SearchItem] = []
+SEARCH_CACHE: list[SearchItem] = []
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
@@ -109,15 +108,18 @@ ROTATION_DETAILS = APP.api.model('RotationDetails', {
     'friendly_diff': fields.String(),
 })
 
+@APP.route('/api/decks')
 @APP.route('/api/decks/')
 def decks_api() -> Response:
     """
     Grab a slice of results from a 0-indexed resultset of decks.
     Input:
         {
+            'achievementKey': <str?>,
             'archetypeId': <int?>,
             'cardName': <str?>,
             'competitionId': <int?>,
+            'competitionFlagId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,
@@ -133,11 +135,11 @@ def decks_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
+    order_by = clauses.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
     page, page_size, limit = pagination(request.args)
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
-    where = query.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
+    where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
     total = deck.load_decks_count(where=where, season_id=season_id)
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
@@ -146,10 +148,11 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.api.route('/decks/updated')
 @APP.api.route('/decks/updated/')
 class UpdatedDecks(Resource):
     @APP.api.marshal_with(DECKS)
-    def get(self) -> Dict[str, Any]:
+    def get(self) -> dict[str, Any]:
         """
         Grab a slice of finished sorted decks last updated after a certain point.
         Input:
@@ -173,12 +176,13 @@ class UpdatedDecks(Resource):
         if timestamp < 1e9:
             raise InvalidArgumentException('Invalid timestamp!')
         page, page_size, limit = pagination(request.args)
-        where = '(' + query.decks_where(request.args, False, None) + ') AND ' + query.decks_updated_since(timestamp)
+        where = '(' + clauses.decks_where(request.args, False, None) + ') AND ' + clauses.decks_updated_since(timestamp)
         total = deck.load_decks_count(where=where, season_id=season)
         ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
         prepare_decks(ds)
         return {'page': page, 'total': total, 'objects': ds}
 
+@APP.route('/api/cards2')
 @APP.route('/api/cards2/')
 def cards2_api() -> Response:
     """
@@ -202,14 +206,14 @@ def cards2_api() -> Response:
             'message': <str>,
         }
     """
-    order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     archetype_id = request.args.get('archetypeId') or None
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
-    additional_where, message = query.card_search_where(q) if q else ('TRUE', '')
+    additional_where, message = clauses.card_search_where(q) if q else ('TRUE', '')
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
     total = card.load_cards_count(additional_where=additional_where, archetype_id=archetype_id, person_id=person_id, season_id=season_id)
@@ -218,6 +222,7 @@ def cards2_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/cardfeed')
 @APP.route('/api/cardfeed/')
 def cardfeed_api() -> Response:
     """
@@ -236,6 +241,7 @@ def cardfeed_api() -> Response:
     r = {'cards': os}
     return return_camelized_json(r)
 
+@APP.route('/api/people')
 @APP.route('/api/people/')
 def people_api() -> Response:
     """
@@ -256,11 +262,11 @@ def people_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
-    where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
+    where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
     people = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people)
     total = ps.load_people_count(where=where, season_id=season_id)
@@ -269,6 +275,7 @@ def people_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/h2h')
 @APP.route('/api/h2h/')
 def h2h_api() -> Response:
     """
@@ -290,12 +297,12 @@ def h2h_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     person_id = int(request.args.get('personId', 0))
     q = request.args.get('q', '').strip()
-    where = query.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
+    where = clauses.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
     entries = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
     for entry in entries:
         entry.opp_url = url_for('seasons.person', mtgo_username=entry.opp_mtgo_username, season_id=season_id)
@@ -305,6 +312,7 @@ def h2h_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/leaderboards')
 @APP.route('/api/leaderboards/')
 def leaderboards_api() -> Response:
     """
@@ -327,10 +335,10 @@ def leaderboards_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
-    where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
+    where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
     try:
         competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
@@ -350,6 +358,7 @@ def leaderboards_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/matches')
 @APP.route('/api/matches/')
 def matches_api() -> Response:
     """
@@ -371,11 +380,11 @@ def matches_api() -> Response:
             'total': <int>
         }
     """
-    order_by = query.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    order_by = clauses.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
-    person_where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
-    opponent_where = query.text_match_where(query.person_query('o'), q) if q else 'TRUE'
+    person_where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
+    opponent_where = clauses.text_match_where(query.person_query('o'), q) if q else 'TRUE'
     where = f'({person_where} OR {opponent_where})'
     try:
         competition_id = int(request.args.get('competitionId', ''))
@@ -391,6 +400,7 @@ def matches_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/archetypes')
 @APP.route('/api/archetypes/')
 def archetypes_api() -> Response:
     """
@@ -408,6 +418,7 @@ def archetypes_api() -> Response:
     r = {'total': len(data), 'objects': data}
     return return_camelized_json(r)
 
+@APP.route('/api/rotation/cards')
 @APP.route('/api/rotation/cards/')
 def rotation_cards_api() -> Response:
     """
@@ -427,49 +438,32 @@ def rotation_cards_api() -> Response:
             'total': <int>
         }
     """
-    _, _, cs = rotation.read_rotation_files()
     q = request.args.get('q', '').lower()
-    search_results = None
-    try:
-        search_results = [c.name for c in card_search.search(q)] if q else None
-    except card_search.InvalidSearchException:
-        pass
-    if search_results is not None:
-        cs = [c for c in cs if c.name in search_results]
+    page, page_size, limit = pagination(request.args)
+    where, message = clauses.card_search_where(q) if q else ('TRUE', '')
     if not session.get('admin', False):
-        cs = [c for c in cs if c.status != 'Undecided']
-    # Now add rank to the cards, which only decksite knows not magic.rotation.
-    ranks = playability.rank()
-    for c in cs:
-        c.rank = ranks.get(c.name, 0 if c.never_legal() else sys.maxsize)
-        if c.rank == 0:
-            c.display_rank = 'NEW'
-        elif c.rank == sys.maxsize:
-            c.display_rank = '-'
-        else:
-            c.display_rank = str(c.rank)
-    rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
-    total = len(cs)
-    page, page_size, _ = pagination(request.args)
-    start = page * page_size
-    end = start + page_size
-    cs = cs[start:end]
+        where += " AND status <> 'Undecided'"
+    order_by = clauses.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    cs: list[Card] = rot.load_rotation(where=where, order_by=order_by, limit=limit)
     prepare_cards(cs)
-    r = {'page': page, 'total': total, 'objects': cs}
+    total = rot.load_rotation_count(where=where)
+    r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
 
 @APP.api.route('/decks/<int:deck_id>')
+@APP.api.route('/decks/<int:deck_id>/')
 class LoadDeck(Resource):
     @APP.api.marshal_with(DECK)
     def get(self, deck_id: int) -> Deck:
         return deck.load_deck(deck_id)
 
 @APP.api.route('/randomlegaldeck')
+@APP.api.route('/randomlegaldeck/')
 class LoadRandomDeck(Resource):
     @APP.api.marshal_with(DECK)
-    def get(self) -> Optional[Deck]:
+    def get(self) -> Deck | None:
         blob = league.random_legal_deck()
         if blob is None:
             APP.api.abort(404, 'No legal decks could be found')
@@ -478,9 +472,10 @@ class LoadRandomDeck(Resource):
         return blob
 
 @APP.api.route('/rotation')
+@APP.api.route('/rotation/')
 class Rotation(Resource):
     @APP.api.marshal_with(ROTATION_DETAILS)
-    def get(self) -> Dict[str, Any]:
+    def get(self) -> dict[str, Any]:
         now = dtutil.now()
         diff = seasons.next_rotation() - now
         result = {
@@ -492,6 +487,7 @@ class Rotation(Resource):
         return result
 
 @APP.route('/api/competitions')
+@APP.route('/api/competitions/')
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
@@ -507,10 +503,12 @@ def competitions_api() -> Response:
     return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')
+@APP.route('/api/competitions/<competition_id>/')
 def competition_api(competition_id: int) -> Response:
     return return_json(comp.load_competition(competition_id))
 
 @APP.api.route('/league')
+@APP.api.route('/league/')
 class League(Resource):
     @APP.api.marshal_with(COMPETITION)
     def get(self) -> comp.Competition:
@@ -520,11 +518,13 @@ class League(Resource):
             lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
         return lg
 @APP.api.route('/seasoncodes')
+@APP.api.route('/seasoncodes/')
 class SeasonCodes(Resource):
-    def get(self) -> List[str]:
+    def get(self) -> list[str]:
         return seasons.SEASONS[:seasons.current_season_num()]
 
 @APP.route('/api/person/<person>')
+@APP.route('/api/person/<person>/')
 @fill_args('season_id')
 def person_api(person: str, season_id: int = -1) -> Response:
     if season_id == -1:
@@ -537,6 +537,7 @@ def person_api(person: str, season_id: int = -1) -> Response:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
 @APP.route('/api/person/<person>/decks')
+@APP.route('/api/person/<person>/decks/')
 @fill_args('season_id')
 def person_decks_api(person: str, season_id: int = 0) -> Response:
     p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
@@ -547,6 +548,7 @@ def person_decks_api(person: str, season_id: int = 0) -> Response:
     return return_json(blob)
 
 @APP.route('/api/league/run/<person>')
+@APP.route('/api/league/run/<person>/')
 def league_run_api(person: str) -> Response:
     decks = league.active_decks_by(person)
     if len(decks) == 0:
@@ -563,6 +565,7 @@ def league_run_api(person: str) -> Response:
     return return_json(run)
 
 @APP.route('/api/league/drop/<person>', methods=['POST'])
+@APP.route('/api/league/drop/<person>/', methods=['POST'])
 def drop(person: str) -> Response:
     error = validate_api_key()
     if error:
@@ -579,6 +582,7 @@ def drop(person: str) -> Response:
     return return_json(result)
 
 @APP.route('/api/doorprize', methods=['POST'])
+@APP.route('/api/doorprize/', methods=['POST'])
 def doorprize() -> Response:
     error = validate_api_key()
     if error:
@@ -588,21 +592,26 @@ def doorprize() -> Response:
     return return_json({'success': True})
 
 @APP.route('/api/rotation/clear_cache')
+@APP.route('/api/rotation/clear_cache/')
 def rotation_clear_cache() -> Response:
     rotation.clear_redis()
     rotation.rotation_redis_store()
+    rot.force_cache_update()
     return return_json({'success': True})
 
 @APP.route('/api/cards')
+@APP.route('/api/cards/')
 def cards_api() -> Response:
     blob = {'cards': card.load_cards()}
     return return_json(blob)
 
 @APP.route('/api/card/<card>')
+@APP.route('/api/card/<card>/')
 def card_api(c: str) -> Response:
     return return_json(oracle.load_card(c))
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
+@APP.route('/api/archetype/reassign/', methods=['POST'])
 @auth.demimod_required
 @fill_form('deck_id', 'archetype_id')
 def post_reassign(deck_id: int, archetype_id: int) -> Response:
@@ -611,23 +620,27 @@ def post_reassign(deck_id: int, archetype_id: int) -> Response:
     return return_json({'success': True, 'deck_id': deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])
+@APP.route('/api/rule/update/', methods=['POST'])
 @fill_form('rule_id')
 @auth.demimod_required
-def post_rule_update(rule_id: Optional[int] = None) -> Response:
+def post_rule_update(rule_id: int | None = None) -> Response:
     if rule_id is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
         success, msg = rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
         return return_json({'success': success, 'msg': msg})
     return return_json({'success': False, 'msg': 'Required keys not found'})
 
+@APP.route('/api/sitemap')
 @APP.route('/api/sitemap/')
 def sitemap() -> Response:
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and len(rule.arguments) == 0]
     return return_json({'urls': urls})
 
+@APP.route('/api/intro')
 @APP.route('/api/intro/')
 def intro() -> Response:
     return return_json(not request.cookies.get('hide_intro', False) and not auth.hide_intro())
 
+@APP.route('/api/intro', methods=['POST'])
 @APP.route('/api/intro/', methods=['POST'])
 def hide_intro() -> Response:
     r = Response(response='')
@@ -635,6 +648,7 @@ def hide_intro() -> Response:
     return r
 
 @APP.route('/api/status')
+@APP.route('/api/status/')
 @auth.load_person
 def person_status() -> Response:
     username = auth.mtgo_username()
@@ -659,7 +673,7 @@ def person_status() -> Response:
             r['league_end'] = dtutil.display_time(time_until_league_end / datetime.timedelta(seconds=1), granularity=2)
     return return_json(r)
 
-def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
+def guarantee_at_most_one_or_retire(decks: list[Deck]) -> Deck | None:
     try:
         run = guarantee.at_most_one(decks)
     except TooManyItemsException:
@@ -668,12 +682,14 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
     return run
 
 @APP.route('/api/key_cards/<int:season_num>')
+@APP.route('/api/key_cards/<int:season_num>/')
 def key_cards(season_num: int) -> Response:
     data = playability.key_cards(season_num)
     return return_json({'data': data})
 
 
 @APP.route('/api/admin/people/<int:person_id>/notes')
+@APP.route('/api/admin/people/<int:person_id>/notes/')
 @auth.admin_required_no_redirect
 def person_notes(person_id: int) -> Response:
     return return_json({'notes': ps.load_notes(person_id)})
@@ -696,29 +712,33 @@ def deck_embed(deck_id: int) -> Response:
     return return_json(embed)
 
 @APP.route('/api/test_500')
+@APP.route('/api/test_500/')
 def trigger_test_500() -> Response:
     if configuration.production.value:
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
     raise TooManyItemsException
 
 @APP.route('/api/achievements')
+@APP.route('/api/achievements/')
 def all_achievements() -> Response:
     data = {}
     data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
     return return_json(data)
 
 @APP.route('/api/tournaments')
+@APP.route('/api/tournaments/')
 def all_tournaments() -> Response:
     data = {}
     data['tournaments'] = (tournaments.all_series_info())
     return return_json(data)
 
+@APP.route('/api/search')
 @APP.route('/api/search/')
 def search() -> Response:
     init_search_cache()
     q = request.args.get('q', '').lower()
-    exact_matches: List[SearchItem] = []
-    fuzzy_matches: List[SearchItem] = []
+    exact_matches: list[SearchItem] = []
+    fuzzy_matches: list[SearchItem] = []
     if len(q) < 2:
         return return_json([])
     for item in SEARCH_CACHE:
@@ -747,7 +767,7 @@ def init_search_cache() -> None:
         for item in json.load(f):
             SEARCH_CACHE.append(item)
 
-def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[str] = None) -> Dict[str, Any]:
+def menu_item_to_search_item(menu_item: dict[str, Any], parent_name: str | None = None) -> dict[str, Any]:
     name = ''
     if parent_name:
         name += f'{parent_name} – '
@@ -758,9 +778,9 @@ def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[st
         url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}
 
-def pagination(args: Dict[str, str]) -> Tuple[int, int, str]:
+def pagination(args: dict[str, str]) -> tuple[int, int, str]:
     try:
-        return query.pagination(args)
+        return clauses.pagination(args)
     except InvalidArgumentException as e:
         raise BadRequest from e
 

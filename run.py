@@ -5,12 +5,12 @@ import pkgutil
 import sys
 import time
 from types import ModuleType
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import click
 from traceback_with_variables import activate_by_import  # noqa: F401
 
-from shared import configuration, decorators, sentry
+from shared import configuration, decorators, repo, sentry
 
 logging.basicConfig(level=logging.INFO)
 
@@ -95,10 +95,13 @@ def logsite() -> None:
 
 @cli.command()
 @click.argument('argv', nargs=-1)
-def modo_bugs(argv: Tuple[str]) -> None:
-    from modo_bugs import main
-    sentry.init()
-    main.run(argv)
+def modo_bugs(argv: tuple[str]) -> None:
+    try:
+        from modo_bugs import main
+        sentry.init()
+        main.run(argv)
+    except Exception as e:
+        repo.create_issue(f'Exception running modo_bugs: {e}', 'modo-bugs', 'run.py', 'PennyDreadfulMTG/perf-reports', e)
 
 @cli.command()
 @click.option('--force', is_flag=True, help='Force a rebuild of the database')
@@ -110,7 +113,7 @@ def init_cards(force: bool = False) -> None:
 
 
 @decorators.interprocess_locked('.task.lock')
-def task(args: List[str]) -> None:
+def task(args: list[str]) -> None:
     try:
         module = args[0]
         if module == 'scraper':
@@ -132,7 +135,7 @@ def task(args: List[str]) -> None:
         elif name == 'weekly':
             run_all_tasks(module, 'WEEKLY')
         else:
-            s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
+            s = importlib.import_module(f'{module}.{name}')
             use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
             exitcode = None
             if use_app_context:
@@ -151,7 +154,7 @@ def task(args: List[str]) -> None:
         repo.create_issue(f'Error running task {args}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
         raise
 
-def call(args: List[str], s: ModuleType) -> int:
+def call(args: list[str], s: ModuleType) -> int:
     exitcode = -99
     if getattr(s, 'scrape', None) is not None:
         exitcode = s.scrape(*args[2:])
@@ -162,16 +165,16 @@ def call(args: List[str], s: ModuleType) -> int:
         exitcode = s.ad_hoc()
     return exitcode
 
-def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
+def run_all_tasks(module: Any, with_flag: str | None = None) -> None:
     error = None
-    m = importlib.import_module('{module}'.format(module=module))
+    m = importlib.import_module(f'{module}')
 
     from decksite import APP
     APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context():
         for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):
             try:
-                s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
+                s = importlib.import_module(f'{module}.{modname}')
 
                 if with_flag and not getattr(s, with_flag, False):
                     continue

@@ -2,7 +2,7 @@ import datetime
 import sys
 from enum import Enum
 from itertools import groupby
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Union
 
 import inflect
 from dateutil import rrule
@@ -12,8 +12,8 @@ from magic.models import Competition, Deck
 from shared import dtutil, guarantee
 from shared.container import Container
 
-TournamentDateType = Tuple[int, str, datetime.datetime]
-Prizes = List[Dict[str, Union[str, object]]]
+TournamentDateType = tuple[int, str, datetime.datetime]
+Prizes = list[dict[str, Union[str, object]]]
 
 FNM = 1
 SAT = 2
@@ -31,13 +31,13 @@ class StageType(Enum):
     ELIMINATION_ROUNDS = 'elimination_rounds'
 
 
-def next_tournament_info() -> Dict[str, Any]:
+def next_tournament_info() -> dict[str, Any]:
     return tournament_info(TimeDirection.AFTER)
 
-def previous_tournament_info() -> Dict[str, Any]:
+def previous_tournament_info() -> dict[str, Any]:
     return tournament_info(TimeDirection.BEFORE, units=1)
 
-def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, Any]:
+def tournament_info(time_direction: TimeDirection, units: int = 2) -> dict[str, Any]:
     tournament_id, name, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
     near = next_tournament_time_precise < 18000  # Threshold for near: 5 hours in seconds
@@ -64,7 +64,7 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
     dates = get_all_next_tournament_dates(start, index=index)
     return sorted(dates, key=lambda t: t[2])[index]
 
-def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
+def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> list[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index])
@@ -204,7 +204,7 @@ def normal_prize(f: int) -> int:
 def series_info(tournament_id: int) -> Container:
     return guarantee.exactly_one([s for s in all_series_info() if s.tournament_id == tournament_id])
 
-def all_series_info() -> List[Container]:
+def all_series_info() -> list[Container]:
     info = {t[0]: t for t in get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))}
     return [
         Container({
@@ -266,7 +266,7 @@ def all_series_info() -> List[Container]:
         }),
     ]
 
-def rounds_info() -> List[Dict[Union[str, StageType], int]]:
+def rounds_info() -> list[dict[str | StageType, int]]:
     return [
         {
             'min_players': 2,

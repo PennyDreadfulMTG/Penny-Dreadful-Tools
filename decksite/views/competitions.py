@@ -1,11 +1,9 @@
-from typing import List
-
 from decksite.view import View
 from magic.models import Competition
 
 
 class Competitions(View):
-    def __init__(self, competitions: List[Competition]) -> None:
+    def __init__(self, competitions: list[Competition]) -> None:
         super().__init__()
         self.competitions = competitions
         self.show_seasons = True

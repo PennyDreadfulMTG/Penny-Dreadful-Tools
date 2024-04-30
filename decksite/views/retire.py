@@ -1,5 +1,3 @@
-from typing import List
-
 from flask import url_for
 
 from decksite.data.form import Form
@@ -8,7 +6,7 @@ from shared.container import Container
 
 
 class Retire(LeagueForm):
-    def __init__(self, form: Form, matches: List[Container]) -> None:
+    def __init__(self, form: Form, matches: list[Container]) -> None:
         super().__init__(form)
         self.logout_url = url_for('logout', target='retire')
         self.matches = matches

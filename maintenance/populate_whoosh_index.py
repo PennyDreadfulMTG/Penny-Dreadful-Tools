@@ -11,4 +11,4 @@ def ad_hoc() -> None:
     start = time.time()
     whoosh_write.reindex()
     end = time.time()
-    print('Indexing done in {t} seconds'.format(t=(end - start)))
+    print(f'Indexing done in {(end - start)} seconds')

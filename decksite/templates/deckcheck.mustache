@@ -1,6 +1,6 @@
 <section>
     <form method="post">
-        {{#person_id}}
+        {{#form.has_recent_decks}}
             <div>
                 <label for="name">{{TT_YOUR_RECENT_DECKS}}</label>
                     <select id="signup_recent_decks">
@@ -10,7 +10,7 @@
                         {{/form.recent_decks}}
                     </select>
             </div>
-        {{/person_id}}
+        {{/form.has_recent_decks}}
         <div>
             <label for="decklist">{{TT_DECKLIST}}</label>
             <textarea {{#form.errors.decklist}}class="error"{{/form.errors.decklist}} name="decklist" id="decklist">{{form.decklist}}</textarea>

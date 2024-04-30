@@ -1,10 +1,10 @@
 import codecs
 import datetime
 import json
+import logging
 import re
 import sys
 import urllib.parse
-from typing import Dict, List, Optional
 
 import requests
 from github.Issue import Issue
@@ -18,18 +18,18 @@ from .strings import BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX, REGEX
 
 
 @lazy_property
-def cardnames() -> List[str]:
+def cardnames() -> list[str]:
     return fetcher.catalog_cardnames()
 
 @lazy_property
-def pd_legal_cards() -> List[str]:
+def pd_legal_cards() -> list[str]:
     print('Fetching http://pdmtgo.com/legal_cards.txt')
     return requests.get('http://pdmtgo.com/legal_cards.txt').text.split('\n')
 
 
-ALL_BUGS: List[BugData] = []
+ALL_BUGS: list[BugData] = []
 
-VERIFICATION_BY_ISSUE: Dict[int, str] = {}
+VERIFICATION_BY_ISSUE: dict[int, str] = {}
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)  # type: ignore
@@ -118,16 +118,16 @@ def process_issue(issue: Issue) -> None:
         else:
             cat = 'Unconfirmed'
             if not issue.comments:
-                print('Issue #{id} was reported {days} ago, and has had no followup.'.format(id=issue.number, days=age))
+                print(f'Issue #{issue.number} was reported {age} ago, and has had no followup.')
                 if age > 30:
                     issue.create_comment('Closing due to lack of followup.')
                     issue.edit(state='closed')
                     return
 
-        if not 'Unclassified' in labels:
+        if 'Unclassified' not in labels:
             issue.add_to_labels('Unclassified')
     elif 'Unclassified' in labels:
-        print('Removing Unclassified from Issue #{id}'.format(id=issue.number))
+        print(f'Removing Unclassified from Issue #{issue.number}')
         issue.remove_from_labels('Unclassified')
         cat = categories.pop()
     else:
@@ -168,11 +168,15 @@ def process_issue(issue: Issue) -> None:
 
         ALL_BUGS.append(bug)
 
-def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str]) -> None:
+def process_forum(feedback_link: str | None, issue: Issue, labels: list[str]) -> None:
     if not feedback_link:
         return
 
-    status = fetcher.get_daybreak_label(feedback_link)
+    try:
+        status = fetcher.get_daybreak_label(feedback_link)
+    except requests.RequestException as e:
+        logging.exception(e)
+        status = None
     _status = status
     if status:
         status = 'Daybreak: ' + status
@@ -193,14 +197,14 @@ def process_forum(feedback_link: Optional[str], issue: Issue, labels: list[str])
             issue.remove_from_labels(s)
             labels.remove(s)
 
-def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[str]) -> None:
+def update_issue_body(issue: Issue, cards: list[str], see_also: str | None) -> None:
     expected = '<!-- Images --> '
     images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
     for row in strings.grouper(4, cards):
-        expected = expected + '<img src="https://pennydreadfulmagic.com/image/{0}/" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+        expected = expected + '<img src="https://pennydreadfulmagic.com/image/{}/" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
     if see_also is not None:
         for row in strings.grouper(5, re.findall(REGEX_CARDREF, see_also)):
-            expected = expected + '<img src="https://pennydreadfulmagic.com/image/{0}/" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+            expected = expected + '<img src="https://pennydreadfulmagic.com/image/{}/" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
 
     if not images:
         print('Adding Images...')
@@ -211,13 +215,13 @@ def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[str]) -
         body = issue.body.replace(images.group(0), expected)
         issue.edit(body=body)
 
-def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
+def check_for_invalid_card_names(issue: Issue, cards: list[str]) -> None:
     labels = [lab.name for lab in issue.labels]
     fail = False
     for c in cards:
         if '//' in c:
             pass
-        elif not c in cardnames():
+        elif c not in cardnames():
             total_cards, names, warnings = fetcher.search_scryfall(c)
             if total_cards == 1:
                 body = issue.body.replace(c, names[0])
@@ -230,7 +234,7 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
     elif not fail and 'Invalid Card Name' in labels:
         issue.remove_from_labels('Invalid Card Name')
 
-def get_affects(issue: Issue) -> List[str]:
+def get_affects(issue: Issue) -> list[str]:
     affects = strings.get_body_field(issue.body, 'Affects')
     if affects is None:
         title = issue.title  # type: str
@@ -285,7 +289,7 @@ def fix_user_errors(issue: Issue) -> None:
     # People are putting [cardnames] in square quotes, despite the fact we prefer Affects: now.
     title = strings.strip_squarebrackets(issue.title)
     if title != issue.title:
-        print('Changing title of #{0} to "{1}"'.format(issue.number, title))
+        print(f'Changing title of #{issue.number} to "{title}"')
         issue.edit(title=title)
 
 def apply_screenshot_labels(issue: Issue) -> None:
@@ -306,12 +310,12 @@ def apply_screenshot_labels(issue: Issue) -> None:
     if 'clips.twitch.tv/' in issue.body:
         has_video = True
 
-    if has_screenshot and not 'Has Screenshot' in labels:
+    if has_screenshot and 'Has Screenshot' not in labels:
         issue.add_to_labels('Has Screenshot')
     if has_screenshot and 'Needs Screenshot' in labels:
         issue.remove_from_labels('Needs Screenshot')
 
-    if has_video and not 'Has Video' in labels:
+    if has_video and 'Has Video' not in labels:
         issue.add_to_labels('Has Video')
     if has_video and 'Needs Video' in labels:
         issue.remove_from_labels('Needs Video')

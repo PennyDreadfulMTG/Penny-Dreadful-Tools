@@ -1,12 +1,10 @@
-from typing import List, Optional, Tuple
-
 import pytest
 
 from decksite import deck_name
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
-TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
+TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control', 1),
     ('U/B Control', 'Dimir Control', ['U', 'B'], 'Control', 1),
     ('dimir Control', 'Dimir Control', ['U', 'B'], 'Control', 1),
@@ -42,7 +40,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('S6 red Deck Wins', 'Red Deck Wins', ['R'], None, 6),
     ('S6red Deck Wins', 'Red Deck Wins', ['R'], None, 6),
     ('Mono-W Soldiers', 'Mono White Soldiers', ['W'], None, 1),
-    ('BWWave', 'Bwwave', ['W'], None, 1),  # Not ideal but ok.
+    ('BWWave', 'BWWave', ['W'], None, 1),
     ('PD - Archfiend Cycling', 'Archfiend Cycling', None, None, 1),
     ('a red deck but not a net deck', 'A Red Deck but Not a Net Deck', None, None, 1),
     ('Better red than dead', 'Better Red Than Dead', None, None, 1),
@@ -95,7 +93,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('Food - PD', 'Food', ['B', 'R', 'G'], 'Food', 1),
     ('Storm (PD S16)', 'Storm', ['U', 'B'], 'Storm', 16),
     ('Black-Red Midrange', 'Rakdos Midrange', ['R', 'B'], 'Rakdos Midrange', 1),
-    ('Happy B DAY Adriana', 'Happy B Day Adriana', ['W', 'R'], 'AggroSlide', 1),
+    ('Happy B DAY Adriana', 'Happy B DAY Adriana', ['W', 'R'], 'AggroSlide', 1),
     ('braids b', 'Braids Black', ['B'], 'Midrange', 1),
     ('[Penny Dreadful] UR Cycling', 'Izzet Cycling', ['U', 'R'], 'Midrange', 1),
     ('Penny-Zombies', 'Zombies', ['B'], 'Zombies', 1),
@@ -112,12 +110,12 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('Fuck', 'Mono Blue Aggro', ['U'], 'Aggro', 1),
     ('Mono Black Reanimator', 'Mono Black Reanimator', ['B'], 'Mono Black Reanimator', 1),
     ('Mad Cat Lady pd league', 'Mad Cat Lady League', ['B'], 'Aggro', 1),
-    ("(NecropolisRegent's) The Emperor Protects", "(Necropolisregent's) the Emperor Protects", ['B'], 'Control', 1),
+    ("(NecropolisRegent's) The Emperor Protects", "(NecropolisRegent's) the Emperor Protects", ['B'], 'Control', 1),
     ('Run Like Hell', 'Run Like Hell', ['R'], 'Red Deck Wins', 1),
     ('Weed Has Been Legalized Spiderman', 'Weed Has Been Legalized Spiderman', ['R'], 'Red Deck Wins', 1),
     ('Raiding Dem Hoes', 'Raiding Dem', ['R'], 'Red Deck Wins', 1),
     ('Azorius 8post Control v2', 'Azorius 8post Control v2', ['U', 'W'], 'Azorius Cloudpost Control', 1),
-    ('GGreen v2.0', 'Ggreen v2', ['G'], 'Mono Green Aggro', 1),
+    ('GGreen v2.0', 'GGreen v2', ['G'], 'Mono Green Aggro', 1),
     ('Enchantress VI', 'Enchantress v6', ['W', 'G'], 'Enchantress', 1),
     ('LonisV3', 'Lonis v3', ['U', 'G'], 'Combo', 1),
     ('Izzet Twin V3', 'Izzet Twin v3', ['U', 'R'], 'Izzet Twin', 1),
@@ -142,7 +140,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('S32-MILL', 'Mill', [], None, 32),
     ('Elves-N-Taxes3', 'Elves-N-Taxes3', [], None, 1),
     ('Elves-N-Taxes3', 'Elves-N-Taxes3', [], None, 3),
-    ('S32Tezz', 'S32tezz', [], None, 1),
+    ('S32Tezz', 'S32Tezz', [], None, 1),
     ('S32Tezz', 'Tezz', [], None, 32),
     ('0-s31_BW_Yorion', '0 Orzhov Yorion', ['W', 'B'], None, 31),  # I would love to remove 0 here but not right now
     ('PD S31 - Enchant', 'Enchant', [], None, 31),
@@ -167,11 +165,11 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('Living end... kinda', 'Living End Kinda', [], None, 1),
     ('32. UR_Twin', 'Izzet Twin', ['U', 'R'], 'Izzet Twin', 32),
     ('new version. does no thragtusk make me lose?', 'New Version Does No Thragtusk Make Me Lose?', [], None, 1),
-    ('FDSe 1.0', 'Fdse v1', [], None, 1),
+    ('FDSe 1.0', 'FDSe v1', [], None, 1),
     ('Weird Linessa 1.1', 'Weird Linessa v1.1', [], None, 1),
     ('Cloudy Enduring Ideal v1.1', 'Cloudy Enduring Ideal v1.1', [], None, 1),
     ('Cloudy Enduring Ideal V1.1', 'Cloudy Enduring Ideal v1.1', [], None, 1),
-    ('Orzhov Tokens 1.1: not even sure if i need the black', 'Tokens v1.1: Not Even Sure if I Need the Orzhov', ['W', 'B'], None, 1),
+    ('Orzhov Tokens 1.1: not even sure if i need the black', 'Orzhov Tokens 1.1: Not Even Sure if I Need the Black', ['W', 'B'], None, 1),
     ('Selesnya Aggro v 1.1', 'Selesnya Aggro v1.1', ['W', 'G'], 'Selesnya Little Kid', 1),
     ('Season 18 Post 1.11.2', 'Post v1.11.2', [], None, 18),
     ('Affinity 1.12', 'Affinity v1.12', [], None, 1),
@@ -180,11 +178,11 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('Life Gain Mk1.1', 'Life Gain v1.1', [], None, 1),
     ('War of Attrition 1.1 (New Phyrexia)', 'War of Attrition v1.1 (New Phyrexia)', [], None, 1),
     ('Vatmidrange (1.1)', 'Vatmidrange v1.1', [], None, 1),
-    ('HellPosts 1.1: Still dies to Red', 'Hellposts v1.1: Still Dies to Red', [], None, 1),
+    ('HellPosts 1.1: Still dies to Red', 'HellPosts v1.1: Still Dies to Red', [], None, 1),
     ('Reanimate...Annihilate 1.1', 'Reanimate Annihilate v1.1', [], None, 1),
     ('Mirror-Mad Ooze V2.1', 'Mirror-Mad Ooze v2.1', [], None, 1),
     ('Abzan Oriss-Lock Traverse Midrange v 2.1', 'Abzan Oriss-Lock Traverse Midrange v2.1', [], None, 1),
-    ('Grixis Eldrazi 2.1 (COrrect Lands yay)', 'Grixis Eldrazi v2.1 (Correct Lands Yay)', [], None, 1),
+    ('Grixis Eldrazi 2.1 (COrrect Lands yay)', 'Grixis Eldrazi v2.1 (COrrect Lands Yay)', [], None, 1),
     ('Count Till 10 V2.1', 'Count Till 10 v2.1', [], None, 1),
     ("Ol' Reliable 2.1, now with Demolition Field", "Ol' Reliable v2.1, Now With Demolition Field", [], None, 1),
     ('2012', '2012', [], None, 1),
@@ -219,7 +217,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('RB Madness rev2', 'Rakdos Madness v2', [], None, 2),
     ('12-Rack', '12-Rack', [], None, 2),
     ('31. Yorion Fires', 'Yorion Fires', [], None, 31),
-    ('GreenStompy PD31', 'Greenstompy', [], None, 31),
+    ('GreenStompy PD31', 'GreenStompy', [], None, 31),
     ('Enchantress v31.3.0', 'Enchantress v31.3', [], None, 31),
     ('Enchantress v31.3.1', 'Enchantress v31.3.1', [], None, 31),
     ('druelf-s31 (1)', 'Druelf v1', [], None, 31),
@@ -227,7 +225,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('[S31] PD500 Colossus', 'Colossus', [], None, 31),
     ('s31-tempted-by-the-ring-20231202-175217', 'Tempted-by-the-Ring-20231202-175217', [], None, 31),
     ('Izzet Trashburn Ver9.0', 'Izzet Trashburn v9', [], None, 1),
-    ('Comblins18.0 S18', 'comblins18.0', [], None, 18),  # titlecase won't titlecase a word with an inline period
+    ('Comblins18.0 S18', 'Comblins18.0', [], None, 18),
     ('PD_RG_Warriors_20.01', 'Gruul Warriors v20.01', [], None, 20),
     ('23.05.6 (S23)', '23.05.6', [], None, 23),
     ('Storm PD S06', 'Storm S06', [], None, 6),
@@ -285,7 +283,33 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str], int]] = [
     ('Red deck wins 3.4.22', 'Red Deck Wins v3.4.22', [], None, 23),
     ('count to 20', 'Count to 20', [], None, 23),
     ('delver🚮 (v2)', 'Delver🚮 v2', [], None, 23),
+    ('librarians', 'Librarians', ['U'], 'Mono Blue Librarians', 32),
+    ('trying to fit in', 'Trying to Fit In', ['U', 'R'], 'Izzet Twin', 32),
+    ('Blue Man Group', 'Blue Man Group', [], None, 32),
+    ('#JustNayaThings', '#JustNayaThings', [], None, 32),
+    ('Blue Burn', 'Blue Burn', [], None, 32),
+    ('S15 is a meme', 'S15 Is a Meme', [], None, 32),
+    ('GG Con', 'GG Con', [], None, 32),
+    ('I WILL Make Combo Work In Season 15', 'I WILL Make Combo Work in Season 15', [], None, 15),
+    ('Rakdos aggro but with green instead of black', 'Rakdos Aggro but With Green Instead of Black', [], None, 32),
+    ('Blue Dreadnought + More Red Hate', 'Blue Dreadnought + More Red Hate', [], None, 32),
+    ('UB or not UB? That is the Question', 'UB or Not UB? That Is the Question', [], None, 32),
+    ('R E A N I M A T O R', 'R E A N I M A T O R', [], None, 32),
+    ('Meme deck for #general', 'Meme Deck for #general', [], None, 32),
+    ('black and green', 'Black and Green', [], None, 32),
+    ('Fix the gargadon bug me angy', 'Fix the Gargadon Bug Me Angy', [], None, 32),
+    ('The World Is So Black And White Nowadays', 'The World Is So Black and White Nowadays', [], None, 32),
+    ('red and black jank', 'Red and Black Jank', [], None, 32),
+    ('blue man group', 'Blue Man Group', ['U'], None, 32),
+    ('No Green Jeskai Ascendancy', 'No Green Jeskai Ascendancy', ['W', 'U', 'R'], 'Jeskai Jeskai Ascendancy', 32),
+    ('GREEN JESKAI COMBO S8 Ver1.0', 'RGWU COMBO v1', ['G', 'W', 'U', 'R'], 'Four Color Jeskai Ascendancy', 8),
+    ('white weenie', 'White Weenie', ['W'], 'White Weenie', 32),
+    ('Teaching mystical erections', 'Teaching Mystical', ['U', 'B'], 'Dimir Control', 32),
+    ('Teaching Mystical Erections', 'Teaching Mystical', ['U', 'B'], 'Dimir Control', 32),
+    ('Kiki-Titi', 'Kiki-Titi', ['U', 'R'], 'Izzet Twin', 32),
+    ('Greasefag', 'Orzhov Greasefang', ['W', 'B'], 'Greasefang', 33),
 ]
+
 def test_replace_space_alternatives() -> None:
     assert deck_name.replace_space_alternatives('3.1.2') == '3.1.2'
     assert deck_name.replace_space_alternatives('A.very_silly_name 2.6') == 'A very silly name 2.6'
@@ -347,7 +371,7 @@ def test_normalize_colors() -> None:
     assert deck_name.normalize_colors('Braids B', ['B']) == 'Braids Black'
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name,season_id', TESTDATA)
-def test_normalize(original_name: str, expected: str, colors: List[str], archetype_name: str, season_id: int) -> None:
+def test_normalize(original_name: str, expected: str, colors: list[str], archetype_name: str, season_id: int) -> None:
     d = Container({'original_name': original_name,
                    'archetype_name': archetype_name,
                    'colors': colors or [],

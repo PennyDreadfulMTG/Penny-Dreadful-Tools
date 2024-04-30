@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import subprocess
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from interactions import Client, listen
 from interactions.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
@@ -30,7 +30,7 @@ class Bot(Client):
                          slash_context=command.MtgInteractionContext,
                          **kwargs)
         prefixed_commands.setup(self, prefixed_context=command.MtgMessageContext, default_prefix='!')
-        self.achievement_cache: Dict[str, Dict[str, str]] = {}
+        self.achievement_cache: dict[str, dict[str, str]] = {}
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
             self.load_extension('interactions.ext.debug_extension')
@@ -103,7 +103,7 @@ class Bot(Client):
                     streaming = True
             if not streaming and streaming_role in member.roles:
                 await member.remove_role(streaming_role)
-            elif streaming and not streaming_role in member.roles:
+            elif streaming and streaming_role not in member.roles:
                 await member.add_role(streaming_role)
         # Achievements
         if event.status in ['online', 'dnd']:
@@ -113,7 +113,7 @@ class Bot(Client):
         role = await get_role(member.guild, 'Linked Magic Online')
         data = None
         # Linked to PDM
-        if role is not None and not role in member.roles:
+        if role is not None and role not in member.roles:
             if data is None:
                 data = await fetcher.person_data_async(member.id)
             if data.get('id', None):
@@ -126,8 +126,8 @@ class Bot(Client):
 
         # Trophies
         if is_pd_server(guild) and data is not None and data.get('achievements', None) is not None:
-            expected: List[Role] = []
-            remove: List[Role] = []
+            expected: list[Role] = []
+            remove: list[Role] = []
 
             async def achievement_name(key: str) -> str:
                 name = self.achievement_cache.get(key, None)
@@ -186,12 +186,12 @@ async def prepare_database_async() -> None:
     oracle.init()
 
 
-def is_pd_server(guild: Optional[Guild]) -> bool:
+def is_pd_server(guild: Guild | None) -> bool:
     if not guild:
         return False
     return guild.id == configuration.pd_server_id.value
 
-async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optional[Role]:
+async def get_role(guild: Guild, rolename: str, create: bool = False) -> Role | None:
     for r in guild.roles:
         if r.name == rolename:
             return r

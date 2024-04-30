@@ -60,7 +60,7 @@ class Match(View):
     def og_description(self) -> str:
         p = inflect.engine()
         fmt = titlecase.titlecase(p.a(self.format_name))
-        description = '{fmt} match.'.format(fmt=fmt)
+        description = f'{fmt} match.'
         return description
 
     def page_title(self) -> str:
@@ -68,4 +68,4 @@ class Match(View):
 
 def player_link(name: str) -> str:
     url = url_for('show_person', person=name)
-    return '<a href="{url}">{name}</a>'.format(url=html.escape(url), name=html.escape(name))
+    return f'<a href="{html.escape(url)}">{html.escape(name)}</a>'

@@ -84,8 +84,8 @@ body {
         These colors are what we want in the header/footer for the practical reason that if the page is particularly short we want this color to show to the bottom of the browser and on elastic scroll at top/bottom of the browser.
         See main for the main content colors.
     */
-    background: #999;
-    color: #eee;
+    background: var(--secondary-background);
+    color: var(--secondary-text);
     /*
         For most text, the optimal line spacing is between 120% and 145% of the point size.
         https://practicaltypography.com/line-spacing.html
@@ -108,7 +108,7 @@ small {
 nav {
     font-family: heading-caps, main-text, "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
-    border-bottom: 0.05rem solid #999;
+    border-bottom: 0.05rem solid var(--border);
 }
 
 article, section p {
@@ -130,8 +130,8 @@ blockquote {
     margin-bottom: 1rem;
 }
 
-.notice a {
-    background: #eee;
+.notice p {
+    background: var(--tertiary-background);
     display: block;
     font-size: 1.333rem;
     padding: 1em;
@@ -157,7 +157,7 @@ footer a {
 }
 
 footer a:hover {
-    color: #502828;
+    color: var(--secondary-highlight);
     transition-property: color;
     transition-duration: 1s;
 }
@@ -373,8 +373,8 @@ header .search {
 }
 
 main, nav {
-    background: #f9f9f9;
-    color: #502828;
+    background: var(--background);
+    color: var(--text);
 }
 
 nav {
@@ -404,11 +404,11 @@ footer {
 }
 
 .status-bar {
-    background-color: #eee;
-    border-top: 0.05rem solid #ccc;
+    background-color: var(--tertiary-background);
+    border-top: 0.05rem solid var(--border);
     bottom: 0;
     box-sizing: border-box; /* So we can just say 100% width and have the status bar with padding fit the screen. */
-    color: #502828;
+    color: var(--tertiary-text);
     left: 0;
     padding-bottom: 1em;
     padding-top: 2em;
@@ -421,7 +421,7 @@ footer {
 @media only screen and (max-width: 640px), only screen and (max-height: 640px) {
     /* Move status-bar to the top so it doesn't conflict with bottom nav. */
     .status-bar {
-        border-bottom: 0.05rem solid #ccc;
+        border-bottom: 0.05rem solid var(--border);
         border-top: 0;
         bottom: inherit;
         font-size: 0.75rem;
@@ -438,12 +438,6 @@ section {
     margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     max-width: 100%; /* So that overflow-x on contained table clips overly wide content, otherwise the fact that sections are floated means it is ignored. */
     padding-top: 1rem;
-}
-
-.box {
-    background: #eee;
-    border: 0.05rem solid #ccc;
-    padding: 0 1rem;
 }
 
 /* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
@@ -493,40 +487,62 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
 
 Colors
 
-(Names from http://coolors.co/)
-
-Base colors:
-
-f9f9f9 "snow" – White. Main background color. Foreground color in secondary areas.
-502828 "acajou" – Black. Text, links, tertiary background color.
-
-Grays:
-
-eee "isabelline" – Highlight. Used to call attention to part of a table or text.  Foreground color in tertiary areas.
-999 "spanish gray" - Mana box borders, menu text color on hover, secondary background color.
-
-Other:
-
-f00 "red" – Errors.
-
-Colors of Magic (avoid using these to represent anything else):
-
-fffcda "cornsilk" – W mana
-ace2fa "blue lagoon" – U mana
-ccc2c0 "pale silver" – B mana
-f8aa92 "vivid tangerine" – R mana
-9dd2af "turquoise green" – G mana
-
 Color attributes are mostly found with their related structural elements in this file.
 
 */
 
+:root {
+    /* Site colors. (Names from http://coolors.co/) */
+    --white: #f9f9f9; /* Snow */
+    --black: #502828; /* Acajou */
+    --light-gray: #eee; /* Isabelline */
+    --dark-gray: #999; /* Spanish gray */
+    --red: #f00;
+
+    /* Helpful aliases for site colors. */
+
+    /* Main */
+    --background: var(--white);
+    --text: var(--black);
+    --deemphasized-text: var(--dark-gray);
+    --border: var(--dark-gray);
+    --light-border: var(--light-gray);
+    --line: var(--black);
+    --highlight: var(--light-gray);
+    --inactive: var(--dark-gray);
+    --error: var(--red);
+    --button: var(--light-gray);
+    --text-over-images: var(--white);
+    --toggle-off: var(--light-gray);
+    --toggle-on: var(--dark-gray);
+    --menu-highlight-text: var(--dark-gray);
+    --submenu-background: var(--black);
+    --submenu-text: var(--white);
+    --submenu-text-hover: var(--dark-gray);
+
+    /* Header and footer */
+    --secondary-background: var(--dark-gray);
+    --secondary-text: var(--white);
+    --secondary-highlight: var(--black);
+
+    /* Status bar, mobile menu and notice banner */
+    --tertiary-background: var(--light-gray);
+    --tertiary-text: var(--black);
+
+    /* Colors of Magic (avoid using these to represent anything else). */
+    --w-mana: #fffcda;
+    --u-mana: #ace2fa;
+    --b-mana: #ccc2c0;
+    --r-mana: #f8aa92;
+    --g-mana: #9dd2af;
+}
+
 .error {
-    color: red;
+    color: var(--error);
 }
 
 .inactive {
-    color: #999;
+    color: var(--inactive);
     cursor: default;
 }
 
@@ -552,7 +568,7 @@ header h1 {
     margin-bottom: 0;
     margin-right: 3rem;
     padding: 3rem 0 1rem 0;
-    text-shadow:  0.05rem 0.05rem 1rem #502828;
+    text-shadow:  0.05rem 0.05rem 1rem var(--text);
     text-transform: lowercase;
 }
 
@@ -566,7 +582,7 @@ main h1 {
 }
 
 main h2 {
-    border-top: 0.05rem solid #502828;
+    border-top: 0.05rem solid var(--line);
     font-size: 1rem;
     margin-bottom: 2rem;
     margin-top: 1rem;
@@ -607,7 +623,7 @@ a, main table.calendar a, main .intro .details a, .details a, main li a.force-li
 }
 
 main a:hover, main table.calendar a:hover, .details a:hover, main li a.force-link-style:hover {
-    background-color: #eee;
+    background-color: var(--highlight);
     border-radius: 0.317em;
     transition-duration: 1s;
     transition-property: background;
@@ -649,12 +665,12 @@ a.interesting, a.interesting:hover {
 }
 
 a.interestingness-heavily-played, a.interestingness-heavily-played:hover, a.interestingness-new, a.interestingness-new:hover {
-    border: 0.05rem solid #999;
+    border: 0.05rem solid var(--border);
     padding-top: 0;
 }
 
 a.interestingness-heavily-played, a.interestingness-moderately-played {
-    background-color: #eee;
+    background-color: var(--highlight);
 }
 
 /*
@@ -788,7 +804,7 @@ tr.wide td, tr.wide th {
 }
 
 tr.wide+tr td {
-    border-top: 0.05rem solid #999;
+    border-top: 0.05rem solid var(--border);
 }
 
 tr.wide td.wide {
@@ -798,7 +814,7 @@ tr.wide td.wide {
 }
 
 td.divider, th.divider {
-    border-right: 0.07em solid #999;
+    border-right: 0.07em solid var(--border);
 }
 
 /* Hide dividing line when it would appear in hidden content not in the main table. */
@@ -830,7 +846,7 @@ div.live {
 }
 
 .live .table-header {
-    color: #999;
+    color: var(--deemphasized-text);
     display: flex;
     font-size: 0.75rem; /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
     justify-content: space-between;
@@ -973,7 +989,7 @@ Although it displays a similar thing that maxes out around 7-1-1 for a long tour
 /* Some visual indicators of legal status on /rotation/. */
 
 .legality-undecided {
-    color: #999;
+    color: var(--deemphasized-text);
 }
 
 .legality-not-legal {
@@ -1036,8 +1052,8 @@ Some pages still send giant tables of data but logsite and deck table have pagin
     padding: 0.75rem; /* rem because font-size is larger for arrows than page-size. */
 }
 
-.pagination .page-size {
-    border: 0.05rem solid #ccc;
+.page-size {
+    border: 0.05rem solid var(--border);
     text-align: center;
 }
 
@@ -1056,7 +1072,7 @@ Menu items can have submenus. At wider widths these are "mega menus" that stretc
         float: left;
     }
     .menu a:hover {
-        color: #999;
+        color: var(--menu-highlight-text);
         transition-duration: 1s;
         transition-property: color;
     }
@@ -1083,7 +1099,7 @@ Menu items can have submenus. At wider widths these are "mega menus" that stretc
 
     /* Create the caret as a border with opacity zero to hide it initially. */
     .has-submenu > a:after {
-        border-bottom: 1em solid #502828;
+        border-bottom: 1em solid var(--text);
         border-left: 1.333em solid transparent;
         border-right: 1.333em solid transparent;
         content: "";
@@ -1124,9 +1140,9 @@ Menu items can have submenus. At wider widths these are "mega menus" that stretc
 /* Submenu. */
 
 .submenu-container {
-    background: #502828;
+    background: var(--submenu-background);
     box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
-    color: #f9f9f9;
+    color: var(--submenu-text);
     display: none;
     left: 0;
     position: absolute;
@@ -1138,8 +1154,8 @@ Menu items can have submenus. At wider widths these are "mega menus" that stretc
 }
 
 .submenu-container a:hover {
-    background-color: #502828;
-    color: #999;
+    background-color: var(--submenu-background);
+    color: var(--menu-highlight-text);
 }
 
 
@@ -1154,11 +1170,11 @@ Mobile Menu
         display: none;
     }
     .menu {
-        background-color: #ccc;
-        border-top: 0.05rem solid #502828;
+        background-color: var(--tertiary-background);
+        border-top: 0.05rem solid var(--line);
         bottom: 0;
         box-sizing: border-box; /* So we can just say 100% width and have the status bar with padding fit the screen. */
-        color: #502828;
+        color: var(--tertiary-text);
         display: flex;
         justify-content: space-around;
         left: 0;
@@ -1173,7 +1189,7 @@ Mobile Menu
     }
 
     .menu > li {
-        border-left: 0.05rem solid #502828;
+        border-left: 0.05rem solid var(--line);
         flex: 1 1 0; /* Evenly spaced and sized menu items. */
         float: left;
         font-size: 0.75rem;
@@ -1196,11 +1212,11 @@ Mobile Menu
     }
 
     .menu a.menuitem:hover {
-        background-color: #eee;
+        background-color: var(--submenu-text-hover);
     }
 
     .menu .current {
-        background: #eee;
+        background: var(--tertiary-background);
     }
 
     nav .icon {
@@ -1365,7 +1381,7 @@ Calendar
 }
 
 .calendar td, .calendar th {
-    border-bottom: 0.05rem solid #eee;
+    border-bottom: 0.05rem solid var(--light-border);
     padding: 0.563rem 1rem 0.563rem 0;
 }
 
@@ -1403,7 +1419,7 @@ Calendar
 }
 
 .calendar .league {
-    background: #eee;
+    background: var(--highlight);
     padding-left: 1rem;
 }
 
@@ -1412,7 +1428,7 @@ Calendar
 }
 
 .calendar .league.begin {
-    border-top: 0.05rem solid #999;
+    border-top: 0.05rem solid var(--border);
 }
 
 /*
@@ -1424,36 +1440,36 @@ We show the color composition of a deck with a horizontal bar made up of the col
 */
 
 .mana:nth-child(1) {
-    border-left: 0.05rem solid #999;
+    border-left: 0.05rem solid var(--border);
 }
 
 .mana {
-    border-bottom: 0.05rem solid #999;
-    border-right: 0.05rem solid #999;
-    border-top: 0.05rem solid #999;
+    border-bottom: 0.05rem solid var(--border);
+    border-right: 0.05rem solid var(--border);
+    border-top: 0.05rem solid var(--border);
     display: inline-block;
     height: 1em; /* This appears in table rows so needs to use be relative. */
     vertical-align: text-top;
 }
 
 .mana-W {
-    background-color: #fffcda;
+    background-color: var(--w-mana);
 }
 
 .mana-U {
-    background-color: #ace2fa
+    background-color: var(--u-mana);
 }
 
 .mana-B {
-    background-color: #ccc2c0;
+    background-color: var(--b-mana);
 }
 
 .mana-R {
-    background-color: #f8aa92;
+    background-color: var(--r-mana);
 }
 
 .mana-G {
-    background-color: #9dd2af;
+    background-color: var(--g-mana);
 }
 
 /*
@@ -1480,12 +1496,12 @@ h2.section {
 }
 
 .subtitle {
-    color: #999;
+    color: var(--deemphasized-text);
     font-size: 0.75rem;
 }
 
 .total {
-    color: #999;
+    color: var(--deemphasized-text);
     float: right;
     font-size: 0.75rem;
     /* Compensate for difference between this font-size and the font-size of the h2. */
@@ -1538,8 +1554,8 @@ Button Bars
 */
 
 ul.buttons li {
-    background: #f9f9f9;
-    color: #999;
+    background: var(--background);
+    color: var(--deemphasized-text);
     display: block;
     font-size: 0.75rem;
     list-style-type: none;
@@ -1548,7 +1564,7 @@ ul.buttons li {
 }
 
 ul.buttons > li {
-    border: 0.05rem solid #eee;
+    border: 0.05rem solid var(--light-border);
     border-radius: 0.563em;
     margin-left: 0.75rem;
 }
@@ -1576,7 +1592,7 @@ ul.buttons > li {
 }
 
 ul.buttons li a:hover, ul.buttons li .dd-button:hover {
-    background: #eee;
+    background: var(--highlight);
 }
 
 /* Button Bar Dropdowns - adapted from https://codepen.io/raneio/pen/NbbZEM */
@@ -1597,7 +1613,7 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
 }
 
 .dropdown .dd-menu {
-    border: 0.05rem solid #eee;
+    border: 0.05rem solid var(--light-border);
     list-style-type: none;
     padding: 0;
     position: absolute;
@@ -1626,7 +1642,7 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
 }
 
 .dd-menu li:hover {
-    background-color: #f6f6f6;
+    background-color: var(--highlight);
 }
 
 .dd-menu li a {
@@ -1684,7 +1700,7 @@ form {
 }
 
 button, form, input, select, textarea {
-    accent-color: #502828;
+    accent-color: var(--text);
     color: inherit;
     font-family: main-text, "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: inherit;
@@ -1708,10 +1724,10 @@ select {
 }
 
 header input {
-    color: #502828;
+    color: var(--text);
 }
 
-button, main input, select, textarea, .uploader-label, .instructions {
+button, main input, select, textarea, .uploader-label {
     width: 20rem;
 }
 
@@ -1726,7 +1742,7 @@ textarea, input[type=text], select {
 }
 
 button {
-    background-color: #eee;
+    background-color: var(--button);
 }
 
 table input {
@@ -1739,12 +1755,12 @@ input[type=checkbox] {
 
 /* Make disabled inputs look like normal text, not like an editable form field. */
 input[type=text][disabled=true] {
-    background-color: #f9f9f9;
+    background-color: inherit;
     border: none;
 }
 
 input[type=text], button {
-    border: 0.05rem solid #999;
+    border: 0.05rem solid var(--border);
 }
 
 input[type=number] {
@@ -1771,7 +1787,7 @@ input[type=radio] {
     margin-left: 0;
 }
 
-button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok, .form-field {
+button, div.error, .uploader-label, div.logout, div.validation-ok, .form-field {
     margin-left: 12rem;
 }
 
@@ -1791,15 +1807,11 @@ input.error, select.error, textarea.error {
     display: none;
 }
 
-.uploader-label, .instructions {
+.uploader-label {
     cursor: pointer;
     float: none;
     margin-top: 0;
     text-align: left;
-}
-
-.instructions {
-    color: #ccc;
 }
 
 .draw-report {
@@ -1842,7 +1854,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-top: 0.5625rem;
         max-width: 80%;
     }
-    button, div.error, .uploader-label, .instructions, div.validation-ok, .form-field {
+    button, div.error, .uploader-label, div.validation-ok, .form-field {
         margin-left: 0;
     }
 }
@@ -1869,7 +1881,7 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 */
 
 .dismiss {
-    color: #ccc;
+    color: var(--deemphasized-text);
     margin-bottom: 0;
     text-align: right;
 }
@@ -1881,8 +1893,8 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 }
 
 .intro {
-    background: #eee;
-    border: 0.05rem solid #ccc;
+    background: var(--tertiary-background);
+    border: 0.05rem solid var(--border);
     max-width: 30em;
     padding: 2rem;
     position: relative; /* So that we can absolutely position the dismiss x in the corner. */
@@ -1909,8 +1921,8 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 }
 
 .details {
-    background: #f9f9f9;
-    border: 0.05rem solid #ccc;
+    background: var(--background);
+    border: 0.05rem solid var(--border);
     display: none;
     margin-bottom: 1rem;
     padding: 1rem 1rem 0 1rem;
@@ -1927,7 +1939,7 @@ Alternatively use p element instead of div to get p text size and not enforced 0
 */
 
 .loading {
-    color: #999;
+    color: var(--deemphasized-text);
     margin-left: -1rem;
 }
 
@@ -1949,7 +1961,7 @@ div.loading {
     margin: 0 auto;
     position: relative;
     animation: rotation .6s infinite linear;
-    border-left: 0.05rem solid #999;
+    border-left: 0.05rem solid var(--border);
     border-right: 0.05rem;
     border-bottom: 0.05rem;
     border-top: 0.05rem;
@@ -2020,25 +2032,25 @@ Search
 }
 
 .tt-suggestion {
-    background-color: #f9f9f9;
-    outline: 0.05rem solid #ccc;
-    color: #502828;
+    background-color: var(--background);
+    outline: 0.05rem solid var(--border);
+    color: var(--text);
     font-size: 0.9rem;
     padding: 0.563rem 0.563em;
 
 }
 
 .tt-highlight {
-    background-color: #eee;
+    background-color: var(--highlight);
 }
 
 .tt-suggestion:hover, .tt-cursor {
-    background-color: #eee;
+    background-color: var(--highlight);
 }
 
 /* Prevent weird double border from the javascript making this transparent and overlaying two inputs. */
 .tt-input {
-    background-color: #f9f9f9 !important;
+    background-color: var(--background) !important;
 }
 
 /*
@@ -2059,7 +2071,7 @@ Archetypes
 
 /* Highlight the currently selected row … */
 tr.current, tr.current td {
-    background-color: #eee;
+    background-color: var(--highlight);
 }
 
 /* Pad to the left of the archetype name based on its depth in the hierarchy.
@@ -2131,7 +2143,7 @@ News
 }
 
 .news .date {
-    color: #999;
+    color: var(--deemphasized-text);
     display: inline-block;
     font-family: main-text, "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: normal;
@@ -2249,7 +2261,7 @@ Notification Badges
 }
 
 .badge a, .badge a:hover {
-    color: #502828;
+    color: var(--text);
 }
 
 /*
@@ -2285,7 +2297,7 @@ Video
 */
 
 .video-wrapper {
-    background: #eee;
+    background: var(--highlight);
     height: 0;
     margin-bottom: 1rem;
     padding-bottom: 56.25%; /* 16:9 */
@@ -2307,7 +2319,7 @@ Achievements
 */
 
 .achievement-category {
-    border: 0.05rem solid #999;
+    border: 0.05rem solid var(--border);
     margin-bottom: 1rem;
     max-width: 100%; /* Don't exceed the space available but … */
     width: 30rem; /* … display at article width if possible. */
@@ -2318,7 +2330,7 @@ Achievements
 }
 
 .achievement-category .more-info {
-    border-top: 0.05rem solid #ccc;
+    border-top: 0.05rem solid var(--border);
     display: none; /* The detail slide-out starts hidden so you can see more achievements at a glance. */
     padding-bottom: 1rem;
     padding-top: 1rem;
@@ -2342,11 +2354,11 @@ Achievements
 }
 
 .achievement-bar .bar {
-    background: #eee;
+    background: var(--highlight);
 }
 
 .achievement-bar .background {
-    background: #f9f9f9;
+    background: var(--background);
 }
 
 .achievement-bar .expansion-indicator {
@@ -2404,12 +2416,13 @@ Charts
 
 .variable-height-bar-chart {
     margin-top: 1rem;
+    overflow: hidden; /* Prevent a scrollbar if height is a fraction of a pixel taller than the container. */
     width: 100%;
 }
 
 .variable-height-bar-chart a {
-    border: 0.05rem solid #999;
-    color: #f9f9f9;
+    border: 0.05rem solid var(--border);
+    color: var(--text-over-images);
     display: block;
     font-family: main-text, "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: normal;
@@ -2484,7 +2497,7 @@ From https://codepen.io/mallendeo/pen/eLIiG
 }
 
 .toggle + .toggle-button {
-    background: #eee;
+    background: var(--toggle-off);
     border-radius: 2em;
     padding: 2px;
     transition: all .4s ease;
@@ -2492,12 +2505,12 @@ From https://codepen.io/mallendeo/pen/eLIiG
 
 .toggle + .toggle-button:after {
     border-radius: 50%;
-    background: #f9f9f9;
+    background: var(--background);
     transition: all .2s ease;
 }
 
 .toggle-right + .toggle-button {
-    background: #999;
+    background: var(--toggle-on);
 }
 
 /*

@@ -1,6 +1,6 @@
 # type: ignore
 
-from typing import Any, Dict
+from typing import Any
 
 import sqlalchemy as sa
 
@@ -26,7 +26,7 @@ class Game(fsa.Model):
         # If we want to remove chat, or OOB messages, do that here.
         return self.log.strip()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             'id': self.id,
             'match_id': self.match_id,

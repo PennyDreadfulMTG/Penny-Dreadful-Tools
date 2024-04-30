@@ -3,7 +3,7 @@ import os
 
 import setuptools
 
-with open('README.md', 'r') as fh:
+with open('README.md') as fh:
     DESC = fh.read()
 
 REQ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements.txt')

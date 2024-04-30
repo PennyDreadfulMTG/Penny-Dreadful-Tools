@@ -17,6 +17,7 @@ def test_legal_formats() -> None:
     assert season_name in formats
     assert 'Legacy' in formats
     assert 'Penny Dreadful EMN' in formats
+    assert 'Commander' not in formats
 
     formats = legality.legal_formats(d, {season_name})
     assert len(formats) == 1
@@ -24,7 +25,6 @@ def test_legal_formats() -> None:
     assert 'Legacy' not in formats
 
     d.maindeck = [CardRef('Swamp', 55), CardRef('Think Twice', 5)]
-    formats = legality.legal_formats(d)
     assert len(d.all_cards()) == 60
     assert len(legality.legal_formats(d)) == 0
 
@@ -32,9 +32,10 @@ def test_legal_formats() -> None:
     formats = legality.legal_formats(d)
     assert 'Legacy' in formats
     assert 'Modern' in formats
+    assert 'Oathbreaker' not in formats
+    assert 'Duel' not in formats
 
     d.sideboard = [CardRef('Swamp', 15), CardRef('Think Twice', 1)]
-    formats = legality.legal_formats(d)
     assert len(legality.legal_formats(d)) == 0
 
     d.maindeck = [CardRef('Swamp', 56), CardRef('Fork', 4)]
@@ -42,6 +43,7 @@ def test_legal_formats() -> None:
     formats = legality.legal_formats(d)
     assert 'Legacy' in formats
     assert 'Modern' not in formats
+    assert 'Oathbreaker' not in formats
 
     d.maindeck = [CardRef('Swamp', 60)]
     d.sideboard = [CardRef('Swamp', 15)]
@@ -52,3 +54,4 @@ def test_legal_formats() -> None:
     assert 'Vintage' in formats
     assert season_name in formats
     assert 'Penny Dreadful EMN' in formats
+    assert 'Duel' not in formats

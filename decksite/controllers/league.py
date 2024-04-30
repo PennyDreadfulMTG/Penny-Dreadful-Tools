@@ -1,5 +1,3 @@
-from typing import Optional
-
 from flask import Response, make_response, redirect, request, session, url_for
 from werkzeug import wrappers
 
@@ -11,6 +9,7 @@ from decksite.data import match
 from decksite.data import person as ps
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import LeagueInfo, Report, Retire, SignUp
+from shared.pd_exception import DoesNotExistException
 from shared_web.decorators import fill_cookies
 
 
@@ -29,10 +28,13 @@ def current_league() -> wrappers.Response:
 @APP.route('/signup/')
 @auth.load_person
 @fill_cookies('deck_id')
-def signup(form: Optional[SignUpForm] = None, deck_id: Optional[int] = None) -> str:
+def signup(form: SignUpForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    d = ds.load_deck(deck_id) if deck_id else None
+    try:
+        d = ds.load_deck(deck_id) if deck_id else None
+    except DoesNotExistException:  # Handle the deck being deleted since we set a cookie, fixes #9419.
+        d = None
     view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id(), d)
     return view.page()
 
@@ -54,7 +56,7 @@ def add_signup() -> Response:
 @APP.route('/report/')
 @auth.load_person
 @fill_cookies('deck_id')
-def report(form: Optional[ReportForm] = None, deck_id: Optional[int] = None) -> str:
+def report(form: ReportForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = ReportForm(request.form, deck_id, auth.person_id())
     view = Report(form, auth.person_id())
@@ -63,7 +65,7 @@ def report(form: Optional[ReportForm] = None, deck_id: Optional[int] = None) -> 
 
 @APP.route('/report/', methods=['POST'])
 def add_report() -> Response:
-    form = ReportForm(request.form)
+    form = ReportForm(request.form, person_id=auth.person_id())
     if form.validate() and lg.report(form):
         response = make_response(redirect(url_for('deck', deck_id=form.entry)))
         response.set_cookie('deck_id', form.entry)
@@ -74,7 +76,7 @@ def add_report() -> Response:
 @APP.route('/retire/')
 @fill_cookies('deck_id')
 @auth.login_required
-def retire(form: Optional[RetireForm] = None, deck_id: Optional[int] = None) -> str:
+def retire(form: RetireForm | None = None, deck_id: int | None = None) -> str:
     if form is None:
         form = RetireForm(request.form, deck_id, session.get('id'))
     ms = []

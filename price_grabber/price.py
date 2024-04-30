@@ -1,5 +1,4 @@
 import time
-from typing import Optional
 
 from magic import card_price, seasons
 from magic.abc import PriceDataType
@@ -7,7 +6,7 @@ from magic.models import Card
 from shared import configuration, database
 
 
-def info(card: Card, force: bool = False) -> Optional[PriceDataType]:
+def info(card: Card, force: bool = False) -> PriceDataType | None:
     if not force:
         r = info_cached(card)
         if r is not None:
@@ -15,7 +14,7 @@ def info(card: Card, force: bool = False) -> Optional[PriceDataType]:
     cache()
     return info_cached(card)
 
-def info_cached(card: Optional[Card] = None, name: Optional[str] = None) -> Optional[PriceDataType]:
+def info_cached(card: Card | None = None, name: str | None = None) -> PriceDataType | None:
     if name is None and card is not None:
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'

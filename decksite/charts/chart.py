@@ -1,6 +1,5 @@
 import os.path
 import pathlib
-from typing import Dict
 
 import matplotlib as mpl
 
@@ -16,14 +15,14 @@ from shared.pd_exception import DoesNotExistException, OperationalException
 
 def cmc(deck_id: int, attempts: int = 0) -> str:
     if attempts > 3:
-        msg = 'Unable to generate cmc chart for {id} in 3 attempts.'.format(id=deck_id)
+        msg = f'Unable to generate cmc chart for {deck_id} in 3 attempts.'
         logger.error(msg)
         raise OperationalException(msg)
     path = determine_path(str(deck_id) + '-cmc.png')
     if acceptable_file(path):
         return path
     d = deck.load_deck(deck_id)
-    costs: Dict[str, int] = {}
+    costs: dict[str, int] = {}
     for ci in d.maindeck:
         c = ci.card
         if c.is_land():
@@ -41,7 +40,7 @@ def cmc(deck_id: int, attempts: int = 0) -> str:
         return path
     return cmc(deck_id, attempts + 1)
 
-def image(path: str, costs: Dict[str, int]) -> str:
+def image(path: str, costs: dict[str, int]) -> str:
     ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']
     xs = [costs.get(k, 0) for k in ys]
     sns.set_style('white')
@@ -65,7 +64,7 @@ def determine_path(name: str) -> str:
     charts_dir = configuration.charts_dir.value
     pathlib.Path(charts_dir).mkdir(parents=True, exist_ok=True)
     if not os.path.exists(charts_dir):
-        raise DoesNotExistException('Cannot store graph images because {charts_dir} does not exist.'.format(charts_dir=charts_dir))
+        raise DoesNotExistException(f'Cannot store graph images because {charts_dir} does not exist.')
     return os.path.join(charts_dir, name)
 
 def acceptable_file(path: str) -> bool:
@@ -73,5 +72,5 @@ def acceptable_file(path: str) -> bool:
         return False
     if os.path.getsize(path) >= 6860:  # This is a few bytes smaller than a completely empty graph on prod.
         return True
-    logger.warning('Chart at {path} is suspiciously small.'.format(path=path))
+    logger.warning(f'Chart at {path} is suspiciously small.')
     return False

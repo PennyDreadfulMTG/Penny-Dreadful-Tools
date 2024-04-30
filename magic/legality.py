@@ -1,16 +1,14 @@
-from typing import Dict, List, Optional, Set
-
 from magic import oracle, seasons
 from magic.database import db
 from magic.models import Card
 from shared.container import Container
 
-FORMATS: Set[str] = set()
+FORMATS: set[str] = set()
 
 def legal_in_format(d: Container, f: str) -> bool:
-    return f in legal_formats(d, set([f]))
+    return f in legal_formats(d, {f})
 
-def legal_formats(d: Container, formats_to_check: Optional[Set[str]] = None, errors: Optional[Dict[str, Dict[str, Set[str]]]] = None) -> Set[str]:
+def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors: dict[str, dict[str, set[str]]] | None = None) -> set[str]:
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS
@@ -37,11 +35,12 @@ def legal_formats(d: Container, formats_to_check: Optional[Set[str]] = None, err
             add_error(errors, f, 'Legality_General', 'You have more than 15 cards in your sideboard.')
             formats_to_discard.add(f)
     if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) != 100:
-        add_error(errors, 'Commander', 'General', 'Incorrect deck size.')
-        formats_to_discard.add('Commander')
-    card_count: Dict[str, int] = {}
+        for fmt in {'Commander', 'Duel'}:
+            add_error(errors, fmt, 'General', 'Incorrect deck size.')
+            formats_to_discard.add(fmt)
+    card_count: dict[str, int] = {}
     for c in d.all_cards():
-        if not c.type_line.startswith('Basic ') and not 'A deck can have any number of cards named' in c.oracle_text:
+        if not c.type_line.startswith('Basic ') and 'A deck can have any number of cards named' not in c.oracle_text:
             card_count[c.name] = card_count.get(c.name, 0) + 1
     if card_count.values() and max(card_count.values()) > 4:
         affected_cards = []
@@ -55,8 +54,9 @@ def legal_formats(d: Container, formats_to_check: Optional[Set[str]] = None, err
                     add_error(errors, f, 'Legality_Too_Many', card)
                 formats_to_discard.add(f)
     elif card_count.values() and max(card_count.values()) > 1:
-        add_error(errors, 'Commander', 'Legality_General', 'Deck is not Singleton.')
-        formats_to_discard.add('Commander')
+        for fmt in {'Commander', 'Duel', 'Oathbreaker'}:
+            add_error(errors, fmt, 'Legality_General', 'Deck is not Singleton.')
+            formats_to_discard.add(fmt)
     for c in set(d.all_cards()):
         for f in formats_to_check:
             if f not in c.legalities.keys() or c.legalities[f] == 'Banned':
@@ -70,14 +70,14 @@ def legal_formats(d: Container, formats_to_check: Optional[Set[str]] = None, err
 
     return formats_to_check - formats_to_discard
 
-def add_error(errors: Dict[str, Dict[str, Set[str]]], fmt: str, error_type: str, card: str) -> None:
+def add_error(errors: dict[str, dict[str, set[str]]], fmt: str, error_type: str, card: str) -> None:
     if fmt not in errors:
         errors[fmt] = dict()
     if error_type not in errors[fmt]:
         errors[fmt][error_type] = set()
     errors[fmt][error_type].add(card)
 
-def cards_legal_in_format(cardlist: List[Card], f: str) -> List[Card]:
+def cards_legal_in_format(cardlist: list[Card], f: str) -> list[Card]:
     init()
     results = []
     for c in cardlist:

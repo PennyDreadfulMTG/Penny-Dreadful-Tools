@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 from decksite.view import View
 from magic.models import Deck

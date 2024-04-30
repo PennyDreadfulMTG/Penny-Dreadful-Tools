@@ -1,5 +1,4 @@
 import re
-from typing import Dict, Optional
 
 from interactions.models.internal import OptionType, auto_defer, slash_command, slash_option
 
@@ -11,7 +10,7 @@ from shared import fetch_tools
 @slash_command('resources')
 @slash_option('resource', 'Your query', OptionType.STRING)
 @auto_defer()
-async def resources(ctx: MtgInteractionContext, resource: Optional[str]) -> None:
+async def resources(ctx: MtgInteractionContext, resource: str | None) -> None:
     """Useful pages related to `args`."""
     results = {}
     if resource is None:
@@ -23,13 +22,13 @@ async def resources(ctx: MtgInteractionContext, resource: Optional[str]) -> None
     if len(results) == 0:
         s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))
     elif len(results) > 10:
-        s = '{author}: Too many results, please be more specific.'.format(author=ctx.author.mention)
+        s = f'{ctx.author.mention}: Too many results, please be more specific.'
     else:
         for url, text in results.items():
-            s += '{text}: <{url}>\n'.format(text=text, url=url)
+            s += f'{text}: <{url}>\n'
     await ctx.send(s)
 
-def site_resources(args: str) -> Dict[str, str]:
+def site_resources(args: str) -> dict[str, str]:
     results = {}
     match = re.match('^s? ?([0-9]*|all) +', args)
     if match:
@@ -48,7 +47,7 @@ def site_resources(args: str) -> Dict[str, str]:
     if area == 'person':
         area = 'people'
     sitemap = fetcher.sitemap()
-    matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
+    matches = [endpoint for endpoint in sitemap if endpoint.startswith(f'/{area}/')]
     if len(matches) > 0:
         detail = '{detail}/'.format(
             detail=fetch_tools.escape(detail, True)) if detail else ''
@@ -58,7 +57,7 @@ def site_resources(args: str) -> Dict[str, str]:
     return results
 
 
-def resources_resources(args: str) -> Dict[str, str]:
+def resources_resources(args: str) -> dict[str, str]:
     results = {}
     words = args.split()
     for title, items in fetcher.resources().items():

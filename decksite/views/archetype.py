@@ -1,8 +1,7 @@
 import copy
-from typing import Any, List
+from typing import Any, TypedDict
 
 from flask import url_for
-from mypy_extensions import TypedDict
 
 from decksite.data import archetype as archs
 from decksite.deck_type import DeckType
@@ -10,16 +9,16 @@ from decksite.view import View
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException
 
-Matchups = TypedDict('Matchups', {
-    'is_matchups': bool,
-    'archetypes': List[archs.Archetype],
-})
+
+class Matchups(TypedDict):
+    is_matchups: bool
+    archetypes: list[archs.Archetype]
 
 class Archetype(View):
     def __init__(self,
                  archetype: archs.Archetype,
-                 archetypes: List[archs.Archetype],
-                 matchups: List[Container],
+                 archetypes: list[archs.Archetype],
+                 matchups: list[Container],
                  tournament_only: bool = False,
                  ) -> None:
         super().__init__()
@@ -54,7 +53,7 @@ class Archetype(View):
         return url_for('.archetype', archetype_id=self.archetype.id, _external=True)
 
     def og_description(self) -> str:
-        return 'Penny Dreadful {name} archetype'.format(name=self.archetype.name)
+        return f'Penny Dreadful {self.archetype.name} archetype'
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.archetype, attr)

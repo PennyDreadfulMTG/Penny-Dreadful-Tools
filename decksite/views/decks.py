@@ -9,4 +9,4 @@ class Decks(View):
 
     def page_title(self) -> str:
         deck_type = 'League ' if self.league_only else ''
-        return '{season_name} {deck_type}Decks'.format(season_name=self.season_name(), deck_type=deck_type)
+        return f'{self.season_name()} {deck_type}Decks'

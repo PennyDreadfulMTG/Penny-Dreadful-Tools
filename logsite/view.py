@@ -1,12 +1,10 @@
-from typing import Optional
-
 from flask import url_for
 
 from shared_web.base_view import BaseView
 
 
 class View(BaseView):
-    def js_extra_url(self) -> Optional[str]:
+    def js_extra_url(self) -> str | None:
         pass
 
     def favicon_url(self) -> str:

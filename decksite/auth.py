@@ -1,16 +1,17 @@
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 from flask import redirect, request, session, url_for
 from werkzeug import wrappers
 
-from decksite.data import person, permission
+from decksite.data import permission, person
 from decksite.data.permission import Permission
 
 
 def login_required(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
+    def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> wrappers.Response:
         if session.get('id') is None:
             return redirect(url_for('authenticate', target=request.url))
         return f(*args, **kwargs)
@@ -18,7 +19,7 @@ def login_required(f: Callable) -> Callable:
 
 def demimod_required(f: Callable[..., wrappers.Response]) -> Callable[..., wrappers.Response]:
     @wraps(f)
-    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
+    def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> wrappers.Response:
         if session.get('admin') is None and session.get('demimod') is None:
             return redirect(url_for('authenticate', target=request.url))
         if session.get('admin') is False and session.get('demimod') is False:
@@ -28,7 +29,7 @@ def demimod_required(f: Callable[..., wrappers.Response]) -> Callable[..., wrapp
 
 def admin_required(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
+    def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> wrappers.Response:
         if session.get('admin') is None:
             return redirect(url_for('authenticate', target=request.url))
         if session.get('admin') is False:
@@ -38,7 +39,7 @@ def admin_required(f: Callable) -> Callable:
 
 def admin_required_no_redirect(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Tuple[str, int]:
+    def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> tuple[str, int]:
         if not session.get('admin'):
             return '', 403
         return f(*args, **kwargs)
@@ -47,7 +48,7 @@ def admin_required_no_redirect(f: Callable) -> Callable:
 
 def load_person(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
+    def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> Any:
         if discord_id() is not None:
             p = person.maybe_load_person_by_discord_id(discord_id())
             if p:
@@ -56,13 +57,13 @@ def load_person(f: Callable) -> Callable:
     return decorated_function
 
 
-def discord_id() -> Optional[int]:
+def discord_id() -> int | None:
     return session.get('id')
 
-def person_id() -> Optional[int]:
+def person_id() -> int | None:
     return session.get('logged_person_id')
 
-def mtgo_username() -> Optional[str]:
+def mtgo_username() -> str | None:
     return session.get('mtgo_username')
 
 def login(p: person.Person) -> None:
@@ -70,7 +71,7 @@ def login(p: person.Person) -> None:
     session['person_id'] = p.id
     session['mtgo_username'] = p.name
     session.permanent = True
-    locale: Optional[str] = session.get('discord_locale')
+    locale: str | None = session.get('discord_locale')
     if locale and p.locale != locale:
         person.set_locale(p.id, locale)
 

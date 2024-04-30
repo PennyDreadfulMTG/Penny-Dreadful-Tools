@@ -1,6 +1,6 @@
 # type: ignore
 
-from typing import Any, Dict
+from typing import Any
 
 from flask import Response
 from sqlalchemy import func, text
@@ -15,7 +15,7 @@ from .db import Format
 
 @APP.route('/stats.json')
 def stats() -> Response:
-    val: Dict[str, Any] = {}
+    val: dict[str, Any] = {}
     try:
         last_switcheroo = calc_last_switcheroo()
         if last_switcheroo:
@@ -105,9 +105,9 @@ def calc_last_switcheroo() -> match.Match:
 @APP.route('/recent.json')
 def recent_json() -> Response:
     last_week = dtutil.now() - dtutil.ts2dt(7 * 24 * 60 * 60)
-    val: Dict[str, Any] = {}
+    val: dict[str, Any] = {}
     val['formats'] = {}
-    last_f: Dict[str, int] = {}
+    last_f: dict[str, int] = {}
     for m in match.Match.query.filter(match.Match.start_time > last_week).all():
         f = m.format
         if val['formats'].get(f.name, None) is None:

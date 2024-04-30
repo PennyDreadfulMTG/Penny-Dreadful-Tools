@@ -1,7 +1,7 @@
 import datetime
 import urllib.parse
 from enum import Enum
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Literal
 
 import pydantic
 
@@ -13,10 +13,10 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 Card = str
-Cards = Dict[Card, int]
+Cards = dict[Card, int]
 DeckID = int
 GatherlingUsername = str
-FinalStandings = Dict[GatherlingUsername, int]
+FinalStandings = dict[GatherlingUsername, int]
 MTGOUsername = str
 
 class Bool(Enum):
@@ -113,11 +113,11 @@ class Standing:
 @pydantic.dataclasses.dataclass
 class Player:
     name: GatherlingUsername
-    verified: Optional[Literal[True]]
-    discord_id: Optional[int]
-    discord_handle: Optional[str]
-    mtga_username: Optional[str]
-    mtgo_username: Optional[MTGOUsername]
+    verified: Literal[True] | None
+    discord_id: int | None
+    discord_handle: str | None
+    mtga_username: str | None
+    mtgo_username: MTGOUsername | None
 
 @pydantic.dataclasses.dataclass
 class Event:
@@ -127,7 +127,7 @@ class Event:
     number: int
     format: Format
     host: str
-    cohost: Optional[str]
+    cohost: str | None
     active: Bool
     finalized: Bool
     current_round: int
@@ -137,19 +137,19 @@ class Event:
     finalrounds: int
     finalstruct: str
     mtgo_room: str
-    matches: List[GatherlingMatch]
-    unreported: List[str]
-    decks: List[GatherlingDeck]
-    finalists: List[Finalist]
-    standings: List[Standing]
-    players: List[Player]
+    matches: list[GatherlingMatch]
+    unreported: list[str]
+    decks: list[GatherlingDeck]
+    finalists: list[Finalist]
+    standings: list[Standing]
+    players: list[Player]
 
 
-APIResponse = Dict[str, Event]
+APIResponse = dict[str, Event]
 
-ALIASES: Dict[str, str] = {}
+ALIASES: dict[str, str] = {}
 
-def scrape(name: Optional[str] = None) -> None:
+def scrape(name: str | None = None) -> None:
     if name:
         data = fetch_tools.fetch_json(gatherling_url(f'/api.php?action=eventinfo&event={name}'))
         process_tournament(data['name'], Event(**data))
@@ -158,7 +158,7 @@ def scrape(name: Optional[str] = None) -> None:
         response = make_api_response(data)
         process(response)
 
-def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
+def make_api_response(data: dict[str, dict[Any, Any]]) -> APIResponse:
     response = {}
     for k, v in data.items():
         # First check it's an event we are interested in.
@@ -187,7 +187,7 @@ def process_tournament(name: str, event: Event) -> None:
     guess_archetypes(list(decks_by_gatherling_username.values()))
     db().commit('tournament')
 
-def determine_finishes(standings: List[Standing], finalists: List[Finalist]) -> FinalStandings:
+def determine_finishes(standings: list[Standing], finalists: list[Finalist]) -> FinalStandings:
     ps = {}
     for f in finalists:
         ps[f.player] = medal2finish(f.medal)
@@ -222,10 +222,10 @@ def insert_competition(name: str, date: datetime.datetime, event: Event) -> int:
             raise InvalidDataException(f'Unexpected number of finalrounds: `{event.finalrounds}`') from e
     return competition.get_or_insert_competition(date, date, name, event.series, url, top_n)
 
-def insert_decks(competition_id: int, date: datetime.datetime, ds: List[GatherlingDeck], fs: FinalStandings, players: List[Player]) -> Dict[GatherlingUsername, deck.Deck]:
+def insert_decks(competition_id: int, date: datetime.datetime, ds: list[GatherlingDeck], fs: FinalStandings, players: list[Player]) -> dict[GatherlingUsername, deck.Deck]:
     return {d.playername: insert_deck(competition_id, date, d, fs, players) for d in ds}
 
-def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck, fs: FinalStandings, players: List[Player]) -> deck.Deck:
+def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck, fs: FinalStandings, players: list[Player]) -> deck.Deck:
     finish = fuzzy_get(fs, d.playername)
     if not finish:
         raise InvalidDataException(f"I don't have a finish for `{d.playername}`")
@@ -251,11 +251,11 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
         raise InvalidArgumentException("You asked me to insert a deck that already exists `{raw['source']}`, `{raw['identifier']}`")
     return deck.add_deck(raw)
 
-def insert_matches(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], ms: List[GatherlingMatch], total_rounds: int) -> None:
+def insert_matches(date: datetime.datetime, decks_by_gatherling_username: dict[GatherlingUsername, deck.Deck], ms: list[GatherlingMatch], total_rounds: int) -> None:
     for m in ms:
         insert_match(date, decks_by_gatherling_username, m, total_rounds)
 
-def insert_match(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], m: GatherlingMatch, total_rounds: int) -> None:
+def insert_match(date: datetime.datetime, decks_by_gatherling_username: dict[GatherlingUsername, deck.Deck], m: GatherlingMatch, total_rounds: int) -> None:
     d1 = fuzzy_get(decks_by_gatherling_username, m.playera)
     if not d1:
         raise InvalidDataException(f"I don't have a deck for `{m.playera}`")
@@ -283,7 +283,7 @@ def elimination(m: GatherlingMatch, total_rounds: int) -> int:
     remaining_rounds = total_rounds - m.round + 1
     return pow(2, remaining_rounds)  # 1 => 2, 2 => 4, 3 => 8 which are the values 'elimination' expects
 
-def find_mtgo_username(gatherling_username: GatherlingUsername, players: List[Player]) -> str:
+def find_mtgo_username(gatherling_username: GatherlingUsername, players: list[Player]) -> str:
     for p in players:
         if p.name == gatherling_username:
             if p.mtgo_username is not None:
@@ -293,9 +293,9 @@ def find_mtgo_username(gatherling_username: GatherlingUsername, players: List[Pl
 def gatherling_url(href: str) -> str:
     if href.startswith('http'):
         return href
-    return 'https://gatherling.com{href}'.format(href=href)
+    return f'https://gatherling.com{href}'
 
-def guess_archetypes(ds: List[deck.Deck]) -> None:
+def guess_archetypes(ds: list[deck.Deck]) -> None:
     deck.calculate_similar_decks(ds)
     for d in ds:
         if d.similar_decks and d.similar_decks[0].archetype_id is not None:
@@ -306,7 +306,7 @@ def vivify_date(s: str) -> datetime.datetime:
 
 # Work around some inconsistencies with casing in the API response.
 # https://github.com/PennyDreadfulMTG/gatherling/issues/145
-def fuzzy_get(d: Dict[str, Any], k: str) -> Any:
+def fuzzy_get(d: dict[str, Any], k: str) -> Any:
     v = d.get(k)
     if v is not None:
         return v

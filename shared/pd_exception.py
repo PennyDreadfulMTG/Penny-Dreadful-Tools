@@ -16,6 +16,9 @@ class DatabaseException(PDException):
 class DatabaseMissingException(DatabaseException):
     pass
 
+class DatabaseNoSuchTableException(DatabaseException):
+    pass
+
 class DoesNotExistException(PDException):
     pass
 

@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, List
 
 from dateutil.relativedelta import FR, relativedelta
 
@@ -11,12 +10,12 @@ from shared.container import Container
 
 
 class Prizes(View):
-    def __init__(self, competitions: List[Competition]) -> None:
+    def __init__(self, competitions: list[Competition]) -> None:
         super().__init__()
-        self.weeks: List[Container] = []
+        self.weeks: list[Container] = []
         weeks = split_by_week(competitions)
         for week in weeks:
-            prizes: Dict[str, int] = {}
+            prizes: dict[str, int] = {}
             if week.end_date > dtutil.now(dtutil.WOTC_TZ):
                 pass
             for c in week.get('competitions', []):
@@ -24,13 +23,13 @@ class Prizes(View):
                     prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(c, d)
             subject = 'Penny Dreadful Prizes for Week Ending {date:%b} {date.day}'.format(date=week.end_date)
             body = '\n'.join([c.name for c in week.get('competitions', [])]) + '\n\n'
-            body += '\n'.join(['{username} {prize}'.format(username=k, prize=prizes[k]) for k in sorted(prizes) if prizes[k] > 0])
+            body += '\n'.join([f'{k} {prizes[k]}' for k in sorted(prizes) if prizes[k] > 0])
             self.weeks.append(Container({'subject': subject, 'body': body, 'n': len(week.get('competitions', []))}))
 
     def page_title(self) -> str:
         return 'Prizes'
 
-def split_by_week(competitions: List[Competition]) -> List[Container]:
+def split_by_week(competitions: list[Competition]) -> list[Container]:
     dt = (dtutil.now(dtutil.WOTC_TZ) + relativedelta(weekday=FR(-1))).replace(hour=0, minute=0, second=0)
     weeks = []
     while True:

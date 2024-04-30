@@ -1,14 +1,15 @@
 import collections
-from typing import Dict, Generator, Iterable, List, Optional, Set, Union
+import re
+from collections.abc import Generator, Iterable
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, Regex, String, Token
 from magic import card, layout, mana, multiverse, seasons
 from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
-from magic.models import Card
+from shared import configuration
 from shared.database import concat, sqlescape, sqllikeescape
-from shared.pd_exception import ParseException
+from shared.pd_exception import DoesNotExistException, ParseException
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -17,21 +18,19 @@ REGEX = 'regex'
 QUOTED_STRING = 'quoted_string'
 UNQUOTED_STRING = 'unquoted_string'
 
-VALUE_LOOKUP: Dict[str, Dict[str, int]] = {}
+VALUE_LOOKUP: dict[str, dict[str, int]] = {}
 
-def search(query: str) -> List[Card]:
+def search(query: str) -> set[str]:
     query = query.replace('“', '"').replace('”', '"')
     where = parse(tokenize(query))
-    sql = """{base_query}
-        ORDER BY pd_legal DESC, name
-    """.format(base_query=multiverse.cached_base_query(where))
-    rs = db().select(sql)
-    return [Card(r) for r in rs]
+    base_query = multiverse.cached_base_query(where)
+    sql = f'{base_query} ORDER BY NULL'
+    return {r['name'] for r in db().select(sql)}
 
 # Cut a query string up into tokens and combine them in an Expression, recursively for subexpressisons. Or raise if string is malformed.
 def tokenize(s: str) -> Expression:
     s = s.lower()
-    tokens: Dict[int, List[Union[Expression, Token]]] = {0: []}
+    tokens: dict[int, list[Expression | Token]] = {0: []}
     chars = list(s)
     chars.append(' ')
     depth = 0
@@ -67,14 +66,14 @@ def tokenize(s: str) -> Expression:
                     string = [c]
                     mode = UNQUOTED_STRING
                 else:
-                    raise InvalidTokenException("Expected expression, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+                    raise InvalidTokenException(f"Expected expression, got '{c}' at character {i} in {s}")
             elif mode == EXPECT_OPERATOR:
                 if Operator.match(rest):
                     tokens[depth].append(Operator(rest))
                     mode = EXPECT_TERM
                     i += Operator.length(rest) - 1
                 else:
-                    raise InvalidTokenException("Expected operator, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+                    raise InvalidTokenException(f"Expected operator, got '{c}' at character {i} in {s}")
             elif mode == EXPECT_TERM:
                 if c == '"':
                     string = []
@@ -108,16 +107,16 @@ def tokenize(s: str) -> Expression:
                 else:
                     string.append(c)
             else:
-                raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+                raise InvalidModeException(f"Bad mode '{c}' at character {i} in {s}")
             i += 1
     except KeyError as e:
         raise InvalidSearchException(f'Invalid nesting in {s}') from e
     if mode == QUOTED_STRING:
-        raise InvalidSearchException('Reached end of expression without finding the end of a quoted string in {s}'.format(s=s))
+        raise InvalidSearchException(f'Reached end of expression without finding the end of a quoted string in {s}')
     if mode == REGEX:
         raise InvalidSearchException(f'Reached end of expression without finding the end of a regular expression in {s}')
     if depth != 0:
-        raise InvalidSearchException('Reached end of expression without finding enough closing parentheses in {s}'.format(s=s))
+        raise InvalidSearchException(f'Reached end of expression without finding enough closing parentheses in {s}')
     return Expression(tokens[0])
 
 # Parse an Expression into a SQL WHERE clause or raise if Expression is invalid.
@@ -138,7 +137,7 @@ def parse(expression: Expression) -> str:
                 raise InvalidSearchException('You cannot provide a key without both an operator and a value') from e
             i += 2
         elif cls == Expression:
-            s += '({token})'.format(token=parse(token))  # type: ignore
+            s += f'({parse(token)})'  # type: ignore
         elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT':  # type: ignore
             raise InvalidSearchException('You cannot start a search expression with a boolean operator')
         elif cls == BooleanOperator and i == len(tokens) - 1:
@@ -146,12 +145,12 @@ def parse(expression: Expression) -> str:
         elif cls == BooleanOperator:
             pass
         else:
-            raise InvalidTokenException("Invalid token '{token}' ({cls}) at character {i}".format(token=token, cls=cls, i=i))
+            raise InvalidTokenException(f"Invalid token '{token}' ({cls}) at character {i}")
         next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
         next_cls = next_token.__class__
         if cls == BooleanOperator:
             s = s.rstrip(' ')
-            s += ' {s} '.format(s=token.value())  # type: ignore
+            s += f' {token.value()} '  # type: ignore
         elif next_cls != BooleanOperator or next_token.value() == 'NOT':  # type: ignore
             s += ' AND '
         i += 1
@@ -165,7 +164,9 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return color_where('color', operator.value(), term.value())
     if key.value() in ['coloridentity', 'commander', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
-    if key.value() in ['text', 'oracle', 'o', 'fulloracle', 'fo']:
+    if key.value() in ['oracle', 'o']:
+        return text_where('text', term, exclude_parenthetical=True)
+    if key.value() in ['fulloracle', 'fo']:
         return text_where('text', term)
     if key.value() == 'type' or key.value() == 't':
         return text_where('type_line', term)
@@ -191,11 +192,13 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return mana_where(operator.value(), term.value())
     if key.value() == 'is':
         return is_subquery(term.value())
+    if key.value() == 'not':
+        return f'NOT ({is_subquery(term.value())})'
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
     raise InvalidCriterionException
 
-def text_where(column: str, term: Token) -> str:
+def text_where(column: str, term: Token, exclude_parenthetical: bool = False) -> str:
     q = term.value()
     if column == 'type_line' and q == 'pw' and not term.is_regex():
         q = 'planeswalker'
@@ -205,28 +208,31 @@ def text_where(column: str, term: Token) -> str:
         column = 'oracle_text'
     if term.is_regex():
         operator = 'REGEXP'
+        q = replace_scryfall_regex_extensions(q)
         escaped = sqlescape('(?m)' + q)
     else:
         operator = 'LIKE'
         escaped = sqllikeescape(q)
     if column == 'oracle_text' and '~' in escaped:
-        parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
+        parts = [f"'{text}'" for text in escaped.strip("'").split('~')]
         escaped = concat(intersperse(parts, 'name'))
+    if exclude_parenthetical:
+        column = f"REGEXP_REPLACE({column}, '\\\\([^)]*\\\\)', '')"
     return f'({column} {operator} {escaped})'
 
-def subtable_where(subtable: str, value: str, operator: Optional[str] = None) -> str:
+def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:
     # Specialcase colorless because it has no entry in the color table.
     if (subtable in ['color', 'color_identity']) and value == 'c':
-        return '(c.id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
+        return f'(c.id NOT IN (SELECT card_id FROM card_{subtable}))'
     v = value_lookup(subtable, value)
     if str(v).isdigit():
-        column = '{subtable}_id'.format(subtable=subtable).replace('color_identity_id', 'color_id')
+        column = f'{subtable}_id'.replace('color_identity_id', 'color_id')
         operator = '=' if not operator else operator
     else:
         column = subtable
         v = sqllikeescape(v)  # type: ignore
         operator = 'LIKE' if not operator else operator
-    return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
+    return f'(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {v}))'
 
 def math_where(column: str, operator: str, term: str) -> str:
     if operator == ':':
@@ -237,6 +243,11 @@ def math_where(column: str, operator: str, term: str) -> str:
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     all_colors = {'w', 'u', 'b', 'r', 'g'}
+    try:
+        season_id = int(term)
+        return f'c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) {operator} {season_id})'
+    except ValueError:
+        pass
     if term in COLOR_COMBINATIONS_LOWER.keys():
         colors = set(COLOR_COMBINATIONS_LOWER[term])
     else:
@@ -247,8 +258,8 @@ def color_where(subtable: str, operator: str, term: str) -> str:
         raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term.replace('m', '')}' instead")
     if operator == ':' and subtable == 'color_identity':
         operator = '<='
-    required: Set[str] = set()
-    excluded: Set[str] = set()
+    required: set[str] = set()
+    excluded: set[str] = set()
     min_colors, max_colors = None, None
     if 'm' in colors:
         min_colors = 2
@@ -286,12 +297,16 @@ def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
 def format_where(term: str) -> str:
-    if term == 'pd' or term.startswith('penny'):
-        term = seasons.current_season_name()
-    format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
-    if format_id is None:
-        raise InvalidValueException("Invalid format '{term}'".format(term=term))
-    return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
+    season_code = parse_season(term) if term.startswith('pd') or term.startswith('penny') else None
+    if season_code == seasons.ALL:
+        format_ids = db().values("SELECT id FROM format WHERE name LIKE 'Penny Dreadful%%'")
+    else:
+        if season_code:
+            term = f'Penny Dreadful {season_code}'
+        format_ids = db().values('SELECT id FROM format WHERE name LIKE %s', [f'{card.unaccent(term)}%%'])
+    if not format_ids:
+        raise InvalidValueException(f"Invalid format '{term}'")
+    return f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id IN ({', '.join(str(id) for id in format_ids)}) AND legality <> 'Banned'))"
 
 def rarity_where(operator: str, term: str) -> str:
     rarity_id = value_lookup('rarity', term)
@@ -299,24 +314,24 @@ def rarity_where(operator: str, term: str) -> str:
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
-    return '(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))'.format(operator=operator, rarity_id=rarity_id)
+    return f'(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))'
 
 def mana_where(operator: str, term: str) -> str:
     term = term.upper()
     try:
         symbols = mana.parse(term)  # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
-        symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+        symbols = [f'{{{symbol}}}' for symbol in symbols]
     except mana.InvalidManaCostException:
         symbols = [term]
     if operator == ':':
         d = collections.Counter(symbols)  # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
-        clause = ' AND '.join('mana_cost LIKE {symbol}'.format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
+        clause = ' AND '.join(f'mana_cost LIKE {sqllikeescape(symbol * n)}' for symbol, n in d.items())
     elif operator == '=':
-        joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)
-        clause = "mana_cost = '{joined}'".format(joined=joined)
+        joined = ''.join(f'{symbol}' for symbol in symbols)
+        clause = f"mana_cost = '{joined}'"
     else:
-        raise InvalidTokenException('mana expects `:` or `=` not `{operator}`. Did you want cmc?'.format(operator=operator))
-    return '({clause})'.format(clause=clause)
+        raise InvalidTokenException(f'mana expects `:` or `=` not `{operator}`. Did you want cmc?')
+    return f'({clause})'
 
 def playable_where(term: str) -> str:
     term = term.upper()
@@ -329,23 +344,23 @@ def playable_where(term: str) -> str:
     symbols_without_curlies.add('C')
     all_colors = ['W', 'U', 'B', 'R', 'G']
     # Phyrexian
-    symbols_without_curlies.update(['{c}/P'.format(c=c) for c in all_colors])
+    symbols_without_curlies.update([f'{c}/P' for c in all_colors])
     # Twobrid
-    symbols_without_curlies.update(['2/{c}'.format(c=c) for c in all_colors])
+    symbols_without_curlies.update([f'2/{c}' for c in all_colors])
     for color in colors:
         # Hybrid
-        symbols_without_curlies.update(['{color}/{other}'.format(color=color, other=other) for other in all_colors if other != color])
-        symbols_without_curlies.update(['{other}/{color}'.format(color=color, other=other) for other in all_colors if other != color])
+        symbols_without_curlies.update([f'{color}/{other}' for other in all_colors if other != color])
+        symbols_without_curlies.update([f'{other}/{color}' for other in all_colors if other != color])
     where = 'mana_cost'
     for symbol in symbols_without_curlies:
-        where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
-    return "{where} = ''".format(where=where)
+        where = f"REPLACE({where}, '{{{symbol}}}', '')"
+    return f"{where} = ''"
 
 
 # Look up the id of a value if we have a lookup table for it.
 # Raise if not found in that table.
 # Return 'value' back if we don't have a lookup table for this thing ('subtype', for example).
-def value_lookup(table: str, value: str) -> Union[int, str]:
+def value_lookup(table: str, value: str) -> int | str:
     if not VALUE_LOOKUP:
         init_value_lookup()
     if table in VALUE_LOOKUP and value in VALUE_LOOKUP[table]:
@@ -388,40 +403,70 @@ def init_value_lookup() -> None:
             VALUE_LOOKUP['color_identity'] = d
 
 def is_subquery(subquery_name: str) -> str:
+    if subquery_name == 'dfc':
+        return "(c.layout IN ('transform', 'modal_dfc'))"
+    if subquery_name == 'mdfc':
+        subquery_name = 'modal_dfc'
     if subquery_name in layout.all_layouts():
-        return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
+        return f'(c.layout = {sqlescape(subquery_name)})'
     if subquery_name == 'spikey':
-        # This is a pretty egregious hardcoding of 426 card names but I really don't want to call Scryfall from here.
-        return "(name = 'Adun Oakenshield' OR name = 'Arcades Sabboth' OR name = 'Arcbound Ravager' OR name = 'Arcum Dagsson' OR name = 'Arcum''s Astrolabe' OR name = 'Autumn Willow' OR name = 'Axelrod Gunnarson' OR name = 'Balustrade Spy' OR name = 'Barktooth Warbeard' OR name = 'Baron Sengir' OR name = 'Bartel Runeaxe' OR name = 'Biorhythm' OR name = 'Blazing Shoal' OR name = 'Boris Devilboon' OR name = 'Braids, Cabal Minion' OR name = 'Braingeyser' OR name = 'Chromium' OR name = 'Circle of Flame' OR name = 'Cloudpost' OR name = 'Coalition Victory' OR name = 'Cranial Plating' OR name = 'Cursed Scroll' OR name = 'Dakkon Blackblade' OR name = 'Darksteel Citadel' OR name = 'Dingus Egg' OR name = 'Disciple of the Vault' OR name = 'Dread Return' OR name = 'Edric, Spymaster of Trest' OR name = 'Empty the Warrens' OR name = 'Erayo, Soratami Ascendant' OR name = 'Eron the Relentless' OR name = 'Fact or Fiction' OR name = 'Frantic Search' OR name = 'Gabriel Angelfire' OR name = 'Golden Wish' OR name = 'Grandmother Sengir' OR name = 'Grapeshot' OR name = 'Hada Freeblade' OR name = 'Halfdane' OR name = 'Hazezon Tamar' OR name = 'Heartless Hidetsugu' OR name = 'Hypergenesis' OR name = 'Hypnotic Specter' OR name = 'Icy Manipulator' OR name = 'Ihsan''s Shade' OR name = 'Intangible Virtue' OR name = 'Invigorate' OR name = 'Ivory Tower' OR name = 'Jacques le Vert' OR name = 'Jasmine Boreal' OR name = 'Juggernaut' OR name = 'Kird Ape' OR name = 'Kokusho, the Evening Star' OR name = 'Lady Caleria' OR name = 'Lady Evangela' OR name = 'Lady Orca' OR name = 'Limited Resources' OR name = 'Lodestone Golem' OR name = 'Lucky Clover' OR name = 'Lutri, the Spellchaser' OR name = 'Marhault Elsdragon' OR name = 'Márton Stromgald' OR name = 'Merieke Ri Berit' OR name = 'Nicol Bolas' OR name = 'Niv-Mizzet, the Firemind' OR name = 'Orcish Oriflamme' OR name = 'Palladia-Mors' OR name = 'Panoptic Mirror' OR name = 'Pavel Maliki' OR name = 'Ponder' OR name = 'Prophet of Kruphix' OR name = 'Protean Hulk' OR name = 'Punishing Fire' OR name = 'Ramses Overdark' OR name = 'Reflector Mage' OR name = 'Regrowth' OR name = 'Riftsweeper' OR name = 'Riven Turnbull' OR name = 'Rofellos, Llanowar Emissary' OR name = 'Rohgahh of Kher Keep' OR name = 'Rubinia Soulsinger' OR name = 'Rukh Egg' OR name = 'Runed Halo' OR name = 'Second Sunrise' OR name = 'Seething Song' OR name = 'Serendib Efreet' OR name = 'Simian Spirit Guide' OR name = 'Skeleton Ship' OR name = 'Sol''kanar the Swamp King' OR name = 'Sorcerous Spyglass' OR name = 'Spatial Contortion' OR name = 'Stangg' OR name = 'Summer Bloom' OR name = 'Sunastian Falconer' OR name = 'Sway of the Stars' OR name = 'Sword of the Ages' OR name = 'Sylvan Library' OR name = 'Sylvan Primordial' OR name = 'Temporal Fissure' OR name = 'Tetsuo Umezawa' OR name = 'Thawing Glaciers' OR name = 'Thirst for Knowledge' OR name = 'Tobias Andrion' OR name = 'Tor Wauki' OR name = 'Trade Secrets' OR name = 'Treasure Cruise' OR name = 'Undercity Informer' OR name = 'Underworld Dreams' OR name = 'Vaevictis Asmadi' OR name = 'Voltaic Key' OR name = 'Wild Nacatl' OR name = 'Worldfire' OR name = 'Worldgorger Dragon' OR name = 'Xira Arien' OR name = 'Yisan, the Wanderer Bard' OR name = 'Zirda, the Dawnwaker' OR name = 'Zur the Enchanter' OR name = 'Adriana''s Valor' OR name = 'Advantageous Proclamation' OR name = 'Aether Vial' OR name = 'Aetherworks Marvel' OR name = 'Agent of Treachery' OR name = 'Ali from Cairo' OR name = 'Amulet of Quoz' OR name = 'Ancestral Recall' OR name = 'Ancestral Vision' OR name = 'Ancient Den' OR name = 'Ancient Tomb' OR name = 'Angus Mackenzie' OR name = 'Ashnod''s Coupon' OR name = 'Assemble the Rank and Vile' OR name = 'Attune with Aether' OR name = 'Ayesha Tanaka' OR name = 'Back to Basics' OR name = 'Backup Plan' OR name = 'Balance' OR name = 'Baral, Chief of Compliance' OR name = 'Bazaar of Baghdad' OR name = 'Berserk' OR name = 'Birthing Pod' OR name = 'Bitterblossom' OR name = 'Black Lotus' OR name = 'Black Vise' OR name = 'Bloodbraid Elf' OR name = 'Bloodstained Mire' OR name = 'Brago''s Favor' OR name = 'Brainstorm' OR name = 'Bridge from Below' OR name = 'Bronze Tablet' OR name = 'Burning-Tree Emissary' OR name = 'Burning Wish' OR name = 'Candelabra of Tawnos' OR name = 'Cauldron Familiar' OR name = 'Chalice of the Void' OR name = 'Chandler' OR name = 'Channel' OR name = 'Chaos Orb' OR name = 'Chrome Mox' OR name = 'Cloud of Faeries' OR name = 'Contract from Below' OR name = 'Copy Artifact' OR name = 'Counterspell' OR name = 'Crop Rotation' OR name = 'Crucible of Worlds' OR name = 'Cunning Wish' OR name = 'Dark Depths' OR name = 'Darkpact' OR name = 'Dark Ritual' OR name = 'Daughter of Autumn' OR name = 'Daze' OR name = 'Deathrite Shaman' OR name = 'Death Wish' OR name = 'Demonic Attorney' OR name = 'Demonic Consultation' OR name = 'Demonic Tutor' OR name = 'Derevi, Empyrial Tactician' OR name = 'Dig Through Time' OR name = 'Divine Intervention' OR name = 'Doomsday' OR name = 'Double Cross' OR name = 'Double Deal' OR name = 'Double Dip' OR name = 'Double Play' OR name = 'Double Stroke' OR name = 'Double Take' OR name = 'Drannith Magistrate' OR name = 'Dreadhorde Arcanist' OR name = 'Dream Halls' OR name = 'Earthcraft' OR name = 'Echoing Boon' OR name = 'Edgar Markov' OR name = 'Emissary''s Ploy' OR name = 'Emrakul, the Aeons Torn' OR name = 'Emrakul, the Promised End' OR name = 'Enlightened Tutor' OR name = 'Enter the Dungeon' OR name = 'Entomb' OR name = 'Escape to the Wilds' OR name = 'Expedition Map' OR name = 'Eye of Ugin' OR name = 'Faithless Looting' OR name = 'Fall from Favor' OR name = 'Falling Star' OR name = 'Fastbond' OR name = 'Feldon''s Cane' OR name = 'Felidar Guardian' OR name = 'Field of the Dead' OR name = 'Fires of Invention' OR name = 'Flash' OR name = 'Flooded Strand' OR name = 'Fluctuator' OR name = 'Food Chain' OR name = 'Fork' OR name = 'Gaea''s Cradle' OR name = 'Gauntlet of Might' OR name = 'General Jarkeld' OR name = 'Gifts Ungiven' OR name = 'Gitaxian Probe' OR name = 'Glimpse of Nature' OR name = 'Goblin Lackey' OR name = 'Goblin Recruiter' OR name = 'Golgari Grave-Troll' OR name = 'Golos, Tireless Pilgrim' OR name = 'Gosta Dirk' OR name = 'Great Furnace' OR name = 'Green Sun''s Zenith' OR name = 'Grim Monolith' OR name = 'Grindstone' OR name = 'Griselbrand' OR name = 'Growth Spiral' OR name = 'Gush' OR name = 'Gwendlyn Di Corci' OR name = 'Hammerheim' OR name = 'Hazduhr the Abbot' OR name = 'Hermit Druid' OR name = 'High Tide' OR name = 'Hired Heist' OR name = 'Hogaak, Arisen Necropolis' OR name = 'Hold the Perimeter' OR name = 'Hullbreacher' OR name = 'Humility' OR name = 'Hunding Gjornersen' OR name = 'Hurkyl''s Recall' OR name = 'Hymn of the Wilds' OR name = 'Hymn to Tourach' OR name = 'Illusionary Mask' OR name = 'Immediate Action' OR name = 'Imperial Seal' OR name = 'Incendiary Dissent' OR name = 'Inverter of Truth' OR name = 'Iona, Shield of Emeria' OR name = 'Irini Sengir' OR name = 'Iterative Analysis' OR name = 'Jace, the Mind Sculptor' OR name = 'Jedit Ojanen' OR name = 'Jerrard of the Closed Fist' OR name = 'Jeweled Bird' OR name = 'Johan' OR name = 'Joven' OR name = 'Karakas' OR name = 'Karn, the Great Creator' OR name = 'Kasimir the Lone Wolf' OR name = 'Kei Takahashi' OR name = 'Kethis, the Hidden Hand' OR name = 'Krark-Clan Ironworks' OR name = 'Land Tax' OR name = 'Leovold, Emissary of Trest' OR name = 'Leyline of Abundance' OR name = 'Library of Alexandria' OR name = 'Lightning Bolt' OR name = 'Lingering Souls' OR name = 'Lin Sivvi, Defiant Hero' OR name = 'Lion''s Eye Diamond' OR name = 'Living Wish' OR name = 'Livonya Silone' OR name = 'Lord Magnus' OR name = 'Lotus Petal' OR name = 'Lurrus of the Dream-Den' OR name = 'Magical Hacker' OR name = 'Mana Crypt' OR name = 'Mana Drain' OR name = 'Mana Vault' OR name = 'Maze of Ith' OR name = 'Memory Jar' OR name = 'Mental Misstep' OR name = 'Merchant Scroll' OR name = 'Metalworker' OR name = 'Mind Over Matter' OR name = 'Mind''s Desire' OR name = 'Mind Twist' OR name = 'Mirror Universe' OR name = 'Mishra''s Workshop' OR name = 'Moat' OR name = 'Monastery Mentor' OR name = 'Mox Diamond' OR name = 'Mox Emerald' OR name = 'Mox Jet' OR name = 'Mox Lotus' OR name = 'Mox Opal' OR name = 'Mox Pearl' OR name = 'Mox Ruby' OR name = 'Mox Sapphire' OR name = 'Muzzio''s Preparations' OR name = 'Mycosynth Lattice' OR name = 'Mystical Tutor' OR name = 'Mystic Forge' OR name = 'Mystic Sanctuary' OR name = 'Narset, Parter of Veils' OR name = 'Natural Order' OR name = 'Natural Unity' OR name = 'Nebuchadnezzar' OR name = 'Necropotence' OR name = 'Nexus of Fate' OR name = 'Oath of Druids' OR name = 'Oath of Nissa' OR name = 'Oko, Thief of Crowns' OR name = 'Omnath, Locus of Creation' OR name = 'Once More with Feeling' OR name = 'Once Upon a Time' OR name = 'Painter''s Servant' OR name = 'Paradox Engine' OR name = 'Pendelhaven' OR name = 'Peregrine Drake' OR name = 'Personal Tutor' OR name = 'Polluted Delta' OR name = 'Power Play' OR name = 'Preordain' OR name = 'Primeval Titan' OR name = 'Princess Lucrezia' OR name = 'Ragnar' OR name = 'Ramirez DePietro' OR name = 'Rampaging Ferocidon' OR name = 'Ramunap Ruins' OR name = 'Rashka the Slayer' OR name = 'Rasputin Dreamweaver' OR name = 'R&D''s Secret Lair' OR name = 'Rebirth' OR name = 'Recall' OR name = 'Recurring Nightmare' OR name = 'Replenish' OR name = 'Reveka, Wizard Savant' OR name = 'Richard Garfield, Ph.D.' OR name = 'Rishadan Port' OR name = 'Rite of Flame' OR name = 'Rogue Refiner' OR name = 'Seat of the Synod' OR name = 'Secrets of Paradise' OR name = 'Secret Summoning' OR name = 'Sensei''s Divining Top' OR name = 'Sentinel Dispatch' OR name = 'Serra Ascendant' OR name = 'Serra''s Sanctum' OR name = 'Shahrazad' OR name = 'Sinkhole' OR name = 'Sir Shandlar of Eberyn' OR name = 'Sivitri Scarzam' OR name = 'Skullclamp' OR name = 'Smuggler''s Copter' OR name = 'Sol Ring' OR name = 'Soraya the Falconer' OR name = 'Sovereign''s Realm' OR name = 'Splinter Twin' OR name = 'Squandered Resources' OR name = 'Staff of Domination' OR name = 'Staying Power' OR name = 'Stoneforge Mystic' OR name = 'Strip Mine' OR name = 'Stroke of Genius' OR name = 'Summoner''s Bond' OR name = 'Sundering Titan' OR name = 'Survival of the Fittest' OR name = 'Sword of the Meek' OR name = 'Swords to Plowshares' OR name = 'Sylvan Tutor' OR name = 'Tainted Pact' OR name = 'Teferi, Time Raveler' OR name = 'Tempest Efreet' OR name = 'Test of Endurance' OR name = 'Thassa''s Oracle' OR name = 'The Lady of the Mountain' OR name = 'The Tabernacle at Pendrell Vale' OR name = 'Thorn of Amethyst' OR name = 'Tibalt''s Trickery' OR name = 'Time Machine' OR name = 'Time Spiral' OR name = 'Timetwister' OR name = 'Time Vault' OR name = 'Time Walk' OR name = 'Time Warp' OR name = 'Timmerian Fiends' OR name = 'Tinker' OR name = 'Tolaria' OR name = 'Tolarian Academy' OR name = 'Torsten Von Ursus' OR name = 'Treachery' OR name = 'Tree of Tales' OR name = 'Trinisphere' OR name = 'Tuknir Deathlock' OR name = 'Umezawa''s Jitte' OR name = 'Underworld Breach' OR name = 'Unexpected Potential' OR name = 'Upheaval' OR name = 'Urborg' OR name = 'Ur-Drago' OR name = 'Uro, Titan of Nature''s Wrath' OR name = 'Valakut, the Molten Pinnacle' OR name = 'Vampiric Tutor' OR name = 'Vault of Whispers' OR name = 'Veil of Summer' OR name = 'Veldrane of Sengir' OR name = 'Vial Smasher the Fierce' OR name = 'Walking Ballista' OR name = 'Weight Advantage' OR name = 'Wheel of Fortune' OR name = 'Wilderness Reclamation' OR name = 'Windfall' OR name = 'Windswept Heath' OR name = 'Winota, Joiner of Forces' OR name = 'Winter Orb' OR name = 'Wooded Foothills' OR name = 'Worldknit' OR name = 'Worldly Tutor' OR name = 'Wrenn and Six' OR name = 'Yawgmoth''s Bargain' OR name = 'Yawgmoth''s Will' OR name = 'Zuran Orb')"
+        names = spikey_names()
+        return '(name = ' + ' OR name = '.join(sqlescape(name) for name in names) + ')'
     if subquery_name == 'vanilla':
         return "(oracle_text = '')"
     if subquery_name == 'hybrid':
         return "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))"
     subqueries = {
+        'bikeland': 't:land o:"Cycling {2}" ci=2',
+        'bounceland': 't:land (o:"When ~ enters the battlefield, return a land you control to its owner\'s hand" OR o:/When ~ enters the battlefield, sacrifice it unless you return an untapped .* you control to its owner\'s hand/)',
+        'canopyland': 'o:"{T}, Pay 1 life: Add" o:"{1}, {T}, Sacrifice ~: Draw a card."',
         'commander': 't:legendary (t:creature OR o:"~ can be your commander") f:commander',
-        'checkland': 't:land fo:"unless you control a" fo:"} or {"',
-        'creatureland': 't:land o:"becomes a"',
-        'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
-        'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',
-        'painland': 't:land o:"~ deals 1 damage to you."',
+        'checkland': 't:land ci=2 fo:/unless you control an? (Plains|Island|Swamp|Mountain|Forest)/',
+        'companion': 'o:"Companion — "',
+        'creatureland': 't:land -t:creature o:/becomes? a.* creature/ -"Argoth, Sanctum of Nature" -o:/target .* becomes/',
+        'dual': 't:land ci=2 -o:/./',
+        'fastland': 't:land o:"enters the battlefield tapped unless you control two or fewer other lands." -t:gate',
+        'fetchland': 't:land o:/{T}, Pay 1 life, Sacrifice ~: Search your library for an? [a-z]+ or [a-z]+ card, put it onto the battlefield, then shuffle./',
+        'filterland': r't:land (o:/\sm, {T}: Add \sc\sc/ OR o:/\sm, {T}: Add five mana in any combination of colors./)',
+        'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life."',
+        'outlaw': 't:Assassin OR t:Mercenary OR t:Pirate OR t:Rogue OR t:Warlock',
+        'painland': r't:land o:/Add \{.\} or \{.\}. ~ deals 1 damage to you./ -o:"~ enters the battlefield tapped"',
         'permanent': 't:artifact OR t:creature OR t:enchantment OR t:land OR t:planeswalker',
-        'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
+        'scryland': 't:land "Temple of" o:"When ~ enters the battlefield, scry 1"',
+        'shadowland': "t:land o:/As ~ enters the battlefield, you may reveal an? [a-z]+ or [a-z]+ card from your hand. If you don't, ~ enters the battlefield tapped./",
+        'shockland': 't:land o:"As ~ enters the battlefield, you may pay 2 life. If you don\'t, it enters the battlefield tapped."',
+        'slowland': 't:land o:"~ enters the battlefield tapped unless you control two or more other lands."',
         # 205.2a The card types are artifact, battle, conspiracy, creature, dungeon, enchantment, instant, land, phenomenon, plane, planeswalker, scheme, sorcery, tribal, and vanguard. See section 3, “Card Types.”
         'spell': 't:artifact OR t:battle OR t:creature OR t:enchantment OR t:instant OR t:planeswalker OR t:sorcery',
-        'storageland': 'o:"storage counter"',
+        'storageland': 't:land o:"storage counter" (o:"You may choose not to untap ~ during your untap step." OR o:"{1}, {T}: Put a storage counter on ~")',
+        'tangoland': 't:land o:"~ enters the battlefield tapped unless you control two or more basic lands."',
         'triland': 't:land fo:": Add {" fo:"}, {" fo:"}, or {" fo:"enters the battlefield tapped" -fo:cycling',
     }
-    for k in list(subqueries.keys()):
-        if k.endswith('land'):
-            subqueries[k.replace('land', '')] = subqueries[k]
     subqueries['refuge'] = subqueries['gainland']
     subqueries['manland'] = subqueries['creatureland']
+    subqueries['bicycleland'] = subqueries['bikeland']
+    subqueries['cycleland'] = subqueries['bikeland']
+    subqueries['karoo'] = subqueries['bounceland']
+    subqueries['canland'] = subqueries['canopyland']
+    subqueries['battleland'] = subqueries['tangoland']
+    subqueries['snarl'] = subqueries['shadowland']
     query = subqueries.get(subquery_name, '')
     if query == '':
-        raise InvalidSearchException('Did not recognize `{subquery_name}` as a value for `is:`'.format(subquery_name=subquery_name))
+        raise InvalidSearchException(f'Did not recognize `{subquery_name}` as a value for `is:`')
     query = parse(tokenize(query))
-    query = '({0})'.format(query)
+    query = f'({query})'
     return query
+
+def spikey_names() -> list[str]:
+    try:
+        with open(configuration.is_spikey_file.get()) as f:
+            names = [name.strip() for name in f.readlines()]
+            if len(names) >= 426:
+                return names
+    except FileNotFoundError:
+        pass
+    # Hardcoded list from 2021 as backup in case the file is missing or corrupt.
+    return ['Adun Oakenshield', 'Arcades Sabboth', 'Arcbound Ravager', 'Arcum Dagsson', "Arcum's Astrolabe", 'Autumn Willow', 'Axelrod Gunnarson', 'Balustrade Spy', 'Barktooth Warbeard', 'Baron Sengir', 'Bartel Runeaxe', 'Biorhythm', 'Blazing Shoal', 'Boris Devilboon', 'Braids, Cabal Minion', 'Braingeyser', 'Chromium', 'Circle of Flame', 'Cloudpost', 'Coalition Victory', 'Cranial Plating', 'Cursed Scroll', 'Dakkon Blackblade', 'Darksteel Citadel', 'Dingus Egg', 'Disciple of the Vault', 'Dread Return', 'Edric, Spymaster of Trest', 'Empty the Warrens', 'Erayo, Soratami Ascendant', 'Eron the Relentless', 'Fact or Fiction', 'Frantic Search', 'Gabriel Angelfire', 'Golden Wish', 'Grandmother Sengir', 'Grapeshot', 'Hada Freeblade', 'Halfdane', 'Hazezon Tamar', 'Heartless Hidetsugu', 'Hypergenesis', 'Hypnotic Specter', 'Icy Manipulator', "Ihsan's Shade", 'Intangible Virtue', 'Invigorate', 'Ivory Tower', 'Jacques le Vert', 'Jasmine Boreal', 'Juggernaut', 'Kird Ape', 'Kokusho, the Evening Star', 'Lady Caleria', 'Lady Evangela', 'Lady Orca', 'Limited Resources', 'Lodestone Golem', 'Lucky Clover', 'Lutri, the Spellchaser', 'Marhault Elsdragon', 'Márton Stromgald', 'Merieke Ri Berit', 'Nicol Bolas', 'Niv-Mizzet, the Firemind', 'Orcish Oriflamme', 'Palladia-Mors', 'Panoptic Mirror', 'Pavel Maliki', 'Ponder', 'Prophet of Kruphix', 'Protean Hulk', 'Punishing Fire', 'Ramses Overdark', 'Reflector Mage', 'Regrowth', 'Riftsweeper', 'Riven Turnbull', 'Rofellos, Llanowar Emissary', 'Rohgahh of Kher Keep', 'Rubinia Soulsinger', 'Rukh Egg', 'Runed Halo', 'Second Sunrise', 'Seething Song', 'Serendib Efreet', 'Simian Spirit Guide', 'Skeleton Ship', "Sol'kanar the Swamp King", 'Sorcerous Spyglass', 'Spatial Contortion', 'Stangg', 'Summer Bloom', 'Sunastian Falconer', 'Sway of the Stars', 'Sword of the Ages', 'Sylvan Library', 'Sylvan Primordial', 'Temporal Fissure', 'Tetsuo Umezawa', 'Thawing Glaciers', 'Thirst for Knowledge', 'Tobias Andrion', 'Tor Wauki', 'Trade Secrets', 'Treasure Cruise', 'Undercity Informer', 'Underworld Dreams', 'Vaevictis Asmadi', 'Voltaic Key', 'Wild Nacatl', 'Worldfire', 'Worldgorger Dragon', 'Xira Arien', 'Yisan, the Wanderer Bard', 'Zirda, the Dawnwaker', 'Zur the Enchanter', "Adriana's Valor", 'Advantageous Proclamation', 'Aether Vial', 'Aetherworks Marvel', 'Agent of Treachery', 'Ali from Cairo', 'Amulet of Quoz', 'Ancestral Recall', 'Ancestral Vision', 'Ancient Den', 'Ancient Tomb', 'Angus Mackenzie', "Ashnod's Coupon", 'Assemble the Rank and Vile', 'Attune with Aether', 'Ayesha Tanaka', 'Back to Basics', 'Backup Plan', 'Balance', 'Baral, Chief of Compliance', 'Bazaar of Baghdad', 'Berserk', 'Birthing Pod', 'Bitterblossom', 'Black Lotus', 'Black Vise', 'Bloodbraid Elf', 'Bloodstained Mire', "Brago's Favor", 'Brainstorm', 'Bridge from Below', 'Bronze Tablet', 'Burning-Tree Emissary', 'Burning Wish', 'Candelabra of Tawnos', 'Cauldron Familiar', 'Chalice of the Void', 'Chandler', 'Channel', 'Chaos Orb', 'Chrome Mox', 'Cloud of Faeries', 'Contract from Below', 'Copy Artifact', 'Counterspell', 'Crop Rotation', 'Crucible of Worlds', 'Cunning Wish', 'Dark Depths', 'Darkpact', 'Dark Ritual', 'Daughter of Autumn', 'Daze', 'Deathrite Shaman', 'Death Wish', 'Demonic Attorney', 'Demonic Consultation', 'Demonic Tutor', 'Derevi, Empyrial Tactician', 'Dig Through Time', 'Divine Intervention', 'Doomsday', 'Double Cross', 'Double Deal', 'Double Dip', 'Double Play', 'Double Stroke', 'Double Take', 'Drannith Magistrate', 'Dreadhorde Arcanist', 'Dream Halls', 'Earthcraft', 'Echoing Boon', 'Edgar Markov', "Emissary's Ploy", 'Emrakul, the Aeons Torn', 'Emrakul, the Promised End', 'Enlightened Tutor', 'Enter the Dungeon', 'Entomb', 'Escape to the Wilds', 'Expedition Map', 'Eye of Ugin', 'Faithless Looting', 'Fall from Favor', 'Falling Star', 'Fastbond', "Feldon's Cane", 'Felidar Guardian', 'Field of the Dead', 'Fires of Invention', 'Flash', 'Flooded Strand', 'Fluctuator', 'Food Chain', 'Fork', "Gaea's Cradle", 'Gauntlet of Might', 'General Jarkeld', 'Gifts Ungiven', 'Gitaxian Probe', 'Glimpse of Nature', 'Goblin Lackey', 'Goblin Recruiter', 'Golgari Grave-Troll', 'Golos, Tireless Pilgrim', 'Gosta Dirk', 'Great Furnace', "Green Sun's Zenith", 'Grim Monolith', 'Grindstone', 'Griselbrand', 'Growth Spiral', 'Gush', 'Gwendlyn Di Corci', 'Hammerheim', 'Hazduhr the Abbot', 'Hermit Druid', 'High Tide', 'Hired Heist', 'Hogaak, Arisen Necropolis', 'Hold the Perimeter', 'Hullbreacher', 'Humility', 'Hunding Gjornersen', "Hurkyl's Recall", 'Hymn of the Wilds', 'Hymn to Tourach', 'Illusionary Mask', 'Immediate Action', 'Imperial Seal', 'Incendiary Dissent', 'Inverter of Truth', 'Iona, Shield of Emeria', 'Irini Sengir', 'Iterative Analysis', 'Jace, the Mind Sculptor', 'Jedit Ojanen', 'Jerrard of the Closed Fist', 'Jeweled Bird', 'Johan', 'Joven', 'Karakas', 'Karn, the Great Creator', 'Kasimir the Lone Wolf', 'Kei Takahashi', 'Kethis, the Hidden Hand', 'Krark-Clan Ironworks', 'Land Tax', 'Leovold, Emissary of Trest', 'Leyline of Abundance', 'Library of Alexandria', 'Lightning Bolt', 'Lingering Souls', 'Lin Sivvi, Defiant Hero', "Lion's Eye Diamond", 'Living Wish', 'Livonya Silone', 'Lord Magnus', 'Lotus Petal', 'Lurrus of the Dream-Den', 'Magical Hacker', 'Mana Crypt', 'Mana Drain', 'Mana Vault', 'Maze of Ith', 'Memory Jar', 'Mental Misstep', 'Merchant Scroll', 'Metalworker', 'Mind Over Matter', "Mind's Desire", 'Mind Twist', 'Mirror Universe', "Mishra's Workshop", 'Moat', 'Monastery Mentor', 'Mox Diamond', 'Mox Emerald', 'Mox Jet', 'Mox Lotus', 'Mox Opal', 'Mox Pearl', 'Mox Ruby', 'Mox Sapphire', "Muzzio's Preparations", 'Mycosynth Lattice', 'Mystical Tutor', 'Mystic Forge', 'Mystic Sanctuary', 'Narset, Parter of Veils', 'Natural Order', 'Natural Unity', 'Nebuchadnezzar', 'Necropotence', 'Nexus of Fate', 'Oath of Druids', 'Oath of Nissa', 'Oko, Thief of Crowns', 'Omnath, Locus of Creation', 'Once More with Feeling', 'Once Upon a Time', "Painter's Servant", 'Paradox Engine', 'Pendelhaven', 'Peregrine Drake', 'Personal Tutor', 'Polluted Delta', 'Power Play', 'Preordain', 'Primeval Titan', 'Princess Lucrezia', 'Ragnar', 'Ramirez DePietro', 'Rampaging Ferocidon', 'Ramunap Ruins', 'Rashka the Slayer', 'Rasputin Dreamweaver', "R&D's Secret Lair", 'Rebirth', 'Recall', 'Recurring Nightmare', 'Replenish', 'Reveka, Wizard Savant', 'Richard Garfield, Ph.D.', 'Rishadan Port', 'Rite of Flame', 'Rogue Refiner', 'Seat of the Synod', 'Secrets of Paradise', 'Secret Summoning', "Sensei's Divining Top", 'Sentinel Dispatch', 'Serra Ascendant', "Serra's Sanctum", 'Shahrazad', 'Sinkhole', 'Sir Shandlar of Eberyn', 'Sivitri Scarzam', 'Skullclamp', "Smuggler's Copter", 'Sol Ring', 'Soraya the Falconer', "Sovereign's Realm", 'Splinter Twin', 'Squandered Resources', 'Staff of Domination', 'Staying Power', 'Stoneforge Mystic', 'Strip Mine', 'Stroke of Genius', "Summoner's Bond", 'Sundering Titan', 'Survival of the Fittest', 'Sword of the Meek', 'Swords to Plowshares', 'Sylvan Tutor', 'Tainted Pact', 'Teferi, Time Raveler', 'Tempest Efreet', 'Test of Endurance', "Thassa's Oracle", 'The Lady of the Mountain', 'The Tabernacle at Pendrell Vale', 'Thorn of Amethyst', "Tibalt's Trickery", 'Time Machine', 'Time Spiral', 'Timetwister', 'Time Vault', 'Time Walk', 'Time Warp', 'Timmerian Fiends', 'Tinker', 'Tolaria', 'Tolarian Academy', 'Torsten Von Ursus', 'Treachery', 'Tree of Tales', 'Trinisphere', 'Tuknir Deathlock', "Umezawa's Jitte", 'Underworld Breach', 'Unexpected Potential', 'Upheaval', 'Urborg', 'Ur-Drago', "Uro, Titan of Nature's Wrath", 'Valakut, the Molten Pinnacle', 'Vampiric Tutor', 'Vault of Whispers', 'Veil of Summer', 'Veldrane of Sengir', 'Vial Smasher the Fierce', 'Walking Ballista', 'Weight Advantage', 'Wheel of Fortune', 'Wilderness Reclamation', 'Windfall', 'Windswept Heath', 'Winota, Joiner of Forces', 'Winter Orb', 'Wooded Foothills', 'Worldknit', 'Worldly Tutor', 'Wrenn and Six', "Yawgmoth's Bargain", "Yawgmoth's Will", 'Zuran Orb']
 
 def intersperse(iterable: Iterable, delimiter: str) -> Generator:
     it = iter(iterable)
@@ -429,6 +474,49 @@ def intersperse(iterable: Iterable, delimiter: str) -> Generator:
     for x in it:
         yield delimiter
         yield x
+
+def parse_season(term: str) -> str:
+    spaceless = term.replace(' ', '')
+    try:
+        m = re.match(r'(pd|penny)(dreadful)?(s|season)?(...|\d+)?$', spaceless)
+        if m and (m.group(3) is m.group(4) is None):
+            return seasons.current_season_code()
+        if not m:
+            raise ValueError
+        code = m.group(4)
+        if code == 'all':
+            return seasons.ALL
+        return seasons.season_code(int(code))
+    except (AttributeError, IndexError, ValueError, DoesNotExistException):
+        pass
+    raise InvalidValueException(f"Could not get a Penny Dreadful season from '{term}'")
+
+def replace_scryfall_regex_extensions(q: str) -> str:
+    # Three char classes first because the other may be substrings of these …
+
+    # \smr Short-hand for any repeated mana symbol. For example, {G}{G} matches \smr
+    # q = q.replace(r'\smr', rf'({mana_symbol_pattern})\1')  # This \1 would mean neither we nor callers could ever use parens (for grouping, say) without noncapturing prefix before \smr. Might have to hardcode enumerate every combination?
+    # \smh Short-hand for any hybrid card symbol. Note that monocolor Phyrexian symbols aren’t considered hybrid.
+    q = q.replace(r'\smh', r'{[WUBRGP0-9]/[^P]}')
+    # \smp Short-hand for any Phyrexian card symbol, e.g. {P}, {W/P}, or {G/W/P}.
+    q = q.replace(r'\smp', r'{[WUBRGC/]*P}')
+    # \spt Short-hand for a X/X power/toughness expression
+    pt_pattern = r'([0-9]+|X)'
+    q = q.replace(r'\spt', f'{pt_pattern}/{pt_pattern}')
+    # \spp Short-hand for a +X/+X power/toughness expression
+    q = q.replace(r'\spp', rf'\+{pt_pattern}/\+{pt_pattern}')
+    # \smm Short-hand for a -X/-X power/toughness expression
+    q = q.replace(r'\smm', rf'-{pt_pattern}/-{pt_pattern}')
+
+    # … and then two char classes
+    # \sm # Short-hand for any mana symbol
+    mana_symbol_pattern = r'{([SWUBRGPCP0-9/]+)}'
+    q = q.replace(r'\sm', mana_symbol_pattern)
+    # \sc Short-hand for any colored mana symbol
+    q = q.replace(r'\sc', r'{[WUBRGP/]+}')
+    # \ss Short-hand for any card symbol
+    # q = q.replace(r'\ss', r'{[^}]+}')
+    return q
 
 class InvalidSearchException(ParseException):
     pass

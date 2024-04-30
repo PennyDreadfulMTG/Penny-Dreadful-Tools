@@ -3,7 +3,7 @@ import importlib
 import inspect
 import logging
 from os import path
-from typing import Optional, cast
+from typing import cast
 
 from interactions import Client, SlashContext
 from interactions.ext.prefixed_commands import (PrefixedCommand, PrefixedContext,
@@ -45,16 +45,16 @@ def scaleless_load(bot: Client, module: str) -> bool:
 
 class CardConverter:
     @classmethod
-    async def convert(cls, ctx: PrefixedContext | SlashContext, argument: str) -> Optional[Card]:
+    async def convert(cls, ctx: PrefixedContext | SlashContext, argument: str) -> Card | None:
         try:
             result, mode, printing = command.results_from_queries([argument])[0]
             if result.has_match() and not result.is_ambiguous():
                 return command.cards_from_names_with_mode([result.get_best_match()], mode, printing)[0]
             if result.is_ambiguous():
-                message = await ctx.send('{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=ctx.author.mention, c=ctx.invoke_target, s=command.disambiguation(result.get_ambiguous_matches()[0:5])))
+                message = await ctx.send(f'{ctx.author.mention}: Ambiguous name for {ctx.invoke_target}. Suggestions: {command.disambiguation(result.get_ambiguous_matches()[0:5])}')
                 await command.disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
             else:
-                message = await ctx.send('{author}: No matches.'.format(author=ctx.author.mention))
+                message = await ctx.send(f'{ctx.author.mention}: No matches.')
                 await message.add_reaction('❎')
             return None
         except Exception as exc:

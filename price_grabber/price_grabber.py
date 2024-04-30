@@ -1,7 +1,6 @@
 import datetime
 import itertools
 import sys
-from typing import Dict, List, Optional
 
 import ftfy
 
@@ -29,13 +28,13 @@ def fetch() -> None:
             timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
             all_prices[url] = parser.parse_cardhoarder_prices(s)
     if not timestamps:
-        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.cardhoarder_urls.get()), all_prices=all_prices))
+        raise TooFewItemsException(f'Did not get any prices when fetching {itertools.chain(configuration.cardhoarder_urls.get())} ({all_prices})')
     count = store(min(timestamps), all_prices)
     cleanup(count)
 
-def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> int:
+def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> int:
     DATABASE.begin('store')
-    lows: Dict[str, int] = {}
+    lows: dict[str, int] = {}
     for code in all_prices:
         prices = all_prices[code]
         for name, p, _ in prices:
@@ -69,7 +68,7 @@ def cleanup(count: int = 0) -> None:
         limit = f'LIMIT {count * 2}'
     execute('DELETE FROM low_price WHERE `time` < %s ' + limit, [dtutil.dt2ts(oldest_needed)])
 
-def execute(sql: str, values: Optional[List[object]] = None) -> None:
+def execute(sql: str, values: list[object] | None = None) -> None:
     if values is None:
         values = []
     try:

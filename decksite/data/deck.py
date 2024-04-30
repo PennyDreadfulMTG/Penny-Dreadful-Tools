@@ -1,9 +1,7 @@
 import hashlib
 import json
 import time
-from typing import Dict, List, Optional, Set, Union
-
-from mypy_extensions import TypedDict
+from typing import TypedDict
 
 from decksite import deck_name
 from decksite.data import query, season
@@ -18,28 +16,28 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
 
-def latest_decks(season_id: Optional[Union[str, int]] = None) -> List[Deck]:
+def latest_decks(season_id: str | int | None = None) -> list[Deck]:
     return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
 
-def recent_decks_for_person(person_id: int) -> List[Deck]:
+def recent_decks_for_person(person_id: int) -> list[Deck]:
     return load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
 
 def load_deck(deck_id: int) -> Deck:
-    return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
+    return guarantee.exactly_one(load_decks(f'd.id = {sqlescape(deck_id)}'))
 
 def load_decks_count(where: str = 'TRUE',
                      having: str = 'TRUE',
-                     season_id: Optional[Union[str, int]] = None) -> int:
+                     season_id: str | int | None = None) -> int:
     sql = load_decks_query('COUNT(DISTINCT d.id) AS n', where=where, group_by=None, having=having,
                            order_by='TRUE', limit='', season_id=season_id)
     return int(db().value(sql))
 
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
-               order_by: Optional[str] = None,
+               order_by: str | None = None,
                limit: str = '',
-               season_id: Optional[Union[str, int]] = None,
-               ) -> List[Deck]:
+               season_id: str | int | None = None,
+               ) -> list[Deck]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
     columns = """
@@ -81,11 +79,11 @@ def load_decks(where: str = 'TRUE',
 
 def load_decks_query(columns: str,
                      where: str = 'TRUE',
-                     group_by: Optional[str] = None,
+                     group_by: str | None = None,
                      having: str = 'TRUE',
-                     order_by: Optional[str] = None,
+                     order_by: str | None = None,
                      limit: str = '',
-                     season_id: Optional[Union[str, int]] = None,
+                     season_id: str | int | None = None,
                      ) -> str:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
@@ -154,10 +152,10 @@ def deserialize_deck(sdeck: Container) -> Deck:
 
 def load_decks_heavy(where: str = 'TRUE',
                      having: str = 'TRUE',
-                     order_by: Optional[str] = None,
+                     order_by: str | None = None,
                      limit: str = '',
-                     season_id: Optional[Union[str, int]] = None,
-                     ) -> List[Deck]:
+                     season_id: str | int | None = None,
+                     ) -> list[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
 
@@ -254,20 +252,22 @@ def load_decks_heavy(where: str = 'TRUE',
     load_competitive_stats(decks)
     for d in decks:
         expiry = 60 if d.is_in_current_run() else 3600
-        redis.store('decksite:deck:{id}'.format(id=d.id), d, ex=expiry)
+        redis.store(f'decksite:deck:{d.id}', d, ex=expiry)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 # We also ignore split and aftermath cards so if you are genuinely using a color in a split card but have no other cards of that color we won't claim it as one of the deck's colors.
 def set_colors(d: Deck) -> None:
-    deck_colors: Set[str] = set()
-    deck_colored_symbols: List[str] = []
+    deck_colors: set[str] = set()
+    deck_colored_symbols: list[str] = []
     for c in [entry.card for entry in d.maindeck + d.sideboard]:
         for cost in c.get('mana_cost') or ():
             if c.layout == 'split':
                 continue  # They might only be using one half so ignore it.
             if c.type_line == 'Instant — Trap':
                 continue  # People often sideboard off-colour traps.
+            if c.layout == 'modal_dfc':
+                continue  # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
             deck_colors.update(card_colors['required'])
@@ -280,37 +280,33 @@ def set_legality(d: Deck) -> None:
     d.legal_formats = legality.legal_formats(d)
 
 
-CardsDescription = Dict[str, Dict[str, int]]
-RawDeckDescription = TypedDict('RawDeckDescription',
-                               {
-                                   'name': str,  # Name of Deck
-                                   'url': str,  # Source URL of Deck
-                                   'source': str,  # Source name
-                                   'identifier': str,  # Unique ID
-                                   'cards': CardsDescription,  # Contents of Deck
-                                   'archetype': Optional[str],
-                                   'created_date': float,  # Date deck was created.  If null, current time will be used.
-                                   # One of these three usernames is required:
-                                   'mtgo_username': Optional[str],
-                                   'tappedout_username': Optional[str],
-                                   'mtggoldfish_username': Optional[str],
-
-                                   # TappedOut Variables
-                                   'resource_uri': Optional[str],
-                                   'featured_card': Optional[str],
-                                   'score': Optional[int],
-                                   'thumbnail_url': Optional[str],
-                                   'small_thumbnail_url': Optional[str],
-                                   'slug': Optional[str],
-                                   'user': Optional[str],  # This is mapped to tappedout_username
-
-                                   # Competition variables (League/Gatherling)
-                                   'competition_id': Optional[int],
-                                   'finish': Optional[int],
-                                   'wins': int,
-                                   'losses': int,
-                                   'draws': int,
-                               }, total=False)
+CardsDescription = dict[str, dict[str, int]]
+class RawDeckDescription(TypedDict, total=False):
+    name: str  # Name of Deck
+    url: str  # Source URL of Deck
+    source: str  # Source name
+    identifier: str  # Unique ID
+    cards: CardsDescription  # Contents of Deck
+    archetype: str | None
+    created_date: float  # Date deck was created.  If null, current time will be used.
+    # One of these three usernames is required:
+    mtgo_username: str | None
+    tappedout_username: str | None
+    mtggoldfish_username: str | None
+    # TappedOut Variables
+    resource_uri: str | None
+    featured_card: str | None
+    score: int | None
+    thumbnail_url: str | None
+    small_thumbnail_url: str | None
+    slug: str | None
+    user: str | None  # This is mapped to tappedout_username
+    # Competition variables (League/Gatherling)
+    competition_id: int | None
+    finish: int | None
+    wins: int
+    losses: int
+    draws: int
 # Expects:
 #
 # {
@@ -335,7 +331,7 @@ RawDeckDescription = TypedDict('RawDeckDescription',
 # source + identifier must be unique for each decklist.
 def add_deck(params: RawDeckDescription) -> Deck:
     if not params.get('mtgo_username') and not params.get('tappedout_username') and not params.get('mtggoldfish_username'):
-        raise InvalidDataException('Did not find a username in {params}'.format(params=params))
+        raise InvalidDataException(f'Did not find a username in {params}')
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
     cards = params['cards']
@@ -418,9 +414,9 @@ def prime_cache(d: Deck) -> None:
             deck_cache (deck_id, normalized_name, colors, colored_symbols, color_sort, legal_formats, wins, draws, losses, active_date, season_id)
         VALUES
             (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s
+        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s, season_id = %s
     """
-    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), season_id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s])
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), season_id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, season_id])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
 
@@ -437,7 +433,7 @@ def add_cards(deck_id: int, cards: CardsDescription) -> None:
         db().rollback('add_cards')
         raise
 
-def get_deck_id(source_name: str, identifier: str) -> Optional[int]:
+def get_deck_id(source_name: str, identifier: str) -> int | None:
     source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
@@ -447,7 +443,7 @@ def insert_deck_card(deck_id: int, name: str, n: int, in_sideboard: bool) -> Non
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])
 
-def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Optional[str], mtggoldfish_username: Optional[str]) -> int:
+def get_or_insert_person_id(mtgo_username: str | None, tappedout_username: str | None, mtggoldfish_username: str | None) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
@@ -459,29 +455,29 @@ def get_source_id(source: str) -> int:
     sql = 'SELECT id FROM source WHERE name = %s'
     source_id = db().value(sql, [source])
     if not source_id:
-        raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
+        raise InvalidDataException(f'Unknown source: `{source}`')
     return source_id
 
-def get_archetype_id(archetype: Optional[str]) -> Optional[int]:
+def get_archetype_id(archetype: str | None) -> int | None:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
-def calculate_similar_decks(ds: List[Deck]) -> None:
+def calculate_similar_decks(ds: list[Deck]) -> None:
     threshold = 20
     cards_escaped = ', '.join(sqlescape(name) for name in all_card_names(ds))
     if not cards_escaped:
         for d in ds:
             d.similar_decks = []
         return
-    potentially_similar = load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))'.format(cards_escaped=cards_escaped))
+    potentially_similar = load_decks(f'd.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))')
     for d in ds:
         for psd in potentially_similar:
             psd.similarity_score = round(similarity_score(d, psd) * 100)
         d.similar_decks = [psd for psd in potentially_similar if psd.similarity_score >= threshold and psd.id != d.id]
         d.similar_decks.sort(key=lambda d: -(d.similarity_score))
-        redis.store('decksite:deck:{id}:similar'.format(id=d.id), d.similar_decks, ex=172800)
+        redis.store(f'decksite:deck:{d.id}:similar', d.similar_decks, ex=172800)
 
-def all_card_names(ds: List[Deck]) -> Set[str]:
+def all_card_names(ds: list[Deck]) -> set[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
     names = set()
     for d in ds:
@@ -498,7 +494,7 @@ def similarity_score(a: Deck, b: Deck) -> float:
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-def load_decks_by_cards(names: List[str], not_names: List[str]) -> List[Deck]:
+def load_decks_by_cards(names: list[str], not_names: list[str]) -> list[Deck]:
     sql = ''
     if names:
         sql += contains_cards_clause(names)
@@ -508,7 +504,7 @@ def load_decks_by_cards(names: List[str], not_names: List[str]) -> List[Deck]:
         sql += contains_cards_clause(not_names, True)
     return load_decks(sql)
 
-def contains_cards_clause(names: List[str], negate: bool = False) -> str:
+def contains_cards_clause(names: list[str], negate: bool = False) -> str:
     negation = ' NOT' if negate else ''
     operator = '>=' if negate else '='
     n = 1 if negate else len(names)
@@ -520,7 +516,7 @@ def contains_cards_clause(names: List[str], negate: bool = False) -> str:
             HAVING COUNT(DISTINCT card) {operator} {n})
         """.format(negation=negation, names=', '.join(map(sqlescape, names)), operator=operator, n=n)
 
-def load_cards(decks: List[Deck]) -> None:
+def load_cards(decks: list[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
@@ -535,7 +531,7 @@ def load_cards(decks: List[Deck]) -> None:
         d[location] = d.get(location, [])
         d[location].append(CardRef(name, row['n']))
 
-def load_conflicted_decks() -> List[Deck]:
+def load_conflicted_decks() -> list[Deck]:
     where = """d.decklist_hash in
         (
             SELECT
@@ -551,16 +547,16 @@ def load_conflicted_decks() -> List[Deck]:
         )"""
     return load_decks(where, order_by='d.decklist_hash')
 
-def load_queue_similarity(decks: List[Deck]) -> None:
+def load_queue_similarity(decks: list[Deck]) -> None:
     sql = 'SELECT deck.id, deck_cache.similarity FROM deck JOIN deck_cache ON deck.id = deck_cache.deck_id WHERE NOT deck.reviewed'
     sim = {}
     for row in (Container(r) for r in db().select(sql)):
         sim[row.id] = row.similarity
     for deck in decks:
-        deck.similarity = '{0}%'.format(sim[deck.id]) if sim[deck.id] is not None else ''
+        deck.similarity = f'{sim[deck.id]}%' if sim[deck.id] is not None else ''
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
-def load_competitive_stats(decks: List[Deck]) -> None:
+def load_competitive_stats(decks: list[Deck]) -> None:
     decks_by_id = {d.id: d for d in decks if d.get('omw') is None}
     if len(decks_by_id) == 0:
         return
@@ -632,7 +628,7 @@ def preaggregate_omw() -> None:
     """
     db().execute(sql)
 
-def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
+def count_matches(deck_id: int, opponent_deck_id: int) -> dict[int, int]:
     sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'
     result = {int(deck_id): 0, int(opponent_deck_id): 0}
     for row in db().select(sql, [deck_id, opponent_deck_id]):

@@ -2,8 +2,9 @@ import collections
 import datetime
 import logging
 import re
+from collections.abc import Callable, Sequence
 from copy import copy
-from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
+from typing import Union
 
 import attr
 import whoosh
@@ -29,7 +30,7 @@ DISAMBIGUATION_EMOJIS = [':one:', ':two:', ':three:', ':four:', ':five:']
 DISAMBIGUATION_EMOJIS_BY_NUMBER = {1: '1⃣', 2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣'}
 DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣': 1, '2⃣': 2, '3⃣': 3, '4⃣': 4, '5⃣': 5}
 
-HELP_GROUPS: Set[str] = set()
+HELP_GROUPS: set[str] = set()
 
 @lazy_property
 def searcher() -> WhooshSearcher:
@@ -60,7 +61,7 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
         await ctx.post_cards(cards, ctx.author)
 
-def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
+def parse_queries(content: str, scryfall_compatability_mode: bool) -> list[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, flags=re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.
     if scryfall_compatability_mode:
         queries = re.findall(r'(?<!\[)\[([^\]]*)\](?!\])', to_scan)  # match [card] but not [[card]]
@@ -68,16 +69,16 @@ def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
         queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: Optional[str] = None) -> List[Card]:
+def cards_from_names_with_mode(cards: Sequence[str | None], mode: str, preferred_printing: str | None = None) -> list[Card]:
     return [copy_with_mode(oracle.load_card(c), mode, preferred_printing) for c in cards if c is not None]
 
-def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: Optional[str] = None) -> Card:
+def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str | None = None) -> Card:
     c = copy(oracle_card)
     c['mode'] = mode
     c['preferred_printing'] = preferred_printing
     return c
 
-def parse_mode(query: str) -> Tuple[str, str, Optional[str]]:
+def parse_mode(query: str) -> tuple[str, str, str | None]:
     mode = ''
     preferred_printing = None
     if query.startswith('$'):
@@ -88,7 +89,7 @@ def parse_mode(query: str) -> Tuple[str, str, Optional[str]]:
         preferred_printing = preferred_printing.lower().strip()
     return mode, query, preferred_printing
 
-def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str, Optional[str]]]:
+def results_from_queries(queries: list[str]) -> list[tuple[SearchResult, str, str | None]]:
     all_results = []
     for query in queries:
         mode, query, preferred_printing = parse_mode(query)
@@ -96,7 +97,7 @@ def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str, Op
         all_results.append((result, mode, preferred_printing))
     return all_results
 
-def complex_search(query: str) -> List[Card]:
+def complex_search(query: str) -> list[Card]:
     if query == '':
         return []
     _num, cardnames, _results = fetcher.search_scryfall(query)
@@ -110,27 +111,27 @@ def simplify_string(s: str) -> str:
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-def disambiguation(cards: List[str]) -> str:
+def disambiguation(cards: list[str]) -> str:
     if len(cards) > 5:
         return ','.join(cards)
     return ' '.join([' '.join(x) for x in zip(DISAMBIGUATION_EMOJIS, cards)])
 
-async def disambiguation_reactions(message: Message, cards: List[str]) -> None:
+async def disambiguation_reactions(message: Message, cards: list[str]) -> None:
     for i in range(1, len(cards) + 1):
         await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
-async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, command: str) -> Optional[Card]:
+async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, command: str) -> Card | None:
     if not args:
-        await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
+        await send(channel, f'{author.mention}: Please specify a card name.')
         return None
     result, mode, preferred_printing = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], mode, preferred_printing)[0]
     if result.is_ambiguous():
-        message = await send(channel, '{author}: Ambiguous name for {c}. Suggestions: {s} (click number below)'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
+        message = await send(channel, f'{author.mention}: Ambiguous name for {command}. Suggestions: {disambiguation(result.get_ambiguous_matches()[0:5])} (click number below)')
         await disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
     else:
-        await send(channel, '{author}: No matches.'.format(author=author.mention))
+        await send(channel, f'{author.mention}: No matches.')
     return None
 
 async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
@@ -142,20 +143,20 @@ async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, ar
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
 
-async def post_nothing(channel: Union[PrefixedContext, InteractionContext, TYPE_MESSAGEABLE_CHANNEL], replying_to: Optional[Member | User] = None) -> None:
+async def post_nothing(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_CHANNEL, replying_to: Member | User | None = None) -> None:
     if replying_to is not None:
-        text = '{author}: No matches.'.format(author=replying_to.mention)
+        text = f'{replying_to.mention}: No matches.'
     else:
         text = 'No matches.'
     message = await send(channel, text)
     await message.add_reaction('❎')
 
 
-async def send(channel: Union[PrefixedContext, InteractionContext, TYPE_MESSAGEABLE_CHANNEL], content: str, file: Optional[File] = None) -> Message:
+async def send(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_CHANNEL, content: str, file: File | None = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
-async def send_image_with_retry(channel: Union[PrefixedContext, InteractionContext, TYPE_MESSAGEABLE_CHANNEL], image_file: str, text: str = '') -> None:
+async def send_image_with_retry(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_CHANNEL, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         logging.warning('Message size is zero so resending')
@@ -164,18 +165,18 @@ async def send_image_with_retry(channel: Union[PrefixedContext, InteractionConte
 
 async def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
     mana = await emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
-    mana = mana.replace('|', ' // ')
+    mana = mana.replace('|', ' // ').removeprefix(' // ').removesuffix(' // ')  # Strip leading/trailing // for lands (See #9147)
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
     if requested_card.get('mode', None) == '$':
-        text = '{name} {legal} — {price}'.format(name=requested_card.name, price=card_price.card_price_string(requested_card), legal=legal)
+        text = f'{requested_card.name} {legal} — {card_price.card_price_string(requested_card)}'
     else:
-        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type_line, legal=legal)
+        text = f'{requested_card.name} {mana} — {requested_card.type_line}{legal}'
     if requested_card.bugs:
         for bug in requested_card.bugs:
             text += '\n:lady_beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
             if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
                 time_since_confirmed = (dtutil.now() - bug['last_confirmed']).total_seconds()
-                text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
+                text += f' (Last confirmed {dtutil.display_time(time_since_confirmed, 1)} ago.)'
     return text
 
 # See #5532 and #5566.
@@ -198,9 +199,9 @@ def escape_underscores(s: str) -> str:
     return new_s
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
-def uniqify_cards(cards: List[Card]) -> List[Card]:
+def uniqify_cards(cards: list[Card]) -> list[Card]:
     # Remove multiple printings of the same card from the result set.
-    results: Dict[str, Card] = collections.OrderedDict()
+    results: dict[str, Card] = collections.OrderedDict()
     for c in cards:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
@@ -227,7 +228,7 @@ def slash_card_option(param: str = 'card') -> Callable:
 
 #     return wrapper
 
-def make_choice(value: str, name: Optional[str] = None) -> Dict[str, Union[int, float, str]]:
+def make_choice(value: str, name: str | None = None) -> dict[str, int | float | str]:
     return {
         'name': (name or value)[:100],
         'value': value[:100],
@@ -264,7 +265,7 @@ def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) ->
         name = command.name.default
     return prefixed_command(name)(wrapper)
 
-def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: Optional[str] = None, nag: bool = True) -> PrefixedCommand:
+def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: str | None = None, nag: bool = True) -> PrefixedCommand:
     """
     This is a horrible hack.  Use it if a slash command takes one multiword argument
     """
@@ -309,7 +310,7 @@ class MtgMixin:
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 
-    async def post_cards(self: 'MtgContext', cards: List[Card], replying_to: Optional[User | Member] = None, additional_text: str = '') -> None:  # type: ignore
+    async def post_cards(self: 'MtgContext', cards: list[Card], replying_to: User | Member | None = None, additional_text: str = '') -> None:  # type: ignore
         if len(cards) == 0:
             await post_nothing(self, replying_to)
             return
@@ -325,7 +326,7 @@ class MtgMixin:
         if len(cards) == 1:
             text = await single_card_text_internal(self.bot, cards[0], legality_format)
         else:
-            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card, legality_format=legality_format))), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+            text = ' • '.join('{name} {legal} {price}'.format(name=card.name, legal=(emoji.info_emoji(card, legality_format=legality_format)), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')).strip() for card in cards)
         if len(cards) > MAX_CARDS_SHOWN:
             image_file = None
         else:

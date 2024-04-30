@@ -1,5 +1,4 @@
 import re
-from typing import Dict, Optional
 
 from interactions.client import Client
 from interactions.models import PartialEmoji
@@ -8,9 +7,9 @@ from magic import rotation, seasons
 from magic.models import Card
 from shared import redis_wrapper as redis
 
-CACHE: Dict[str, PartialEmoji] = {}
+CACHE: dict[str, PartialEmoji] = {}
 
-async def find_emoji(emoji: str, client: Client) -> Optional[PartialEmoji]:
+async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
     if res := CACHE.get(emoji):
         return res
 
@@ -32,7 +31,7 @@ async def replace_emoji(text: str, client: Client) -> str:
     if text is None:
         return ''
     output = text
-    symbols = re.findall(r'\{([A-Z0-9/]{1,3})\}', text)
+    symbols = re.findall(r'{([A-Z0-9/]+)}', text)
     for symbol in symbols:
         name = symbol
         name = name.replace('/', '')
@@ -58,7 +57,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
         else:
             s += ':no_entry_sign:'
         if rotation.in_rotation() and not no_rotation_hype:
-            rot_emoji = get_future_legality(c, legal)
+            rot_emoji = get_future_legality(c)
             s += rot_emoji
         if not legal and verbose and not rot_emoji:
             s += f' (not legal in {legality_format})'
@@ -67,7 +66,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
         s += ':lady_beetle:'
     return s
 
-def get_future_legality(c: Card, legal: bool) -> str:
+def get_future_legality(c: Card) -> str:
     out_emoji = '<:rotating_out:702545628882010183>'
     for status, symbol in {'undecided': ':question:', 'legal': '<:rotating_in:702545611597021204>', 'notlegal': out_emoji}.items():
         if redis.sismember(f'decksite:rotation:summary:{status}', c.name):

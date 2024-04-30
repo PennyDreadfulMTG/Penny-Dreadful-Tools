@@ -57,9 +57,11 @@ export class Table extends React.Component {
             deckType = "tournament";
         }
         const params = {
+            "achievementKey": this.props.achievementKey,
             "archetypeId": this.props.archetypeId,
             "cardName": this.props.cardName,
             "competitionId": this.props.competitionId,
+            "competitionFlagId": this.props.competitionFlagId,
             "competitionSeriesId": this.props.competitionSeriesId,
             deckType,
             page,
@@ -124,7 +126,7 @@ export class Table extends React.Component {
                     <span>
                         { this.state.total > 20
                             ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
-                                <select value={this.state.pageSize} onChange={pageSizeChanged.bind(this)}>
+                                <select className="page-size" value={this.state.pageSize} onChange={pageSizeChanged.bind(this)}>
                                     <option value="20">20</option>
                                     <option value="100">100</option>
                                 </select>
@@ -218,11 +220,13 @@ export const renderCard = (card) => (
 // Most of these are PropTypes.string because they come (originally) from data-* on the HTML element so this isn't very good typechecking.
 // It would be nice to check what they "really" are.
 Table.propTypes = {
+    "achievementKey": PropTypes.string,
     "activeRunsText": PropTypes.string,
     "archetypeId": PropTypes.string,
     "cardName": PropTypes.string,
     "className": PropTypes.oneOf(["", "with-marginalia"]),
     "competitionId": PropTypes.string,
+    "competitionFlagId": PropTypes.string,
     "competitionSeriesId": PropTypes.string,
     "endpoint": PropTypes.string.isRequired,
     "hidePerson": PropTypes.string,
@@ -237,7 +241,7 @@ Table.propTypes = {
     "searchPrompt": PropTypes.string,
     "seasonId": PropTypes.string,
     "showArchetype": PropTypes.string,
-    "showLegalSeasons": PropTypes.string,
+    "showSeasonIcon": PropTypes.string,
     "showOmw": PropTypes.string,
     "showSearch": PropTypes.bool,
     "tournamentOnly": PropTypes.string

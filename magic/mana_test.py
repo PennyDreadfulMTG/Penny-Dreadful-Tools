@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from magic import database, mana
@@ -150,9 +148,9 @@ def test_is_hybrid() -> None:
     assert not mana.hybrid('U/P')
     assert mana.hybrid('G/U/P')
 
-def do_test(s: str, expected: List[str]) -> None:
+def do_test(s: str, expected: list[str]) -> None:
     symbols = mana.parse(s)
     works = symbols == expected
     if not works:
-        print('\nInput: {s}\nExpected: {expected}\n  Actual: {actual}'.format(s=s, expected=expected, actual=symbols))
+        print(f'\nInput: {s}\nExpected: {expected}\n  Actual: {symbols}')
     assert works

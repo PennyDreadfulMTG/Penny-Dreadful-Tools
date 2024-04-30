@@ -1,7 +1,6 @@
 import asyncio
 import functools
 import os
-from typing import List, Optional, Tuple
 
 from flask import Response, make_response, send_file
 
@@ -42,7 +41,7 @@ def bannercss() -> Response:
 
 @APP.route('/banner/<int:seasonnum>.png')
 @APP.route('/banner/<int:seasonnum>_<int:crop>.png')
-def banner(seasonnum: int, crop: Optional[int] = None) -> Response:
+def banner(seasonnum: int, crop: int | None = None) -> Response:
     nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))
@@ -59,6 +58,7 @@ def discord_banner() -> Response:
     return send_file(os.path.abspath(path))
 
 @APP.route('/api/banner')
+@APP.route('/api/banner/')
 def banner_json() -> Response:
     cardnames, background = banner_cards(get_season_id())
     return return_json({
@@ -67,7 +67,7 @@ def banner_json() -> Response:
     })
 
 
-def banner_cards(seasonnum: int) -> Tuple[List[str], str]:
+def banner_cards(seasonnum: int) -> tuple[list[str], str]:
     if seasonnum == 0:
         cardnames = ['Parallax Wave', 'Treasure Cruise', 'Duress', 'Chain Lightning', 'Rofellos, Llanowar Emissary ', 'Thawing Glaciers', 'Temur Ascendancy']
         background = 'Lake of the Dead'
@@ -115,8 +115,8 @@ def banner_cards(seasonnum: int) -> Tuple[List[str], str]:
     return cardnames, background
 
 @functools.lru_cache
-def guess_banner(season_num: int) -> Tuple[List[str], str]:
-    cardnames: List[str] = []
+def guess_banner(season_num: int) -> tuple[list[str], str]:
+    cardnames: list[str] = []
     picked_colors = []
     try:
         cards = playability.season_playability(season_num)

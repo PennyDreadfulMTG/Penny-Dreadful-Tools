@@ -1,26 +1,20 @@
-import datetime
-
 from decksite.view import View
 from magic import rotation, seasons
-from shared import configuration, dtutil
+from shared import dtutil
 
 
 class Rotation(View):
-    def __init__(self) -> None:
+    def __init__(self, in_rotation: bool, runs: int, num_cards: int) -> None:
         super().__init__()
-        until_rotation = seasons.next_rotation() - dtutil.now()
-        in_rotation = configuration.always_show_rotation.value
-        if until_rotation < datetime.timedelta(7):
-            in_rotation = True
-            self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(seasons.next_rotation(), 2)
-        else:
-            self.rotation_msg = 'Rotation is ' + dtutil.display_date(seasons.next_rotation(), 2)
-        if in_rotation:
-            self.in_rotation = in_rotation
-            self.runs, self.runs_percent, self.cards = rotation.read_rotation_files()
-        else:
-            self.cards = []
-        self.num_cards = len(self.cards)
+        self.runs = runs
+        self.runs_percent = rotation.runs_percentage(runs)
+        self.total_runs = rotation.TOTAL_RUNS
+        self.num_cards = num_cards
+        self.has_cards = runs > 0
+        prefix = 'Rotation is in progress, ends ' if in_rotation else 'Rotation is '
+        display_date = dtutil.display_date(seasons.next_rotation(), 2)
+        self.rotation_msg = prefix + display_date
+        self.note = 'Data from the last rotation is shown' if runs and not in_rotation else ''
 
     def page_title(self) -> str:
         return 'Rotation'

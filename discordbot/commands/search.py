@@ -22,4 +22,4 @@ async def m_scry(ctx: MtgMessageContext, *, args: str) -> None:
     await search.call_callback(search.callback, ctx)  # type: ignore
 
 def more_results_link(args: str, total: int) -> str:
-    return f'and {total - 4} more.\n<https://scryfall.com/search/?q={fetch_tools.escape(args)}>' if total > MAX_CARDS_SHOWN else ''
+    return f' and {total - 4} more.\n<https://scryfall.com/search/?q={fetch_tools.escape(args)}>' if total > MAX_CARDS_SHOWN else ''

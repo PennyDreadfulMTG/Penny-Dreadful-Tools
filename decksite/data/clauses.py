@@ -1,5 +1,4 @@
 from decksite.data import achievements
-from decksite.data.achievements import PerfectRunCrusher
 from decksite.data.query import person_query
 from decksite.deck_type import DeckType
 from decksite.tournament import CompetitionFlag
@@ -187,6 +186,7 @@ def exclude_active_league_runs(except_person_id: int | None) -> str:
 
 def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> str:
     parts = ['TRUE']
+    person_id = None
     if not is_admin:
         parts.append(exclude_active_league_runs(viewer_id))
     if args.get('deckType') == DeckType.LEAGUE.value:
@@ -198,7 +198,6 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
         parts.append(archetype_where(archetype_id))
     if args.get('personId'):
         person_id = int(args.get('personId', ''))
-        parts.append(f'd.person_id = {person_id}')
     if args.get('cardName'):
         parts.append(card_where(args.get('cardName', '')))
     if args.get('competitionFlagId'):
@@ -209,12 +208,19 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
         parts.append(f'c.id = {competition_id}')
     if args.get('achievementKey'):
         achievement_key = str(args.get('achievementKey'))
-        # Perfect run crushes show your opponent's deck so we have to skip filtering on personId in that case.
-        achievement_person_id = int(args.get('personId', '')) if achievement_key != PerfectRunCrusher.key and 'person_id' in args else None
+        achievement_person_id = int(args.get('personId', ''))
         season_id = int(args.get('seasonId', ''))
         deck_ids = achievements.load_deck_ids(achievement_key, achievement_person_id, season_id)
+        # Some achievements load decks from multiple people by id …
         if deck_ids:
             parts.append(f"d.id IN ({', '.join(map(str, deck_ids))})")
+            person_id = None
+        # … but the other should be filtered to this person's decks
+        else:
+            person_id = achievement_person_id
+    if person_id:
+        parts.append(f'd.person_id = {person_id}')
+
     return ') AND ('.join(parts)
 
 def text_match_where(field: str, q: str) -> str:

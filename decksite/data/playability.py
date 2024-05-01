@@ -8,6 +8,8 @@ from shared.decorators import retry_after_calling
 from shared.pd_exception import DatabaseNoSuchTableException
 
 
+SIDEBOARD_WEIGHT = 0.2
+
 def preaggregate() -> None:
     preaggregate_legal_cards()
     preaggregate_season_count()
@@ -175,25 +177,31 @@ def preaggregate_season_card_count() -> None:
             name VARCHAR(190),
             season_id INT,
             num_decks INT,
+            num_decks_maindeck INT,
+            num_decks_sideboard INT,
+            num_decks_sideboard_only INT,
             PRIMARY KEY (name, season_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX idx_name_season_id (name, season_id) -- This is crucial to the performance of the JOIN to _legal_cards we do when creating _playability
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            card AS name,
+            dc.card AS name,
             season.season_id,
-            COUNT(*) AS num_decks
+            COUNT(DISTINCT dc.deck_id) AS num_decks,
+            SUM(CASE WHEN dc.sideboard THEN 0 ELSE 1 END) AS num_decks_maindeck,
+            SUM(CASE WHEN dc.sideboard THEN 1 ELSE  0 END) AS num_decks_sideboard,
+            SUM(CASE WHEN dc.sideboard AND md.card IS NULL THEN 1 ELSE 0 END) AS num_decks_sideboard_only
         FROM
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN
+            deck_card AS md ON dc.card = md.card AND dc.deck_id = md.deck_id AND NOT md.sideboard
         {season_join}
         -- Exclude cards that were not legal in the season, even if they are somehow in the database under that season. See #9121.
         INNER JOIN
             _legal_cards AS lc ON season.season_id = lc.season_id AND dc.card = lc.name
         WHERE
-            NOT dc.sideboard
-        AND
             d.archetype_id IS NOT NULL
         GROUP BY
             dc.card,
@@ -212,26 +220,32 @@ def preaggregate_season_archetype_card_count() -> None:
             season_id INT,
             archetype_id INT,
             num_decks INT,
+            num_decks_maindeck INT,
+            num_decks_sideboard INT,
+            num_decks_sideboard_only INT,
             PRIMARY KEY (name, season_id, archetype_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            card AS name,
+            dc.card AS name,
             season.season_id,
             d.archetype_id,
-            COUNT(*) AS num_decks
+            COUNT(DISTINCT dc.deck_id) AS num_decks,
+            SUM(CASE WHEN dc.sideboard THEN 0 ELSE 1 END) AS num_decks_maindeck,
+            SUM(CASE WHEN dc.sideboard THEN 1 ELSE  0 END) AS num_decks_sideboard,
+            SUM(CASE WHEN dc.sideboard AND md.card IS NULL THEN 1 ELSE 0 END) AS num_decks_sideboard_only
         FROM
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN
+            deck_card AS md ON dc.card = md.card AND dc.deck_id = md.deck_id AND NOT md.sideboard
         {season_join}
         -- Exclude cards that were not legal in the season, even if they are somehow in the database under that season. See #9121.
         INNER JOIN
             _legal_cards AS lc ON season.season_id = lc.season_id AND dc.card = lc.name
         WHERE
-            NOT dc.sideboard
-        AND
             d.archetype_id IS NOT NULL
         GROUP BY
             dc.card,
@@ -260,7 +274,7 @@ def preaggregate_season_archetype_playability() -> None:
             sacc.archetype_id,
             (
                 -- num decks playing this card in this archetype in this season
-                sacc.num_decks
+                (sacc.num_decks_maindeck + sacc.num_decks_sideboard_only * {SIDEBOARD_WEIGHT})
                     /
                 -- num decks in this archetype in this season
                 sac.num_decks
@@ -271,7 +285,7 @@ def preaggregate_season_archetype_playability() -> None:
                     -
                 (
                     -- num decks playing this card in this season
-                    scc.num_decks
+                    (scc.num_decks_maindeck + scc.num_decks_sideboard_only * {SIDEBOARD_WEIGHT})
                         /
                     -- num decks in this season
                     sc.num_decks
@@ -314,19 +328,24 @@ def preaggregate_card_count() -> None:
     sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190),
-            num_decks INT,
+            num_decks_maindeck INT,
+            num_decks_sideboard INT,
+            num_decks_sideboard_only INT,
             PRIMARY KEY (name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            card AS name,
-            COUNT(*) AS num_decks
+            dc.card AS name,
+            COUNT(DISTINCT dc.deck_id) AS num_decks,
+            SUM(CASE WHEN dc.sideboard THEN 0 ELSE 1 END) AS num_decks_maindeck,
+            SUM(CASE WHEN dc.sideboard THEN 1 ELSE  0 END) AS num_decks_sideboard,
+            SUM(CASE WHEN dc.sideboard AND md.card IS NULL THEN 1 ELSE 0 END) AS num_decks_sideboard_only
         FROM
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN
+            deck_card AS md ON dc.card = md.card AND dc.deck_id = md.deck_id AND NOT md.sideboard
         WHERE
-            NOT dc.sideboard
-        AND
             d.archetype_id IS NOT NULL
         GROUP BY
             dc.card
@@ -339,21 +358,26 @@ def preaggregate_archetype_card_count() -> None:
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190),
             archetype_id INT,
-            num_decks INT,
+            num_decks_maindeck INT,
+            num_decks_sideboard INT,
+            num_decks_sideboard_only INT,
             PRIMARY KEY (name, archetype_id),
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            card AS name,
+            dc.card AS name,
             d.archetype_id,
-            COUNT(*) AS num_decks
+            COUNT(DISTINCT dc.deck_id) AS num_decks,
+            SUM(CASE WHEN dc.sideboard THEN 0 ELSE 1 END) AS num_decks_maindeck,
+            SUM(CASE WHEN dc.sideboard THEN 1 ELSE  0 END) AS num_decks_sideboard,
+            SUM(CASE WHEN dc.sideboard AND md.card IS NULL THEN 1 ELSE 0 END) AS num_decks_sideboard_only
         FROM
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN
+            deck_card AS md ON dc.card = md.card AND dc.deck_id = md.deck_id AND NOT md.sideboard
         WHERE
-            NOT dc.sideboard
-        AND
             d.archetype_id IS NOT NULL
         GROUP BY
             dc.card,
@@ -378,7 +402,7 @@ def preaggregate_archetype_playability() -> None:
             acc.archetype_id,
             (
                 -- num decks playing this card in this archetype
-                acc.num_decks
+                acc.num_decks_maindeck
                     /
                 -- num decks in this archetype
                 ac.num_decks
@@ -389,7 +413,7 @@ def preaggregate_archetype_playability() -> None:
                     -
                 (
                     -- num decks playing this card
-                    cc.num_decks
+                    cc.num_decks_maindeck
                         /
                     -- num decks
                     (SELECT COUNT(*) FROM deck WHERE archetype_id IS NOT NULL)
@@ -418,7 +442,7 @@ def preaggregate_season_playability() -> None:
             scc.name,
             scc.season_id,
             (
-                scc.num_decks
+                (scc.num_decks_maindeck + scc.num_decks_sideboard_only * {SIDEBOARD_WEIGHT})
                     /
                 (SELECT COUNT(*) FROM deck_cache WHERE season_id = scc.season_id)
             ) AS playability
@@ -437,7 +461,7 @@ def preaggregate_playability() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             lc.name,
-            SUM(IFNULL(scc.num_decks, 0)) / SUM(sc.num_decks) AS playability
+            SUM((IFNULL(scc.num_decks_maindeck, 0) + IFNULL(scc.num_decks_sideboard_only, 0) * {SIDEBOARD_WEIGHT})) / SUM(sc.num_decks) AS playability
         FROM
             _legal_cards AS lc
         LEFT JOIN

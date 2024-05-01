@@ -1868,10 +1868,6 @@ input[type="radio"] {
     width: auto;
 }
 
-.hidden-by-scryfall-filter, .hidden-by-interestingness-filter {
-    display: none;
-}
-
 /*
 
 Intro

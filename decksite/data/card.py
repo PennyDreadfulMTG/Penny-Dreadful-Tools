@@ -229,7 +229,7 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards_count(additional_where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None) -> int:
+def load_cards_count(additional_where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False, all_legal: bool = False) -> int:
     if person_id:
         table = '_card_person_stats'
         where = f'person_id = {sqlescape(person_id)}'
@@ -239,8 +239,14 @@ def load_cards_count(additional_where: str = 'TRUE', archetype_id: int | None = 
     else:
         table = '_card_stats'
         where = 'TRUE'
-    season_query = query.season_query(season_id)
-    sql = f'SELECT COUNT(DISTINCT name) AS n FROM {table} WHERE ({where}) AND ({additional_where}) AND ({season_query})'
+    season_query = query.season_query(season_id, 'cs.season_id')
+    if tournament_only:
+        where = f"({where}) AND deck_type = 'tournament'"
+    if all_legal:
+        from_clause = f'_legal_cards AS cs LEFT JOIN {table} AS other ON cs.name = other.name AND cs.season_id = other.season_id'
+    else:
+        from_clause = f'{table} AS cs'
+    sql = f'SELECT COUNT(DISTINCT cs.name) AS n FROM {from_clause} WHERE ({where}) AND ({additional_where}) AND ({season_query})'
     return int(db().value(sql))
 
 @retry_after_calling(preaggregate)
@@ -252,35 +258,41 @@ def load_cards(
         person_id: int | None = None,
         season_id: int | None = None,
         tournament_only: bool = False,
+        all_legal: bool = False,
 ) -> list[Card]:
     if person_id:
         table = '_card_person_stats'
         where = f'person_id = {sqlescape(person_id)}'
-        group_by = 'person_id, name'
+        group_by = 'person_id, cs.name'
     elif archetype_id:
         table = '_card_archetype_stats'
         where = f'archetype_id = {archetype_id}'
-        group_by = 'archetype_id, name'
+        group_by = 'archetype_id, cs.name'
     else:
         table = '_card_stats'
         where = 'TRUE'
-        group_by = 'name'
+        group_by = 'cs.name'
     if tournament_only:
         where = f"({where}) AND deck_type = 'tournament'"
-    sql = """
+    if all_legal:
+        from_clause = f'_legal_cards AS cs LEFT JOIN {table} AS other ON cs.name = other.name AND cs.season_id = other.season_id'
+    else:
+        from_clause = f'{table} AS cs'
+    season_query = query.season_query(season_id, 'cs.season_id')
+    sql = f"""
         SELECT
-            name,
-            SUM(num_decks) AS num_decks,
-            SUM(wins) AS wins,
-            SUM(losses) AS losses,
-            SUM(draws) AS draws,
-            SUM(wins - losses) AS record,
-            SUM(perfect_runs) AS perfect_runs,
-            SUM(tournament_wins) AS tournament_wins,
-            SUM(tournament_top8s) AS tournament_top8s,
+            cs.name,
+            SUM(IFNULL(num_decks, 0)) AS num_decks,
+            SUM(IFNULL(wins, 0)) AS wins,
+            SUM(IFNULL(losses, 0)) AS losses,
+            SUM(IFNULL(draws, 0)) AS draws,
+            SUM(IFNULL(wins, 0) - losses) AS record,
+            SUM(IFNULL(perfect_runs, 0)) AS perfect_runs,
+            SUM(IFNULL(tournament_wins, 0)) AS tournament_wins,
+            SUM(IFNULL(tournament_top8s, 0)) AS tournament_top8s,
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
-            {table} AS cs
+            {from_clause}
         WHERE
             ({where}) AND ({additional_where}) AND ({season_query})
         GROUP BY
@@ -288,7 +300,7 @@ def load_cards(
         ORDER BY
             {order_by}
         {limit}
-    """.format(table=table, season_query=query.season_query(season_id), where=where, additional_where=additional_where, group_by=group_by, order_by=order_by, limit=limit)
+    """
     cs = [Container(r) for r in db().select(sql)]
     cards = oracle.cards_by_name()
     for c in cs:

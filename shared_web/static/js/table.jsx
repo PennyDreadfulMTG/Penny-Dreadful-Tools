@@ -58,7 +58,9 @@ export class Table extends React.Component {
         }
         const params = {
             "achievementKey": this.props.achievementKey,
+            "allLegal": this.props.allLegal,
             "archetypeId": this.props.archetypeId,
+            "baseQuery": this.props.baseQuery,
             "cardName": this.props.cardName,
             "competitionId": this.props.competitionId,
             "competitionFlagId": this.props.competitionFlagId,
@@ -209,7 +211,7 @@ export const renderWinPercent = (object) => {
 
 export const renderCard = (card) => (
     <React.Fragment>
-        <a href={card.url} className={"card" +  (card.interestingness ? " interesting interestingness-" + card.interestingness : "")}>{card.name}</a>
+        <a href={card.url} className="card">{card.name}</a>
         { card.pdLegal
             ? ""
             : <span className="illegal"></span>
@@ -222,7 +224,9 @@ export const renderCard = (card) => (
 Table.propTypes = {
     "achievementKey": PropTypes.string,
     "activeRunsText": PropTypes.string,
+    "allLegal": PropTypes.bool,
     "archetypeId": PropTypes.string,
+    "baseQuery": PropTypes.string,
     "cardName": PropTypes.string,
     "className": PropTypes.oneOf(["", "with-marginalia"]),
     "competitionId": PropTypes.string,

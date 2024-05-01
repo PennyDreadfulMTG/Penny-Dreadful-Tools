@@ -58,7 +58,6 @@ class View(BaseView):
         self.is_deck_page = False
         self.has_external_source = False
         self.is_home_page = False
-        self.show_filters_toggle = False
         self.tournament_rounds_info: list[dict[str, int | str]] = []
         self.matches: list[Container] = []
 
@@ -72,7 +71,7 @@ class View(BaseView):
         return seasons.season_code(get_season_id()).lower()
 
     def has_buttons(self) -> bool:
-        return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source or self.show_filters_toggle
+        return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source
 
     def all_seasons(self) -> list[SeasonInfoDescription]:
         seasonlist: list[SeasonInfoDescription] = [{

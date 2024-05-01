@@ -1,20 +1,13 @@
-{{#speculation}}
-    <section>
-        <p>What rotation would look like if it happened today.</p>
-    </section>
-{{/speculation}}
-{{> scryfallfilter}}
-{{#sections}}
-    {{> section}}
-{{/sections}}
 <section>
-    <h2>Key</h2>
-    {{> rotationkey}}
+    <h2>New This Season</h2>
+    {{#new_this_season}}
+        {{> livecardtable}}
+    {{/new_this_season}}
 </section>
-{{#show_downloads}}
+{{#rotated_out}}
     <section>
-        <h2>Downloads</h2>
-        <p><a href="{{new_cards_deck_url}}">New Cards File</a></p>
-        <p><a href="{{rotated_out_cards_deck_url}}">Rotated Out File</a></p>
+        <h2>Rotated Out</h2>
+        {{> livecardtable}}
     </section>
-{{/show_downloads}}
+{{/rotated_out}}
+{{> changesdownloads}}

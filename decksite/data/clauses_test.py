@@ -20,6 +20,7 @@ def test_decks_where() -> None:
 
 def test_card_search_where() -> None:
     assert ("name IN ('Tasigur, the Golden Fang')", '') == clauses.card_search_where('Tasigur, the Golden Fang')
+    assert ("cs.name IN ('Tasigur, the Golden Fang')", '') == clauses.card_search_where('Tasigur, the Golden Fang', column_name='cs.name')
     # This test will not pass until we support `banned`.
     # 'banned:vintage cmc=6 c:g': "name IN ('Rebirth')",
     where, message = clauses.card_search_where('f:modern c:r "of the" moon')

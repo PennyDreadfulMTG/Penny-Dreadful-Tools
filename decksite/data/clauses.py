@@ -233,10 +233,13 @@ def card_where(name: str) -> str:
     return f'd.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(name)})'
 
 # Returns two values, a SQL WHERE clause and a message about that clause (possibly an error message) suitable for display.
-def card_search_where(q: str) -> tuple[str, str]:
+def card_search_where(q: str, base_query: str | None = None, column_name: str = 'name') -> tuple[str, str]:
     try:
-        cs = search.search(q)
-        return 'FALSE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(name) for name in cs) + ')', ''
+        query = f'({q})' if q else ''
+        query += ' AND ' if q and base_query else ''
+        query += f'({base_query})' if base_query else ''
+        cs = search.search(query)
+        return 'FALSE' if len(cs) == 0 else f'{column_name} IN (' + ', '.join(sqlescape(name) for name in cs) + ')', ''
     except search.InvalidSearchException as e:
         return 'FALSE', str(e)
 

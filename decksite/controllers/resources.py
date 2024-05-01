@@ -1,11 +1,12 @@
-from flask import Response, make_response, request
+from flask import Response, make_response, request, redirect, url_for
+from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
 from decksite.data import playability
 from decksite.data import rotation as rtn
 from decksite.league import DeckCheckForm
-from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
+from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges, RotationSpeculation
 from magic import card, oracle
 from magic import rotation as rot
 
@@ -52,12 +53,10 @@ def do_deck_check() -> str:
 
 @APP.route('/rotation/changes/')
 @SEASONS.route('/rotation/changes/')
-def rotation_changes() -> str:
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = RotationChanges(
-        *oracle.pd_rotation_changes(get_season_id()), playability=playability.playability(), query=query)
+def rotation_changes() -> str | wrappers.Response:
+    if get_season_id() == 0:
+        return redirect(url_for('rotation_changes'))
+    view = RotationChanges()
     return view.page()
 
 @APP.route('/rotation/changes/files/<any(new,out):changes_type>/')
@@ -70,11 +69,7 @@ def rotation_changes_files(changes_type: str) -> Response:
 @APP.route('/rotation/speculation/')
 @auth.admin_required
 def rotation_speculation() -> str:
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(
-        out=True), playability.playability(), speculation=True, query=query)
+    view = RotationSpeculation(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), playability=playability.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/files/<any(new,out):changes_type>/')

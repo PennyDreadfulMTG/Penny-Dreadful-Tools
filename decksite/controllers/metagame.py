@@ -70,10 +70,7 @@ def season() -> wrappers.Response:
 @cached()
 def cards(deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = Cards(query=query, tournament_only=tournament_only)
+    view = Cards(tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/cards/<path:name>/')

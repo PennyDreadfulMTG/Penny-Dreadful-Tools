@@ -268,6 +268,8 @@ def set_colors(d: Deck) -> None:
                 continue  # People often sideboard off-colour traps.
             if c.layout == 'modal_dfc':
                 continue  # They might only be using one half so ignore it.
+            if c.name == 'Damn':
+                continue  # They might only be using the overload.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
             deck_colors.update(card_colors['required'])

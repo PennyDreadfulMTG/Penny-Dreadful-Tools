@@ -7,6 +7,7 @@ import pydantic
 
 from decksite.data import archetype, competition, deck, match, person, top
 from decksite.database import db
+from decksite.tournament import CompetitionFlag
 from magic import decklist
 from shared import dtutil, fetch_tools
 from shared.database import sqlescape
@@ -220,7 +221,12 @@ def insert_competition(name: str, date: datetime.datetime, event: Event) -> int:
             top_n = top.Top(pow(2, event.finalrounds))
         except ValueError as e:
             raise InvalidDataException(f'Unexpected number of finalrounds: `{event.finalrounds}`') from e
-    return competition.get_or_insert_competition(date, date, name, event.series, url, top_n)
+    competition_flag = None
+    if ('Kick Off' in name or 'Kickoff' in name) and 'Season' in name:
+        competition_flag = CompetitionFlag.KICK_OFF
+    if 'Penny Dreadful 500' in name:
+        competition_flag = CompetitionFlag.PENNY_DREADFUL_500
+    return competition.get_or_insert_competition(date, date, name, event.series, url, top_n, competition_flag)
 
 def insert_decks(competition_id: int, date: datetime.datetime, ds: list[GatherlingDeck], fs: FinalStandings, players: list[Player]) -> dict[GatherlingUsername, deck.Deck]:
     return {d.playername: insert_deck(competition_id, date, d, fs, players) for d in ds}

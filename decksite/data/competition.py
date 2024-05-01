@@ -7,6 +7,7 @@ from flask import url_for
 from decksite.data import deck, query
 from decksite.data.top import Top
 from decksite.database import db
+from decksite.tournament import CompetitionFlag
 from magic.models import Competition
 from shared import dtutil, guarantee
 from shared.container import Container
@@ -18,7 +19,8 @@ def get_or_insert_competition(start_date: datetime.datetime,
                               name: str,
                               competition_series: str,
                               url: str | None,
-                              top_n: Top) -> int:
+                              top_n: Top,
+                              competition_flag: CompetitionFlag | None = None) -> int:
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
@@ -31,9 +33,10 @@ def get_or_insert_competition(start_date: datetime.datetime,
     competition_id = db().value(sql, [name])
     if competition_id:
         return competition_id
+    competition_flag_id = competition_flag.value if competition_flag else None
     db().begin('insert_competition')
-    sql = 'INSERT INTO competition (start_date, end_date, name, competition_series_id, url, top_n) VALUES (%s, %s, %s, %s, %s, %s)'
-    competition_id = db().insert(sql, [start, end, name, competition_series_id, url, top_n.value])
+    sql = 'INSERT INTO competition (start_date, end_date, name, competition_series_id, url, top_n, competition_flag_id) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+    competition_id = db().insert(sql, [start, end, name, competition_series_id, url, top_n.value, competition_flag_id])
     if url is None:
         sql = 'UPDATE competition SET url = %s WHERE id = %s'
         db().execute(sql, [url_for('competition', competition_id=competition_id, _external=True), competition_id])

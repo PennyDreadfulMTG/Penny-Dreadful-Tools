@@ -7,7 +7,6 @@ from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 from shared.pd_exception import DatabaseNoSuchTableException
 
-
 SIDEBOARD_WEIGHT = 0.2
 
 def preaggregate() -> None:

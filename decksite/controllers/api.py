@@ -241,7 +241,7 @@ def cardfeed_api() -> Response:
         # Scryfall requested this naming convention for these layouts even though that is not our standard for them.
         if send_scryfall_two_names(c.layout):
             name = ' // '.join(c.names)
-        os.append({'name': name, 'rank': rank, 'legal': bool(c.pd_legal)})
+        os.append({'name': name, 'oracle_id': c.oracle_id, 'rank': rank, 'legal': bool(c.pd_legal)})
     r = {'cards': os}
     return return_camelized_json(r)
 

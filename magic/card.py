@@ -30,6 +30,7 @@ DATE = 'INTEGER'
 INTEGER = 'INTEGER'
 REAL = 'REAL'
 TEXT = 'LONGTEXT'
+UUID = 'CHAR(36)'
 VARCHAR = f'VARCHAR({MAX_LEN_VARCHAR})'
 
 BASE: ColumnDescription = {
@@ -81,12 +82,14 @@ def base_query_specific_properties() -> TableDescription:
 
 def card_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'layout']:
+    for k in ['id', 'oracle_id', 'layout']:
         props[k] = copy.deepcopy(BASE)
     props['id']['type'] = INTEGER
     props['id']['nullable'] = False
     props['id']['primary_key'] = True
     props['id']['scryfall'] = False
+    props['oracle_id']['type'] = UUID
+    props['oracle_id']['unique'] = True
     props['layout']['nullable'] = False
     return props
 
@@ -144,6 +147,7 @@ def printing_properties() -> TableDescription:
         props[k]['scryfall'] = False
     props['id']['primary_key'] = True
     props['id']['nullable'] = False
+    props['system_id']['type'] = UUID
     props['reserved']['type'] = BOOLEAN
     props['card_id']['foreign_key'] = ('card', 'id')
     props['set_id']['foreign_key'] = ('set', 'id')

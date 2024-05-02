@@ -22,6 +22,7 @@ class CardDescription(TypedDict, total=False):
     life_modifier: str
     loyalty: str
     mana_cost: str
+    oracle_id: str
     oracle_text: str
     power: str
     name: str
@@ -32,7 +33,7 @@ class CardDescription(TypedDict, total=False):
     type_line: str
     watermark: str
     flavor_name: NotRequired[str]
-    # …and parts we don't. Some of these are typed other than str because of the usage in mutliverse_test which uses real data from Scryfall.
+    # …and parts we don't. Some of these are typed other than str because of the usage in multiverse_test which uses real data from Scryfall.
     arena_id: str
     artist_ids: list[str]
     booster: bool
@@ -55,7 +56,6 @@ class CardDescription(TypedDict, total=False):
     multiverse_ids: list[int]
     nonfoil: bool
     object: str
-    oracle_id: str
     oversized: bool
     printed_name: str
     printed_text: str

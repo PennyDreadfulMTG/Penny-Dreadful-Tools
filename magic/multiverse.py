@@ -136,7 +136,6 @@ def base_query_lite() -> str:
 
 
 async def update_database_async(new_date: datetime.datetime) -> None:
-    sets, all_cards = [], []
     try:
         sets = await fetcher.all_sets_async()
         if os.path.exists('scryfall-default-cards.json'):
@@ -256,7 +255,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             card_id = next_card_id
             next_card_id += 1
             cards[p['name']] = card_id
-            card_values.append({'id': card_id, 'layout': p['layout']})
+            card_values.append({'id': card_id, 'oracle_id': p['oracle_id'], 'layout': p['layout']})
 
             if is_meld_result(p):  # We don't make entries for a meld result until we know the card_ids of the front faces.
                 meld_result_printings.append(p)

@@ -16,8 +16,8 @@ const renderRow = (table, card) => (
     <tr key={card.name} className={"legality-" + card.status.toLowerCase().replaceAll(" ", "-")}>
         <td>
             { card.hitInLastRun
-                ? "↑"
-                : "↓"
+                ? <span title={"Present in last run"} className={"last-run"}>↑</span>
+                : <span title={"Not present in last run"} className={"last-run"}>↓</span>
             }
         </td>
         <td className="name">{renderCard(card)}</td>

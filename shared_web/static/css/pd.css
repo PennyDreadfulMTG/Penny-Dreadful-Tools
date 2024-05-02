@@ -2519,7 +2519,7 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 
 */
 
-.active, .stars {
+.active, .stars, .last-run {
     cursor: help;
 }
 

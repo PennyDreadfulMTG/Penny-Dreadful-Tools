@@ -363,7 +363,7 @@ PD.initPersonalization = function() {
                 text += " <span class=\"division\"></span> <a href=\"/link/\">Link</a> your Magic Online account";
             }
             if (data.deck) {
-                text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
+                text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/report/\">Report</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
                 if (data.league_end) {
                     text += "<span class=\"division\"></span> <a href=\"/league/current/\">Current league</a> ends in " + data.league_end;
                 }

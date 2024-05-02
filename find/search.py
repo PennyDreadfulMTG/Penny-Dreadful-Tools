@@ -301,8 +301,7 @@ def format_where(term: str) -> str:
     if season_code == seasons.ALL:
         format_ids = db().values("SELECT id FROM format WHERE name LIKE 'Penny Dreadful%%'")
     else:
-        if season_code:
-            t = f'Penny Dreadful {season_code}'
+        t = f'Penny Dreadful {season_code}' if season_code else term
         format_ids = db().values('SELECT id FROM format WHERE name LIKE %s', [f'{card.unaccent(t)}%%'])
     if not format_ids:
         raise InvalidValueException(f"Invalid format '{term}'")

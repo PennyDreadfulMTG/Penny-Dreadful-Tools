@@ -100,11 +100,13 @@ def get_printing(generalized_card: Card, setcode: str) -> Printing | None:
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
-        + f' WHERE card_id = %s AND (s.code = %s OR s.name LIKE {sqllikeescape(setcode)})'
-    rs = db().select(sql, [generalized_card.id, setcode])
-    if rs:
-        return [Printing(r) for r in rs][0]
-    return None
+        + f' WHERE card_id = %s AND (s.code = %s OR s.name LIKE {sqllikeescape(setcode)})' \
+        + ' ORDER BY s.code = %s DESC, s.released_at' \
+        + ' LIMIT 1'
+    rs = db().select(sql, [generalized_card.id, setcode, setcode])
+    if not rs:
+        return None
+    return Printing(rs[0])
 
 def get_set(set_id: int) -> Container:
     rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])

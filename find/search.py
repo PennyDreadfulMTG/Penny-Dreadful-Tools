@@ -190,7 +190,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return rarity_where(operator.value(), term.value())
     if key.value() == 'mana' or key.value() == 'm':
         return mana_where(operator.value(), term.value())
-    if key.value() == 'is':
+    if key.value() == 'is' or key.value() == 'has':
         return is_subquery(term.value())
     if key.value() == 'not':
         return f'NOT ({is_subquery(term.value())})'

@@ -9,7 +9,7 @@ from shared.database import Database, get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 109
+SCHEMA_VERSION = 110
 DATABASE = Container()
 
 def db() -> Database:
@@ -52,6 +52,8 @@ def setup() -> None:
     db().execute(sql)
     sql = create_table_def('card_color_identity', card.card_color_properties())
     db().execute(sql)
+    sql = create_table_def('card_produced_mana', card.card_color_properties())
+    db().execute(sql)
     sql = create_table_def('card_supertype', card.card_type_properties('supertype'))
     db().execute(sql)
     sql = create_table_def('card_subtype', card.card_type_properties('subtype'))
@@ -73,7 +75,8 @@ def setup() -> None:
         ('Blue', 'U'),
         ('Black', 'B'),
         ('Red', 'R'),
-        ('Green', 'G')
+        ('Green', 'G'),
+        ('Colorless', 'C') -- This is a little funky as we only use it for produced_mana, not color or color_identity.
     """)
     db().execute("""INSERT INTO rarity (name) VALUES
         ('Basic Land'),

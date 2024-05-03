@@ -160,6 +160,7 @@ async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], 
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
     db().execute('DELETE FROM card_color')
     db().execute('DELETE FROM card_color_identity')
+    db().execute('DELETE FROM card_produced_mana')
     db().execute('DELETE FROM card_legality')
     db().execute('DELETE FROM card_bug')
     db().execute('DELETE FROM face')
@@ -185,6 +186,7 @@ async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
     if values['card_color']:  # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
         insert_many('card_color', card.card_color_properties(), values['card_color'])
         insert_many('card_color_identity', card.card_color_properties(), values['card_color_identity'])
+        insert_many('card_produced_mana', card.card_color_properties(), values['card_produced_mana'])
     insert_many('printing', card.printing_properties(), values['printing'])
     insert_many('card_flavor_name', card.card_flavor_name_properties(), values['flavor_name'])
     insert_many('face', card.face_properties(), values['face'], ['position'])
@@ -203,6 +205,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
     meld_result_printings: list[CardDescription] = []
     card_color_values: list[dict[str, Any]] = []
     card_color_identity_values: list[dict[str, Any]] = []
+    card_produced_mana_values: list[dict[str, Any]] = []
     printing_values: list[dict[str, Any]] = []
     card_legality_values: list[dict[str, Any]] = []
     rarity_ids = {x['name']: x['id'] for x in db().select('SELECT id, name FROM rarity')}
@@ -269,6 +272,9 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             for color in p.get('color_identity', []):
                 color_id = colors[color]
                 card_color_identity_values.append({'card_id': card_id, 'color_id': color_id})
+            for color in [c for c in p.get('produced_mana', []) if c not in ['T']]:  # Ignore Sole Performer and its production of "T". Scryfall itself doesn't allow searching for that.
+                color_id = colors[color]
+                card_produced_mana_values.append({'card_id': card_id, 'color_id': color_id})
             # DFCs store their colors in their faces, not at the top level. See #9022.
             for color in face_colors(p):
                 color_id = colors[color]
@@ -297,6 +303,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
         'card': card_values,
         'card_color': card_color_values,
         'card_color_identity': card_color_identity_values,
+        'card_produced_mana': card_produced_mana_values,
         'face': face_values,
         'printing': printing_values,
         'card_legality': card_legality_values,

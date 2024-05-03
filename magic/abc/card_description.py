@@ -25,6 +25,7 @@ class CardDescription(TypedDict, total=False):
     oracle_id: str
     oracle_text: str
     power: str
+    produced_mana: list[str]
     name: str
     rarity: str
     reserved: bool

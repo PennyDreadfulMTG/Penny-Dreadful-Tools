@@ -80,17 +80,15 @@ def test_mana_costs() -> None:
     # s = 'devotion:{u/b}{u/b}{u/b}'
     # do_functional_test(s, ['Ashemnoor Gouger', 'Niv-Mizzet Parun', 'Omniscience', 'Phrexian Obliterator', 'Progenitus'], ['Cunning Nightbonger', 'Watery Grave'])
 
-    # s = 'produces=wu'
-    # do_functional_test(s, ['Azorius Signet', 'Celestial Colonnade'], ['Birds of Paradise', 'Teferi, Time Raveler'])
+    s = 'produces=wu'
+    do_functional_test(s, ['Azorius Signet', 'Celestial Colonnade'], ['Birds of Paradise', 'Teferi, Time Raveler'])
 
-    # s = 'produces:rc'
-    # do_functional_test(s, ['Aether Hub', 'Ramunap Ruins', 'The Seedcore', 'Talisman of Creativity', 'Grinning Ignus', 'Lithoform Blight'], ["Arcum's Astrolabe", 'Sulfur Falls', 'Birds of Paradise', 'Simian Spirit Guide', 'Pentad Prism'])
-    # s = 'produces:c'
-    # do_functional_test(s, ['Aether Hub', 'Channel', 'Talisman of Creativity', 'Thaumatic Compass', 'Worn Powerstone', 'Boreal Druid', 'Catacomb Sifter', 'Grand Architect'], ['Thran Portal', "Arcum's Astrolabe", 'Burst Lightning', 'Chromatic Star'])
-    # s = 'produces>g'
-    # do_functional_test(s, ['Aether Hub', "Arcum's Astrolabe", 'Birds of Paradise', "Llanowar Wastes", 'Lotus Bloom', 'Pentad Prism', 'Opulent Palace', 'Vivid Marsh', 'Servant of the Conduit', 'Song of Freyalise', "Mirari's Wake", 'Gruul Signet'], ['Thran Portal', 'Ramunap Ruins', 'Rofellos, Llanowar Emissary'])
-    # s = 'produces>'
-    # do_functional_test(s, [], ['Forest'])
+    s = 'produces:rc'
+    do_functional_test(s, ['Aether Hub', 'Ramunap Ruins', 'The Seedcore', 'Talisman of Creativity', 'Grinning Ignus', 'Lithoform Blight'], ["Arcum's Astrolabe", 'Sulfur Falls', 'Birds of Paradise', 'Simian Spirit Guide', 'Pentad Prism'])
+    s = 'produces:c'
+    do_functional_test(s, ['Aether Hub', 'Channel', 'Talisman of Creativity', 'Thaumatic Compass', 'Worn Powerstone', 'Boreal Druid', 'Catacomb Sifter', 'Grand Architect'], ['Thran Portal', "Arcum's Astrolabe", 'Burst Lightning', 'Chromatic Star'])
+    s = 'produces>g'
+    do_functional_test(s, ['Aether Hub', "Arcum's Astrolabe", 'Birds of Paradise', 'Llanowar Wastes', 'Lotus Bloom', 'Pentad Prism', 'Opulent Palace', 'Vivid Marsh', 'Servant of the Conduit', 'Song of Freyalise', "Mirari's Wake", 'Gruul Signet'], ['Thran Portal', 'Ramunap Ruins', 'Rofellos, Llanowar Emissary'])
 
 @pytest.mark.functional
 def test_power_toughness_and_loyalty() -> None:

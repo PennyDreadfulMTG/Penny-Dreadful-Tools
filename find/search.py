@@ -164,6 +164,8 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return color_where('color', operator.value(), term.value())
     if key.value() in ['coloridentity', 'commander', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
+    if key.value() == 'produces':
+        return color_where('produced_mana', operator.value(), term.value())
     if key.value() in ['oracle', 'o']:
         return text_where('text', term, exclude_parenthetical=True)
     if key.value() in ['fulloracle', 'fo']:
@@ -221,12 +223,12 @@ def text_where(column: str, term: Token, exclude_parenthetical: bool = False) ->
     return f'({column} {operator} {escaped})'
 
 def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:
-    # Specialcase colorless because it has no entry in the color table.
+    # Specialcase colorless for color and coloridentity because they have no entries (but not true for produced_mana).
     if (subtable in ['color', 'color_identity']) and value == 'c':
         return f'(c.id NOT IN (SELECT card_id FROM card_{subtable}))'
     v = value_lookup(subtable, value)
     if str(v).isdigit():
-        column = f'{subtable}_id'.replace('color_identity_id', 'color_id')
+        column = f'{subtable}_id'.replace('color_identity_id', 'color_id').replace('produced_mana_id', 'color_id')
         operator = '=' if not operator else operator
     else:
         column = subtable
@@ -252,7 +254,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
         colors = set(COLOR_COMBINATIONS_LOWER[term])
     else:
         colors = set(term)
-    if 'c' in colors and len(colors) > 1:
+    if 'c' in colors and len(colors) > 1 and subtable != 'produced_mana':
         raise InvalidValueException('A card cannot be colorless and colored')
     if 'm' in colors and len(colors) > 1:
         raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term.replace('m', '')}' instead")
@@ -264,7 +266,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     if 'm' in colors:
         min_colors = 2
         colors.remove('m')
-    if 'c' in colors:
+    if 'c' in colors and subtable != 'produced_mana':
         max_colors = 0
         colors.remove('c')
     if operator in ['=', '!']:
@@ -400,6 +402,7 @@ def init_value_lookup() -> None:
         VALUE_LOOKUP[table] = d
         if table == 'color':
             VALUE_LOOKUP['color_identity'] = d
+            VALUE_LOOKUP['produced_mana'] = d
 
 def is_subquery(subquery_name: str) -> str:
     if subquery_name == 'dfc':

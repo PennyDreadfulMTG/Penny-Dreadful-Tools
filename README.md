@@ -47,7 +47,7 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - docker-compose up
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
-- Install python 3.10
+- Install python 3.12
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
@@ -69,7 +69,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 ## Manual Development Environment Setup (Non-docker instructions)
 
 - Install MariaDB 10.0+
-- Install python 3.10
+- Install python 3.12
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
@@ -116,5 +116,4 @@ Check the dev.py source code for the full set of options including `unit`, `type
 
 ## Working on React components
 
-- Run logsite
 - pipenv run python dev.py watch # Builds bundle.js after every file change.

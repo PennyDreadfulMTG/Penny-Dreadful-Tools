@@ -1,5 +1,5 @@
 from decksite import league
-from decksite.form import Form
+from decksite.data.form import Form
 from decksite.view import View
 
 

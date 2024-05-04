@@ -20,6 +20,7 @@ init-cards = "python run.py init-cards"
 flake8 = "==7.0.0"
 flake8-quotes = "*"
 flake8-bugbear = "*"
+flake8-commas = "*"
 flake8-import-graph = "*"
 flake8-raise = "*"
 flake8-deprecated = "*"
@@ -109,4 +110,4 @@ discord-typings = "*"
 anyascii = "*"
 
 [requires]
-python_version = "3.12"
+python_version = "3.10"

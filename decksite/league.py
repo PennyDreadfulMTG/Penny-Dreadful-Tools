@@ -9,10 +9,9 @@ from flask import url_for
 from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite.data import competition, deck, match, person, query
-from decksite.data.form import Form
 from decksite.database import db
-from magic import card, decklist, legality, seasons
-from magic.decklist import DecklistType
+from decksite.form import DecklistForm, Form
+from magic import card, seasons
 from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools, guarantee, logger
 from shared import redis_wrapper as redis
@@ -26,28 +25,13 @@ class Status(Enum):
     CLOSED = 0
     OPEN = 1
 
-class SignUpForm(Form):
-    def __init__(self,
-                 form: ImmutableMultiDict,
-                 person_id: int | None,
-                 mtgo_username: str | None) -> None:
-        super().__init__(form)
-        if person_id is not None:
-            ds = deck.recent_decks_for_person(person_id)
-            self.recent_decks: list[dict[str, Any]] = []
-            for d in ds:
-                recent_deck = {'name': d['name'], 'main': [], 'sb': []}
-                for c in d.maindeck:
-                    recent_deck['main'].append('{n} {c}'.format(n=c['n'], c=c['name']))
-                for c in d.sideboard:
-                    recent_deck['sb'].append('{n} {c}'.format(n=c['n'], c=c['name']))
-                self.recent_decks.append({'name': d['name'], 'list': json.dumps(recent_deck)})
-            self.has_recent_decks = len(self.recent_decks) > 0
-        if mtgo_username is not None:
-            self.mtgo_username = mtgo_username
-        self.deck = Container()
-        self.card_errors: dict[str, set[str]] = {}
-        self.card_warnings: dict[str, set[str]] = {}
+class SignUpForm(DecklistForm):
+    def __init__(self, form: ImmutableMultiDict, person_id: int | None, mtgo_username: str | None) -> None:
+        super().__init__(form, person_id, mtgo_username)
+        self.source = 'League'
+        self.competition_id = active_league().id
+        self.identifier = ''
+        self.url = url_for('competition', competition_id=self.competition_id, _external=True)
 
     def do_validation(self) -> None:
         if len(self.mtgo_username) == 0:
@@ -62,70 +46,21 @@ class SignUpForm(Form):
             self.errors['name'] = 'Deck Name is required'
         elif len(self.name) > card.MAX_LEN_TEXT:
             self.errors['name'] = f'Deck Name is too long (max {card.MAX_LEN_TEXT})'
-        else:
-            self.source = 'League'
-            self.competition_id = db().value(active_competition_id_query())
-            self.identifier = identifier(self)
-            self.url = url_for('competition', competition_id=self.competition_id, _external=True)
         self.parse_and_validate_decklist()
+        self.identifier = identifier(self)
 
-    def parse_and_validate_decklist(self) -> None:
-        self.decklist: str = self.decklist.strip()
-        if len(self.decklist) == 0:
-            self.errors['decklist'] = 'Decklist is required'
-        else:
-            self.parse_decklist()
-            if self.cards is not None:
-                self.vivify_deck()
-            if self.deck:
-                self.check_deck_legality()
+class DeckCheckForm(DecklistForm):
+    def __init__(self, form: ImmutableMultiDict, person_id: int | None, mtgo_username: str | None) -> None:
+        super().__init__(form, person_id, mtgo_username)
+        self.validation_ok_message = ''
 
-    def parse_decklist(self) -> None:
-        self.cards: DecklistType = {}
-        if self.decklist.startswith('<?xml'):
-            try:
-                self.cards = decklist.parse_xml(self.decklist)
-            except InvalidDataException:
-                self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'
-        else:
-            try:
-                self.cards = decklist.parse(self.decklist)
-            except InvalidDataException as e:
-                self.errors['decklist'] = f'{str(e)}. Try exporting from Magic Online as Text and pasting the result.'
-
-    def vivify_deck(self) -> None:
-        try:
-            self.deck = decklist.vivify(self.cards)
-        except InvalidDataException as e:
-            self.errors['decklist'] = str(e)
-
-    def check_deck_legality(self) -> None:
-        errors: dict[str, dict[str, set[str]]] = {}
-        season_name = seasons.current_season_name()
-        if season_name not in legality.legal_formats(self.deck, None, errors):
-            self.errors['decklist'] = ' '.join(errors.get(season_name, {}).pop('Legality_General', ['Not a legal deck']))
-            self.card_errors = errors.get(season_name, {})
-        banned_for_bugs = {c.name for c in self.deck.all_cards() if any(b.get('bannable', False) for b in c.bugs or [])}
-        playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any(not b.get('bannable', False) for b in c.bugs or [])}
-        if len(banned_for_bugs) > 0:
-            self.errors['decklist'] = 'Deck contains cards with game-breaking bugs'
-            self.card_errors['Legality_Bugs'] = banned_for_bugs
-        if len(playable_bugs) > 0:
-            self.warnings['decklist'] = 'Deck contains playable bugs'
-            self.card_warnings['Warnings_Bugs'] = playable_bugs
-
-
-class DeckCheckForm(SignUpForm):
     def do_validation(self) -> None:
         self.parse_and_validate_decklist()
         if len(self.errors) == 0:
             self.validation_ok_message = 'The deck is legal'
 
 class ReportForm(Form):
-    def __init__(self,
-                 form: ImmutableMultiDict,
-                 deck_id: int | None = None,
-                 person_id: int | None = None) -> None:
+    def __init__(self, form: ImmutableMultiDict, deck_id: int | None = None, person_id: int | None = None) -> None:
         super().__init__(form)
 
         decks = active_decks()

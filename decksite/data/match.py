@@ -13,14 +13,16 @@ from shared.container import Container
 from shared.pd_exception import TooFewItemsException
 
 
-def insert_match(dt: datetime.datetime,
-                 left_id: int,
-                 left_games: int,
-                 right_id: int | None,
-                 right_games: int,
-                 round_num: int | None = None,
-                 elimination: int | None = None,
-                 mtgo_match_id: int | None = None) -> int:
+def insert_match(
+    dt: datetime.datetime,
+    left_id: int,
+    left_games: int,
+    right_id: int | None,
+    right_games: int,
+    round_num: int | None = None,
+    elimination: int | None = None,
+    mtgo_match_id: int | None = None,
+) -> int:
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     update_cache(left_id, left_games, right_games, dt=dt)

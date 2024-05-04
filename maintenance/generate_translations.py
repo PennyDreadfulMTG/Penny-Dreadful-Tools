@@ -12,9 +12,11 @@ from shared_web import template
 
 
 def ad_hoc() -> int:
-    dist = Distribution(dict(
-        name='Penny-Dreadful-Tools',
-    ))
+    dist = Distribution(
+        dict(
+            name='Penny-Dreadful-Tools',
+        ),
+    )
     dist.message_extractors = {  # type: ignore
         'decksite': [
             ('**.py', 'python', {}),

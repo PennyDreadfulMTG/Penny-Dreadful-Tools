@@ -17,8 +17,10 @@ from shared import configuration, dtutil, fetch_tools, guarantee, logger
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
-                                 LockNotAcquiredException)
+from shared.pd_exception import (
+    InvalidArgumentException, InvalidDataException,
+    LockNotAcquiredException,
+)
 
 
 class Status(Enum):
@@ -99,10 +101,12 @@ class ReportForm(Form):
             self.errors['opponent'] = "You can't play yourself"
 
 class RetireForm(Form):
-    def __init__(self,
-                 form: ImmutableMultiDict,
-                 deck_id: int | None = None,
-                 discord_user: int | None = None) -> None:
+    def __init__(
+        self,
+        form: ImmutableMultiDict,
+        deck_id: int | None = None,
+        discord_user: int | None = None,
+    ) -> None:
         super().__init__(form)
         person_object = None
         if discord_user is not None:

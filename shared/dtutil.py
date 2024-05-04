@@ -54,7 +54,7 @@ def timezone(tzid: str) -> datetime.tzinfo:
 
 def now(tz: Any | None = None) -> datetime.datetime:
     if tz is None:
-        tz = datetime.timezone.utc
+        tz = datetime.UTC
     return datetime.datetime.now(tz)
 
 def day_of_week(dt: datetime.datetime, tz: Any) -> str:

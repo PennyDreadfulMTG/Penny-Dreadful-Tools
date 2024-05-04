@@ -17,17 +17,20 @@ class Swiss(Extension):
         name='num_players',
         description='number of players in the event',
         opt_type=OptionType.INTEGER,
-        required=True)
+        required=True,
+    )
     @slash_option(
         name='num_rounds',
         description='number of rounds of Swiss',
         opt_type=OptionType.INTEGER,
-        required=False)
+        required=False,
+    )
     @slash_option(
         name='top_n',
         description='number of players who make it to the elimination round (ie: Top N)',
         opt_type=OptionType.INTEGER,
-        required=False)
+        required=False,
+    )
     async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: int | None = None, top_n: int | None = None) -> None:
         """Display the record need to reach the elimination rounds for a given tournament"""
         if not num_players:

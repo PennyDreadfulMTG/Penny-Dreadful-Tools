@@ -4,8 +4,10 @@ import inflect
 from interactions import AutocompleteContext
 from interactions.client import Client
 from interactions.ext.prefixed_commands import prefixed_command
-from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command,
-                                 slash_option)
+from interactions.models import (
+    TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command,
+    slash_option,
+)
 
 from discordbot.command import MtgContext, MtgMessageContext, make_choice
 from magic import card_price, fetcher, oracle, rotation, tournaments
@@ -255,7 +257,8 @@ class ExplainCog(Extension):
         description='Thing to be explained',
         opt_type=OptionType.STRING,
         required=True,
-        autocomplete=True)
+        autocomplete=True,
+    )
     async def explain(self, ctx: MtgContext, thing: str | None = None) -> None:
         """Answers for Frequently Asked Questions"""
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
@@ -280,7 +283,8 @@ class ExplainCog(Extension):
             s = textwrap.dedent(explanation[0])
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(
-                things=', '.join(sorted(keys)))
+                things=', '.join(sorted(keys)),
+            )
             await ctx.send(usage)
             return
         if word == 'rotation' and rotation.in_rotation():

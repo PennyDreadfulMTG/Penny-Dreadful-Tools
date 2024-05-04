@@ -15,12 +15,13 @@ class Matchups(TypedDict):
     archetypes: list[archs.Archetype]
 
 class Archetype(View):
-    def __init__(self,
-                 archetype: archs.Archetype,
-                 archetypes: list[archs.Archetype],
-                 matchups: list[Container],
-                 tournament_only: bool = False,
-                 ) -> None:
+    def __init__(
+        self,
+        archetype: archs.Archetype,
+        archetypes: list[archs.Archetype],
+        matchups: list[Container],
+        tournament_only: bool = False,
+    ) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')

@@ -1,5 +1,7 @@
-from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, BaseContext, GuildText,
-                                 InteractionContext)
+from interactions.models import (
+    TYPE_MESSAGEABLE_CHANNEL, BaseContext, GuildText,
+    InteractionContext,
+)
 
 
 def guild_id(ctx: BaseContext | TYPE_MESSAGEABLE_CHANNEL | None) -> int | None:

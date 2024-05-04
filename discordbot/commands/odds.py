@@ -15,22 +15,26 @@ class Odds(Extension):
         name='copies',
         description='How many copies are you running? (Default 4)',
         opt_type=OptionType.INTEGER,
-        required=False)
+        required=False,
+    )
     @slash_option(
         name='drawn',
         description='How many cards have you drawn? (Default 7)',
         opt_type=OptionType.INTEGER,
-        required=False)
+        required=False,
+    )
     @slash_option(
         name='needed',
         description='How many do you need to draw? (Default 1)',
         opt_type=OptionType.INTEGER,
-        required=False)
+        required=False,
+    )
     @slash_option(
         name='deck_size',
         description='How big is your deck? (Default 60)',
         opt_type=OptionType.INTEGER,
-        required=False)
+        required=False,
+    )
     async def odds(self, ctx: MtgInteractionContext, drawn: int = 7, copies: int = 4, needed: int = 1, deck_size: int = 60) -> None:
         """Determine the odds of drawing a card"""
         h = hypergeom(deck_size, copies, drawn)

@@ -19,8 +19,10 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: dict[str, int] = {}
 
 # This is only a fallback
-KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
-               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
+KNOWN_MELDS = [
+    'Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
+    'Urza, Planeswalker', 'Mishra, Lost to Phyrexia',
+]
 
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))
@@ -102,7 +104,8 @@ def base_query(where: str = '(1 = 1)') -> str:
         format_id=get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True),
         card_props=', '.join(f'c.{name}' for name in card.card_properties()),
         face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']),
-        where=where)
+        where=where,
+    )
 
 def base_query_lite() -> str:
     return """
@@ -132,7 +135,8 @@ def base_query_lite() -> str:
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()),
         card_props=', '.join(f'c.{name}' for name in card.card_properties()),
-        face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']))
+        face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']),
+    )
 
 
 async def update_database_async(new_date: datetime.datetime) -> None:
@@ -472,13 +476,21 @@ async def set_legal_cards_async(season: str | None = None) -> None:
     legal_cards = []
     for row in all_cards:
         if row['name'] in new_list:
-            legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
-                                                                          card_id=row['id']))
+            legal_cards.append(
+                "({format_id}, {card_id}, 'Legal')".format(
+                    format_id=format_id,
+                    card_id=row['id'],
+                ),
+            )
         elif row['flavor_names']:
             for fn in row['flavor_names'].split('|'):
                 if fn in new_list:
-                    legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
-                                                                                  card_id=row['id']))
+                    legal_cards.append(
+                        "({format_id}, {card_id}, 'Legal')".format(
+                            format_id=format_id,
+                            card_id=row['id'],
+                        ),
+                    )
                     break
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
              VALUES {values}""".format(values=', '.join(legal_cards))

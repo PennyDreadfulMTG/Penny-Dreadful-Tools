@@ -55,10 +55,12 @@ def preaggregate_card() -> None:
             card,
             season.season_id,
             ct.name
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_card_archetype() -> None:
@@ -107,10 +109,12 @@ def preaggregate_card_archetype() -> None:
             d.archetype_id,
             season.season_id,
             ct.name
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_card_person() -> None:
@@ -159,10 +163,12 @@ def preaggregate_card_person() -> None:
             ct.name
         ORDER BY
             NULL -- Tell the database that we don't need the results back in the GROUP BY order, any order will do.
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_unique() -> None:

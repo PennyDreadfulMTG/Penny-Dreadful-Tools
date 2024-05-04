@@ -159,10 +159,12 @@ def preaggregate_archetypes() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_archetype_person() -> None:
@@ -216,10 +218,12 @@ def preaggregate_archetype_person() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_disjoint_archetypes() -> None:
@@ -264,10 +268,12 @@ def preaggregate_disjoint_archetypes() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_disjoint_archetype_person() -> None:
@@ -316,10 +322,12 @@ def preaggregate_disjoint_archetype_person() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """.format(
+        table=table,
+        competition_join=query.competition_join(),
+        season_join=query.season_join(),
+        nwdl_join=deck.nwdl_join(),
+    )
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_matchups() -> None:
@@ -540,11 +548,13 @@ def load_disjoint_archetypes(order_by: str | None = None, person_id: int | None 
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(table=table,
-               where=where,
-               season_query=query.season_query(season_id),
-               group_by=group_by,
-               order_by=order_by or 'TRUE')
+    """.format(
+        table=table,
+        where=where,
+        season_query=query.season_query(season_id),
+        group_by=group_by,
+        order_by=order_by or 'TRUE',
+    )
     return archetype_list_from(sql, order_by is None)
 
 def archetype_list_from(sql: str, should_preorder: bool) -> list[Archetype]:

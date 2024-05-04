@@ -9,14 +9,14 @@ def test_ts2dt() -> None:
     epoch_seconds = 0
     dt = dtutil.ts2dt(epoch_seconds)
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '1970-01-01 00:00:00 +0000'
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     dt = dtutil.ts2dt(int(now.timestamp()))
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == f'{now:%Y-%m-%d %H:%M:%S %z}'
 
 def test_dt2ts() -> None:
     dt = timezone('UTC').localize(datetime.datetime.utcfromtimestamp(0))
     assert dtutil.dt2ts(dt) == 0
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     now_ts = round(now.timestamp())
     assert dtutil.dt2ts(now) == now_ts
 
@@ -63,13 +63,13 @@ def test_display_date() -> None:
     assert dtutil.display_date(dt) == 'Mar 2008'
     dt = dtutil.parse('2008-03-29 02:00', '%Y-%m-%d %H:%M', timezone('UTC'))
     assert dtutil.display_date(dt) == 'Mar 2008'
-    dt = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=10)
+    dt = datetime.datetime.now(datetime.UTC) - datetime.timedelta(seconds=10)
     assert dtutil.display_date(dt).find('seconds ago') >= 0
-    dt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=72)
+    dt = datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=72)
     assert dtutil.display_date(dt).find('days') >= 0
     assert dtutil.display_date(dt).find('from now') >= 0
     assert dtutil.display_date(dt).find('ago') == -1
-    dt = datetime.datetime.now(datetime.timezone.utc)
+    dt = datetime.datetime.now(datetime.UTC)
     assert dtutil.display_date(dt).find('just now') >= 0
     assert dtutil.display_date(dt).find('from now') == -1
     dt = datetime.datetime.now(dtutil.WOTC_TZ) + datetime.timedelta(days=28, hours=15, minutes=35)

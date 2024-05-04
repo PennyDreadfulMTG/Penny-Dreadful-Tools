@@ -64,14 +64,15 @@ class SetInfo():
         json['mtgoCode'] = json['code']
         recursive_update.rupdate(json, OVERRIDES.get(json['name'], {}))  # type: ignore
 
-        return cls(name=json['name'],
-                   code=json['code'],
-                   codename=json['codename'],
-                   mtgo_code=json['mtgoCode'],
-                   enter_date=DateType(**json['enterDate']),
-                   exit_date=DateType(**json['exitDate']),
-                   enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0),
-                   )
+        return cls(
+            name=json['name'],
+            code=json['code'],
+            codename=json['codename'],
+            mtgo_code=json['mtgoCode'],
+            enter_date=DateType(**json['enterDate']),
+            exit_date=DateType(**json['exitDate']),
+            enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0),
+        )
 
 @attr.define()
 class RotationInfo():

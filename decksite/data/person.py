@@ -106,10 +106,12 @@ def load_people_count(where: str = 'TRUE', season_id: str | int | None = None) -
     return db().value(sql) or 0
 
 # Note: This only loads people who have decks in the specified season.
-def load_people(where: str = 'TRUE',
-                order_by: str = 'num_decks DESC, p.name',
-                limit: str = '',
-                season_id: str | int | None = None) -> Sequence[Person]:
+def load_people(
+    where: str = 'TRUE',
+    order_by: str = 'num_decks DESC, p.name',
+    limit: str = '',
+    season_id: str | int | None = None,
+) -> Sequence[Person]:
     person_query = query.person_query()
     season_join = query.season_join() if season_id else ''
     season_query = query.season_query(season_id, 'season.season_id')

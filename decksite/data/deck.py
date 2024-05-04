@@ -25,19 +25,24 @@ def recent_decks_for_person(person_id: int) -> list[Deck]:
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks(f'd.id = {sqlescape(deck_id)}'))
 
-def load_decks_count(where: str = 'TRUE',
-                     having: str = 'TRUE',
-                     season_id: str | int | None = None) -> int:
-    sql = load_decks_query('COUNT(DISTINCT d.id) AS n', where=where, group_by=None, having=having,
-                           order_by='TRUE', limit='', season_id=season_id)
+def load_decks_count(
+    where: str = 'TRUE',
+    having: str = 'TRUE',
+    season_id: str | int | None = None,
+) -> int:
+    sql = load_decks_query(
+        'COUNT(DISTINCT d.id) AS n', where=where, group_by=None, having=having,
+        order_by='TRUE', limit='', season_id=season_id,
+    )
     return int(db().value(sql))
 
-def load_decks(where: str = 'TRUE',
-               having: str = 'TRUE',
-               order_by: str | None = None,
-               limit: str = '',
-               season_id: str | int | None = None,
-               ) -> list[Deck]:
+def load_decks(
+    where: str = 'TRUE',
+    having: str = 'TRUE',
+    order_by: str | None = None,
+    limit: str = '',
+    season_id: str | int | None = None,
+) -> list[Deck]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
     columns = """
@@ -77,14 +82,15 @@ def load_decks(where: str = 'TRUE',
         decks.append(decks_by_id[row['id']])
     return decks
 
-def load_decks_query(columns: str,
-                     where: str = 'TRUE',
-                     group_by: str | None = None,
-                     having: str = 'TRUE',
-                     order_by: str | None = None,
-                     limit: str = '',
-                     season_id: str | int | None = None,
-                     ) -> str:
+def load_decks_query(
+    columns: str,
+    where: str = 'TRUE',
+    group_by: str | None = None,
+    having: str = 'TRUE',
+    order_by: str | None = None,
+    limit: str = '',
+    season_id: str | int | None = None,
+) -> str:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     if group_by is None:
@@ -150,12 +156,13 @@ def deserialize_deck(sdeck: Container) -> Deck:
     deck.sideboard = [CardRef(ref['name'], ref['n']) for ref in deck.sideboard]
     return deck
 
-def load_decks_heavy(where: str = 'TRUE',
-                     having: str = 'TRUE',
-                     order_by: str | None = None,
-                     limit: str = '',
-                     season_id: str | int | None = None,
-                     ) -> list[Deck]:
+def load_decks_heavy(
+    where: str = 'TRUE',
+    having: str = 'TRUE',
+    order_by: str | None = None,
+    limit: str = '',
+    season_id: str | int | None = None,
+) -> list[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
 

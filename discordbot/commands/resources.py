@@ -50,9 +50,13 @@ def site_resources(args: str) -> dict[str, str]:
     matches = [endpoint for endpoint in sitemap if endpoint.startswith(f'/{area}/')]
     if len(matches) > 0:
         detail = '{detail}/'.format(
-            detail=fetch_tools.escape(detail, True)) if detail else ''
-        url = fetcher.decksite_url('{season_prefix}/{area}/{detail}'.format(
-            season_prefix=season_prefix, area=fetch_tools.escape(area), detail=detail))
+            detail=fetch_tools.escape(detail, True),
+        ) if detail else ''
+        url = fetcher.decksite_url(
+            '{season_prefix}/{area}/{detail}'.format(
+            season_prefix=season_prefix, area=fetch_tools.escape(area), detail=detail,
+            ),
+        )
         results[url] = args
     return results
 
@@ -63,13 +67,17 @@ def resources_resources(args: str) -> dict[str, str]:
     for title, items in fetcher.resources().items():
         for text, url in items.items():
             asked_for_this_section_only = len(
-                words) == 1 and roughly_matches(title, words[0])
+                words,
+            ) == 1 and roughly_matches(title, words[0])
             asked_for_this_section_and_item = len(words) == 2 and roughly_matches(
-                title, words[0]) and roughly_matches(text, words[1])
+                title, words[0],
+            ) and roughly_matches(text, words[1])
             asked_for_this_item_only = len(
-                words) == 1 and roughly_matches(text, words[0])
+                words,
+            ) == 1 and roughly_matches(text, words[0])
             the_whole_thing_sounds_right = roughly_matches(
-                text, ' '.join(words))
+                text, ' '.join(words),
+            )
             the_url_matches = roughly_matches(url, ' '.join(words))
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right or the_url_matches:
                 results[url] = text

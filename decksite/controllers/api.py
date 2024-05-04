@@ -16,15 +16,19 @@ from decksite.data import playability, query
 from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
-                              prepare_people)
+from decksite.prepare import (
+    prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
+    prepare_people,
+)
 from decksite.views import DeckEmbed
 from magic import layout, oracle, rotation, seasons, tournaments
 from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
-                                 TooManyItemsException)
+from shared.pd_exception import (
+    DoesNotExistException, InvalidArgumentException,
+    TooManyItemsException,
+)
 from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
@@ -33,80 +37,94 @@ SearchItem = dict[str, str]
 
 SEARCH_CACHE: list[SearchItem] = []
 
-DECK_ENTRY = APP.api.model('DecklistEntry', {
-    'n': fields.Integer(),
-    'name': fields.String(),
-})
+DECK_ENTRY = APP.api.model(
+    'DecklistEntry', {
+        'n': fields.Integer(),
+        'name': fields.String(),
+    },
+)
 
-DECK = APP.api.model('Deck', {
-    'id': fields.Integer(readonly=True),
-    'name': fields.String(),
-    'created_date': fields.DateTime(),
-    'updated_date': fields.DateTime(),
-    'wins': fields.Integer(),
-    'losses': fields.Integer(),
-    'draws': fields.Integer(),
-    'finish': fields.Integer(),
-    'archetype_id': fields.Integer(),
-    'archetype_name': fields.String(),
-    'source_url': fields.String(),
-    'competition_id': fields.Integer(),
-    'competition_name': fields.String(),
-    'person': fields.String(),
-    'decklist_hash': fields.String(),
-    'retired': fields.Boolean(),
-    'colors': fields.List(fields.String()),
-    'omw': fields.String(),
-    'season_id': fields.Integer(),
-    'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
-    'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
-    'url': fields.String(),
-    'source_name': fields.String(),
-    'competition_type_name': fields.String(),
-    'last_archetype_change': fields.Integer(),
-})
+DECK = APP.api.model(
+    'Deck', {
+        'id': fields.Integer(readonly=True),
+        'name': fields.String(),
+        'created_date': fields.DateTime(),
+        'updated_date': fields.DateTime(),
+        'wins': fields.Integer(),
+        'losses': fields.Integer(),
+        'draws': fields.Integer(),
+        'finish': fields.Integer(),
+        'archetype_id': fields.Integer(),
+        'archetype_name': fields.String(),
+        'source_url': fields.String(),
+        'competition_id': fields.Integer(),
+        'competition_name': fields.String(),
+        'person': fields.String(),
+        'decklist_hash': fields.String(),
+        'retired': fields.Boolean(),
+        'colors': fields.List(fields.String()),
+        'omw': fields.String(),
+        'season_id': fields.Integer(),
+        'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
+        'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
+        'url': fields.String(),
+        'source_name': fields.String(),
+        'competition_type_name': fields.String(),
+        'last_archetype_change': fields.Integer(),
+    },
+)
 
-COMPETITION = APP.api.model('Competition', {
-    'id': fields.Integer(readonly=True),
-    'name': fields.String(),
-    'start_date': fields.DateTime(),
-    'end_date': fields.DateTime(),
-    # 'url': fields.Url('competition'),
-    'top_n': fields.Integer(),
-    'num_decks': fields.Integer(),
-    'num_reviewed': fields.Integer(),
-    'sponsor_name': fields.String(),
-    'series_name': fields.String(),
-    'type': fields.String(),
-    'season_id': fields.Integer(),
-    'decks': fields.List(fields.Nested(DECK)),
-})
+COMPETITION = APP.api.model(
+    'Competition', {
+        'id': fields.Integer(readonly=True),
+        'name': fields.String(),
+        'start_date': fields.DateTime(),
+        'end_date': fields.DateTime(),
+        # 'url': fields.Url('competition'),
+        'top_n': fields.Integer(),
+        'num_decks': fields.Integer(),
+        'num_reviewed': fields.Integer(),
+        'sponsor_name': fields.String(),
+        'series_name': fields.String(),
+        'type': fields.String(),
+        'season_id': fields.Integer(),
+        'decks': fields.List(fields.Nested(DECK)),
+    },
+)
 
-DECKS = APP.api.model('MultipleDecks', {
-    'objects': fields.List(fields.Nested(DECK)),
-    'page': fields.Integer(),
-    'total': fields.Integer(),
-})
+DECKS = APP.api.model(
+    'MultipleDecks', {
+        'objects': fields.List(fields.Nested(DECK)),
+        'page': fields.Integer(),
+        'total': fields.Integer(),
+    },
+)
 
-RELEASE_DATE = APP.api.model('ReleaseDate', {
-    'exact': fields.DateTime(),
-    'rough': fields.String(),
-})
+RELEASE_DATE = APP.api.model(
+    'ReleaseDate', {
+        'exact': fields.DateTime(),
+        'rough': fields.String(),
+    },
+)
 
-SET = APP.api.model('Set', {
-    'code': fields.String(),
-    'name': fields.String(),
-    'enter_date': fields.Nested(RELEASE_DATE),
-    'exit_date': fields.Nested(RELEASE_DATE),
-    'enter_date_dt': fields.String(),
-})
+SET = APP.api.model(
+    'Set', {
+        'code': fields.String(),
+        'name': fields.String(),
+        'enter_date': fields.Nested(RELEASE_DATE),
+        'exit_date': fields.Nested(RELEASE_DATE),
+        'enter_date_dt': fields.String(),
+    },
+)
 
-ROTATION_DETAILS = APP.api.model('RotationDetails', {
-    'last': fields.Nested(SET),
-    'next': fields.Nested(SET),
-    'diff': fields.Float(),
-    'friendly_diff': fields.String(),
-})
+ROTATION_DETAILS = APP.api.model(
+    'RotationDetails', {
+        'last': fields.Nested(SET),
+        'next': fields.Nested(SET),
+        'diff': fields.Float(),
+        'friendly_diff': fields.String(),
+    },
+)
 
 @APP.route('/api/decks')
 @APP.route('/api/decks/')
@@ -672,7 +690,7 @@ def person_status() -> Response:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     active_league = league.active_league()
     if active_league:
-        time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)
+        time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.UTC)
         if time_until_league_end <= datetime.timedelta(days=2):
             r['league_end'] = dtutil.display_time(time_until_league_end / datetime.timedelta(seconds=1), granularity=2)
     return return_json(r)

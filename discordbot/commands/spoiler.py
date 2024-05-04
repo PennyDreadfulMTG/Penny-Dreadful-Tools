@@ -18,7 +18,8 @@ async def spoiler(ctx: MtgContext, card: str) -> None:
         await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))
         return
     imagename = '{set}_{number}'.format(
-        set=sfcard['set'], number=sfcard['collector_number'])
+        set=sfcard['set'], number=sfcard['collector_number'],
+    )
     imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
     if sfcard.get('card_faces') and sfcard.get('layout', '') != 'split':
         c = sfcard['card_faces'][0]

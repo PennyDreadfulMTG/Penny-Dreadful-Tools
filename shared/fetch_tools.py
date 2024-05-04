@@ -88,10 +88,11 @@ async def post_json_async(url: str, data: dict) -> Any:
         logger.error(f'Failed to load JSON:\n{blob}')
         raise
 
-def post(url: str,
-         data: dict[str, str] | None = None,
-         json_data: Any | None = None,
-         ) -> str:
+def post(
+    url: str,
+    data: dict[str, str] | None = None,
+    json_data: Any | None = None,
+) -> str:
     logger.info(f'POSTing to {url} with {data} / {json_data}')
     try:
         response = requests.post(url, data=data, json=json_data)
@@ -147,21 +148,25 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
         s = s.replace('-split-', '//')
     return s
 
-def post_discord_webhook(webhook_id: str,
-                         webhook_token: str,
-                         message: str | None = None,
-                         username: str | None = None,
-                         avatar_url: str | None = None,
-                         embeds: list[dict[str, Any]] | None = None,
-                         ) -> bool:
+def post_discord_webhook(
+    webhook_id: str,
+    webhook_token: str,
+    message: str | None = None,
+    username: str | None = None,
+    avatar_url: str | None = None,
+    embeds: list[dict[str, Any]] | None = None,
+) -> bool:
     if not webhook_id or not webhook_token:
         return False
     url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(
-        id=webhook_id, token=webhook_token)
-    post(url, json_data={
-        'content': message,
-        'username': username,
-        'avatar_url': avatar_url,
-        'embeds': embeds,
-    })
+        id=webhook_id, token=webhook_token,
+    )
+    post(
+        url, json_data={
+            'content': message,
+            'username': username,
+            'avatar_url': avatar_url,
+            'embeds': embeds,
+        },
+    )
     return True

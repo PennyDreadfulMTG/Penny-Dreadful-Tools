@@ -7,15 +7,17 @@ from shared.container import Container
 
 
 class EditRules(View):
-    def __init__(self,
-                 num_classified: int,
-                 num_total: int,
-                 doubled_decks: list[Deck],
-                 mistagged_decks: list[Deck],
-                 overlooked_decks: list[Deck],
-                 rules: list[Container],
-                 archetypes: list[Archetype],
-                 excluded_archetype_info: list[Container]) -> None:
+    def __init__(
+        self,
+        num_classified: int,
+        num_total: int,
+        doubled_decks: list[Deck],
+        mistagged_decks: list[Deck],
+        overlooked_decks: list[Deck],
+        rules: list[Container],
+        archetypes: list[Archetype],
+        excluded_archetype_info: list[Container],
+    ) -> None:
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total

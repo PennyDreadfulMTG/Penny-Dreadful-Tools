@@ -7,8 +7,10 @@ from magic.models import Card, Printing
 from shared import configuration, fetch_tools, guarantee
 from shared.container import Container
 from shared.database import sqlescape, sqllikeescape
-from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
-                                 TooFewItemsException)
+from shared.pd_exception import (
+    InvalidArgumentException, InvalidDataException,
+    TooFewItemsException,
+)
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
@@ -188,8 +190,10 @@ def if_todays_prices(out: bool = True) -> list[Card]:
                 WHERE format_id = {format})
         AND c.name in (SELECT name FROM `{prices_database}`.cache WHERE week {compare} 0.5)
         AND c.layout IN ({layouts})
-    """.format(not_clause=not_clause, format=current_format, prices_database=configuration.get('prices_database'),
-               compare=compare, layouts=', '.join([sqlescape(lo) for lo in layout.playable_layouts()]))
+    """.format(
+        not_clause=not_clause, format=current_format, prices_database=configuration.get('prices_database'),
+        compare=compare, layouts=', '.join([sqlescape(lo) for lo in layout.playable_layouts()]),
+    )
 
     rs = db().select(multiverse.cached_base_query(where=where))
     cards = [Card(r) for r in rs]

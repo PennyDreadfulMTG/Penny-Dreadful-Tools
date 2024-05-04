@@ -73,7 +73,8 @@ def export(match_id: int) -> tuple[str, int, dict[str, str]]:
         format=local.format.name,
         comment=local.comment,
         mods=','.join([m.name for m in local.modules]),
-        players=','.join([p.name for p in local.players]))
+        players=','.join([p.name for p in local.players]),
+    )
     n = 1
     for g in local.games:
         text += f'== Game {n} ({g.id}) ==\n'
@@ -81,7 +82,9 @@ def export(match_id: int) -> tuple[str, int, dict[str, str]]:
         text += g.sanitized_log().strip()
         text += '\n\n'
     text = text.replace('\n', '\r\n')
-    return (text, 200, {
-        'Content-type': 'text/plain; charset=utf-8',
-        'Content-Disposition': f'attachment; filename={match_id}.txt',
-    })
+    return (
+        text, 200, {
+            'Content-type': 'text/plain; charset=utf-8',
+            'Content-Disposition': f'attachment; filename={match_id}.txt',
+        },
+    )

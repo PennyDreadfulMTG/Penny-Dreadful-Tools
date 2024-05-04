@@ -22,7 +22,8 @@ def setup_session(url: str) -> None:
     token = discord.fetch_token(
         TOKEN_URL,
         client_secret=OAUTH2_CLIENT_SECRET,
-        authorization_response=url)
+        authorization_response=url,
+    )
     session.permanent = True
     session['oauth2_token'] = token
     discord = make_session(token=session.get('oauth2_token'))
@@ -52,9 +53,11 @@ def add_to_guild() -> None:
         discord.put('/guilds/{guild}/members/{user}'.format(guild=configuration.get('guild_id'), user=session['discord_id']))
 
 
-def make_session(token: str | None = None,
-                 state: str | None = None,
-                 scope: list[str] | None = None) -> OAuth2Session:
+def make_session(
+    token: str | None = None,
+    state: str | None = None,
+    scope: list[str] | None = None,
+) -> OAuth2Session:
     return OAuth2Session(
         client_id=OAUTH2_CLIENT_ID,
         token=token,
@@ -66,7 +69,8 @@ def make_session(token: str | None = None,
             'client_secret': OAUTH2_CLIENT_SECRET,
         },
         auto_refresh_url=TOKEN_URL,
-        token_updater=token_updater)
+        token_updater=token_updater,
+    )
 
 def token_updater(token: str) -> None:
     session['oauth2_token'] = token

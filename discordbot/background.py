@@ -210,7 +210,7 @@ class BackgroundTasks(Extension):
         if not league:
             return IntervalTrigger(minutes=5)
 
-        diff = round((dtutil.parse_rfc3339(league['end_date']) - datetime.datetime.now(tz=datetime.timezone.utc)) / datetime.timedelta(seconds=1))
+        diff = round((dtutil.parse_rfc3339(league['end_date']) - datetime.datetime.now(tz=datetime.UTC)) / datetime.timedelta(seconds=1))
 
         embed = Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
         if diff <= 60 * 60 * 24:
@@ -258,14 +258,18 @@ class BackgroundTasks(Extension):
     @Task.create(IntervalTrigger(hours=12))
     async def background_task_mos_premodern(self) -> None:
         def message(begin: datetime.date, end: datetime.date, league_number: str) -> str:
-            msg = ('Hello CPL players!\nThe current Premodern League '
-                   'is "**Premodern Monthly League {league_number}**".\n\n'
-                   '**The event will run from {begin} to {end}**.\n\n'
-                   'You can register for this league by going to Gatherling.com '
-                   '> Player CP > Active Events > Join League {league_number}.')
-            return msg.format(begin=begin.strftime('%m/%d'),
-                              end=end.strftime('%m/%d'),
-                              league_number=league_number)
+            msg = (
+                'Hello CPL players!\nThe current Premodern League '
+                'is "**Premodern Monthly League {league_number}**".\n\n'
+                '**The event will run from {begin} to {end}**.\n\n'
+                'You can register for this league by going to Gatherling.com '
+                '> Player CP > Active Events > Join League {league_number}.'
+            )
+            return msg.format(
+                begin=begin.strftime('%m/%d'),
+                end=end.strftime('%m/%d'),
+                league_number=league_number,
+            )
 
         # Get league number from active events on gatherling.com.
         the_json = await fetcher.gatherling_active_events()

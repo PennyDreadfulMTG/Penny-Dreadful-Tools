@@ -6,9 +6,11 @@ import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
-from shared.pd_exception import (DatabaseConnectionRefusedException, DatabaseException,
-                                 DatabaseMissingException, DatabaseNoSuchTableException,
-                                 InvalidArgumentException, LockNotAcquiredException)
+from shared.pd_exception import (
+    DatabaseConnectionRefusedException, DatabaseException,
+    DatabaseMissingException, DatabaseNoSuchTableException,
+    InvalidArgumentException, LockNotAcquiredException,
+)
 
 ValidSqlArgumentDescription = Any
 
@@ -151,11 +153,13 @@ class Database():
 
     def nuke_database(self) -> None:
         self.begin('nuke_database')
-        query = self.values("""
+        query = self.values(
+            """
             SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
             FROM information_schema.tables
             WHERE table_schema = %s;
-        """, [self.name])
+        """, [self.name],
+        )
         self.execute('SET FOREIGN_KEY_CHECKS = 0')
         self.execute(''.join(query))
         self.execute('SET FOREIGN_KEY_CHECKS = 1')

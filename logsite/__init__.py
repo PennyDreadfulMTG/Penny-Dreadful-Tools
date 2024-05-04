@@ -17,7 +17,8 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}
     password=configuration.mysql_passwd.value,
     host=configuration.mysql_host.value,
     port=configuration.mysql_port.value,
-    db=configuration.get('logsite_database'))
+    db=configuration.get('logsite_database'),
+)
 
 from . import db, stats, api, views  # isort:skip # noqa: F401
 

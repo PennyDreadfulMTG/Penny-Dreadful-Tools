@@ -14,8 +14,10 @@ from decksite.data import person as ps
 from decksite.data import playability
 from decksite.data import season as ss
 from decksite.deck_type import DeckType
-from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
-                            Seasons)
+from decksite.views import (
+    Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
+    Seasons,
+)
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
@@ -151,7 +153,8 @@ def validate_deck_type(s: str | None, allowed_values: list[DeckType] | None = No
         deck_type = DeckType(s)
         if allowed_values and deck_type not in allowed_values:
             raise DoesNotExistException(
-                f'Invalid deck_type for this endpoint: {deck_type}')
+                f'Invalid deck_type for this endpoint: {deck_type}',
+            )
     except ValueError as e:
         raise DoesNotExistException(e) from e
     return deck_type

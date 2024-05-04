@@ -14,13 +14,15 @@ from shared.container import Container
 from shared.database import sqlescape
 
 
-def get_or_insert_competition(start_date: datetime.datetime,
-                              end_date: datetime.datetime,
-                              name: str,
-                              competition_series: str,
-                              url: str | None,
-                              top_n: Top,
-                              competition_flag: CompetitionFlag | None = None) -> int:
+def get_or_insert_competition(
+    start_date: datetime.datetime,
+    end_date: datetime.datetime,
+    name: str,
+    competition_series: str,
+    url: str | None,
+    top_n: Top,
+    competition_flag: CompetitionFlag | None = None,
+) -> int:
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()

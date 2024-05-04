@@ -2,8 +2,10 @@ from urllib import parse
 
 from interactions.models import Embed, OptionType, slash_command, slash_option
 
-from discordbot.command import (DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext,
-                                MtgInteractionContext)
+from discordbot.command import (
+    DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext,
+    MtgInteractionContext,
+)
 from magic import fetcher, oracle
 from shared import configuration, fetch_tools
 
@@ -27,7 +29,8 @@ def format_deck(x: dict) -> dict:
         'name': name_fstring.format(**name_fdict),
         'value': '[{arch} deck by {author} ({format})]({domain}/decks/{id})'.format(
             arch=x['tags'][0]['name'], author=x['author']['nickname'],
-            format=x['format'], id=x['deck']['deck_id'], domain=link_domain),
+            format=x['format'], id=x['deck']['deck_id'], domain=link_domain,
+        ),
     }
 
 @slash_command('dreadrise', description='Query Dreadrise')
@@ -77,16 +80,21 @@ async def decks(ctx: MtgInteractionContext, query: str) -> None:
     else:
         subsample = data['sample'][:MAX_DECKS_SHOWN_WITH_CONTINUATION]
         arr = [format_deck(x) for x in subsample]
-        arr.append({'name': 'Other results', 'value': '[{n} more results found]({domain}{path}?q={query}{pd})'.format(
-            domain=link_domain,
-            n=count - MAX_DECKS_SHOWN_WITH_CONTINUATION,
-            path='/deck-search',
-            pd='&dist=penny_dreadful',
-            query=parse.quote_plus(query),
-        )})
+        arr.append({
+            'name': 'Other results', 'value': '[{n} more results found]({domain}{path}?q={query}{pd})'.format(
+                domain=link_domain,
+                n=count - MAX_DECKS_SHOWN_WITH_CONTINUATION,
+                path='/deck-search',
+                pd='&dist=penny_dreadful',
+                query=parse.quote_plus(query),
+            ),
+        })
 
-    embed.set_thumbnail(url='https://api.scryfall.com/cards/named?exact={card}&format=image&version=art_crop'.format(
-        card=data['sample'][0]['main_card'].replace(' ', '%20')))
+    embed.set_thumbnail(
+        url='https://api.scryfall.com/cards/named?exact={card}&format=image&version=art_crop'.format(
+        card=data['sample'][0]['main_card'].replace(' ', '%20'),
+        ),
+    )
     for x in arr:
         embed.add_field(name=x['name'], value=x['value'], inline=False)
     await ctx.send(embeds=[embed])
@@ -119,4 +127,5 @@ async def matchups(ctx: MtgInteractionContext, q1: str, q2: str | None) -> None:
 
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<{d}/card-search?dist=penny_dreadful&q={q}>'.format(
-        n=total - DEFAULT_CARDS_SHOWN, q=fetch_tools.escape(args), d=link_domain) if total > MAX_CARDS_SHOWN else ''
+        n=total - DEFAULT_CARDS_SHOWN, q=fetch_tools.escape(args), d=link_domain,
+    ) if total > MAX_CARDS_SHOWN else ''

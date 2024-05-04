@@ -1,5 +1,7 @@
-from manabase_solver import (DEFAULT_WEIGHTS, UnsatisfiableConstraint, card, make_deck,
-                             penny_dreadful_lands, solve)
+from manabase_solver import (
+    DEFAULT_WEIGHTS, UnsatisfiableConstraint, card, make_deck,
+    penny_dreadful_lands, solve,
+)
 from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite.form import DecklistForm

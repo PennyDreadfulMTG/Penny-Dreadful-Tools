@@ -355,10 +355,12 @@ def test_parse_roman_sloppily() -> None:
     assert deck_name.parse_roman_sloppily('xivii') == 16
 
 def test_invalid_color() -> None:
-    d = Container({'original_name': 'PD',
-                   'archetype_name': 'Control',
-                   'colors': ['U', 'X'],
-                   'season_id': 1})
+    d = Container({
+        'original_name': 'PD',
+        'archetype_name': 'Control',
+        'colors': ['U', 'X'],
+        'season_id': 1,
+    })
     with pytest.raises(InvalidDataException):
         deck_name.normalize(d)
 
@@ -372,8 +374,10 @@ def test_normalize_colors() -> None:
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name,season_id', TESTDATA)
 def test_normalize(original_name: str, expected: str, colors: list[str], archetype_name: str, season_id: int) -> None:
-    d = Container({'original_name': original_name,
-                   'archetype_name': archetype_name,
-                   'colors': colors or [],
-                   'season_id': season_id})
+    d = Container({
+        'original_name': original_name,
+        'archetype_name': archetype_name,
+        'colors': colors or [],
+        'season_id': season_id,
+    })
     assert deck_name.normalize(d) == expected

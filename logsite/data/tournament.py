@@ -8,8 +8,11 @@ class TournamentInfo(fsa.Model):
     __tablename__ = 'match_tournament'
     id = sa.Column(sa.Integer, primary_key=True)
     match_id = sa.Column(sa.Integer, sa.ForeignKey('match.id'), nullable=False)
-    tournament_id = sa.Column(sa.Integer, sa.ForeignKey(
-        'tournament.id'), nullable=False)
+    tournament_id = sa.Column(
+        sa.Integer, sa.ForeignKey(
+        'tournament.id',
+        ), nullable=False,
+    )
     round_num = sa.Column(sa.Integer)
 
     def to_dict(self) -> dict:

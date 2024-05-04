@@ -11,6 +11,8 @@ def test() -> None:
 
 @pytest.mark.functional
 def test_some_pages() -> None:
-    for path in ['/', '/people/', '/cards/', '/cards/Unsummon/', '/competitions/', '/competitions/', '/tournaments/',
-                 '/resources/', '/bugs/', '/signup/', '/report/', '/admin/banners/']:
+    for path in [
+        '/', '/people/', '/cards/', '/cards/Unsummon/', '/competitions/', '/competitions/', '/tournaments/',
+        '/resources/', '/bugs/', '/signup/', '/report/', '/admin/banners/',
+    ]:
         smoke_tester.response_test(path, 200)

@@ -6,8 +6,10 @@ from os import path
 from typing import cast
 
 from interactions import Client, SlashContext
-from interactions.ext.prefixed_commands import (PrefixedCommand, PrefixedContext,
-                                                PrefixedInjectedClient)
+from interactions.ext.prefixed_commands import (
+    PrefixedCommand, PrefixedContext,
+    PrefixedInjectedClient,
+)
 from interactions.models import InteractionCommand
 
 from discordbot import command

@@ -1,6 +1,6 @@
 from flask import url_for
 
-from decksite.form import Form
+from decksite.data.form import Form
 from decksite.views.league_form import LeagueForm
 
 

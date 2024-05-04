@@ -107,7 +107,6 @@ freezegun = "*"
 werkzeug = "==3.0.2"
 discord-typings = "*"
 anyascii = "*"
-manabase-solver = "*"
 
 [requires]
 python_version = "3.12"

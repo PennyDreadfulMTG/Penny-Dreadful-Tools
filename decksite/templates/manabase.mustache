@@ -1,0 +1,12 @@
+<section>
+    <p>This is an extremely experimental manabase generator. It does not understand unusual mana costs, entirely
+    colorless decks, and many other things. Perhaps with your feedback it can nudge towards usefulness – @bakert on
+    the <a href="/discord/">Discord</a></p>
+    <form method="post">
+        {{> recentdecks}}
+        {{> decklistinput}}
+        <button type="submit">Generate</button>
+    </form>
+    {{#output}}<pre style="font-family: monospace; overflow: scroll">{{output}}</pre>{{/output}}
+    {{> deckerrors}}
+</section>

@@ -25,7 +25,7 @@ from shared.container import Container
 from shared.fetch_tools import FetchException
 from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
                                  NotConfiguredException, TooFewItemsException)
-from shared.type import BugData, ForumData
+from shared.types import BugData, ForumData
 
 
 async def achievement_cache_async() -> dict[str, dict[str, str]]:

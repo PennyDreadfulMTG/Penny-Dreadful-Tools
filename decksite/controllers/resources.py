@@ -2,14 +2,12 @@ from flask import Response, make_response, redirect, request, url_for
 from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, get_season_id
-from decksite import manabase as mbs
 from decksite.cache import cached
 from decksite.data import playability
 from decksite.data import rotation as rtn
 from decksite.league import DeckCheckForm
-from decksite.manabase import ManabaseForm
-from decksite.views import (Bugs, DeckCheck, LinkAccounts, Manabase, Resources, Rotation,
-                            RotationChanges, RotationSpeculation)
+from decksite.views import (Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges,
+                            RotationSpeculation)
 from magic import card, oracle
 from magic import rotation as rot
 
@@ -40,7 +38,8 @@ def bugs() -> str:
 @APP.route('/deckcheck/')
 def deck_check(form: DeckCheckForm | None = None) -> str:
     if form is None:
-        form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
+        form = DeckCheckForm(
+            request.form, auth.person_id(), auth.mtgo_username())
     view = DeckCheck(form, auth.person_id())
     return view.page()
 
@@ -51,21 +50,6 @@ def do_deck_check() -> str:
     form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
     form.validate()
     return deck_check(form)
-
-
-@APP.route('/manabase/')
-def manabase(form: ManabaseForm | None = None) -> str:
-    if form is None:
-        form = ManabaseForm(request.form, auth.person_id(), auth.mtgo_username())
-    view = Manabase(form)
-    return view.page()
-
-@APP.route('/manabase/', methods=['POST'])
-def do_manabase() -> str:
-    form = ManabaseForm(request.form, auth.person_id(), auth.mtgo_username())
-    if form.validate():
-        form.output = mbs.find_manabase(form)
-    return manabase(form)
 
 
 @APP.route('/rotation/changes/')

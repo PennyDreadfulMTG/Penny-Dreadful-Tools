@@ -11,7 +11,7 @@ from github.Issue import Issue
 
 from shared import configuration
 from shared.lazy import lazy_property
-from shared.types import BugData
+from shared.type import BugData
 
 from . import fetcher, repo, strings
 from .strings import BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX, REGEX_CARDREF

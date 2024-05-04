@@ -1,7 +1,7 @@
 from flask import url_for
 from flask_babel import gettext
 
-from decksite.data.form import Form
+from decksite.form import Form
 from decksite.views.league_form import LeagueForm
 
 

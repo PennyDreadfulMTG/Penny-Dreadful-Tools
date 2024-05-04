@@ -10,7 +10,7 @@ from magic import fetcher
 from magic.models import Card
 from shared import configuration, fetch_tools
 from shared.pd_exception import OperationalException
-from shared.type import BugData, ForumData
+from shared.types import BugData, ForumData
 
 
 class ModoBugs(Extension):

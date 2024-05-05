@@ -3,8 +3,7 @@ import subprocess
 import urllib
 from typing import Any
 
-from flask import (Blueprint, Flask, Request, Response, redirect, request, send_from_directory,
-                   session, url_for)
+from flask import Blueprint, Flask, Request, Response, redirect, request, send_from_directory, session, url_for
 from flask.helpers import make_response
 from flask_babel import Babel
 from flask_restx import Api

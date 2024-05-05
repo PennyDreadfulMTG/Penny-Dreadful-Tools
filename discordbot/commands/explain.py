@@ -4,8 +4,7 @@ import inflect
 from interactions import AutocompleteContext
 from interactions.client import Client
 from interactions.ext.prefixed_commands import prefixed_command
-from interactions.models import (TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command,
-                                 slash_option)
+from interactions.models import TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext, MtgMessageContext, make_choice
 from magic import card_price, fetcher, oracle, rotation, tournaments

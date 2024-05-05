@@ -11,9 +11,7 @@ import whoosh
 from interactions import Client, SlashContext, global_autocomplete
 from interactions.client.errors import Forbidden
 from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, prefixed_command
-from interactions.models import (DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType,
-                                 DMGroup, Extension, File, InteractionCommand, InteractionContext,
-                                 Member, Message, OptionType, User, slash_option)
+from interactions.models import DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType, DMGroup, Extension, File, InteractionCommand, InteractionContext, Member, Message, OptionType, User, slash_option
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id

@@ -1,5 +1,4 @@
-from whoosh.analysis import (IDTokenizer, LowercaseFilter, StandardAnalyzer, StemmingAnalyzer,
-                             SubstitutionFilter)
+from whoosh.analysis import IDTokenizer, LowercaseFilter, StandardAnalyzer, StemmingAnalyzer, SubstitutionFilter
 
 from shared import configuration
 

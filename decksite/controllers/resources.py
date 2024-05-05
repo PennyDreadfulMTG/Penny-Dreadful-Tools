@@ -8,8 +8,7 @@ from decksite.data import playability
 from decksite.data import rotation as rtn
 from decksite.league import DeckCheckForm
 from decksite.manabase import ManabaseForm
-from decksite.views import (Bugs, DeckCheck, LinkAccounts, Manabase, Resources, Rotation,
-                            RotationChanges, RotationSpeculation)
+from decksite.views import Bugs, DeckCheck, LinkAccounts, Manabase, Resources, Rotation, RotationChanges, RotationSpeculation
 from magic import card, oracle
 from magic import rotation as rot
 

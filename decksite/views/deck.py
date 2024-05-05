@@ -58,7 +58,7 @@ class Deck(View):
                     },
                     'y': {
                         'display': False,
-                        'max': round(max(costs.values()) * 1.3),
+                        'max': round(max(costs.values(), default=0) * 1.3),
                     },
                 },
             }),

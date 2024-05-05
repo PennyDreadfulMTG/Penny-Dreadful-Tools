@@ -41,6 +41,7 @@ types-toml = "*"
 types-typed-ast = "*"
 pipfile = "*"
 types-freezegun = "*"
+brotli = "*"
 
 [packages]
 aiohttp = "*"
@@ -109,6 +110,7 @@ werkzeug = "==3.0.2"
 discord-typings = "*"
 anyascii = "*"
 manabase-solver = "*"
+brotli = "*"
 
 [requires]
 python_version = "3.10"

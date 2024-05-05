@@ -16,15 +16,13 @@ from decksite.data import playability, query
 from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
-                              prepare_people)
+from decksite.prepare import prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
 from magic import layout, oracle, rotation, seasons, tournaments
 from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
-                                 TooManyItemsException)
+from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form

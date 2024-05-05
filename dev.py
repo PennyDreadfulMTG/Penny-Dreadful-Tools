@@ -105,7 +105,6 @@ def mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -> N
 
 @cli.command()
 def upload_coverage() -> None:
-    return  # Temporarily disabled, see #12370.
     try:
         print('>>>> Upload coverage')
         from shared import fetch_tools

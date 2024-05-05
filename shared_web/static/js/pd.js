@@ -1,4 +1,4 @@
-/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, Bloodhound */
+/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound */
 /* eslint-disable max-lines */
 window.PD = {};
 
@@ -411,14 +411,23 @@ PD.initPersonNotes = function() {
 };
 
 PD.renderCharts = function() {
+    Chart.register(ChartDataLabels);
     Chart.defaults.font.family = $("body").css("font-family");
     if ($("td").length > 0) {
-        Chart.defaults.font.size = parseInt($("td").css("font-size"), 10);
+        const fontSize = parseInt($("td").css("font-size"), 10);
+        Chart.defaults.font.size = fontSize;
+        Chart.defaults.plugins.datalabels.font.size = fontSize;
     }
     Chart.defaults.plugins.legend.display = false;
-    Chart.defaults.plugins.title.display = false;
+    Chart.defaults.plugins.tooltip.enabled = false;
+    Chart.defaults.plugins.datalabels.formatter = function (value) {
+        return value || "";
+    };
+    Chart.defaults.plugins.datalabels.anchor = "end";
+    Chart.defaults.plugins.datalabels.align = "end";
     Chart.defaults.plugins.tooltip.displayColors = false;
-    Chart.defaults.scale.ticks.beginAtZero = true;
+    Chart.defaults.plugins.colors.enabled = false;
+    Chart.defaults.color = "#502828";
     $(".chart").each(function() {
         var type = $(this).data("type"),
             labels = $(this).data("labels"),
@@ -431,7 +440,7 @@ PD.renderCharts = function() {
             type,
             "data": {
                 labels,
-                datasets: [{ data: series }]
+                datasets: [{ data: series, backgroundColor: "#f9d0a9" }]
             },
             options
         });

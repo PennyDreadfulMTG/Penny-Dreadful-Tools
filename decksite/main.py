@@ -9,7 +9,6 @@ from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite.cache import cached
-from decksite.charts import chart
 from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import match as ms
@@ -39,10 +38,6 @@ def export(deck_id: int) -> Response:
     safe_name = deck_name.file_name(d)
     return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={safe_name}.txt'})
 
-@APP.route('/charts/cmc/<deck_id>-cmc.png')
-def cmc_chart(deck_id: int) -> Response:
-    return send_file(chart.cmc(int(deck_id)))
-
 @APP.route('/discord/')
 def discord() -> wrappers.Response:
     return redirect('https://discord.gg/RxhTEEP')
@@ -69,7 +64,7 @@ def dev_db() -> wrappers.Response:
 
 @APP.before_request
 def before_request() -> wrappers.Response | None:
-    simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt', '/charts/']
+    simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt']
     if not any(request.path.startswith(prefix) for prefix in simple_paths):
         auth.check_perms()
     if not request.path.endswith('/'):

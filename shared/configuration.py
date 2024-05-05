@@ -21,8 +21,6 @@ RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 # === Decksite ===
 # On production, /rotation/ turns off when not active.
 always_show_rotation = BoolSetting('always_show_rotation', False)
-# Path to chart storage directory.  Used by decksite.
-charts_dir = StrSetting('charts_dir', './images/charts')
 is_test_site = BoolSetting('is_test_site', False)
 
 # === Discord Bot ===

@@ -1,4 +1,5 @@
-Chart.js
+Chart.js:chart.umd
+chartjs-plugin-datalabels
 jquery
 jquery.hoverIntent
 jquery.tablesorter

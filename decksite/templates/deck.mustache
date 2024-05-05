@@ -6,7 +6,9 @@
     </section>
     <section>
         <h2>Mana Costs</h2>
-        <img src="{{cmc_chart_url}}" width="200">
+        {{#mv_chart}}
+            <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
+        {{/mv_chart}}
         <p>{{average_cmc}} average</p>
     </section>
 {{/public}}

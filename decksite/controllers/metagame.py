@@ -14,8 +14,7 @@ from decksite.data import person as ps
 from decksite.data import playability
 from decksite.data import season as ss
 from decksite.deck_type import DeckType
-from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame,
-                            Seasons)
+from decksite.views import Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 

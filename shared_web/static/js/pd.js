@@ -411,6 +411,7 @@ PD.initPersonNotes = function() {
 };
 
 PD.renderCharts = function() {
+    // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
     Chart.register(ChartDataLabels);
     Chart.defaults.font.family = $("body").css("font-family");
     if ($("td").length > 0) {

@@ -21,12 +21,13 @@ const build = function() {
             }]
         },
         options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
+            plugins: {
+                datalabels: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true
+                }
             }
         }
     });

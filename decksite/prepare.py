@@ -75,7 +75,6 @@ def prepare_deck(d: Deck) -> None:
         d.competition_url = f'/competitions/{d.competition_id}/'
     d.url = f'/decks/{d.id}/'
     d.export_url = f'/export/{d.id}/'
-    d.cmc_chart_url = f'/charts/cmc/{d.id}-cmc.png'
     if d.is_in_current_run():
         d.active_safe = '<span class="active" title="Active in the current league">⊕</span>'
         d.stars_safe = f'{d.active_safe} {d.stars_safe}'.strip()

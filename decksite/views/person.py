@@ -38,17 +38,18 @@ class Person(View):
                 'labels': json.dumps(['White', 'Blue', 'Black', 'Red', 'Green', 'Colorless']),
                 'series': json.dumps([colors.get('W'), colors.get('U'), colors.get('B'), colors.get('R'), colors.get('G'), colors.get('C')]),
                 'options': json.dumps({
+                    'animation': {
+                        'duration': 0,  # Because this causes the canvas to grow sideways it makes the page jump around so even though it's nice let's skip it.
+                    },
                     'indexAxis': 'y',
-                    'responsive': True,
                     'scales': {
-                        'xAxes': {
-                            'ticks': {
-                                'precision': 0,  # Only display whole numbers on x-axis.
-                            },
+                        'x': {
+                            'display': False,
+                            'max': round(max(colors.values()) * 1.3),
                         },
-                        'yAxes': {
-                            'ticks': {
-                                'autoSkip': False,
+                        'y': {
+                            'grid': {
+                                'display': False,
                             },
                         },
                     },

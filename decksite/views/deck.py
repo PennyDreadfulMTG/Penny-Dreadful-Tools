@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 import inflect
@@ -30,6 +31,38 @@ class Deck(View):
         self.is_deck_page = True
         # To allow mods to change archetype from a dropdown on this page, will be empty for non-demimods
         self.archetypes = archetypes
+        costs: dict[str, int] = {}
+        for ci in d.maindeck:
+            c = ci.card
+            if c.is_land():
+                continue
+            if c.mana_cost is None:
+                cost = '0'
+            elif next((s for s in c.mana_cost if '{X}' in s), None) is not None:
+                cost = 'X'
+            else:
+                converted = int(float(c.cmc))
+                cost = '7+' if converted >= 7 else str(converted)
+            costs[cost] = ci.get('n') + costs.get(cost, 0)
+        self.mv_chart = {
+            'type': 'bar',
+            'labels': json.dumps(['0', '1', '2', '3', '4', '5', '6', '7+', 'X']),
+            'series': json.dumps([costs.get('0', 0), costs.get('1', 0), costs.get('2', 0), costs.get('3', 0), costs.get('4', 0), costs.get('5', 0), costs.get('6', 0), costs.get('7+', 0), costs.get('X', 0)]),
+            'options': json.dumps({
+                'indexAxis': 'x',
+                'scales': {
+                    'x': {
+                        'grid': {
+                            'display': False,
+                        },
+                    },
+                    'y': {
+                        'display': False,
+                        'max': round(max(costs.values()) * 1.3),
+                    },
+                },
+            }),
+        }
 
     def og_title(self) -> str:
         return self.deck.name if self.public() else '(Active League Run)'

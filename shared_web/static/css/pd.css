@@ -498,6 +498,7 @@ Color attributes are mostly found with their related structural elements in this
     --light-gray: #eee; /* Isabelline */
     --dark-gray: #999; /* Spanish gray */
     --red: #f00;
+    --soft-tangerine: #f9d0a9; /* Light orange */
 
     /* Helpful aliases for site colors. */
 
@@ -508,7 +509,7 @@ Color attributes are mostly found with their related structural elements in this
     --border: var(--dark-gray);
     --light-border: var(--light-gray);
     --line: var(--black);
-    --highlight: var(--light-gray);
+    --highlight: var(--soft-tangerine);
     --inactive: var(--dark-gray);
     --error: var(--red);
     --button: var(--light-gray);

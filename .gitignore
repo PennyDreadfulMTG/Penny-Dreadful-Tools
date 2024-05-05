@@ -23,7 +23,6 @@
 /codecov.sh
 /images/*.jpg
 /images/*.png
-/images/charts/*.png
 /modo_bugs_repo/
 /monkeytype.sqlite3
 AllCards-x.json

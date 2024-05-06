@@ -41,51 +41,20 @@ def insert_match(dt: datetime.datetime,
     return match_id
 
 def load_match(match_id: int, deck_id: int) -> Container:
-    return guarantee.exactly_one(load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}'))
+    ms, _ = load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}')
+    return guarantee.exactly_one(ms)
 
 def load_matches_by_deck(d: deck.Deck) -> list[Container]:
     where = f'd.id = {d.id}'
-    return load_matches(where=where, season_id=None)
+    ms, _ = load_matches(where=where, season_id=None)
+    return ms
 
 def load_matches_by_person(person_id: int, season_id: int | None = None) -> list[Container]:
     where = f'd.person_id = {person_id}'
-    return load_matches(where=where, season_id=season_id)
+    ms, _ = load_matches(where=where, season_id=season_id)
+    return ms
 
-def load_matches_count(where: str = 'TRUE', season_id: int | str | None = None) -> int:
-    competition_join = query.competition_join()
-    season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.season_id')
-    sql = f"""
-        SELECT
-            COUNT(DISTINCT m.id)
-        FROM
-            `match` AS m
-        INNER JOIN
-            deck_match AS dm ON m.id = dm.match_id
-        INNER JOIN
-            deck AS d ON dm.deck_id = d.id
-        INNER JOIN
-            deck_cache AS dc ON d.id = dc.deck_id
-        INNER JOIN
-            person AS p ON d.person_id = p.id
-        LEFT JOIN
-            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
-        LEFT JOIN
-            deck AS od ON odm.deck_id = od.id
-        LEFT JOIN
-            deck_cache AS odc ON od.id = odc.deck_id
-        LEFT JOIN
-            person AS o ON od.person_id = o.id
-        {competition_join}
-        {season_join}
-        WHERE
-            {where}
-        AND
-            {season_query}
-    """
-    return int(db().value(sql))
-
-def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> list[Container]:
+def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> tuple[list[Container], int]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')
     competition_join = query.competition_join()
@@ -112,7 +81,8 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
             odc.wins,
             odc.draws,
             odc.losses,
-            od.retired
+            od.retired,
+            COUNT(*) OVER () AS total
         FROM
             `match` AS m
         INNER JOIN
@@ -143,9 +113,10 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
             {order_by}
         {limit}
     """
-    matches = [Container(r) for r in db().select(sql)]
+    rs = db().select(sql)
+    matches = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
     setup_matches(show_active_deck_names, matches)
-    return matches
+    return matches, 0 if not rs else rs[0]['total']
 
 def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) -> None:
     for m in matches:

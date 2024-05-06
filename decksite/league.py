@@ -169,7 +169,7 @@ def active_decks(additional_where: str = 'TRUE') -> list[deck.Deck]:
         AND
             ({additional_where})
     """.format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
-    decks = deck.load_decks(where)
+    decks, _ = deck.load_decks(where)
     return sorted(decks, key=lambda d: f'{d.person.ljust(100)}{d.name}')
 
 def active_decks_by(mtgo_username: str) -> list[deck.Deck]:
@@ -188,9 +188,10 @@ def report(form: ReportForm) -> bool:
         entry_deck_id = int(form.entry)
         opponent_deck_id = int(form.opponent)
 
-        ds = {d.id: d for d in deck.load_decks(f'd.id IN ({entry_deck_id}, {opponent_deck_id})')}
-        entry_deck = ds.get(entry_deck_id)
-        opponent_deck = ds.get(opponent_deck_id)
+        ds, _ = deck.load_decks(f'd.id IN ({entry_deck_id}, {opponent_deck_id})')
+        ds_by_id = {d.id: d for d in ds}
+        entry_deck = ds_by_id.get(entry_deck_id)
+        opponent_deck = ds_by_id.get(opponent_deck_id)
 
         if not entry_deck:
             form.errors['entry'] = 'This deck does not appear to exist. Please try again.'
@@ -320,7 +321,8 @@ def random_legal_deck() -> Deck | None:
     where = f'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {seasons.current_season_num()})'
     having = f'(d.competition_id NOT IN ({active_competition_id_query()}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'
     try:
-        return deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]
+        ds, _ = deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]
+        return ds
     except IndexError:
         # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
         return None

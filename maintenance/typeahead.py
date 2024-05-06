@@ -28,7 +28,8 @@ def cards() -> list[dict[str, str]]:
 
 def people() -> list[dict[str, str]]:
     urls = []
-    for p in person.load_people():
+    ps, _ = person.load_people()
+    for p in ps:
         urls.append({'name': p.name, 'type': 'Person', 'url': url_for('person', mtgo_username=p.name)})
     return urls
 

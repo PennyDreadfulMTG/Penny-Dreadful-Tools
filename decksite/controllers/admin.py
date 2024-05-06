@@ -42,7 +42,7 @@ def admin_home() -> wrappers.Response:
 @auth.admin_required
 def edit_aliases() -> str:
     aliases = ps.load_aliases()
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = EditAliases(aliases, all_people)
     return view.page()
 
@@ -171,7 +171,7 @@ def rotation_checklist() -> str:
 @auth.admin_required
 def player_notes() -> str:
     notes = ps.load_notes()
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = PlayerNotes(notes, all_people)
     return view.page()
 
@@ -188,7 +188,7 @@ def post_player_note(person_id: int, note: str) -> wrappers.Response:
 @APP.route('/admin/unlink/')
 @auth.admin_required
 def unlink(num_affected_people: int | None = None, errors: list[str] | None = None) -> str:
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()
 
@@ -210,7 +210,7 @@ def post_unlink() -> str:
 @APP.route('/admin/ban/')
 @auth.admin_required
 def ban(success: bool | None = None) -> str:
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Ban(all_people, success)
     return view.page()
 

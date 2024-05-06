@@ -135,9 +135,10 @@ def matchups() -> str:
     results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else None
     matchup_archetypes = archs.load_archetypes()
     matchup_archetypes.sort(key=lambda a: a.name)
-    matchup_people = list(ps.load_people(where='p.mtgo_username IS NOT NULL'))
+    matchup_people, _ = ps.load_people(where='p.mtgo_username IS NOT NULL')
+    matchup_people = list(matchup_people)
     matchup_people.sort(key=lambda p: p.name)
-    matchup_cards = cs.load_cards()
+    matchup_cards, _ = cs.load_cards()
     matchup_cards.sort(key=lambda c: c.name)
     view = Matchups(hero, enemy, season_id, matchup_archetypes, matchup_people, matchup_cards, results)
     return view.page()

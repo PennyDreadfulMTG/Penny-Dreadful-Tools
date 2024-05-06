@@ -27,7 +27,7 @@ def if_not_in_rotation(val: T) -> Callable[[FuncType[T]], FuncType[T]]:
         return wrapper
     return decorator
 
-def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> list[Card]:
+def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> tuple[list[Card], int]:
     sql = f"""
         SELECT
             name,
@@ -37,7 +37,8 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
             percent_needed,
             rank,
             status,
-            hit_in_last_run
+            hit_in_last_run,
+            COUNT(*) OVER () AS total
         FROM
             _rotation
         WHERE
@@ -47,22 +48,15 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
         {limit}
     """
     try:
-        cs = [Container(r) for r in db().select(sql)]
+        rs = db().select(sql)
+        cs = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
     except DatabaseException as e:
         logger.error('Failed to load rotation information', e)
-        return []
+        return [], 0
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])
-    return cs
-
-def load_rotation_count(where: str = 'TRUE') -> int:
-    try:
-        return db().value(f'SELECT COUNT(*) FROM _rotation WHERE {where}')
-    except DatabaseException as e:
-        logger.error('Failed to load rotation count', e)
-        return 0
-
+    return cs, 0 if not rs else rs[0]['total']
 
 def load_rotation_summary() -> tuple[int, int]:
     sql = 'SELECT MAX(hits) AS runs, COUNT(*) AS num_cards FROM _rotation'

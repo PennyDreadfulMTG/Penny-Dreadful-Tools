@@ -209,7 +209,11 @@ class Achievement:
             """.format(k=self.key, id=p.id, season_query=query.season_query(season_id))
         ids = db().value(sql)
         result = Container()
-        result.decks = deck.load_decks(where=f'd.id IN ({ids})') if ids is not None else []
+        if ids:
+            ds, _ = deck.load_decks(where=f'd.id IN ({ids})')
+        else:
+            ds = []
+        result.decks = ds
         for f in self.flags:
             result[f] = True
         return result

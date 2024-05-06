@@ -47,16 +47,19 @@ def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Pe
 def maybe_load_person_by_discord_id(discord_id: int | None) -> Person | None:
     if discord_id is None:
         return None
-    return guarantee.at_most_one(load_people(f'p.discord_id = {discord_id}'))
+    ps, _ = load_people(f'p.discord_id = {discord_id}')
+    return guarantee.at_most_one(ps)
 
 def maybe_load_person_by_tappedout_name(username: str) -> Person | None:
-    return guarantee.at_most_one(load_people(f'p.tappedout_username = {sqlescape(username)}'))
+    ps, _ = load_people(f'p.tappedout_username = {sqlescape(username)}')
+    return guarantee.at_most_one(ps)
 
 def maybe_load_person_by_mtggoldfish_name(username: str) -> Person | None:
-    return guarantee.at_most_one(load_people(f'p.mtggoldfish_username = {sqlescape(username)}'))
+    ps, _ = load_people(f'p.mtggoldfish_username = {sqlescape(username)}')
+    return guarantee.at_most_one(ps)
 
 def load_person(where: str, season_id: int | None = None) -> Person:
-    people = load_people(where, season_id=season_id)
+    people, _ = load_people(where, season_id=season_id)
     if len(people) == 0:  # We didn't find an entry for that person with decks, what about without?
         person = load_person_statless(where, season_id)
     else:
@@ -87,29 +90,11 @@ def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> P
         p.season_id = season_id
     return guarantee.exactly_one(people)
 
-def load_people_count(where: str = 'TRUE', season_id: str | int | None = None) -> int:
-    season_join = query.season_join() if season_id else ''
-    season_query = query.season_query(season_id, 'season.season_id')
-    sql = f"""
-        SELECT
-            COUNT(DISTINCT p.id)
-        FROM
-            person AS p
-        LEFT JOIN
-            deck AS d ON d.person_id = p.id
-        LEFT JOIN
-            deck_cache AS dc ON d.id = dc.deck_id
-        {season_join}
-        WHERE
-            ({where}) AND ({season_query})
-    """
-    return db().value(sql) or 0
-
 # Note: This only loads people who have decks in the specified season.
 def load_people(where: str = 'TRUE',
                 order_by: str = 'num_decks DESC, p.name',
                 limit: str = '',
-                season_id: str | int | None = None) -> Sequence[Person]:
+                season_id: str | int | None = None) -> tuple[Sequence[Person], int]:
     person_query = query.person_query()
     season_join = query.season_join() if season_id else ''
     season_query = query.season_query(season_id, 'season.season_id')
@@ -133,7 +118,8 @@ def load_people(where: str = 'TRUE',
             SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions,
+            COUNT(*) OVER () AS total
         FROM
             person AS p
         LEFT JOIN
@@ -149,10 +135,11 @@ def load_people(where: str = 'TRUE',
             {order_by}
         {limit}
     """
-    people = [Person(r) for r in db().select(sql)]
+    rs = db().select(sql)
+    people = [Person({k: v for k, v in r.items() if k != 'total'}) for r in rs]
     for p in people:
         p.season_id = season_id
-    return people
+    return people, 0 if not rs else rs[0]['total']
 
 def seasons_active(person_id: int) -> list[int]:
     sql = f"""
@@ -227,13 +214,7 @@ def set_achievements(people: list[Person], season_id: int | None = None) -> None
         people_by_id[result['id']].achievements.pop('id')
 
 @retry_after_calling(preaggregate_head_to_head)
-def load_head_to_head_count(person_id: int, where: str = 'TRUE', season_id: int | None = None) -> int:
-    season_query = query.season_query(season_id)
-    sql = f'SELECT COUNT(*) FROM _head_to_head_stats AS hths INNER JOIN person AS opp ON hths.opponent_id = opp.id WHERE ({where}) AND (hths.person_id = {person_id}) AND ({season_query})'
-    return db().value(sql)
-
-@retry_after_calling(preaggregate_head_to_head)
-def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: int | None = None) -> Sequence[Container]:
+def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: int | None = None) -> tuple[Sequence[Container], int]:
     season_query = query.season_query(season_id)
     sql = f"""
         SELECT
@@ -244,7 +225,8 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
             SUM(wins) AS wins,
             SUM(losses) AS losses,
             SUM(draws) AS draws,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            COUNT(*) OVER () AS total
         FROM
             _head_to_head_stats AS hths
         INNER JOIN
@@ -258,7 +240,8 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
             {order_by}
         {limit}
     """
-    return [Container(r) for r in db().select(sql)]
+    rs = db().select(sql)
+    return [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs], 0 if not rs else rs[0]['total']
 
 def associate(d: deck.Deck, discord_id: int) -> int:
     person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)

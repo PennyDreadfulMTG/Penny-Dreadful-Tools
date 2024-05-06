@@ -605,6 +605,14 @@
             "markers": "python_version >= '3.8'",
             "version": "==7.5.1"
         },
+        "croniter": {
+            "hashes": [
+                "sha256:f1f8ca0af64212fbe99b1bee125ee5a1b53a9c1b433968d8bca8817b79d237f3",
+                "sha256:fdbb44920944045cc323db54599b321325141d82d14fa7453bc0699826bbe9ed"
+            ],
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==2.0.5"
+        },
         "cryptography": {
             "hashes": [
                 "sha256:02c0eee2d7133bdbbc5e24441258d5d2244beb31da5ed19fbb80315f4bbbff55",
@@ -1007,11 +1015,11 @@
         },
         "interactions.py": {
             "hashes": [
-                "sha256:6702b94b5c28a0ec0164567e034583cdb158e39ab35dc25cb2f9514b7349b764",
-                "sha256:b82ff8f2240eeb4575012a1e18f485eea2959a7f9f9963d5bbbeafda8ae03b3a"
+                "sha256:4922f1e06b1a2a55004a6705aa1c5642b73108366756285cb6cf26c902559b7d",
+                "sha256:a073c83a663f71173ecc6255c8cbaea62521e6adb89083884ff26ebf62cb908f"
             ],
             "markers": "python_version >= '3.10'",
-            "version": "==5.6.0"
+            "version": "==5.12.1"
         },
         "isort": {
             "hashes": [
@@ -2132,7 +2140,7 @@
                 "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"
             ],
             "index": "pypi",
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.9.0.post0"
         },
         "python-dotenv": {
@@ -2373,7 +2381,7 @@
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
             "index": "pypi",
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
         },
         "soupsieve": {

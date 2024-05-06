@@ -42,7 +42,6 @@ def load_query(people_by_id: dict[int, Person], season_id: int | None) -> str:
     return """
         SELECT
             person_id AS id,
-            season_id,
             {columns}
         FROM
             _achievements AS a

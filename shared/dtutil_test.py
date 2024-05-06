@@ -14,7 +14,7 @@ def test_ts2dt() -> None:
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == f'{now:%Y-%m-%d %H:%M:%S %z}'
 
 def test_dt2ts() -> None:
-    dt = datetime.datetime.fromtimestamp(0, datetime.UTC)
+    dt = datetime.datetime.fromtimestamp(0, datetime.timezone.utc)
     assert dtutil.dt2ts(dt) == 0
     now = datetime.datetime.now(datetime.timezone.utc)
     now_ts = round(now.timestamp())

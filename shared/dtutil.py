@@ -29,7 +29,7 @@ FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts: int) -> datetime.datetime:
-    return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
+    return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc)
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt: datetime.datetime) -> int:

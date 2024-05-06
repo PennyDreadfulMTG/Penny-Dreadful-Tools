@@ -308,7 +308,7 @@ def test_nesting_conditions() -> None:
 
 # END Tests from https://scryfall.com/docs/syntax
 
-@pytest.mark.function
+@pytest.mark.functional
 def test_colors_with_ints() -> None:
     do_functional_test('ci=5 t:legendary -t:creature', ['Genju of the Realm', 'Legacy Weapon'], ['Coalition Victory', 'Garth One-Eye'])
     do_functional_test('c=5 t:legendary -t:creature', ['Genju of the Realm'], ['Coalition Victory', 'Garth One-Eye', 'Legacy Weapon'])

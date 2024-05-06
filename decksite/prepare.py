@@ -24,6 +24,8 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | 
     c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
     c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
     c.has_legal_format = len(c.legal_formats) > 0
+    c.legal_seasons = sorted(seasons.SEASONS.index(fmt.replace('Penny Dreadful ', '')) + 1 for fmt in c.legal_formats - c.non_pd_legal_formats)
+    c.first_legal_this_season = c.legal_seasons and min(c.legal_seasons) == season_id
     set_legal_icons(c)
     if c.get('num_decks') is not None:
         c.show_record = c.get('wins') or c.get('losses') or c.get('draws')

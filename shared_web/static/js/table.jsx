@@ -211,7 +211,7 @@ export const renderWinPercent = (object) => {
 
 export const renderCard = (card) => (
     <React.Fragment>
-        <a href={card.url} className="card">{card.name}</a>
+        <a href={card.url} className={`card${card.firstLegalThisSeason ? " new" : ""}`}>{card.name}</a>
         { card.pdLegal
             ? ""
             : <span className="illegal"></span>

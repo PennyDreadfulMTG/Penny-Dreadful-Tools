@@ -138,8 +138,7 @@ def decks_api() -> Response:
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
     where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
-    total = deck.load_decks_count(where=where, season_id=season_id)
-    ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    ds, total = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'total': total, 'objects': ds}
     resp = return_camelized_json(r)
@@ -175,8 +174,7 @@ class UpdatedDecks(Resource):
             raise InvalidArgumentException('Invalid timestamp!')
         page, page_size, limit = pagination(request.args)
         where = '(' + clauses.decks_where(request.args, False, None) + ') AND ' + clauses.decks_updated_since(timestamp)
-        total = deck.load_decks_count(where=where, season_id=season)
-        ds = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
+        ds, total = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
         prepare_decks(ds)
         return {'page': page, 'total': total, 'objects': ds}
 
@@ -661,7 +659,8 @@ def person_status() -> Response:
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:
-        r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
+        _, total = deck.load_decks('NOT d.reviewed', limit='LIMIT 1')
+        r['archetypes_to_tag'] = total
     active_league = league.active_league()
     if active_league:
         time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)

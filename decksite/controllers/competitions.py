@@ -43,7 +43,7 @@ def tournament_leaderboards() -> str:
 @APP.route('/tournaments/pd500/')
 @cached()
 def pd500() -> str:
-    tournament_winning_decks = ds.load_decks(where='d.finish = 1', season_id=get_season_id())
+    tournament_winning_decks, _ = ds.load_decks(where='d.finish = 1', season_id=get_season_id())
     view = PD500(tournament_winning_decks)
     return view.page()
 

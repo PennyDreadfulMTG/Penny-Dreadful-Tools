@@ -97,7 +97,7 @@ def load_decks(competitions: list[Competition]) -> None:
         return
     competitions_by_id = {c.id: c for c in competitions}
     where = 'd.competition_id IN ({ids})'.format(ids=', '.join(str(k) for k in competitions_by_id.keys()))
-    decks = deck.load_decks(where)
+    decks, _ = deck.load_decks(where)
     for c in competitions:
         c.decks = []
     for d in decks:

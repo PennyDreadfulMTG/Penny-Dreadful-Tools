@@ -21,7 +21,7 @@ def about_gp() -> Response:
 @cached()
 def about() -> str:
     season_id = max(get_season_id() - 1, 0)
-    last_season_tournament_winners = deck.load_decks('d.finish = 1', season_id=season_id)
+    last_season_tournament_winners, _ = deck.load_decks('d.finish = 1', season_id=season_id)
     view = About(request.args.get('src'), last_season_tournament_winners)
     return view.page()
 

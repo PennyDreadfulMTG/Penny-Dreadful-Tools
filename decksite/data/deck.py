@@ -17,27 +17,23 @@ from shared.pd_exception import InvalidDataException
 
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
-    return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
+    ds, _ = load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
+    return ds
 
 def recent_decks_for_person(person_id: int) -> list[Deck]:
-    return load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
+    ds, _ = load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
+    return ds
 
 def load_deck(deck_id: int) -> Deck:
-    return guarantee.exactly_one(load_decks(f'd.id = {sqlescape(deck_id)}'))
-
-def load_decks_count(where: str = 'TRUE',
-                     having: str = 'TRUE',
-                     season_id: str | int | None = None) -> int:
-    sql = load_decks_query('COUNT(DISTINCT d.id) AS n', where=where, group_by=None, having=having,
-                           order_by='TRUE', limit='', season_id=season_id)
-    return int(db().value(sql))
+    ds, _ = load_decks(f'd.id = {sqlescape(deck_id)}')
+    return guarantee.exactly_one(ds)
 
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: str | None = None,
                limit: str = '',
                season_id: str | int | None = None,
-               ) -> list[Deck]:
+               ) -> tuple[list[Deck], int]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
     columns = """
@@ -49,7 +45,8 @@ def load_decks(where: str = 'TRUE',
         cache.losses,
         cache.draws,
         cache.color_sort,
-        ct.name AS competition_type_name
+        ct.name AS competition_type_name,
+        COUNT(*) OVER () AS total
     """
     group_by = """
             d.id,
@@ -69,13 +66,13 @@ def load_decks(where: str = 'TRUE',
             decks_by_id[row['id']] = deserialize_deck(d)
     if heavy:
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
-        loaded_decks = load_decks_heavy(where)
+        loaded_decks, _ = load_decks_heavy(where)
         for d in loaded_decks:
             decks_by_id[d.id] = d
     decks = []
     for row in rows:
         decks.append(decks_by_id[row['id']])
-    return decks
+    return decks, 0 if not rows else rows[0]['total']
 
 def load_decks_query(columns: str,
                      where: str = 'TRUE',
@@ -155,7 +152,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      order_by: str | None = None,
                      limit: str = '',
                      season_id: str | int | None = None,
-                     ) -> list[Deck]:
+                     ) -> tuple[list[Deck], int]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
 
@@ -193,7 +190,8 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
             season.season_id,
-            IFNULL(MAX(m.date), d.created_date) AS active_date
+            IFNULL(MAX(m.date), d.created_date) AS active_date,
+            COUNT(*) OVER () AS total
 --            MAX(q.changed_date) AS last_archetype_change
         FROM
             deck AS d
@@ -231,7 +229,7 @@ def load_decks_heavy(where: str = 'TRUE',
     rows = db().select(sql)
     decks = []
     for row in rows:
-        d = Deck(row)
+        d = Deck({k: v for k, v in row.items() if k != 'total'})
         d.maindeck = []
         d.sideboard = []
         d.competition_top_n = Top(d.competition_top_n or 0)
@@ -253,7 +251,7 @@ def load_decks_heavy(where: str = 'TRUE',
     for d in decks:
         expiry = 60 if d.is_in_current_run() else 3600
         redis.store(f'decksite:deck:{d.id}', d, ex=expiry)
-    return decks
+    return decks, 0 if not rows else rows[0]['total']
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 # We also ignore split and aftermath cards so if you are genuinely using a color in a split card but have no other cards of that color we won't claim it as one of the deck's colors.
@@ -471,7 +469,7 @@ def calculate_similar_decks(ds: list[Deck]) -> None:
         for d in ds:
             d.similar_decks = []
         return
-    potentially_similar = load_decks(f'd.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))')
+    potentially_similar, _ = load_decks(f'd.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))')
     for d in ds:
         for psd in potentially_similar:
             psd.similarity_score = round(similarity_score(d, psd) * 100)
@@ -504,7 +502,8 @@ def load_decks_by_cards(names: list[str], not_names: list[str]) -> list[Deck]:
         sql += ' AND '
     if not_names:
         sql += contains_cards_clause(not_names, True)
-    return load_decks(sql)
+    ds, _ = load_decks(sql)
+    return ds
 
 def contains_cards_clause(names: list[str], negate: bool = False) -> str:
     negation = ' NOT' if negate else ''
@@ -547,7 +546,8 @@ def load_conflicted_decks() -> list[Deck]:
             GROUP BY
                 d1.decklist_hash
         )"""
-    return load_decks(where, order_by='d.decklist_hash')
+    ds, _ = load_decks(where, order_by='d.decklist_hash')
+    return ds
 
 def load_queue_similarity(decks: list[Deck]) -> None:
     sql = 'SELECT deck.id, deck_cache.similarity FROM deck JOIN deck_cache ON deck.id = deck_cache.deck_id WHERE NOT deck.reviewed'

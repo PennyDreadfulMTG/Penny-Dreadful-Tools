@@ -68,7 +68,13 @@ def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None =
             {where}
     """
     rs = guarantee.exactly_one(db().select(sql, args))
+
     hero_deck_ids = rs['hero_deck_ids'].split(',') if rs['hero_deck_ids'] else []
+    if hero_deck_ids:
+        hero_decks, _ = deck.load_decks('d.id IN (' + ', '.join(hero_deck_ids) + ')')
+    else:
+        hero_decks = []
+    enemy_deck_ids = rs['enemy_deck_ids'].split(',') if rs['enemy_deck_ids'] else []
     match_ids = rs['match_ids'].split(',') if rs['match_ids'] else []
     if match_ids:
         ms, _ = match.load_matches(where='m.id IN (' + ', '.join(match_ids) + ')', order_by='m.date DESC, m.round DESC')
@@ -76,9 +82,9 @@ def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None =
         ms = []
     return MatchupResults(
         hero_deck_ids=hero_deck_ids,
-        hero_decks=deck.load_decks('d.id IN (' + ', '.join(hero_deck_ids) + ')') if hero_deck_ids else [],
-        enemy_deck_ids=rs['enemy_deck_ids'].split(',') if rs['enemy_deck_ids'] else [],
-        match_ids=rs['match_ids'].split(',') if rs['match_ids'] else [],
+        hero_decks=hero_decks,
+        enemy_deck_ids=enemy_deck_ids,
+        match_ids=match_ids,
         matches=ms,
         wins=rs['wins'],
         draws=rs['draws'],

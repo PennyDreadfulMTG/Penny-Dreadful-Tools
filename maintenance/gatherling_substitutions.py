@@ -14,7 +14,7 @@ def ad_hoc() -> None:
     except (IndexError, TypeError, ValueError):
         start = dtutil.now() - datetime.timedelta(days=7)
     print(f'Checking all Gatherling decks from {start}. To check from a different date supply it as a commandline arg in the form YYYY-MM-DD')
-    decks = deck.load_decks(f"d.created_date >= UNIX_TIMESTAMP('{start}') AND ct.name = 'Gatherling'")
+    decks, _ = deck.load_decks(f"d.created_date >= UNIX_TIMESTAMP('{start}') AND ct.name = 'Gatherling'")
     print(f'Found {len(decks)} decks.')
     searcher = WhooshSearcher()
     for d in decks:

@@ -19,7 +19,7 @@ from decksite.data.achievements import Achievement
 from decksite.prepare import prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
 from magic import layout, oracle, rotation, seasons, tournaments
-from magic.models import Card, Deck
+from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
@@ -268,9 +268,8 @@ def people_api() -> Response:
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
-    people = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    people, total = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people)
-    total = ps.load_people_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': people}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
@@ -304,10 +303,9 @@ def h2h_api() -> Response:
     person_id = int(request.args.get('personId', 0))
     q = request.args.get('q', '').strip()
     where = clauses.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
-    entries = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
+    entries, total = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
     for entry in entries:
         entry.opp_url = url_for('seasons.person', mtgo_username=entry.opp_mtgo_username, season_id=season_id)
-    total = ps.load_head_to_head_count(person_id=person_id, where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
@@ -351,9 +349,8 @@ def leaderboards_api() -> Response:
         where += f' AND (cs.id = {competition_series_id})'
     except ValueError:
         pass
-    entries = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id)
+    entries, total = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id)
     prepare_leaderboard(entries)
-    total = comp.load_leaderboard_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
@@ -393,9 +390,8 @@ def matches_api() -> Response:
         season_id = None
     except ValueError:
         season_id = seasons.season_id(str(request.args.get('seasonId')), None)
-    entries = match.load_matches(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
+    entries, total = match.load_matches(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
     prepare_matches(entries)
-    total = match.load_matches_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
@@ -445,9 +441,8 @@ def rotation_cards_api() -> Response:
     if not session.get('admin', False):
         where += " AND status <> 'Undecided'"
     order_by = clauses.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    cs: list[Card] = rot.load_rotation(where=where, order_by=order_by, limit=limit)
+    cs, total = rot.load_rotation(where=where, order_by=order_by, limit=limit)
     prepare_cards(cs)
-    total = rot.load_rotation_count(where=where)
     r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))

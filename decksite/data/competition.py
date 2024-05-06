@@ -139,35 +139,7 @@ def series(season_id: int | None = None) -> list[dict[str, Any]]:
     """
     return [Container(r) for r in db().select(sql)]
 
-def load_leaderboard_count(where: str, season_id: str | int | None = None) -> int:
-    season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.season_id')
-    sql = f"""
-        SELECT
-            COUNT(DISTINCT p.id)
-        FROM
-            competition AS c
-        INNER JOIN
-            competition_series AS cs ON cs.id = c.competition_series_id
-        LEFT JOIN
-            sponsor AS sp ON sp.id = cs.sponsor_id
-        INNER JOIN
-            competition_type AS ct ON ct.id = cs.competition_type_id
-        INNER JOIN
-            deck AS d ON d.competition_id = c.id
-        INNER JOIN
-            person AS p ON d.person_id = p.id
-        LEFT JOIN
-            deck_match AS dm ON dm.deck_id = d.id
-        LEFT JOIN
-            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
-        {season_join}
-        WHERE
-            ({where}) AND ({season_query})
-    """
-    return db().value(sql, [], 0)
-
-def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: str | int | None = None) -> Sequence[Container]:
+def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: str | int | None = None) -> tuple[Sequence[Container], int]:
     person_query = query.person_query()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.season_id')
@@ -183,7 +155,8 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
             -- Points are complicated because tournaments count entries while leagues do not and leagues count 5-0s but tournaments do not.
             (CASE WHEN ct.name <> 'League' THEN COUNT(DISTINCT d.id) ELSE 0 END) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) + COUNT(DISTINCT CASE WHEN five_ohs.five_oh AND ct.name = 'League' THEN d.id ELSE NULL END) AS points,
             ROW_NUMBER() OVER (ORDER BY points DESC, wins DESC, person) AS finish,
-            season.season_id
+            season.season_id,
+            COUNT(*) OVER () AS total
         FROM
             competition AS c
         INNER JOIN
@@ -224,8 +197,9 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
             person
         {limit}
     """
-    entries = [Container(r) for r in db().select(sql)]
-    return entries
+    rs = db().select(sql)
+    entries = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
+    return entries, 0 if not rs else rs[0]['total']
 
 def set_doorprize(competition_name: str, winner: str) -> None:
     sql = """

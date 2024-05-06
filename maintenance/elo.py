@@ -26,7 +26,7 @@ def run() -> None:
     matches = db().select(sql)
     for m in matches:
         match(m)
-    current = person.load_people()
+    current, _ = person.load_people()
     people_by_id = {p.id: p for p in current}
     sql = 'UPDATE person SET elo = %s WHERE id = %s'
     for person_id, new_elo in sorted(PEOPLE.items(), key=lambda x: -x[1]):

@@ -997,6 +997,12 @@ Although it displays a similar thing that maxes out around 7-1-1 for a long tour
     text-decoration: line-through;
 }
 
+/* Newly-legal cards should be highlighted on /rotation/chanages */
+
+.content-rotationchanges .new {
+    background-color: var(--highlight);
+}
+
 /* Angled headers */
 
 th.angled {

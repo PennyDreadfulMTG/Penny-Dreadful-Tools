@@ -229,27 +229,6 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards_count(additional_where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False, all_legal: bool = False) -> int:
-    if person_id:
-        table = '_card_person_stats'
-        where = f'person_id = {sqlescape(person_id)}'
-    elif archetype_id:
-        table = '_card_archetype_stats'
-        where = f'archetype_id = {archetype_id}'
-    else:
-        table = '_card_stats'
-        where = 'TRUE'
-    season_query = query.season_query(season_id, 'cs.season_id')
-    if tournament_only:
-        where = f"({where}) AND deck_type = 'tournament'"
-    if all_legal:
-        from_clause = f'_legal_cards AS cs LEFT JOIN {table} AS other ON cs.name = other.name AND cs.season_id = other.season_id'
-    else:
-        from_clause = f'{table} AS cs'
-    sql = f'SELECT COUNT(DISTINCT cs.name) AS n FROM {from_clause} WHERE ({where}) AND ({additional_where}) AND ({season_query})'
-    return int(db().value(sql))
-
-@retry_after_calling(preaggregate)
 def load_cards(
         additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',
@@ -259,7 +238,7 @@ def load_cards(
         season_id: int | None = None,
         tournament_only: bool = False,
         all_legal: bool = False,
-) -> list[Card]:
+) -> tuple[list[Card], int]:
     if person_id:
         table = '_card_person_stats'
         where = f'person_id = {sqlescape(person_id)}'
@@ -290,7 +269,8 @@ def load_cards(
             SUM(IFNULL(perfect_runs, 0)) AS perfect_runs,
             SUM(IFNULL(tournament_wins, 0)) AS tournament_wins,
             SUM(IFNULL(tournament_top8s, 0)) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            COUNT(*) OVER () AS total
         FROM
             {from_clause}
         WHERE
@@ -301,16 +281,18 @@ def load_cards(
             {order_by}
         {limit}
     """
-    cs = [Container(r) for r in db().select(sql)]
+    rs = db().select(sql)
+    cs = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])
         c.played_competitively = c.wins or c.draws or c.losses
-    return cs
+    return cs, 0 if not rs else rs[0]['total']
 
 @retry_after_calling(preaggregate_card)
 def load_card(name: str, tournament_only: bool = False, season_id: int | None = None) -> Card:
-    c = guarantee.at_most_one(load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only))
+    cs, _ = load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only)
+    c = guarantee.at_most_one(cs)
     if c:
         return c
     # If there is no card in the db for this name-tournament_only-season_id combo we fake one to show as a placeholder

@@ -216,9 +216,8 @@ def cards2_api() -> Response:
     q = request.args.get('q', '').strip()
     additional_where, message = clauses.card_search_where(q, base_query, 'cs.name') if q or base_query else ('TRUE', '')
     all_legal = request.args.get('allLegal', False)
-    cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)
+    cs, total = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)
     prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
-    total = card.load_cards_count(additional_where=additional_where, archetype_id=archetype_id, person_id=person_id, season_id=season_id, tournament_only=tournament_only, all_legal=all_legal)
     r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
@@ -604,8 +603,8 @@ def rotation_clear_cache() -> Response:
 @APP.route('/api/cards')
 @APP.route('/api/cards/')
 def cards_api() -> Response:
-    blob = {'cards': card.load_cards()}
-    return return_json(blob)
+    cs, _ = card.load_cards()
+    return return_json({'cards': cs})
 
 @APP.route('/api/card/<card>')
 @APP.route('/api/card/<card>/')

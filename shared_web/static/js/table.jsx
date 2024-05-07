@@ -44,7 +44,7 @@ export class Table extends React.Component {
             }
         }
         if (this.props.reloadCards && typeof Deckbox !== "undefined") {
-            Deckbox.load();
+            Deckbox.load(this.state.page > 0);
         }
     }
 

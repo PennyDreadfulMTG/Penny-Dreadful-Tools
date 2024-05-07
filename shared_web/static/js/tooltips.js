@@ -292,7 +292,7 @@ Deckbox._ = {
     },
 
     preloadImages: function() {
-        const cardElements = Array.from(document.querySelectorAll(".card")).reverse();
+        const cardElements = Array.from(document.querySelectorAll(".card"));
         for (let i = 0; i < cardElements.length; i++) {
             const link = cardElements[i];
             if (Deckbox._.needsTooltip(link)) {

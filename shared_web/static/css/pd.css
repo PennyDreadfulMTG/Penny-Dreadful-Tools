@@ -32,7 +32,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 body {
-    line-height: 1;
+    line-height: var(--table-line-height);
 }
 
 ol, ul {
@@ -68,6 +68,20 @@ http://www.modularscale.com/?1&em&1.333 will show you bigger and smaller options
 
 */
 
+:root {
+    /*
+        For most text, the optimal line spacing is between 120% and 145% of the point size.
+        https://practicaltypography.com/line-spacing.html
+    */
+    --reading-line-height: 1.333; /* Let the text breathe, for reading */
+    --table-line-height: 1; /* Put the text closer together, for data density */
+
+    --x-large-font-size: 1.777rem; /* Display size text */
+    --large-font-size: 1.333rem; /*  To emphasize or draw attention */
+    --reading-font-size: 1rem; /* Clear */
+    --table-font-size: 0.75rem; /* Show more information */
+}
+
 html {
     /*
         On the web, the optimal size is 15–25 pixels.
@@ -86,11 +100,7 @@ body {
     */
     background: var(--secondary-background);
     color: var(--secondary-text);
-    /*
-        For most text, the optimal line spacing is between 120% and 145% of the point size.
-        https://practicaltypography.com/line-spacing.html
-    */
-    line-height: 1.333;
+    line-height: var(--reading-line-height);
 }
 
 b, strong /* strong to support markdown conversion to HTML, prefer b */ {
@@ -125,7 +135,7 @@ article {
 }
 
 blockquote {
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     margin-left: 2.369rem;
     margin-bottom: 1rem;
 }
@@ -133,7 +143,7 @@ blockquote {
 .notice p {
     background: var(--tertiary-background);
     display: block;
-    font-size: 1.333rem;
+    font-size: var(--large-font-size);
     padding: 1em;
 }
 
@@ -424,7 +434,7 @@ footer {
         border-bottom: 0.05rem solid var(--border);
         border-top: 0;
         bottom: inherit;
-        font-size: 0.75rem;
+        font-size: var(--table-font-size);
         padding-bottom: 0;
         padding-top: 1em;
         top: 0;
@@ -565,7 +575,7 @@ header h1 {
     font-family: var(--heading-font-family);
     font-variant-numeric: oldstyle-nums;
     font-weight: normal;
-    font-size: 1.333rem;
+    font-size: var(--large-font-size);
     margin-bottom: 0;
     margin-right: 3rem;
     padding: 3rem 0 1rem 0;
@@ -578,13 +588,13 @@ h1, h2 {
 }
 
 main h1 {
-    font-size: 1.333rem;
+    font-size: var(--large-font-size);
     padding-top: 2rem;
 }
 
 main h2 {
     border-top: 0.05rem solid var(--line);
-    font-size: 1rem;
+    font-size: var(--reading-font-size);
     margin-bottom: 2rem;
     margin-top: 1rem;
     padding-top: 1rem;
@@ -694,8 +704,8 @@ ul.decklist {
     list-style-type: none;
     margin: 0;
     padding-left: 0;
-    line-height: 1;
-    font-size: 0.75rem;
+    line-height: var(--table-line-height);
+    font-size: var(--table-font-size);
 }
 
 .division:after {
@@ -721,7 +731,7 @@ Sizes in the table are in ems because they should relate to the size of table te
 
 main table {
     border-spacing: 0.25em 0;
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     font-weight: 400;
     margin-bottom: 1em;
     display: block; /* Make the body as wide as the table rather than overflowing over background. */
@@ -749,7 +759,7 @@ table.with-marginalia {
 main th {
     cursor: pointer;
     font-family: var(--heading-font-family);
-    font-size: 1em;
+    font-size: var(--table-font-size);
     font-variant-numeric: oldstyle-nums;
     text-align: left;
     text-transform: lowercase;
@@ -830,7 +840,7 @@ th.legend {
 }
 
 .marginalia {
-    line-height: 1;
+    line-height: var(--table-line-height);
     margin-left: -4em;
     margin-right: -0.5em;
     text-align: right;
@@ -838,7 +848,7 @@ th.legend {
 }
 
 .stars {
-    font-size: 1.333rem; /* The stars are a bit small in our chosen font but the targets are not. */
+    font-size: var(--large-font-size); /* The stars are a bit small in our chosen font but the targets are not. */
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
@@ -849,7 +859,7 @@ div.live {
 .live .table-header {
     color: var(--deemphasized-text);
     display: flex;
-    font-size: 0.75rem; /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
+    font-size: var(--table-font-size); /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
     justify-content: space-between;
     margin-bottom: 1em; /* Same as `main table`'s margin-bottom so that top table extras are the same distance from the table as the pagination at the bottom. */
 }
@@ -1030,10 +1040,10 @@ Some pages still send giant tables of data but logsite and deck table have pagin
 
 .pagination {
     display: flex;
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     font-variant-numeric: oldstyle-nums;
     justify-content: flex-end;
-    line-height: 1.769; /* So that the smaller (font-size: 0.75rem) text lines up vertically with the larger (font-size: 1rem) arrows which have line-height 1.333 (the base line height) */
+    line-height: 1.777; /* So that the smaller (font-size: 0.75rem) text lines up vertically with the larger (font-size: 1rem) arrows which have line-height 1.333 (the base line height) = 1.333 / 0.75 */
 }
 
 .pagination .section {
@@ -1046,8 +1056,8 @@ Some pages still send giant tables of data but logsite and deck table have pagin
 }
 
 .pagination .links {
-    font-size: 1rem;
-    line-height: 1.333;
+    font-size: var(--reading-font-size);
+    line-height: var(--reading-line-height);
 }
 
 .pagination .pages {
@@ -1199,7 +1209,7 @@ Mobile Menu
         border-left: 0.05rem solid var(--line);
         flex: 1 1 0; /* Evenly spaced and sized menu items. */
         float: left;
-        font-size: 0.75rem;
+        font-size: var(--table-font-size);
         margin: 0;
         overflow: hidden;
         padding: 0;
@@ -1246,7 +1256,7 @@ Mobile Menu
     }
 
     .menuitem .icon {
-        font-size: 1rem;
+        font-size: var(--reading-font-size);
     }
 
     .menuitem .icon.home::before {
@@ -1384,7 +1394,7 @@ Calendar
 
 .calendar {
     border-collapse: separate; /* Otherwise the top-border on begin is hidden by the bottom-border on the cell above. */
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
 }
 
 .calendar td, .calendar th {
@@ -1406,7 +1416,7 @@ Calendar
 }
 
 .calendar .date {
-    font-size: 1rem;
+    font-size: var(--reading-font-size);
     text-align: right;
     vertical-align: top;
 }
@@ -1420,8 +1430,8 @@ Calendar
 }
 
 .calendar .date .day {
-    font-size: 1.777rem;
-    line-height: 1;
+    font-size: var(--x-large-font-size);
+    line-height: var(--table-line-height);
     vertical-align: top;
 }
 
@@ -1485,10 +1495,6 @@ Deck
 
 */
 
-.bye {
-    font-size: 0.8rem;
-}
-
 section section, h2.section {
     float: left;
 }
@@ -1504,15 +1510,15 @@ h2.section {
 
 .subtitle {
     color: var(--deemphasized-text);
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
 }
 
 .total {
     color: var(--deemphasized-text);
     float: right;
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     /* Compensate for difference between this font-size and the font-size of the h2. */
-    line-height: 1;
+    line-height: var(--table-line-height);
     margin-left: 1rem;
     margin-top: 0.333rem;
 }
@@ -1530,7 +1536,7 @@ section.legal {
 .other-legal-formats {
     display: flex;
     flex-wrap: wrap;
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
 }
 
 .legal-format {
@@ -1546,7 +1552,7 @@ For /seasons/ and the stats section on the homepage.
 */
 
 .stats p {
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
 }
 
 .stats li {
@@ -1564,7 +1570,7 @@ ul.buttons li {
     background: var(--background);
     color: var(--deemphasized-text);
     display: block;
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     list-style-type: none;
     padding: 0.422em 1em;
     text-align: center;
@@ -1834,12 +1840,12 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 
 .inline input, .inline select, .inline textarea, .inline label, .inline button {
     height: 1.1rem; /* Nonstandard height because of the padding the browser adds. */
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     line-height: 1.2; /* Nonstandard line-height because of nonstandard height. */
 }
 
 .inline select {
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
 }
 
 .inline button {
@@ -1916,7 +1922,7 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 }
 
 .tagline {
-    font-size: 1.333rem;
+    font-size: var(--large-font-size);
 }
 
 .intro .learn-more  {
@@ -1955,7 +1961,7 @@ Alternatively use p element instead of div to get p text size and not enforced 0
 }
 
 div.loading {
-    font-size: 0.75rem; /* Only make the text smaller in the table spinners not the status bar spinner, to avoid a change in status bar size on load. */
+    font-size: var(--table-font-size); /* Only make the text smaller in the table spinners not the status bar spinner, to avoid a change in status bar size on load. */
 }
 
 .spinner {
@@ -2008,10 +2014,10 @@ Search
 .search input {
     border: 0;
     box-sizing: border-box; /* Lets us specify width the same as the search results below it without having to account for padding. */
-    font-size: 1rem;
-    line-height: 1.333; /* Give the search text a little room to breathe. */
+    font-size: var(--reading-font-size);
+    line-height: var(--reading-line-height); /* Give the search text a little room to breathe. */
     /*
-        The heading we are lining up with here has font-size: 1.333rem and line-height 1.333rem to be 1.777rem tall.
+        The heading we are lining up with here has font-size: 1.333rem and line-height 1.333 to be 1.777rem tall.
         We have font-size 1rem and line-height 1.333 for a height of 1.333rem.
         We add half the missing height above as margins to line up perfectly.
         We do NOT do the same for the bottom because we want the search results to line up with the bottom of the input not have a gap.
@@ -2038,7 +2044,7 @@ Search
     background-color: var(--background);
     outline: 0.05rem solid var(--border);
     color: var(--text);
-    font-size: 0.9rem;
+    font-size: var(--reading-font-size);
     padding: 0.563rem 0.563em;
 
 }
@@ -2141,7 +2147,7 @@ News
 }
 
 .news li {
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     margin-left: -1em; /* Shifted the width of item:before holding the icon to put it into the margin. */
 }
 
@@ -2245,9 +2251,9 @@ Notification Badges
 }
 
 .badge {
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
     height: 1.333em;
-    line-height: 1.333;
+    line-height: var(--reading-line-height);
     min-width: 1.333em;
     padding: 0;
     position: absolute;
@@ -2367,7 +2373,7 @@ Achievements
 .achievement-bar .expansion-indicator {
     align-items: center;
     display: flex; /* We want a larger glyph for folks that think they have to click the glyph to expand not the whole box but we want it to be vertically centered. This is just easier than doing a bunch of calculations. */
-    font-size: 1.777rem; /* It's too small at the same size as the text because it's a small glyph. */
+    font-size: var(--x-large-font-size); /* It's too small at the same size as the text because it's a small glyph. */
     height: 100%;
     justify-content: flex-end; /* Vertically center the expansion indicator regardless of box height. */
     padding: 0 1rem;
@@ -2525,7 +2531,7 @@ Used for Unique Cards Played and Cards Played First list on person detail page.
 */
 
 .card-lists {
-    font-size: 0.75rem;
+    font-size: var(--table-font-size);
 }
 
 .card-lists li {

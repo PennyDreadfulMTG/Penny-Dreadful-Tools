@@ -224,7 +224,7 @@ export const renderCard = (card) => (
 Table.propTypes = {
     "achievementKey": PropTypes.string,
     "activeRunsText": PropTypes.string,
-    "allLegal": PropTypes.bool,
+    "allLegal": PropTypes.string,
     "archetypeId": PropTypes.string,
     "baseQuery": PropTypes.string,
     "cardName": PropTypes.string,

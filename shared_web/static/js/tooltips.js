@@ -277,22 +277,42 @@ Deckbox._ = {
         Deckbox._.addEvent(document, "mousemove", Deckbox._.onmousemove);
         Deckbox._.addEvent(document, "mouseout", Deckbox._.onmouseout);
         Deckbox._.addEvent(document, "click", Deckbox._.click);
+    },
+
+    debounce: function(func, wait) {
+        let timeout;
+        return function (...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    preloadImages: function() {
+        const cardElements = Array.from(document.querySelectorAll(".card")).reverse();
+        for (let i = 0; i < cardElements.length; i++) {
+            const link = cardElements[i];
+            if (Deckbox._.needsTooltip(link)) {
+                document.body.appendChild(Deckbox._.preloadImg(link));
+            }
+        }
     }
 };
 
 /**
  * Call this to initialize or reinitialize (after xhr data load) card mouseover images.
  */
-Deckbox.load = function() {
+Deckbox.load = function(shouldDebounce) {
     $(".card").each(function() {
         $(this).data("tt", "https://deckbox.org/mtg/" + $(this).text().replace(/^[0-9 ]*/, "") + "/tooltip");
     });
-    var allLinks = document.getElementsByTagName("a");
-    for (var i = 0; i < allLinks.length; i++) {
-        var link = allLinks[i];
-        if (Deckbox._.needsTooltip(link)) {
-            document.body.appendChild(Deckbox._.preloadImg(link));
-        }
+    if (shouldDebounce) {
+        Deckbox._.debouncedLoadImages();
+    } else {
+        Deckbox._.preloadImages();
     }
 };
 
@@ -306,6 +326,8 @@ Deckbox.load = function() {
     if (!!window.attachEvent && !(Object.prototype.toString.call(window.opera) === "[object Opera]")) {
         Deckbox._.loadCSS(protocol + "//deckbox.org/assets/external/deckbox_tooltip_ie.css");
     }
+
+    Deckbox._.debouncedLoadImages = Deckbox._.debounce(Deckbox._.preloadImages, 250);
 
     /* Preload the tooltip images. */
     Deckbox._.onDocumentLoad(Deckbox.load);

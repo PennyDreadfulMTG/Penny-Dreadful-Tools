@@ -9,6 +9,8 @@ repos:
     -   id: check-yaml
     -   id: check-added-large-files
     -   id: requirements-txt-fixer
+    -   id: no-commit-to-branch
+        args: [-b, master]
     # -   id: pretty-format-json
     #     args:
     #     - --autofix

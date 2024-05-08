@@ -74,23 +74,7 @@ class View(BaseView):
         return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source
 
     def all_seasons(self) -> list[SeasonInfoDescription]:
-        seasonlist: list[SeasonInfoDescription] = [{
-            'name': 'All Time',
-            'code': 'all',
-            'code_lower': 'all',
-            'num': None,
-            'url': seasonized_url('all'),
-            'decks_url': url_for('seasons.decks', season_id='all'),
-            'league_decks_url': url_for('seasons.decks', season_id='all', deck_type=DeckType.LEAGUE.value),
-            'competitions_url': url_for('seasons.competitions', season_id='all'),
-            'archetypes_url': url_for('seasons.archetypes', season_id='all'),
-            'people_url': url_for('seasons.people', season_id='all'),
-            'cards_url': url_for('seasons.cards', season_id='all'),
-            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
-            'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
-            'legality_name': None,
-            'legal_cards_url': None,
-        }]
+        seasonlist: list[SeasonInfoDescription] = []
         num = 1
         current_code = seasons.current_season_code()
         for code in seasons.SEASONS:
@@ -114,6 +98,23 @@ class View(BaseView):
             num += 1
             if code == current_code:
                 break
+        seasonlist.append({
+            'name': 'All Time',
+            'code': 'all',
+            'code_lower': 'all',
+            'num': None,
+            'url': seasonized_url('all'),
+            'decks_url': url_for('seasons.decks', season_id='all'),
+            'league_decks_url': url_for('seasons.decks', season_id='all', deck_type=DeckType.LEAGUE.value),
+            'competitions_url': url_for('seasons.competitions', season_id='all'),
+            'archetypes_url': url_for('seasons.archetypes', season_id='all'),
+            'people_url': url_for('seasons.people', season_id='all'),
+            'cards_url': url_for('seasons.cards', season_id='all'),
+            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
+            'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
+            'legality_name': None,
+            'legal_cards_url': None,
+        })
         seasonlist.reverse()
         return seasonlist
 

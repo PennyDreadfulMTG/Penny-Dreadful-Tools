@@ -1631,6 +1631,7 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
     padding: 0;
     position: absolute;
     top: 100%;
+    right: 0;
 }
 
 .dd-input + .dd-menu {
@@ -1638,13 +1639,18 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
 }
 
 .dd-input:checked + .dd-menu {
-    display: block;
+    display: grid;
 }
 
 .dd-menu {
-  list-style-type: none;
-  position: absolute;
-  top: 100%;
+    background: var(--background);
+    border: 0.05rem solid var(--border);
+    grid-template-columns: repeat(4, 1fr);
+    list-style-type: none;
+    padding: 1em;
+    width: 15rem;
+    position: absolute;
+    top: 100%;
 }
 
 .dd-menu li {

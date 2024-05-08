@@ -1,9 +1,12 @@
 <label class="dropdown seasonchooser">
     <div class="dd-button"><i class="ss ss-{{season_code_lower}}"></i> {{season_name}} ▾</div>
     <input type="checkbox" class="dd-input">
-    <ul class="dd-menu">
+    <ol class="dd-menu">
+        {{! Skip two cells so that All and the current season are near to the cursor after opening the menu. }}
+        <span></span>
+        <span></span>
         {{#all_seasons}}
-            <li><a href="{{url}}"><i class="ss ss-{{code_lower}}"></i>{{name}}</a></li>
+            <li><a href="{{url}}"><i class="ss ss-{{code_lower}}"></i> {{#num}}{{num}}{{/num}}{{^num}}All{{/num}}</a></li>
         {{/all_seasons}}
-    </ul>
+    </ol>
 </label>

@@ -2489,10 +2489,7 @@ From https://codepen.io/mallendeo/pen/eLIiG
     height: 1rem;
     position: relative;
     cursor: pointer;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    user-select: none;
 }
 
 .toggle + .toggle-button:after, .toggle + .toggle-button:before {
@@ -2664,7 +2661,6 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     left: 0;
     width: 100%;
     height: 100%;
-    -webkit-transform-origin: 0 0;
     transform-origin: 0 0;
 }
 
@@ -2810,7 +2806,6 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     height: 8px;
     margin-left: 3px; /* space from the side */
     margin-top: 2px; /* space between target and stem */
-    -webkit-transform-origin: 0 0;
     transform-origin: 0 0;
 }
 
@@ -2843,7 +2838,6 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     float: left;
     width: 100%;
     height: 100%;
-    -webkit-transform-origin: 0 0;
     transform-origin: 0 0;
     position: relative;
 }
@@ -2857,7 +2851,6 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 }
 
 .tpd-stem-side-inversed {
-    -webkit-transform: scale(-1, 1);
     transform: scale(-1, 1);
 }
 
@@ -2944,17 +2937,14 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 }
 
 .tpd-stem-transform-left {
-    -webkit-transform: rotate(-90deg) scale(-1, 1);
     transform: rotate(-90deg) scale(-1, 1);
 }
 
 .tpd-stem-transform-right {
-    -webkit-transform: rotate(90deg) translate(0, -100%);
     transform: rotate(90deg) translate(0, -100%);
 }
 
 .tpd-stem-transform-bottom {
-    -webkit-transform: scale(1, -1) translate(0, -100%);
     transform: scale(1, -1) translate(0, -100%);
 }
 

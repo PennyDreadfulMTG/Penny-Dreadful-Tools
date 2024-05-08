@@ -1074,6 +1074,10 @@ Some pages still send giant tables of data but logsite and deck table have pagin
     text-align: center;
 }
 
+.paginate {
+    user-select: none; /* So when you're clicking (and more importantly double-clicking) the essentially graphical pagination arrows you don't end up with an ugly text selection highlight. */
+}
+
 /*
 
 Menu

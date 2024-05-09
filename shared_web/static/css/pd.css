@@ -1319,75 +1319,98 @@ z-index
 
 Although z-index is way more complicated than this (google for "stacking contexts") here is what we are trying to achieve as if z-index worked globally.
 
-100 page, achievement bar background
-125 achievement bar actual bar
-150 achievement bar summary (text over bar), achievement bar symbol, achievement bar slidedown indicator
-175 achievement earned indicator (has a tooltip so needs to be above the rest of the bar)
-200 badge
-250 status-bar
-275 season dropdown
-300 dropdown menu
-400 card and text tooltips
+Copying from Material Design we have six levels from 0-5. (We currently only use five, though.)
+
+0 (0dp):
+    Header
+    Main
+    Footer
+
+1 (1dp):
+    Season picker (and anything else semipermanent that needs to go over normal content but should not appear over the dropdown submenu, the mobile menu, or the status bar)
+
+2 (3dp):
+    Subnav (desktop) – this float down over most things
+
+3 (6dp):
+    Status bar (top or bottom)
+    Nav (mobile)
+
+– Above here reserved for active states only, no object's resting state is at level 4 or 5.
+
+4 (8dp):
+    Card hover tooltip
+    Text hover tooltip
+
+5 (12dp): Not in use as we don't have anything that gets in an active state and needs to go over anything else. Less is more!
+
+Also copying from Material Design we have bigger and bigger drop shadows the higher "up" you go.
 
 */
 
-/* Create separate stacking contexts for each top-level element in the page by positioning them and giving them approximately sensible z-index values.
-   See https://www.sitepoint.com/managing-css-stacking-contexts-hostile-environment/ */
+/*
+
+Give each of the major page elements relative positioning so that if we use relative positioning in one of our pages
+that element doesn't suddenly start floating above the subnav and the status bar, etc. (For example the bars on /achievements).
+
+ */
 header, nav, main, footer {
     position: relative;
 }
 
-header {
-    z-index: 40;
+.dd-menu {
+    z-index: 1;
+    box-shadow: var(--elevation-1);
 }
 
-nav {
-    z-index: 30;
+/* The way the desktop submenu is implemented it floats over the top of most other stuff. */
+@media only screen and (min-width: 641px) {
+    .submenu-container {
+        z-index: 2;
+        box-shadow: var(--elevation-2);
+    }
 }
 
-main {
-    z-index: 20;
-}
+/*
 
-footer {
-    z-index: 10;
-}
+This is a bit of a hack to have the badge appear "above" the menu item so that clicking it works.
+Ideally they're at the same level but this appears later in the HTML so it's still clickable.
 
-.achievement-bar .bar {
-    z-index: 125;
-}
-
-.achievement-bar .summary, .achievement-bar .expansion-indicator {
-    z-index: 150;
-}
-
-.achievement-bar .earned {
-    z-index: 175;
-}
-
+ */
 .badge-holder {
-    z-index: 200;
+    z-index: 3;
+    /* This is just a div containing the floating number/link to the admin archetypes page and doesn't need a box shadow. */
 }
 
 .status-bar {
-    z-index: 250;
+    z-index: 3;
+    box-shadow: var(--elevation-3);
 }
 
-.dd-menu {
-    z-index: 275;
-}
-
-.has-submenu > a:after {
-    z-index: 300;
-}
-
-.submenu-container {
-    z-index: 300;
+@media only screen and (max-width: 640px) {
+    nav {
+        z-index: 3;
+        box-shadow: var(--elevation-3);
+    }
 }
 
 /* These classes use nonstandard underscores because they come from third party-generated html. */
 .deckbox_i_tooltip, .deckbox_t_tooltip, .tpd-tooltip {
-    z-index: 400 !important /* csslint allow: important */; /* Override 3rd party css loaded by js. */
+    z-index: 4 !important /* csslint allow: important */; /* Override 3rd party css loaded by js. */
+}
+
+.deckbox_i_tooltip, .deckbox_t_tooltip {
+    box-shadow: var(--elevation-4);
+}
+
+:root {
+    /* Derived from https://github.com/material-components/material-web/blob/main/elevation/internal/_elevation.scss */
+                   /* Key light shadow */            /* Ambient light shadow */
+    --elevation-1: 0px 1px 2px 0px rgb(0 0 0 / 30%), 0px 1px 3px 1px rgb(0 0 0 / 15%);
+    --elevation-2: 0px 1px 2px 0px rgb(0 0 0 / 30%), 0px 2px 6px 2px rgb(0 0 0 / 15%);
+    --elevation-3: 0px 1px 3px 0px rgb(0 0 0 / 30%), 0px 4px 8px 3px rgb(0 0 0 / 15%);
+    --elevation-4: 0px 2px 3px 0px rgb(0 0 0 / 30%), 0px 6px 10px 4px rgb(0 0 0 / 15%);
+    --elevation-5: 0px 4px 4px 0px rgb(0 0 0 / 30%), 0px 8px 12px 6px rgb(0 0 0 / 15%);
 }
 
 /*
@@ -1632,7 +1655,7 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
 .dropdown .dd-menu {
     border: 0.05rem solid var(--light-border);
     list-style-type: none;
-    padding: 0;
+    padding: 1em;
     position: absolute;
     top: 100%;
     right: 0;

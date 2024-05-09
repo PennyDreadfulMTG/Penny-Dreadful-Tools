@@ -2,13 +2,13 @@
     {{#achievements}}
         <div class="achievement-category">
             <div class="achievement-bar has-more-info">
-                {{#legend}}
-                    <span class="earned" title="{{legend}}">🏆</span>
-                {{/legend}}
                 <span class="background"></span>
                 <span class="bar" style="width: {{percent}}%"></span>
                 <span class="summary"><b>{{title}}</b> {{summary}}</span>
                 <span class="expansion-indicator">▾</span>
+                {{#legend}}
+                    <span class="earned" title="{{legend}}">🏆</span>
+                {{/legend}}
             </div>
             <div class="more-info">
                 <p>{{{description_safe}}}</p>

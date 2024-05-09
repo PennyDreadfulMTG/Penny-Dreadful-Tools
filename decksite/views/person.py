@@ -65,6 +65,7 @@ class Person(View):
         self.has_unique_cards = len(self.unique_cards) > 0
         self.cards = self.trailblazer_cards + self.unique_cards
         self.seasons_active: list[dict[str, object]] = []
+        self.legal_seasons = list(seasons_active)
         self.setup_active_seasons(seasons_active)
 
     def __getattr__(self, attr: str) -> Any:

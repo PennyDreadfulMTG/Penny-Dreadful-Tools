@@ -521,6 +521,7 @@ Color attributes are mostly found with their related structural elements in this
     --line: var(--black);
     --highlight: var(--soft-tangerine);
     --inactive: var(--dark-gray);
+    --disabled: var(--light-gray);
     --error: var(--red);
     --button: var(--light-gray);
     --text-over-images: var(--white);
@@ -1601,6 +1602,7 @@ ul.buttons li {
     list-style-type: none;
     padding: 0.422em 1em;
     text-align: center;
+    user-select: none;
 }
 
 ul.buttons > li {
@@ -1626,7 +1628,7 @@ ul.buttons > li {
     padding: 0;
 }
 
-.banner ul.buttons li a, .banner ul.buttons li .dd-button {
+.banner ul.buttons li a, .banner ul.buttons li .dd-button, .banner ul.buttons li div.disabled {
     display: block;
     padding: 0.422em 1em;
 }
@@ -1680,19 +1682,23 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
     top: 100%;
 }
 
-.dd-menu li {
+.dd-menu li a {
     cursor: pointer;
     float: none;
     margin: 0;
     white-space: nowrap;
 }
 
-.dd-menu li:hover {
+.dd-menu li a:hover {
     background-color: var(--highlight);
 }
 
 .dd-menu li a {
     display: block;
+}
+
+.dd-menu li div.disabled {
+    color: var(--disabled);
 }
 
 /*

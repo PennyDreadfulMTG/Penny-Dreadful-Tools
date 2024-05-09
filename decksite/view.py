@@ -24,6 +24,7 @@ class SeasonInfoDescription(TypedDict, total=False):
     name: str
     code: str
     code_lower: str
+    disabled: bool
     num: int | None
     url: str
     decks_url: str
@@ -46,6 +47,7 @@ class View(BaseView):
         self.hide_active_runs = not session.get('admin', False)
         self.show_seasons: bool = False
         self.legal_formats: list[str] | None = None
+        self.legal_seasons: list[int] | None = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.is_person_page: bool | None = None
         self.next_tournament_name = None
@@ -82,6 +84,7 @@ class View(BaseView):
                 'name': seasons.season_name(num),
                 'code': code,
                 'code_lower': code.lower(),
+                'disabled': False,
                 'num': num,
                 'url': seasonized_url(num),
                 'decks_url': url_for('seasons.decks', season_id=num),
@@ -102,6 +105,7 @@ class View(BaseView):
             'name': 'All Time',
             'code': 'all',
             'code_lower': 'all',
+            'disabled': False,
             'num': None,
             'url': seasonized_url('all'),
             'decks_url': url_for('seasons.decks', season_id='all'),
@@ -117,6 +121,13 @@ class View(BaseView):
         })
         seasonlist.reverse()
         return seasonlist
+
+    def season_chooser(self) -> list[SeasonInfoDescription]:
+        ss = self.all_seasons()
+        for season in ss:
+            if self.legal_seasons and season['num'] and season['num'] not in self.legal_seasons:
+                season['disabled'] = True
+        return ss
 
     def favicon_url(self) -> str:
         return url_for('favicon', rest='.ico')

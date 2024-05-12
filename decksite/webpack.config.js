@@ -7,6 +7,7 @@ const config = {
         __dirname + "/../shared_web/static/js/headtoheadtable.jsx",
         __dirname + "/../shared_web/static/js/leaderboardtable.jsx",
         __dirname + "/../shared_web/static/js/matchtable.jsx",
+        __dirname + "/../shared_web/static/js/metagamegrid.jsx",
         __dirname + "/../shared_web/static/js/persontable.jsx",
         __dirname + "/../shared_web/static/js/rotationtable.jsx",
     ],

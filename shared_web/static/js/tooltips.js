@@ -91,7 +91,7 @@ Deckbox._ = {
         img.style.display = "none";
         img.style.width = "1px";
         img.style.height = "1px";
-        img.src = "https://deckbox.org/mtg/" + $(link).text().replace(/^[0-9 ]*/, "") + "/tooltip";
+        img.src = Deckbox._.url(link);
         return img;
     },
 
@@ -299,6 +299,16 @@ Deckbox._ = {
                 document.body.appendChild(Deckbox._.preloadImg(link));
             }
         }
+    },
+
+    url: function (e) {
+        const name = Deckbox._.name(e);
+        return "https://deckbox.org/mtg/" + name.replace(/^[0-9 ]*/, "") + "/tooltip";
+    },
+
+    name: function (e) {
+        const name = $(e).data("name");
+        return name ? name : $(e).text();
     }
 };
 
@@ -307,7 +317,7 @@ Deckbox._ = {
  */
 Deckbox.load = function(shouldDebounce) {
     $(".card").each(function() {
-        $(this).data("tt", "https://deckbox.org/mtg/" + $(this).text().replace(/^[0-9 ]*/, "") + "/tooltip");
+        $(this).data("tt", Deckbox._.url(this));
     });
     if (shouldDebounce) {
         Deckbox._.debouncedLoadImages();

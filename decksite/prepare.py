@@ -1,7 +1,10 @@
 from collections.abc import Sequence
 
+from anytree import PreOrderIter
 from flask import g, session, url_for
 
+from decksite.data import archetype
+from decksite.data.archetype import Archetype
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
 from magic import fetcher, seasons
@@ -146,6 +149,19 @@ def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
         if show_rounds:
             m.display_round = display_round(m)
 
+def prepare_archetypes(archetypes: list[Archetype], current_id: int | None, tournament_only: bool, season_id: int | str | None) -> None:
+    for a in archetypes:
+        prepare_archetype(a, archetypes, current_id, tournament_only, season_id)
+
+def prepare_archetype(a: archetype.Archetype, archetypes: list[archetype.Archetype], current_id: int | None, tournament_only: bool, season_id: int | str | None) -> None:
+    a.current = a.id == current_id
+    a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
+    archetype_ids = {a.id for a in archetypes}
+    for b in [b for b in PreOrderIter(a) if b.id in archetype_ids]:
+        b['url'] = url_for('seasons.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
+        # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
+        b['depth'] = b.depth
+
 def display_round(m: Container) -> str:
     if not m.get('elimination'):
         return m.round
@@ -193,15 +209,15 @@ def set_stars_and_top8(d: Deck) -> None:
 
 def colors_html(colors: list[str], colored_symbols: list[str]) -> str:
     total = len(colored_symbols)
+    s = '<div class="mana-bar">'
     if total == 0:
-        return '<span class="mana" style="width: 3rem"></span>'
-    s = ''
+        s += '<span class="stacked-bar mana" style="flex-grow: 1"></span>'  # For decks with only generic mana costs we'll show an empty bar, not nothing.
     for color in colors:
         n = colored_symbols.count(color)
-        one_pixel_in_rem = 0.05  # See pd.css base font size for the derivation of this value.
-        width = (3.0 - one_pixel_in_rem * len(colors)) / total * n
-        s += f'<span class="mana mana-{color}" style="width: {width}rem"></span>'
-    return s
+        width = max(round(100 * n / total), 0)
+        if width > 0:
+            s += f'<span class="stacked-bar mana-{color}" style="flex-grow: {width}"></span>'
+    return s + '</div>'
 
 def set_season_icon(d: Deck) -> None:
     code = seasons.season_code(d.season_id)

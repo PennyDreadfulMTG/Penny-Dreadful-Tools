@@ -1,4 +1,5 @@
 import { DataManager } from "./datamanager";
+import PropTypes from "prop-types";
 import React from "react";
 
 /*
@@ -118,3 +119,8 @@ export const renderCard = (card) => (
         }
     </React.Fragment>
 );
+
+Table.propTypes = {
+    "renderHeaderRow": PropTypes.func.isRequired,
+    "renderRow": PropTypes.func.isRequired
+};

@@ -313,7 +313,7 @@ p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date, .deck-name, .rotation p, .stats p {
+table, ul.decklist.li, .news .date, .deck-name, .rotation p, .stats p, .metagame .archetype {
     font-variant-numeric: normal;
 }
 
@@ -606,12 +606,6 @@ main h2 {
     border: 0;
 }
 
-/* Prevent metagame text from overflowing the content area, scroll instead.
-   Not applicable to .content because that hides marginalia on deck tables. */
-.content-metagame {
-    overflow: scroll;
-}
-
 main h1 a:visited, main h2 a:visited {
     color: inherit;
 }
@@ -636,13 +630,13 @@ a, main table.calendar a, main .intro .details a, .details a, main li a.force-li
 
 main a:hover, main table.calendar a:hover, .details a:hover, main li a.force-link-style:hover {
     background-color: var(--highlight);
-    border-radius: 0.317em;
+    border-radius: var(--text-rounded-corners);
     transition-duration: 1s;
     transition-property: background;
 }
 
 /* There are a lot of places we want plain links not heading-caps, even in the main content area. */
-main td a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a {
+main td a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a, .metagame .archetype {
     font-family: inherit;
     font-variant-numeric: normal;
     text-transform: none;
@@ -671,7 +665,7 @@ a.external:after {
 }
 
 a.interesting, a.interesting:hover {
-    border-radius: 0.317em;
+    border-radius: var(--text-rounded-corners);
     margin-left: -0.317rem;
     padding: 0.05rem 0.317rem;
 }
@@ -767,10 +761,12 @@ main th {
 }
 
 main th, main td {
+    line-height: var(--table-line-height);
     max-width: 13em;
     overflow: hidden;
-    padding: 0.178em 0.563em;
+    padding: calc(5rem / 20) 0.563em;
     text-overflow: ellipsis;
+    vertical-align: bottom; /* This makes graphical elements like the mana bar start at the bottom of the table cell rather than at the baseline of the text per the Meyer reset. */
     white-space: nowrap;
 }
 
@@ -778,7 +774,7 @@ main th, main td {
 @media only screen and (max-width: 640px) {
     main th, main td {
         max-width: 7em;
-        padding: 0.178em 0.32em;
+        padding: calc(5rem / 20) 0.32em;
     }
 }
 
@@ -857,7 +853,7 @@ div.live {
     margin-bottom: 2rem;
 }
 
-.live .table-header {
+.live .table-header, .grid-header {
     color: var(--deemphasized-text);
     display: flex;
     font-size: var(--table-font-size); /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
@@ -865,7 +861,7 @@ div.live {
     margin-bottom: 1em; /* Same as `main table`'s margin-bottom so that top table extras are the same distance from the table as the pagination at the bottom. */
 }
 
-.live .table-header .message {
+.live .table-header .message, .grid-header .message {
     margin-left: 1rem;
     margin-right: 1rem;
     flex-grow: 1; /* The message can take up all the space that the search box and the pageSize dropdown do not. */
@@ -1025,10 +1021,6 @@ th.angled {
 th.angled .inner {
     transform: translate(1rem, 5rem) rotate(315deg);
     width: 1em;
-}
-
-.matchup-grid {
-    padding-right: 5rem; /* Accommodate the angled headers so we don't get a scroll bar on small (early season) matchup grids. See #5991. */
 }
 
 /*
@@ -1478,23 +1470,38 @@ Calendar
 
 /*
 
-Mana bar
+Stacked bar
 
 We show the color composition of a deck with a horizontal bar made up of the colors of Magic as printed on cards in their mana symbols.
+We also show the meta share of a deck in this way.
 
 */
 
-.mana:nth-child(1) {
+.stacked-bar:nth-child(1) {
     border-left: 0.05rem solid var(--border);
 }
 
-.mana {
+.stacked-bar {
     border-bottom: 0.05rem solid var(--border);
     border-right: 0.05rem solid var(--border);
     border-top: 0.05rem solid var(--border);
+    box-sizing: border-box;
     display: inline-block;
-    height: 1em; /* This appears in table rows so needs to use be relative. */
-    vertical-align: text-top;
+    height: calc(18rem / 20); /* height (18px) + td.contains-mana-bar padding-top (3px) + td.contains-mana-bar padding-bottom (4px) must equal main td padding-top (5px) + main td padding-bottom (5px) + main td font-size (15px) * main td line-height (1). */
+}
+
+.stacked-bar-highlight {
+    background-color: var(--highlight);
+}
+
+.mana-bar {
+    display: flex;
+    width: inherit;
+}
+
+td.contains-mana-bar {
+    padding: calc(3rem / 20) 0.563em calc(4rem / 20);
+    width: 3rem;
 }
 
 .mana-W {
@@ -1594,6 +1601,11 @@ Button Bars
 
 */
 
+:root {
+    --button-rounded-corners: 0.563em;
+    --text-rounded-corners: 0.317rem;
+}
+
 ul.buttons li {
     background: var(--background);
     color: var(--deemphasized-text);
@@ -1607,7 +1619,7 @@ ul.buttons li {
 
 ul.buttons > li {
     border: 0.05rem solid var(--light-border);
-    border-radius: 0.563em;
+    border-radius: var(--button-rounded-corners);
     margin-left: 0.75rem;
 }
 
@@ -1711,7 +1723,7 @@ Cards are 445px tall images that are usually 312px wide but may be wider if they
 
 .card-img {
     border: solid black 0.3rem;
-    border-radius: 0.6rem;
+    border-radius: var(--button-rounded-corners);
     height: 15rem;
     margin-top: 1rem;
     width: 10.517rem;
@@ -2452,32 +2464,148 @@ p.detail .text {
     position: relative;
 }
 
-/*
-
-Charts
-
-*/
-
-.content-metagame section {
-    max-width: 100%;
+:root {
+    --metagame-tile-side-border: calc(8rem / 20);
 }
 
-.variable-height-bar-chart {
-    margin-top: 1rem;
-    overflow: hidden; /* Prevent a scrollbar if height is a fraction of a pixel taller than the container. */
+/* This is the containing grid from the page HTML. */
+.metagamegrid {
     width: 100%;
 }
 
-.variable-height-bar-chart a {
-    border: 0.05rem solid var(--border);
-    color: var(--text-over-images);
-    display: block;
-    font-family: var(--main-text-font-family);
-    font-variant-numeric: normal;
-    padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metagame.LEFT_PADDING. */
-    text-shadow: 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000;
-    text-transform: none;
+/* This is the grid of tiles inside the component. */
+.metagame-grid {
+    display: grid;
+    gap: 0.422rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    margin-bottom: 1rem;
+}
+
+.metagame-grid a:hover {
+    border-radius: inherit; /* Don't round the corners on hover. */
+}
+
+.metagame-grid .archetype {
+    border: 0.05rem solid #ccc;
+    font-size: var(--table-font-size);
+    padding: var(--metagame-tile-side-border);
+}
+
+.metagame-grid .archetype-name {
+    font-size: 18px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.metagame-grid .row {
+    margin: 0 0 8px;
+}
+
+.metagame-grid .row:last-child {
+    margin-bottom: 0;
+}
+
+.metagame-grid .flex-row {
+    display: flex;
+}
+
+.metagame-grid .cell {
+    flex: 1;
+}
+
+.metagame-grid .cell-2 {
+    flex: 2;
+}
+
+.metagame-grid .cell-3 {
+    flex: 3;
+}
+
+.metagame-grid .c {
+    text-align: center;
+}
+
+.metagame-grid .r {
+    text-align: right;
+}
+
+.metagame-grid .additional {
+    color: #ccc;
+    font-variant-numeric: oldstyle-nums;
+}
+
+.metagame-grid .additional span {
+    margin-left: 8px;
+}
+
+.metagame-grid .percentage-with-additional {
+    color: var(--deemphasized-text);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.metagame-grid .percentage-with-additional .percentage {
+    color: var(--text);
+    font-variant-numeric: normal;
+}
+
+.metagame-grid .key-cards {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 0.05rem;
+}
+
+.metagame-grid .key-card {
+    background-color: var(--disabled);
+    display: flex;
+    margin-left: calc(-1 * var(--metagame-tile-side-border));
+    margin-right: calc(-1 * var(--metagame-tile-side-border));
+    margin-bottom: 9px;
+}
+
+.metagame-grid .key-card .card {
+    border: 0;
+}
+
+.metagame-grid .card {
+    border: 0.05rem solid var(--line);
+    box-sizing: border-box;
+    display: block;
+    margin: 0;
+    width: 100%;
+}
+
+/* Wild hack to make the card images square even though the width is not known until layout time – https://stackoverflow.com/questions/5445491/height-equal-to-dynamic-width-css-fluid-layout#comment27691932_5445491 */
+.metagame-grid .card:before {
+    content: "";
+    display: block;
+    margin-top: 64%;
+}
+
+.metagame-grid .key-cards .card:before {
+    margin-top: 100%;
+}
+
+.metagame-grid .meta-share {
+    display: flex;
+    width: 100%;
+}
+
+.metagame-grid .meta-share div {
+    flex-basis: 0;
+}
+
+.metagame-grid .meta-share div:last-child {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.metagame-grid .colors {
+    height: 15px;
 }
 
 /*

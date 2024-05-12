@@ -11,7 +11,6 @@ from decksite.data import deck as ds
 from decksite.data import match
 from decksite.data import matchup as mus
 from decksite.data import person as ps
-from decksite.data import playability
 from decksite.data import season as ss
 from decksite.deck_type import DeckType
 from decksite.views import Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons
@@ -36,9 +35,7 @@ def decks(deck_type: str | None = None) -> str:
 @cached()
 def metagame(deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
-    disjoint_archetypes = archs.load_disjoint_archetypes(season_id=get_season_id(), tournament_only=tournament_only)
-    key_cards = playability.key_cards(get_season_id())
-    view = Metagame(disjoint_archetypes, tournament_only=tournament_only, key_cards=key_cards)
+    view = Metagame(tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/decks/<int:deck_id>/')

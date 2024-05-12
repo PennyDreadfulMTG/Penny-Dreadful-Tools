@@ -16,12 +16,14 @@ from decksite.data import playability, query
 from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
+from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
-from magic import layout, oracle, rotation, seasons, tournaments
-from magic.models import Deck
+from magic import image_fetcher, layout, oracle, rotation, seasons, tournaments
+from magic.colors import find_colors
+from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
+from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
@@ -413,6 +415,48 @@ def archetypes_api() -> Response:
     r = {'total': len(data), 'objects': data}
     return return_camelized_json(r)
 
+@APP.route('/api/archetypes2')
+@APP.route('/api/archetypes2/')
+def archetypes2_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of archetypes.
+
+    Input:
+        {
+            'page': <int>,
+            'pageSize': <int>,
+            'seasonId': <int|'all'?>
+        }
+    Output:
+        {
+            'page': <int>,
+            'objects': [<entry>],
+            'total': <int>
+        }
+
+    """
+    order_by = clauses.archetype_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    page, page_size, limit = pagination(request.args)
+    tournament_only = request.args.get('deckType') == 'tournament'
+    season_id = seasons.season_id(str(request.args.get('seasonId')), None)
+    results, total = archs.load_disjoint_archetypes(order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
+    archetype_key_cards = playability.key_cards_long(season_id)
+    cards = oracle.cards_by_name()
+    for result in results:
+        kcs = [cards[name] for name in archetype_key_cards.get(result.id, [])]
+        result.key_cards = [c for c in kcs if not is_uninteresting(c)][0:5]
+        result.num_matches = (result.wins or 0) + (result.losses or 0) + (result.draws or 0)
+        colors, colored_symbols = find_colors(oracle.load_cards(archetype_key_cards.get(result.id, [])))
+        result.colors_safe = colors_html(colors, colored_symbols)
+        kcs = [Card({'name': c['name'], 'url': image_fetcher.scryfall_image(c, 'art_crop')}) for c in result.key_cards]
+        result.key_cards = kcs
+    prepare_archetypes(results, None, tournament_only, season_id)
+    # Remove infinite loops from the results
+    results = [Container({k: v for k, v in result.items() if 'NodeMixin' not in k}) for result in results]
+    r = {'page': page, 'total': total, 'objects': results}
+    resp = return_camelized_json(r)
+    return resp
+
 @APP.route('/api/rotation/cards')
 @APP.route('/api/rotation/cards/')
 def rotation_cards_api() -> Response:
@@ -781,3 +825,8 @@ def pagination(args: dict[str, str]) -> tuple[int, int, str]:
 
 def send_scryfall_two_names(lo: str) -> bool:
     return lo in layout.has_two_names() and lo not in layout.has_meld_back()
+
+def is_uninteresting(c: Card) -> bool:
+    is_basic = 'Basic' in c.type_line
+    is_dual = '} or {' in c.oracle_text or '}, or {' in c.oracle_text
+    return c.is_land() and (is_basic or is_dual)

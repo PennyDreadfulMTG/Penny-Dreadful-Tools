@@ -112,7 +112,7 @@ export class DataManager extends React.Component {
         const start = objects.length === 0 ? 0 : page * this.state.pageSize + 1;
         const end = Math.min(start + this.state.pageSize - 1, this.state.total);
         const total = this.state.total;
-        return { end, total }
+        return { start, end, total };
     }
 
     movePage(page) {
@@ -137,7 +137,7 @@ DataManager.propTypes = {
     "archetypeId": PropTypes.string,
     "baseQuery": PropTypes.string,
     "cardName": PropTypes.string,
-    "className": PropTypes.oneOf(["", "with-marginalia"]),
+    "className": PropTypes.oneOf(["", "with-marginalia", "metagame-grid"]),
     "competitionId": PropTypes.string,
     "competitionFlagId": PropTypes.string,
     "competitionSeriesId": PropTypes.string,
@@ -149,8 +149,6 @@ DataManager.propTypes = {
     "pageSize": PropTypes.string.isRequired,
     "personId": PropTypes.string,
     "reloadCards": PropTypes.bool,
-    "renderHeaderRow": PropTypes.func.isRequired,
-    "renderRow": PropTypes.func.isRequired,
     "searchPrompt": PropTypes.string,
     "seasonId": PropTypes.string,
     "showArchetype": PropTypes.string,

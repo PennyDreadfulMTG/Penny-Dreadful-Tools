@@ -1,3 +1,5 @@
+from scipy.stats import norm
+
 from decksite.data import achievements
 from decksite.data.query import person_query
 from decksite.deck_type import DeckType
@@ -170,6 +172,28 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, {order_by_rank}'
 
+def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
+    if not sort_by:
+        sort_by = 'quality'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    sort_options = {
+        'name': ('name', 'ASC'),
+        'metaShare': ('SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER ()', 'DESC'),
+        'quality': (wilson_lower_bound_sql(), 'DESC'),
+        'winPercent': ('SUM(wins) / NULLIF(SUM(wins + losses), 0)', 'DESC'),
+        'tournamentWins': ('tournament_wins', 'DESC'),
+        'tournamentTop8s': ('tournament_top8s', 'DESC'),
+        'perfectRuns': ('perfect_runs', 'DESC'),
+    }
+    col, default_order = sort_options[sort_by]
+    if sort_order == 'AUTO':
+        sort_order = default_order
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    return f'{col} {sort_order}, {wilson_lower_bound_sql()} DESC, num_decks DESC, win_percent DESC, name ASC'
+
 def exclude_active_league_runs(except_person_id: int | None) -> str:
     clause = """
         d.retired
@@ -259,3 +283,18 @@ def pagination(args: dict[str, str]) -> tuple[int, int, str]:
         raise InvalidArgumentException(f'Page size of {page_size} greater than maximum of {MAX_LIVE_TABLE_PAGE_SIZE}')
     start = page * page_size
     return page, page_size, f'LIMIT {start}, {page_size}'
+
+
+VERY_HIGH_CONFIDENCE = 0.99
+HIGH_CONFIDENCE = 0.95
+
+# Calculate the lower using the Wilson interval at 95% confidence.
+# See https://discord.com/channels/207281932214599682/230056266938974218/691464882998214686
+# See https://stackoverflow.com/a/10029645/375262
+# See https://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+def wilson_lower_bound_sql(phat: str = 'SUM(wins) / SUM(wins + losses)', n: str = 'SUM(wins + losses)', confidence_level: float = VERY_HIGH_CONFIDENCE) -> str:
+    z = z_value(confidence_level)
+    return f'({phat} + {z} * {z} / (2 * {n}) - {z} * SQRT(({phat} * (1 - {phat}) + {z} * {z} / (4 * {n})) / {n})) / (1 + {z} * {z} / {n})'
+
+def z_value(confidence_level: float) -> float:
+    return norm.ppf((1 + confidence_level) / 2)

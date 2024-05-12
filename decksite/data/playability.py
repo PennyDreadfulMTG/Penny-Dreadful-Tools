@@ -8,6 +8,8 @@ from shared.decorators import retry_after_calling
 from shared.pd_exception import DatabaseNoSuchTableException
 
 SIDEBOARD_WEIGHT = 0.2
+# At the time of writing (May 2024) 0.3 finds at least one key card for any archetype in any season. 0.16 finds five (for /metagame). .1 then seems like a nice baseline to make sure we get "a deck" back. Pretty arbitrary.
+USEFUL_PLAYABILITY_THRESHOLD = 0.1
 
 def preaggregate() -> None:
     preaggregate_legal_cards()
@@ -54,6 +56,34 @@ def key_cards(season_id: int) -> dict[int, str]:
             p.name
     """
     return {r['archetype_id']: r['name'] for r in db().select(sql)}
+
+
+@retry_after_calling(preaggregate)
+def key_cards_long(season_id: int) -> dict[int, list[str]]:
+    if season_id:
+        table = '_season_archetype_playability'
+        where = f'p.season_id = {season_id}'
+    else:
+        table = '_archetype_playability'
+        where = 'TRUE'
+    where = f'({where}) AND p.playability > {USEFUL_PLAYABILITY_THRESHOLD}'
+    sql = f"""
+        SELECT
+            p.archetype_id,
+            p.name
+        FROM
+            {table} AS p
+        WHERE
+            {where}
+        ORDER BY
+            p.archetype_id,
+            p.playability DESC,
+            p.name
+    """
+    r: dict[int, list[str]] = {}
+    for row in db().select(sql):
+        r[row['archetype_id']] = r.get(row['archetype_id'], []) + [row['name']]
+    return r
 
 @retry_after_calling(preaggregate)
 def playability() -> dict[str, float]:
@@ -265,7 +295,8 @@ def preaggregate_season_archetype_playability() -> None:
             playability DECIMAL(6,5) NOT NULL,
             PRIMARY KEY (name, season_id, archetype_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            INDEX idx_archetype_id_playability_name (archetype_id, playability, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             sacc.name,
@@ -394,7 +425,8 @@ def preaggregate_archetype_playability() -> None:
             archetype_id INT NOT NULL,
             playability DECIMAL(6,5) NOT NULL,
             PRIMARY KEY (name, archetype_id),
-            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            INDEX idx_archetype_id_playability_name (archetype_id, playability, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             acc.name,

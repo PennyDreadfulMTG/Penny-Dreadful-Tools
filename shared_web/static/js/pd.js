@@ -26,6 +26,7 @@ PD.init = function() {
     PD.initSignupDeckChooser();
     PD.initPersonalization();
     PD.renderCharts();
+    // $(".archetype-name").fitText(0.8);
 };
 
 PD.initDismiss = function() {

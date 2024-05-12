@@ -8,6 +8,7 @@ from decksite.data import query, season
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, seasons
+from magic.colors import find_colors
 from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, logger
 from shared import redis_wrapper as redis
@@ -256,25 +257,7 @@ def load_decks_heavy(where: str = 'TRUE',
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 # We also ignore split and aftermath cards so if you are genuinely using a color in a split card but have no other cards of that color we won't claim it as one of the deck's colors.
 def set_colors(d: Deck) -> None:
-    deck_colors: set[str] = set()
-    deck_colored_symbols: list[str] = []
-    for c in [entry.card for entry in d.maindeck + d.sideboard]:
-        for cost in c.get('mana_cost') or ():
-            if c.layout == 'split':
-                continue  # They might only be using one half so ignore it.
-            if c.type_line == 'Instant — Trap':
-                continue  # People often sideboard off-colour traps.
-            if c.layout == 'modal_dfc':
-                continue  # They might only be using one half so ignore it.
-            if c.name == 'Damn':
-                continue  # They might only be using the overload.
-            card_symbols = mana.parse(cost)
-            card_colors = mana.colors(card_symbols)
-            deck_colors.update(card_colors['required'])
-            card_colored_symbols = mana.colored_symbols(card_symbols)
-            deck_colored_symbols += card_colored_symbols['required']
-    d.colors = mana.order(deck_colors)
-    d.colored_symbols = deck_colored_symbols
+    d.colors, d.colored_symbols = find_colors([entry.card for entry in d.maindeck + d.sideboard])
 
 def set_legality(d: Deck) -> None:
     d.legal_formats = legality.legal_formats(d)

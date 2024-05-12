@@ -3,7 +3,6 @@ import sys
 from typing import Any, TypedDict, cast
 
 import inflect
-from anytree.iterators import PreOrderIter
 from babel import Locale
 from flask import request, session, url_for
 from flask_babel import gettext, ngettext
@@ -238,17 +237,7 @@ class View(BaseView):
         prepare.prepare_people(getattr(self, 'people', []))
 
     def prepare_archetypes(self) -> None:
-        for a in getattr(self, 'archetypes', []):
-            self.prepare_archetype(a, getattr(self, 'archetypes', []), self.tournament_only)
-
-    def prepare_archetype(self, a: archetype.Archetype, archetypes: list[archetype.Archetype], tournament_only: bool = False) -> None:
-        a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-        a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
-        archetype_ids = {a.id for a in archetypes}
-        for b in [b for b in PreOrderIter(a) if b.id in archetype_ids]:
-            b['url'] = url_for('.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
-            # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
-            b['depth'] = b.depth
+        prepare.prepare_archetypes(getattr(self, 'archetypes', []), getattr(self, 'archetype', {}).get('id', None), getattr(self, 'tournament_only', False), self.season_id())
 
     def prepare_leaderboards(self) -> None:
         for leaderboard in getattr(self, 'leaderboards', []):

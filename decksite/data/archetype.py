@@ -482,7 +482,8 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            COUNT(*) OVER () AS total
         FROM
             archetype AS a
         LEFT JOIN
@@ -497,11 +498,12 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
         ORDER BY
             {order_by}
     """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by or 'TRUE')
-    return archetype_list_from(sql, order_by is None)
+    archs, _ = archetype_list_from(sql, order_by is None)
+    return archs
 
 # Load a list of all archetypes where archetypes categories do NOT include the stats of their children. Thus Aggro is only decks assigned directly to Aggro and does not include Red Deck Wins. See also load_archetypes that does it the other way.
 @retry_after_calling(preaggregate)
-def load_disjoint_archetypes(order_by: str | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Archetype]:
+def load_disjoint_archetypes(order_by: str | None = None, limit: str = '', person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> tuple[list[Archetype], int]:
     if person_id:
         table = '_arch_disjoint_person_stats'
         where = f'person_id = {sqlescape(person_id)}'
@@ -512,7 +514,9 @@ def load_disjoint_archetypes(order_by: str | None = None, person_id: int | None 
         group_by = 'a.id'
     if tournament_only:
         where = f"({where}) AND deck_type = 'tournament'"
-    sql = """
+    season_query = query.season_query(season_id)
+    order_by = order_by or 'TRUE'
+    sql = f"""
         SELECT
             a.id,
             a.name,
@@ -526,7 +530,9 @@ def load_disjoint_archetypes(order_by: str | None = None, person_id: int | None 
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            COUNT(*) OVER () AS total,
+            SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER () AS meta_share
         FROM
             archetype AS a
         LEFT JOIN
@@ -540,15 +546,13 @@ def load_disjoint_archetypes(order_by: str | None = None, person_id: int | None 
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(table=table,
-               where=where,
-               season_query=query.season_query(season_id),
-               group_by=group_by,
-               order_by=order_by or 'TRUE')
+        {limit}
+    """
     return archetype_list_from(sql, order_by is None)
 
-def archetype_list_from(sql: str, should_preorder: bool) -> list[Archetype]:
-    archetypes = [Archetype(a) for a in db().select(sql)]
+def archetype_list_from(sql: str, should_preorder: bool) -> tuple[list[Archetype], int]:
+    rs = db().select(sql)
+    archetypes = [Archetype({k: v for k, v in a.items() if k != 'total'}) for a in rs]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
         a.decks = []
@@ -556,7 +560,7 @@ def archetype_list_from(sql: str, should_preorder: bool) -> list[Archetype]:
         a.parent = archetypes_by_id.get(a.parent_id, None)
     if should_preorder:
         archetypes = preorder(archetypes)
-    return archetypes
+    return archetypes, 0 if not rs else rs[0]['total']
 
 def preorder(archetypes: list[Archetype]) -> list[Archetype]:
     archs = []

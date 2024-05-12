@@ -91,7 +91,8 @@ Deckbox._ = {
         img.style.display = "none";
         img.style.width = "1px";
         img.style.height = "1px";
-        img.src = "https://deckbox.org/mtg/" + $(link).text().replace(/^[0-9 ]*/, "") + "/tooltip";
+        // Use createTextNode to avoid XSS vulnerability - see https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/security/code-scanning/33
+        img.src = document.createTextNode(Deckbox._.url(link)).wholeText;
         return img;
     },
 
@@ -299,6 +300,16 @@ Deckbox._ = {
                 document.body.appendChild(Deckbox._.preloadImg(link));
             }
         }
+    },
+
+    url: function (e) {
+        const name = Deckbox._.name(e);
+        return "https://deckbox.org/mtg/" + name.replace(/^[0-9 ]*/, "") + "/tooltip";
+    },
+
+    name: function (e) {
+        const name = $(e).data("name");
+        return name ? name : $(e).text();
     }
 };
 
@@ -307,7 +318,7 @@ Deckbox._ = {
  */
 Deckbox.load = function(shouldDebounce) {
     $(".card").each(function() {
-        $(this).data("tt", "https://deckbox.org/mtg/" + $(this).text().replace(/^[0-9 ]*/, "") + "/tooltip");
+        $(this).data("tt", Deckbox._.url(this));
     });
     if (shouldDebounce) {
         Deckbox._.debouncedLoadImages();

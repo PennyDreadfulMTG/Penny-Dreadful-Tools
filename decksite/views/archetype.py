@@ -3,6 +3,7 @@ from typing import Any, TypedDict
 
 from flask import url_for
 
+from decksite import prepare
 from decksite.data import archetype as archs
 from decksite.deck_type import DeckType
 from decksite.view import View
@@ -39,7 +40,7 @@ class Archetype(View):
         for m in self.matchups['archetypes']:
             m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
         for m in self.matchups['archetypes']:
-            self.prepare_archetype(m, self.matchups['archetypes'], tournament_only)
+            prepare.prepare_archetype(m, self.matchups['archetypes'], None, tournament_only, self.season_id())
         self.tournament_only = self.hide_source = tournament_only
         self.show_seasons = True
         self.show_tournament_toggle = True

@@ -81,7 +81,7 @@ const renderSort = (grid) => (
     <form className="inline">
         <select onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
             <option value="quality">Quality</option>
-            <option value="numDecks">Meta Share</option>
+            <option value="metaShare">Meta Share</option>
             <option value="winPercent">Win %</option>
             <option value="tournamentWins">Tournament Wins</option>
             <option value="tournamentTop8s">Tournament Top 8s</option>

@@ -181,7 +181,7 @@ def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
         sort_order = str(sort_order)
     sort_options = {
         'name': ('name', 'ASC'),
-        'numDecks': ('num_decks', 'DESC'),
+        'metaShare': ('SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER ()', 'DESC'),
         'quality': (wilson_lower_bound_sql(), 'DESC'),
         'winPercent': ('SUM(wins) / NULLIF(SUM(wins + losses), 0)', 'DESC'),
         'tournamentWins': ('tournament_wins', 'DESC'),

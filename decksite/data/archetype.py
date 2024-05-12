@@ -532,7 +532,7 @@ def load_disjoint_archetypes(order_by: str | None = None, limit: str = '', perso
             SUM(tournament_top8s) AS tournament_top8s,
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
             COUNT(*) OVER () AS total,
-            SUM(wins + losses + draws) / SUM(wins + losses + draws) OVER () AS meta_share
+            SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER () AS meta_share
         FROM
             archetype AS a
         LEFT JOIN

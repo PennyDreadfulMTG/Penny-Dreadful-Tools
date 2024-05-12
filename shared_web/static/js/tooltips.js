@@ -91,7 +91,8 @@ Deckbox._ = {
         img.style.display = "none";
         img.style.width = "1px";
         img.style.height = "1px";
-        img.src = Deckbox._.url(link);
+        // Use createTextNode to avoid XSS vulnerability - see https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/security/code-scanning/33
+        img.src = document.createTextNode(Deckbox._.url(link)).wholeText;
         return img;
     },
 

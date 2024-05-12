@@ -1,6 +1,6 @@
 import { DataManager } from "./datamanager";
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 /*
 
@@ -82,5 +82,5 @@ export class Grid extends DataManager {
 }
 
 Grid.propTypes = {
-    "renderSort": PropTypes.func,
+    "renderSort": PropTypes.func
 };

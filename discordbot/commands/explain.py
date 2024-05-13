@@ -3,7 +3,6 @@ import textwrap
 import inflect
 from interactions import AutocompleteContext
 from interactions.client import Client
-from interactions.ext.prefixed_commands import prefixed_command
 from interactions.models import TYPE_MESSAGEABLE_CHANNEL, Extension, OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext, MtgMessageContext, make_choice
@@ -299,8 +298,6 @@ class ExplainCog(Extension):
 
     async def reroute(self, ctx: MtgMessageContext) -> None:
         await self.explain.callback(ctx, ctx.content_parameters)
-
-    m_explain = prefixed_command('explain')(reroute)
 
 def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
     tournament_channel_id = configuration.get_int('tournament_channel_id')

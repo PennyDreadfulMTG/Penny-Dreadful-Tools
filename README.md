@@ -60,8 +60,9 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Add a bot at <https://discordapp.com/developers/applications/me>
 - Add a bot user for the bot
 - Add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
+- Go to the Bot section.
 - Click to reveal the token (not secret) on <https://discordapp.com/developers/applications/me>
-- Copy `.env.example` to `.env` and alter the value for "token" to this value
+- Copy `.env.example` to `.env` and alter the value for "token" to this value. (or to "token" in config.json if not in docker setup)
 - Do the same for the discord client_id and client_secret
 - Optionally take a look at shared/configuration.py and enter any required non-default information into `.env`
 - You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>

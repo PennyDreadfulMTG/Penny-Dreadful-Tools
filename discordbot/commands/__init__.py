@@ -3,10 +3,8 @@ import importlib
 import inspect
 import logging
 from os import path
-from typing import cast
 
 from interactions import Client, SlashContext
-from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, PrefixedInjectedClient
 from interactions.models import InteractionCommand
 
 from discordbot import command
@@ -25,7 +23,6 @@ def setup(bot: Client) -> None:
             if not scaleless_load(bot, mod):
                 logging.exception(e)
 
-
 def scaleless_load(bot: Client, module: str) -> bool:
     n = 0
     try:
@@ -34,17 +31,13 @@ def scaleless_load(bot: Client, module: str) -> bool:
             if isinstance(obj, InteractionCommand):
                 bot.add_interaction(obj)
                 n += 1
-            elif isinstance(obj, PrefixedCommand):
-                botp = cast(PrefixedInjectedClient, bot)
-                botp.prefixed.add_command(obj)
-                n += 1
     except Exception:
         raise
     return n > 0
 
 class CardConverter:
     @classmethod
-    async def convert(cls, ctx: PrefixedContext | SlashContext, argument: str) -> Card | None:
+    async def convert(cls, ctx: SlashContext, argument: str) -> Card | None:
         try:
             result, mode, printing = command.results_from_queries([argument])[0]
             if result.has_match() and not result.is_ambiguous():

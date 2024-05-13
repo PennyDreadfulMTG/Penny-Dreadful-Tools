@@ -1,7 +1,6 @@
 from interactions.client import Client
 from interactions.models import Extension, slash_command
 
-from discordbot import command
 from discordbot.command import MtgInteractionContext, slash_card_option
 from magic import oracle
 from magic.models import Card
@@ -13,8 +12,6 @@ class Flavour(Extension):
     async def flavor(self, ctx: MtgInteractionContext, card: Card) -> None:
         """Flavor text of a card"""
         await ctx.single_card_text(card, flavor_text)
-
-    m_flavor = command.alias_message_command_to_slash_command(flavor)
 
 def flavor_text(c: Card) -> str:
     for printing in oracle.get_printings(c):

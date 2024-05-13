@@ -5,7 +5,6 @@ from typing import Any
 
 from interactions import Client, listen
 from interactions.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
-from interactions.ext import prefixed_commands
 from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
 
 import discordbot.commands
@@ -17,7 +16,6 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
-
 class Bot(Client):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
@@ -26,10 +24,7 @@ class Bot(Client):
 
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES | Intents.MESSAGE_CONTENT)
 
-        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True,
-                         slash_context=command.MtgInteractionContext,
-                         **kwargs)
-        prefixed_commands.setup(self, prefixed_context=command.MtgMessageContext, default_prefix='!')
+        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, slash_context=command.MtgInteractionContext, **kwargs)
         self.achievement_cache: dict[str, dict[str, str]] = {}
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:

@@ -6,7 +6,7 @@ from shared import repo
 
 
 class Bug(Extension):
-    @slash_command('bug')
+    @slash_command()
     @slash_option('title', 'One sentence description of the issue', OptionType.STRING, required=True)
     @slash_option('body', 'More info', OptionType.STRING)
     async def bug(self, ctx: MtgContext, title: str, body: str | None = None) -> None:

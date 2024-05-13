@@ -1,12 +1,14 @@
-from interactions.ext.prefixed_commands import prefixed_command
+from interactions import Extension, Client
 from interactions.models import slash_command
 
 from discordbot.command import MtgContext
-from magic import fetcher
 
 
-@slash_command('downtimes')
-async def downtimes(ctx: MtgContext) -> None:
-    await ctx.send(fetcher.downtimes())
+class Downtimes(Extension):
+    @slash_command()
+    async def downtimes(self, ctx: MtgContext) -> None:
+        await ctx.send('Temporarily disabled as malfunctioning')
+        # await ctx.send(fetcher.downtimes())
 
-m_downtimes = prefixed_command('downtime')(downtimes.callback)
+def setup(bot: Client) -> None:
+    Downtimes(bot)

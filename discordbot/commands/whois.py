@@ -1,8 +1,6 @@
-import re
 from typing import Any
 
 from interactions import Client
-from interactions.ext.prefixed_commands import prefixed_command
 from interactions.models import Extension, OptionType, User, slash_command, slash_option
 
 from discordbot.command import MtgContext
@@ -10,19 +8,6 @@ from magic import fetcher
 
 
 class Whois(Extension):
-    @prefixed_command('whois')
-    async def whois(self, ctx: MtgContext, args: str) -> None:
-        """Who is a person?"""
-        mention = re.match(r'<@!?(\d+)>', args)
-        await ctx.channel.trigger_typing()
-
-        if mention:
-            person = await self.bot.get_user(mention.group(1))
-            msg = await whois_discord(person)
-        else:
-            msg = await whois_mtgo(args)
-        await ctx.send(msg)
-
     @slash_command('whois', sub_cmd_name='mtgo', sub_cmd_description='Info about a MTGO player')
     @slash_option('username', 'The username of the MTGO player', OptionType.STRING, required=True)
     async def whois_mtgo(self, ctx: MtgContext, username: str) -> None:

@@ -1,5 +1,6 @@
 import re
 
+from interactions import Extension, Client
 from interactions.models.internal import OptionType, auto_defer, slash_command, slash_option
 
 from discordbot.command import MtgInteractionContext, roughly_matches
@@ -7,26 +8,27 @@ from magic import fetcher
 from shared import fetch_tools
 
 
-@slash_command('resources')
-@slash_option('resource', 'Your query', OptionType.STRING)
-@auto_defer()
-async def resources(ctx: MtgInteractionContext, resource: str | None) -> None:
-    """Useful pages related to `args`."""
-    results = {}
-    if resource is None:
-        resource = ''
-    if len(resource) > 0:
-        results.update(resources_resources(resource))
-        results.update(site_resources(resource))
-    s = ''
-    if len(results) == 0:
-        s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))
-    elif len(results) > 10:
-        s = f'{ctx.author.mention}: Too many results, please be more specific.'
-    else:
-        for url, text in results.items():
-            s += f'{text}: <{url}>\n'
-    await ctx.send(s)
+class Resources(Extension):
+    @slash_command()
+    @slash_option('resource', 'Your query', OptionType.STRING)
+    @auto_defer()
+    async def resources(self, ctx: MtgInteractionContext, resource: str | None = None) -> None:
+        """Useful pages related to `args`."""
+        results = {}
+        if resource is None:
+            resource = ''
+        if len(resource) > 0:
+            results.update(resources_resources(resource))
+            results.update(site_resources(resource))
+        s = ''
+        if len(results) == 0:
+            s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))
+        elif len(results) > 10:
+            s = f'{ctx.author.mention}: Too many results, please be more specific.'
+        else:
+            for url, text in results.items():
+                s += f'{text}: <{url}>\n'
+        await ctx.send(s)
 
 def site_resources(args: str) -> dict[str, str]:
     results = {}
@@ -74,3 +76,6 @@ def resources_resources(args: str) -> dict[str, str]:
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right or the_url_matches:
                 results[url] = text
     return results
+
+def setup(bot: Client) -> None:
+    Resources(bot)

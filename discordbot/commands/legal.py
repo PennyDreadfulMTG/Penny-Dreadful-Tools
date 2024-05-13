@@ -13,7 +13,5 @@ class Legal(Extension):
         """Announce whether the specified card is legal or not."""
         await ctx.single_card_text(card, lambda c: '')
 
-    m_legal = command.alias_message_command_to_slash_command(legal)
-
 def setup(bot: Client) -> None:
     Legal(bot)

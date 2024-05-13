@@ -4,7 +4,6 @@ from interactions.client import Client
 from interactions.models import Extension, OptionType, slash_command, slash_option
 from interactions.models.discord.enums import MessageFlags
 
-from discordbot import command
 from discordbot.command import MtgContext
 from shared import configuration
 
@@ -39,8 +38,6 @@ class Google(Extension):
                 raise
 
         await ctx.send(s)
-
-    m_google = command.alias_message_command_to_slash_command(google, 'query')
 
 def setup(bot: Client) -> None:
     Google(bot)

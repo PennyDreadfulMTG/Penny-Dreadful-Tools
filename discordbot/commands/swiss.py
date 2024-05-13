@@ -3,7 +3,7 @@ import math
 from interactions import Client
 from interactions.models import Extension, OptionType, slash_command, slash_option
 
-from discordbot.command import MtgInteractionContext, migrate_to_slash_command
+from discordbot.command import MtgInteractionContext
 from magic import tournaments
 
 
@@ -12,7 +12,7 @@ class Swiss(Extension):
         self.bot = bot
         super().__init__()
 
-    @slash_command('swiss')
+    @slash_command()
     @slash_option(
         name='num_players',
         description='number of players in the event',
@@ -60,8 +60,6 @@ class Swiss(Extension):
             else:
                 s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
         await ctx.send(s)
-
-    m_swiss = migrate_to_slash_command(swiss)
 
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> tuple[list[int], str | None]:
     players_in_elimination_rounds = 2 ** num_elimination_rounds

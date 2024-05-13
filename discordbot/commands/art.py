@@ -10,7 +10,7 @@ from magic.models import Card
 
 
 class Art(Extension):
-    @slash_command('art')
+    @slash_command()
     @command.slash_card_option()
     async def art(self, ctx: MtgInteractionContext, card: Card) -> None:
         """Display the artwork of the requested card."""
@@ -22,8 +22,6 @@ class Art(Extension):
                 await ctx.send_image_with_retry(file_path)
             else:
                 await ctx.send(f'{ctx.author.mention}: Could not get image.')
-
-    m_art = command.alias_message_command_to_slash_command(art)
 
 def setup(bot: Client) -> None:
     Art(bot)

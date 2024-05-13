@@ -2,6 +2,7 @@ import functools
 
 from github import Github
 from github.Repository import Repository
+from interactions import Client
 from interactions.models import Button, Embed, Extension, slash_command
 
 from discordbot import command
@@ -81,10 +82,6 @@ class ModoBugs(Extension):
                         elif no.custom_id == pressed.custom_id:
                             self.blacklist.add((b['url'], f['url']))
 
-    # @modobug.subcommand('still-bugged')
-    # async def still(self, ctx: MtgInteractionContext) -> None:
-    #     """Report updated bugs"""
-
     @modobug.subcommand('lookup')
     @command.slash_card_option()
     async def buglink(self, ctx: MtgContext, card: Card) -> None:
@@ -122,3 +119,6 @@ def get_repo() -> Repository:
     if gh is not None:
         return gh.get_repo('PennyDreadfulMTG/modo-bugs')
     raise OperationalException
+
+def setup(bot: Client) -> None:
+    ModoBugs(bot)

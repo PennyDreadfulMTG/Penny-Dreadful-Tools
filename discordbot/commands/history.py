@@ -1,5 +1,4 @@
 from interactions import Client
-from interactions.ext.prefixed_commands import prefixed_command
 from interactions.models import Extension, slash_command
 
 from discordbot import command
@@ -10,14 +9,11 @@ from shared import fetch_tools
 
 
 class History(Extension):
-    @slash_command('history')
+    @slash_command()
     @command.slash_card_option()
     async def history(self, ctx: MtgContext, card: Card) -> None:
         """Show the legality history of the specified card and a link to its all time page."""
         await ctx.single_card_text(card, card_history)
-
-    m_h = command.alias_message_command_to_slash_command(history)
-    m_hi = prefixed_command('hi')(m_h.callback)
 
 def card_history(c: Card) -> str:
     data: dict[int, bool] = {}

@@ -10,8 +10,8 @@ import attr
 import whoosh
 from interactions import Client, SlashContext, global_autocomplete
 from interactions.client.errors import Forbidden
-from interactions.ext.prefixed_commands import PrefixedCommand, PrefixedContext, prefixed_command
-from interactions.models import DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType, DMGroup, Extension, File, InteractionCommand, InteractionContext, Member, Message, OptionType, User, slash_option
+from interactions.ext.prefixed_commands import PrefixedContext
+from interactions.models import DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContext, ChannelType, DMGroup, File, InteractionContext, Member, Message, OptionType, User, slash_option
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
@@ -218,14 +218,6 @@ def slash_card_option(param: str = 'card') -> Callable:
 
     return wrapper
 
-# def slash_permission_pd_mods() -> Callable:
-#     """Restrict this command to Mods in the PD server"""
-
-#     def wrapper(func: Callable) -> Callable:
-#         return slash_permission(Permission(id=226785937970036748, guild_id=207281932214599682, type=PermissionTypes.ROLE))(func)
-
-#     return wrapper
-
 def make_choice(value: str, name: str | None = None) -> dict[str, int | float | str]:
     return {
         'name': (name or value)[:100],
@@ -246,41 +238,6 @@ async def autocomplete_card(ctx: AutocompleteContext) -> None:
     choices.extend(results.fuzzy)
     choices = [*set(choices)]
     await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
-
-def migrate_to_slash_command(command: InteractionCommand, soft: bool = False) -> PrefixedCommand:
-    """
-    Maintaining prefixed commands is painful and buggy.  Sometimes we just need to turn them off.
-    """
-    async def wrapper(_scale: Extension, ctx: MtgMessageContext) -> None:
-        if soft:
-            await command.call_callback(command.callback, ctx)
-        else:
-            await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
-
-    if isinstance(command.name, str):
-        name = command.name
-    else:
-        name = command.name.default
-    return prefixed_command(name)(wrapper)
-
-def alias_message_command_to_slash_command(command: InteractionCommand, param: str = 'card', name: str | None = None, nag: bool = True) -> PrefixedCommand:
-    """
-    This is a horrible hack.  Use it if a slash command takes one multiword argument
-    """
-
-    async def wrapper(_scale: Extension, ctx: MtgMessageContext) -> None:
-        if nag:
-            await ctx.reply(f'This command has been updated. Please use {command.mention()} instead.')
-
-        ctx.kwargs[param] = ctx.content_parameters
-        await command.call_callback(command.callback, ctx)
-
-    if name is None:
-        if isinstance(command.name, str):
-            name = command.name
-        else:
-            name = command.name.default
-    return prefixed_command(name)(wrapper)
 
 class MtgMixin:
     async def send_image_with_retry(self: 'MtgContext', image_file: str, text: str = '') -> None:  # type: ignore
@@ -331,8 +288,6 @@ class MtgMixin:
             try:
                 if isinstance(self, InteractionContext):
                     await self.defer()
-                elif isinstance(self, PrefixedContext):
-                    await self.channel.trigger_typing()
             except Exception:
                 pass
             image_file = await image_fetcher.download_image_async(cards)

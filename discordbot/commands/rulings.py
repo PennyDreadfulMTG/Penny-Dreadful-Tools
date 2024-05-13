@@ -8,7 +8,7 @@ from shared import fetch_tools
 
 
 class Rulings(Extension):
-    @slash_command('rulings')
+    @slash_command()
     @slash_card_option()
     @auto_defer()
     async def rulings(self, ctx: MtgContext, card: Card) -> None:

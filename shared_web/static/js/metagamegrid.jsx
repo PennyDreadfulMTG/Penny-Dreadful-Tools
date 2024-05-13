@@ -78,23 +78,26 @@ const renderItem = (grid, archetype) => (
 );
 
 const renderSort = (grid) => (
-    <form className="inline">
-        <select onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
-            <option value="quality">Quality</option>
-            <option value="metaShare">Meta Share</option>
-            <option value="winPercent">Win %</option>
-            <option value="tournamentWins">Tournament Wins</option>
-            <option value="tournamentTop8s">Tournament Top 8s</option>
-            <option value="perfectRuns">League 5–0 Runs</option>
-            <option value="name">Name</option>
-        </select>
-        {" : "}
-        <select onChange={(e) => { grid.sort(grid.state.sortBy, e.target.value); }}>
-            <option value="AUTO">Auto</option>
-            <option value="ASC">Asc</option>
-            <option value="DESC">Desc</option>
-        </select>
-    </form>
+    <React.Fragment>
+        {"Sorted by "}
+        <form className="inline">
+            <select onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
+                <option value="quality">Quality</option>
+                <option value="metaShare">Meta Share</option>
+                <option value="winPercent">Win %</option>
+                <option value="tournamentWins">Tournament Wins</option>
+                <option value="tournamentTop8s">Tournament Top 8s</option>
+                <option value="perfectRuns">League 5–0 Runs</option>
+                <option value="name">Name</option>
+            </select>
+            {" : "}
+            <select onChange={(e) => { grid.sort(grid.state.sortBy, e.target.value); }}>
+                <option value="AUTO">Auto</option>
+                <option value="ASC">Asc</option>
+                <option value="DESC">Desc</option>
+            </select>
+        </form>
+    </React.Fragment>
 );
 
 [...document.getElementsByClassName("metagamegrid")].forEach((e) => {
@@ -106,6 +109,8 @@ const renderSort = (grid) => (
                 renderItem={renderItem}
                 renderSort={renderSort}
                 reloadCards={true}
+                searchPrompt={"Archetype name"}
+                showSearch={true}
                 {...e.dataset}
             />;
         createRoot(e).render(grid);

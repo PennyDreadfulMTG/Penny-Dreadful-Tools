@@ -140,9 +140,8 @@ def runtests(argv: Iterable[str], m: str) -> None:
 
     argstr = ' '.join(args)
     print(f'>>>> Running tests with "{argstr}"')
-    import pytest
-
-    code = pytest.main(args)
+    import subprocess
+    code = subprocess.call(['pytest'] + args)
     if os.environ.get('GITHUB_ACTIONS') == 'true':
         upload_coverage()
     if code:

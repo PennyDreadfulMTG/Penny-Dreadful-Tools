@@ -3231,12 +3231,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:1e924f823cdc2142670c942527f71b49912e6954b3b85388cd0cc1259ad4bfcf",
-                "sha256:378f8baa5b693e4f8a284e8f7b0b34c682210848900816788e19ee4712de8f59"
+                "sha256:af2a105be6d504339bfed81319cc8e8697865f0ee5c6baa63658f127b33b9e63",
+                "sha256:cdf445b5161bf17753500713a475ab79a45bd0d87728b8bfcecd86e2fbf66402"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.16.21.20240425"
+            "version": "==1.16.21.20240513"
         },
         "types-toml": {
             "hashes": [

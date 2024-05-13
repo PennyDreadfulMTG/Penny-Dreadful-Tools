@@ -507,14 +507,13 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
 
 # Load a list of all archetypes where archetypes categories do NOT include the stats of their children. Thus Aggro is only decks assigned directly to Aggro and does not include Red Deck Wins. See also load_archetypes that does it the other way.
 @retry_after_calling(preaggregate)
-def load_disjoint_archetypes(order_by: str | None = None, limit: str = '', person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> tuple[list[Archetype], int]:
+def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, limit: str = '', person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> tuple[list[Archetype], int]:
     if person_id:
         table = '_arch_disjoint_person_stats'
-        where = f'person_id = {sqlescape(person_id)}'
+        where = f'({where}) AND person_id = {sqlescape(person_id)}'
         group_by = 'ars.person_id, a.id'
     else:
         table = '_arch_disjoint_stats'
-        where = 'TRUE'
         group_by = 'a.id'
     if tournament_only:
         where = f"({where}) AND deck_type = 'tournament'"

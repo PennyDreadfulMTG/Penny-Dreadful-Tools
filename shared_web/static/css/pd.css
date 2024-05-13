@@ -871,6 +871,15 @@ div.live {
     width: 0; /* We don't want this element to make the table wider than it would otherwise be. */
 }
 
+.live .table-header input.name, .grid-header input.name {
+    width: 10em;
+}
+
+.grid-header .sort {
+    flex: 1;
+    text-align: right;
+}
+
 /*
 
 Force a consistent size of each column in react tables otherwise things "jump" as you paginate.

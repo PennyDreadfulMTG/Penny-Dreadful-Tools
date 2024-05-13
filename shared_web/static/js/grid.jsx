@@ -39,7 +39,9 @@ export class Grid extends DataManager {
                         : null
                     }
                     { this.props.renderSort
-                        ? this.props.renderSort(this)
+                        ? <span className="sort">
+                            {this.props.renderSort(this)}
+                        </span>
                         : null
                     }
                     { this.state.error

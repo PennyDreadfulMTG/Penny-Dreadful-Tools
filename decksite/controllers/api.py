@@ -267,7 +267,7 @@ def people_api() -> Response:
     page, page_size, limit = pagination(request.args)
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
-    where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
+    where = clauses.text_where(query.person_query(), q) if q else 'TRUE'
     people, total = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people)
     r = {'page': page, 'total': total, 'objects': people}
@@ -425,6 +425,7 @@ def archetypes2_api() -> Response:
         {
             'page': <int>,
             'pageSize': <int>,
+            'q': <str?>,
             'seasonId': <int|'all'?>
         }
     Output:
@@ -435,11 +436,13 @@ def archetypes2_api() -> Response:
         }
 
     """
+    q = request.args.get('q', '').lower()
+    where = clauses.text_where('a.name', q) if q else 'TRUE'
     order_by = clauses.archetype_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
-    results, total = archs.load_disjoint_archetypes(order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
+    results, total = archs.load_disjoint_archetypes(where=where, order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
     archetype_key_cards = playability.key_cards_long(season_id)
     cards = oracle.cards_by_name()
     for result in results:

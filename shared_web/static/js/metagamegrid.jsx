@@ -106,6 +106,8 @@ const renderSort = (grid) => (
                 renderItem={renderItem}
                 renderSort={renderSort}
                 reloadCards={true}
+                searchPrompt={"Archetype name"}
+                showSearch={true}
                 {...e.dataset}
             />;
         createRoot(e).render(grid);

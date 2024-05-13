@@ -16,12 +16,7 @@ class Matchups(TypedDict):
     archetypes: list[archs.Archetype]
 
 class Archetype(View):
-    def __init__(self,
-                 archetype: archs.Archetype,
-                 archetypes: list[archs.Archetype],
-                 matchups: list[Container],
-                 tournament_only: bool = False,
-                 ) -> None:
+    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], tournament_only: bool = False) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
@@ -43,6 +38,7 @@ class Archetype(View):
             prepare.prepare_archetype(m, self.matchups['archetypes'], None, tournament_only, self.season_id())
         self.tournament_only = self.hide_source = tournament_only
         self.show_seasons = True
+        self.legal_seasons = seasons_active
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.show_archetype_tree = len(self.archetypes) > 0

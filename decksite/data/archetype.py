@@ -31,6 +31,10 @@ def load_archetype(archetype: int | str) -> Archetype:
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
     return arch
 
+def seasons_active(archetype_id: int) -> list[int]:
+    sql = 'SELECT season_id FROM _arch_stats WHERE archetype_id = %s'
+    return db().values(sql, [archetype_id])
+
 def add(name: str, parent: int, description: str) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])
     ancestors = db().select('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])

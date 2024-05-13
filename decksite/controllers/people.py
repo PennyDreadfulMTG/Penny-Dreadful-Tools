@@ -41,7 +41,9 @@ def person(mtgo_username: str | None = None, person_id: int | None = None) -> st
 @SEASONS.route('/people/id/<int:person_id>/achievements/')
 def person_achievements(mtgo_username: str | None = None, person_id: int | None = None) -> str:
     p = load_person(mtgo_username, person_id, season_id=get_season_id())
-    view = PersonAchievements(p, achs.load_achievements(p, season_id=get_season_id(), with_detail=True))
+    p_achs = achs.load_achievements(p, season_id=get_season_id(), with_detail=True)
+    seasons_active = ps.seasons_active(p.id)
+    view = PersonAchievements(p, p_achs, seasons_active)
     return view.page()
 
 @APP.route('/person/achievements/')

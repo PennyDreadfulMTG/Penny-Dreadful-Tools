@@ -245,7 +245,7 @@ The characters included in our subsetted fonts are:
     ▪ U+25AA BLACK SMALL SQUARE (bullet point, could switch to U+2022 BULLET which Concourse has)
     🐞 U+1F41E LADY BEETLE (bug)
     🚫 U+1F6AB NO ENTRY SIGN (deck/card is illegal this season)
-    🏆 U+1F3C6 TROPHY (5-0 league run)
+    🏆 U+1F3C6 TROPHY (5-0 league run, competitions on mobile menu)
     📰 U+1F4F0 NEWSPAPER (subreddit post news item, manually entered news item - we don't actually have any of these yet but the possibility exists)
     💻 U+1F4BB PERSONAL COMPUTER (code release news item)
     ▾ U+25BE BLACK DOWN-POINTING SMALL TRIANGLE (indicator on season selector dropdown)
@@ -257,7 +257,7 @@ The characters included in our subsetted fonts are:
     ⚔ U+2694 CROSSED SWORDS (represents number of matches)
     🏅 U+2059 SPORTS MEDAL (achievement earned)
 
-    Please note: anything added here needs to be added to base_chars in the fonts maintenance task.
+    (Please note: anything added here needs to be added to base_chars in the fonts maintenance task.)
 
 as well as many characters used only in deck names.
 

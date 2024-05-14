@@ -41,7 +41,10 @@ PREFER = {
     '🪦': 'NotoEmoji',
 }
 
-def ad_hoc(*args: list[str]) -> None:
+CharToFontsMapping = dict[str, list[str]]
+FontInfo = list[tuple[str, str, set[str], set[str], str]]
+
+def ad_hoc(*args: str) -> None:
     options_mode = 'options' in args
     base_only = 'base-only' in args
     # Some symbols we use outside of deck names
@@ -51,16 +54,15 @@ def ad_hoc(*args: list[str]) -> None:
     all_chars = base_chars | from_deck_names
     print('\nLooking for', len(all_chars), 'chars -', len(base_chars), 'base chars, and', len(from_deck_names), 'from deck names\n', file=sys.stderr)
     remaining_chars = all_chars.copy()
-    m: dict[str, list[tuple[str, TTFont]]] = {}
-    r: list[tuple[str, set[str], set[str]]] = []
-    f: dict[str, list[str]] = {}
+    char_to_fonts: CharToFontsMapping = {}
+    font_info: FontInfo = []
     for path in get_font_paths():
         name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '')
         font = TTFont(path, 0, allowVID=0, ignoreDecompileErrors=True, fontNumber=-1)
         found_chars = find_chars(font, name, options_mode, all_chars)
         for c in found_chars:
-            so_far = m.get(c, [])
-            m[c] = so_far + [name]
+            fonts_so_far = char_to_fonts.get(c, [])
+            char_to_fonts[c] = fonts_so_far + [name]
         needed_found_chars = found_chars & remaining_chars
         remaining_chars -= needed_found_chars
         css = ''
@@ -69,16 +71,14 @@ def ad_hoc(*args: list[str]) -> None:
             encoded = encode(woff2)
             css = font_face(name, encoded)
         if options_mode or needed_found_chars:
-            r.append((name, path, found_chars, needed_found_chars, css))
-            so_far = f.get(name, set())
-            f[name] = so_far | found_chars
+            font_info.append((name, path, found_chars, needed_found_chars, css))
         if not options_mode and not remaining_chars:
             break
     if options_mode:
-        print_options(m, r)
+        print_options(char_to_fonts, font_info)
     else:
-        print_css(r)
-    print_report(r, f, remaining_chars)
+        print_css(font_info)
+    print_report(font_info, remaining_chars)
 
 def deck_name_chars() -> set[str]:
     sql = 'SELECT id, name FROM deck'
@@ -121,7 +121,7 @@ def find_chars(font: TTFont, name: str, options_mode: bool, to_find: set[str]) -
                 found.add(glyph)
     return found
 
-def subset_font(path: str, chars: set[str]) -> str:
+def subset_font(path: str, chars: set[str]) -> bytes:
     print(f'Subsetting {path}', file=sys.stderr)
     _, tmppath = tempfile.mkstemp()
     try:
@@ -143,7 +143,7 @@ def subset_font(path: str, chars: set[str]) -> str:
 def find_base_chars() -> set[str]:
     return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅')
 
-def encode(woff2: str) -> str:
+def encode(woff2: bytes) -> str:
     enc_file = base64.b64encode(woff2)
     return enc_file.decode('ascii')
 
@@ -158,11 +158,11 @@ def font_face(name: str, encoded: str) -> str:
         }}
     """
 
-def print_css(r: list[tuple[str, set[str], set[str]]]) -> None:
-    symbol_font_names = [name for name, _, _, _, _ in r if not name == 'main-text']
-    font_faces = ''.join(css for _, _, _, _, css in r)
-    sample_chars = [(name, ''.join(f'<span title="{ord(c)}">{c}</span>' for c in sorted(used))) for name, _, _, used, _ in r]
-    samples = ''.join(f"<p>{name} {sample}</p>" for name, sample in sample_chars)
+def print_css(font_info: FontInfo) -> None:
+    symbol_font_names = [name for name, _, _, _, _ in font_info if not name == 'main-text']
+    font_faces = ''.join(css for _, _, _, _, css in font_info)
+    sample_chars = [(name, ''.join(f'<span title="{ord(c)}">{c}</span>' for c in sorted(used))) for name, _, _, used, _ in font_info]
+    samples = ''.join(f'<p>{name} {sample}</p>' for name, sample in sample_chars)
     print('-------- 8< --------', file=sys.stderr)
     print(f"""
         <!DOCTYPE html>
@@ -193,20 +193,20 @@ def print_css(r: list[tuple[str, set[str], set[str]]]) -> None:
     """)
     print('-------- 8< --------', file=sys.stderr)
 
-def print_options(m: dict[str, list[str]], r: list[tuple[str, set[str], set[str]]]) -> None:
-    print(f"""
+def print_options(char_to_fonts: CharToFontsMapping, font_info: FontInfo) -> None:
+    print("""
         <!DOCTYPE html>
         <html lang="en">
             <head>
                 <meta charset="utf-8">
                 <title>Penny Dreadful Font Test</title>
                 <style>
-                body {{
+                body {
                     font-family: monospace;
                     font-size: 20px;
-                }}
+                }
     """)
-    for name, path, _, _, _ in r:
+    for name, path, _, _, _ in font_info:
         print(f"""
             @font-face {{
                 font-family: '{name}';
@@ -218,11 +218,11 @@ def print_options(m: dict[str, list[str]], r: list[tuple[str, set[str], set[str]
             </head>
             <body>
     """)
-    for c in sorted(m):
-        if 'main-text' in m[c]:
+    for c in sorted(char_to_fonts):
+        if 'main-text' in char_to_fonts[c]:
             continue
         print(f'<p><span style="width: 40em; display: inline-block; text-align: right;">{unicodedata.name(c)} (U+{ord(c)})</span> ')
-        for name in m[c]:
+        for name in char_to_fonts[c]:
             print(f'<span title="{name}" style="font-family: {name}">{c}</span> ')
         print('</p>')
     print("""
@@ -230,10 +230,10 @@ def print_options(m: dict[str, list[str]], r: list[tuple[str, set[str], set[str]
         </html>
     """)
 
-def print_report(r: dict[str, tuple[set[str], set[str], str]], f, remaining_chars: set[str]) -> None:
-    longest = max(len(name) for name, _, _, _, _ in r)
+def print_report(font_info: FontInfo, remaining_chars: set[str]) -> None:
+    longest = max(len(name) for name, _, _, _, _ in font_info)
     print('Font'.rjust(longest), 'Found', 'Used', file=sys.stderr)
-    for name, _, found, used, _ in r:
+    for name, _, found, used, _ in font_info:
         if len(used) > 0:
             print(name.rjust(longest), str(len(found)).rjust(5), str(len(used)).rjust(4), ''.join(sorted(used)), file=sys.stderr)
     if remaining_chars:

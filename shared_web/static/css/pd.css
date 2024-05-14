@@ -2514,6 +2514,10 @@ p.detail .text {
     margin-bottom: 1rem;
 }
 
+.metagame-grid a {
+    font-variant-numeric: normal; /* In general an a uses oldstyle-nums as it may be in text. But this is a block. */
+}
+
 .metagame-grid a:hover {
     border-radius: inherit; /* Don't round the corners on hover. */
 }
@@ -2565,8 +2569,9 @@ p.detail .text {
 }
 
 .metagame-grid .additional {
-    color: #ccc;
-    font-variant-numeric: oldstyle-nums;
+    color: var(--deemphasized-text);
+    font-size: calc(12rem / 20);
+    line-height: calc(15 / 12);
 }
 
 .metagame-grid .additional span {

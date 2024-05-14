@@ -175,8 +175,8 @@ footer a:hover {
 /* Fonts */
 
 :root {
-    --heading-font-family: "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", heading-caps, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --main-text-font-family: "Noto Emoji", Symbola, "Noto Sans CJK TC Regular", "Noto Sans Armenian", "Noto Sans Canadian Aboriginal", "Noto Sans Sinhala UI", "Noto Sans Thai", main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --heading-font-family: var(--symbol-fonts), heading-caps, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --main-text-font-family: var(--symbol-fonts), main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @font-face {
@@ -225,6 +225,7 @@ Symbols provided by our main font are:
     ← U+2190 LEFT-POINTING ARROW (paginate left)
     ↑ U+2191 UPWARDS ARROW (currently hitting in rotation, external links)
     ↓ U+2193 DOWNWARDS ARROW (currently missing in rotation)
+    • U+2022 BULLET (separator for lists of card names because commas are often present in card names)
 
 The characters included in our subsetted fonts are:
 

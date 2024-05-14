@@ -244,7 +244,7 @@ The characters included in our subsetted fonts are:
     ▪ U+25AA BLACK SMALL SQUARE (bullet point, could switch to U+2022 BULLET which Concourse has)
     🐞 U+1F41E LADY BEETLE (bug)
     🚫 U+1F6AB NO ENTRY SIGN (deck/card is illegal this season)
-    🏆 U+1F3C6 TROPHY (tournament win in news, 5-0 league run in news, achievement earned)
+    🏆 U+1F3C6 TROPHY (5-0 league run)
     📰 U+1F4F0 NEWSPAPER (subreddit post news item, manually entered news item - we don't actually have any of these yet but the possibility exists)
     💻 U+1F4BB PERSONAL COMPUTER (code release news item)
     ▾ U+25BE BLACK DOWN-POINTING SMALL TRIANGLE (indicator on season selector dropdown)
@@ -253,7 +253,10 @@ The characters included in our subsetted fonts are:
     ✅ U+2705 HEAVY WHITE CHECK MARK (deck/card is legal indicator)
     ☐ U+2610 BALLOT BOX (uncheck all checkboxes in this table)
     ☑ U+2611 BALLOT BOX WITH CHECK (check all checkboxes in this table)
-    • U+2022 BULLET (separator for lists of card names because commas are often present in card names)
+    ⚔ U+2694 CROSSED SWORDS (represents number of matches)
+    🏅 U+2059 SPORTS MEDAL (achievement earned)
+
+    Please note: anything added here needs to be added to base_chars in the fonts maintenance task.
 
 as well as many characters used only in deck names.
 
@@ -2235,7 +2238,15 @@ News
     width: 1em;
 }
 
-.news li.tournament-winner:before, .news li.perfect-league-run:before {
+.news li.tournament-winner:before {
+    content: "①";
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 1em;
+}
+
+.news li.perfect-league-run:before {
     content: "🏆";
     display: inline-block;
     margin: 0;

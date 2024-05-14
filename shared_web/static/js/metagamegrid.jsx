@@ -64,7 +64,7 @@ const renderItem = (grid, archetype) => (
             {!grid.props.tournamentOnly && (
                 <div className="cell r">
                     <span title="5–0 League Runs">
-                        ⁙ {n(archetype.perfectRuns)}
+                        🏆 {n(archetype.perfectRuns)}
                     </span>
                 </div>
             )}

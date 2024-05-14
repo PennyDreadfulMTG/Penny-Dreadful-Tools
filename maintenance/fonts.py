@@ -1,85 +1,245 @@
+import base64
 import os
-from itertools import chain
-from os.path import basename
+import sys
+import tempfile
+import unicodedata
 
 from fontTools import subset
 from fontTools.ttLib import TTFont
-from fontTools.unicode import Unicode
 
 from decksite.database import db
 
+# Called as a maintenance task this will output to stdout an HTML file.
+# Part of that (marked) should be copy-and-pasted into pd.css.
+# Instead, you can call it from the commandline something like this:
+#
+# $ PYTHONPATH=. pipenv run python3 maintenance/fonts.py  >/tmp/index.html && open /tmp/index.html
+#
+# to see all the possibilities and maybe update the PREFER dict below.
+#
+# Relies on find_base_chars being kept up to date with the symbols we are using across the site.
 
-def ad_hoc() -> None:
-    print('Subsetting fonts')
+# Prefer the simplest, lightest, but largest, version of each symbol
+PREFER = {
+    '☀': 'NotoEmoji',
+    '☐': 'Symbola',
+    '☑': 'NotoEmoji',
+    '☝': 'NotoEmoji',
+    '☭': 'Symbola',
+    '⚡': 'NotoEmoji',
+    '☺': 'Segoe UI Symbol',
+    '✅': 'Segoe UI Symbol',
+    '✋': 'NotoEmoji',
+    '🏆': 'Segoe UI Symbol',
+    '🐟': 'NotoEmoji',
+    '👻': 'Segoe UI Symbol',
+    '💻': 'Segoe UI Symbol',
+    '🌩': 'NotoEmoji',
+    '📷': 'NotoEmoji',
+    '🚮': 'Symbola',
+    '🛏': 'NotoEmoji',
+    '🪦': 'NotoEmoji',
+}
+
+def ad_hoc(*args: list[str]) -> None:
+    options_mode = 'options' in args
+    base_only = 'base-only' in args
     # Some symbols we use outside of deck names
-    base_chars = {'①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑯', 'Ⓣ', '⇅', '⊕', '⸺', '▪', '🐞', '🚫', '🏆', '📰', '💻', '▾', '△', '🛈', '✅', '☐', '☑'}
+    base_chars = find_base_chars()
     # And all the non-latin1 chars in deck names
-    all_chars = base_chars | deck_name_chars()
-    print('Looking for', ''.join(all_chars))
+    from_deck_names = set() if base_only else deck_name_chars()
+    all_chars = base_chars | from_deck_names
+    print('\nLooking for', len(all_chars), 'chars -', len(base_chars), 'base chars, and', len(from_deck_names), 'from deck names\n', file=sys.stderr)
     remaining_chars = all_chars.copy()
-    map: dict[str, list[str]] = {}
-    for path, is_base_font in get_font_paths().items():
+    m: dict[str, list[tuple[str, TTFont]]] = {}
+    r: list[tuple[str, set[str], set[str]]] = []
+    f: dict[str, list[str]] = {}
+    for path in get_font_paths():
+        name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '')
         font = TTFont(path, 0, allowVID=0, ignoreDecompileErrors=True, fontNumber=-1)
-        found_chars = find_chars(font, all_chars)
+        found_chars = find_chars(font, name, options_mode, all_chars)
         for c in found_chars:
-            map[c] = map.get(c, []) + [path]
+            so_far = m.get(c, [])
+            m[c] = so_far + [name]
         needed_found_chars = found_chars & remaining_chars
         remaining_chars -= needed_found_chars
-        if found_chars:
-            print(f'Found {len(found_chars)} chars ({len(needed_found_chars)} needed): {found_chars} in {path} ({len(remaining_chars)} remaining)')
-        if needed_found_chars and not is_base_font:
-            subset_font(path, needed_found_chars)
-    if remaining_chars:
-        print('Could not find all chars:', remaining_chars)
-    for c, paths in map.items():
-        if len(paths) > 1:
-            print(f'Char {c} found in multiple fonts: {paths}')
-    print("""
-        Done. Now you have a bunch of woff2 files in the current directory. You need to convert them to CSS-friendly base64
-        strings and put them in the CSS file. You can do this with https://hellogreg.github.io/woff2base/
-        If you end up with a font we've never used before you need to change all the lists of fonts in the CSS file to
-        include it. Funnily enough merging the fonts in something like FontLab actually increases their size by 20KB.
-    """)
+        css = ''
+        if needed_found_chars and name != 'main-text':
+            woff2 = subset_font(path, needed_found_chars)
+            encoded = encode(woff2)
+            css = font_face(name, encoded)
+        if options_mode or needed_found_chars:
+            r.append((name, path, found_chars, needed_found_chars, css))
+            so_far = f.get(name, set())
+            f[name] = so_far | found_chars
+        if not options_mode and not remaining_chars:
+            break
+    if options_mode:
+        print_options(m, r)
+    else:
+        print_css(r)
+    print_report(r, f, remaining_chars)
 
 def deck_name_chars() -> set[str]:
-    sql = 'SELECT name FROM deck WHERE name <> CONVERT(name USING latin2)'
-    names = db().values(sql)
-    return set(''.join(names))
+    sql = 'SELECT id, name FROM deck'
+    rs = db().select(sql)
+    seen = set()
+    for row in rs:
+        name = row['name']
+        for c in name:
+            if c not in seen:
+                try:
+                    char_name = unicodedata.name(c)
+                except ValueError as e:
+                    char_name = f'VALUE ERROR NO NAME {e}'  # control characters do this
+                print(f"{c} {char_name} (U+{ord(c)}) from {row['id']}", file=sys.stderr)
+                seen.add(c)
+    return seen
 
-# This is just a giant hack because there's 3G+ of fonts we want to look in (!) so I don't want to add them to the repo.
-def get_font_paths() -> dict[str, bool]:
-    paths = {
-        '/Users/bakert/Downloads/main-text.ttf': True,
-        '/Users/bakert/Downloads/Noto_Emoji/static/NotoEmoji-Regular.ttf': False,
-        '/Users/bakert/Downloads/symbola/Symbola.ttf': False,
-        # I got the TTF for this from https://github.com/indigofeather/fonts/tree/master - it's not in the noto-cjk repo
-        '/Users/bakert/Downloads/NotoSansCJKtc-Regular.ttf': False,
-    }
-    paths.update({path: False for path in find_ttfs('/Users/bakert/notofonts.github.io/')})
-    return paths
+# You need to get these fonts/alter these paths before running this script.
+def get_font_paths() -> list[str]:
+    return [
+        '/Users/bakert/Downloads/main-text.ttf',
+        '/Users/bakert/notofonts.github.io/megamerge/NotoSansLiving-Regular.ttf',
+        '/Users/bakert/noto-cjk/Sans/Variable/TTF/NotoSansCJKjp-VF.ttf',
+        '/Users/bakert/notofonts.github.io/megamerge/NotoSansHistorical-Regular.ttf',
+        '/Users/bakert/notofonts.github.io/fonts/NotoSansSymbols/hinted/ttf/NotoSansSymbols-Regular.ttf',
+        '/Users/bakert/notofonts.github.io/fonts/NotoSansSymbols2/hinted/ttf/NotoSansSymbols2-Regular.ttf',
+        '/Users/bakert/Downloads/Noto_Emoji/static/NotoEmoji-Regular.ttf',
+        '/Users/bakert/Downloads/Segoe UI Symbol.ttf',
+        '/Users/bakert/Downloads/symbola/Symbola.ttf',
+    ]
 
-def find_ttfs(path: str) -> list[str]:
-    ttf_files = []
-    for root, _dirs, files in os.walk(path):
-        for file in files:
-            if file.endswith('.ttf') and 'Regular' in file and 'Serif' not in file:
-                ttf_files.append(os.path.join(root, file))
-    return ttf_files
-
-def find_chars(font: TTFont, to_find: set[str]) -> set[str]:
-    chars = chain.from_iterable([y + (Unicode[y[0]],) for y in x.cmap.items()] for x in font['cmap'].tables)
-    points = [char[0] for char in chars]
-    return {c for c in to_find if ord(c) in points}
+def find_chars(font: TTFont, name: str, options_mode: bool, to_find: set[str]) -> set[str]:
+    found = set()
+    for table in font['cmap'].tables:
+        for glyph in to_find:
+            has_preferred = PREFER.get(glyph)
+            if not options_mode and has_preferred and PREFER.get(glyph) != name:
+                continue
+            if ord(glyph) in table.cmap.keys():
+                found.add(glyph)
+    return found
 
 def subset_font(path: str, chars: set[str]) -> str:
-    text = ','.join(chars)
-    new_path = f'{basename(path)}.subset.woff2'
-    args = [
-        path,
-        f'--text={text}',
-        '--no-layout-closure',
-        f'--output-file={new_path}',
-        '--flavor=woff2',
-    ]
-    subset.main(args)
-    return new_path
+    print(f'Subsetting {path}', file=sys.stderr)
+    _, tmppath = tempfile.mkstemp()
+    try:
+        text = ','.join(chars)
+        args = [
+            path,
+            f'--text={text}',
+            '--no-layout-closure',
+            f'--output-file={tmppath}',
+            '--flavor=woff2',
+        ]
+        subset.main(args)
+        with open(tmppath, 'rb') as f:
+            s = f.read()
+            return s
+    finally:
+        os.remove(tmppath)
+
+def find_base_chars() -> set[str]:
+    return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅')
+
+def encode(woff2: str) -> str:
+    enc_file = base64.b64encode(woff2)
+    return enc_file.decode('ascii')
+
+def font_face(name: str, encoded: str) -> str:
+    return f"""
+        @font-face {{
+            font-family: {name};
+            font-style: normal;
+            font-weight: normal;
+            font-stretch: normal;
+            src: url("data:font/woff2;charset=utf-8;base64,{encoded}") format("woff2");
+        }}
+    """
+
+def print_css(r: list[tuple[str, set[str], set[str]]]) -> None:
+    symbol_font_names = [name for name, _, _, _, _ in r if not name == 'main-text']
+    font_faces = ''.join(css for _, _, _, _, css in r)
+    sample_chars = [(name, ''.join(f'<span title="{ord(c)}">{c}</span>' for c in sorted(used))) for name, _, _, used, _ in r]
+    samples = ''.join(f"<p>{name} {sample}</p>" for name, sample in sample_chars)
+    print('-------- 8< --------', file=sys.stderr)
+    print(f"""
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <meta charset="utf-8">
+                <title>Penny Dreadful Font Test</title>
+                <style>
+                    body {{
+                        font-family: "Concourse T3", var(--symbol-fonts);
+                        font-size: 20px;
+                    }}
+
+                    /* BEGIN COPY AND PASTE OUTPUT FOR pd.css */
+
+                    :root {{
+                        --symbol-fonts: {', '.join(symbol_font_names)};
+                    }}
+                    {font_faces}
+
+                    /* END COPY AND PASTE OUTPUT FOR pd.css */
+                </style>
+            </head>
+            <body>
+                {samples}
+            </body>
+        </html>
+    """)
+    print('-------- 8< --------', file=sys.stderr)
+
+def print_options(m: dict[str, list[str]], r: list[tuple[str, set[str], set[str]]]) -> None:
+    print(f"""
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <meta charset="utf-8">
+                <title>Penny Dreadful Font Test</title>
+                <style>
+                body {{
+                    font-family: monospace;
+                    font-size: 20px;
+                }}
+    """)
+    for name, path, _, _, _ in r:
+        print(f"""
+            @font-face {{
+                font-family: '{name}';
+                src: url('file://{path}') format('truetype');
+        }}
+        """)
+    print("""
+                </style>
+            </head>
+            <body>
+    """)
+    for c in sorted(m):
+        if 'main-text' in m[c]:
+            continue
+        print(f'<p><span style="width: 40em; display: inline-block; text-align: right;">{unicodedata.name(c)} (U+{ord(c)})</span> ')
+        for name in m[c]:
+            print(f'<span title="{name}" style="font-family: {name}">{c}</span> ')
+        print('</p>')
+    print("""
+            </body>
+        </html>
+    """)
+
+def print_report(r: dict[str, tuple[set[str], set[str], str]], f, remaining_chars: set[str]) -> None:
+    longest = max(len(name) for name, _, _, _, _ in r)
+    print('Font'.rjust(longest), 'Found', 'Used', file=sys.stderr)
+    for name, _, found, used, _ in r:
+        if len(used) > 0:
+            print(name.rjust(longest), str(len(found)).rjust(5), str(len(used)).rjust(4), ''.join(sorted(used)), file=sys.stderr)
+    if remaining_chars:
+        print('\nWARNING! DID NOT FIND THE FOLLOWING CHARS:', remaining_chars, file=sys.stderr)
+    print(file=sys.stderr)
+
+
+if __name__ == '__main__':
+    ad_hoc(*sys.argv)

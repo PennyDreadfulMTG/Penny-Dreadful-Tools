@@ -2308,11 +2308,6 @@ Season Symbols
     margin-right: 0.317rem;
 }
 
-/* Here we mix our text with their symbol rather than using their font so we require different behavior. */
-.seasonchooser i.ss {
-    vertical-align: text-top;
-}
-
 /*
 
 Language Switcher

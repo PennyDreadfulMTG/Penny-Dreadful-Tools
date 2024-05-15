@@ -10,6 +10,7 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
+from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
@@ -53,7 +54,8 @@ class View(BaseView):
         self.next_tournament_time = None
         self.tournaments: list[Container] = []
         self.content_class = 'content-' + self.__class__.__name__.lower()
-        self.page_size = request.cookies.get('page_size', 20)
+        self.page_size = request.cookies.get('page_size', DEFAULT_LIVE_TABLE_PAGE_SIZE)
+        self.grid_page_size = request.cookies.get('grid_page_size', DEFAULT_GRID_PAGE_SIZE)
         self.tournament_only: bool = False
         self.show_tournament_toggle = False
         self.is_deck_page = False

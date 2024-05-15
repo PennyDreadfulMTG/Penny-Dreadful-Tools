@@ -1,4 +1,4 @@
-from interactions import Extension, Client
+from interactions import Client, Extension
 from interactions.models import File, slash_command
 
 from discordbot import emoji

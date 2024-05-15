@@ -2,7 +2,7 @@ import logging
 import traceback
 from typing import Any
 
-from interactions import Extension, Client, slash_option, OptionType, is_owner, check
+from interactions import Client, Extension, OptionType, check, is_owner, slash_option
 from interactions.client.errors import CommandException
 from interactions.models import slash_command
 

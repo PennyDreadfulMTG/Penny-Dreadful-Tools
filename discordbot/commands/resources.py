@@ -1,6 +1,6 @@
 import re
 
-from interactions import Extension, Client
+from interactions import Client, Extension
 from interactions.models.internal import OptionType, auto_defer, slash_command, slash_option
 
 from discordbot.command import MtgInteractionContext, roughly_matches

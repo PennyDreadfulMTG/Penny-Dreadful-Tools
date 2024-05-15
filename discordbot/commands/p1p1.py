@@ -1,6 +1,6 @@
 import random
 
-from interactions import Extension, Client
+from interactions import Client, Extension
 from interactions.models import Buckets, max_concurrency, slash_command
 
 from discordbot.command import MtgInteractionContext

@@ -1,6 +1,6 @@
 import random
 
-from interactions import Extension, Client
+from interactions import Client, Extension
 from interactions.models import OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext

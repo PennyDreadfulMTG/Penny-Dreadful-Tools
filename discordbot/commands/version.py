@@ -1,7 +1,7 @@
 import subprocess
 from importlib.metadata import version as _v
 
-from interactions import Timestamp, Extension, Client
+from interactions import Client, Extension, Timestamp
 from interactions.models import Embed, slash_command
 
 from discordbot.command import MtgContext

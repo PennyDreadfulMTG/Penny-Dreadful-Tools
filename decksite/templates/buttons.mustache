@@ -1,7 +1,7 @@
 <ul class="buttons">
     {{#show_tournament_toggle}}
         <li>
-            <a href="{{toggle_results_url}}">
+            <a class="button" href="{{toggle_results_url}}">
                 <span class="toggle {{#tournament_only}}toggle-right{{/tournament_only}}" id="tournament-toggle" type="checkbox"></span>
                 <span class="toggle-button" for="tournament-toggle"></span>
                 Tournaments Only
@@ -9,16 +9,16 @@
         </li>
     {{/show_tournament_toggle}}
     {{#has_external_source}}
-        <li><a title="View competition source ({{type}})" class="external" href="{{url}}">Source</a></li>
+        <li class="button" ><a title="View competition source ({{type}})" class="external" href="{{url}}">Source</a></li>
     {{/has_external_source}}
     {{^is_in_current_run}}
       {{#is_deck_page}}
-          <li><a title="Magic Online Download (txt)" href="{{export_url}}">Download</a></li>
-          <li><a title="Buy on Cardhoarder" class="external" href="{{cardhoarder_url}}">Buy</a></li>
-          <li><a title="View decklist source ({{source_name}})" {{#source_is_external}}class="external"{{/source_is_external}} href="{{source_url}}">Source</a></li>
+          <li><a class="button" title="Magic Online Download (txt)" href="{{export_url}}">Download</a></li>
+          <li><a class="button" title="Buy on Cardhoarder" class="external" href="{{cardhoarder_url}}">Buy</a></li>
+          <li><a class="button" title="View decklist source ({{source_name}})" {{#source_is_external}}class="external"{{/source_is_external}} href="{{source_url}}">Source</a></li>
       {{/is_deck_page}}
     {{/is_in_current_run}}
     {{#show_seasons}}
-        <li>{{> seasonchooser}}</li>
+        <li class="button">{{> seasonchooser}}</li>
     {{/show_seasons}}
 </ul>

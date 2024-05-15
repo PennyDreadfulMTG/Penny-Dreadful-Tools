@@ -1632,22 +1632,26 @@ Button Bars
     --text-rounded-corners: 0.317rem;
 }
 
-ul.buttons li {
+.button {
     background: var(--background);
+    border: 0.05rem solid var(--light-border);
+    border-radius: var(--button-rounded-corners);
     color: var(--deemphasized-text);
     display: block;
     font-size: var(--table-font-size);
-    list-style-type: none;
     padding: 0.422em 1em;
     text-align: center;
     user-select: none;
 }
 
+ul.buttons li {
+    list-style-type: none;
+}
+
 ul.buttons > li {
-    border: 0.05rem solid var(--light-border);
-    border-radius: var(--button-rounded-corners);
     margin-left: 0.75rem;
 }
+
 
 /* We only want to float the buttons alongside the h1. Other buttons should just appear in the flow. */
 .banner ul.buttons {

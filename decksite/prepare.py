@@ -1,3 +1,4 @@
+import urllib.parse
 from collections.abc import Sequence
 
 from anytree import PreOrderIter
@@ -58,7 +59,7 @@ def url_for_card(c: Card, tournament_only: bool = False, season_id: int | str | 
             g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
         else:
             g.url_cache['card_page'] = url_for('seasons.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
-    return g.url_cache['card_page'].replace('--cardname--', c.name)
+    return g.url_cache['card_page'].replace('--cardname--', urllib.parse.quote(c.name))
 
 def prepare_decks(ds: list[Deck]) -> None:
     for d in ds:

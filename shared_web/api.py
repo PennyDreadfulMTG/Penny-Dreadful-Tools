@@ -49,7 +49,7 @@ def validate_api_key() -> Response | None:
 def generate_error(code: str, msg: str, **more: Any) -> dict[str, Any]:
     return {'error': True, 'code': code, 'msg': msg, **more}
 
-def return_json(content: bool | dict[str, Any] | None | list[Container] | list[dict[str, str]], status: int = 200, camelize: bool = False) -> Response:
+def return_json(content: bool | dict[str, Any] | None | list[Container] | list[dict[str, str]], status: int = 200) -> Response:
     s = json.dumps(content, default=extra_serializer)
     r = Response(response=s, status=status, mimetype='application/json')
     return r

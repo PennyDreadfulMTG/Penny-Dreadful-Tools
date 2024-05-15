@@ -293,10 +293,10 @@ class RawDeckDescription(TypedDict, total=False):
 # Expects:
 #
 # {
-#     'name': <string>,
-#     'url': <string>,
-#     'source': <string>,
-#     'identifier': <string>,
+#     'name': <str>,
+#     'url': <str>,
+#     'source': <str>,
+#     'identifier': <str>,
 #     'cards' {
 #         'maindeck': {
 #             '<canonical card name>': <int>,

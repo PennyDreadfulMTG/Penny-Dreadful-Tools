@@ -1,7 +1,7 @@
 import glob
 import os
 
-from interactions import check, is_owner, Extension, Client
+from interactions import Client, Extension, check, is_owner
 from interactions.models import slash_command
 
 from discordbot.command import MtgContext

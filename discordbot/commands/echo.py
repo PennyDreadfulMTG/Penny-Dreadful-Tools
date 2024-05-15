@@ -1,4 +1,4 @@
-from interactions import slash_command, Extension, Client, slash_option, OptionType
+from interactions import Client, Extension, OptionType, slash_command, slash_option
 
 from discordbot import emoji
 from discordbot.command import MtgContext

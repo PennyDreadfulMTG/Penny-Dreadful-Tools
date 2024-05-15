@@ -1,4 +1,4 @@
-from interactions import slash_command, Client, Extension
+from interactions import Client, Extension, slash_command
 
 from discordbot.command import MtgInteractionContext
 from shared import configuration, redis_wrapper

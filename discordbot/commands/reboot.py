@@ -1,5 +1,5 @@
 # from interactions.models.checks import is_owner
-from interactions import is_owner, check, slash_command, Extension, Client
+from interactions import Client, Extension, check, is_owner, slash_command
 
 from discordbot.command import MtgContext
 from shared import redis_wrapper

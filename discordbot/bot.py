@@ -16,6 +16,7 @@ from shared import redis_wrapper as redis
 from shared import repo
 from shared.settings import with_config_file
 
+
 class Bot(Client):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()

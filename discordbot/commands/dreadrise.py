@@ -1,6 +1,6 @@
 from urllib import parse
 
-from interactions import Extension, Client
+from interactions import Client, Extension
 from interactions.models import Embed, OptionType, slash_command, slash_option
 
 from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext, MtgInteractionContext

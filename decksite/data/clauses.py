@@ -291,7 +291,7 @@ def pagination(args: dict[str, str]) -> tuple[int, int, str]:
 VERY_HIGH_CONFIDENCE = 0.99
 HIGH_CONFIDENCE = 0.95
 
-# Calculate the lower using the Wilson interval at 95% confidence.
+# Calculate the lower using the Wilson interval at the given confidence level.
 # See https://discord.com/channels/207281932214599682/230056266938974218/691464882998214686
 # See https://stackoverflow.com/a/10029645/375262
 # See https://www.evanmiller.org/how-not-to-sort-by-average-rating.html

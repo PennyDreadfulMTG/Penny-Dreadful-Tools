@@ -16,6 +16,7 @@ from decksite.data import playability, query
 from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
+from decksite.data.clauses import DEFAULT_LIVE_TABLE_PAGE_SIZE, DEFAULT_GRID_PAGE_SIZE
 from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
 from magic import image_fetcher, layout, oracle, rotation, seasons, tournaments
@@ -439,7 +440,7 @@ def archetypes2_api() -> Response:
     q = request.args.get('q', '').lower()
     where = clauses.text_where('a.name', q) if q else 'TRUE'
     order_by = clauses.archetype_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page, page_size, limit = pagination(request.args)
+    page, page_size, limit = pagination(request.args, DEFAULT_GRID_PAGE_SIZE)
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     results, total = archs.load_disjoint_archetypes(where=where, order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
@@ -820,9 +821,9 @@ def menu_item_to_search_item(menu_item: dict[str, Any], parent_name: str | None 
         url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}
 
-def pagination(args: dict[str, str]) -> tuple[int, int, str]:
+def pagination(args: dict[str, str], default_page_size: int = DEFAULT_LIVE_TABLE_PAGE_SIZE) -> tuple[int, int, str]:
     try:
-        return clauses.pagination(args)
+        return clauses.pagination(args, default_page_size)
     except InvalidArgumentException as e:
         raise BadRequest from e
 

@@ -12,7 +12,7 @@ from shared.pd_exception import InvalidArgumentException
 # Form SQL WHERE, ORDER BY and LIMIT clauses, sometimes by making db queries.
 
 DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
-DEFAULT_GRID_PAGE_SIZE = 24 # Looks good at 1, 2, 4, 6, 8, 12 columns wide which is the vast majority of cases
+DEFAULT_GRID_PAGE_SIZE = 24  # Looks good at 1, 2, 4, 6, 8, 12 columns wide which is the vast majority of cases
 MAX_PAGE_SIZE = 500
 
 def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: str | None) -> str:

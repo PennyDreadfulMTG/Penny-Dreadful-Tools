@@ -42,6 +42,7 @@ class Archetype(View):
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.show_archetype_tree = len(self.archetypes) > 0
+        self.has_cards = True
 
     def og_title(self) -> str:
         return self.archetype.name

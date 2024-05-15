@@ -119,3 +119,9 @@ Check the dev.py source code for the full set of options including `unit`, `type
 
 - Run logsite
 - pipenv run python dev.py watch # Builds bundle.js after every file change.
+
+## Decksite performance testing/monitoring
+
+- You can run decksite in profiling mode with:
+    - $ pipenv run python3 ~/pd/run.py profiler
+- You can be warned about slowness by setting `slow_query`, `slow_page` and `slow_fetch` limits in conifg.json

@@ -9,12 +9,12 @@
             <div class="subtitle">{{display_date}}</div>
         </div>
             <ul class="buttons">
-                <li><a title="" href="/export/{{id}}">Download</a></li>
+                <li class="button"><a title="" href="/export/{{id}}">Download</a></li>
                 {{#has_unexpected_third_game}}
                     <li><a title="Match has an unexpected game 3" href="#">Switcheroo</a></li>
                 {{/has_unexpected_third_game}}
                 {{#is_tournament}}
-                    <li><a title="" href="#">Tournament Match</a></li>
+                    <li><a href="#">Tournament Match</a></li>
                 {{/is_tournament}}
             </ul>
     </div>

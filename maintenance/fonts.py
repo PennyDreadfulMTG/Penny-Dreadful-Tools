@@ -29,13 +29,13 @@ PREFER = {
     '☝': 'NotoEmoji',
     '☭': 'Symbola',
     '⚡': 'NotoEmoji',
-    '☺': 'Segoe UI Symbol',
-    '✅': 'Segoe UI Symbol',
+    '☺': 'SegoeUISymbol',
+    '✅': 'SegoeUISymbol',
     '✋': 'NotoEmoji',
-    '🏆': 'Segoe UI Symbol',
+    '🏆': 'SegoeUISymbol',
     '🐟': 'NotoEmoji',
-    '👻': 'Segoe UI Symbol',
-    '💻': 'Segoe UI Symbol',
+    '👻': 'SegoeUISymbol',
+    '💻': 'SegoeUISymbol',
     '🌩': 'NotoEmoji',
     '📷': 'NotoEmoji',
     '🚮': 'Symbola',
@@ -60,7 +60,7 @@ def ad_hoc(*args: str) -> None:
     font_info: FontInfo = []
     metrics = {}
     for path in get_font_paths():
-        name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '')
+        name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
         font = TTFont(path)
         if not metrics:
             metrics = get_vertical_metrics(font)

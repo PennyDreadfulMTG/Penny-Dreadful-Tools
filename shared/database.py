@@ -178,6 +178,8 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
     raise InvalidArgumentException(f'Cannot sqlescape `{s}`')
 
 def sqllikeescape(s: str) -> str:
+    if type(s) is not str:
+        raise InvalidArgumentException('You can only use LIKE on strings')
     s = s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
     return sqlescape(f'%{s}%', backslashed_escaped=True)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from shared.database import sqlescape
+from shared.database import sqlescape, sqllikeescape
 from shared.pd_exception import InvalidArgumentException
 
 
@@ -14,3 +14,12 @@ def test_sqlescape() -> None:
     assert sqlescape('this\\one') == "'this\\\\one'"
     with pytest.raises(InvalidArgumentException):
         sqlescape({})
+
+def test_sqllikeescape() -> None:
+    assert sqllikeescape('a') == "'%%a%%'"
+    with pytest.raises(InvalidArgumentException):
+        sqllikeescape(6)  # type: ignore
+    assert sqllikeescape('this\\one') == "'%%this\\\\one%%'"
+    assert sqllikeescape('%') == "'%%\\%%%%'"
+    with pytest.raises(InvalidArgumentException):
+        sqllikeescape({})  # type: ignore

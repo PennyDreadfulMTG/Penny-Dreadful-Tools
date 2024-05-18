@@ -58,7 +58,7 @@ def ad_hoc(*args: str) -> None:
     remaining_graphemes = all_graphemes.copy()
     graphemes_to_fonts: GraphemeToFontMapping = {}
     font_info: FontInfo = []
-    metrics = {}
+    metrics: dict[str, int] = {}
     for path in get_font_paths():
         name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
         font = TTFont(path)
@@ -174,7 +174,7 @@ def get_vertical_metrics(font: TTFont) -> dict[str, int]:
         'Typo Line Gap': os2.sTypoLineGap,
         'HHead Ascent': hhea.ascent,
         'HHead Descent': hhea.descent,
-        'HHead Line Gap': hhea.lineGap
+        'HHead Line Gap': hhea.lineGap,
     }
 
 def adjust_vertical_metrics(font: TTFont, metrics: dict[str, int]) -> TTFont:
@@ -207,12 +207,12 @@ def font_face(name: str, encoded: str) -> str:
 }}
     """
 
-def print_css(font_info: FontInfo, deck_names: list[str]) -> None:
+def print_css(font_info: FontInfo, deck_names: set[str]) -> None:
     symbol_font_names = [name for name, _, _, _, _ in font_info if not name == 'main-text']
     font_faces = ''.join(css for _, _, _, _, css in font_info)
     sample_graphemes = [(name, ''.join(f'<span title="{points(grapheme)}">{html.escape(grapheme)}</span>' for grapheme in sorted(used))) for name, _, _, used, _ in font_info]
     samples = ''.join(f'<p>{html.escape(name)} {sample}</p>' for name, sample in sample_graphemes)
-    deck_names = '\n'.join(f'<p>{html.escape(name)}</p>' for name in deck_names)
+    deck_name_samples = '\n'.join(f'<p>{html.escape(name)}</p>' for name in deck_names)
     print(f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -244,7 +244,7 @@ def print_css(font_info: FontInfo, deck_names: list[str]) -> None:
             <body>
                 <div id="content">
                     {samples}
-                    {deck_names}
+                    {deck_name_samples}
                 </div>
                 <script>
                      function detectLocalFontUsage() {{

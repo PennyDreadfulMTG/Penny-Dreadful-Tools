@@ -42,23 +42,21 @@ def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
     sql = f"""
         WITH season_totals AS (
             SELECT
-                season_id,
-                SUM(wins + losses + draws) AS total_matches
+                season.id AS season_id,
+                IFNULL(SUM(wins + losses + draws), 0) AS num_matches
             FROM
-                _arch_stats
-            WHERE
-                archetype_id <= 9 AND {where}
+                season
+            LEFT JOIN
+                _arch_stats AS a ON a.season_id = season.id AND archetype_id <= 9 AND {where}
             GROUP BY
-                season_id
+                season.id
         )
         SELECT
-            SUM(a.wins + a.losses + a.draws) / st.total_matches AS meta_share
+            CASE WHEN st.num_matches = 0 THEN 0 ELSE SUM(a.wins + a.losses + a.draws) / st.num_matches END AS meta_share
         FROM
             season_totals AS st
         LEFT JOIN
-            _arch_stats AS a ON a.season_id = st.season_id AND a.archetype_id = %s
-        WHERE
-            {where}
+            _arch_stats AS a ON a.season_id = st.season_id AND a.archetype_id = %s AND {where}
         GROUP BY
             st.season_id
         ORDER BY

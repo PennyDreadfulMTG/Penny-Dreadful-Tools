@@ -35,6 +35,37 @@ def seasons_active(archetype_id: int) -> list[int]:
     sql = 'SELECT season_id FROM _arch_stats WHERE archetype_id = %s'
     return db().values(sql, [archetype_id])
 
+def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
+    where = 'TRUE'
+    if tournament_only:
+        where = "deck_type = 'tournament'"
+    sql = f"""
+        WITH season_totals AS (
+            SELECT
+                season_id,
+                SUM(wins + losses + draws) AS total_matches
+            FROM
+                _arch_stats
+            WHERE
+                archetype_id <= 9 AND {where}
+            GROUP BY
+                season_id
+        )
+        SELECT
+            SUM(a.wins + a.losses + a.draws) / st.total_matches AS meta_share
+        FROM
+            season_totals AS st
+        LEFT JOIN
+            _arch_stats AS a ON a.season_id = st.season_id AND a.archetype_id = %s
+        WHERE
+            {where}
+        GROUP BY
+            st.season_id
+        ORDER BY
+            st.season_id;
+    """
+    return [float(v) if v else 0.0 for v in db().values(sql, [archetype_id])]
+
 def add(name: str, parent: int, description: str) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])
     ancestors = db().select('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])

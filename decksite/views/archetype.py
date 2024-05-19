@@ -1,4 +1,5 @@
 import copy
+import json
 from typing import Any, TypedDict
 
 from flask import url_for
@@ -16,7 +17,7 @@ class Matchups(TypedDict):
     archetypes: list[archs.Archetype]
 
 class Archetype(View):
-    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], tournament_only: bool = False) -> None:
+    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], meta_share: list[float], tournament_only: bool = False) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
@@ -43,6 +44,37 @@ class Archetype(View):
         self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.show_archetype_tree = len(self.archetypes) > 0
         self.has_cards = True
+        if self.season_id() == 0:
+            self.history_chart = {
+                'type': 'bar',
+                'labels': json.dumps(list(range(1, len(meta_share) + 1))),
+                'series': json.dumps(meta_share),
+                'options': json.dumps({
+                    'indexAxis': 'x',
+                    'plugins': {
+                        'datalabels': {
+                            'display': False,
+                        },
+                        'tooltip': {
+                            'enabled': True,
+                        },
+                    },
+                    'scales': {
+                        'x': {
+                            'grid': {
+                                'display': False,
+                            },
+                        },
+                        'y': {
+                            'ticks': {
+                                'format': {
+                                    'style': 'percent',
+                                },
+                            },
+                        },
+                    },
+                }),
+            }
 
     def og_title(self) -> str:
         return self.archetype.name

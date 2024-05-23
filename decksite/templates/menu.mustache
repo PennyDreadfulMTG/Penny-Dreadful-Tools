@@ -1,20 +1,20 @@
 <ul class="menu badges">
     {{#menu}}
-        <li class="{{#has_submenu}}has-submenu{{/has_submenu}} {{#admin_only}}admin{{/admin_only}}">
+        <li class="{{#admin_only}}admin{{/admin_only}}">
             {{#badge}}
                 <div class="badge-holder">
                     <span class="admin demimod badge {{badge_class}}"><a href="{{url}}">{{text}}</a></span>
                 </div>
             {{/badge}}
-            <a class="menuitem {{#current}}current{{/current}}" href="{{url}}">
+            <a class="item {{#current}}current{{/current}}" href="{{url}}">
                 <div class="icon {{endpoint}}"></div>
                 {{name}}
             </a>
             {{#has_submenu}}
-                <div class="submenu-container">
+                <div class="submenu">
                     <ul>
                         {{#submenu}}
-                             <li><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{name}}</a></li>
+                             <li><a class="item {{#current}}current{{/current}} {{#is_external}}external{{/is_external}}" href="{{url}}">{{name}}</a></li>
                         {{/submenu}}
                     </ul>
                 </div>

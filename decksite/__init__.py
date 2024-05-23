@@ -82,7 +82,7 @@ def build_menu() -> list[dict[str, str | dict[str, str]]]:
             {'name': gettext('Community Guidelines'), 'endpoint': 'community_guidelines'},
             {'name': gettext('Contact Us'), 'endpoint': 'contact_us'},
         ]},
-        {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'submenu': admin.admin_menu()},
+        {'name': gettext('Admin'), 'demimod_only': True, 'endpoint': 'admin_home', 'submenu': admin.admin_menu()},
     ]
     setup_links(menu)
     for item in menu:

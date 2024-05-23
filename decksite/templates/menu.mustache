@@ -1,6 +1,6 @@
 <ul class="menu badges">
     {{#menu}}
-        <li class="{{#admin_only}}admin{{/admin_only}}">
+        <li class="{{#admin_only}}admin{{/admin_only}} {{#demimod_only}}demimod{{/demimod_only}}">
             {{#badge}}
                 <div class="badge-holder">
                     <span class="admin demimod badge {{badge_class}}"><a href="{{url}}">{{text}}</a></span>
@@ -14,7 +14,7 @@
                 <div class="submenu">
                     <ul>
                         {{#submenu}}
-                             <li><a class="item {{#current}}current{{/current}} {{#is_external}}external{{/is_external}}" href="{{url}}">{{name}}</a></li>
+                             <li class="{{#admin_only}}admin{{/admin_only}} {{#demimod_only}}demimod{{/demimod_only}}"><a class="item {{#current}}current{{/current}} {{#is_external}}external{{/is_external}}" href="{{url}}">{{name}}</a></li>
                         {{/submenu}}
                     </ul>
                 </div>

@@ -331,7 +331,7 @@ html, body {
 }
 
 nav, .page {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 nav {

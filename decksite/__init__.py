@@ -49,7 +49,8 @@ def build_menu() -> list[dict[str, str | dict[str, str]]]:
         {'name': gettext('Bugs'), 'endpoint': 'bugs'},
     ]
     menu = [
-        {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
+        {'name': gettext('Home'), 'endpoint': 'home'},
+        {'name': gettext('Metagame'), 'endpoint': 'metagame', 'badge': archetypes_badge, 'submenu': [
             {'name': gettext('Meta'), 'endpoint': '.metagame'},
             {'name': gettext('Decks'), 'endpoint': '.decks'},
             {'name': gettext('Archetypes'), 'endpoint': '.archetypes', 'badge': archetypes_badge},

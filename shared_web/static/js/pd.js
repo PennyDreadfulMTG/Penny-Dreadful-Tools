@@ -55,7 +55,7 @@ PD.initMenu = function() {
                 nav.classList.toggle("showing");
             });
         };
-    })
+    });
     $(".contains-dropdown").hoverIntent({
         over: PD.onDropdownHover,
         out: PD.onDropdownLeave,

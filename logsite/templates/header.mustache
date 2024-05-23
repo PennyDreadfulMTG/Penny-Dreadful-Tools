@@ -18,12 +18,11 @@
         {{/og_title}}
     </head>
     <body>
-        <header>
-            {{> language_switcher}}
-            <h1><a href="{{home_url}}">PDBot Stats</a></h1>
-        </header>
-        <nav>
-            {{> menu}}
-        </nav>
-        <main>
-            <h1>{{page_title}}</h1>
+        <div class="page">
+            <header>
+                <div class="hamburger">☰</div>
+                {{> language_switcher}}
+                <h1><a href="{{home_url}}">PDBot Stats</a></h1>
+            </header>
+            <main>
+                <h1>{{page_title}}</h1>

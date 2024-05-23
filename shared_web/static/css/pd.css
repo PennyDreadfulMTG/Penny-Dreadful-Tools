@@ -328,6 +328,7 @@ html, body {
     display: flex;
     height: 100vh;
     overflow: hidden;
+    width: 100%;
 }
 
 nav, .page {

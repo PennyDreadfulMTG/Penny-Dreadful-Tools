@@ -249,10 +249,10 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
     return ') AND ('.join(parts)
 
 def text_where(field: str, q: str) -> str:
-    return f"{field} LIKE '%%" + q.replace("'", "''").replace('%', '%%') + "%%'"
+    return f"{field} LIKE '%%" + q.replace("'", "''").replace('%', '\\%%') + "%%'"
 
 def text_match_where(field: str, q: str) -> str:
-    return f"{field} LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '%%') for c in list(q)) + "%%'"
+    return f"{field} LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '\\%%') for c in list(q)) + "%%'"
 
 def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'

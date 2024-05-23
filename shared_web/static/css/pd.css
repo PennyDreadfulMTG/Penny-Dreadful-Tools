@@ -415,20 +415,33 @@ footer {
     width: 100%;
 }
 
-/* Because the status bar takes a reasonable amount of vertical real estate in the default version we also check height for this one. See #6068. */
-@media only screen and (max-width: 900px), only screen and (max-height: 640px) {
+/* BAKERT scrim should be over status bar */
+
+/* On compact view show the status bar at the top under the app bar (avoiding being hidden under browser/os controls at the bottom). */
+@media only screen and (max-width: 900px) {
     .status-bar {
         border-bottom: 0.05rem solid var(--border);
         border-top: 0;
         bottom: inherit;
         font-size: var(--table-font-size);
-        padding-bottom: 0;
-        padding-top: 1em;
+        max-height: 3rem;
+        overflow-y: auto;
         position: absolute;
-        top: 4rem;
+        top: 0;
     }
-    main {
-        padding-top: 2rem;
+    header {
+        padding-top: 3rem; /* Make room for the transplanted status bar. */
+    }
+}
+
+/* When the amount of vertical space is limited, or when the status bar is at the top, make it skinnier. See #6068. */
+@media only screen and (max-width: 900px), only screen and (max-height: 640px) {
+    .status-bar {
+        padding-bottom: 8px;
+        padding-top: 8px;
+    }
+    .status-bar p {
+        margin-bottom: 0;
     }
 }
 

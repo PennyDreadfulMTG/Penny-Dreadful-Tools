@@ -417,9 +417,17 @@ footer {
 /* Because the status bar takes a reasonable amount of vertical real estate in the default version we also check height for this one. See #6068. */
 @media only screen and (max-width: 900px), only screen and (max-height: 640px) {
     .status-bar {
+        border-bottom: 0.05rem solid var(--border);
+        border-top: 0;
+        bottom: inherit;
         font-size: var(--table-font-size);
         padding-bottom: 0;
         padding-top: 1em;
+        position: absolute;
+        top: 4rem;
+    }
+    main {
+        padding-top: 2rem;
     }
 }
 

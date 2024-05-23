@@ -38,7 +38,25 @@ PD.initDismiss = function() {
 };
 
 PD.initMenu = function() {
-    $(".has-submenu").hoverIntent({
+    document.querySelectorAll(".hamburger").forEach((e) => {
+        e.onclick = () => {
+            document.querySelectorAll(".scrim").forEach((scrim) => {
+                scrim.classList.toggle("showing");
+            });
+            document.querySelectorAll("body > nav").forEach((nav) => {
+                nav.classList.toggle("showing");
+            });
+        };
+    });
+    document.querySelectorAll(".scrim").forEach((e) => {
+        e.onclick = () => {
+            e.classList.toggle("showing");
+            document.querySelectorAll("nav").forEach((nav) => {
+                nav.classList.toggle("showing");
+            });
+        };
+    })
+    $(".contains-dropdown").hoverIntent({
         over: PD.onDropdownHover,
         out: PD.onDropdownLeave,
         interval: 50,
@@ -49,14 +67,14 @@ PD.initMenu = function() {
 PD.onDropdownHover = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {
         $(this).addClass("hovering");
-        $(this).find(".submenu-container").slideDown("fast");
+        $(this).find(".language-menu").slideDown("fast");
     }
 };
 
 PD.onDropdownLeave = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {
         $(this).removeClass("hovering");
-        $(this).find(".submenu-container").slideUp("fast");
+        $(this).find(".language-menu").slideUp("fast");
     }
 };
 

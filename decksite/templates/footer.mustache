@@ -1,28 +1,33 @@
-            </div>
-        </main>
-        <footer>
-            {{#menu}}
-                <section {{#admin_only}}class="admin"{{/admin_only}}>
-                    <p><b><a class="menuitem" href="{{url}}">{{name}}</a></b></p>
-                    {{#submenu}}
-                        <p><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{name}}</a></p>
-                    {{/submenu}}
+                </div> {{! .content }}
+            </main>
+            <footer>
+                {{#menu}}
+                    <section {{#admin_only}}class="admin"{{/admin_only}}>
+                        <p><b><a class="menuitem" href="{{url}}">{{name}}</a></b></p>
+                        {{#submenu}}
+                            <p><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{name}}</a></p>
+                        {{/submenu}}
+                    </section>
+                {{/menu}}
+                <section>
+                    <p>Penny Dreadful tournaments and league are sponsored by <a class="external" href="https://cardhoarder.com/">Cardhoarder</a>.</p>
+                    <p><a href="https://cardhoarder.com/"><img class="sponsor-logo" src="{{cardhoarder_logo_url}}" alt="" width="470" height="366"></a></p>
                 </section>
-            {{/menu}}
-            <section>
-                <p>Penny Dreadful tournaments and league are sponsored by <a class="external" href="https://cardhoarder.com/">Cardhoarder</a>.</p>
-                <p><a href="https://cardhoarder.com/"><img class="sponsor-logo" src="{{cardhoarder_logo_url}}" alt="" width="470" height="366"></a></p>
-            </section>
-            <section>
-                <p>Popup card images courtesy of <a href="https://deckbox.org/">deckbox.org</a>.</p>
-            </section>
-            <section>
-                {{> contact}}
-            </section>
-        </footer>
-        <footer class="status-bar">
-            <p class="loading"><span class="spinner"></span> <span class="text">Loading…</span></p>
-        </footer>
+                <section>
+                    <p>Popup card images courtesy of <a href="https://deckbox.org/">deckbox.org</a>.</p>
+                </section>
+                <section>
+                    {{> contact}}
+                </section>
+            </footer>
+            <footer class="status-bar">
+                <p class="loading"><span class="spinner"></span> <span class="text">Loading…</span></p>
+            </footer>
+        </div> {{! .layout }}
+        <nav>
+            {{> menu}}
+        </nav>
+        <div class="scrim"></div>
         {{#tooltips_url}}
             <script defer src="{{tooltips_url}}"></script>
         {{/tooltips_url}}

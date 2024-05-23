@@ -28,8 +28,14 @@ def admin_menu() -> list[dict[str, str]]:
     endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for endpoint in endpoints:
         name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
-        m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
-    m.append({'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation'})
+        m.append({
+            'name': name,
+            'endpoint': endpoint,
+            'url': url_for(endpoint),
+            'admin_only': True,
+            'demimod_only': name == 'Edit Archetypes',
+        })
+    m.append({'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation', 'admin_only': True, 'demimod_only': False})
     return m
 
 @APP.route('/admin/')

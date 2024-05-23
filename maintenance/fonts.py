@@ -6,7 +6,9 @@ import tempfile
 import unicodedata
 
 from fontTools import subset
+from fontTools.merge import Merger, Options
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.scaleUpem import scale_upem
 from regex import regex
 
 from decksite.database import db
@@ -41,6 +43,7 @@ PREFER = {
     '🚮': 'Symbola',
     '🛏': 'NotoEmoji',
     '🪦': 'NotoEmoji',
+    '🏠': 'SegoeUISymbol',
 }
 
 GraphemeToFontMapping = dict[str, list[str]]
@@ -59,6 +62,7 @@ def ad_hoc(*args: str) -> None:
     graphemes_to_fonts: GraphemeToFontMapping = {}
     font_info: FontInfo = []
     metrics: dict[str, int] = {}
+    used_fonts = []
     for path in get_font_paths():
         name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
         font = TTFont(path)
@@ -74,16 +78,20 @@ def ad_hoc(*args: str) -> None:
         if needed_found_graphemes and name != 'main-text':
             subsetted = subset_font(font, needed_found_graphemes)
             adjusted = adjust_vertical_metrics(subsetted, metrics)
+            scale_upem(adjusted, 2048)
+            used_fonts.append((name, adjusted))
             encoded = encode(adjusted)
             css = font_face(name, encoded)
         if options_mode or needed_found_graphemes:
             font_info.append((name, path, found_graphemes, needed_found_graphemes, css))
         if not options_mode and not remaining_graphemes:
             break
+    merged = merge_fonts([f[1] for f in used_fonts])
+    encoded = encode(merged)
     if options_mode:
         print_options(graphemes_to_fonts, font_info)
     else:
-        print_css(font_info, deck_names)
+        print_css(font_info, deck_names, encoded)
     print_report(font_info, remaining_graphemes)
 
 def deck_name_graphemes() -> tuple[set[str], set[str]]:
@@ -105,7 +113,10 @@ def get_font_paths() -> list[str]:
     return [
         '/Users/bakert/Downloads/main-text.ttf',
         '/Users/bakert/notofonts.github.io/megamerge/NotoSansLiving-Regular.ttf',
-        '/Users/bakert/noto-cjk/Sans/Variable/TTF/NotoSansCJKjp-VF.ttf',
+        # You must use the static version of these fonts not the variable versions even though it means you need more fonts.
+        # These were downloaded from Google fonts, not from the noto-cjk repo which doesn't seem to have them in this format.
+        '/Users/bakert/Downloads/NotoSansJP-Regular.ttf',
+        '/Users/bakert/Downloads/NotoSansSC-Regular.ttf',
         '/Users/bakert/notofonts.github.io/megamerge/NotoSansHistorical-Regular.ttf',
         '/Users/bakert/notofonts.github.io/fonts/NotoSansSymbols/hinted/ttf/NotoSansSymbols-Regular.ttf',
         '/Users/bakert/notofonts.github.io/fonts/NotoSansSymbols2/hinted/ttf/NotoSansSymbols2-Regular.ttf',
@@ -133,6 +144,8 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
     _, tmp_in = tempfile.mkstemp()
     _, tmp_out = tempfile.mkstemp()
     font.save(tmp_in)
+
+
     try:
         text = ','.join(graphemes)
         args = [
@@ -143,13 +156,14 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
             '--flavor=woff2',
         ]
         subset.main(args)
-        return TTFont(tmp_out)
+        subsetted_font = TTFont(tmp_out)
+        return subsetted_font
     finally:
         os.remove(tmp_in)
         os.remove(tmp_out)
 
 def find_base_graphemes() -> set[str]:
-    return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅')
+    return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅☰🏠')
 
 def encode(font: TTFont) -> str:
     _, tmp_in = tempfile.mkstemp()
@@ -196,6 +210,25 @@ def adjust_vertical_metrics(font: TTFont, metrics: dict[str, int]) -> TTFont:
     finally:
         os.remove(tmp_out)
 
+def merge_fonts(fonts: list[TTFont]) -> TTFont:
+    temp_files = []
+    for font in fonts:
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.ttf')
+        font.save(temp_file.name)
+        temp_files.append(temp_file.name)
+
+    try:
+        merger = Merger(options=Options(drop_tables=["vmtx", "vhea", "MATH"]))
+        merged_font = merger.merge(temp_files)
+    finally:
+        for temp_file in temp_files:
+            try:
+                os.remove(temp_file)
+            except OSError:
+                pass
+
+    return merged_font
+
 def font_face(name: str, encoded: str) -> str:
     return f"""
 @font-face {{
@@ -207,9 +240,8 @@ def font_face(name: str, encoded: str) -> str:
 }}
     """
 
-def print_css(font_info: FontInfo, deck_names: set[str]) -> None:
-    symbol_font_names = [name for name, _, _, _, _ in font_info if not name == 'main-text']
-    font_faces = ''.join(css for _, _, _, _, css in font_info)
+def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: str) -> None:
+    ff = font_face('symbols', encoded_merged_font)
     sample_graphemes = [(name, ''.join(f'<span title="{points(grapheme)}">{html.escape(grapheme)}</span>' for grapheme in sorted(used))) for name, _, _, used, _ in font_info]
     samples = ''.join(f'<p>{html.escape(name)} {sample}</p>' for name, sample in sample_graphemes)
     deck_name_samples = '\n'.join(f'<p>{html.escape(name)}</p>' for name in deck_names)
@@ -221,7 +253,7 @@ def print_css(font_info: FontInfo, deck_names: set[str]) -> None:
                 <title>Penny Dreadful Font Test</title>
                 <style>
                     * {{
-                        font-family: var(--symbol-fonts), main-text, fantasy; /* fantasy as base font so we can use js to detect misses, see below. */
+                        font-family: symbols, main-text, fantasy; /* fantasy as base font so we can use js to detect misses, see below. */
                         font-size: 20px;
                     }}
 
@@ -232,10 +264,7 @@ def print_css(font_info: FontInfo, deck_names: set[str]) -> None:
 
                     /* BEGIN COPY AND PASTE OUTPUT FOR pd.css */
 
-:root {{
-    --symbol-fonts: {', '.join(symbol_font_names)};
-}}
-{font_faces}
+{ff}
 
                     /* END COPY AND PASTE OUTPUT FOR pd.css */
 

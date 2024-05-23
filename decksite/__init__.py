@@ -93,7 +93,7 @@ def build_menu() -> list[dict[str, str | dict[str, str]]]:
     return menu
 
 def is_current(item: dict[str, str | dict[str, str]], current_template: str) -> bool:
-    return item.get('endpoint', '').replace('seasons', '').replace('.', '') == current_template or current_template in [entry.get('endpoint', '').replace('.', '') for entry in item.get('submenu', [])]
+    return item.get('endpoint', '').replace('seasons', '').replace('.', '') == current_template or current_template in [entry.get('endpoint', '').replace('.', '') for entry in item.get('submenu', [])]  # type: ignore
 
 def setup_links(menu: list[dict[str, Any]]) -> None:
     for item in menu:

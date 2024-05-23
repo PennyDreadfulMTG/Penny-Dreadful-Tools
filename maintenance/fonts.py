@@ -145,7 +145,6 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
     _, tmp_out = tempfile.mkstemp()
     font.save(tmp_in)
 
-
     try:
         text = ','.join(graphemes)
         args = [
@@ -218,12 +217,13 @@ def merge_fonts(fonts: list[TTFont]) -> TTFont:
         temp_files.append(temp_file.name)
 
     try:
-        merger = Merger(options=Options(drop_tables=["vmtx", "vhea", "MATH"]))
+        # Stole these options from google's noto megamerge
+        merger = Merger(options=Options(drop_tables=['vmtx', 'vhea', 'MATH']))
         merged_font = merger.merge(temp_files)
     finally:
-        for temp_file in temp_files:
+        for path in temp_files:
             try:
-                os.remove(temp_file)
+                os.remove(path)
             except OSError:
                 pass
 

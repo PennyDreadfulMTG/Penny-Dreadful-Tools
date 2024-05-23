@@ -49,7 +49,8 @@ def build_menu() -> list[dict[str, str | dict[str, str]]]:
         {'name': gettext('Bugs'), 'endpoint': 'bugs'},
     ]
     menu = [
-        {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
+        {'name': gettext('Home'), 'endpoint': 'home'},
+        {'name': gettext('Metagame'), 'endpoint': 'metagame', 'badge': archetypes_badge, 'submenu': [
             {'name': gettext('Meta'), 'endpoint': '.metagame'},
             {'name': gettext('Decks'), 'endpoint': '.decks'},
             {'name': gettext('Archetypes'), 'endpoint': '.archetypes', 'badge': archetypes_badge},
@@ -85,9 +86,14 @@ def build_menu() -> list[dict[str, str | dict[str, str]]]:
     ]
     setup_links(menu)
     for item in menu:
-        item['current'] = item.get('endpoint', '').replace('seasons', '').replace('.', '') == current_template or current_template in [entry.get('endpoint', '').replace('.', '') for entry in item.get('submenu', [])]
+        item['current'] = is_current(item, current_template)
         item['has_submenu'] = item.get('submenu') is not None
+        for subitem in item.get('submenu', []):
+            subitem['current'] = is_current(subitem, current_template)
     return menu
+
+def is_current(item: dict[str, str | dict[str, str]], current_template: str) -> bool:
+    return item.get('endpoint', '').replace('seasons', '').replace('.', '') == current_template or current_template in [entry.get('endpoint', '').replace('.', '') for entry in item.get('submenu', [])]  # type: ignore
 
 def setup_links(menu: list[dict[str, Any]]) -> None:
     for item in menu:

@@ -32,7 +32,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 body {
-    line-height: var(--table-line-height);
+    line-height: 1;
 }
 
 ol, ul {

@@ -510,6 +510,7 @@ Color attributes are mostly found with their related structural elements in this
     --dark-gray: #999; /* Spanish gray */
     --red: #f00;
     --soft-tangerine: #f9d0a9; /* Light orange */
+    --true-black: #000; /* Black. Only for use at less than 1 opacity, for scrim and similar. */
 
     /* Helpful aliases for site colors. */
 
@@ -532,6 +533,7 @@ Color attributes are mostly found with their related structural elements in this
     --language-menu-background: var(--black);
     --language-menu-text: var(--white);
     --language-menu-text-hover: var(--dark-gray);
+    --scrim-color: var(--true-black);
 
     /* Header and footer */
     --secondary-background: var(--dark-gray);
@@ -772,7 +774,7 @@ nav:has(li:hover > .item + .submenu) {
 }
 
 .scrim.showing {
-    background-color: #000;
+    background-color: var(--scrim-color);
     display: block;
     height: 100vh;
     left: 0;

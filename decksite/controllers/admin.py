@@ -21,22 +21,18 @@ from shared import dtutil
 from shared import redis_wrapper as redis
 from shared.pd_exception import InvalidArgumentException
 from shared_web.decorators import fill_form
+from shared_web.menu import Menu, MenuItem
 
 
-def admin_menu() -> list[dict[str, str]]:
+def admin_menu() -> Menu:
     m = []
     endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for endpoint in endpoints:
-        name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
-        m.append({
-            'name': name,
-            'endpoint': endpoint,
-            'url': url_for(endpoint),
-            'admin_only': True,
-            'demimod_only': name == 'Edit Archetypes',
-        })
-    m.append({'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation', 'admin_only': True, 'demimod_only': False})
-    return m
+        name = titlecase.titlecase(str(endpoint).replace('_', ' ')) if endpoint else 'Admin Home'
+        permission_required = 'demimod' if name in ['Edit Archetypes', 'Edit Rules'] else 'admin'
+        m.append(MenuItem(name, endpoint=endpoint, permission_required=permission_required))
+    m.append(MenuItem(gettext('Rotation Speculation'), endpoint='rotation_speculation', permission_required='admin'))
+    return Menu(m)
 
 @APP.route('/admin/')
 @auth.demimod_required

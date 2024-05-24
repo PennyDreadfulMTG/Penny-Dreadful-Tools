@@ -2,12 +2,12 @@
 
 import subprocess
 
-from flask import url_for
 from sqlalchemy import create_engine
 from sqlalchemy_utils import create_database, database_exists
 
 from shared import configuration
 from shared_web.flask_app import PDFlask
+from shared_web.menu import Menu, MenuItem
 
 APP = PDFlask(__name__)
 
@@ -33,13 +33,13 @@ APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
 APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
 
-def build_menu() -> list[dict[str, str]]:
+def build_menu() -> Menu:
     menu = [
-        {'name': 'Home', 'url': url_for('home')},
-        {'name': 'Matches', 'url': url_for('matches')},
-        {'name': 'People', 'url': url_for('people')},
-        {'name': 'Stats', 'url': url_for('charts')},
-        {'name': 'About', 'url': url_for('about')},
+        MenuItem('Home', endpoint='home'),
+        MenuItem('Matches', endpoint='matches'),
+        MenuItem('People', endpoint='people'),
+        MenuItem('Stats', endpoint='charts'),
+        MenuItem('About', endpoint='about'),
     ]
     return menu
 

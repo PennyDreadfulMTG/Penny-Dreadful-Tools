@@ -1782,12 +1782,20 @@ p.bug-desc {
     margin-left: 0.2em;
 }
 
-.github {
-    width: 1.333em;
-    height: 1.333em;
-    padding-right: 0.563em;
-    vertical-align: middle;
+.toggle-illegal {
+    margin-left: 0;
 }
+
+tr.wide td.github {
+    margin: 0;
+    padding: calc(7rem / 20) 0 0;
+}
+
+tr.wide td.github img {
+    height: calc(20rem / 20);
+    width: 100%;
+}
+
 
 /*
 

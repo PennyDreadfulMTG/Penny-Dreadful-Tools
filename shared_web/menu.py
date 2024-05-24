@@ -69,4 +69,4 @@ class MenuItem:
         return self.permission_required == 'demimod' or self.permission_required == 'admin'
 
 def normalize_endpoint(item: 'MenuItem') -> str:
-    return item.endpoint.replace('seasons', '').replace('.', '')
+    return item.endpoint.replace('seasons.', '').replace('.', '')

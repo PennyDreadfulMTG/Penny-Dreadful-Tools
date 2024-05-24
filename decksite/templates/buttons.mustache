@@ -9,7 +9,7 @@
         </li>
     {{/show_tournament_toggle}}
     {{#has_external_source}}
-        <li class="button"><a title="View competition source ({{type}})" class="external" href="{{url}}">Source</a></li>
+        <li><a title="View competition source ({{type}})" class="button external" href="{{url}}">Source</a></li>
     {{/has_external_source}}
     {{^is_in_current_run}}
       {{#is_deck_page}}
@@ -19,6 +19,6 @@
       {{/is_deck_page}}
     {{/is_in_current_run}}
     {{#show_seasons}}
-        <li class="button">{{> seasonchooser}}</li>
+        <li>{{> seasonchooser}}</li>
     {{/show_seasons}}
 </ul>

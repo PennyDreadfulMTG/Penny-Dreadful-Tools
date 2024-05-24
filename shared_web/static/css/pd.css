@@ -1629,12 +1629,15 @@ Button Bars
     background: var(--background);
     border: 0.05rem solid var(--light-border);
     border-radius: var(--button-rounded-corners);
-    color: var(--deemphasized-text);
     display: block;
-    font-size: var(--table-font-size);
     padding: 0.422em 1em;
     text-align: center;
     user-select: none;
+}
+
+.button, .dd-menu {
+    color: var(--deemphasized-text);
+    font-size: var(--table-font-size);
 }
 
 ul.buttons li {
@@ -1683,6 +1686,10 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
     display: inline-block;
     cursor: pointer;
     white-space: nowrap;
+}
+
+.dd-button .expansion-indicator {
+    margin-left: 0.317rem; /* This matches the margin-right on .ss which is the other side of the text on the season chooser. */
 }
 
 .dd-input {

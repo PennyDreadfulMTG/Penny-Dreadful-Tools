@@ -1,3 +1,5 @@
+from collections import Counter
+
 from magic import mana
 from magic.models import Card
 
@@ -42,21 +44,29 @@ def find_colors(cs: list[Card]) -> tuple[list[str], list[str]]:
     colors: set[str] = set()
     colored_symbols: list[str] = []
     for c in cs:
+        card_colors = []
+        card_colored_symbols = []
+        if "you may pay {0} rather than pay this spell's mana cost" in c.oracle_text:
+            continue  # Mostly for Ravenous Trap which people sideboard off color to play for the alternative cost.
+        if c.name == 'Damn':
+            continue  # They might only be using the front, or only using the overload.
         for cost in c.get('mana_cost') or ():
-            if c.layout == 'split':
-                continue  # They might only be using one half so ignore it.
-            if c.type_line == 'Instant — Trap':
-                continue  # People often sideboard off-colour traps.
-            if c.layout == 'modal_dfc':
-                continue  # They might only be using one half so ignore it.
-            if c.name == 'Damn':
-                continue  # They might only be using the overload.
-            card_symbols = mana.parse(cost)
-            card_colors = mana.colors(card_symbols)
-            colors.update(card_colors['required'])
-            card_colored_symbols = mana.colored_symbols(card_symbols)
-            colored_symbols += card_colored_symbols['required']
+            face_colors = mana.parse(cost)
+            card_colors.append(mana.colors(face_colors)['required'])
+            card_colored_symbols.append(mana.colored_symbols(face_colors)['required'])
+        colors_in_every_cost = set.intersection(*card_colors)
+        colored_symbols_in_every_cost = find_common_symbols(card_colored_symbols)
+        colors.update(colors_in_every_cost)
+        colored_symbols += colored_symbols_in_every_cost
     return mana.order(colors), colored_symbols
+
+def find_common_symbols(lists):
+    if not lists:
+        return []
+    common_counter = Counter(lists[0])
+    for sublist in lists[1:]:
+        common_counter &= Counter(sublist)
+    return list(common_counter.elements())
 
 def init() -> None:
     for name, colors in COLOR_COMBINATIONS.items():

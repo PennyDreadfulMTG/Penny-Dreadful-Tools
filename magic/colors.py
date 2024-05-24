@@ -60,7 +60,7 @@ def find_colors(cs: list[Card]) -> tuple[list[str], list[str]]:
         colored_symbols += colored_symbols_in_every_cost
     return mana.order(colors), colored_symbols
 
-def find_common_symbols(lists):
+def find_common_symbols(lists: list[list[str]]) -> list[str]:
     if not lists:
         return []
     common_counter = Counter(lists[0])

@@ -115,12 +115,16 @@ small {
     font-size: 0.563em;
 }
 
-article, section p {
+:root {
     /*
         Aim for an average line length of 45-90 characters, including spaces.
         https://practicaltypography.com/line-length.html
     */
-    max-width: 30em;
+    --max-readable-line-length: 67ch;
+}
+
+article, section p {
+    max-width: var(--max-readable-line-length);
 }
 
 article {
@@ -1026,11 +1030,13 @@ tr.wide td, tr.wide th {
 
 tr.wide+tr td {
     border-top: 0.05rem solid var(--border);
+    line-height: var(--reading-line-height);
+    vertical-align: top;
 }
 
 tr.wide td.wide {
     padding-right: 1em;
-    max-width: 50em;
+    max-width: var(--max-readable-line-length);
     white-space: normal;
 }
 
@@ -1988,7 +1994,7 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 .intro {
     background: var(--tertiary-background);
     border: 0.05rem solid var(--border);
-    max-width: 30em;
+    max-width: var(--max-readable-line-length);
     padding: 2rem;
     position: relative; /* So that we can absolutely position the dismiss x in the corner. */
     width: 100%;
@@ -2245,7 +2251,7 @@ News
 
 .news .story {
     display: inline-block;
-    max-width: 33em;
+    max-width: var(--max-readable-line-length);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -2419,7 +2425,7 @@ Achievements
     border: 0.05rem solid var(--border);
     margin-bottom: 1rem;
     max-width: 100%; /* Don't exceed the space available but … */
-    width: 30rem; /* … display at article width if possible. */
+    width: var(--max-readable-line-length); /* … display at article width if possible. */
 }
 
 .achievement-category p:last-child {

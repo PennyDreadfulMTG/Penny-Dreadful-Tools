@@ -118,7 +118,7 @@ Check the dev.py source code for the full set of options including `unit`, `type
 ## Working on React components
 
 - Run logsite
-- pipenv run python dev.py watch # Builds bundle.js after every file change.
+- pipenv run python dev.py watch # Builds bundle.js after every file change. Uses development build so that you get source maps - useful line numbers and error messages, unlike build/buildjs.
 
 ## Decksite performance testing/monitoring
 

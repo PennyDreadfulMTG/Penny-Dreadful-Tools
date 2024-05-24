@@ -33,7 +33,7 @@ class Menu(Iterable, Sized):
 class Badge:
     url: str
     text: str
-    className: str
+    class_name: str
 
 @dataclass
 class MenuItem:

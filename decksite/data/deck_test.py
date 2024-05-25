@@ -4,19 +4,18 @@ from shared.container import Container
 
 
 def test_set_colors() -> None:
-    def card(name: str, mana_cost: str, layout: str = 'normal', type_line: str = 'Creature') -> Card:
+    def card(name: str, mana_cost: str, oracle_text: str = '') -> Card:
         return Card({
             'name': name,
             'mana_cost': mana_cost,
-            'layout': layout,
-            'type_line': type_line,
+            'oracle_text': oracle_text,
         })
 
     bop = card('Birds of Paradise', '{G}')
     bbe = card('Bloodbraid Elf', '{2}{R}{G}')
-    life_death = card('Life // Death', '{G}{1}{B}', layout='split')
-    rav_trap = card('Ravenous Trap', '{2}{B}{B}', type_line='Instant — Trap')
-    valentin = card('Valentin, Dean of the Vein', '{B}{2}{G}{G}', layout='modal_dfc')
+    life_death = card('Life // Death', '{G}|{1}{B}')
+    rav_trap = card('Ravenous Trap', '{2}{B}{B}', oracle_text="If an opponent had three or more cards put into their graveyard from anywhere this turn, you may pay {0} rather than pay this spell's mana cost.")
+    valentin = card('Valentin, Dean of the Vein', '{B}|{2}{G}{G}')
     finks = card('Kitchen Finks', '{1}{G/W}{G/W}')
     tests = [
         ([], []),

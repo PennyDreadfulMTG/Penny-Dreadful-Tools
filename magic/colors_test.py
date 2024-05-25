@@ -2,20 +2,20 @@ from magic import colors, oracle
 
 def test_find_colors() -> None:
     delver_of_secrets = oracle.load_card('Delver of Secrets')
-    dead_gone = oracle.load_card('Dead // Gone')  # => R
-    breaking_entering = oracle.load_card('Breaking // Entering')  # => B
-    claim_fame = oracle.load_card('Claim // Fame') # => ? R? Or'  #) nothing?
-    fire_ice = oracle.load_card('Fire // Ice')  # => nothing
-    bala_ged_recovery = oracle.load_card('Bala Ged Recovery')  # => G (or') nothi  #ng?)
-    birgi_god_of_storytelling = oracle.load_card('Birgi, God of Storytelling')  # => R
-    valentin_dead_of_the_vein = oracle.load_card('Valentin, Dean of the Vein')  # => nothing
-    archangel_avacyn = oracle.load_card('Archangel Avacyn')  # => W
-    ravenous_trap = oracle.load_card('Ravenous Trap')  # => nothing
-    ricochet_trap = oracle.load_card('Ricochet Trap')  # => R
-    damn = oracle.load_card('Damn')  # => nothing
-    kellan_daring_traveler = oracle.load_card('Kellan, Daring Traveler')  # => nothing
-    kellan_inquisitive_prodigy = oracle.load_card('Kellan, Inquisitive Prodigy')  # => UG
-    kitchen_finks = oracle.load_card('Kitchen Finks')  # => nothing
+    dead_gone = oracle.load_card('Dead // Gone')
+    breaking_entering = oracle.load_card('Breaking // Entering')
+    claim_fame = oracle.load_card('Claim // Fame')
+    fire_ice = oracle.load_card('Fire // Ice')
+    bala_ged_recovery = oracle.load_card('Bala Ged Recovery')
+    birgi_god_of_storytelling = oracle.load_card('Birgi, God of Storytelling')
+    valentin_dead_of_the_vein = oracle.load_card('Valentin, Dean of the Vein')
+    archangel_avacyn = oracle.load_card('Archangel Avacyn')
+    ravenous_trap = oracle.load_card('Ravenous Trap')
+    ricochet_trap = oracle.load_card('Ricochet Trap')
+    damn = oracle.load_card('Damn')
+    kellan_daring_traveler = oracle.load_card('Kellan, Daring Traveler')
+    kellan_inquisitive_prodigy = oracle.load_card('Kellan, Inquisitive Prodigy')
+    kitchen_finks = oracle.load_card('Kitchen Finks')
     bedeck_bedazzle = oracle.load_card('Bedeck // Bedazzle')
 
     assert (['U'], ['U', 'U', 'U', 'U']) == colors.find_colors([delver_of_secrets, delver_of_secrets, delver_of_secrets, delver_of_secrets])

@@ -1,10 +1,8 @@
 <section>
     <p><a class="external" href="https://github.com/PennyDreadfulMTG/modo-bugs/issues/">Report a Magic Online Bug</a></p>
     <p>
-        <span class="inline">
-            <input type="checkbox" class="toggle-illegal" name="toggle_illegal">
-            <label for="toggle_illegal">Hide cards not legal in Penny Dreadful</label>
-        </span>
+        <input type="checkbox" class="toggle-illegal" name="toggle_illegal">
+        <label for="toggle_illegal">Hide cards not legal in Penny Dreadful</label>
     </p>
     <table class="bugtable">
         <thead>
@@ -22,8 +20,8 @@
                         <td>{{> singlecard}}</td>
                         <td class="wide">{{description}}</td>
                         <td class="{sorter: 'bugseverity'}">{{classification}}</td>
-                        <td>
-                            <a href="{{url}}" title="Github"><img class="github" src={{github_icon}} /></a>
+                        <td class="github">
+                            <a href="{{url}}" title="Github"><img src={{github_icon}} /></a>
                             {{#from_bug_blog}}
                                 <a href="{{bug_blog_url}}" title="Bug Blog"><i class="ss ss-pmei ss-2x"></i></a>
                             {{/from_bug_blog}}

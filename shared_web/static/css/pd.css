@@ -115,12 +115,16 @@ small {
     font-size: 0.563em;
 }
 
-article, section p {
+:root {
     /*
         Aim for an average line length of 45-90 characters, including spaces.
         https://practicaltypography.com/line-length.html
     */
-    max-width: 30em;
+    --max-readable-line-length: 67ch;
+}
+
+article, section p {
+    max-width: var(--max-readable-line-length);
 }
 
 article {
@@ -510,6 +514,7 @@ Color attributes are mostly found with their related structural elements in this
     --dark-gray: #999; /* Spanish gray */
     --red: #f00;
     --soft-tangerine: #f9d0a9; /* Light orange */
+    --true-black: #000; /* Black. Only for use at less than 1 opacity, for scrim and similar. */
 
     /* Helpful aliases for site colors. */
 
@@ -532,6 +537,7 @@ Color attributes are mostly found with their related structural elements in this
     --language-menu-background: var(--black);
     --language-menu-text: var(--white);
     --language-menu-text-hover: var(--dark-gray);
+    --scrim-color: var(--true-black);
 
     /* Header and footer */
     --secondary-background: var(--dark-gray);
@@ -772,7 +778,7 @@ nav:has(li:hover > .item + .submenu) {
 }
 
 .scrim.showing {
-    background-color: #000;
+    background-color: var(--scrim-color);
     display: block;
     height: 100vh;
     left: 0;
@@ -1024,11 +1030,13 @@ tr.wide td, tr.wide th {
 
 tr.wide+tr td {
     border-top: 0.05rem solid var(--border);
+    line-height: var(--reading-line-height);
+    vertical-align: top;
 }
 
 tr.wide td.wide {
     padding-right: 1em;
-    max-width: 50em;
+    max-width: var(--max-readable-line-length);
     white-space: normal;
 }
 
@@ -1774,12 +1782,20 @@ p.bug-desc {
     margin-left: 0.2em;
 }
 
-.github {
-    width: 1.333em;
-    height: 1.333em;
-    padding-right: 0.563em;
-    vertical-align: middle;
+.toggle-illegal {
+    margin-left: 0;
 }
+
+tr.wide td.github {
+    margin: 0;
+    padding: calc(7rem / 20) 0 0;
+}
+
+tr.wide td.github img {
+    height: calc(20rem / 20);
+    width: 100%;
+}
+
 
 /*
 
@@ -1986,7 +2002,7 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 .intro {
     background: var(--tertiary-background);
     border: 0.05rem solid var(--border);
-    max-width: 30em;
+    max-width: var(--max-readable-line-length);
     padding: 2rem;
     position: relative; /* So that we can absolutely position the dismiss x in the corner. */
     width: 100%;
@@ -2243,7 +2259,7 @@ News
 
 .news .story {
     display: inline-block;
-    max-width: 33em;
+    max-width: var(--max-readable-line-length);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -2417,7 +2433,7 @@ Achievements
     border: 0.05rem solid var(--border);
     margin-bottom: 1rem;
     max-width: 100%; /* Don't exceed the space available but … */
-    width: 30rem; /* … display at article width if possible. */
+    width: var(--max-readable-line-length); /* … display at article width if possible. */
 }
 
 .achievement-category p:last-child {

@@ -11,7 +11,7 @@ class EditArchetypes(View):
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)
-        ds, _ = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC')
+        ds, _ = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC', limit='LIMIT 20')
         self.queue = ds
         deck.load_queue_similarity(self.queue)
         rule.apply_rules_to_decks(self.queue)

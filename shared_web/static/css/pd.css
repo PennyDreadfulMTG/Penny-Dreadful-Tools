@@ -537,7 +537,7 @@ Color attributes are mostly found with their related structural elements in this
     --text-over-images: var(--white);
     --toggle-off: var(--light-gray);
     --toggle-on: var(--dark-gray);
-    --menu-highlight-text: var(--dark-gray);
+    --language-menu-highlight-text: var(--dark-gray);
     --language-menu-background: var(--black);
     --language-menu-text: var(--white);
     --language-menu-text-hover: var(--dark-gray);
@@ -2821,7 +2821,7 @@ The old menu used to use most of this, now it's just used by the language switch
 
 .language-menu a:hover {
     background-color: var(--language-menu-background);
-    color: var(--menu-highlight-text);
+    color: var(--language-menu-highlight-text);
 }
 
 .language-menu {

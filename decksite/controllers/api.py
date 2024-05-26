@@ -29,6 +29,7 @@ from shared.pd_exception import DoesNotExistException, InvalidArgumentException,
 from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
+from shared_web.menu import MenuItem
 
 SearchItem = dict[str, str]
 
@@ -797,29 +798,25 @@ def init_search_cache() -> None:
         return
     submenu_entries = []  # Accumulate the submenu entries and add them after the top-level entries as they are less important.
     for entry in APP.config.get('menu', lambda: [])():
-        if entry.get('admin_only'):
+        if entry.permission_required:
             continue
         SEARCH_CACHE.append(menu_item_to_search_item(entry))
-        for subentry in entry.get('submenu', []):
-            submenu_entries.append(menu_item_to_search_item(subentry, entry.get('name')))
+        for subentry in entry.submenu:
+            if subentry.permission_required:
+                continue
+            submenu_entries.append(menu_item_to_search_item(subentry))
     for entry in submenu_entries:
-        if entry.get('admin_only'):
-            continue
-        SEARCH_CACHE.append(menu_item_to_search_item(entry))
+        SEARCH_CACHE.append(entry)
     with open(configuration.get_str('typeahead_data_path')) as f:
         for item in json.load(f):
             SEARCH_CACHE.append(item)
 
-def menu_item_to_search_item(menu_item: dict[str, Any], parent_name: str | None = None) -> dict[str, Any]:
+def menu_item_to_search_item(menu_item: MenuItem, parent_name: str | None = None) -> dict[str, Any]:
     name = ''
     if parent_name:
         name += f'{parent_name} – '
-    name += menu_item.get('name', '')
-    if menu_item.get('url'):
-        url = menu_item.get('url')
-    else:
-        url = url_for(menu_item.get('endpoint', ''))
-    return {'name': name, 'type': 'Page', 'url': url}
+    name += menu_item.name
+    return {'name': name, 'type': 'Page', 'url': menu_item.url}
 
 def pagination(args: dict[str, str], default_page_size: int = DEFAULT_LIVE_TABLE_PAGE_SIZE) -> tuple[int, int, str]:
     try:

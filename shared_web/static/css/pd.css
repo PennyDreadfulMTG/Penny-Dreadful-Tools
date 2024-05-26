@@ -789,7 +789,6 @@ nav:has(li:hover > .item + .submenu) {
     opacity: 0.5;
     position: absolute;
     width: 100vw;
-    z-index: 1;
 }
 
 nav.showing:has(.current ~ .submenu) + .scrim.showing {
@@ -1411,6 +1410,10 @@ Ideally they're at the same level but this appears later in the HTML so it's sti
 .badge-holder {
     z-index: 3;
     /* This is just a div containing the floating number/link to the admin archetypes page and doesn't need a box shadow. */
+}
+
+.scrim {
+    z-index: 3;
 }
 
 nav.showing {

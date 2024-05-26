@@ -79,6 +79,7 @@ http://www.modularscale.com/?1&em&1.333 will show you bigger and smaller options
     --x-large-font-size: 1.777rem; /* Display size text */
     --large-font-size: 1.333rem; /*  To emphasize or draw attention */
     --reading-font-size: 1rem; /* Clear */
+    /* If you make changes here be sure to update both the Chart.js fontSizes in pd.js. */
     --table-font-size: 0.75rem; /* Show more information */
 }
 
@@ -88,6 +89,7 @@ html {
         https://practicaltypography.com/point-size.html
 
         With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
+        If you make changes here be sure to update both the Chart.js fontSizes in pd.js.
     */
     font: 400 20px var(--main-text-font-family);
     font-variant-numeric: normal;
@@ -174,6 +176,7 @@ footer a:hover {
 
 :root {
     --heading-font-family: symbols, heading-caps, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /* If you make changes here also change the Chart.js fontFamily in pd.js */
     --main-text-font-family: symbols, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -508,6 +511,7 @@ Color attributes are mostly found with their related structural elements in this
 
 :root {
     /* Site colors. (Names from http://coolors.co/) */
+    /* If you make changes here be sure to update the Chart.js color and backgroundColor in pd.js. */
     --white: #f9f9f9; /* Snow */
     --black: #502828; /* Acajou */
     --light-gray: #eee; /* Isabelline */

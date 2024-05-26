@@ -2561,12 +2561,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:1828c1e2bc93cdb371fd0955fa51e27c3143490fe40a650db3fca22ea44233b3",
-                "sha256:268c782f9d657bb0447a97bb9d50debd3a48721bb9d1d8194548d4835798beac"
+                "sha256:8f5379b9948682d72a9ab531fbe52932e84c4f38deda570255f9bae3edd766bc",
+                "sha256:e31fee7b9d15ef53980526579ac6089b3ae51a005a281acf97178e90ac71aff6"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==70.0.0.20240523"
+            "version": "==70.0.0.20240524"
         },
         "typing-extensions": {
             "hashes": [

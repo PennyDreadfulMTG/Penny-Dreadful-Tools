@@ -58,6 +58,7 @@ class Home(View):
                     'url': url_for('current_league'),
                     'link_text': gettext('Current League…'),
                     'decks': league_decks,
+                    'hide_source': True,
                     'show_omw': True,
                     'hide_top8': True,
                 },
@@ -65,6 +66,7 @@ class Home(View):
         if tournament_decks:
             self.deck_tables.append(
                 {
+                    'hide_source': True,
                     'title': gettext('Latest Tournament Top 8'),
                     'url': url_for('competition', competition_id=tournament_id),
                     'link_text': gettext('View Tournament…'),

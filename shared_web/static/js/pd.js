@@ -432,12 +432,11 @@ PD.initPersonNotes = function() {
 PD.renderCharts = function() {
     // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
     Chart.register(ChartDataLabels);
-    Chart.defaults.font.family = $("body").css("font-family");
-    if ($("td").length > 0) {
-        const fontSize = parseInt($("td").css("font-size"), 10);
-        Chart.defaults.font.size = fontSize;
-        Chart.defaults.plugins.datalabels.font.size = fontSize;
-    }
+    // Because we don't want to wait for window.onload (css and images loaded) we hardcode here to avoid loading the browser default values from Safari.
+    // Should be kept in sync with CSS.
+    Chart.defaults.font.family = 'symbols, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif';
+    Chart.defaults.font.size = "15px";
+    Chart.defaults.plugins.datalabels.font.size = "15px";
     Chart.defaults.plugins.legend.display = false;
     Chart.defaults.plugins.tooltip.enabled = false;
     Chart.defaults.plugins.datalabels.formatter = function (value) {

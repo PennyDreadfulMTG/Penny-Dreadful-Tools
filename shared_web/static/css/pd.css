@@ -1012,6 +1012,7 @@ main table:not(.with-marginalia) td:first-child, main table:not(.with-marginalia
 /* Align end of rows with left and right edges of the content area. */
 main td:last-child, main th:last-child {
     margin-right: 0;
+    padding-right: 0;
 }
 
 td.c {
@@ -1095,6 +1096,16 @@ div.live {
 
 .live .table-header input.name, .grid-header input.name {
     width: 10em;
+}
+
+/* Highlight table rows on hover. */
+
+tr:hover td {
+    background-color: var(--highlight);
+}
+
+tr:hover td.marginalia {
+    background-color: inherit;
 }
 
 .grid-header .sort {

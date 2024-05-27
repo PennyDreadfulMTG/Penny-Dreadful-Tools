@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import sys
+import time
 
 import attrs
 from bs4 import BeautifulSoup
@@ -136,6 +137,7 @@ def get_daybreak_label(url: str) -> str | None:
     return None
 
 def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:
+    time.sleep(1)  # Try not to get blocked by the Daybreak forums.
     html = fetch_tools.fetch(url)
     soup = BeautifulSoup(html, 'html.parser')
     posts = []

@@ -539,16 +539,30 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
 def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, limit: str = '', person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> tuple[list[Archetype], int]:
     if person_id:
         table = '_arch_disjoint_person_stats'
-        where = f'({where}) AND person_id = {sqlescape(person_id)}'
+        base_where = f'person_id = {sqlescape(person_id)}'
         group_by = 'ars.person_id, a.id'
     else:
         table = '_arch_disjoint_stats'
+        base_where = 'TRUE'
         group_by = 'a.id'
     if tournament_only:
-        where = f"({where}) AND deck_type = 'tournament'"
+        base_where = f"({base_where}) AND deck_type = 'tournament'"
+    where = f'({where}) AND ({base_where})'
     season_query = query.season_query(season_id)
     order_by = order_by or 'TRUE'
     sql = f"""
+        WITH total_count AS (
+            SELECT
+                SUM(wins + draws + losses) AS total_matches
+            FROM
+                archetype AS a
+            LEFT JOIN
+                {table} AS ars ON a.id = ars.archetype_id
+            LEFT JOIN
+                archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+            WHERE
+                ({base_where}) AND ({season_query})
+        )
         SELECT
             a.id,
             a.name,
@@ -564,13 +578,15 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
             SUM(tournament_top8s) AS tournament_top8s,
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
             COUNT(*) OVER () AS total,
-            SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER () AS meta_share
+            SUM(wins + losses + draws) / tc.total_matches AS meta_share
         FROM
             archetype AS a
         LEFT JOIN
             {table} AS ars ON a.id = ars.archetype_id
         LEFT JOIN
              archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+        LEFT JOIN
+            total_count AS tc ON TRUE
         WHERE
             ({where}) AND ({season_query})
         GROUP BY

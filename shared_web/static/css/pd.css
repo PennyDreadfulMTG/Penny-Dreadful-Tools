@@ -2250,6 +2250,11 @@ News
 
 */
 
+.news {
+    --news-icon-size: var(--table-font-size);
+    --news-icon-margin: calc(4rem / 20);
+}
+
 .news li.item a {
     font-family: var(--main-text-font-family);
     font-variant-numeric: normal;
@@ -2263,64 +2268,58 @@ News
 
 .news li {
     font-size: var(--table-font-size);
-    margin-left: -1em; /* Shifted the width of item:before holding the icon to put it into the margin. */
+    max-width: var(--max-readable-line-length);
+}
+
+.news li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .news .date {
     color: var(--deemphasized-text);
-    display: inline-block;
     font-family: var(--main-text-font-family);
     font-variant-numeric: normal;
-    float: right;
-    margin-left: 1rem;
+    margin-left: 8px;
+    flex: 0 0 auto;
 }
 
 .news .story {
-    display: inline-block;
-    max-width: var(--max-readable-line-length);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    vertical-align: top; /* Otherwise overflow: hidden makes it rise upwards */
+    flex: 1 1 auto;
 }
 
-/* 33em at 0.75 font-size is 495px + the 40px of padding is way too much for 320-640px displays. */
-@media only screen and (max-width: 640px) {
-    .news .story {
-        max-width: 15em /* (320px screen width - 40px padding) / 15px per em = 18.666666667, and let's leave some room for the date. */
+@media only screen and (min-width: 900px) {
+    .news li {
+        margin-left: calc((var(--news-icon-size) + var(--news-icon-margin)) * -1); /* Shifted the width of item:before holding the icon to put it into the margin. */
     }
-}
 
-.news li.site-news:before, .news li.subreddit-post:before {
-    content: "📰";
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    width: 1em;
-}
+    .news li a:before {
+        flex: 0 0 auto;
+        margin: 0 var(--news-icon-margin) 0 0;
+        padding: 0;
+        text-align: right;
+        width: 1em;
+    }
 
-.news li.tournament-winner:before {
-    content: "①";
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    width: 1em;
-}
+    .news li.site-news a:before, .news li.subreddit-post a:before {
+        content: "📰";
+    }
 
-.news li.perfect-league-run:before {
-    content: "🏆";
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    width: 1em;
-}
+    .news li.tournament-winner a:before {
+        content: "①";
+    }
 
-.news li.code-release:before {
-    content: "💻";
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    width: 1em;
+    .news li.perfect-league-run a:before {
+        content: "🏆";
+    }
+
+    .news li.code-release a:before {
+        content: "💻";
+    }
 }
 
 /*

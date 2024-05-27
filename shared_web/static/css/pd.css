@@ -2251,7 +2251,8 @@ News
 */
 
 .news {
-    --news-icon-size: var(--table-font-size);
+    --news-icon-font-size: var(--table-font-size);
+    --news-icon-width: calc(18rem / 20); /* Size of the newspaper glyph in Noto Emoji at --table-font-size. */
     --news-icon-margin: calc(4rem / 20);
 }
 
@@ -2281,7 +2282,7 @@ News
     color: var(--deemphasized-text);
     font-family: var(--main-text-font-family);
     font-variant-numeric: normal;
-    margin-left: 8px;
+    margin-left: calc(8rem / 20);
     flex: 0 0 auto;
 }
 
@@ -2294,15 +2295,15 @@ News
 
 @media only screen and (min-width: 900px) {
     .news li {
-        margin-left: calc((var(--news-icon-size) + var(--news-icon-margin)) * -1); /* Shifted the width of item:before holding the icon to put it into the margin. */
+        margin-left: calc((var(--news-icon-width) + var(--news-icon-margin)) * -1); /* Shifted the width of item:before holding the icon to put it into the margin. */
     }
 
     .news li a:before {
         flex: 0 0 auto;
         margin: 0 var(--news-icon-margin) 0 0;
         padding: 0;
-        text-align: right;
-        width: 2em;
+        text-align: center;
+        width: var(--news-icon-width);
     }
 
     .news li.site-news a:before, .news li.subreddit-post a:before {

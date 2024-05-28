@@ -707,10 +707,20 @@ In between we show the top-level menu revealing the submenu on hover (or touch o
     --full-menu-width: calc(var(--main-menu-width) + var(--submenu-width));
 }
 
-.hamburger {
-    cursor: pointer;
-    font-size: var(--large-font-size); /* Matching header h1 */
-    margin-right: 1em;
+nav {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.menu {
+    flex: 1;
+    position: relative;
+}
+
+.submenu {
+    flex: 1;
+    overflow-y: auto; /* Allow scrolling within each div */
 }
 
 nav, .menu, .submenu {
@@ -751,12 +761,21 @@ nav li:hover > .item + .submenu {
     width: var(--submenu-width);
 }
 
-/* Expand nav width only when hovering over a menu item with a submenu */
-nav:has(li:hover > .item + .submenu) {
-    width: var(--full-menu-width);
-    z-index: 4;
+/*
+
+When the nav is entirely a popover or entirely shown then it should take up full width when you are hovering over an item with a submenu.
+When you are in a middle width the main menu is always shown but the submenu is a popover which we position absolutely, so this doesn't apply to middle widths.
+
+*/
+@media only screen and (max-width: 900px), only screen and (min-width: 1601px) {
+    /* Expand nav width when hovering over a menu item with a submenu */
+    nav:has(li:hover > .item + .submenu) {
+        width: var(--full-menu-width);
+        z-index: 4;
+    }
 }
 
+/* Once you reach a certain width we hide the hamburger and instead show the main menu strip. */
 @media only screen and (min-width: 901px) {
     .hamburger {
         display: none;
@@ -767,6 +786,22 @@ nav:has(li:hover > .item + .submenu) {
     }
 }
 
+/* On medium-width screens we show the main menu but the submenu is a popover. */
+@media only screen and (min-width: 901px) and (max-width: 1600px) {
+    nav {
+        overflow: visible;
+        position: relative
+    }
+    nav:has(li:hover > .item + .submenu) {
+        width: var(--main-menu-width);
+    }
+    nav li:hover > .item + .submenu {
+        top: 0;
+        position: absolute;
+    }
+}
+
+/* Once you get properly wide we just show the main menu and the submenu if there is one in the flow of the page. */
 @media only screen and (min-width: 1601px) {
     nav:has(.current ~ .submenu) {
         width: var(--full-menu-width);
@@ -776,6 +811,8 @@ nav:has(li:hover > .item + .submenu) {
         width: var(--submenu-width);
     }
 }
+
+/* In narrow widths when you click the hamburger we show the whole nav as a modal drawer with a scrim. */
 
 .scrim {
     display: none;
@@ -883,20 +920,10 @@ nav.showing:has(.current ~ .submenu) {
     background-color: var(--highlight);
 }
 
-nav {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
-
-.menu {
-    flex: 1;
-    position: relative;
-}
-
-.submenu {
-    flex: 1;
-    overflow-y: auto; /* Allow scrolling within each div */
+.hamburger {
+    cursor: pointer;
+    font-size: var(--large-font-size); /* Matching header h1 */
+    margin-right: 1em;
 }
 
 /*

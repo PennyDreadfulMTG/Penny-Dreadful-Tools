@@ -67,6 +67,7 @@ def ad_hoc(*args: str) -> None:
         name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
         font = TTFont(path)
         if not metrics:
+            scale_upem(font, 2048)
             metrics = get_vertical_metrics(font)
         found_graphemes = find_graphemes(font, name, options_mode, all_graphemes)
         for c in found_graphemes:
@@ -77,8 +78,8 @@ def ad_hoc(*args: str) -> None:
         css = ''
         if needed_found_graphemes and name != 'main-text':
             subsetted = subset_font(font, needed_found_graphemes)
+            scale_upem(subsetted, 2048)
             adjusted = adjust_vertical_metrics(subsetted, metrics)
-            scale_upem(adjusted, 2048)
             used_fonts.append((name, adjusted))
             encoded = encode(adjusted)
             css = font_face(name, encoded)

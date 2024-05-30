@@ -430,6 +430,7 @@ PD.initPersonNotes = function() {
 };
 
 PD.renderCharts = function() {
+    const isDark = document.documentElement.classList.contains("dark-mode");
     // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
     Chart.register(ChartDataLabels);
     // Because we don't want to wait for window.onload (css and images loaded) we hardcode here to avoid loading the browser default values from Safari.
@@ -446,7 +447,7 @@ PD.renderCharts = function() {
     Chart.defaults.plugins.datalabels.align = "end";
     Chart.defaults.plugins.tooltip.displayColors = false;
     Chart.defaults.plugins.colors.enabled = false;
-    Chart.defaults.color = "#502828";
+    Chart.defaults.color = isDark ? "#8C8C8C" : "#502828";
     $(".chart").each(function() {
         var type = $(this).data("type"),
             labels = $(this).data("labels"),
@@ -459,7 +460,7 @@ PD.renderCharts = function() {
             type,
             "data": {
                 labels,
-                datasets: [{ data: series, backgroundColor: "#f9d0a9" }]
+                datasets: [{ data: series, backgroundColor: isDark ? "#574466" : "#f9d0a9" }]
             },
             options
         });

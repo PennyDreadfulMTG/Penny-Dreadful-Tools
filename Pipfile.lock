@@ -685,12 +685,12 @@
         },
         "discord-typings": {
             "hashes": [
-                "sha256:5cb849f9205085a81bf05dca90367a270af86148c4e91c355fc212354a4d55fd",
-                "sha256:6b51f9d1b6e5fb70c72c87dbcc608feaa5ff5c88bb77ea6b3dc53d80b8732792"
+                "sha256:3d8776e16aa1f908fae947225d9cfd99701bcf0c7e28ca56bc10d892d1cfcffa",
+                "sha256:fc39321dd04b3299e2b680da34454be8f29540acff4303752d514444daeb4e6d"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==0.8.0"
+            "version": "==0.9.0"
         },
         "editorconfig": {
             "hashes": [
@@ -2570,12 +2570,12 @@
         },
         "typing-extensions": {
             "hashes": [
-                "sha256:8cbcdc8606ebcb0d95453ad7dc5065e6237b6aa230a31e81d0f440c30fed5fd8",
-                "sha256:b349c66bea9016ac22978d800cfff206d5f9816951f12a7d0ec5578b0a819594"
+                "sha256:6024b58b69089e5a89c347397254e35f1bf02a907728ec7fee9bf0fe837d203a",
+                "sha256:915f5e35ff76f56588223f15fdd5938f9a1cf9195c0de25130c627e4d597f6d1"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==4.12.0"
+            "version": "==4.12.1"
         },
         "tzdata": {
             "hashes": [

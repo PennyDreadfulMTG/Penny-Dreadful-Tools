@@ -1021,7 +1021,7 @@ main table a:hover {
 }
 
 table.with-marginalia {
-    margin-left: -4.126em; /* Width of .marginalia + left-padding + right-padding */
+    margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
 }
 
 @media only screen and (max-width: 900px) {
@@ -2914,7 +2914,7 @@ The old menu used to use most of this, now it's just used by the language switch
 
 @media only screen and (min-width: 641px) and (max-width: 800px) {
     .language-menu {
-        padding: 0 1rem 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
+        padding: 0 1rem 0 4.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
 }
 

@@ -421,7 +421,7 @@ def is_subquery(subquery_name: str) -> str:
     subqueries = {
         'bikeland': 't:land o:"Cycling {2}" ci=2',
         'bounceland': 't:land (o:"When ~ enters the battlefield, return a land you control to its owner\'s hand" OR o:/When ~ enters the battlefield, sacrifice it unless you return an untapped .* you control to its owner\'s hand/)',
-        'canopyland': 'o:"{T}, Pay 1 life: Add" o:"{1}, {T}, Sacrifice ~: Draw a card."',
+        'canopyland': 'o:"{T}, Pay 1 life: Add {" o:"{1}, {T}, Sacrifice ~: Draw a card."',
         'commander': 't:legendary (t:creature OR o:"~ can be your commander") f:commander',
         'checkland': 't:land ci=2 fo:/unless you control an? (Plains|Island|Swamp|Mountain|Forest)/',
         'companion': 'o:"Companion — "',

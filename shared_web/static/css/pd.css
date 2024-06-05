@@ -1747,7 +1747,7 @@ ul.buttons > li {
 }
 
 .banner ul.buttons > li {
-    float: left;
+    float: right;
 }
 
 /* When the buttons are links we want the whole button to be the link. */

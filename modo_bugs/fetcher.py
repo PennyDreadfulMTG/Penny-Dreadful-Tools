@@ -83,6 +83,7 @@ def find_announcements() -> tuple[str | None, bool]:
         return (None, False)
     (title, link) = articles[0]
     logger.info(f'Found: {title} ({link})')
+    time.sleep(1)
     bn = 'PATCH NOTES' in fetch_tools.fetch(link)
     new = update_redirect('announcements', title, link, has_build_notes=str(bn))
     return (link, new)
@@ -119,6 +120,7 @@ def get_article_archive() -> list[tuple[str, str]]:
     return []
 
 def get_daybreak_label(url: str) -> str | None:
+    time.sleep(1)
     html = fetch_tools.fetch(url)
     soup = BeautifulSoup(html, 'html.parser')
     label = soup.find('span', class_='label--primary')

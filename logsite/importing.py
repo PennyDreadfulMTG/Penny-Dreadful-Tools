@@ -5,9 +5,8 @@ import os
 import re
 import shutil
 
-from werkzeug.exceptions import BadRequest
-
-from shared import fetch_tools, repo
+from shared import fetch_tools
+from shared.pd_exception import InvalidDataException
 
 from . import APP
 from .data import game, match, tournament
@@ -41,8 +40,7 @@ def import_log(lines: list[str], match_id: int) -> match.Match:
     try:
         local = import_header(lines, match_id)
     except IndexError as e:
-        repo.create_issue('Error importing match log header', 'logsite', 'logsite', 'PennyDreadfulMTG/perf-reports', exception=e)
-        raise BadRequest from e
+        raise InvalidDataException from e
     if local.has_unexpected_third_game is None:
         local.has_unexpected_third_game = False
     lines = lines[4:]

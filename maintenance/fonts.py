@@ -58,7 +58,12 @@ def ad_hoc(*args: str) -> None:
     from_deck_names, deck_names = (set(), set()) if base_only else deck_name_graphemes()
     all_graphemes = base_graphemes | from_deck_names
     print('\nLooking for', len(all_graphemes), 'graphemes -', len(base_graphemes), 'base graphemes, and', len(from_deck_names), 'from deck names\n', file=sys.stderr)
-    remaining_graphemes = all_graphemes.copy()
+    # Make a copy of all_graphemes for processing BUT exclude things like APOSTROPHE+COMBINING GRAVE ACCENT (U+39 and U+768)
+    # which will overwrite main-text's apostrophe with one from a font that supports that combination. This makes all apostrophes
+    # in the site look wrong for the sake of a single deck name – https://pennydreadfulmagic.com/decks/10989/
+    # At some point we should find a more general solution in case it happens with other characters
+    # and if at all possible stop rendering this deck name (partially) in system fonts.
+    remaining_graphemes = {grapheme for grapheme in all_graphemes if "'" not in grapheme}
     graphemes_to_fonts: GraphemeToFontMapping = {}
     font_info: FontInfo = []
     metrics: dict[str, int] = {}
@@ -67,7 +72,6 @@ def ad_hoc(*args: str) -> None:
         name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
         font = TTFont(path)
         if not metrics:
-            scale_upem(font, 2048)
             metrics = get_vertical_metrics(font)
         found_graphemes = find_graphemes(font, name, options_mode, all_graphemes)
         for c in found_graphemes:
@@ -78,7 +82,10 @@ def ad_hoc(*args: str) -> None:
         css = ''
         if needed_found_graphemes and name != 'main-text':
             subsetted = subset_font(font, needed_found_graphemes)
-            scale_upem(subsetted, 2048)
+            # main-text has 1000 upem, scale this font so that it has the same upem so that the vertical metrics work
+            scale_upem(subsetted, 1000)
+            # Fonts like Noto Sans Living Regular have insane bounding boxes to account for wild Indonesian characters and similar.
+            # Force them to have the same vertical metrics as main-text to prevent wild line height and other issues.
             adjusted = adjust_vertical_metrics(subsetted, metrics)
             used_fonts.append((name, adjusted))
             encoded = encode(adjusted)

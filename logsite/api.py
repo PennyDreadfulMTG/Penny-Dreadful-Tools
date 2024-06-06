@@ -3,6 +3,8 @@
 
 from flask import Response, request, session
 
+from shared import repo
+from shared.pd_exception import InvalidDataException
 from shared_web.api import return_json, validate_api_key
 
 from . import APP, db, importing
@@ -52,16 +54,18 @@ def upload() -> Response:
     if error:
         return error
     match_id = int(request.form['match_id'])
-    if match_id == 219603564:
-        return return_json({'success': True})  # Prevent infinite 500 errors.
-    if request.form.get('lines'):
-        lines = request.form['lines']
-        importing.import_log(lines.split('\n'), match_id)
-    else:
-        importing.import_from_pdbot(match_id)
-    start_time = int(request.form['start_time_utc'])
-    end_time = int(request.form['end_time_utc'])
-    match.get_match(match_id).set_times(start_time, end_time)
+
+    try:
+        if request.form.get('lines'):
+            lines = request.form['lines']
+            importing.import_log(lines.split('\n'), match_id)
+        else:
+            importing.import_from_pdbot(match_id)
+        start_time = int(request.form['start_time_utc'])
+        end_time = int(request.form['end_time_utc'])
+        match.get_match(match_id).set_times(start_time, end_time)
+    except InvalidDataException as e:
+        repo.create_issue('Error uploading match', 'logsite', 'logsite', 'PennyDreadfulMTG/perf-reports', exception=e)
 
     return return_json({'success': True})
 

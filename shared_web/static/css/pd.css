@@ -575,8 +575,8 @@ Color attributes are mostly found with their related structural elements in this
 html.dark-mode {
     --white: #121212; /* Night */
     --black: #8C8C8C; /* Battleship gray */
-    --light-gray: #1e1e1e; /* Eerie black */
-    --dark-gray: #3c3c3c; /* Onyx */
+    --light-gray: #3c3c3c; /* Onyx */
+    --dark-gray: #5a5a5a; /* Davy's gray */
     --red: #933; /* Auburn */
     --soft-tangerine: #574466; /* English violet */
     --true-black: #fff; /* White. Only for use at less than 1 opacity, for scrim and similar. */

@@ -1,7 +1,3 @@
-import functools
-from collections.abc import Callable
-from typing import Any
-
 import decksite.data.clauses
 from decksite.data import preaggregation, query
 from decksite.database import db
@@ -10,22 +6,9 @@ from magic.models import Card
 from shared import decorators, logger
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import FuncType, T
 from shared.pd_exception import DatabaseException, OperationalException
 
 # A decksite-level cache of rotation information, primarily to make /rotation much faster.
-
-# A decorator that skips execution of some things in this module if it's not currently rotation time.
-# To test this stuff set always_show_rotation to True in config.json.
-def if_not_in_rotation(val: T) -> Callable[[FuncType[T]], FuncType[T]]:
-    def decorator(decorated_func: FuncType[T]) -> FuncType[T]:
-        @functools.wraps(decorated_func)
-        def wrapper(*args: list[Any], **kwargs: dict[str, Any]) -> T:
-            if not rotation.in_rotation():
-                return val
-            return decorated_func(*args, **kwargs)
-        return wrapper
-    return decorator
 
 def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> tuple[list[Card], int]:
     sql = f"""
@@ -70,7 +53,6 @@ def load_rotation_summary() -> tuple[int, int]:
 # This is expensive (more than 10s), don't call it on user time.
 # To trigger manually without having to be in a python shell, hit /api/rotation/clear_cache in a browser.
 @decorators.interprocess_locked('.rotation-cache.lock')
-@if_not_in_rotation(None)
 def force_cache_update() -> None:
     season_id = seasons.next_season_num()
     db().begin(f'rotation_runs_season_{season_id}')
@@ -81,7 +63,6 @@ def force_cache_update() -> None:
     db().commit(f'rotation_runs_season_{season_id}')
     cache_rotation()
 
-@if_not_in_rotation(None)
 def update_rotation_runs() -> None:
     season_id = seasons.next_season_num()
     for path in rotation.files():
@@ -92,7 +73,6 @@ def update_rotation_runs() -> None:
         sql += ', '.join(f'({number}, {sqlescape(name)}, {season_id})' for number, name in cs)
         db().execute(sql)
 
-@if_not_in_rotation(None)
 def cache_rotation() -> None:
     table = '_rotation'
     sql = f"""

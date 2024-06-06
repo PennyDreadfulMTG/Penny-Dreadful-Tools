@@ -67,7 +67,6 @@ def ad_hoc(*args: str) -> None:
         name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
         font = TTFont(path)
         if not metrics:
-            scale_upem(font, 2048)
             metrics = get_vertical_metrics(font)
         found_graphemes = find_graphemes(font, name, options_mode, all_graphemes)
         for c in found_graphemes:
@@ -78,7 +77,10 @@ def ad_hoc(*args: str) -> None:
         css = ''
         if needed_found_graphemes and name != 'main-text':
             subsetted = subset_font(font, needed_found_graphemes)
-            scale_upem(subsetted, 2048)
+            # main-text has 1000 upem, scale this font so that it has the same upem so that the vertical metrics work
+            scale_upem(subsetted, 1000)
+            # Fonts like Noto Sans Living Regular have insane bounding boxes to account for wild Indonesian characters and similar.
+            # Force them to have the same vertical metrics as main-text to prevent wild line height and other issues.
             adjusted = adjust_vertical_metrics(subsetted, metrics)
             used_fonts.append((name, adjusted))
             encoded = encode(adjusted)

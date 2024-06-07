@@ -3,7 +3,7 @@
 General Notes
 
 In general our CSS aims to be minimal, reusable and as consistent as possible but aesthetics will trump a slavish devotion to consistency.
-We don't use any CSS features that aren't 99% green for all non-proxy browsers (Opera Mini, UC Browser) on caniuse.com when shown by usage
+We don't use any CSS features that aren't in caniuse.com's "baseline".
 
 */
 
@@ -272,8 +272,6 @@ For more information see the task, and #5215 and #8823.
 
 /* BEGIN SYMBOL FONTS - Paste the output of the fonts maintenance task here. */
 
-
-
 @font-face {
     font-family: symbols;
     font-style: normal;
@@ -515,13 +513,14 @@ Color attributes are mostly found with their related structural elements in this
 
     /* Site colors. (Names from http://coolors.co/) */
     /* If you make changes here be sure to update the Chart.js color and backgroundColor in pd.js. */
-    --white: #f9f9f9; /* Snow */
-    --black: #502828; /* Acajou */
-    --light-gray: #eee; /* Isabelline */
-    --dark-gray: #999; /* Spanish gray */
-    --red: #f00;
-    --soft-tangerine: #f9d0a9; /* Light orange */
-    --true-black: #000; /* Black. Only for use at less than 1 opacity, for scrim and similar. */
+    --white: oklch(98.21% 0 0); /* Snow */
+    --black: oklch(33.03% 0.06 20.81); /* Acajou */
+    --light-gray: oklch(94.91% 0 0); /* Isabelline */
+    --dark-gray: oklch(68.3% 0 0); /* Spanish gray */
+    --red: oklch(62.8% 0.25768330773615683 29.2338851923426);
+    --soft-tangerine: oklch(88.33% 0.069 65.31); /* Light orange */
+    --soft-tangerine-darker: oklch(80% 0.12 65.31);
+    --true-black: oklch(0% 0 0); /* Black. Only for use at less than 1 opacity, for scrim and similar. */
 
     /* Helpful aliases for site colors. */
 
@@ -533,6 +532,7 @@ Color attributes are mostly found with their related structural elements in this
     --light-border: var(--light-gray);
     --line: var(--black);
     --highlight: var(--soft-tangerine);
+    --highlight-border: var(--soft-tangerine-darker);
     --inactive: var(--dark-gray);
     --disabled: var(--light-gray);
     --error: var(--red);
@@ -573,12 +573,13 @@ Color attributes are mostly found with their related structural elements in this
 }
 
 html.dark-mode {
-    --white: #121212; /* Night */
-    --black: #8C8C8C; /* Battleship gray */
-    --light-gray: #3c3c3c; /* Onyx */
-    --dark-gray: #5a5a5a; /* Davy's gray */
-    --red: #933; /* Auburn */
-    --soft-tangerine: #574466; /* English violet */
+    --white: oklch(18.22% 0 0); /* Night */
+    --black: oklch(64.01% 0 0); /* Battleship gray */
+    --light-gray: oklch(35.62% 0 0); /* Onyx */
+    --dark-gray: oklch(46.76% 0 0); /* Davy's gray */
+    --red: oklch(47.08% 0.137 24); /* Auburn */
+    --soft-tangerine: oklch(42.05% 0.06 309.48); /* English violet */
+    --soft-tangerine-darker: oklch(50% 0.06 309.48);
     --true-black: #fff; /* White. Only for use at less than 1 opacity, for scrim and similar. */
 
     /* Desaturated and dimmed version of mana colors. */
@@ -1164,7 +1165,7 @@ div.live {
 
 /* Highlight table rows on hover. */
 
-tr:hover td {
+table:not(.calendar) tr:hover td {
     background-color: var(--highlight);
 }
 
@@ -1528,9 +1529,13 @@ Calendar
     font-size: var(--table-font-size);
 }
 
-.calendar td, .calendar th {
-    border-bottom: 0.05rem solid var(--light-border);
+.calendar td {
+    border-top: 0.05rem solid var(--light-border);
     padding: 0.563rem 1rem 0.563rem 0;
+}
+
+.calendar tr:last-child td {
+    border-bottom: 0.05rem solid var(--light-border);
 }
 
 .calendar th {
@@ -1576,7 +1581,8 @@ Calendar
 }
 
 .calendar .league.begin {
-    border-top: 0.05rem solid var(--border);
+    border: 0;
+    border-top: 0.05rem solid var(--highlight-border);
 }
 
 /*

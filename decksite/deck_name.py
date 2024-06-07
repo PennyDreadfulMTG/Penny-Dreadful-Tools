@@ -82,7 +82,6 @@ def normalize(d: Deck) -> str:
         name = remove_season(name, d.season_id)
         name = remove_extra_spaces(name)
         name = remove_hashtags(name)
-        name = strip_leading_punctuation(name)
         name = remove_leading_deck(name)
         name = remove_extraneous_hyphens(name)
         unabbreviated = expand_common_abbreviations(name)
@@ -351,9 +350,6 @@ def ucase_roman_numerals(name: str) -> str:
     if numerals:
         name = name.replace(numerals.group(1), numerals.group(1).upper())
     return name
-
-def strip_leading_punctuation(name: str) -> str:
-    return re.sub(r'^[^\w"\'(]*', '', name, flags=re.IGNORECASE)
 
 # See #6041.
 def remove_leading_deck(name: str) -> str:

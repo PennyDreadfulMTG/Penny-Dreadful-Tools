@@ -63,7 +63,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('White Jund', 'White Jund', ['B', 'R', 'G', 'W'], 'White Jund', 1),
     ('White Jund', 'BRGW', ['B', 'R', 'G', 'W'], None, 1),
     ('ゼウスサイクリング', 'ゼウスサイクリング', ['U', 'G', 'B'], 'New Perspectives', 1),
-    ('$', 'UBRG Necrotic Ooze Combo', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo', 1),
+    ('$', '$', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo', 1),
     ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro', 1),
     ('White Green', 'Selesnya', ['W', 'G'], None, 1),
     ('RG Energy', 'Gruul Energy', ['R', 'G'], 'Pummeler', 1),
@@ -308,6 +308,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Teaching Mystical Erections', 'Teaching Mystical', ['U', 'B'], 'Dimir Control', 32),
     ('Kiki-Titi', 'Kiki-Titi', ['U', 'R'], 'Izzet Twin', 32),
     ('Greasefag', 'Orzhov Greasefang', ['W', 'B'], 'Greasefang', 33),
+    ('🏴‍☠️', '🏴‍☠️', ['U', 'R'], 'Pirates', 33),
 ]
 
 def test_replace_space_alternatives() -> None:

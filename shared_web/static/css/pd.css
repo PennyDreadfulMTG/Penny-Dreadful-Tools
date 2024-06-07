@@ -3,7 +3,7 @@
 General Notes
 
 In general our CSS aims to be minimal, reusable and as consistent as possible but aesthetics will trump a slavish devotion to consistency.
-We don't use any CSS features that aren't 99% green for all non-proxy browsers (Opera Mini, UC Browser) on caniuse.com when shown by usage
+We don't use any CSS features that aren't in caniuse.com's "baseline".
 
 */
 
@@ -271,8 +271,6 @@ For more information see the task, and #5215 and #8823.
 */
 
 /* BEGIN SYMBOL FONTS - Paste the output of the fonts maintenance task here. */
-
-
 
 @font-face {
     font-family: symbols;

@@ -1164,7 +1164,7 @@ div.live {
 
 /* Highlight table rows on hover. */
 
-tr:hover td {
+table:not(.calendar) tr:hover td {
     background-color: var(--highlight);
 }
 

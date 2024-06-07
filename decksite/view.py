@@ -285,6 +285,7 @@ class View(BaseView):
             t.date = t.time.day
             if leagues and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
                 t.league = leagues.pop(-1)
+                t.league['class'] = 'ongoing'
                 t.league.display = True
                 end_date = t.league.end_date
             elif not shown_end and end_date and t.time >= end_date:

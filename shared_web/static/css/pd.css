@@ -534,6 +534,7 @@ Color attributes are mostly found with their related structural elements in this
     --light-border: var(--light-gray);
     --line: var(--black);
     --highlight: var(--soft-tangerine);
+    --highlight-border: var(--soft-tangerine-darker);
     --inactive: var(--dark-gray);
     --disabled: var(--light-gray);
     --error: var(--red);
@@ -1530,9 +1531,13 @@ Calendar
     font-size: var(--table-font-size);
 }
 
-.calendar td, .calendar th {
-    border-bottom: 0.05rem solid var(--light-border);
+.calendar td {
+    border-top: 0.05rem solid var(--light-border);
     padding: 0.563rem 1rem 0.563rem 0;
+}
+
+.calendar tr:last-child td {
+    border-bottom: 0.05rem solid var(--light-border);
 }
 
 .calendar th {
@@ -1578,7 +1583,8 @@ Calendar
 }
 
 .calendar .league.begin {
-    border-top: 0.05rem solid var(--border);
+    border: 0;
+    border-top: 0.05rem solid var(--highlight-border);
 }
 
 /*

@@ -111,7 +111,7 @@ def get_article_archive() -> list[tuple[str, str]]:
     if links:
         return [parse_article_item_extended(a) for a in links]
     scripts = soup.find_all('script')
-    findblob = re.compile(r'window.DGC.archive.articles = (.*?);', re.MULTILINE)
+    findblob = re.compile(r'window.DGC.archive.articles = (.*?}]);', re.MULTILINE)
     for s in scripts:
         if (m := findblob.search(s.contents[0])):
             blob = m.group(1)

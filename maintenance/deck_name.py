@@ -4,7 +4,7 @@ from decksite.data import deck
 # We have pretty good tests for deck_name sanitization, but sometimes you want to see what a change in the algorithm would do to real deck names.
 # Make your changes in deck_name.py and then run this to see which decks would change if re-normalized.
 
-def ad_hoc():
+def ad_hoc() -> None:
     ds, _ = deck.load_decks()
     for d in ds:
         current = d.name

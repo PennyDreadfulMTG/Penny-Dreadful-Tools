@@ -2493,11 +2493,7 @@ Outlines
 */
 
 * {
-    outline-width: 0;
-}
-
-*:focus {
-    opacity: 0.8;
+    outline-color: var(--highlight);
 }
 
 /*

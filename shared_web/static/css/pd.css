@@ -355,7 +355,7 @@ nav {
     order: 2;
 }
 
-header, main, footer, .status-bar, .language-menu {
+header, main, footer, .status-bar {
     padding: 0 32px 0 calc(96rem / 20); /* padding not margin because we want colors to bleed all the way to the edge of the window. */
 }
 
@@ -625,7 +625,7 @@ html.dark-mode {
 }
 
 /* Because it's over an image we need the header text to still be white (aka black) even in dark mode. */
-html.dark-mode header a,
+html.dark-mode header h1 a,
 html.dark-mode .hamburger {
     color: var(--black);
 }
@@ -2891,8 +2891,8 @@ The old menu used to use most of this, now it's just used by the language switch
 */
 
 @media only screen and (min-width: 641px) {
-    .language-switcher .language-menu {
-        width: 100vw; /* Use this rather than the more obvious "100%" because the language switcher is absolutely positioned and yet contains a submenu which thinks 100% means 100% of the language switcher element, not of the whole page. */
+    .language-switcher {
+        width: 100%;
     }
 
     /* Slide-out caret at top of the dropdown. */
@@ -2958,10 +2958,6 @@ The old menu used to use most of this, now it's just used by the language switch
 .language-menu a:hover {
     background-color: var(--language-menu-background);
     color: var(--language-menu-highlight-text);
-}
-
-.language-menu {
-    padding: 0 10%; /* padding not margin because we want colors to bleed all the way to the edge of the window.  See also .language-menu and .status-bar. */
 }
 
 /*

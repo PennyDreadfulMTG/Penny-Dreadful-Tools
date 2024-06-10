@@ -123,6 +123,7 @@ small {
         https://practicaltypography.com/line-length.html
     */
     --max-readable-line-length: 67ch;
+    --marginalia-width: 4em;
 }
 
 article, section p {
@@ -501,6 +502,32 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
 
 /*
 
+Spacing
+
+See: https://medium.com/eightshapes-llc/space-in-design-systems-188bcbae0d62
+
+This stuff is in transition. We've just made a start on having consistent spacing.
+
+*/
+
+:root {
+    --spacing-text: calc(8rem / 20);
+}
+
+/* Most textual elements have padding for the cases where we want to give them a background-color */
+main h2, main td, main th, section p, article p, .hamburger, .subtitle, main li, footer p, header h1, form label {
+    padding-left: var(--spacing-text);
+    padding-right: var(--spacing-text);
+}
+
+/* Some other elements need margin so that they line up with the padding on the textual elements */
+.video-wrapper {
+    margin-left: var(--spacing-text);
+    margin-right: var(--spacing-text);
+}
+
+/*
+
 Colors
 
 Color attributes are mostly found with their related structural elements in this file.
@@ -638,7 +665,8 @@ h1, h2 {
 
 main h1 {
     font-size: var(--large-font-size);
-    padding-top: 2rem;
+    margin-top: 2rem;
+    padding: 0 var(--spacing-text);
 }
 
 main h2 {
@@ -1024,7 +1052,7 @@ main table a:hover {
 }
 
 table.with-marginalia {
-    margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
+    margin-left: calc(calc(var(--marginalia-width) + 0.563em) * -1); /* Width of .marginalia + left-padding (it has no right-padding) */
 }
 
 @media only screen and (max-width: 900px) {
@@ -1049,7 +1077,7 @@ main th, main td {
     line-height: var(--table-line-height);
     max-width: 13em;
     overflow: hidden;
-    padding: calc(5rem / 20) 0.563em;
+    padding: calc(5rem / 20) var(--spacing-text);
     text-overflow: ellipsis;
     vertical-align: bottom; /* This makes graphical elements like the mana bar start at the bottom of the table cell rather than at the baseline of the text per the Meyer reset. */
     white-space: nowrap;
@@ -1066,18 +1094,6 @@ main th, main td {
 /* Allow elements in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
-}
-
-/* Align beginning of rows with left and right edges of the content area. */
-main table:not(.with-marginalia) td:first-child, main table:not(.with-marginalia) th:first-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
-    margin-left: 0;
-    padding-left: 0;
-}
-
-/* Align end of rows with left and right edges of the content area. */
-main td:last-child, main th:last-child {
-    margin-right: 0;
-    padding-right: 0;
 }
 
 td.c {
@@ -1126,10 +1142,11 @@ th.legend {
 
 .marginalia {
     line-height: var(--table-line-height);
-    margin-left: -4em;
-    margin-right: -0.5em;
+    margin-left: calc(var(--marginalia-width) * -1);
+    margin-right: -0.5em; /* BAKERT sus */
+    padding-right: 0;
     text-align: right;
-    width: 4em;
+    width: var(--marginalia-width);
 }
 
 .stars {
@@ -1617,7 +1634,7 @@ We also show the meta share of a deck in this way.
 }
 
 td.contains-mana-bar {
-    padding: calc(3rem / 20) 0.563em calc(4rem / 20);
+    padding: calc(4rem / 20) 0.563em calc(4rem / 20);
     width: 3rem;
 }
 
@@ -2912,18 +2929,6 @@ The old menu used to use most of this, now it's just used by the language switch
 
 .language-menu {
     padding: 0 10%; /* padding not margin because we want colors to bleed all the way to the edge of the window.  See also .language-menu and .status-bar. */
-}
-
-@media only screen and (max-width: 640px) {
-    .language-menu {
-        padding: 0;
-    }
-}
-
-@media only screen and (min-width: 641px) and (max-width: 800px) {
-    .language-menu {
-        padding: 0 1rem 0 4.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
-    }
 }
 
 /*

@@ -1912,6 +1912,11 @@ To avoid affecting the search box most rules for input are prefixed with main.
 
 */
 
+:root {
+    --label-width: 13rem;
+    --form-element-margin: 1rem;
+}
+
 form {
     margin: 2rem 0;
 }
@@ -1988,9 +1993,8 @@ input[type=number] {
 form label, .label {
     display: block;
     float: left;
-    margin-right: 1rem;
     text-align: right;
-    width: 10rem;
+    width: var(--label-width);
 }
 
 textarea {
@@ -1998,7 +2002,7 @@ textarea {
 }
 
 main input, select, textarea {
-    margin-left: 1rem;
+    margin-left: var(--form-element-margin);
 }
 
 input[type=radio] {
@@ -2006,7 +2010,7 @@ input[type=radio] {
 }
 
 button, div.error, .uploader-label, div.logout, div.validation-ok, .form-field {
-    margin-left: 12rem;
+    margin-left: calc(var(--label-width) + var(--form-element-margin));
 }
 
 div.logout, div.error, div.validation-ok, .form-field, .errors-and-warnings {

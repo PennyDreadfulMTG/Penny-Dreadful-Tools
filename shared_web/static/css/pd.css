@@ -599,6 +599,8 @@ Color attributes are mostly found with their related structural elements in this
     cursor: default;
 }
 
+/* Dark Mode */
+
 html.dark-mode {
     --white: oklch(18.22% 0 0); /* Night */
     --black: oklch(64.01% 0 0); /* Battleship gray */
@@ -620,7 +622,9 @@ html.dark-mode {
     --ambient-light-shadow-color: rgba(255 255 255 / 15%);
 }
 
-html.dark-mode img {
+html.dark-mode img,
+html.dark-mode .metagame-grid .card,
+html.dark-mode header::before {
     filter: brightness(50%);
 }
 

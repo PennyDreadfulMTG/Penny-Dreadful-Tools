@@ -1425,10 +1425,6 @@ header::before {
     width: 100%;
 }
 
-header.season-all:before {
-    background-image: url("/banner/0.png");
-}
-
 /*
 
 z-index

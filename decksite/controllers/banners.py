@@ -31,10 +31,10 @@ def banner_stats() -> str:
 
 @APP.route('/banner/banner.css')
 def bannercss() -> Response:
-    css = 'header.season-0:before{ background-image:url("/banner/0.png");}\n'
+    css = 'header.season-0::before{ background-image:url("/banner/0.png");}\n'
     for i, _ in enumerate(seasons.SEASONS):
         i = i + 1
-        css += f'header.season-{i}:before' + '{ background-image:' + f'url("/banner/{i}.png");' + '}\n'
+        css += f'header.season-{i}::before' + '{ background-image:' + f'url("/banner/{i}.png");' + '}\n'
     r = make_response(css)
     r.headers['Content-Type'] = 'text/css; charset=utf-8'
     return r

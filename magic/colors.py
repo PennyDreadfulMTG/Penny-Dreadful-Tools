@@ -50,6 +50,8 @@ def find_colors(cs: list[Card]) -> tuple[list[str], list[str]]:
             continue  # Mostly for Ravenous Trap which people sideboard off color to play for the alternative cost.
         if c.name == 'Damn':
             continue  # They might only be using the front, or only using the overload.
+        if 'you may begin the game with it on the battlefield' in c.oracle_text:
+            continue  # You can play off-color leylines
         for cost in c.get('mana_cost') or ():
             face_colors = mana.parse(cost)
             card_colors.append(mana.colors(face_colors)['required'])

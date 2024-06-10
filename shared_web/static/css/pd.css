@@ -599,6 +599,8 @@ Color attributes are mostly found with their related structural elements in this
     cursor: default;
 }
 
+/* Dark Mode */
+
 html.dark-mode {
     --white: oklch(18.22% 0 0); /* Night */
     --black: oklch(64.01% 0 0); /* Battleship gray */
@@ -620,7 +622,9 @@ html.dark-mode {
     --ambient-light-shadow-color: rgba(255 255 255 / 15%);
 }
 
-html.dark-mode img {
+html.dark-mode img,
+html.dark-mode .metagame-grid .card,
+html.dark-mode header::before {
     filter: brightness(50%);
 }
 
@@ -728,7 +732,7 @@ main table a:hover, main h1 a:hover, main h2 a:hover, main h3 a:hover, main li a
 }
 
 /* Mark links that go off-site. */
-a.external:after {
+a.external::after {
     background: none;
     content: "↑";
     font-size: 0.563em; /* em because it should be relative to the text size it is attached to. */
@@ -964,7 +968,7 @@ nav.showing:has(.current ~ .submenu) {
     content: "🛈";
 }
 
-.icon.admin_home:before {
+.icon.admin_home::before {
     content: "A";
 }
 
@@ -1016,7 +1020,7 @@ ul.decklist {
     font-size: var(--table-font-size);
 }
 
-.division:after {
+.division::after {
     content: "▪";
     padding: 0 0.563em;
 }
@@ -1410,7 +1414,7 @@ header * {
   position: relative;
 }
 
-header:before {
+header::before {
     background-size: cover;
     content: "";
     filter: grayscale(50%);
@@ -1419,10 +1423,6 @@ header:before {
     position: absolute;
     top: 0;
     width: 100%;
-}
-
-header.season-all:before {
-    background-image: url("/banner/0.png");
 }
 
 /*
@@ -2384,10 +2384,10 @@ News
 
 @media only screen and (min-width: 900px) {
     .news li {
-        margin-left: calc((var(--news-icon-width) + var(--news-icon-margin)) * -1); /* Shifted the width of item:before holding the icon to put it into the margin. */
+        margin-left: calc((var(--news-icon-width) + var(--news-icon-margin)) * -1); /* Shifted the width of item::before holding the icon to put it into the margin. */
     }
 
-    .news li a:before {
+    .news li a::before {
         flex: 0 0 auto;
         margin: 0 var(--news-icon-margin) 0 0;
         padding: 0;
@@ -2395,19 +2395,19 @@ News
         width: var(--news-icon-width);
     }
 
-    .news li.site-news a:before, .news li.subreddit-post a:before {
+    .news li.site-news a::before, .news li.subreddit-post a::before {
         content: "📰";
     }
 
-    .news li.tournament-winner a:before {
+    .news li.tournament-winner a::before {
         content: "①";
     }
 
-    .news li.perfect-league-run a:before {
+    .news li.perfect-league-run a::before {
         content: "🏆";
     }
 
-    .news li.code-release a:before {
+    .news li.code-release a::before {
         content: "💻";
     }
 }
@@ -2418,7 +2418,7 @@ Season Symbols
 
 */
 
-.ss:before {
+.ss::before {
     margin-right: 0.178em;
     vertical-align: -0.1em; /* None of the standard keyword values for vertical-align successfully line up the text and the image center. */
 }
@@ -2743,13 +2743,13 @@ p.detail .text {
 }
 
 /* Wild hack to make the card images square even though the width is not known until layout time – https://stackoverflow.com/questions/5445491/height-equal-to-dynamic-width-css-fluid-layout#comment27691932_5445491 */
-.metagame-grid .card:before {
+.metagame-grid .card::before {
     content: "";
     display: block;
     margin-top: 64%;
 }
 
-.metagame-grid .key-cards .card:before {
+.metagame-grid .key-cards .card::before {
     margin-top: 100%;
 }
 
@@ -2790,15 +2790,15 @@ From https://codepen.io/mallendeo/pen/eLIiG
     display: none;
 }
 
-.toggle, .toggle:after, .toggle:before, .toggle *, .toggle *:after, .toggle *:before, .toggle + .toggle-button {
+.toggle, .toggle::after, .toggle::before, .toggle *, .toggle *:after, .toggle *:before, .toggle + .toggle-button {
     box-sizing: border-box;
 }
 
-.toggle::-moz-selection, .toggle:after::-moz-selection, .toggle:before::-moz-selection, .toggle *::-moz-selection, .toggle *:after::-moz-selection, .toggle *:before::-moz-selection, .toggle + .toggle-button::-moz-selection {
+.toggle::-moz-selection, .toggle::after::-moz-selection, .toggle::before::-moz-selection, .toggle *::-moz-selection, .toggle *:after::-moz-selection, .toggle *:before::-moz-selection, .toggle + .toggle-button::-moz-selection {
     background: none;
 }
 
-.toggle::selection, .toggle:after::selection, .toggle:before::selection, .toggle *::selection, .toggle *:after::selection, .toggle *:before::selection, .toggle + .toggle-button::selection {
+.toggle::selection, .toggle::after::selection, .toggle::before::selection, .toggle *::selection, .toggle *:after::selection, .toggle *:before::selection, .toggle + .toggle-button::selection {
     background: none;
 }
 
@@ -2812,7 +2812,7 @@ From https://codepen.io/mallendeo/pen/eLIiG
     user-select: none;
 }
 
-.toggle + .toggle-button:after, .toggle + .toggle-button:before {
+.toggle + .toggle-button::after, .toggle + .toggle-button::before {
     position: relative;
     display: block;
     content: "";
@@ -2820,15 +2820,15 @@ From https://codepen.io/mallendeo/pen/eLIiG
     height: 100%;
 }
 
-.toggle + .toggle-button:after {
+.toggle + .toggle-button::after {
     left: 0;
 }
 
-.toggle + .toggle-button:before {
+.toggle + .toggle-button::before {
     display: none;
 }
 
-.toggle-right + .toggle-button:after {
+.toggle-right + .toggle-button::after {
     left: 50%;
 }
 
@@ -2839,7 +2839,7 @@ From https://codepen.io/mallendeo/pen/eLIiG
     transition: all .4s ease;
 }
 
-.toggle + .toggle-button:after {
+.toggle + .toggle-button::after {
     border-radius: 50%;
     background: var(--background);
     transition: all .2s ease;
@@ -2874,7 +2874,7 @@ The old menu used to use most of this, now it's just used by the language switch
     }
 
     /* Create the caret as a border with opacity zero to hide it initially. */
-    .contains-dropdown > a:after {
+    .contains-dropdown > a::after {
         border-bottom: 1em solid var(--text);
         border-left: 1.333em solid transparent;
         border-right: 1.333em solid transparent;
@@ -2890,15 +2890,15 @@ The old menu used to use most of this, now it's just used by the language switch
         width: 0;
     }
 
-    .language-switcher.contains-dropdown > a:after {
+    .language-switcher.contains-dropdown > a::after {
         top: 1.126em;
     }
 
     /* Show the caret on hover. */
-    .hovering > a:after {
+    .hovering > a::after {
         opacity: 1;
         transform: translateY(0); /* In the revealed state the caret is sitting inside the language switcher's padding,  */
-        transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a:after on hover. */
+        transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a::after on hover. */
     }
 }
 
@@ -3417,7 +3417,7 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 }
 
 .tpd-size-large .tpd-spinner-spin,
-.tpd-size-large .tpd-spinner-spin:after {
+.tpd-size-large .tpd-spinner-spin::after {
     width: 20px;
     height: 20px;
 }

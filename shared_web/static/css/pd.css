@@ -622,6 +622,11 @@ html.dark-mode {
     --ambient-light-shadow-color: rgba(255 255 255 / 15%);
 }
 
+/* Because it's over an image we need the header text to still be white (aka black) even in dark mode. */
+html.dark-mode header a, .hamburger {
+    color: var(--black);
+}
+
 html.dark-mode img,
 html.dark-mode .metagame-grid .card,
 html.dark-mode header::before {
@@ -659,7 +664,7 @@ header h1 {
     font-size: var(--large-font-size);
     margin-bottom: 0;
     margin-right: 3rem;
-    text-shadow:  0.05rem 0.05rem 1rem white;
+    text-shadow:  0.05rem 0.05rem 8px black; /* We want this dark in both light mode and dark mode because it's over an image. */
     text-transform: lowercase;
 }
 

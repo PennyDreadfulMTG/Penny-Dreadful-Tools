@@ -1,4 +1,4 @@
-/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound */
+/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound, setDarkMode */
 /* eslint-disable max-lines */
 window.PD = {};
 
@@ -9,6 +9,7 @@ PD.init = function() {
     PD.initAchievements();
     PD.initTables();
     PD.initDetails();
+    PD.initDarkModeToggle();
     PD.initTooltips();
     PD.initTypeahead();
     PD.initSearchShortcut();
@@ -163,6 +164,17 @@ PD.initDetails = function() {
     $(".details").siblings("p.question").click(function() {
         $(this).siblings(".details").toggle();
         return false;
+    });
+};
+
+PD.initDarkModeToggle = function() {
+    document.querySelectorAll(".dark-mode-toggle-container a.item").forEach((toggle) => {
+        toggle.onclick = () => {
+            const isDark = document.documentElement.classList.contains("dark-mode");
+            localStorage.setItem("prefersDarkMode", (!isDark).toString());
+            setDarkMode();
+            return false;
+        };
     });
 };
 

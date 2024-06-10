@@ -5,6 +5,8 @@
         }
         return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     };
-    // Add .dark-mode to the html element if that's what we think they want.
-    (() => { document.documentElement.classList.toggle('dark-mode', prefersDarkMode()) })();
+    const setDarkMode = () => {
+        document.documentElement.classList.toggle('dark-mode', prefersDarkMode());
+    }
+    setDarkMode();
 </script>

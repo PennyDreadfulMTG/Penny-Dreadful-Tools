@@ -20,7 +20,7 @@ class Matchups(View):
             c['archetypes'] = [{'name': a.name, 'id': a.id, 'selected': str(c['choices'].get('archetype_id')) == str(a.id)} for a in archetypes]  # type: ignore
             c['people'] = [{'mtgo_username': p.mtgo_username.lower(), 'id': p.id, 'selected': str(c['choices'].get('person_id')) == str(p.id)} for p in people]  # type: ignore
             c['cards'] = [{'name': card.name, 'selected': c['choices'].get('card') == card.name} for card in cards]  # type: ignore
-        self.seasons = [{'season_id': s['num'] or '', 'name': s['name'], 'selected': str(season_id) == str(s['num'])} for s in [self.all_seasons()[-1]] + self.all_seasons()[:-1]]
+        self.seasons = [{'season_id': s['num'] or '', 'name': s['name'], 'selected': str(season_id) == str(s['num'])} for s in self.all_seasons()]
         self.decks = results.hero_decks if results and results.hero_decks else []
         self.show_decks = len(self.decks) > 0
         self.matches = results.matches if results and results.matches else []

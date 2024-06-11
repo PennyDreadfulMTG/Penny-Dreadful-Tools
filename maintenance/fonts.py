@@ -206,7 +206,7 @@ def adjust_vertical_metrics(font: TTFont, metrics: dict[str, int]) -> TTFont:
         os2 = font['OS/2']
         os2.usWinAscent = metrics['Win Ascent']
         os2.usWinDescent = metrics['Win Descent']
-        os2.sTypoAscender = metrics['Typo Ascent']
+        os2.sTypoAscender = metrics['Win Ascent']  # This is theoretically wrong, but it makes everything work, instead of making things sit too high in the bounding box, so here we are.
         os2.sTypoDescender = metrics['Typo Descent']
         os2.sTypoLineGap = metrics['Typo Line Gap']
         hhea = font['hhea']

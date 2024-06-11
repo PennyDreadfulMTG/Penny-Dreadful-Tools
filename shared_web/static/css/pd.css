@@ -814,6 +814,7 @@ nav, .menu, .submenu {
 
 .menu {
     font-size: 14px;
+    flex-direction: column;
 }
 
 .submenu {
@@ -837,6 +838,10 @@ nav li:hover > .item + .submenu {
 .submenu:hover {
     display: block;
     width: var(--submenu-width);
+}
+
+.dark-mode-toggle-container {
+    margin-top: auto; /* Hug the bottom, away from the other menu items. */
 }
 
 /*
@@ -866,10 +871,6 @@ When you are in a middle width the main menu is always shown but the submenu is 
     }
     .menu {
         display: flex;
-        flex-direction: column;
-    }
-    .dark-mode-toggle-container {
-        margin-top: auto; /* Hug the bottom, away from the other menu items. */
     }
 }
 

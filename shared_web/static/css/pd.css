@@ -927,7 +927,7 @@ nav.showing {
 }
 
 nav.showing .menu {
-    display: block;
+    display: flex;
     width: var(--main-menu-width);
 }
 

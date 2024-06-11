@@ -95,6 +95,7 @@ def ad_hoc(*args: str) -> None:
         if not options_mode and not remaining_graphemes:
             break
     merged = merge_fonts([f[1] for f in used_fonts])
+    merged.save('/tmp/merged.ttf')
     encoded = encode(merged)
     if options_mode:
         print_options(graphemes_to_fonts, font_info)

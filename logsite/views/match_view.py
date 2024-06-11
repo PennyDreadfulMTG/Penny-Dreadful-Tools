@@ -29,7 +29,7 @@ class Match(View):
         self.players_string = ' vs '.join([p.name for p in viewed_match.players])
         self.players_string_safe = ' vs '.join([player_link(p.name) for p in viewed_match.players])
         self.module_string = ', '.join([m.name for m in viewed_match.modules])
-        if viewed_match.start_time > datetime.datetime.now() - datetime.timedelta(days=1) and not session.get('admin'):
+        if viewed_match.start_time and viewed_match.start_time > datetime.datetime.now() - datetime.timedelta(days=1) and not session.get('admin'):
             self.hidden = True
             return
         if not viewed_match.games:

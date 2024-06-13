@@ -563,6 +563,7 @@ Color attributes are mostly found with their related structural elements in this
     --line: var(--black);
     --highlight: var(--soft-tangerine);
     --highlight-border: var(--soft-tangerine-darker);
+    --selected: var(--light-gray);
     --inactive: var(--dark-gray);
     --disabled: var(--light-gray);
     --error: var(--red);
@@ -2322,7 +2323,7 @@ Archetypes
 
 /* Highlight the currently selected row … */
 tr.current, tr.current td {
-    background-color: var(--highlight);
+    background-color: var(--selected);
 }
 
 /* Pad to the left of the archetype name based on its depth in the hierarchy.

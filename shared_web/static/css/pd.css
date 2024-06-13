@@ -1801,13 +1801,12 @@ ul.buttons > li {
 
 /* We only want to float the buttons alongside the h1. Other buttons should just appear in the flow. */
 .banner ul.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     float: right;
     padding-left: 0; /* For when we wrap under the title. We'll use the title's right-margin to stay far enough away until wrapping. */
     margin-top: 2rem; /* Line up with the h1 of the title when not wrapped under. */
-}
-
-.banner ul.buttons > li {
-    float: right;
 }
 
 /* When the buttons are links we want the whole button to be the link. */

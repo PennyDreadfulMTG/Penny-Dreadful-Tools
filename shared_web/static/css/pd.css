@@ -2657,6 +2657,12 @@ p.detail .text {
     position: relative;
 }
 
+/*
+
+Metagame
+
+*/
+
 :root {
     --metagame-tile-side-border: calc(8rem / 20);
 }
@@ -2886,7 +2892,7 @@ From https://codepen.io/mallendeo/pen/eLIiG
 
 /*
 
-Language Switcher
+Language Switcher (Menu)
 
 The old menu used to use most of this, now it's just used by the language switcher.
 

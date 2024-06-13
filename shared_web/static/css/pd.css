@@ -356,7 +356,7 @@ nav {
 }
 
 header, main, footer, .status-bar {
-    padding: 0 32px 0 calc(96rem / 20); /* padding not margin because we want colors to bleed all the way to the edge of the window. */
+    padding: 0 var(--spacing-page-with-marginalia) 0 var(--spacing-page-with-marginalia); /* padding not margin because we want colors to bleed all the way to the edge of the window. */
 }
 
 /* Minimal spacing around the content on extra-small displays. */
@@ -513,6 +513,7 @@ This stuff is in transition. We've just made a start on having consistent spacin
 */
 
 :root {
+    --spacing-page-with-marginalia: calc(96rem / 20);
     --spacing-text: calc(8rem / 20);
 }
 

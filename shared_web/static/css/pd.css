@@ -1664,6 +1664,12 @@ We also show the meta share of a deck in this way.
     background-color: var(--highlight);
 }
 
+a:hover .stacked-bar-highlight {
+    background-color: var(--highlight-border);
+    transition-duration: 1s;
+    transition-property: background;
+}
+
 .mana-bar {
     display: flex;
     width: inherit;

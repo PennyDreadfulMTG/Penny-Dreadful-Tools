@@ -1,54 +1,114 @@
-.idea/
+# Most of this file is documented with the reasons something is ignored but I
+# don't remember or never knew what these few were for. Don't add here!
+/TestResults.xml
+ffmpeg.exe
+my_doodle.py
+test_results.xml
+/src/pystache/
+/configs/*
+/.hypothesis/
+
+## Our stuff
+
+# Configuration files
+config.json
+/*.config.json
+/.env
+
+# Various caches used by apps in the repo
+.is-spikey.txt
+/images/*.jpg
+/images/*.png
+.cache/
+# The old CMC charts. These are now dynamic with Chart.js and don't use pngs.
+decksite/images/*-cmc.png
+# Pretty sure this one is no longer in use but it's still in configuration.py
+.web_cache/
+
+# JS build output
+shared_web/static/dist/
+
+# Dev db output
+shared_web/static/dev-db.sql.gz
+
+# Search index
+whoosh_index/
+
+# Task locking
+/.task.lock
+
+# i18n
 *.mo
 *.po
+
+# modo-bugs makes its own checkout of the repo to do its thing
+/modo_bugs_repo/
+
+# Scripts
+/codecov.sh
+
+## Data stuff
+
+# Scryfall
+/scryfall-default-cards.json
+
+# MTGJSON
+AllCards-x.json
+AllSets.json
+
+## OS stuff
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+## Programming language and framework stuff
+
+# Python
 *.py,cover
 *.pyc
-*.sqlite
-.DS_Store
-.cache/
-.coverage
-.is-spikey.txt
+
+# Node
+node_modules/
+
+# MyPy
 .mypy_cache
+.mypy_cache/
+
+# PyTest
 .pytest_cache/
+
+# Codecov
+.coverage
+coverage.xml
+
+# Old sqlite stuff that we really don't need any more
+spellfix.*
+sqlite3.h
+sqlite3ext.h
+*.sqlite
+/monkeytype.sqlite3
+meta.sqlite
+# Pretty sure these were the sqlite db names or something, probably not needed
+magic.db
+db
+decksite.db
+prices.db
+
+## IDE stuff
+
+# PyCharm
+.idea/
+
+# pyright, Python LSP
+pyrightconfig.json
+
+# VS Code
 .vs/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.web_cache/
-/*.config.json
-.mypy_cache/
-/TestResults.xml
-/codecov.sh
-/images/*.jpg
-/images/*.png
-/modo_bugs_repo/
-/monkeytype.sqlite3
-AllCards-x.json
-AllSets.json
-Thumbs.db
-config.json
-coverage.xml
-db
-decksite.db
-decksite/images/*-cmc.png
-ffmpeg.exe
-magic.db
-meta.sqlite
-my_doodle.py
-node_modules/
-prices.db
-shared_web/static/dist/
-shared_web/static/dev-db.sql.gz
-spellfix.*
-sqlite3.h
-sqlite3ext.h
-test_results.xml
-whoosh_index/
-/scryfall-default-cards.json
-/.env
-/src/pystache/
-/configs/*
-/.hypothesis/
-/.task.lock

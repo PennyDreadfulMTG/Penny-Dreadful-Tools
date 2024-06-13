@@ -441,6 +441,24 @@ PD.initPersonNotes = function() {
     }
 };
 
+PD.formatPercentage = function (value) {
+    return new Intl.NumberFormat(
+        // eslint-disable-next-line no-undefined
+        undefined,
+        // Choose the options that get us closest to our desired style – a percentage that tells you enough to be useful but no unnecessary decimal places or trailing zeroes.
+        {
+            style: "percent", // Treat decimals as percentages, multiplying by 100 and adding a % sign.
+            minimumSignificantDigits: 2,
+            maximumSignificantDigits: 2
+        }
+    )
+        .format(value)
+        // \D here is the locale-agnostic decimals separator.
+        .replace(/(\D[0-9]*?)0+%$/, "$1%") // Get rid of trailing zeroes after the decimal separator.
+        .replace(/\D%/, "%") // Clean up the scenario where we got rid of everything after the decimal separator and now have something like "4.%.
+        .replace(/^0%$/, "0"); // Replace literal "0%" with "0" as zero is unitless.
+};
+
 PD.renderCharts = function() {
     const isDark = document.documentElement.classList.contains("dark-mode");
     // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
@@ -466,6 +484,13 @@ PD.renderCharts = function() {
             series = $(this).data("series"),
             options = $(this).data("options"),
             ctx = this.getContext("2d");
+        // This is our own extension to Chart.js to allow for a "percent" style on the y-axis.
+        // "percent" does actual exist as an undocumented option but doesn't quite do what we want.
+        for (const scale of Object.keys(options.scales)) {
+            if (options.scales?.[scale]?.ticks?.format?.style === "percent") {
+                options.scales[scale].ticks.callback = PD.formatPercentage;
+            }
+        }
         // eslint-disable-next-line new-cap
         // eslint-disable-next-line no-new
         new Chart(ctx, {

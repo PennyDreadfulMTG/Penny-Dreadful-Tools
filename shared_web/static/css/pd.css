@@ -356,7 +356,7 @@ nav {
 }
 
 header, main, footer, .status-bar {
-    padding: 0 32px 0 calc(96rem / 20); /* padding not margin because we want colors to bleed all the way to the edge of the window. */
+    padding: 0 var(--spacing-page-with-marginalia) 0 var(--spacing-page-with-marginalia); /* padding not margin because we want colors to bleed all the way to the edge of the window. */
 }
 
 /* Minimal spacing around the content on extra-small displays. */
@@ -513,6 +513,7 @@ This stuff is in transition. We've just made a start on having consistent spacin
 */
 
 :root {
+    --spacing-page-with-marginalia: calc(96rem / 20);
     --spacing-text: calc(8rem / 20);
 }
 
@@ -2656,6 +2657,12 @@ p.detail .text {
     position: relative;
 }
 
+/*
+
+Metagame
+
+*/
+
 :root {
     --metagame-tile-side-border: calc(8rem / 20);
 }
@@ -2885,7 +2892,7 @@ From https://codepen.io/mallendeo/pen/eLIiG
 
 /*
 
-Language Switcher
+Language Switcher (Menu)
 
 The old menu used to use most of this, now it's just used by the language switcher.
 
@@ -2975,6 +2982,17 @@ Used for Unique Cards Played and Cards Played First list on person detail page.
 
 .card-lists li {
     list-style-type: none;
+}
+
+/*
+
+Charts
+
+*/
+
+.history-chart {
+    max-width: 60rem;
+    width: 100%;
 }
 
 /*

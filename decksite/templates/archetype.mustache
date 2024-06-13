@@ -13,11 +13,9 @@
     {{> livecardtable}}
 </section>
 {{#history_chart}}
-    <section>
+    <section class="history-chart">
         <h2>History</h2>
-        <div style="position: relative; width:80vw; max-width: 60rem">
-            <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
-        </div>
+        <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
     </section>
 {{/history_chart}}
 {{#show_record}}

@@ -2986,6 +2986,17 @@ Used for Unique Cards Played and Cards Played First list on person detail page.
 
 /*
 
+Charts
+
+*/
+
+.history-chart {
+    max-width: 60rem;
+    width: 100%;
+}
+
+/*
+
 Tooltips
 
 We used tippedjs for tooltips but we don't want to load their CSS separately so here are the parts we need.

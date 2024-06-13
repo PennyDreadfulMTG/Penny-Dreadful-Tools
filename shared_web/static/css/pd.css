@@ -563,6 +563,7 @@ Color attributes are mostly found with their related structural elements in this
     --line: var(--black);
     --highlight: var(--soft-tangerine);
     --highlight-border: var(--soft-tangerine-darker);
+    --selected: var(--light-gray);
     --inactive: var(--dark-gray);
     --disabled: var(--light-gray);
     --error: var(--red);
@@ -1663,6 +1664,12 @@ We also show the meta share of a deck in this way.
     background-color: var(--highlight);
 }
 
+a:hover .stacked-bar-highlight {
+    background-color: var(--highlight-border);
+    transition-duration: 1s;
+    transition-property: background;
+}
+
 .mana-bar {
     display: flex;
     width: inherit;
@@ -2322,7 +2329,7 @@ Archetypes
 
 /* Highlight the currently selected row … */
 tr.current, tr.current td {
-    background-color: var(--highlight);
+    background-color: var(--selected);
 }
 
 /* Pad to the left of the archetype name based on its depth in the hierarchy.

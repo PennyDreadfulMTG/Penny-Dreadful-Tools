@@ -1222,11 +1222,12 @@ div.live {
 
 /* Highlight table rows on hover. */
 
-table:not(.calendar) tr:hover td:not(.marginalia) {
+tr.clickable:hover td:not(.marginalia) {
     background-color: var(--highlight);
+    cursor: pointer;
 }
 
-tr:hover td.marginalia {
+tr.clickable:hover td.marginalia {
     background-color: inherit;
 }
 

@@ -37,7 +37,7 @@ const renderHeaderRow = (table) => (
 );
 
 const renderRow = (table, deck) => (
-    <tr key={deck.id}>
+    <tr key={deck.id} onClick={() => window.location.href = deck.url} className="clickable">
         <td className="marginalia" dangerouslySetInnerHTML={{__html: deck.starsSafe}}></td>
         <td className="contains-mana-bar" dangerouslySetInnerHTML={{__html: deck.colorsSafe}} ></td>
         <td className="deck-name"><a title={deck.decklist || null} href={deck.url}>{deck.name}</a></td>

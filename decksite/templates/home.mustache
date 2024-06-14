@@ -17,7 +17,7 @@
             </thead>
             <tbody>
                 {{#top_cards}}
-                    <tr>
+                    <tr data-href="{{url}}" class="clickable">
                         <td>{{> singlecard}}</td>
                         <td class="n">{{num_decks}}</td>
                         <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>

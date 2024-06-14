@@ -24,6 +24,7 @@ PD.init = function() {
     ]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.localizeTimes();
+    PD.initLinks();
     PD.initSignupDeckChooser();
     PD.initPersonalization();
     PD.renderCharts();
@@ -327,6 +328,14 @@ PD.toggleIllegalCards = function() {
 PD.localizeTimes = function() {
     PD.localizeTimeElements();
     PD.hideRepetitionInCalendar();
+};
+
+PD.initLinks = function() {
+    document.querySelectorAll("[data-href]").forEach((elem) => {
+        elem.addEventListener("click", () => {
+            window.location.href = elem.getAttribute("data-href");
+        });
+    });
 };
 
 PD.localizeTimeElements = function() {

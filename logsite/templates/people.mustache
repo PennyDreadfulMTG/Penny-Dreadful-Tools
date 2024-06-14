@@ -10,7 +10,7 @@
         </thead>
         <tbody>
             {{#people}}
-                <tr>
+                <tr data-href="{{url}}" class="clickable">
                     <td class="marginalia">{{{stars_safe}}}</td>
                     <td><a href="{{url}}">{{name}}</a></td>
                     <td>{{num_matches}}</td>

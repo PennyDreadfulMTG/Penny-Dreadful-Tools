@@ -479,6 +479,8 @@ PD.renderCharts = function() {
     Chart.defaults.plugins.datalabels.font.size = "15px";
     Chart.defaults.plugins.legend.display = false;
     Chart.defaults.plugins.tooltip.enabled = false;
+    Chart.defaults.plugins.tooltip.titleAlign = "left";
+    Chart.defaults.plugins.tooltip.bodyAlign = "right";
     Chart.defaults.plugins.datalabels.formatter = function (value) {
         return value || "";
     };
@@ -493,11 +495,19 @@ PD.renderCharts = function() {
             series = $(this).data("series"),
             options = $(this).data("options"),
             ctx = this.getContext("2d");
-        // This is our own extension to Chart.js to allow for a "percent" style on the y-axis.
-        // "percent" does actual exist as an undocumented option but doesn't quite do what we want.
+        // These are our extension to Chart.js. We can't pass a callback from the HTML data attrs
+        // so instead we intercept some magic values here to allow for a "percent" style and other
+        // options. "percent" does actual exist as an undocumented option but it quite do what
+        // we want so we override that behavior here.
+        if (options.pd?.title?.style === "season") {
+            options.plugins.tooltip.callbacks = options.plugins.tooltip.callbacks || {};
+            options.plugins.tooltip.callbacks.title = (t) => "Season " + t[0].label;
+        }
         for (const scale of Object.keys(options.scales)) {
             if (options.scales?.[scale]?.ticks?.format?.style === "percent") {
                 options.scales[scale].ticks.callback = PD.formatPercentage;
+                options.plugins.tooltip.callbacks = options.plugins.tooltip.callbacks || {};
+                options.plugins.tooltip.callbacks.label = (v) => PD.formatPercentage(v.raw);
             }
         }
         // eslint-disable-next-line new-cap

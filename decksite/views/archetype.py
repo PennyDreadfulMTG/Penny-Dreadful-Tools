@@ -50,6 +50,11 @@ class Archetype(View):
                 'labels': json.dumps(list(range(1, len(meta_share) + 1))),
                 'series': json.dumps(meta_share),
                 'options': json.dumps({
+                    'pd': {
+                        'title': {
+                            'style': 'season',
+                        },
+                    },
                     'indexAxis': 'x',
                     'plugins': {
                         'datalabels': {

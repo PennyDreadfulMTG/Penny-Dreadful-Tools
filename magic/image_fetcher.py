@@ -154,7 +154,7 @@ def save_composite_image(in_filepaths: list[str], out_filepath: str) -> None:
 
     for image in images:
         aspect_ratio = image.width / image.height
-        image.thumbnail([aspect_ratio * 445, 445])
+        image.thumbnail([aspect_ratio * 445, 445])  # type: ignore
     widths, heights = zip(*(i.size for i in images))
     total_width = sum(widths)
     max_height = max(heights)
@@ -187,22 +187,22 @@ async def generate_banner(names: list[str], background: str, v_crop: int | None 
     file_path = await download_art_crop(c, hq_artcrops)
     if file_path:
         with Image.open(file_path) as img:
-            h = v_crop / 100 * 1315
-            canvas.paste(img.resize((1920, 1315), Image.BICUBIC).crop((0, h, 1920, h + 210)))
+            h = int(v_crop / 100 * 1315)
+            canvas.paste(img.resize((1920, 1315), Image.Resampling.BICUBIC).crop((0, h, 1920, h + 210)))
 
     n = math.ceil(len(cards) / 2)
     x = 800
     for c in cards[:n]:
         ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
-            img = img.resize((160, 213), Image.LANCZOS)
+            img = img.resize((160, 213), Image.Resampling.LANCZOS)
             canvas.paste(img, (x, 30))
             x = x + img.width + 10
     x = 900
     for c in cards[n:]:
         ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
-            img = img.resize((160, 213), Image.LANCZOS)
+            img = img.resize((160, 213), Image.Resampling.LANCZOS)
             canvas.paste(img, (x, 60))
             x = x + img.width + 10
 
@@ -234,14 +234,14 @@ async def generate_discord_banner(names: list[str], background: str) -> str:
     for c in cards[:n]:
         ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
-            img = img.resize((320, 426), Image.LANCZOS)
+            img = img.resize((320, 426), Image.Resampling.LANCZOS)
             canvas.paste(img, (x, 500))
             x = x + img.width + 10
     x = 300
     for c in cards[n:]:
         ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
-            img = img.resize((320, 426), Image.LANCZOS)
+            img = img.resize((320, 426), Image.Resampling.LANCZOS)
             canvas.paste(img, (x, 600))
             x = x + img.width + 10
 

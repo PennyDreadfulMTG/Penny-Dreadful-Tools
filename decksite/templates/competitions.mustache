@@ -10,7 +10,7 @@
         <tbody>
             {{#competitions}}
                 {{#num_decks}}
-                    <tr>
+                    <tr data-href="{{competition_url}}" class="clickable">
                         <td><a href="{{competition_url}}">{{{name}}}</a></td>
                         <td class="n" data-sortInitialOrder="desc"><a href="{{competition_url}}">{{{num_decks}}}</a></td>
                         <td data-text="{{date_sort}}"><a href="{{competition_url}}">{{{display_date}}}</a></td>

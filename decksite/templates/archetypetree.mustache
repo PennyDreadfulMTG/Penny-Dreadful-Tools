@@ -21,7 +21,7 @@
     <tbody>
         {{#archetypes}}
             {{^hide_archetype}}
-                <tr class="archetype archetype-{{depth}}{{#current}} current{{/current}}">
+                <tr class="archetype archetype-{{depth}}{{#current}} current{{/current}} clickable" data-href="{{url}}">
                     <td data-sort="{{sort}}" class="primary initial"><a href="{{url}}">{{name}}</a></td>
                     {{^is_matchups}}
                         <td class="n">{{num_decks}}</td>

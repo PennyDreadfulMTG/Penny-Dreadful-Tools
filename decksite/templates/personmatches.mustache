@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             {{#matches}}
-                <tr>
+                <tr data-href="{{log_url}}" class="clickable">
                     {{#show_hero}}<td><a href="{{person_url}}">{{person}}</a></td>{{/show_hero}}
                     <td><a href="{{deck_url}}">{{deck_name}}</a></td>
                     <td><a href="{{opponent_url}}">{{opponent}}</a></td>

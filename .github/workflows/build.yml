@@ -56,7 +56,7 @@ jobs:
       with:
         python-version: '3.10'
         cache: 'pipenv'
-    - uses: getong/mariadb-action@v1.1
+    - uses: getong/mariadb-action@v1.2
       with:
         mysql root password: bad-password
     - name: Install dependencies

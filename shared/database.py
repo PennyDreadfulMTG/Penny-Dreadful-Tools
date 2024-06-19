@@ -177,11 +177,15 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
         return "'{escaped}'".format(escaped=encodable.replace("'", "''").replace('%', '%%'))
     raise InvalidArgumentException(f'Cannot sqlescape `{s}`')
 
-def sqllikeescape(s: str) -> str:
+def sqllikeescape(s: str, fuzzy: bool = False) -> str:
     if type(s) is not str:
         raise InvalidArgumentException('You can only use LIKE on strings')
-    s = s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+    joiner = '%' if fuzzy else ''
+    s = joiner.join(sqllikeescapesymbols(c) for c in list(s))
     return sqlescape(f'%{s}%', backslashed_escaped=True)
+
+def sqllikeescapesymbols(s: str) -> str:
+    return s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
 
 def concat(parts: Iterable[str]) -> str:
     return 'CONCAT(' + ', '.join(parts) + ')'

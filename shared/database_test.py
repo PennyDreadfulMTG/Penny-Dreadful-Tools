@@ -23,3 +23,6 @@ def test_sqllikeescape() -> None:
     assert sqllikeescape('%') == "'%%\\%%%%'"
     with pytest.raises(InvalidArgumentException):
         sqllikeescape({})  # type: ignore
+    hard = r'What % _chance_ of a \?'
+    assert sqllikeescape(hard) == r"'%%What \%% \_chance\_ of a \\?%%'"
+    assert sqllikeescape(hard, fuzzy=True) == r"'%%W%%h%%a%%t%% %%\%%%% %%\_%%c%%h%%a%%n%%c%%e%%\_%% %%o%%f%% %%a%% %%\\%%?%%'"

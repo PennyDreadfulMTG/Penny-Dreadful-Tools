@@ -2463,11 +2463,11 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:1f87acdce4a43a523ae5aa21a3fc37522d73ebd9ec04b1dbf01aa3d173852def",
-                "sha256:fbc40a78a8a9c6675133031116144f0d0940376fa6e4e1acd5624c90b0aaf58b"
+                "sha256:422b91cb49378b97e7e8d0e8d5a1069df23689d45262b86f54988a7db264e874"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==2.5.1"
+            "version": "==2.6.0"
         },
         "sgmllib3k": {
             "hashes": [
@@ -2629,7 +2629,6 @@
                 "sha256:a448b2f64d686155468037e1ace9f2d2199776e17f0a46610480d311f73e3472",
                 "sha256:dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==2.2.2"
         },

@@ -1968,6 +1968,7 @@ form {
 
 button, form, input, select, textarea {
     accent-color: var(--text);
+    background-color: inherit;
     color: inherit;
     font-family: var(--main-text-font-family);
     font-size: inherit;

@@ -1869,11 +1869,12 @@
         },
         "pip": {
             "hashes": [
-                "sha256:ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc",
-                "sha256:ea9bd1a847e8c5774a5777bb398c19e80bcd4e2aa16a4b301b718fe6f593aba2"
+                "sha256:a775837439bf5da2c1a0c2fa43d5744854497c689ddbd9344cf3ea6d00598540",
+                "sha256:bdae551038c0ce6a83030b4aedef27fc95f0daa683593fea22fa05e55ed8e317"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==24.0"
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==24.1"
         },
         "pip-check-reqs": {
             "hashes": [

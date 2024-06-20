@@ -70,7 +70,7 @@ jobs:
         pipenv run pytest
         pipenv run python dev.py upload-coverage
     - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v4.2.2
+      uses: mikepenz/action-junit-report@v4.3.0
       if: always() # always run even if the previous step fails
       with:
         report_paths: '**/TestResults.xml'

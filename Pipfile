@@ -42,6 +42,7 @@ types-typed-ast = "*"
 pipfile = "*"
 types-freezegun = "*"
 brotli = "*"
+ruff = "*"
 
 [packages]
 aiohttp = "*"

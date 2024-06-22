@@ -4,19 +4,19 @@ exclude = [
     "__pycache__",
     "src",
 ]
-ignore = [
+lint.ignore = [
     "E402",
     "E501",
     "E713",
 ]
-select = [
+lint.select = [
     "E",
     "F",
     "T2",
     "W",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "rotation_script/*" = ["T201"]
 "shared/*" = ["T201"]
 "maintenance/*" = ["T201"]

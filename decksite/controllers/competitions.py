@@ -14,11 +14,13 @@ def competitions() -> str:
     view = Competitions(comp.load_competitions(season_id=get_season_id()))
     return view.page()
 
+
 @APP.route('/competitions/<competition_id>/')
 @cached()
 def competition(competition_id: int) -> str:
     view = Competition(comp.load_competition(competition_id, should_load_decks=False))
     return view.page()
+
 
 @APP.route('/tournaments/')
 def tournaments() -> str:
@@ -32,6 +34,7 @@ def hosting() -> str:
     view = TournamentHosting()
     return view.page()
 
+
 @APP.route('/tournaments/leaderboards/')
 @SEASONS.route('/tournaments/leaderboards/')
 @cached()
@@ -40,6 +43,7 @@ def tournament_leaderboards() -> str:
     view = TournamentLeaderboards(series)
     return view.page()
 
+
 @APP.route('/tournaments/pd500/')
 @cached()
 def pd500() -> str:
@@ -47,11 +51,13 @@ def pd500() -> str:
     view = PD500(tournament_winning_decks)
     return view.page()
 
+
 @APP.route('/tournaments/kickoff/')
 @cached()
 def kickoff() -> str:
     view = KickOff()
     return view.page()
+
 
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')

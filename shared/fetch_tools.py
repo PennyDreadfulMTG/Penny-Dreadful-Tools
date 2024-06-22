@@ -40,6 +40,7 @@ def fetch(url: str, character_encoding: str | None = None, force: bool = False, 
             return fetch(url, character_encoding, force, retry=False)
         raise FetchException(e) from e
 
+
 async def fetch_async(url: str) -> str:
     logger.info(f'Async fetching {url}')
     try:
@@ -49,6 +50,7 @@ async def fetch_async(url: str) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError, aiohttp.ClientConnectorError) as e:
         raise FetchException(e) from e
 
+
 async def post_async_with_json(url: str, data: dict) -> str:
     logger.info(f'Async posting to {url}')
     try:
@@ -57,6 +59,7 @@ async def post_async_with_json(url: str, data: dict) -> str:
             return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
         raise FetchException(e) from e
+
 
 def fetch_json(url: str, character_encoding: str | None = None, session: requests.Session | None = None) -> Any:
     try:
@@ -68,6 +71,7 @@ def fetch_json(url: str, character_encoding: str | None = None, session: request
         logger.error(f'Failed to load JSON:\n{blob}')
         raise FetchException(e) from e
 
+
 async def fetch_json_async(url: str) -> Any:
     try:
         blob = await fetch_async(url)
@@ -77,6 +81,7 @@ async def fetch_json_async(url: str) -> Any:
     except json.decoder.JSONDecodeError:
         logger.error(f'Failed to load JSON:\n{blob}')
         raise
+
 
 async def post_json_async(url: str, data: dict) -> Any:
     try:
@@ -88,16 +93,19 @@ async def post_json_async(url: str, data: dict) -> Any:
         logger.error(f'Failed to load JSON:\n{blob}')
         raise
 
-def post(url: str,
-         data: dict[str, str] | None = None,
-         json_data: Any | None = None,
-         ) -> str:
+
+def post(
+    url: str,
+    data: dict[str, str] | None = None,
+    json_data: Any | None = None,
+) -> str:
     logger.info(f'POSTing to {url} with {data} / {json_data}')
     try:
         response = requests.post(url, data=data, json=json_data)
         return response.text
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e) from e
+
 
 def store(url: str, path: str) -> requests.Response:
     logger.info(f'Storing {url} in {path}')
@@ -129,11 +137,14 @@ async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
     except (urllib.error.HTTPError, aiohttp.ClientError) as e:
         raise FetchException(e) from e
 
+
 class FetchException(OperationalException):
     pass
 
+
 def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 1000
+
 
 def escape(str_input: str, skip_double_slash: bool = False) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
@@ -147,20 +158,25 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
         s = s.replace('-split-', '//')
     return s
 
-def post_discord_webhook(webhook_id: str,
-                         webhook_token: str,
-                         message: str | None = None,
-                         username: str | None = None,
-                         avatar_url: str | None = None,
-                         embeds: list[dict[str, Any]] | None = None,
-                         ) -> bool:
+
+def post_discord_webhook(
+    webhook_id: str,
+    webhook_token: str,
+    message: str | None = None,
+    username: str | None = None,
+    avatar_url: str | None = None,
+    embeds: list[dict[str, Any]] | None = None,
+) -> bool:
     if not webhook_id or not webhook_token:
         return False
     url = f'https://discordapp.com/api/webhooks/{webhook_id}/{webhook_token}'
-    post(url, json_data={
-        'content': message,
-        'username': username,
-        'avatar_url': avatar_url,
-        'embeds': embeds,
-    })
+    post(
+        url,
+        json_data={
+            'content': message,
+            'username': username,
+            'avatar_url': avatar_url,
+            'embeds': embeds,
+        },
+    )
     return True

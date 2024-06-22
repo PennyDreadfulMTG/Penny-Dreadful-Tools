@@ -14,5 +14,6 @@ class Echo(Extension):
             s = "I'm afraid I can't do that, Dave"
         await ctx.send(s)
 
+
 def setup(bot: Client) -> None:
     Echo(bot)

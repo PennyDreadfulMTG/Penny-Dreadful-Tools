@@ -14,12 +14,14 @@ def test_base_query_legalities() -> None:
     assert 'Penny Dreadful EMN:Legal' in legalities
     assert 'Penny Dreadful AKH:Legal' not in legalities
 
+
 def test_supertypes() -> None:
     assert multiverse.supertypes('Legendary Enchantment Creature - God') == ['Legendary']
     assert multiverse.supertypes('Artifact Creature - Construct') == []
     assert multiverse.supertypes('Basic Snow Land - Island') == ['Basic', 'Snow']
     assert multiverse.supertypes('Enchantment') == []
     assert multiverse.supertypes('Creature - Elder Dragon') == []
+
 
 def test_subtypes() -> None:
     assert multiverse.subtypes('Legendary Enchantment Creature - God') == ['God']

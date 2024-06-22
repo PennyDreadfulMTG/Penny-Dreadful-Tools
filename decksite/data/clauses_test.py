@@ -18,6 +18,7 @@ def test_decks_where() -> None:
     assert "= 'League'" not in clauses.decks_where(args, False, 1)
     assert "= 'Gatherling'" not in clauses.decks_where(args, False, 1)
 
+
 def test_card_search_where() -> None:
     assert ("name IN ('Tasigur, the Golden Fang')", '') == clauses.card_search_where('Tasigur, the Golden Fang')
     assert ("cs.name IN ('Tasigur, the Golden Fang')", '') == clauses.card_search_where('Tasigur, the Golden Fang', column_name='cs.name')
@@ -34,6 +35,7 @@ def test_card_search_where() -> None:
     assert found
     assert {found.group(1), found.group(2)} == {'Blood Moon', 'Magus of the Moon'}
     assert ('FALSE', "Using 'm' with other colors is not supported, use 'color>b' instead") == clauses.card_search_where('c:bm')
+
 
 def test_limit() -> None:
     args = {'page': '1', 'pageSize': '150'}

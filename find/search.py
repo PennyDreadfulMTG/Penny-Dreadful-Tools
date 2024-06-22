@@ -20,12 +20,14 @@ UNQUOTED_STRING = 'unquoted_string'
 
 VALUE_LOOKUP: dict[str, dict[str, int]] = {}
 
+
 def search(query: str) -> set[str]:
     query = query.replace('“', '"').replace('”', '"')
     where = parse(tokenize(query))
     base_query = multiverse.cached_base_query(where)
     sql = f'{base_query} ORDER BY NULL'
     return {r['name'] for r in db().select(sql)}
+
 
 # Cut a query string up into tokens and combine them in an Expression, recursively for subexpressisons. Or raise if string is malformed.
 def tokenize(s: str) -> Expression:
@@ -119,6 +121,7 @@ def tokenize(s: str) -> Expression:
         raise InvalidSearchException(f'Reached end of expression without finding enough closing parentheses in {s}')
     return Expression(tokens[0])
 
+
 # Parse an Expression into a SQL WHERE clause or raise if Expression is invalid.
 def parse(expression: Expression) -> str:
     s = ''
@@ -154,7 +157,8 @@ def parse(expression: Expression) -> str:
         elif next_cls != BooleanOperator or next_token.value() == 'NOT':  # type: ignore
             s += ' AND '
         i += 1
-    return s[:-len(' AND ')].replace('    ', ' ').strip()
+    return s[: -len(' AND ')].replace('    ', ' ').strip()
+
 
 # Parse key, operator and term tokens into a SQL boolean or raise if the tokens are invalid in combination.
 def parse_criterion(key: Token, operator: Token, term: Token) -> str:
@@ -200,6 +204,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return playable_where(term.value())
     raise InvalidCriterionException
 
+
 def text_where(column: str, term: Token, exclude_parenthetical: bool = False) -> str:
     q = term.value()
     if column == 'type_line' and q == 'pw' and not term.is_regex():
@@ -222,6 +227,7 @@ def text_where(column: str, term: Token, exclude_parenthetical: bool = False) ->
         column = f"REGEXP_REPLACE({column}, '\\\\([^)]*\\\\)', '')"
     return f'({column} {operator} {escaped})'
 
+
 def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:
     # Specialcase colorless for color and coloridentity because they have no entries (but not true for produced_mana).
     if (subtable in ['color', 'color_identity']) and value == 'c':
@@ -236,12 +242,14 @@ def subtable_where(subtable: str, value: str, operator: str | None = None) -> st
         operator = 'LIKE' if not operator else operator
     return f'(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {v}))'
 
+
 def math_where(column: str, operator: str, term: str) -> str:
     if operator == ':':
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
     return f'({column} IS NOT NULL AND {column} {operator} {sqlescape(term)})'
+
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     all_colors = {'w', 'u', 'b', 'r', 'g'}
@@ -295,8 +303,10 @@ def color_where(subtable: str, operator: str, term: str) -> str:
         clauses.append(f'c.id NOT IN (SELECT card_id FROM card_{subtable})')
     return '(' + ') AND ('.join(clauses) + ')'
 
+
 def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
+
 
 def format_where(term: str) -> str:
     season_code = parse_season(term) if term.startswith('pd') or term.startswith('penny') else None
@@ -309,6 +319,7 @@ def format_where(term: str) -> str:
         raise InvalidValueException(f"Invalid format '{term}'")
     return f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id IN ({', '.join(str(id) for id in format_ids)}) AND legality <> 'Banned'))"
 
+
 def rarity_where(operator: str, term: str) -> str:
     rarity_id = value_lookup('rarity', term)
     if operator == ':':
@@ -316,6 +327,7 @@ def rarity_where(operator: str, term: str) -> str:
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
     return f'(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))'
+
 
 def mana_where(operator: str, term: str) -> str:
     term = term.upper()
@@ -333,6 +345,7 @@ def mana_where(operator: str, term: str) -> str:
     else:
         raise InvalidTokenException(f'mana expects `:` or `=` not `{operator}`. Did you want cmc?')
     return f'({clause})'
+
 
 def playable_where(term: str) -> str:
     term = term.upper()
@@ -370,6 +383,7 @@ def value_lookup(table: str, value: str) -> int | str:
         raise InvalidValueException(f"Invalid value '{value}' for {table}")
     return value
 
+
 def init_value_lookup() -> None:
     sql = """SELECT
         id,
@@ -403,6 +417,7 @@ def init_value_lookup() -> None:
         if table == 'color':
             VALUE_LOOKUP['color_identity'] = d
             VALUE_LOOKUP['produced_mana'] = d
+
 
 def is_subquery(subquery_name: str) -> str:
     if subquery_name == 'dfc':
@@ -459,6 +474,7 @@ def is_subquery(subquery_name: str) -> str:
     query = f'({query})'
     return query
 
+
 def spikey_names() -> list[str]:
     try:
         with open(configuration.is_spikey_file.get()) as f:
@@ -470,12 +486,14 @@ def spikey_names() -> list[str]:
     # Hardcoded list from 2021 as backup in case the file is missing or corrupt.
     return ['Adun Oakenshield', 'Arcades Sabboth', 'Arcbound Ravager', 'Arcum Dagsson', "Arcum's Astrolabe", 'Autumn Willow', 'Axelrod Gunnarson', 'Balustrade Spy', 'Barktooth Warbeard', 'Baron Sengir', 'Bartel Runeaxe', 'Biorhythm', 'Blazing Shoal', 'Boris Devilboon', 'Braids, Cabal Minion', 'Braingeyser', 'Chromium', 'Circle of Flame', 'Cloudpost', 'Coalition Victory', 'Cranial Plating', 'Cursed Scroll', 'Dakkon Blackblade', 'Darksteel Citadel', 'Dingus Egg', 'Disciple of the Vault', 'Dread Return', 'Edric, Spymaster of Trest', 'Empty the Warrens', 'Erayo, Soratami Ascendant', 'Eron the Relentless', 'Fact or Fiction', 'Frantic Search', 'Gabriel Angelfire', 'Golden Wish', 'Grandmother Sengir', 'Grapeshot', 'Hada Freeblade', 'Halfdane', 'Hazezon Tamar', 'Heartless Hidetsugu', 'Hypergenesis', 'Hypnotic Specter', 'Icy Manipulator', "Ihsan's Shade", 'Intangible Virtue', 'Invigorate', 'Ivory Tower', 'Jacques le Vert', 'Jasmine Boreal', 'Juggernaut', 'Kird Ape', 'Kokusho, the Evening Star', 'Lady Caleria', 'Lady Evangela', 'Lady Orca', 'Limited Resources', 'Lodestone Golem', 'Lucky Clover', 'Lutri, the Spellchaser', 'Marhault Elsdragon', 'Márton Stromgald', 'Merieke Ri Berit', 'Nicol Bolas', 'Niv-Mizzet, the Firemind', 'Orcish Oriflamme', 'Palladia-Mors', 'Panoptic Mirror', 'Pavel Maliki', 'Ponder', 'Prophet of Kruphix', 'Protean Hulk', 'Punishing Fire', 'Ramses Overdark', 'Reflector Mage', 'Regrowth', 'Riftsweeper', 'Riven Turnbull', 'Rofellos, Llanowar Emissary', 'Rohgahh of Kher Keep', 'Rubinia Soulsinger', 'Rukh Egg', 'Runed Halo', 'Second Sunrise', 'Seething Song', 'Serendib Efreet', 'Simian Spirit Guide', 'Skeleton Ship', "Sol'kanar the Swamp King", 'Sorcerous Spyglass', 'Spatial Contortion', 'Stangg', 'Summer Bloom', 'Sunastian Falconer', 'Sway of the Stars', 'Sword of the Ages', 'Sylvan Library', 'Sylvan Primordial', 'Temporal Fissure', 'Tetsuo Umezawa', 'Thawing Glaciers', 'Thirst for Knowledge', 'Tobias Andrion', 'Tor Wauki', 'Trade Secrets', 'Treasure Cruise', 'Undercity Informer', 'Underworld Dreams', 'Vaevictis Asmadi', 'Voltaic Key', 'Wild Nacatl', 'Worldfire', 'Worldgorger Dragon', 'Xira Arien', 'Yisan, the Wanderer Bard', 'Zirda, the Dawnwaker', 'Zur the Enchanter', "Adriana's Valor", 'Advantageous Proclamation', 'Aether Vial', 'Aetherworks Marvel', 'Agent of Treachery', 'Ali from Cairo', 'Amulet of Quoz', 'Ancestral Recall', 'Ancestral Vision', 'Ancient Den', 'Ancient Tomb', 'Angus Mackenzie', "Ashnod's Coupon", 'Assemble the Rank and Vile', 'Attune with Aether', 'Ayesha Tanaka', 'Back to Basics', 'Backup Plan', 'Balance', 'Baral, Chief of Compliance', 'Bazaar of Baghdad', 'Berserk', 'Birthing Pod', 'Bitterblossom', 'Black Lotus', 'Black Vise', 'Bloodbraid Elf', 'Bloodstained Mire', "Brago's Favor", 'Brainstorm', 'Bridge from Below', 'Bronze Tablet', 'Burning-Tree Emissary', 'Burning Wish', 'Candelabra of Tawnos', 'Cauldron Familiar', 'Chalice of the Void', 'Chandler', 'Channel', 'Chaos Orb', 'Chrome Mox', 'Cloud of Faeries', 'Contract from Below', 'Copy Artifact', 'Counterspell', 'Crop Rotation', 'Crucible of Worlds', 'Cunning Wish', 'Dark Depths', 'Darkpact', 'Dark Ritual', 'Daughter of Autumn', 'Daze', 'Deathrite Shaman', 'Death Wish', 'Demonic Attorney', 'Demonic Consultation', 'Demonic Tutor', 'Derevi, Empyrial Tactician', 'Dig Through Time', 'Divine Intervention', 'Doomsday', 'Double Cross', 'Double Deal', 'Double Dip', 'Double Play', 'Double Stroke', 'Double Take', 'Drannith Magistrate', 'Dreadhorde Arcanist', 'Dream Halls', 'Earthcraft', 'Echoing Boon', 'Edgar Markov', "Emissary's Ploy", 'Emrakul, the Aeons Torn', 'Emrakul, the Promised End', 'Enlightened Tutor', 'Enter the Dungeon', 'Entomb', 'Escape to the Wilds', 'Expedition Map', 'Eye of Ugin', 'Faithless Looting', 'Fall from Favor', 'Falling Star', 'Fastbond', "Feldon's Cane", 'Felidar Guardian', 'Field of the Dead', 'Fires of Invention', 'Flash', 'Flooded Strand', 'Fluctuator', 'Food Chain', 'Fork', "Gaea's Cradle", 'Gauntlet of Might', 'General Jarkeld', 'Gifts Ungiven', 'Gitaxian Probe', 'Glimpse of Nature', 'Goblin Lackey', 'Goblin Recruiter', 'Golgari Grave-Troll', 'Golos, Tireless Pilgrim', 'Gosta Dirk', 'Great Furnace', "Green Sun's Zenith", 'Grim Monolith', 'Grindstone', 'Griselbrand', 'Growth Spiral', 'Gush', 'Gwendlyn Di Corci', 'Hammerheim', 'Hazduhr the Abbot', 'Hermit Druid', 'High Tide', 'Hired Heist', 'Hogaak, Arisen Necropolis', 'Hold the Perimeter', 'Hullbreacher', 'Humility', 'Hunding Gjornersen', "Hurkyl's Recall", 'Hymn of the Wilds', 'Hymn to Tourach', 'Illusionary Mask', 'Immediate Action', 'Imperial Seal', 'Incendiary Dissent', 'Inverter of Truth', 'Iona, Shield of Emeria', 'Irini Sengir', 'Iterative Analysis', 'Jace, the Mind Sculptor', 'Jedit Ojanen', 'Jerrard of the Closed Fist', 'Jeweled Bird', 'Johan', 'Joven', 'Karakas', 'Karn, the Great Creator', 'Kasimir the Lone Wolf', 'Kei Takahashi', 'Kethis, the Hidden Hand', 'Krark-Clan Ironworks', 'Land Tax', 'Leovold, Emissary of Trest', 'Leyline of Abundance', 'Library of Alexandria', 'Lightning Bolt', 'Lingering Souls', 'Lin Sivvi, Defiant Hero', "Lion's Eye Diamond", 'Living Wish', 'Livonya Silone', 'Lord Magnus', 'Lotus Petal', 'Lurrus of the Dream-Den', 'Magical Hacker', 'Mana Crypt', 'Mana Drain', 'Mana Vault', 'Maze of Ith', 'Memory Jar', 'Mental Misstep', 'Merchant Scroll', 'Metalworker', 'Mind Over Matter', "Mind's Desire", 'Mind Twist', 'Mirror Universe', "Mishra's Workshop", 'Moat', 'Monastery Mentor', 'Mox Diamond', 'Mox Emerald', 'Mox Jet', 'Mox Lotus', 'Mox Opal', 'Mox Pearl', 'Mox Ruby', 'Mox Sapphire', "Muzzio's Preparations", 'Mycosynth Lattice', 'Mystical Tutor', 'Mystic Forge', 'Mystic Sanctuary', 'Narset, Parter of Veils', 'Natural Order', 'Natural Unity', 'Nebuchadnezzar', 'Necropotence', 'Nexus of Fate', 'Oath of Druids', 'Oath of Nissa', 'Oko, Thief of Crowns', 'Omnath, Locus of Creation', 'Once More with Feeling', 'Once Upon a Time', "Painter's Servant", 'Paradox Engine', 'Pendelhaven', 'Peregrine Drake', 'Personal Tutor', 'Polluted Delta', 'Power Play', 'Preordain', 'Primeval Titan', 'Princess Lucrezia', 'Ragnar', 'Ramirez DePietro', 'Rampaging Ferocidon', 'Ramunap Ruins', 'Rashka the Slayer', 'Rasputin Dreamweaver', "R&D's Secret Lair", 'Rebirth', 'Recall', 'Recurring Nightmare', 'Replenish', 'Reveka, Wizard Savant', 'Richard Garfield, Ph.D.', 'Rishadan Port', 'Rite of Flame', 'Rogue Refiner', 'Seat of the Synod', 'Secrets of Paradise', 'Secret Summoning', "Sensei's Divining Top", 'Sentinel Dispatch', 'Serra Ascendant', "Serra's Sanctum", 'Shahrazad', 'Sinkhole', 'Sir Shandlar of Eberyn', 'Sivitri Scarzam', 'Skullclamp', "Smuggler's Copter", 'Sol Ring', 'Soraya the Falconer', "Sovereign's Realm", 'Splinter Twin', 'Squandered Resources', 'Staff of Domination', 'Staying Power', 'Stoneforge Mystic', 'Strip Mine', 'Stroke of Genius', "Summoner's Bond", 'Sundering Titan', 'Survival of the Fittest', 'Sword of the Meek', 'Swords to Plowshares', 'Sylvan Tutor', 'Tainted Pact', 'Teferi, Time Raveler', 'Tempest Efreet', 'Test of Endurance', "Thassa's Oracle", 'The Lady of the Mountain', 'The Tabernacle at Pendrell Vale', 'Thorn of Amethyst', "Tibalt's Trickery", 'Time Machine', 'Time Spiral', 'Timetwister', 'Time Vault', 'Time Walk', 'Time Warp', 'Timmerian Fiends', 'Tinker', 'Tolaria', 'Tolarian Academy', 'Torsten Von Ursus', 'Treachery', 'Tree of Tales', 'Trinisphere', 'Tuknir Deathlock', "Umezawa's Jitte", 'Underworld Breach', 'Unexpected Potential', 'Upheaval', 'Urborg', 'Ur-Drago', "Uro, Titan of Nature's Wrath", 'Valakut, the Molten Pinnacle', 'Vampiric Tutor', 'Vault of Whispers', 'Veil of Summer', 'Veldrane of Sengir', 'Vial Smasher the Fierce', 'Walking Ballista', 'Weight Advantage', 'Wheel of Fortune', 'Wilderness Reclamation', 'Windfall', 'Windswept Heath', 'Winota, Joiner of Forces', 'Winter Orb', 'Wooded Foothills', 'Worldknit', 'Worldly Tutor', 'Wrenn and Six', "Yawgmoth's Bargain", "Yawgmoth's Will", 'Zuran Orb']
 
+
 def intersperse(iterable: Iterable, delimiter: str) -> Generator:
     it = iter(iterable)
     yield next(it)
     for x in it:
         yield delimiter
         yield x
+
 
 def parse_season(term: str) -> str:
     spaceless = term.replace(' ', '')
@@ -492,6 +510,7 @@ def parse_season(term: str) -> str:
     except (AttributeError, IndexError, ValueError, DoesNotExistException):
         pass
     raise InvalidValueException(f"Could not get a Penny Dreadful season from '{term}'")
+
 
 def replace_scryfall_regex_extensions(q: str) -> str:
     # Three char classes first because the other may be substrings of these …
@@ -520,17 +539,22 @@ def replace_scryfall_regex_extensions(q: str) -> str:
     # q = q.replace(r'\ss', r'{[^}]+}')
     return q
 
+
 class InvalidSearchException(ParseException):
     pass
+
 
 class InvalidTokenException(InvalidSearchException):
     pass
 
+
 class InvalidModeException(InvalidSearchException):
     pass
 
+
 class InvalidValueException(InvalidSearchException):
     pass
+
 
 class InvalidCriterionException(InvalidSearchException):
     pass

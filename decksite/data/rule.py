@@ -10,8 +10,10 @@ from shared.pd_exception import InvalidDataException
 
 IGNORE: list[str] = ['Commander', 'Unclassified']
 
+
 def excluded_archetype_names() -> list[str]:
     return IGNORE
+
 
 def excluded_archetype_ids() -> list[int]:
     if len(IGNORE) == 0:
@@ -19,11 +21,13 @@ def excluded_archetype_ids() -> list[int]:
     sql = 'SELECT id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
     return db().values(sql)
 
+
 def excluded_archetype_info() -> list[Container]:
     if len(IGNORE) == 0:
         return []
     sql = 'SELECT name, id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
     return [Container(row) for row in db().select(sql)]
+
 
 def apply_rules_to_decks(decks: list[Deck]) -> None:
     if len(decks) == 0:
@@ -73,10 +77,12 @@ def cache_all_rules() -> None:
     preaggregation.preaggregate(table, sql)
     logger.warning(f'Done creating {table}')
 
+
 @retry_after_calling(cache_all_rules)
 def num_classified_decks() -> int:
     sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM _applied_rules'
     return db().value(sql)
+
 
 @retry_after_calling(cache_all_rules)
 def mistagged_decks() -> list[Deck]:
@@ -115,6 +121,7 @@ def mistagged_decks() -> list[Deck]:
         d.rule_id, d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
 
+
 @retry_after_calling(cache_all_rules)
 def doubled_decks() -> list[Deck]:
     sql = """
@@ -142,6 +149,7 @@ def doubled_decks() -> list[Deck]:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
         d.archetypes_from_rules_names = ', '.join(f'{a.archetype_name} ({a.rule_id})' for a in archetypes_from_rules[d.id])
     return result
+
 
 @retry_after_calling(cache_all_rules)
 def overlooked_decks() -> list[Deck]:
@@ -171,6 +179,7 @@ def overlooked_decks() -> list[Deck]:
     ids_list = ', '.join(deck_ids)
     ds, _ = deck.load_decks(where=f'd.id IN ({ids_list})')
     return ds
+
 
 @retry_after_calling(cache_all_rules)
 def load_all_rules() -> list[Container]:
@@ -208,9 +217,11 @@ def load_all_rules() -> list[Container]:
             result_by_id[r.rule_id].excluded_cards.append({'n': r.n, 'card': r.card})
     return result
 
+
 def add_rule(archetype_id: int) -> int:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     return db().insert(sql, [archetype_id])
+
 
 def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
     inc = []
@@ -232,6 +243,7 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, st
     update_cards(rule_id, inc, exc)
     return True, ''
 
+
 # @retry_after_calling(cache_all_rules)
 def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, str]]) -> None:
     db().begin('update_rule_cards')
@@ -251,8 +263,10 @@ def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, 
     db().execute(sql)
     db().commit('update_rule_cards')
 
+
 def classified_decks_query() -> str:
     return '(NOT reviewed OR deck.archetype_id NOT IN ({ex}))'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
+
 
 def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str:
     card_name = "REPLACE(deck_card.card, 'Snow-Covered ', '')"

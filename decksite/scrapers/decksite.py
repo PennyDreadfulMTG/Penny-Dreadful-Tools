@@ -22,6 +22,7 @@ def tournament(comp: dict[str, Any]) -> None:
         for d in comp['decks']:
             store_deck(d)
 
+
 def store_deck(d: deck.Deck) -> deck.Deck:
     d['source'] = d['source_name']
     d['url'] = d['source_url']

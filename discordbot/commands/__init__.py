@@ -23,6 +23,7 @@ def setup(bot: Client) -> None:
             if not scaleless_load(bot, mod):
                 logging.exception(e)
 
+
 def scaleless_load(bot: Client, module: str) -> bool:
     n = 0
     try:
@@ -34,6 +35,7 @@ def scaleless_load(bot: Client, module: str) -> bool:
     except Exception:
         raise
     return n > 0
+
 
 class CardConverter:
     @classmethod

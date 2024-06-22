@@ -44,6 +44,7 @@ def test_last_run_number() -> None:
     if real_legality_dir:
         configuration.CONFIG['legality_dir'] = real_legality_dir
 
+
 @pytest.mark.functional
 def test_list_of_most_interesting() -> None:
     never_before_legal_cards = [

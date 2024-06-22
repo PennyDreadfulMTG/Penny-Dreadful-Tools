@@ -23,5 +23,6 @@ class Art(Extension):
             else:
                 await ctx.send(f'{ctx.author.mention}: Could not get image.')
 
+
 def setup(bot: Client) -> None:
     Art(bot)

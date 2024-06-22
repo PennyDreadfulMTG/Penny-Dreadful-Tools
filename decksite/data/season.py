@@ -10,6 +10,7 @@ from shared.pd_exception import InvalidDataException
 
 SEASONS: list[Container] = []
 
+
 def get_season_id(dt: datetime.datetime) -> int:
     if len(SEASONS) == 0:
         init_seasons()
@@ -20,13 +21,16 @@ def get_season_id(dt: datetime.datetime) -> int:
             return s.id - 1
     return SEASONS[-1].id
 
+
 def init_seasons() -> None:
     sql = 'SELECT id, start_date FROM season ORDER BY start_date'
     for r in db().select(sql):
         SEASONS.append(Container({'id': r['id'], 'start_date': dtutil.ts2dt(r['start_date'])}))
 
+
 def preaggregate() -> None:
     preaggregate_season_stats()
+
 
 # All of this takes about 8s so let's not do it on user time. Split into multiple queries because it's much faster.
 def preaggregate_season_stats() -> None:
@@ -117,6 +121,7 @@ def preaggregate_season_stats() -> None:
     preaggregation.preaggregate(table, sql)
     values_s = ', '.join(values)
     db().execute(f'INSERT INTO {table} VALUES {values_s}')
+
 
 @retry_after_calling(preaggregate_season_stats)
 def season_stats() -> dict[int, dict[str, int | datetime.datetime]]:

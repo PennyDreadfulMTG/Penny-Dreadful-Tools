@@ -21,6 +21,7 @@ from .strings import BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX, REGEX
 def cardnames() -> list[str]:
     return fetcher.catalog_cardnames()
 
+
 @lazy_property
 def pd_legal_cards() -> list[str]:
     print('Fetching http://pdmtgo.com/legal_cards.txt')
@@ -33,6 +34,7 @@ VERIFICATION_BY_ISSUE: dict[int, str] = {}
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)  # type: ignore
+
 
 def main() -> None:
     if not configuration.get('github_user') or not configuration.get('github_password'):
@@ -65,6 +67,7 @@ def main() -> None:
     bugsjson = open('bugs.json', mode='w')
     json.dump(ALL_BUGS, bugsjson, indent=2)
     bugsjson.close()
+
 
 def verification_numbers() -> None:
     print('Populating Verification Model')
@@ -168,6 +171,7 @@ def process_issue(issue: Issue) -> None:
 
         ALL_BUGS.append(bug)
 
+
 def process_forum(feedback_link: str | None, issue: Issue, labels: list[str]) -> None:
     if not feedback_link:
         return
@@ -197,6 +201,7 @@ def process_forum(feedback_link: str | None, issue: Issue, labels: list[str]) ->
             issue.remove_from_labels(s)
             labels.remove(s)
 
+
 def update_issue_body(issue: Issue, cards: list[str], see_also: str | None) -> None:
     expected = '<!-- Images --> '
     images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
@@ -214,6 +219,7 @@ def update_issue_body(issue: Issue, cards: list[str], see_also: str | None) -> N
         print('Updating images...')
         body = issue.body.replace(images.group(0), expected)
         issue.edit(body=body)
+
 
 def check_for_invalid_card_names(issue: Issue, cards: list[str]) -> None:
     labels = [lab.name for lab in issue.labels]
@@ -234,6 +240,7 @@ def check_for_invalid_card_names(issue: Issue, cards: list[str]) -> None:
     elif not fail and 'Invalid Card Name' in labels:
         issue.remove_from_labels('Invalid Card Name')
 
+
 def get_affects(issue: Issue) -> list[str]:
     affects = strings.get_body_field(issue.body, 'Affects')
     if affects is None:
@@ -241,6 +248,7 @@ def get_affects(issue: Issue) -> list[str]:
         affects = title
 
     return strings.get_cards_from_string(affects)
+
 
 def fix_user_errors(issue: Issue) -> None:
     body = issue.body
@@ -252,12 +260,14 @@ def fix_user_errors(issue: Issue) -> None:
         cards = re.findall(REGEX_CARDREF, issue.title)
         body = strings.set_body_field(body, 'Affects', ''.join(['[' + c + ']' for c in cards]))
     if re.search(strings.REGEX_SEARCHREF, body):
+
         def do_search(m) -> str:  # type: ignore
             search = m.group(1)
             n, cards, warnings = fetcher.search_scryfall(search)
             if n == 0 or warnings:
                 return m.group(0)
             return ', '.join([f'[{c}]' for c in cards])
+
         body = re.sub(strings.REGEX_SEARCHREF, do_search, body)
 
     # People are missing the bullet points, and putting info on the following line instead.
@@ -291,6 +301,7 @@ def fix_user_errors(issue: Issue) -> None:
     if title != issue.title:
         print(f'Changing title of #{issue.number} to "{title}"')
         issue.edit(title=title)
+
 
 def apply_screenshot_labels(issue: Issue) -> None:
     labels = [c.name for c in issue.labels]

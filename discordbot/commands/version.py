@@ -23,5 +23,6 @@ class Version(Extension):
         embed.add_field('interactions version', snekver)
         await ctx.send(embed=embed)
 
+
 def setup(bot: Client) -> None:
     Version(bot)

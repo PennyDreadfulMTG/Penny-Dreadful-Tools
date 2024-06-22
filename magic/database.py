@@ -12,6 +12,7 @@ from shared.pd_exception import DatabaseException
 SCHEMA_VERSION = 110
 DATABASE = Container()
 
+
 def db() -> Database:
     if flask.current_app:
         context = flask.g
@@ -23,6 +24,7 @@ def db() -> Database:
     init()
     return context.get('magic_database')
 
+
 def init() -> None:
     try:
         if db_version() < SCHEMA_VERSION:
@@ -31,11 +33,14 @@ def init() -> None:
     except DatabaseException:
         setup()
 
+
 def last_updated() -> datetime.datetime:
     return dtutil.ts2dt(db().value('SELECT last_updated FROM scryfall_version', [], 0))
 
+
 def db_version() -> int:
     return db().value('SELECT version FROM db_version', [], 0)
+
 
 def setup() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
@@ -91,9 +96,11 @@ def setup() -> None:
     db().execute('CREATE INDEX idx_card_id_format_id ON card_legality (card_id, format_id, legality)')
     db().execute(f'INSERT INTO db_version (version) VALUES ({SCHEMA_VERSION})')
 
+
 # Drop the database so we can recreate it.
 def delete() -> None:
     db().nuke_database()
+
 
 def column_def(name: str, prop: card.ColumnDescription) -> str:
     nullable = 'NOT NULL' if not prop['nullable'] else ''
@@ -102,12 +109,15 @@ def column_def(name: str, prop: card.ColumnDescription) -> str:
     unique = 'UNIQUE' if prop['unique'] else ''
     return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
+
 def foreign_key_def(name: str, fk: tuple[str, str]) -> str:
     return f'FOREIGN KEY (`{name}`) REFERENCES `{fk[0]}`(`{fk[1]}`)'
+
 
 def unique_constraint_def(name: str, cols: list[str]) -> str:
     cols = [name] + cols
     return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join(f'`{col}`' for col in cols))
+
 
 def create_table_def(name: str, props: card.TableDescription, from_query: str = '') -> str:
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('

@@ -38,6 +38,7 @@ class SeasonInfoDescription(TypedDict, total=False):
     legality_name: str | None
     legal_cards_url: str | None
 
+
 class View(BaseView):
     def __init__(self) -> None:
         super().__init__()
@@ -81,45 +82,49 @@ class View(BaseView):
         num = 1
         current_code = seasons.current_season_code()
         for code in seasons.SEASONS:
-            seasonlist.append({
-                'name': seasons.season_name(num),
-                'code': code,
-                'code_lower': code.lower(),
-                'disabled': False,
-                'num': num,
-                'url': seasonized_url(num),
-                'decks_url': url_for('seasons.decks', season_id=num),
-                'league_decks_url': url_for('seasons.decks', season_id=num, deck_type=DeckType.LEAGUE.value),
-                'competitions_url': url_for('seasons.competitions', season_id=num),
-                'archetypes_url': url_for('seasons.archetypes', season_id=num),
-                'people_url': url_for('seasons.people', season_id=num),
-                'cards_url': url_for('seasons.cards', season_id=num),
-                'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
-                'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id=num),
-                'legality_name': f'Penny Dreadful {code}',
-                'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt',
-            })
+            seasonlist.append(
+                {
+                    'name': seasons.season_name(num),
+                    'code': code,
+                    'code_lower': code.lower(),
+                    'disabled': False,
+                    'num': num,
+                    'url': seasonized_url(num),
+                    'decks_url': url_for('seasons.decks', season_id=num),
+                    'league_decks_url': url_for('seasons.decks', season_id=num, deck_type=DeckType.LEAGUE.value),
+                    'competitions_url': url_for('seasons.competitions', season_id=num),
+                    'archetypes_url': url_for('seasons.archetypes', season_id=num),
+                    'people_url': url_for('seasons.people', season_id=num),
+                    'cards_url': url_for('seasons.cards', season_id=num),
+                    'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
+                    'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id=num),
+                    'legality_name': f'Penny Dreadful {code}',
+                    'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt',
+                }
+            )
             num += 1
             if code == current_code:
                 break
-        seasonlist.append({
-            'name': 'All Time',
-            'code': 'all',
-            'code_lower': 'all',
-            'disabled': False,
-            'num': None,
-            'url': seasonized_url('all'),
-            'decks_url': url_for('seasons.decks', season_id='all'),
-            'league_decks_url': url_for('seasons.decks', season_id='all', deck_type=DeckType.LEAGUE.value),
-            'competitions_url': url_for('seasons.competitions', season_id='all'),
-            'archetypes_url': url_for('seasons.archetypes', season_id='all'),
-            'people_url': url_for('seasons.people', season_id='all'),
-            'cards_url': url_for('seasons.cards', season_id='all'),
-            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
-            'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
-            'legality_name': None,
-            'legal_cards_url': None,
-        })
+        seasonlist.append(
+            {
+                'name': 'All Time',
+                'code': 'all',
+                'code_lower': 'all',
+                'disabled': False,
+                'num': None,
+                'url': seasonized_url('all'),
+                'decks_url': url_for('seasons.decks', season_id='all'),
+                'league_decks_url': url_for('seasons.decks', season_id='all', deck_type=DeckType.LEAGUE.value),
+                'competitions_url': url_for('seasons.competitions', season_id='all'),
+                'archetypes_url': url_for('seasons.archetypes', season_id='all'),
+                'people_url': url_for('seasons.people', season_id='all'),
+                'cards_url': url_for('seasons.cards', season_id='all'),
+                'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
+                'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
+                'legality_name': None,
+                'legal_cards_url': None,
+            }
+        )
         seasonlist.reverse()
         return seasonlist
 
@@ -313,12 +318,14 @@ class View(BaseView):
                     n = 2 ** entry[tournaments.StageType.ELIMINATION_ROUNDS]
                     note = f'(top {n})'
                 last_elimination_rounds = entry[tournaments.StageType.ELIMINATION_ROUNDS]
-            self.tournament_rounds_info.append({
-                'num_players': num_players,
-                'swiss_rounds': entry[tournaments.StageType.SWISS_ROUNDS],
-                'elimination_rounds': entry[tournaments.StageType.ELIMINATION_ROUNDS],
-                'note': note,
-            })
+            self.tournament_rounds_info.append(
+                {
+                    'num_players': num_players,
+                    'swiss_rounds': entry[tournaments.StageType.SWISS_ROUNDS],
+                    'elimination_rounds': entry[tournaments.StageType.ELIMINATION_ROUNDS],
+                    'note': note,
+                }
+            )
 
 
 def seasonized_url(season_id: int | str) -> str:
@@ -337,6 +344,7 @@ def seasonized_url(season_id: int | str) -> str:
         return url_for(endpoint, **args)
     except BuildError:
         return url_for(cast(str, request.endpoint))
+
 
 def add_season_num(f: str) -> str:
     if 'Penny Dreadful ' not in f:

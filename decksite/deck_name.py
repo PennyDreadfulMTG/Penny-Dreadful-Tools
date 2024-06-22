@@ -68,6 +68,7 @@ ABBREVIATIONS = {
 
 MAX_NAME_LEN = 100
 
+
 def normalize(d: Deck) -> str:
     try:
         name = d.original_name
@@ -107,11 +108,13 @@ def normalize(d: Deck) -> str:
     except ValueError as c:
         raise InvalidDataException(f'Failed to normalize {repr(d)}') from c
 
+
 def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
     return safe_name.strip('-')
+
 
 def replace_space_alternatives(name: str) -> str:
     name = name.replace('_', ' ')
@@ -126,8 +129,10 @@ def replace_space_alternatives(name: str) -> str:
             new_name.append(char)
     return ''.join(new_name)
 
+
 def remove_extra_spaces(name: str) -> str:
     return re.sub(r'\s+', ' ', name)
+
 
 def remove_pd(name: str, season_id: int) -> str:
     name = re.sub(r'(^| )[\[({]?pd(?:[hmstf]|500|' + str(season_id) + r')?[])}]?([ -]|$)', '\\1\\2', name, flags=re.IGNORECASE).strip()
@@ -138,23 +143,28 @@ def remove_pd(name: str, season_id: int) -> str:
     name = re.sub(r'penny-', '', name, flags=re.IGNORECASE).strip()
     return name
 
+
 def remove_hashtags(name: str) -> str:
     name = re.sub(r'#[^ ]*', '', name).strip()
     return name
 
+
 def remove_brackets(name: str) -> str:
     return re.sub(r'\[[^]]*]', '', name).strip()
+
 
 def expand_common_abbreviations(name: str) -> str:
     for abbreviation, expansion in ABBREVIATIONS.items():
         name = re.sub(f'(^| ){abbreviation}( |$)', f'\\1{expansion}\\2', name, flags=re.IGNORECASE).strip()
     return name
 
+
 def whitelisted(name: str) -> bool:
     for w in WHITELIST:
         if name.startswith(w):
             return True
     return False
+
 
 def normalize_colors(name: str, colors: list[str]) -> str:
     patterns = ['[WUBRG]+', '[WUBRG](/[WUBRG])*']
@@ -182,11 +192,13 @@ def normalize_colors(name: str, colors: list[str]) -> str:
         name = f'Mono {name}'
     return re.sub(' +', ' ', name.strip())
 
+
 # Don't let things like 'BRRR' and 'UWU' match [WUBRG]+ searches.
 def is_true_match(color_word: str) -> bool:
     if not re.search('^[WUBRG]+$', color_word, flags=re.IGNORECASE):
         return True
     return len(set(color_word)) == len(color_word)
+
 
 def canonicalize_colors(colors: list[str]) -> set[str]:
     color_words: set[str] = set()
@@ -199,8 +211,10 @@ def canonicalize_colors(colors: list[str]) -> set[str]:
                 canonical_colors = canonical_colors | set(symbols)
     return set(mana.order(canonical_colors))
 
+
 def regex_pattern(pattern: str) -> str:
     return f'(?:^| )(?:mono[ -]?)?({pattern})(?: |$)'
+
 
 def standardize_color_string(s: str) -> str:
     colors = re.sub('mono|/|-', '', s, flags=re.IGNORECASE).strip().lower()
@@ -209,6 +223,7 @@ def standardize_color_string(s: str) -> str:
         colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))
     return name_from_colors(set(colors.upper()))
 
+
 def name_from_colors(colors: set[str]) -> str:
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
@@ -216,10 +231,12 @@ def name_from_colors(colors: set[str]) -> str:
             return name
     return 'colorless'
 
+
 def add_colors_if_no_deck_name(name: str, colors: set[str]) -> str:
     if name:
         return name
     return name_from_colors(colors)
+
 
 def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
     if name.replace('Mono ', '') not in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
@@ -232,8 +249,10 @@ def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
         new_name += f'{name} '
     return new_name + archetype
 
+
 def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name, flags=re.IGNORECASE)
+
 
 def remove_profanity(name: str) -> str:
     profanity.load_censor_words(whitelist_words=PROFANITY_WHITELIST)
@@ -241,6 +260,7 @@ def remove_profanity(name: str) -> str:
     name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name)  # We just replaced profanity with a space so compress spaces.
     return name
+
 
 def remove_season(name: str, season_id: int) -> str:
     # Whitelist here because we remove_season even from whitelisted deck names
@@ -252,12 +272,14 @@ def remove_season(name: str, season_id: int) -> str:
         name = _remove_season(r'(?:[\[({]|\b)' + str(season_id) + r'(?:[])}]|\b)', name)
     return name
 
+
 def _remove_season(pattern: str, name: str) -> str:
     season = re.search(pattern, name, flags=re.IGNORECASE)
     # Exempt decks using season number like a version number – 'Red Deck Wins 30.2'
     if season and not re.search(re.escape(season.group()) + r'\.\d', name):
         return name.replace(season.group(), ' ').strip()
     return name
+
 
 def normalize_version(name: str) -> str:
     # Special exemption for 'bakert99 League Deck 1'-style names from Season 1. They don't need version-normalizing.
@@ -303,6 +325,7 @@ def normalize_parenthetical_versions(name: str) -> str:
         name = name.replace(ending_parenthesized_nums.group(), '.'.join(nums))
     return name
 
+
 def is_semver(num: str) -> bool:
     try:
         parts = num.split('.')
@@ -320,12 +343,15 @@ def is_semver(num: str) -> bool:
         return False
     return True
 
+
 def remove_semver_trailing_zeroes(s: str) -> str:
     return remove_semver_trailing_zeroes(s[:-2]) if s.endswith('.0') else s
+
 
 # https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
 def replace_last(find: str, replace: str, subject: str) -> str:
     return replace.join(subject.rsplit(find, 1))
+
 
 # Only allow I, V and X (anything higher than that is more likely to be a false positive). Allow invalid roman numerals like IIX for 8.
 def parse_roman_sloppily(raw: str) -> int:
@@ -345,28 +371,34 @@ def parse_roman_sloppily(raw: str) -> int:
             mode = 'X'
     return n
 
+
 def ucase_roman_numerals(name: str) -> str:
     numerals = re.search(r'\b([ivx]+)\b', name, flags=re.IGNORECASE)
     if numerals:
         name = name.replace(numerals.group(1), numerals.group(1).upper())
     return name
 
+
 # See #6041.
 def remove_leading_deck(name: str) -> str:
     return re.sub('^deck - ', '', name, flags=re.IGNORECASE)
+
 
 def remove_extraneous_hyphens(name: str) -> str:
     s = re.sub('^ ?- ?', '', name)
     return re.sub(' ?- ?$', '', s)
 
+
 def lowercase_version_marker(name: str) -> str:
     return re.sub(r'V(\d[\\.\d]*)', r'v\1', name)
+
 
 def correct_case_of_color_names(name: str) -> str:
     for k in COLOR_COMBINATIONS:
         titlecase_k = titlecase.titlecase(k)
         name = name.replace(titlecase_k, k)
     return name
+
 
 def enforce_max_len(name: str) -> str:
     return name if len(name) <= MAX_NAME_LEN else name[0:MAX_NAME_LEN] + '…'

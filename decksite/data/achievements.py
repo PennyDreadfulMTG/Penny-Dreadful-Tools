@@ -18,6 +18,7 @@ from shared.pd_exception import InvalidArgumentException
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
+
 def load_achievements(p: Person | None, season_id: int | None, with_detail: bool = False) -> list[Container]:
     achievements = []
     for a in Achievement.all_achievements:
@@ -36,6 +37,7 @@ def load_achievements(p: Person | None, season_id: int | None, with_detail: bool
         return achievements
     return sorted(achievements, key=lambda ad: -ad.percent)
 
+
 def load_query(people_by_id: dict[int, Person], season_id: int | None) -> str:
     # keys have been normalised earlier but could still be reserved words
     columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
@@ -50,6 +52,7 @@ def load_query(people_by_id: dict[int, Person], season_id: int | None) -> str:
         GROUP BY
             person_id
     """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
+
 
 def load_deck_ids(key: str, person_id: int | None, season_id: int | None) -> set[int]:
     if key not in [a.key for a in Achievement.all_achievements]:
@@ -71,8 +74,10 @@ def load_deck_ids(key: str, person_id: int | None, season_id: int | None) -> set
         sql += f'AND season_id = {season_id}'
     return {int(num) for item in db().values(sql) if item is not None for num in item.split(',')}
 
+
 def preaggregate_achievements() -> None:
     preaggregation.preaggregate('_achievements', preaggregate_query())
+
 
 def preaggregate_query() -> str:
     # mypy doesn't understand our contract that a.create_columns etc. are only None if in_db is False
@@ -111,7 +116,9 @@ def preaggregate_query() -> str:
             season.season_id IS NOT NULL
     """
 
+
 # Abstract achievement classes
+
 
 class Achievement:
     all_achievements: list['Achievement'] = []
@@ -275,6 +282,7 @@ class Achievement:
     def leaderboard_heading(self) -> str:
         return ''
 
+
 class CountedAchievement(Achievement):
     def display(self, p: Person) -> str:
         n = p.get('achievements', {}).get(self.key, 0)
@@ -288,6 +296,7 @@ class CountedAchievement(Achievement):
     def localised_display(self, n: int) -> str:
         """Calls and returns ngettext."""
         raise NotImplementedError
+
 
 class BooleanAchievement(Achievement):
     season_text = ''
@@ -312,6 +321,7 @@ class BooleanAchievement(Achievement):
 
     def leaderboard_heading(self) -> str:
         return gettext('Seasons')
+
 
 class TournamentOrganizer(Achievement):
     in_db = False
@@ -340,6 +350,7 @@ class TournamentOrganizer(Achievement):
 
     def leaderboard(self, season_id: int | None = None) -> list[Container] | None:
         return None
+
 
 class Player(BooleanAchievement):
     key = 'player'
@@ -373,6 +384,7 @@ class TournamentPlayer(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 tournament entered', '%(num)d tournaments entered', n)
 
+
 class TournamentWinner(CountedAchievement):
     key = 'tournament_wins'
     title = 'Tournament Winner'
@@ -386,6 +398,7 @@ class TournamentWinner(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 victory', '%(num)d victories', n)
+
 
 class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
@@ -404,6 +417,7 @@ class LeaguePlayer(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 league entry', '%(num)d league entries', n)
 
+
 class PerfectRun(CountedAchievement):
     key = 'perfect_runs'
     title = 'Perfect League Run'
@@ -417,6 +431,7 @@ class PerfectRun(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run', '%(num)d perfect runs', n)
+
 
 class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
@@ -479,6 +494,7 @@ class FlawlessRun(CountedAchievement):
                 )
         """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
+
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
@@ -489,6 +505,7 @@ class PerfectRunCrusher(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
+
     sql = 'SUM(CASE WHEN crush_records.crush_count IS NULL THEN 0 ELSE crush_records.crush_count END)'
     detail_sql = 'GROUP_CONCAT(crush_records.crushee_ids)'
     join_sql = 'LEFT JOIN crush_records ON d.id = crush_records.crusher_id'
@@ -527,6 +544,7 @@ class PerfectRunCrusher(CountedAchievement):
                 crush_records AS (SELECT crusher_id, COUNT(crushee_id) AS crush_count, GROUP_CONCAT(crushee_id) AS crushee_ids FROM crushes GROUP BY crusher_id)
             """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
+
 class AncientGrudge(CountedAchievement):
     key = 'ancient_grudges'
     title = 'Ancient Grudge'
@@ -537,6 +555,7 @@ class AncientGrudge(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
+
     sql = """COUNT(DISTINCT agdi.grudge_id)"""
     detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN agdi.both_ids ELSE NULL END)"""
     join_sql = 'LEFT JOIN ancient_grudge_deck_ids AS agdi ON d.id = agdi.id'
@@ -597,6 +616,7 @@ class AncientGrudge(CountedAchievement):
                     k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
             )"""
 
+
 class BurningVengeance(CountedAchievement):
     key = 'burning_vengeances'
     title = 'Burning Vengeance'
@@ -607,6 +627,7 @@ class BurningVengeance(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 defeat avenged', '%(num)d defeats avenged', n)
+
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
     detail_sql = 'GROUP_CONCAT(bvd.both_ids)'
     join_sql = 'LEFT JOIN burning_vengeance_decks AS bvd ON d.id = bvd.id'
@@ -644,6 +665,7 @@ class BurningVengeance(CountedAchievement):
                 )"""
     flags = ['hide_source']
 
+
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
     title = 'Deck Builder'
@@ -670,6 +692,7 @@ class Deckbuilder(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 deck played by others', '%(num)d decks played by others', n)
+
 
 class Pioneer(CountedAchievement):
     key = 'pioneer'
@@ -698,6 +721,7 @@ class Pioneer(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
+
 
 class VarietyPlayer(BooleanAchievement):
     key = 'variety_player'
@@ -743,6 +767,7 @@ class VarietyPlayer(BooleanAchievement):
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Finished five-match league runs with three or more different archetypes in {what}'
 
+
 class Specialist(BooleanAchievement):
     key = 'specialist'
     title = 'Specialist'
@@ -785,6 +810,7 @@ class Specialist(BooleanAchievement):
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing the same archetype three or more times in {what}'
 
+
 class Generalist(BooleanAchievement):
     key = 'generalist'
     title = 'Generalist'
@@ -807,6 +833,7 @@ class Generalist(BooleanAchievement):
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing three or more different archetypes in {what}'
 
+
 class Completionist(BooleanAchievement):
     key = 'completionist'
     title = 'Completionist'
@@ -818,6 +845,7 @@ class Completionist(BooleanAchievement):
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Played in {what} without retiring a league run'
+
 
 class PD500Top8(CountedAchievement):
     key = 'pd500_top8s'
@@ -832,6 +860,7 @@ class PD500Top8(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 Top 8', '%(num)d Top 8s', n)
+
 
 class PD500Winner(CountedAchievement):
     key = 'pd500_wins'

@@ -17,9 +17,11 @@ class ErrorView(BaseView):
         # Make a minimal viable Card-alike object
         if not isinstance(c, str):
             return c
-        container = Container({
-            'name': c,
-            'url': url_for('.card', name=c),
-            'img_url': f'https://pennydreadfulmagic.com/image/{urllib.parse.quote(c)}/',
-        })
+        container = Container(
+            {
+                'name': c,
+                'url': url_for('.card', name=c),
+                'img_url': f'https://pennydreadfulmagic.com/image/{urllib.parse.quote(c)}/',
+            }
+        )
         return container

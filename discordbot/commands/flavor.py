@@ -13,6 +13,7 @@ class Flavour(Extension):
         """Flavor text of a card"""
         await ctx.single_card_text(card, flavor_text)
 
+
 def flavor_text(c: Card) -> str:
     for printing in oracle.get_printings(c):
         if c.preferred_printing is not None and c.preferred_printing.lower() != printing.set_code.lower() and c.preferred_printing.lower() != printing.set_name.lower():
@@ -22,6 +23,7 @@ def flavor_text(c: Card) -> str:
     if c.preferred_printing is not None:
         return f'No flavor text for {c.preferred_printing}'
     return 'No flavor text available'
+
 
 def setup(bot: Client) -> None:
     Flavour(bot)

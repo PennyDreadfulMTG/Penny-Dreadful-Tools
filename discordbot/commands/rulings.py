@@ -15,6 +15,7 @@ class Rulings(Extension):
         """Rulings for a card."""
         await ctx.single_card_text(card, card_rulings)
 
+
 def card_rulings(c: Card) -> str:
     raw_rulings = fetcher.rulings(c.name)
     comments = [r['comment'] for r in raw_rulings]
@@ -23,6 +24,7 @@ def card_rulings(c: Card) -> str:
         comments = comments[:2]
         comments.append(f'And {n} others.  See <https://scryfall.com/search?q=%21%22{fetch_tools.escape(c.name)}%22#rulings>')
     return '\n'.join(comments) or 'No rulings available.'
+
 
 def setup(bot: Client) -> None:
     Rulings(bot)

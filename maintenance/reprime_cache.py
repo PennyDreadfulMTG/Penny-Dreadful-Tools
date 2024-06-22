@@ -6,6 +6,7 @@ from magic import multiverse, oracle
 
 DAILY = True
 
+
 def call_timed(func: Callable) -> None:
     timer = time.perf_counter()
     func()

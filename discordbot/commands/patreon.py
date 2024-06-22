@@ -10,5 +10,6 @@ class Patreon(Extension):
         """Link to the PD Patreon."""
         await ctx.send('<https://www.patreon.com/silasary/>')
 
+
 def setup(bot: Client) -> None:
     Patreon(bot)

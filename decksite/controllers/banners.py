@@ -29,6 +29,7 @@ def banner_stats() -> str:
     view = Banners(banners)
     return view.page()
 
+
 @APP.route('/banner/banner.css')
 def bannercss() -> Response:
     css = 'header.season-0::before{ background-image:url("/banner/0.png");}\n'
@@ -38,6 +39,7 @@ def bannercss() -> Response:
     r = make_response(css)
     r.headers['Content-Type'] = 'text/css; charset=utf-8'
     return r
+
 
 @APP.route('/banner/<int:seasonnum>.png')
 @APP.route('/banner/<int:seasonnum>_<int:crop>.png')
@@ -50,6 +52,7 @@ def banner(seasonnum: int, crop: int | None = None) -> Response:
     path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background, crop))
     return send_file(os.path.abspath(path))
 
+
 @APP.route('/banner/discord.png')
 def discord_banner() -> Response:
     cardnames, background = banner_cards(get_season_id())
@@ -57,14 +60,17 @@ def discord_banner() -> Response:
     path = loop.run_until_complete(image_fetcher.generate_discord_banner(cardnames, background))
     return send_file(os.path.abspath(path))
 
+
 @APP.route('/api/banner')
 @APP.route('/api/banner/')
 def banner_json() -> Response:
     cardnames, background = banner_cards(get_season_id())
-    return return_json({
-        'background': background,
-        'cardnames': cardnames,
-    })
+    return return_json(
+        {
+            'background': background,
+            'cardnames': cardnames,
+        }
+    )
 
 
 def banner_cards(seasonnum: int) -> tuple[list[str], str]:
@@ -113,6 +119,7 @@ def banner_cards(seasonnum: int) -> tuple[list[str], str]:
     else:
         cardnames, background = guess_banner(seasonnum)
     return cardnames, background
+
 
 @functools.lru_cache
 def guess_banner(season_num: int) -> tuple[list[str], str]:

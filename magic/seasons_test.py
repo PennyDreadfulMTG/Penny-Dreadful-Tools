@@ -6,12 +6,13 @@ from shared.pd_exception import DoesNotExistException
 
 def test_seasons_enum_uptodate() -> None:
     """If this is failing, go append new set codes to seasons.SEASONS.
-       This needs to be done every few months.
+    This needs to be done every few months.
 
-       This test is purely for futureproofing, and failing it does not mean anything is currently broken"""
+    This test is purely for futureproofing, and failing it does not mean anything is currently broken"""
     if seasons.next_rotation_ex().code in ['???', None]:
         return
     assert seasons.next_rotation_ex().code in seasons.SEASONS
+
 
 def test_season_id() -> None:
     assert seasons.season_id(1) == 1
@@ -28,6 +29,7 @@ def test_season_id() -> None:
     assert seasons.season_id('ALL') == 'all'
     assert seasons.season_id('all') == 'all'
 
+
 def test_season_code() -> None:
     assert seasons.season_code(1) == 'EMN'
     with pytest.raises(DoesNotExistException):
@@ -40,6 +42,7 @@ def test_season_code() -> None:
     assert seasons.season_code('all') == 'ALL'
     with pytest.raises(DoesNotExistException):
         seasons.season_code(-1)
+
 
 def test_season_name() -> None:
     assert seasons.season_name(1) == 'Season 1'

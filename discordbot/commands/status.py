@@ -12,5 +12,6 @@ class Status(Extension):
         mtgo_status = await fetcher.mtgo_status()
         await ctx.send(f'MTGO is {mtgo_status}')
 
+
 def setup(bot: Client) -> None:
     Status(bot)

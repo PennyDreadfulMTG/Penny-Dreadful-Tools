@@ -10,5 +10,6 @@ class Barbs(Extension):
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await ctx.send(msg)
 
+
 def setup(bot: Client) -> None:
     Barbs(bot)

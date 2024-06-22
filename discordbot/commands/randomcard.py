@@ -12,7 +12,7 @@ class RandomCard(Extension):
     @slash_option('number', 'How many cards?', OptionType.INTEGER)
     async def randomcard(self, ctx: MtgContext, number: int = 1) -> None:
         """A random PD legal card.
-    `!random X` X random PD legal cards."""
+        `!random X` X random PD legal cards."""
         additional_text = ''
         if number < 1:
             number = 1
@@ -21,6 +21,7 @@ class RandomCard(Extension):
             number = 10
         cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), number)]
         await ctx.post_cards(cards, None, additional_text)
+
 
 def setup(bot: Client) -> None:
     RandomCard(bot)

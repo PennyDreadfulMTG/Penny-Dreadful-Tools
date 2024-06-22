@@ -3,8 +3,10 @@ from shared.pd_exception import InvalidArgumentException
 # Repeated snippets of SQL used in various parts of decksite.data. Should not touch the database, text-only.
 # If you need to make a query to form your SQL, see the clauses module.
 
+
 def person_query(table: str = 'p') -> str:
     return f'LOWER(IFNULL(IFNULL(IFNULL({table}.name, {table}.mtgo_username), {table}.mtggoldfish_username), {table}.tappedout_username))'
+
 
 def competition_ids_by_type_select(competition_type: str) -> str:
     return f"""
@@ -25,6 +27,7 @@ def competition_ids_by_type_select(competition_type: str) -> str:
                 )
         """
 
+
 def competition_type_id_select(competition_type: str) -> str:
     return f"""
         SELECT
@@ -34,6 +37,7 @@ def competition_type_id_select(competition_type: str) -> str:
         WHERE
             name = '{competition_type}'
     """
+
 
 def competition_join() -> str:
     return """
@@ -45,6 +49,7 @@ def competition_join() -> str:
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
+
 def season_query(season_id: str | int | None, column_name: str = 'season_id') -> str:
     if season_id is None or season_id == 'all' or season_id == 0:
         return 'TRUE'
@@ -53,8 +58,10 @@ def season_query(season_id: str | int | None, column_name: str = 'season_id') ->
     except ValueError as c:
         raise InvalidArgumentException(f'No season with id `{season_id}`') from c
 
+
 def season_join() -> str:
     return 'LEFT JOIN deck_cache AS season ON d.id = season.deck_id'
+
 
 def ranks_select() -> str:
     return """

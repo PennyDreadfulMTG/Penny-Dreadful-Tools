@@ -10,6 +10,7 @@ from shared.pd_exception import DatabaseConnectionRefusedException, DatabaseExce
 
 ValidSqlArgumentDescription = Any
 
+
 class Database:
     def __init__(self, db: str) -> None:
         warnings.filterwarnings('error', category=MySQLdb.Warning)
@@ -149,18 +150,23 @@ class Database:
 
     def nuke_database(self) -> None:
         self.begin('nuke_database')
-        query = self.values("""
+        query = self.values(
+            """
             SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
             FROM information_schema.tables
             WHERE table_schema = %s;
-        """, [self.name])
+        """,
+            [self.name],
+        )
         self.execute('SET FOREIGN_KEY_CHECKS = 0')
         self.execute(''.join(query))
         self.execute('SET FOREIGN_KEY_CHECKS = 1')
         self.commit('nuke_database')
 
+
 def get_database(location: str) -> Database:
     return Database(location)
+
 
 def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backslashed_escaped: bool = False) -> ValidSqlArgumentDescription:
     if s is None:
@@ -177,6 +183,7 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
         return "'{escaped}'".format(escaped=encodable.replace("'", "''").replace('%', '%%'))
     raise InvalidArgumentException(f'Cannot sqlescape `{s}`')
 
+
 def sqllikeescape(s: str, fuzzy: bool = False) -> str:
     if not isinstance(s, str):
         raise InvalidArgumentException('You can only use LIKE on strings')
@@ -184,8 +191,10 @@ def sqllikeescape(s: str, fuzzy: bool = False) -> str:
     s = joiner.join(sqllikeescapesymbols(c) for c in list(s))
     return sqlescape(f'%{s}%', backslashed_escaped=True)
 
+
 def sqllikeescapesymbols(s: str) -> str:
     return s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
 
 def concat(parts: Iterable[str]) -> str:
     return 'CONCAT(' + ', '.join(parts) + ')'

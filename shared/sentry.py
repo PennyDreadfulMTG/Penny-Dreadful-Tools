@@ -30,5 +30,6 @@ def init() -> None:
         except Exception as c:
             logging.error(c)
 
+
 def monitor(task_name: str) -> Callable[..., Any]:
     return crons.monitor(configuration.get_optional_str('sentry_monitorslug_' + task_name))

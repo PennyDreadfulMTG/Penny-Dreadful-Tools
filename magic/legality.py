@@ -5,8 +5,10 @@ from shared.container import Container
 
 FORMATS: set[str] = set()
 
+
 def legal_in_format(d: Container, f: str) -> bool:
     return f in legal_formats(d, {f})
+
 
 def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors: dict[str, dict[str, set[str]]] | None = None) -> set[str]:
     init()
@@ -70,12 +72,14 @@ def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors
 
     return formats_to_check - formats_to_discard
 
+
 def add_error(errors: dict[str, dict[str, set[str]]], fmt: str, error_type: str, card: str) -> None:
     if fmt not in errors:
         errors[fmt] = dict()
     if error_type not in errors[fmt]:
         errors[fmt][error_type] = set()
     errors[fmt][error_type].add(card)
+
 
 def cards_legal_in_format(cardlist: list[Card], f: str) -> list[Card]:
     init()
@@ -84,6 +88,7 @@ def cards_legal_in_format(cardlist: list[Card], f: str) -> list[Card]:
         if f in c.legalities.keys() and c.legalities[f] != 'Banned':
             results.append(c)
     return results
+
 
 def order_score(fmt: str) -> int:
     if fmt == seasons.current_season_name():
@@ -105,6 +110,7 @@ def order_score(fmt: str) -> int:
     if fmt == 'Commander':
         return 1000000000
     return 10000000000
+
 
 def init() -> None:
     if FORMATS:

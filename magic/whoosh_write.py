@@ -23,9 +23,11 @@ class WhooshWriter:
         ix = open_dir(WhooshConstants.index_dir)
         update_index(ix, [card])
 
+
 def ensure_dir_exists(directory: str) -> None:
     if not os.path.exists(directory):
         os.makedirs(directory)
+
 
 def update_index(index: FileIndex, cards: list[Card]) -> None:
     writer = index.writer()
@@ -55,6 +57,7 @@ def update_index(index: FileIndex, cards: list[Card]) -> None:
             writer.update_document(**document)
     writer.commit()
 
+
 def reindex() -> None:
     writer = WhooshWriter()
     cs = multiverse.get_all_cards()
@@ -66,6 +69,7 @@ def reindex() -> None:
             if c.name == name:
                 c.names.append(alias)
     writer.rewrite_index(cs)
+
 
 def reindex_specific_cards(cs: list[Card]) -> None:
     writer = WhooshWriter()

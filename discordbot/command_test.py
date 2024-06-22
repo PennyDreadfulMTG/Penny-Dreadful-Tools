@@ -9,6 +9,7 @@ def test_roughly_matches() -> None:
     assert command.roughly_matches('jmeka', 'j_meka')
     assert command.roughly_matches('modo bugs', 'modo-bugs')
 
+
 def test_results_from_queries() -> None:
     result = command.results_from_queries(['bolt'])[0][0]
     assert result.has_match()
@@ -57,12 +58,14 @@ def test_do_not_choke_on_unicode() -> None:
     for result, _, _ in command.results_from_queries(list(s)):
         assert not result.has_match()
 
+
 def test_resources_matching_in_url() -> None:
     results = resources.resources_resources('github')
     assert results['https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/'] == 'Penny Dreadful Tools'
 
     results = resources.resources_resources('starcitygames')
     assert results['https://old.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'
+
 
 def test_escape_underscores() -> None:
     r = command.escape_underscores('simple_test')

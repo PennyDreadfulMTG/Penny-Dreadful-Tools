@@ -9,6 +9,7 @@ from . import fetcher
 
 logger = logging.getLogger(__name__)
 
+
 def main(changes: list[str]) -> None:
     (link, new) = fetcher.find_announcements()
     if new and link is not None:
@@ -21,6 +22,7 @@ def scrape(url: str) -> None:
     for b in soup.find_all('h2'):
         parse_header(b)
 
+
 def parse_header(h: Tag) -> None:
     logger.debug(h)
     txt = h.text
@@ -28,6 +30,7 @@ def parse_header(h: Tag) -> None:
         parse_downtimes(h)
     elif txt.startswith('Build Notes') or 'Change Log' in txt or 'PATCH NOTES' in txt:
         parse_build_notes(h)
+
 
 def parse_build_notes(h: Tag) -> None:
     entries = []
@@ -54,6 +57,7 @@ def parse_build_notes(h: Tag) -> None:
         username='Magic Online Announcements',
         avatar_url='https://magic.wizards.com/sites/mtg/files/styles/auth_small/public/images/person/wizards_authorpic_larger.jpg',
     )
+
 
 def parse_downtimes(h: Tag) -> None:
     for n in h.next_elements:

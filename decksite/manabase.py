@@ -12,6 +12,7 @@ class ManabaseForm(DecklistForm):
     def do_validation(self) -> None:
         self.parse_and_validate_decklist(check_legality=False)
 
+
 # This is pretty much an abomination which will fail on things like hyrbid and phyrexian mana. When manabase-solver gets
 # better this can get less horrible. Works only on cards using "normal" colored pips for now.
 def find_manabase(form: ManabaseForm) -> str:

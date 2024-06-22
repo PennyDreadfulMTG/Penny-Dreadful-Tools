@@ -10,6 +10,7 @@ from shared.pd_exception import DatabaseException, OperationalException
 
 # A decksite-level cache of rotation information, primarily to make /rotation much faster.
 
+
 def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> tuple[list[Card], int]:
     sql = f"""
         SELECT
@@ -41,6 +42,7 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
         c.update(cards[c.name])
     return cs, 0 if not rs else rs[0]['total']
 
+
 def load_rotation_summary() -> tuple[int, int]:
     sql = 'SELECT MAX(hits) AS runs, COUNT(*) AS num_cards FROM _rotation'
     try:
@@ -49,6 +51,7 @@ def load_rotation_summary() -> tuple[int, int]:
         logger.error('Unable to get rotation information', e)
         return 0, 0
     return int(row['runs'] or 0), int(row['num_cards'] or 0)
+
 
 # This is expensive (more than 10s), don't call it on user time.
 # To trigger manually without having to be in a python shell, hit /api/rotation/clear_cache in a browser.
@@ -63,6 +66,7 @@ def force_cache_update() -> None:
     db().commit(f'rotation_runs_season_{season_id}')
     cache_rotation()
 
+
 def update_rotation_runs() -> None:
     season_id = seasons.next_season_num()
     for path in rotation.files():
@@ -72,6 +76,7 @@ def update_rotation_runs() -> None:
         sql = 'INSERT IGNORE INTO rotation_runs (number, name, season_id) VALUES '
         sql += ', '.join(f'({number}, {sqlescape(name)}, {season_id})' for number, name in cs)
         db().execute(sql)
+
 
 def cache_rotation() -> None:
     table = '_rotation'

@@ -35,5 +35,6 @@ class Time(Extension):
             logging.exception('Exception trying to get the time for %s.', place)
             await ctx.send(f'{ctx.author.mention}: Location not found.')
 
+
 def setup(bot: Client) -> None:
     Time(bot)

@@ -15,6 +15,7 @@ def people() -> str:
     view = People()
     return view.page()
 
+
 class People(View):
     def __init__(self) -> None:
         super().__init__()

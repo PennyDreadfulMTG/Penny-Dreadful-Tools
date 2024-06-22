@@ -16,8 +16,9 @@ REGEX_SWITCHEROO = r'!! Warning, unexpected game 3 !!'
 REGEX_GATHERLING = r'\[Gatherling\] Event=(.*)'
 REGEX_ROUND = r'\[Gatherling\] Round=(.*)'
 
+
 def load_from_file() -> None:
-    """"Imports a log from an on-disk file"""
+    """ "Imports a log from an on-disk file"""
     files = glob.glob('import/queue/*.txt')
     for fname in files:
         match_id = int(os.path.basename(fname).split('.')[0])
@@ -28,10 +29,12 @@ def load_from_file() -> None:
             shutil.move(fname, f'import/processed/{match_id}.txt')
             return
 
+
 def import_from_pdbot(match_id: int) -> None:
     url = f'https://pdbot.pennydreadfulmagic.com/logs/{match_id}'
     lines = fetch_tools.fetch(url).split('\n')
     import_log(lines, match_id)
+
 
 def import_log(lines: list[str], match_id: int) -> match.Match:
     """Processes a log"""
@@ -78,6 +81,7 @@ def import_log(lines: list[str], match_id: int) -> match.Match:
     game.insert_game(game_id, match_id, '\n'.join(game_lines))
     return local
 
+
 def import_header(lines: list[str], match_id: int) -> match.Match:
     local = match.get_match(match_id)
     if local is None:
@@ -87,6 +91,7 @@ def import_header(lines: list[str], match_id: int) -> match.Match:
         players = [player.strip() for player in lines[3].split(',')]
         local = match.create_match(match_id, format_name, comment, modules, players)
     return local
+
 
 def process_tourney_info(local: match.Match, tname: str | None = None, roundnum: str | None = None) -> None:
     if tname:
@@ -98,6 +103,7 @@ def process_tourney_info(local: match.Match, tname: str | None = None, roundnum:
     tourney_info = local.tournament
     if tourney_info and roundnum:
         tourney_info.round_num = roundnum
+
 
 def reimport(local: match.Match) -> None:
     for lgame in local.games:

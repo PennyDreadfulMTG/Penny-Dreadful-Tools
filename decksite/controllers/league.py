@@ -25,6 +25,7 @@ def current_league() -> wrappers.Response:
     url = url_for('competition', competition_id=lg.active_league().id)
     return redirect(url)
 
+
 @APP.route('/signup/')
 @auth.load_person
 @fill_cookies('deck_id')

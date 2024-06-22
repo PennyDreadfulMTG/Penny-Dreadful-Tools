@@ -14,7 +14,9 @@ def fill_args(*props: str) -> Callable:
                 if kwargs.get(arg, None) is None and reqval is not None:
                     kwargs[arg] = reqval
             return f(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -27,7 +29,9 @@ def fill_cookies(*props: str) -> Callable:
                 if kwargs.get(arg, None) is None and reqval is not None:
                     kwargs[arg] = reqval
             return f(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -40,5 +44,7 @@ def fill_form(*props: str) -> Callable:
                 if kwargs.get(arg, None) is None and reqval is not None:
                     kwargs[arg] = reqval
             return f(*args, **kwargs)
+
         return wrapper
+
     return decorator

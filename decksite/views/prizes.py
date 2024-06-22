@@ -29,6 +29,7 @@ class Prizes(View):
     def page_title(self) -> str:
         return 'Prizes'
 
+
 def split_by_week(competitions: list[Competition]) -> list[Container]:
     dt = (dtutil.now(dtutil.WOTC_TZ) + relativedelta(weekday=FR(-1))).replace(hour=0, minute=0, second=0)
     weeks = []

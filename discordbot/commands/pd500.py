@@ -11,5 +11,6 @@ class PD500(Extension):
         """Display a link to the PD 500 information page."""
         await ctx.send(fetcher.decksite_url('/tournaments/pd500/'))
 
+
 def setup(bot: Client) -> None:
     PD500(bot)

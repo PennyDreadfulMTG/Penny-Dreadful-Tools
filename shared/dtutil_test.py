@@ -13,6 +13,7 @@ def test_ts2dt() -> None:
     dt = dtutil.ts2dt(int(now.timestamp()))
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == f'{now:%Y-%m-%d %H:%M:%S %z}'
 
+
 def test_dt2ts() -> None:
     dt = datetime.datetime.fromtimestamp(0, datetime.timezone.utc)
     assert dtutil.dt2ts(dt) == 0
@@ -20,10 +21,12 @@ def test_dt2ts() -> None:
     now_ts = round(now.timestamp())
     assert dtutil.dt2ts(now) == now_ts
 
+
 def test_end_to_end() -> None:
     epoch_seconds = 0
     dt = dtutil.ts2dt(epoch_seconds)
     assert epoch_seconds == dtutil.dt2ts(dt)
+
 
 def test_parse() -> None:
     s = '1970-01-01 00:00:00'
@@ -34,6 +37,7 @@ def test_parse() -> None:
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2016-01-01 00:00:00 +0000'
     dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('America/Los_Angeles'))
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2016-01-01 08:00:00 +0000'
+
 
 def test_parse_rfc3339() -> None:
     s = '2002-10-02T10:00:00-05:00'
@@ -46,6 +50,7 @@ def test_parse_rfc3339() -> None:
     dt = dtutil.parse_rfc3339(s)
     assert f'{dt:%Y-%m-%d %H:%M:%S %z}' == '2002-10-02 15:00:00 +0000'
 
+
 def test_parse_to_ts() -> None:
     s = '1970-01-01 00:00:00'
     assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 0
@@ -53,10 +58,12 @@ def test_parse_to_ts() -> None:
     assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 119
     assert str(dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))) == '119'
 
+
 def test_now() -> None:
     then = dtutil.parse('2016-01-01', '%Y-%m-%d', dtutil.WOTC_TZ)
     now = dtutil.now()
     assert (now - then).total_seconds() > 0
+
 
 def test_display_date() -> None:
     dt = dtutil.parse('2008-03-29', '%Y-%m-%d', dtutil.WOTC_TZ)
@@ -77,6 +84,7 @@ def test_display_date() -> None:
     dt = datetime.datetime.now(dtutil.WOTC_TZ) + datetime.timedelta(days=6)
     assert dtutil.display_date(dt) == '6 days from now'
 
+
 def test_rounding() -> None:
     assert dtutil.display_time(121, granularity=1) == '2 minutes'
     assert dtutil.display_time(121, granularity=2) == '2 minutes, 1 second'
@@ -89,10 +97,12 @@ def test_rounding() -> None:
     assert dtutil.display_time(86400) == '1 day'
     assert dtutil.display_time(0, 2) == 'now'
 
+
 def test_round_up_preceding_unit() -> None:
     results = [(1, 'hours'), (59, 'minutes'), (59, 'seconds')]
     dtutil.round_up_preceding_unit(results)
     assert results == [(2, 'hours'), (0, 'minutes'), (0, 'seconds')]
+
 
 def test_display_time() -> None:
     assert dtutil.display_time(60 * 60 * 2 - 1 * 60) == '1 hour, 59 minutes'
@@ -105,11 +115,13 @@ def test_display_time() -> None:
     assert dtutil.display_time((24 * 60 * 60 * 3) + (60 * 60 * 2) + (60 * 29)) == '3 days, 2 hours'
     assert dtutil.display_time(2417367) == '3 weeks, 6 days'
 
+
 def test_round_value_appropriately() -> None:
     assert dtutil.round_value_appropriately(59, 1, 60, 30) == 60
     assert dtutil.round_value_appropriately(29, 1, 60, 30) == 29
     assert dtutil.round_value_appropriately(6 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 6
     assert dtutil.round_value_appropriately(7 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 7
+
 
 def test_display_date_with_date_and_year() -> None:
     tz = dtutil.GATHERLING_TZ

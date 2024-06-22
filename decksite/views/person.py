@@ -37,23 +37,25 @@ class Person(View):
                 'type': 'bar',
                 'labels': json.dumps(['White', 'Blue', 'Black', 'Red', 'Green', 'Colorless']),
                 'series': json.dumps([colors.get('W'), colors.get('U'), colors.get('B'), colors.get('R'), colors.get('G'), colors.get('C')]),
-                'options': json.dumps({
-                    'animation': {
-                        'duration': 0,  # Because this causes the canvas to grow sideways it makes the page jump around so even though it's nice let's skip it.
-                    },
-                    'indexAxis': 'y',
-                    'scales': {
-                        'x': {
-                            'display': False,
-                            'max': round(max(colors.values(), default=0) * 1.3),
+                'options': json.dumps(
+                    {
+                        'animation': {
+                            'duration': 0,  # Because this causes the canvas to grow sideways it makes the page jump around so even though it's nice let's skip it.
                         },
-                        'y': {
-                            'grid': {
+                        'indexAxis': 'y',
+                        'scales': {
+                            'x': {
                                 'display': False,
+                                'max': round(max(colors.values(), default=0) * 1.3),
+                            },
+                            'y': {
+                                'grid': {
+                                    'display': False,
+                                },
                             },
                         },
-                    },
-                }),
+                    }
+                ),
             },
         ]
         self.add_note_url = url_for('post_player_note')

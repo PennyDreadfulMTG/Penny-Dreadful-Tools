@@ -21,6 +21,7 @@ class BugData(TypedDict):
     cade_bug: NotRequired[bool]
     help_wanted: NotRequired[bool]
 
+
 class ForumData(TypedDict):
     title: str
     url: str

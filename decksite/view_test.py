@@ -8,10 +8,12 @@ def test_seasonized_url_for_app() -> None:
         assert view.seasonized_url(1) == '/seasons/1/decks/'
         assert view.seasonized_url(seasons.current_season_num()) == '/decks/'
 
+
 def test_seasonized_url_for_seasons() -> None:
     with APP.test_request_context('/seasons/2/decks/'):
         assert view.seasonized_url(1) == '/seasons/1/decks/'
         assert view.seasonized_url(seasons.current_season_num()) == '/decks/'
+
 
 def test_seasonized_url_simple() -> None:
     with APP.test_request_context('/tournaments/'):

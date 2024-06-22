@@ -16,6 +16,7 @@ class Matchups(TypedDict):
     is_matchups: bool
     archetypes: list[archs.Archetype]
 
+
 class Archetype(View):
     def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], meta_share: list[float], tournament_only: bool = False) -> None:
         super().__init__()
@@ -49,36 +50,38 @@ class Archetype(View):
                 'type': 'bar',
                 'labels': json.dumps(list(range(1, len(meta_share) + 1))),
                 'series': json.dumps(meta_share),
-                'options': json.dumps({
-                    'pd': {
-                        'title': {
-                            'style': 'season',
-                        },
-                    },
-                    'indexAxis': 'x',
-                    'plugins': {
-                        'datalabels': {
-                            'display': False,
-                        },
-                        'tooltip': {
-                            'enabled': True,
-                        },
-                    },
-                    'scales': {
-                        'x': {
-                            'grid': {
-                                'display': False,
+                'options': json.dumps(
+                    {
+                        'pd': {
+                            'title': {
+                                'style': 'season',
                             },
                         },
-                        'y': {
-                            'ticks': {
-                                'format': {
-                                    'style': 'percent',
+                        'indexAxis': 'x',
+                        'plugins': {
+                            'datalabels': {
+                                'display': False,
+                            },
+                            'tooltip': {
+                                'enabled': True,
+                            },
+                        },
+                        'scales': {
+                            'x': {
+                                'grid': {
+                                    'display': False,
+                                },
+                            },
+                            'y': {
+                                'ticks': {
+                                    'format': {
+                                        'style': 'percent',
+                                    },
                                 },
                             },
                         },
-                    },
-                }),
+                    }
+                ),
             }
 
     def og_title(self) -> str:

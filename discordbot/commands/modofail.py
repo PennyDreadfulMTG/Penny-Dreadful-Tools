@@ -13,5 +13,6 @@ class ModoFail(Extension):
         redis.expire(f'modofail:{ctx.guild}', 3600)
         await ctx.send(f':bellhop: **MODO fail** {n}')
 
+
 def setup(bot: Client) -> None:
     ModoFail(bot)

@@ -25,8 +25,10 @@ def init() -> redislib.Redis | None:
 
 REDIS = init()
 
+
 def enabled() -> bool:
     return REDIS is not None
+
 
 def _get(key: str, ex: int | None = None) -> bytes | None:
     try:
@@ -42,6 +44,7 @@ def _get(key: str, ex: int | None = None) -> bytes | None:
         pass
     return None
 
+
 def get_str(key: str, ex: int | None = None) -> str | None:
     if REDIS is not None:
         blob = _get(key, ex)
@@ -51,6 +54,7 @@ def get_str(key: str, ex: int | None = None) -> str | None:
                 return val
     return None
 
+
 def get_bool(key: str, ex: int | None = None) -> bool:
     if REDIS is not None:
         blob = _get(key, ex)
@@ -58,6 +62,7 @@ def get_bool(key: str, ex: int | None = None) -> bool:
             return False
         return bool(json.loads(blob))
     return False
+
 
 def get_container(key: str, ex: int | None = None) -> Container | None:
     if REDIS is not None:
@@ -68,6 +73,7 @@ def get_container(key: str, ex: int | None = None) -> Container | None:
                 return Container(val)
     return None
 
+
 def get_int(key: str, ex: int | None = None) -> int | None:
     if REDIS is not None:
         blob = _get(key, ex)
@@ -77,6 +83,7 @@ def get_int(key: str, ex: int | None = None) -> int | None:
                 return val
     return None
 
+
 def get_list(key: str) -> list[Any] | None:
     if REDIS is not None:
         blob = _get(key)
@@ -84,6 +91,7 @@ def get_list(key: str) -> list[Any] | None:
             val = json.loads(blob)
             return val
     return None
+
 
 def get_dict(key: str) -> dict | None:
     if REDIS is not None:
@@ -104,6 +112,7 @@ def get_container_list(key: str) -> list[Container] | None:
 
 T = TypeVar('T', dict, list, str, bool, int, covariant=True)
 
+
 def store(key: str, val: T, **kwargs: Any) -> T:
     if REDIS is not None:
         try:
@@ -114,6 +123,7 @@ def store(key: str, val: T, **kwargs: Any) -> T:
             pass
     return val
 
+
 def increment(key: str, **kwargs: Any) -> int | None:
     if REDIS is not None:
         try:
@@ -123,6 +133,7 @@ def increment(key: str, **kwargs: Any) -> int | None:
         except redislib.exceptions.ConnectionError:
             pass
     return None
+
 
 def clear(*keys_list: AnyStr) -> None:
     if REDIS is not None:
@@ -141,16 +152,19 @@ def expire(key: str, time: int) -> None:
         except redislib.exceptions.ConnectionError:
             pass
 
+
 def keys(pattern: str) -> list[bytes]:
     if REDIS is not None:
         return REDIS.keys(pattern)
     return []
+
 
 def sadd(key: str, *values: Any, ex: int | None = None) -> None:
     if REDIS is not None:
         REDIS.sadd(key, *values)
         if ex is not None:
             REDIS.expire(key, ex)
+
 
 def sismember(key: str, value: str) -> bool:
     if REDIS is not None:

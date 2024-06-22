@@ -12,5 +12,6 @@ class Quality(Extension):
             product = 'Magic Online'
         await ctx.send(f'**{product}** is a Quality™ Program.')
 
+
 def setup(bot: Client) -> None:
     Quality(bot)

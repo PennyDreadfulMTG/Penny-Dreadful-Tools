@@ -4,6 +4,7 @@ from typing_extensions import NotRequired
 
 SetCode = str
 
+
 # Type as returned by scryfall fetching
 class CardDescription(TypedDict, total=False):
     # Parts we currently use …

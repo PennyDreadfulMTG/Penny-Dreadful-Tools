@@ -9,6 +9,7 @@ from shared import redis_wrapper as redis
 
 CACHE: dict[str, PartialEmoji] = {}
 
+
 async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
     if res := CACHE.get(emoji):
         return res
@@ -27,6 +28,7 @@ async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
     except AttributeError:
         return None
 
+
 async def replace_emoji(text: str, client: Client) -> str:
     if text is None:
         return ''
@@ -44,6 +46,7 @@ async def replace_emoji(text: str, client: Client) -> str:
         if emoji is not None:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
+
 
 def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_rotation_hype: bool = False, legality_format: str = 'Penny Dreadful') -> str:
     if legality_format == 'Penny Dreadful':
@@ -65,6 +68,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
     if c.bugs:
         s += ':lady_beetle:'
     return s
+
 
 def get_future_legality(c: Card) -> str:
     out_emoji = '<:rotating_out:702545628882010183>'

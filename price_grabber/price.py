@@ -14,6 +14,7 @@ def info(card: Card, force: bool = False) -> PriceDataType | None:
     cache()
     return info_cached(card)
 
+
 def info_cached(card: Card | None = None, name: str | None = None) -> PriceDataType | None:
     if name is None and card is not None:
         name = card.name
@@ -23,6 +24,7 @@ def info_cached(card: Card | None = None, name: str | None = None) -> PriceDataT
         return db.select(sql, [name])[0]  # type: ignore
     except IndexError:
         return None
+
 
 def cache() -> None:
     db = database.get_database(configuration.get_str('prices_database'))

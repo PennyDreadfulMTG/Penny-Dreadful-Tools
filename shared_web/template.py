@@ -21,6 +21,7 @@ __SEARCHPATH: list[str] = []
 
 StringConverterFunction = Optional[Callable[[str], str]]
 
+
 def render_name(template: str, *context: ContextStack) -> str:
     try:
         renderer = CachedRenderer(search_dirs=[f'{flask.current_app.name}/templates', 'shared_web/templates'])
@@ -28,9 +29,11 @@ def render_name(template: str, *context: ContextStack) -> str:
         renderer = CachedRenderer(search_dirs=__SEARCHPATH)
     return renderer.render_name(template, *context)
 
+
 def render(view: 'BaseView') -> str:
     view.prepare()
     return render_name(view.template(), view)
+
 
 # Subclass pystache.Renderer to provide our custom caching versions of pystache classes for performance reasons.
 class CachedRenderer(pystache.Renderer):
@@ -42,6 +45,7 @@ class CachedRenderer(pystache.Renderer):
         resolve_partial = self._make_resolve_partial()
         engine = CachedRenderEngine(literal=self._to_unicode_hard, escape=self._escape_to_unicode, resolve_context=resolve_context, resolve_partial=resolve_partial, to_str=self.str_coerce)
         return engine
+
 
 # A custom loader that acts exactly as the default loader but only loads a given file once to speed up repeated use of partials.
 # This will stop us loading record.mustache from disk 16,000 times on /cards/ for example.
@@ -55,6 +59,7 @@ class CachedLoader(pystache.loader.Loader):
             self.templates[path] = super().read(path, encoding)
         return self.templates[path]
 
+
 # If you have already parsed a template, don't parse it again.
 class CachedRenderEngine(pystache.renderengine.RenderEngine):
     def __init__(self, literal: StringConverterFunction | None = None, escape: StringConverterFunction | None = None, resolve_context: Callable[[ContextStack, str], str] | None = None, resolve_partial: StringConverterFunction | None = None, to_str: Callable[[object], str] | None = None) -> None:
@@ -65,6 +70,7 @@ class CachedRenderEngine(pystache.renderengine.RenderEngine):
         if self.parsed_templates.get(template) is None:
             self.parsed_templates[template] = insert_gettext_nodes(pystache.parser.parse(template, delimiters))
         return self.parsed_templates[template].render(self, context_stack)
+
 
 # Localization Shim
 def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pystache.parsed.ParsedTemplate:
@@ -85,6 +91,7 @@ def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pys
         # We may need to iterate into Sections and Inverted nodes
     return new_template
 
+
 class _GettextNode:
     def __init__(self, key: str) -> None:
         self.key = key
@@ -97,12 +104,15 @@ class _GettextNode:
 
         def lookup(match: Match) -> str:
             return engine.fetch_string(context, match.group(1))
+
         s = re.sub(r'\{([a-z_]+)\}', lookup, s)
         return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
+
 
 class NoParaTagProcessor(Treeprocessor):
     def run(self, root: etree.Element) -> None:
         root[0].tag = 'span'
+
 
 class NoParaTagsExtension(Extension):
     def extendMarkdown(self, md: Markdown) -> None:

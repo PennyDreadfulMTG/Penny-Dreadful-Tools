@@ -11,6 +11,7 @@ from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, StrSet
 
 try:
     import dotenv
+
     dotenv.load_dotenv('.')
 except ImportError:
     print("Couldn't load .env")
@@ -131,6 +132,7 @@ DEFAULTS: dict[str, Any] = {
     'mos_premodern_channel_id': '921967538907271258',
 }
 
+
 def get_optional_str(key: str) -> str | None:
     val = get(key)
     if val is None:
@@ -139,11 +141,13 @@ def get_optional_str(key: str) -> str | None:
         return val
     raise fail(key, val, str)
 
+
 def get_str(key: str) -> str:
     val = get_optional_str(key)
     if val is None:
         raise fail(key, val, str)
     return val
+
 
 def get_optional_int(key: str) -> int | None:
     val = get(key)
@@ -157,11 +161,13 @@ def get_optional_int(key: str) -> int | None:
         return CONFIG[key]
     raise fail(key, val, int)
 
+
 def get_int(key: str) -> int:
     val = get_optional_int(key)
     if val is None:
         raise fail(key, val, int)
     return val
+
 
 def get_float(key: str) -> float | None:
     val = get(key)
@@ -178,6 +184,7 @@ def get_float(key: str) -> float | None:
 
     raise fail(key, val, float)
 
+
 def get_list(key: str) -> list[str]:
     val = get(key)
     if val is None:
@@ -187,6 +194,7 @@ def get_list(key: str) -> list[str]:
     if isinstance(val, str):
         return val.split(',')
     raise fail(key, val, list[str])
+
 
 def get(key: str) -> str | list[str] | int | float | None:
     if key in CONFIG:
@@ -219,21 +227,26 @@ def get(key: str) -> str | list[str] | int | float | None:
     save_cfg(cfg)
     return cfg[key]
 
+
 @overload
 def write(key: str, value: str) -> str:
     pass
+
 
 @overload
 def write(key: str, value: int) -> int:
     pass
 
+
 @overload
 def write(key: str, value: float) -> float:
     pass
 
+
 @overload
 def write(key: str, value: set[str]) -> set[str]:
     pass
+
 
 def write(key: str, value: str | list[str] | set[str] | int | float) -> str | list[str] | set[str] | int | float:
     subkey = RE_SUBKEY.match(key)
@@ -257,6 +270,7 @@ def write(key: str, value: str | list[str] | set[str] | int | float) -> str | li
     print(f'CONFIG: {fullkey}={cfg[key]}')
     save_cfg(cfg)
     return cfg[key]
+
 
 def server_name() -> str:
     return get_str('decksite_hostname') + ':{port}'.format(port=get_int('decksite_port')) if get_optional_int('decksite_port') else ''

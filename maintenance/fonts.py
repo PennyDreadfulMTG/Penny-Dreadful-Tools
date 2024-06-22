@@ -49,6 +49,7 @@ PREFER = {
 GraphemeToFontMapping = dict[str, list[str]]
 FontInfo = list[tuple[str, str, set[str], set[str], str]]
 
+
 def ad_hoc(*args: str) -> None:
     options_mode = 'options' in args
     base_only = 'base-only' in args
@@ -103,6 +104,7 @@ def ad_hoc(*args: str) -> None:
         print_css(font_info, deck_names, encoded)
     print_report(font_info, remaining_graphemes)
 
+
 def deck_name_graphemes() -> tuple[set[str], set[str]]:
     sql = 'SELECT id, name FROM deck'
     rs = db().select(sql)
@@ -134,6 +136,7 @@ def get_font_paths() -> list[str]:
         '/Users/bakert/Downloads/symbola/Symbola.ttf',
     ]
 
+
 def find_graphemes(font: TTFont, name: str, options_mode: bool, to_find: set[str]) -> set[str]:
     found = set()
     for table in font['cmap'].tables:
@@ -147,6 +150,7 @@ def find_graphemes(font: TTFont, name: str, options_mode: bool, to_find: set[str
             else:
                 found.add(grapheme)
     return found
+
 
 def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
     print(f"Subsetting {font['name'].getDebugName(1)}", file=sys.stderr)
@@ -170,8 +174,10 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
         os.remove(tmp_in)
         os.remove(tmp_out)
 
+
 def find_base_graphemes() -> set[str]:
     return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅☰🏠☼🌙')
+
 
 def encode(font: TTFont) -> str:
     _, tmp_in = tempfile.mkstemp()
@@ -183,6 +189,7 @@ def encode(font: TTFont) -> str:
         return enc_file.decode('ascii')
     finally:
         os.remove(tmp_in)
+
 
 def get_vertical_metrics(font: TTFont) -> dict[str, int]:
     hhea = font['hhea']
@@ -198,6 +205,7 @@ def get_vertical_metrics(font: TTFont) -> dict[str, int]:
         'HHead Descent': hhea.descent,
         'HHead Line Gap': hhea.lineGap,
     }
+
 
 def adjust_vertical_metrics(font: TTFont, metrics: dict[str, int]) -> TTFont:
     print(f"Adjusting vertical metrics of {font['name'].getDebugName(1)}", file=sys.stderr)
@@ -217,6 +225,7 @@ def adjust_vertical_metrics(font: TTFont, metrics: dict[str, int]) -> TTFont:
         return TTFont(tmp_out)
     finally:
         os.remove(tmp_out)
+
 
 def merge_fonts(fonts: list[TTFont]) -> TTFont:
     temp_files = []
@@ -238,6 +247,7 @@ def merge_fonts(fonts: list[TTFont]) -> TTFont:
 
     return merged_font
 
+
 def font_face(name: str, encoded: str) -> str:
     return f"""
 @font-face {{
@@ -248,6 +258,7 @@ def font_face(name: str, encoded: str) -> str:
     src: url("data:font/woff2;charset=utf-8;base64,{encoded}") format("woff2");
 }}
     """
+
 
 def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: str) -> None:
     ff = font_face('symbols', encoded_merged_font)
@@ -319,6 +330,7 @@ def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: st
         </html>
     """)
 
+
 def print_options(grapheme_to_fonts: GraphemeToFontMapping, font_info: FontInfo) -> None:
     print("""
         <!DOCTYPE html>
@@ -356,6 +368,7 @@ def print_options(grapheme_to_fonts: GraphemeToFontMapping, font_info: FontInfo)
         </html>
     """)
 
+
 def print_report(font_info: FontInfo, remaining_graphemes: set[str]) -> None:
     longest = max(len(name) for name, _, _, _, _ in font_info)
     print('Font'.rjust(longest), 'Found', 'Used', file=sys.stderr)
@@ -366,11 +379,13 @@ def print_report(font_info: FontInfo, remaining_graphemes: set[str]) -> None:
         print('\nWARNING! DID NOT FIND THE FOLLOWING GRAPHEMES:', remaining_graphemes, file=sys.stderr)
     print(file=sys.stderr)
 
+
 def named(grapheme: str) -> str:
     try:
         return '+'.join(unicodedata.name(c) for c in grapheme)
     except ValueError as e:
         return f'VALUE ERROR NO NAME {e} ({grapheme})'  # control characters do this
+
 
 def points(grapheme: str) -> str:
     return ' and '.join(f'U+{ord(c)}' for c in grapheme)

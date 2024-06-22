@@ -16,6 +16,7 @@ from shared.types import BugData, ForumData
 
 class ModoBugs(Extension):
     """Commands for interacting with the modo-bugs repository."""
+
     blacklist: set[tuple[str, str]] = set()
 
     @slash_command('modo-bug')
@@ -97,8 +98,10 @@ class ModoBugs(Extension):
 def format_bug(bug: BugData) -> str:
     return f'[{bug["description"]}]({bug["url"]})'
 
+
 def format_post(post: ForumData) -> str:
     return f'[{post["title"]}]({post["url"]})'
+
 
 def valid_thread(post: ForumData) -> bool:
     if post['tracked']:
@@ -107,11 +110,13 @@ def valid_thread(post: ForumData) -> bool:
         return False
     return True
 
+
 @functools.lru_cache
 def get_github() -> Github | None:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
     return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
+
 
 @functools.lru_cache
 def get_repo() -> Repository:
@@ -119,6 +124,7 @@ def get_repo() -> Repository:
     if gh is not None:
         return gh.get_repo('PennyDreadfulMTG/modo-bugs')
     raise OperationalException
+
 
 def setup(bot: Client) -> None:
     ModoBugs(bot)

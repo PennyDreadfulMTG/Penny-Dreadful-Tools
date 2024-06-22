@@ -58,6 +58,7 @@ class Card(Container):
             colors.update(cs['also'])
         return mana.order(colors)
 
+
 def determine_value(k: str, params: dict[str, Any]) -> Any:
     v = params[k]
     if k in ('names', 'mana_cost'):
@@ -68,6 +69,7 @@ def determine_value(k: str, params: dict[str, Any]) -> Any:
         v = determine_bugs(cast(str, v))
     return v
 
+
 def determine_legalities(s: str | None) -> dict[str, str]:
     if s is None:
         return {}
@@ -77,6 +79,7 @@ def determine_legalities(s: str | None) -> dict[str, str]:
         name, status = f.split(':')
         v[name] = status
     return v
+
 
 def determine_bugs(s: str) -> list[dict[str, object]] | None:
     if s is None:

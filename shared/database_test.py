@@ -15,6 +15,7 @@ def test_sqlescape() -> None:
     with pytest.raises(InvalidArgumentException):
         sqlescape({})
 
+
 def test_sqllikeescape() -> None:
     assert sqllikeescape('a') == "'%%a%%'"
     with pytest.raises(InvalidArgumentException):

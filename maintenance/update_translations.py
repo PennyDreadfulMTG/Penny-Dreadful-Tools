@@ -26,8 +26,7 @@ def ad_hoc() -> None:
             logger.warning(f'Saving to {pofile}')
             if os.path.exists(pofile):
                 os.remove(pofile)
-            client.export(project_id='162959', language_code=locale['code'],
-                          local_file=pofile, filters=['translated', 'not_fuzzy'])
+            client.export(project_id='162959', language_code=locale['code'], local_file=pofile, filters=['translated', 'not_fuzzy'])
 
     # Compile .po files into .mo files
     validate_translations.ad_hoc()

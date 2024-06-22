@@ -15,6 +15,7 @@ DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
 DEFAULT_GRID_PAGE_SIZE = 24  # Looks good at 1, 2, 4, 6, 8, 12 columns wide which is the vast majority of cases
 MAX_PAGE_SIZE = 500
 
+
 def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: str | None) -> str:
     if not sort_by and competition_id:
         sort_by = 'top8'
@@ -51,6 +52,7 @@ def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: 
     }
     return sort_options[sort_by] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
 
+
 def cards_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'numDecks'
@@ -69,6 +71,7 @@ def cards_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'perfectRuns': 'perfect_runs',
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
+
 
 def people_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
@@ -90,6 +93,7 @@ def people_order_by(sort_by: str | None, sort_order: str | None) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
+
 def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'numMatches'
@@ -106,6 +110,7 @@ def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, num_matches DESC, record, name'
 
+
 def leaderboard_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'points'
@@ -121,6 +126,7 @@ def leaderboard_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'points': 'points',
     }
     return sort_options[sort_by] + f' {sort_order}, points DESC, wins DESC, person'
+
 
 def matches_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
@@ -139,6 +145,7 @@ def matches_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'opponentDeckName': 'opponent_deck_name',
     }
     return sort_options[sort_by] + f' {sort_order}, person'
+
 
 def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
@@ -173,6 +180,7 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, {order_by_rank}'
 
+
 def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
         sort_by = 'quality'
@@ -195,6 +203,7 @@ def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     return f'{col} {sort_order}, {wilson_lower_bound_sql()} DESC, num_decks DESC, win_percent DESC, name ASC'
 
+
 def exclude_active_league_runs(except_person_id: int | None) -> str:
     clause = """
         d.retired
@@ -208,6 +217,7 @@ def exclude_active_league_runs(except_person_id: int | None) -> str:
     if except_person_id:
         clause += f'OR d.person_id = {except_person_id}'
     return clause
+
 
 def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> str:
     parts = ['TRUE']
@@ -248,6 +258,7 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
 
     return ') AND ('.join(parts)
 
+
 def text_where(field: str, q: str) -> str:
     return f'{field} LIKE {sqllikeescape(q)}'
 
@@ -255,11 +266,14 @@ def text_where(field: str, q: str) -> str:
 def text_match_where(field: str, q: str) -> str:
     return f'{field} LIKE {sqllikeescape(q, fuzzy=True)}'
 
+
 def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'
 
+
 def card_where(name: str) -> str:
     return f'd.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(name)})'
+
 
 # Returns two values, a SQL WHERE clause and a message about that clause (possibly an error message) suitable for display.
 def card_search_where(q: str, base_query: str | None = None, column_name: str = 'name') -> tuple[str, str]:
@@ -272,11 +286,14 @@ def card_search_where(q: str, base_query: str | None = None, column_name: str = 
     except search.InvalidSearchException as e:
         return 'FALSE', str(e)
 
+
 def tournament_only_clause() -> str:
     return "ct.name = 'Gatherling'"
 
+
 def decks_updated_since(ts: int) -> str:
     return f'(q.changed_date > {ts} OR d.updated_date > {ts})'
+
 
 def pagination(args: dict[str, str], default_page_size: int = DEFAULT_LIVE_TABLE_PAGE_SIZE) -> tuple[int, int, str]:
     try:
@@ -293,6 +310,7 @@ def pagination(args: dict[str, str], default_page_size: int = DEFAULT_LIVE_TABLE
 VERY_HIGH_CONFIDENCE = 0.99
 HIGH_CONFIDENCE = 0.95
 
+
 # Calculate the lower using the Wilson interval at the given confidence level.
 # See https://discord.com/channels/207281932214599682/230056266938974218/691464882998214686
 # See https://stackoverflow.com/a/10029645/375262
@@ -300,6 +318,7 @@ HIGH_CONFIDENCE = 0.95
 def wilson_lower_bound_sql(phat: str = 'SUM(wins) / SUM(wins + losses)', n: str = 'SUM(wins + losses)', confidence_level: float = VERY_HIGH_CONFIDENCE) -> str:
     z = z_value(confidence_level)
     return f'({phat} + {z} * {z} / (2 * {n}) - {z} * SQRT(({phat} * (1 - {phat}) + {z} * {z} / (4 * {n})) / {n})) / (1 + {z} * {z} / {n})'
+
 
 def z_value(confidence_level: float) -> float:
     return norm.ppf((1 + confidence_level) / 2)

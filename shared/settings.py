@@ -22,6 +22,7 @@ LOADED_FILES = set()
 if not os.path.exists('configs'):
     os.mkdir('configs')
 
+
 @contextmanager
 def with_config_file(namespace: Any) -> Generator[None, None, None]:
     if namespace is None:
@@ -43,9 +44,11 @@ def with_config_file(namespace: Any) -> Generator[None, None, None]:
     yield
     assert ADDITIONAL_FILES.pop() == filename
 
+
 def save_cfg(cfg: Any) -> None:
     with open('config.json', 'w') as fh:
         fh.write(json.dumps(cfg, indent=4, sort_keys=True))
+
 
 class Setting(Generic[T]):
     def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str | None = None) -> None:
@@ -161,8 +164,10 @@ class StrSetting(Setting[str]):
 class OptionalStrSetting(Setting[Optional[str]]):
     pass
 
+
 class ListSetting(Setting[list[U]]):
     pass
+
 
 class IntSetting(Setting[int]):
     @property
@@ -182,6 +187,7 @@ class IntSetting(Setting[int]):
     @value.setter
     def value(self, value: int) -> int:
         return self.set(value)
+
 
 def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
     return InvalidDataException(f'Expected a {expected_type} for {key}, got `{val}` ({type(val)})')

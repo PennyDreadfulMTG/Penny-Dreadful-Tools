@@ -99,8 +99,10 @@ def stats() -> Response:
         val['formats'][format_name]['last_month']['recent_players'] = [p.name for p in players]
     return return_json(val)
 
+
 def calc_last_switcheroo() -> match.Match:
     return match.Match.query.filter(match.Match.has_unexpected_third_game).order_by(match.Match.id.desc()).first()
+
 
 @APP.route('/recent.json')
 def recent_json() -> Response:

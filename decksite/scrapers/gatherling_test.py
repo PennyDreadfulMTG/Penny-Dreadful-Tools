@@ -12,6 +12,7 @@ def test_medal2finish() -> None:
     for m in gatherling.Medal:
         assert gatherling.medal2finish(m) > 0
 
+
 @with_test_db
 @pytest.mark.functional
 def test_process() -> None:
@@ -47,6 +48,7 @@ def test_process() -> None:
     for m in ms:
         assert (m.opponent is None) or (2 <= m.game_wins + m.game_losses <= 3)
 
+
 def test_find_mtgo_username() -> None:
     data = json.loads(PLAYERS)
     ps = [gatherling.Player(**p) for p in data]
@@ -54,8 +56,10 @@ def test_find_mtgo_username() -> None:
     assert gatherling.find_mtgo_username('AlvaroCarvalho', ps) == 'AlvaroCarvalho'  # mtgo is not set
     assert gatherling.find_mtgo_username('-IceBR-', ps) == '-iceb-'  # mtgo is set and different
 
+
 def test_gatherling_url() -> None:
     assert gatherling.gatherling_url('/') == 'https://gatherling.com/'
+
 
 def test_vivify_date() -> None:
     d = gatherling.vivify_date('2020-12-01 10:11:12')

@@ -4,6 +4,7 @@ from shared import dtutil
 # GONADKING never signed up for the league
 # 11/4/2016 2:53:57   314 GONADKING   CivilOoze   Win 2-1 1   0
 
+
 def disabled() -> None:
     match.insert_match(dtutil.parse('11/1/2016 16:55:02', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 307, 2, 308, 0)
     match.insert_match(dtutil.parse('11/1/2016 17:46:07', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 307, 2, 309, 0)

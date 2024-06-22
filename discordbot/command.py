@@ -30,6 +30,7 @@ DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣': 1, '2⃣': 2, '3⃣': 3, '4⃣': 4, '
 
 HELP_GROUPS: set[str] = set()
 
+
 @lazy_property
 def searcher() -> WhooshSearcher:
     try:
@@ -37,6 +38,7 @@ def searcher() -> WhooshSearcher:
     except whoosh.index.EmptyIndexError:  # Whoosh hasn't been initialized yet!
         whoosh_write.reindex()
         return WhooshSearcher()
+
 
 async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -59,6 +61,7 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
         await ctx.post_cards(cards, ctx.author)
 
+
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> list[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, flags=re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.
     if scryfall_compatability_mode:
@@ -67,14 +70,17 @@ def parse_queries(content: str, scryfall_compatability_mode: bool) -> list[str]:
         queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
+
 def cards_from_names_with_mode(cards: Sequence[str | None], mode: str, preferred_printing: str | None = None) -> list[Card]:
     return [copy_with_mode(oracle.load_card(c), mode, preferred_printing) for c in cards if c is not None]
+
 
 def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str | None = None) -> Card:
     c = copy(oracle_card)
     c['mode'] = mode
     c['preferred_printing'] = preferred_printing
     return c
+
 
 def parse_mode(query: str) -> tuple[str, str, str | None]:
     mode = ''
@@ -87,6 +93,7 @@ def parse_mode(query: str) -> tuple[str, str, str | None]:
         preferred_printing = preferred_printing.lower().strip()
     return mode, query, preferred_printing
 
+
 def results_from_queries(queries: list[str]) -> list[tuple[SearchResult, str, str | None]]:
     all_results = []
     for query in queries:
@@ -95,6 +102,7 @@ def results_from_queries(queries: list[str]) -> list[tuple[SearchResult, str, st
         all_results.append((result, mode, preferred_printing))
     return all_results
 
+
 def complex_search(query: str) -> list[Card]:
     if query == '':
         return []
@@ -102,21 +110,26 @@ def complex_search(query: str) -> list[Card]:
     cbn = oracle.cards_by_name()
     return [cbn[name] for name in cardnames if cbn.get(name) is not None]
 
+
 def roughly_matches(s1: str, s2: str) -> bool:
     return simplify_string(s1).find(simplify_string(s2)) >= 0
+
 
 def simplify_string(s: str) -> str:
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
+
 
 def disambiguation(cards: list[str]) -> str:
     if len(cards) > 5:
         return ','.join(cards)
     return ' '.join([' '.join(x) for x in zip(DISAMBIGUATION_EMOJIS, cards)])
 
+
 async def disambiguation_reactions(message: Message, cards: list[str]) -> None:
     for i in range(1, len(cards) + 1):
         await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
+
 
 async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, command: str) -> Card | None:
     if not args:
@@ -132,6 +145,7 @@ async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str
         await send(channel, f'{author.mention}: No matches.')
     return None
 
+
 async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
@@ -140,6 +154,7 @@ async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, ar
         text = await emoji.replace_emoji(f(c), client)
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
+
 
 async def post_nothing(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_CHANNEL, replying_to: Member | User | None = None) -> None:
     if replying_to is not None:
@@ -154,12 +169,14 @@ async def send(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
+
 async def send_image_with_retry(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_CHANNEL, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         logging.warning('Message size is zero so resending')
         await message.delete()
         await send(channel, file=File(image_file), content=text)
+
 
 async def single_card_text_internal(client: Client, requested_card: Card, legality_format: str) -> str:
     mana = await emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
@@ -176,6 +193,7 @@ async def single_card_text_internal(client: Client, requested_card: Card, legali
                 time_since_confirmed = (dtutil.now() - bug['last_confirmed']).total_seconds()
                 text += f' (Last confirmed {dtutil.display_time(time_since_confirmed, 1)} ago.)'
     return text
+
 
 # See #5532 and #5566.
 def escape_underscores(s: str) -> str:
@@ -196,6 +214,7 @@ def escape_underscores(s: str) -> str:
             new_s += char
     return new_s
 
+
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: list[Card]) -> list[Card]:
     # Remove multiple printings of the same card from the result set.
@@ -203,6 +222,7 @@ def uniqify_cards(cards: list[Card]) -> list[Card]:
     for c in cards:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
+
 
 def slash_card_option(param: str = 'card') -> Callable:
     """Predefined Slash command argument `card`"""
@@ -218,11 +238,13 @@ def slash_card_option(param: str = 'card') -> Callable:
 
     return wrapper
 
+
 def make_choice(value: str, name: str | None = None) -> dict[str, int | float | str]:
     return {
         'name': (name or value)[:100],
         'value': value[:100],
     }
+
 
 @global_autocomplete('card')
 async def autocomplete_card(ctx: AutocompleteContext) -> None:
@@ -238,6 +260,7 @@ async def autocomplete_card(ctx: AutocompleteContext) -> None:
     choices.extend(results.fuzzy)
     choices = [*set(choices)]
     await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
+
 
 class MtgMixin:
     async def send_image_with_retry(self: 'MtgContext', image_file: str, text: str = '') -> None:  # type: ignore
@@ -305,6 +328,7 @@ class MtgMixin:
 
     async def post_nothing(self: 'MtgContext') -> None:  # type: ignore
         await post_nothing(self)
+
 
 @attr.define(init=False)
 class MtgInteractionContext(SlashContext, MtgMixin):

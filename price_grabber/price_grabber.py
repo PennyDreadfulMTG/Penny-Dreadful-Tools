@@ -12,11 +12,13 @@ from shared.pd_exception import DatabaseException, TooFewItemsException
 
 DATABASE = get_database(configuration.get_str('prices_database'))
 
+
 def run() -> None:
     multiverse.init()
     oracle.init()
     fetch()
     price.cache()
+
 
 def fetch() -> None:
     all_prices, timestamps = {}, []
@@ -31,6 +33,7 @@ def fetch() -> None:
         raise TooFewItemsException(f'Did not get any prices when fetching {itertools.chain(configuration.cardhoarder_urls.get())} ({all_prices})')
     count = store(min(timestamps), all_prices)
     cleanup(count)
+
 
 def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> int:
     DATABASE.begin('store')
@@ -59,6 +62,7 @@ def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> int:
     DATABASE.commit('store')
     return count * 20
 
+
 def cleanup(count: int = 0) -> None:
     beginning_of_season = seasons.last_rotation()
     one_month_ago = dtutil.now(dtutil.WOTC_TZ) - datetime.timedelta(31)
@@ -67,6 +71,7 @@ def cleanup(count: int = 0) -> None:
     if count > 0:
         limit = f'LIMIT {count * 2}'
     execute('DELETE FROM low_price WHERE `time` < %s ' + limit, [dtutil.dt2ts(oldest_needed)])
+
 
 def execute(sql: str, values: list[object] | None = None) -> None:
     if values is None:
@@ -78,6 +83,7 @@ def execute(sql: str, values: list[object] | None = None) -> None:
         # If you wish to make an apple pie from scratch, you must first invent the universe.
         create_tables()
         execute(sql, values)
+
 
 def create_tables() -> None:
     print('Creating price tables.')

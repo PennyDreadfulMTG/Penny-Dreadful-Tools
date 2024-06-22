@@ -12,6 +12,7 @@ from shared.fetch_tools import FetchException
 
 TOTAL_RUNS = 168
 
+
 def interesting(playability: dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> str | None:
     if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
         return 'new'
@@ -22,18 +23,22 @@ def interesting(playability: dict[str, float], c: Card, speculation: bool = True
         return 'moderately-played'
     return None
 
+
 def in_rotation() -> bool:
     if configuration.always_show_rotation.value:
         return True
     until_rotation = seasons.next_rotation() - dtutil.now()
     return until_rotation < datetime.timedelta(7)
 
+
 def files() -> list[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))
+
 
 # Will raise if what you pass is not a valid path to a Run_xxx.txt file.
 def run_number_from_path(path: str) -> int:
     return int(os.path.basename(path).split('.')[0].split('_')[1])
+
 
 def last_run_number() -> int | None:
     try:
@@ -41,11 +46,13 @@ def last_run_number() -> int | None:
     except IndexError:
         return None
 
+
 def last_run_time() -> datetime.datetime | None:
     try:
         return dtutil.ts2dt(int(os.path.getmtime(files()[-1])))
     except (IndexError, OSError):
         return None
+
 
 def read_rotation_files() -> tuple[int, int, list[Card]]:
     runs_str = redis.get_str('decksite:rotation:summary:runs')
@@ -54,6 +61,7 @@ def read_rotation_files() -> tuple[int, int, list[Card]]:
     if runs_str is not None and runs_percent_str is not None and cards is not None:
         return int(runs_str), int(runs_percent_str), [Card(c, predetermined_values=True) for c in cards]
     return rotation_redis_store()
+
 
 def rotation_redis_store() -> tuple[int, int, list[Card]]:
     lines = []
@@ -93,6 +101,7 @@ def rotation_redis_store() -> tuple[int, int, list[Card]]:
         redis.sadd('decksite:rotation:summary:notlegal', *card_names_by_status['Not Legal'], ex=604800)
     return (runs, runs_percent, cards)
 
+
 def get_file_contents(file: str) -> list[str]:
     key = f'decksite:rotation:file:{file}'
     contents = redis.get_list(key)
@@ -103,10 +112,12 @@ def get_file_contents(file: str) -> list[str]:
     redis.store(key, contents, ex=604800)
     return contents
 
+
 def clear_redis(clear_files: bool = False) -> None:
     redis.clear(*redis.keys('decksite:rotation:summary:*'))
     if clear_files:
         redis.clear(*redis.keys('decksite:rotation:file:*'))
+
 
 def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_list: list[str]) -> Card | None:
     remaining_runs = TOTAL_RUNS - runs
@@ -129,20 +140,24 @@ def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_l
     else:
         status = 'Undecided'
     hit_in_last_run = name in latest_list
-    c.update({
-        'hits': hits,
-        'hits_needed': hits_needed,
-        'percent': percent,
-        'percent_needed': percent_needed,
-        'status': status,
-        'hit_in_last_run': hit_in_last_run,
-    })
+    c.update(
+        {
+            'hits': hits,
+            'hits_needed': hits_needed,
+            'percent': percent,
+            'percent_needed': percent_needed,
+            'status': status,
+            'hit_in_last_run': hit_in_last_run,
+        }
+    )
     return c
+
 
 def classify_by_status(c: Card, card_names_by_status: dict[str, list[str]]) -> None:
     if c.status not in card_names_by_status:
         card_names_by_status[c.status] = []
     card_names_by_status[c.status].append(c.name)
+
 
 async def rotation_hype_message(hype_command: bool) -> str | None:
     if not hype_command:
@@ -172,6 +187,7 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
         s += f"<{fetcher.decksite_url('/rotation/')}>"
     return s
 
+
 def list_of_most_interesting(cs: list[Card]) -> str:
     max_shown = 25
     redis_key = 'discordbot:rotation:cardranks'
@@ -191,8 +207,10 @@ def list_of_most_interesting(cs: list[Card]) -> str:
         return ' • '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
     return ' • '.join(c.name for c in cs)
 
+
 def runs_percentage(runs: int) -> int:
     return to_percent(runs / TOTAL_RUNS)
+
 
 def to_percent(val: float) -> int:
     return round(val * 100)

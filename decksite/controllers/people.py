@@ -19,6 +19,7 @@ def people() -> str:
     view = People()
     return view.page()
 
+
 @APP.route('/people/<mtgo_username>/')
 @APP.route('/people/id/<int:person_id>/')
 @SEASONS.route('/people/<mtgo_username>/')
@@ -35,6 +36,7 @@ def person(mtgo_username: str | None = None, person_id: int | None = None) -> st
     view = Person(p, person_archetypes, all_archetypes, your_cards, seasons_active, get_season_id())
     return view.page()
 
+
 @APP.route('/people/<mtgo_username>/achievements/')
 @APP.route('/people/id/<int:person_id>/achievements/')
 @SEASONS.route('/people/<mtgo_username>/achievements/')
@@ -46,9 +48,11 @@ def person_achievements(mtgo_username: str | None = None, person_id: int | None 
     view = PersonAchievements(p, p_achs, seasons_active)
     return view.page()
 
+
 @APP.route('/person/achievements/')
 def achievements_redirect() -> wrappers.Response:
     return redirect(url_for('achievements'))
+
 
 @APP.route('/people/<mtgo_username>/matches/')
 @APP.route('/people/id/<int:person_id>/matches/')
@@ -61,6 +65,7 @@ def person_matches(mtgo_username: str | None = None, person_id: int | None = Non
     matches.reverse()  # We want the latest at the top.
     view = PersonMatches(p, matches)
     return view.page()
+
 
 def load_person(mtgo_username: str | None = None, person_id: int | None = None, season_id: int | None = None) -> ps.Person:
     if mtgo_username:

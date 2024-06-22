@@ -26,7 +26,6 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
             'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),
             'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/',
         },
-
     ),
     'deckbuilding': (
         """
@@ -139,7 +138,6 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """
         """,
         {},
-
     ),
     'replay': (
         """
@@ -150,8 +148,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     'reporting': (
         """
         """,
-        {
-        },
+        {},
     ),
     'retire': (
         'To retire from a league run message PDBot on MTGO with `!retire`. If you have authenticated with Discord on pennydreadfulmagic.com you can say `!retire` on Discord or retire on the website.',
@@ -248,12 +245,7 @@ class ExplainCog(Extension):
         name='explain',
         description='Answers for Frequently Asked Questions',
     )
-    @slash_option(
-        name='thing',
-        description='Thing to be explained',
-        opt_type=OptionType.STRING,
-        required=True,
-        autocomplete=True)
+    @slash_option(name='thing', description='Thing to be explained', opt_type=OptionType.STRING, required=True, autocomplete=True)
     async def explain(self, ctx: MtgContext, thing: str | None = None) -> None:
         """Answers for Frequently Asked Questions"""
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
@@ -277,8 +269,7 @@ class ExplainCog(Extension):
 
             s = textwrap.dedent(explanation[0])
         except KeyError:
-            usage = 'I can explain any of these things: {things}'.format(
-                things=', '.join(sorted(keys)))
+            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             await ctx.send(usage)
             return
         if word == 'rotation' and rotation.in_rotation():
@@ -299,11 +290,13 @@ class ExplainCog(Extension):
     async def reroute(self, ctx: MtgMessageContext) -> None:
         await self.explain.callback(ctx, ctx.content_parameters)
 
+
 def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
     tournament_channel_id = configuration.get_int('tournament_channel_id')
     if not tournament_channel_id:
         return False
     return channel.id == tournament_channel_id
+
 
 def promo_explanation() -> tuple[str, dict[str, str]]:
     explanation = 'Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies.'
@@ -317,6 +310,7 @@ def promo_explanation() -> tuple[str, dict[str, str]]:
     if len(legal_cheap_promos) > 0:
         explanation += ' Affected cards include: ' + ' • '.join(c.name for c in legal_cheap_promos)
     return (explanation, {})
+
 
 def setup(bot: Client) -> None:
     ExplainCog(bot)

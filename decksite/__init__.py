@@ -15,15 +15,18 @@ APP = PDFlask(__name__)
 APP.logger.setLevel(logging.WARN)
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
+
 def get_season_id() -> int:
     season_id = g.get('season_id', seasons.current_season_num())
     if season_id == 'all':
         return 0
     return season_id
 
+
 @SEASONS.url_defaults
 def add_season_id(_endpoint: str, values: dict[str, Any]) -> None:
     values.setdefault('season_id', get_season_id())
+
 
 @SEASONS.url_value_preprocessor
 def pull_season_id(_endpoint: str | None, values: dict[Any, Any] | None) -> None:
@@ -34,6 +37,7 @@ def pull_season_id(_endpoint: str | None, values: dict[Any, Any] | None) -> None
 
 
 APP.config['SECRET_KEY'] = configuration.oauth2_client_secret.value
+
 
 def build_menu() -> Menu:
     archetypes_badge = Badge(url_for('edit_archetypes'), '', 'edit_archetypes')
@@ -48,42 +52,70 @@ def build_menu() -> Menu:
         MenuItem(gettext('Link Accounts'), endpoint='link'),
         MenuItem(gettext('Bugs'), endpoint='bugs'),
     ]
-    menu = Menu(menu=[
-        MenuItem(gettext('Home'), endpoint='home'),
-        MenuItem(gettext('Metagame'), endpoint='metagame', badge=archetypes_badge, submenu=Menu([
-            MenuItem(gettext('Meta'), endpoint='.metagame'),
-            MenuItem(gettext('Decks'), endpoint='.decks'),
-            MenuItem(gettext('Archetypes'), endpoint='.archetypes', badge=archetypes_badge),
-            MenuItem(gettext('People'), endpoint='.people'),
-            MenuItem(gettext('Cards'), endpoint='.cards'),
-            MenuItem(gettext('Past Seasons'), endpoint='seasons'),
-            MenuItem(gettext('Matchups'), endpoint='matchups'),
-        ])),
-        MenuItem(gettext('League'), endpoint='league', submenu=Menu([
-            MenuItem(gettext('League Info'), endpoint='league'),
-            MenuItem(gettext('Sign Up'), endpoint='signup'),
-            MenuItem(gettext('Report'), endpoint='report'),
-            MenuItem(gettext('Records'), endpoint='current_league'),
-            MenuItem(gettext('Retire'), endpoint='retire'),
-        ])),
-        MenuItem(gettext('Competitions'), endpoint='competitions', submenu=Menu([
-            MenuItem(gettext('Competition Results'), endpoint='competitions'),
-            MenuItem(gettext('Tournament Info'), endpoint='tournaments'),
-            MenuItem(gettext('Leaderboards'), endpoint='tournament_leaderboards'),
-            MenuItem(gettext('Gatherling'), url='https://gatherling.com/'),
-            MenuItem(gettext('Achievements'), endpoint='achievements'),
-            MenuItem(gettext('Hosting'), endpoint='hosting'),
-        ])),
-        MenuItem(gettext('Resources'), endpoint='resources', submenu=Menu(resources_submenu_items)),
-        MenuItem(gettext('About'), endpoint='about', submenu=Menu([
-            MenuItem(gettext('What is Penny Dreadful?'), endpoint='about'),
-            MenuItem(gettext('About pennydreadfulmagic.com'), endpoint='about_pdm'),
-            MenuItem(gettext('FAQs'), endpoint='faqs'),
-            MenuItem(gettext('Community Guidelines'), endpoint='community_guidelines'),
-            MenuItem(gettext('Contact Us'), endpoint='contact_us'),
-        ])),
-        MenuItem(gettext('Admin'), endpoint='admin_home', submenu=admin.admin_menu(), permission_required='demimod'),
-    ], current_endpoint=request.endpoint)
+    menu = Menu(
+        menu=[
+            MenuItem(gettext('Home'), endpoint='home'),
+            MenuItem(
+                gettext('Metagame'),
+                endpoint='metagame',
+                badge=archetypes_badge,
+                submenu=Menu(
+                    [
+                        MenuItem(gettext('Meta'), endpoint='.metagame'),
+                        MenuItem(gettext('Decks'), endpoint='.decks'),
+                        MenuItem(gettext('Archetypes'), endpoint='.archetypes', badge=archetypes_badge),
+                        MenuItem(gettext('People'), endpoint='.people'),
+                        MenuItem(gettext('Cards'), endpoint='.cards'),
+                        MenuItem(gettext('Past Seasons'), endpoint='seasons'),
+                        MenuItem(gettext('Matchups'), endpoint='matchups'),
+                    ]
+                ),
+            ),
+            MenuItem(
+                gettext('League'),
+                endpoint='league',
+                submenu=Menu(
+                    [
+                        MenuItem(gettext('League Info'), endpoint='league'),
+                        MenuItem(gettext('Sign Up'), endpoint='signup'),
+                        MenuItem(gettext('Report'), endpoint='report'),
+                        MenuItem(gettext('Records'), endpoint='current_league'),
+                        MenuItem(gettext('Retire'), endpoint='retire'),
+                    ]
+                ),
+            ),
+            MenuItem(
+                gettext('Competitions'),
+                endpoint='competitions',
+                submenu=Menu(
+                    [
+                        MenuItem(gettext('Competition Results'), endpoint='competitions'),
+                        MenuItem(gettext('Tournament Info'), endpoint='tournaments'),
+                        MenuItem(gettext('Leaderboards'), endpoint='tournament_leaderboards'),
+                        MenuItem(gettext('Gatherling'), url='https://gatherling.com/'),
+                        MenuItem(gettext('Achievements'), endpoint='achievements'),
+                        MenuItem(gettext('Hosting'), endpoint='hosting'),
+                    ]
+                ),
+            ),
+            MenuItem(gettext('Resources'), endpoint='resources', submenu=Menu(resources_submenu_items)),
+            MenuItem(
+                gettext('About'),
+                endpoint='about',
+                submenu=Menu(
+                    [
+                        MenuItem(gettext('What is Penny Dreadful?'), endpoint='about'),
+                        MenuItem(gettext('About pennydreadfulmagic.com'), endpoint='about_pdm'),
+                        MenuItem(gettext('FAQs'), endpoint='faqs'),
+                        MenuItem(gettext('Community Guidelines'), endpoint='community_guidelines'),
+                        MenuItem(gettext('Contact Us'), endpoint='contact_us'),
+                    ]
+                ),
+            ),
+            MenuItem(gettext('Admin'), endpoint='admin_home', submenu=admin.admin_menu(), permission_required='demimod'),
+        ],
+        current_endpoint=request.endpoint,
+    )
     return menu
 
 
@@ -96,4 +128,5 @@ except DatabaseException as e:
 
 from decksite.controllers import admin  # isort:skip
 from .data import deck  # isort:skip # noqa: F401
+
 APP.config['menu'] = build_menu

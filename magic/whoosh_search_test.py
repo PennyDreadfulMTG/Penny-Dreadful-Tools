@@ -102,5 +102,6 @@ class WhooshSearchTest(unittest.TestCase):
         self.best_match_is('Sad Robon', 'Solemn Simulacrum')
         self.best_match_is('Drak Confidant', 'Dark Confidant')
 
+
 def is_included(name: str, cards: list[str]) -> bool:
     return len([x for x in cards if x == name]) >= 1

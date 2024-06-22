@@ -28,6 +28,7 @@ def decks(deck_type: str | None = None) -> str:
     view = Decks(league_only)
     return view.page()
 
+
 @APP.route('/metagame/')
 @APP.route('/metagame/<any(tournament,league):deck_type>/')
 @SEASONS.route('/metagame/')
@@ -38,6 +39,7 @@ def metagame(deck_type: str | None = None) -> str:
     view = Metagame(tournament_only=tournament_only)
     return view.page()
 
+
 @APP.route('/decks/<int:deck_id>/')
 @auth.load_person
 def deck(deck_id: int) -> str:
@@ -47,6 +49,7 @@ def deck(deck_id: int) -> str:
     view = Deck(d, ms, auth.person_id(), auth.discord_id(), ars)
     return view.page()
 
+
 @APP.route('/seasons/')
 @cached()
 def seasons() -> str:
@@ -54,10 +57,12 @@ def seasons() -> str:
     view = Seasons(stats)
     return view.page()
 
+
 @SEASONS.route('/')
 @cached()
 def season() -> wrappers.Response:
     return redirect(url_for('seasons.decks'))
+
 
 @APP.route('/cards/')
 @APP.route('/cards/<any(tournament,league):deck_type>/')
@@ -68,6 +73,7 @@ def cards(deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     view = Cards(tournament_only=tournament_only)
     return view.page()
+
 
 @APP.route('/cards/<path:name>/')
 @APP.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
@@ -83,11 +89,13 @@ def card(name: str, deck_type: str | None = None) -> str:
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e
 
+
 def parse_card_name(name: str) -> str:
     name = urllib.parse.unquote_plus(name)
     if name.startswith(' '):  # Handle "+2 Mace".
         name = '+' + name.lstrip()
     return oracle.valid_name(name)
+
 
 @APP.route('/archetypes/')
 @APP.route('/archetypes/<any(tournament,league):deck_type>/')
@@ -100,6 +108,7 @@ def archetypes(deck_type: str | None = None) -> str:
     all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
     view = Archetypes(all_archetypes, tournament_only=tournament_only)
     return view.page()
+
 
 @APP.route('/archetypes/<archetype_id>/')
 @APP.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
@@ -149,8 +158,7 @@ def validate_deck_type(s: str | None, allowed_values: list[DeckType] | None = No
     try:
         deck_type = DeckType(s)
         if allowed_values and deck_type not in allowed_values:
-            raise DoesNotExistException(
-                f'Invalid deck_type for this endpoint: {deck_type}')
+            raise DoesNotExistException(f'Invalid deck_type for this endpoint: {deck_type}')
     except ValueError as e:
         raise DoesNotExistException(e) from e
     return deck_type

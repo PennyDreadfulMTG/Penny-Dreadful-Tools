@@ -14,6 +14,7 @@ from shared.decorators import retry_after_calling
 def preaggregate() -> None:
     preaggregate_played_person()
 
+
 def preaggregate_played_person() -> None:
     table = '_played_card_person_stats'
     sql = """
@@ -66,6 +67,7 @@ def preaggregate_played_person() -> None:
     """.format(table=table, logsite_database=configuration.get('logsite_database'), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
 
+
 @retry_after_calling(preaggregate_played_person)
 def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
     sql = f"""
@@ -94,6 +96,7 @@ def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
         c.update(cards[c.name])
     return cs
 
+
 # BUG: This code will forever try to process logs that don't contain "plays" or "casts". There are quite a lot of those - matches where one player has wandered off and the match never really starts and mispairs, etc.
 def process_logs() -> None:
     init()
@@ -120,6 +123,7 @@ def process_logs() -> None:
     sql += ', '.join('(' + ', '.join(str(sqlescape(v)) for v in vs) + ')' for vs in values)
     logsite_db().execute(sql)
 
+
 def next_ids() -> list[int]:
     sql = """
         SELECT
@@ -140,8 +144,10 @@ def next_ids() -> list[int]:
     """
     return logsite_db().values(sql)
 
+
 def process_log(log: str) -> list[tuple[str, str]]:
     return re.findall(r'(\w+) (?:casts|plays) \[([^\]]+)\]', log, re.MULTILINE)
+
 
 def init() -> None:
     sql = """

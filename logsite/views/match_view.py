@@ -17,6 +17,7 @@ def show_match(match_id: int) -> str:
     view = Match(match.get_match(match_id))
     return view.page()
 
+
 class Match(View):
     def __init__(self, viewed_match: match.Match) -> None:
         super().__init__()
@@ -65,6 +66,7 @@ class Match(View):
 
     def page_title(self) -> str:
         return ''
+
 
 def player_link(name: str) -> str:
     url = url_for('show_person', person=name)

@@ -7,6 +7,7 @@ MAX_PRICE_CENTS = 2
 MAX_PRICE_TIX = MAX_PRICE_CENTS / 100
 MAX_PRICE_TEXT = '2¢'
 
+
 def card_price_string(card: Card, short: bool = False) -> str:
     def price_info(c: Card) -> str:
         try:
@@ -36,4 +37,5 @@ def card_price_string(card: Card, short: bool = False) -> str:
             return 'Unknown'
         dollars, cents = str(round(float(p), 2)).split('.')
         return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
+
     return price_info(card)

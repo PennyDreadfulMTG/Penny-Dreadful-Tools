@@ -10,5 +10,6 @@ class Downtimes(Extension):
     async def downtimes(self, ctx: MtgContext) -> None:
         await ctx.send(fetcher.downtimes())
 
+
 def setup(bot: Client) -> None:
     Downtimes(bot)

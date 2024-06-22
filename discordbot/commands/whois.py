@@ -29,6 +29,7 @@ async def whois_mtgo(args: str) -> str:
         msg = f"**{person['name']}** is <@{person['discord_id']}>"
     return msg
 
+
 async def whois_discord(user: User) -> str:
     person = await fetcher.person_data_async(user.id)
     if not_found(person) or person.get('name') is None:
@@ -37,8 +38,10 @@ async def whois_discord(user: User) -> str:
         msg = f"{user.mention} is **{person['name']}** on MTGO"
     return msg
 
+
 def not_found(person: dict[str, Any]) -> bool:
     return person is None or (person.get('error') is not None and person.get('code') == 'NOTFOUND')
+
 
 def setup(bot: Client) -> None:
     Whois(bot)

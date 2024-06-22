@@ -11,5 +11,6 @@ class KickOff(Extension):
         """Display a link to the Season Kick Off information page."""
         await ctx.send(fetcher.decksite_url('/tournaments/kickoff/'))
 
+
 def setup(bot: Client) -> None:
     KickOff(bot)

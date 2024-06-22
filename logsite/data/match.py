@@ -82,6 +82,7 @@ class Match(fsa.Model):
             'html_url': url_for('show_match', match_id=self.id, _external=True),
         }
 
+
 def create_match(match_id: int, format_name: str, comment: str, modules: list[str], players: list[str]) -> Match:
     format_id = db.get_or_insert_format(format_name).id
     local = Match(id=match_id, format_id=format_id, comment=comment)
@@ -92,14 +93,18 @@ def create_match(match_id: int, format_name: str, comment: str, modules: list[st
     db.commit()
     return local
 
+
 def get_match(match_id: int) -> Match:
     return Match.query.filter_by(id=match_id).one_or_none()
+
 
 def get_recent_matches() -> Any:
     return Match.query.order_by(Match.id.desc())
 
+
 def get_recent_matches_by_player(name: str) -> Any:
     return Match.query.filter(Match.players.any(db.User.name == name)).order_by(Match.id.desc())
+
 
 def get_recent_matches_by_format(format_id: int) -> Any:
     return Match.query.filter(Match.format_id == format_id).order_by(Match.id.desc())

@@ -1,6 +1,7 @@
 """
 This module parses Mana Costs
 """
+
 import itertools
 import re
 from collections.abc import Iterable, Sequence
@@ -15,6 +16,7 @@ SLASH = '/'
 MODIFIER = 'P'
 HALF = 'H'
 HYBRID = 'SPECIAL-HYBRID'
+
 
 def parse(s: str) -> list[str]:
     tmp = ''
@@ -104,11 +106,14 @@ def parse(s: str) -> list[str]:
         tokens.append(tmp)
     return tokens
 
+
 def colors(symbols: list[str]) -> dict[str, set[str]]:
     return colors_from_colored_symbols(colored_symbols(symbols))
 
+
 def colors_from_colored_symbols(all_colored_symbols: dict[str, list[str]]) -> dict[str, set[str]]:
     return {'required': set(all_colored_symbols['required']), 'also': set(all_colored_symbols['also'])}
+
 
 def colored_symbols(symbols: list[str]) -> dict[str, list[str]]:
     cs: dict[str, list[str]] = {'required': [], 'also': []}
@@ -130,6 +135,7 @@ def colored_symbols(symbols: list[str]) -> dict[str, list[str]]:
             raise InvalidManaCostException(f'Unrecognized symbol type: `{symbol}` in `{symbols}`')
     return cs
 
+
 def cmc(mana_cost: str) -> float:
     symbols = parse(mana_cost)
     total = 0.0
@@ -148,33 +154,43 @@ def cmc(mana_cost: str) -> float:
             raise InvalidManaCostException(f"Can't calculate CMC - I don't recognize '{symbol}'")
     return total
 
+
 def generic(symbol: str) -> bool:
     return bool(re.match(f'^{DIGIT}+$', symbol))
+
 
 def variable(symbol: str) -> bool:
     return bool(re.match(f'^{X}$', symbol))
 
+
 def phyrexian(symbol: str) -> bool:
     return bool(re.match(f'^({COLOR}/)?{COLOR}/{MODIFIER}$', symbol))
+
 
 def hybrid(symbol: str) -> bool:
     return bool(re.match(f'^{COLOR}/{COLOR}(/{MODIFIER})?$', symbol))
 
+
 def twobrid(symbol: str) -> bool:
     return bool(re.match(f'^2/{COLOR}$', symbol))
+
 
 def half(symbol: str) -> bool:
     return bool(re.match(f'^{HALF}{COLOR}$', symbol))
 
+
 def colored(symbol: str) -> bool:
     return bool(re.match(f'^{COLOR}$', symbol))
+
 
 def has_x(mana_cost: str) -> bool:
     return len([symbol for symbol in parse(mana_cost) if variable(symbol)]) > 0
 
+
 def order(symbols: Iterable[str]) -> list[str]:
     permutations = itertools.permutations(symbols)
     return list(sorted(permutations, key=order_score)[0])
+
 
 def order_score(initial_symbols: tuple[str, ...]) -> int:
     symbols = [symbol for symbol in initial_symbols if symbol not in ('C', 'S')]
@@ -198,6 +214,7 @@ def order_score(initial_symbols: tuple[str, ...]) -> int:
         score -= initial_symbols.index('S') * 2
     return score
 
+
 def sort_score(initial_symbols: Sequence[str]) -> int:
     positions = ['C', 'S', 'W', 'U', 'B', 'R', 'G']
     symbols = set(initial_symbols)
@@ -208,6 +225,7 @@ def sort_score(initial_symbols: Sequence[str]) -> int:
     for symbol in symbols:
         score += pow(2, positions.index(symbol))
     return score
+
 
 class InvalidManaCostException(ParseException):
     pass

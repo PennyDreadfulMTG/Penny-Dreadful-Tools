@@ -13,5 +13,6 @@ class Legal(Extension):
         """Announce whether the specified card is legal or not."""
         await ctx.single_card_text(card, lambda c: '')
 
+
 def setup(bot: Client) -> None:
     Legal(bot)

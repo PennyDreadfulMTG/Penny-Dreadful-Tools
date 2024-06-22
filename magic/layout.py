@@ -61,35 +61,46 @@ LAYOUTS: dict[str, Layout] = {
     'vanguard': Layout(playable=False),
 }
 
+
 def all_layouts() -> list[str]:
     return list(LAYOUTS.keys())
+
 
 def playable_layouts() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.playable]
 
+
 def has_two_names() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_two_names]
+
 
 def uses_two_names() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.uses_two_names]
 
+
 def has_single_back() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_single_back]
+
 
 def has_meld_back() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_meld_back]
 
+
 def has_two_faces() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_two_faces]
+
 
 def sums_cmc() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.sums_cmc]
 
+
 def has_two_mana_costs() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.has_two_mana_costs]
 
+
 def uses_canonical_namespace() -> list[str]:
     return [name for name, props in LAYOUTS.items() if props.uses_canonical_namespace]
+
 
 def is_playable_layout(layout: str) -> bool:
     lo = LAYOUTS.get(layout)
@@ -97,6 +108,7 @@ def is_playable_layout(layout: str) -> bool:
         return lo.playable
     report_missing_layout(layout)
     return False
+
 
 def report_missing_layout(layout: str | None) -> None:
     cache_key = 'missing_layout_logged'

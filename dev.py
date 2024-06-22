@@ -32,17 +32,21 @@ ON_WINDOWS = sys.platform == 'win32'
 def cli() -> None:
     pass
 
+
 @cli.command()
 def build() -> None:
     builddotpy.build()
+
 
 @cli.command()
 def buildpy() -> None:
     builddotpy.buildpy()
 
+
 @cli.command()
 def buildjs() -> None:
     builddotpy.buildjs()
+
 
 def do_lint() -> None:
     """
@@ -55,6 +59,7 @@ def do_lint() -> None:
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 
+
 @cli.command()
 def lint() -> None:
     do_lint()
@@ -65,6 +70,7 @@ def stylefix() -> None:
     autopep = local['autopep8']
     autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG
 
+
 def do_mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
@@ -73,22 +79,28 @@ def do_mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -
     print('>>>> Typechecking')
     args = []
     if strict:
-        args.extend([
-            '--disallow-any-generics',  # Generic types like List or Dict need [T]
-            # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
-            # '--disallow-any-unimported', # Catch import errors
-        ])
+        args.extend(
+            [
+                '--disallow-any-generics',  # Generic types like List or Dict need [T]
+                # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
+                # '--disallow-any-unimported', # Catch import errors
+            ]
+        )
     if typeshedding:
-        args.extend([
-            '--warn-return-any',
-            '--custom-typeshed', '../typeshed',
-        ])
+        args.extend(
+            [
+                '--warn-return-any',
+                '--custom-typeshed',
+                '../typeshed',
+            ]
+        )
     if os.environ.get('GITHUB_ACTOR') != 'dependabot[bot]':
         args.extend(['--warn-unused-ignores'])
     args.extend(argv or ['.'])  # Invoke on the entire project.
 
     print('mypy ' + ' '.join(args))
     from mypy import api
+
     result = api.run(args)
     if result[0]:
         print(result[0])  # stdout
@@ -98,16 +110,19 @@ def do_mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -
     if result[2]:
         sys.exit(result[2])
 
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -> None:
     do_mypy(argv, strict, typeshedding)
+
 
 @cli.command()
 def upload_coverage() -> None:
     try:
         print('>>>> Upload coverage')
         from shared import fetch_tools
+
         fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
         python3 = local['python3']
         python3['-m', 'coverage', 'xml', '-i']
@@ -118,6 +133,7 @@ def upload_coverage() -> None:
         print(e)
     except fetch_tools.FetchException as e:
         print(e)
+
 
 def find_files(needle: str = '', file_extension: str = '', exclude: list[str] | None = None) -> list[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
@@ -130,6 +146,7 @@ def find_files(needle: str = '', file_extension: str = '', exclude: list[str] | 
         paths = [p for p in paths if p not in exclude]
     return paths
 
+
 def runtests(argv: Iterable[str], m: str) -> None:
     args = []
     for arg in list(argv):
@@ -141,24 +158,29 @@ def runtests(argv: Iterable[str], m: str) -> None:
     argstr = ' '.join(args)
     print(f'>>>> Running tests with "{argstr}"')
     import subprocess
+
     code = subprocess.call(['pytest'] + args)
     if os.environ.get('GITHUB_ACTIONS') == 'true':
         upload_coverage()
     if code:
         sys.exit(code)
 
+
 def do_unit(argv: list[str]) -> None:
     runtests(argv, 'not functional and not perf')
+
 
 @cli.command()
 @click.argument('argv', nargs=-1)
 def unit(argv: list[str]) -> None:
     do_unit(argv)
 
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def test(argv: list[str]) -> None:
     runtests(argv, '')
+
 
 def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
@@ -168,10 +190,12 @@ def do_sort(fix: bool) -> None:
     else:
         pipenv['run', 'isort', '.', '--check', '--skip=node_modules'] & FG
 
+
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
 def sort(fix: bool = False) -> None:
     do_sort(fix)
+
 
 @cli.command()
 def reset_db() -> None:
@@ -180,9 +204,12 @@ def reset_db() -> None:
     """
     print('>>>> Reset db')
     import decksite.database
+
     decksite.database.db().nuke_database()
     import magic.database
+
     magic.database.db().nuke_database()
+
 
 @cli.command()
 def dev_db() -> None:
@@ -193,6 +220,7 @@ def dev_db() -> None:
     import requests
 
     import decksite.database
+
     r = requests.get('https://pennydreadfulmagic.com/static/dev-db.sql.gz')
     r.raise_for_status()
     with open('dev-db.sql.gz', 'wb') as f:
@@ -204,10 +232,12 @@ def dev_db() -> None:
             if stmt.strip() != '':
                 decksite.database.db().execute(stmt)
 
+
 def do_push() -> None:
     print('>>>> Pushing')
     branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
+
 
 def stash_if_any() -> str:
     print('>>>> Stashing local changes')
@@ -215,12 +245,14 @@ def stash_if_any() -> str:
     subprocess.check_call(['git', 'stash', 'save', '--include-untracked', label])
     return label
 
+
 def pop_if_any(label: str) -> None:
     print('>>>> Checking for stashed changes')
     output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
     if label in str(output):
         print('>>>> Popping stashed changes')
         subprocess.call(['git', 'stash', 'pop'])
+
 
 def do_safe_push(argv: list[str]) -> None:
     label = stash_if_any()
@@ -230,14 +262,17 @@ def do_safe_push(argv: list[str]) -> None:
     do_push()
     pop_if_any(label)
 
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def safe_push(argv: list[str]) -> None:
     do_safe_push(argv)
 
+
 @cli.command()
 def push() -> None:
     do_push()
+
 
 def do_pull_request(argv: list[str]) -> None:
     print('>>>> Pull request')
@@ -246,10 +281,12 @@ def do_pull_request(argv: list[str]) -> None:
     except (subprocess.CalledProcessError, FileNotFoundError):
         subprocess.check_call(['gh', 'pr', 'create'])
 
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def pull_request(argv: list[str]) -> None:
     do_pull_request(argv)
+
 
 def do_jslint(fix: bool) -> None:
     print('>>>> Linting javascript')
@@ -259,15 +296,18 @@ def do_jslint(fix: bool) -> None:
         cmd.append('--fix')
     subprocess.check_call(cmd + files, shell=ON_WINDOWS)
 
+
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
 def jslint(fix: bool = False) -> None:
     do_jslint(fix)
 
+
 @cli.command()
 def jsfix() -> None:
     print('>>>> Fixing js')
     do_jslint(fix=True)
+
 
 @cli.command()
 def coverage() -> None:
@@ -276,10 +316,12 @@ def coverage() -> None:
     subprocess.check_call(['coverage', 'xml'])
     subprocess.check_call(['coverage', 'report'])
 
+
 @cli.command()
 def watch() -> None:
     print('>>>> Watching')
     subprocess.check_call(['npm', 'run', 'watch'], shell=ON_WINDOWS)
+
 
 @cli.command()
 @click.argument('argv', nargs=-1)
@@ -297,6 +339,7 @@ def branch(args: list[str]) -> None:
     subprocess.check_call(['git', 'checkout', '-b', branch_name])
     pop_if_any(label)
 
+
 # If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
 # This cleans up for you. With the newer better behavior of --include-untracked this should now be unncessary.
 @cli.command()
@@ -312,19 +355,23 @@ def popclean() -> None:
             os.remove(f)
         subprocess.check_call(['git', 'stash', 'pop'])
 
+
 def do_check(argv: list[str]) -> None:
     do_mypy(argv)
     do_lint()
     do_jslint(fix=False)
+
 
 @cli.command()
 @click.argument('argv', nargs=-1)
 def check(argv: list[str]) -> None:
     do_check(argv)
 
+
 def do_full_check(argv: list[str]) -> None:
     do_sort(False)
     do_check(argv)
+
 
 # `full-check` differs from `check` in that it additionally checks import sorting.
 # This is not strictly necessary because a bot will follow up any PR with another PR to correct import sorting.
@@ -335,6 +382,7 @@ def do_full_check(argv: list[str]) -> None:
 def full_check(argv: list[str]) -> None:
     do_full_check(argv)
 
+
 @cli.command()
 @click.argument('argv', nargs=-1)
 def release(argv: list[str]) -> None:
@@ -342,9 +390,11 @@ def release(argv: list[str]) -> None:
     do_safe_push([])
     do_pull_request(argv)
 
+
 @cli.command()
 def swagger() -> None:
     import decksite
+
     decksite.APP.config['SERVER_NAME'] = configuration.server_name()
     with decksite.APP.app_context():
         with open('decksite_api.yml', 'w') as f:
@@ -363,6 +413,7 @@ def repip() -> None:
     from packaging import version
 
     from shared import fetch_tools
+
     reqs = pipfile.load()
     default = reqs.data['default']
     for i in default.items():

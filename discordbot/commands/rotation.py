@@ -11,5 +11,6 @@ class Rotation(Extension):
         """Date of the next Penny Dreadful rotation."""
         await ctx.send(seasons.message())
 
+
 def setup(bot: Client) -> None:
     Rotation(bot)

@@ -549,7 +549,7 @@ def load_competitive_stats(decks: list[Deck]) -> None:
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     else:
         where = 'TRUE'  # MySQL doesn't like to be asked to do IN queries for very long argument lists. Just load everything. (MariaDB doesn't care, interestingly.)
-    sql = """
+    sql = f"""
         SELECT
             d.id,
             ROUND(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF((SUM(CASE WHEN dm.games <> odm.games THEN 1 ELSE 0 END)), 0), 2) * 100 AS omw
@@ -571,7 +571,7 @@ def load_competitive_stats(decks: list[Deck]) -> None:
             {where}
         GROUP BY
             d.id
-    """.format(where=where)
+    """
     rs = db().select(sql)
     for row in rs:
         if decks_by_id.get(row['id']):

@@ -148,14 +148,14 @@ def deck_option_text(d: deck.Deck, viewer_id: int | None, show_details: bool) ->
     return d.person
 
 def active_decks(additional_where: str = 'TRUE') -> list[deck.Deck]:
-    where = """
+    where = f"""
         d.id IN (
             SELECT
                 id
             FROM
                 deck
             WHERE
-                competition_id = ({active_competition_id_query})
+                competition_id = ({active_competition_id_query()})
         ) AND (
                 SELECT
                     COUNT(id)
@@ -168,7 +168,7 @@ def active_decks(additional_where: str = 'TRUE') -> list[deck.Deck]:
             NOT d.retired
         AND
             ({additional_where})
-    """.format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    """
     decks, _ = deck.load_decks(where)
     return sorted(decks, key=lambda d: f'{d.person.ljust(100)}{d.name}')
 
@@ -232,7 +232,7 @@ def report(form: ReportForm) -> bool:
                 fetch_tools.post_discord_webhook(
                     configuration.get_str('league_webhook_id'),
                     configuration.get_str('league_webhook_token'),
-                    '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_deck.person, opponent=opponent_deck.person),
+                    f'{entry_deck.person} reported {form.entry_games}-{form.opponent_games} vs {opponent_deck.person}',
                 )
             else:
                 logger.warning('Not posting manual report to discord because not configured.')

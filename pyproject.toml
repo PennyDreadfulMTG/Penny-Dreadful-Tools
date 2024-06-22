@@ -1,15 +1,21 @@
 [tool.ruff]
+line-length = 9999
 exclude = [
     ".git",
     "__pycache__",
     "src",
 ]
-lint.ignore = [
+
+[tool.ruff.lint]
+extend-select = [
+  "UP",  # pyupgrade
+]
+ignore = [
     "E402",
     "E501",
     "E713",
 ]
-lint.select = [
+select = [
     "E",
     "F",
     "T2",

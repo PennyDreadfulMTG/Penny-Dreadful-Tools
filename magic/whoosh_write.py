@@ -9,7 +9,7 @@ from magic.models import Card
 from magic.whoosh_constants import WhooshConstants
 
 
-class WhooshWriter():
+class WhooshWriter:
     def __init__(self) -> None:
         self.schema = Schema(id=NUMERIC(unique=True, stored=True), canonical_name=STORED(), name=STORED(), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer, field_boost=100.0))
 

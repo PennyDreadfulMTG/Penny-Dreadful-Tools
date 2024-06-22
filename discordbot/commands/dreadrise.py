@@ -120,8 +120,7 @@ def format_deck(x: dict) -> dict:
     }
 
 def more_results_link(args: str, total: int) -> str:
-    return 'and {n} more.\n<{d}/card-search?dist=penny_dreadful&q={q}>'.format(
-        n=total - DEFAULT_CARDS_SHOWN, q=fetch_tools.escape(args), d=link_domain) if total > MAX_CARDS_SHOWN else ''
+    return f'and {total - DEFAULT_CARDS_SHOWN} more.\n<{link_domain}/card-search?dist=penny_dreadful&q={fetch_tools.escape(args)}>' if total > MAX_CARDS_SHOWN else ''
 
 def setup(bot: Client) -> None:
     Dreadrise(bot)

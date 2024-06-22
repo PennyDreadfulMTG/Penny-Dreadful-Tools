@@ -161,7 +161,7 @@ def preaggregate() -> None:
 
 def preaggregate_head_to_head() -> None:
     table = '_head_to_head_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             person_id INT NOT NULL,
             opponent_id INT NOT NULL,
@@ -195,12 +195,12 @@ def preaggregate_head_to_head() -> None:
             deck AS od ON odm.deck_id = od.id
         INNER JOIN
             person AS opp ON od.person_id = opp.id
-        {season_join}
+        {query.season_join()}
         GROUP BY
             p.id,
             opp.id,
             season.season_id
-    """.format(table=table, season_join=query.season_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(achievements.preaggregate_achievements)

@@ -17,7 +17,7 @@ def preaggregate() -> None:
 
 def preaggregate_card() -> None:
     table = '_card_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
@@ -48,22 +48,19 @@ def preaggregate_card() -> None:
         INNER JOIN
             -- Eiliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
             (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         GROUP BY
             card,
             season.season_id,
             ct.name
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_card_archetype() -> None:
     table = '_card_archetype_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
@@ -97,9 +94,9 @@ def preaggregate_card_archetype() -> None:
         INNER JOIN
             -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
             (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         WHERE
             d.archetype_id IS NOT NULL
         GROUP BY
@@ -107,15 +104,12 @@ def preaggregate_card_archetype() -> None:
             d.archetype_id,
             season.season_id,
             ct.name
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_card_person() -> None:
     table = '_card_person_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
@@ -149,9 +143,9 @@ def preaggregate_card_person() -> None:
         INNER JOIN
             -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
             (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         GROUP BY
             card,
             d.person_id,
@@ -159,10 +153,7 @@ def preaggregate_card_person() -> None:
             ct.name
         ORDER BY
             NULL -- Tell the database that we don't need the results back in the GROUP BY order, any order will do.
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_unique() -> None:
@@ -192,7 +183,7 @@ def preaggregate_unique() -> None:
 
 def preaggregate_trailblazer() -> None:
     table = '_trailblazer_cards'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             card VARCHAR(100) NOT NULL,
             deck_id INT NOT NULL,
@@ -219,13 +210,13 @@ def preaggregate_trailblazer() -> None:
                         deck AS d ON dc.deck_id = d.id
                     INNER JOIN
                         deck_match AS dm ON dm.deck_id = d.id
-                    {competition_join}
+                    {query.competition_join()}
                     WHERE
                         d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 1)
                     GROUP BY
                         card
                 )
-    """.format(table=table, competition_join=query.competition_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)

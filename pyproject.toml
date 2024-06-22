@@ -14,14 +14,16 @@ extend-select = [
   "UP",  # pyupgrade
 ]
 ignore = [
+    "E302",
     "E402",
     "E501",
-    "E713",
 ]
 select = [
     "E",
     "F",
+    "I",
     "T2",
+    "UP",
     "W",
 ]
 

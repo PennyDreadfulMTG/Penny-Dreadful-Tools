@@ -1,4 +1,4 @@
-from collections.abc import Iterator, Sized, Iterable
+from collections.abc import Iterable, Iterator, Sized
 from dataclasses import dataclass, field
 
 from flask import url_for

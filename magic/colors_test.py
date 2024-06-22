@@ -1,5 +1,6 @@
 from magic import colors, oracle
 
+
 def test_find_colors() -> None:
     delver_of_secrets = oracle.load_card('Delver of Secrets')
     dead_gone = oracle.load_card('Dead // Gone')

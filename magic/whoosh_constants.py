@@ -3,7 +3,7 @@ from whoosh.analysis import IDTokenizer, LowercaseFilter, StandardAnalyzer, Stem
 from shared import configuration
 
 
-class WhooshConstants():
+class WhooshConstants:
     index_dir = configuration.get_str('whoosh_index_dir')
     tokenized_analyzer = StandardAnalyzer(stoplist=None)
     normalized_analyzer = IDTokenizer() | SubstitutionFilter(r"[\s/,_'-]", '') | LowercaseFilter()

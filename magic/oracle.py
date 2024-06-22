@@ -160,13 +160,13 @@ def changes_between_formats(f1: int, f2: int) -> tuple[Sequence[Card], Sequence[
     return (query_diff_formats(f2, f1), query_diff_formats(f1, f2))
 
 def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
-    where = """
+    where = f"""
     c.id IN
         (SELECT card_id FROM card_legality
-            WHERE format_id = {format1})
+            WHERE format_id = {f1})
     AND c.id NOT IN
-        (SELECT card_id FROM card_legality WHERE format_id = {format2})
-    """.format(format1=f1, format2=f2)
+        (SELECT card_id FROM card_legality WHERE format_id = {f2})
+    """
 
     rs = db().select(multiverse.cached_base_query(where=where))
     out = [Card(r) for r in rs]

@@ -30,7 +30,7 @@ def preaggregate() -> None:
 
 # All of this takes about 8s so let's not do it on user time. Split into multiple queries because it's much faster.
 def preaggregate_season_stats() -> None:
-    sql = """
+    sql = f"""
         SELECT
             season.season_id,
             season_info.start_date,
@@ -44,8 +44,8 @@ def preaggregate_season_stats() -> None:
             deck AS d
         INNER JOIN
             deck_match AS dm ON d.id = dm.deck_id
-        {competition_join}
-        {season_join}
+        {query.competition_join()}
+        {query.season_join()}
         LEFT JOIN
         (
             SELECT
@@ -60,10 +60,10 @@ def preaggregate_season_stats() -> None:
         ) AS season_info ON season_info.id = season.season_id
         GROUP BY
             season.season_id;
-    """.format(competition_join=query.competition_join(), season_join=query.season_join())
+    """
     rs = db().select(sql)
     stats = {r['season_id']: r for r in rs}
-    sql = """
+    sql = f"""
         SELECT
             season.season_id,
             COUNT(DISTINCT dm.match_id) AS num_matches
@@ -71,14 +71,14 @@ def preaggregate_season_stats() -> None:
             deck_match AS dm
         INNER JOIN
             deck AS d ON dm.deck_id = d.id
-        {season_join}
+        {query.season_join()}
         GROUP BY
             season.season_id
-    """.format(season_join=query.season_join())
+    """
     rs = db().select(sql)
     for r in rs:
         stats.get(r['season_id'], {}).update(r)
-    sql = """
+    sql = f"""
         SELECT
             season.season_id,
             COUNT(DISTINCT dc.card) AS num_cards
@@ -86,10 +86,10 @@ def preaggregate_season_stats() -> None:
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
-        {season_join}
+        {query.season_join()}
         GROUP BY
             season.season_id
-    """.format(season_join=query.season_join())
+    """
     rs = db().select(sql)
     for r in rs:
         stats.get(r['season_id'], {}).update(r)
@@ -98,7 +98,7 @@ def preaggregate_season_stats() -> None:
     values = []
     for season in stats.values():
         values.append('(' + ', '.join(str(sqlescape(season[k])) for k in columns) + ')')
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             season_id INT NOT NULL,
             start_date INT NOT NULL,
@@ -113,7 +113,7 @@ def preaggregate_season_stats() -> None:
             PRIMARY KEY (season_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         );
-    """.format(table=table)
+    """
     preaggregation.preaggregate(table, sql)
     values_s = ', '.join(values)
     db().execute(f'INSERT INTO {table} VALUES {values_s}')

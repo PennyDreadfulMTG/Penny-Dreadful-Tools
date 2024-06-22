@@ -11,9 +11,8 @@ import discordbot.commands
 from discordbot import command
 from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, whoosh_write
-from shared import configuration, perf
+from shared import configuration, perf, repo
 from shared import redis_wrapper as redis
-from shared import repo
 from shared.settings import with_config_file
 
 

@@ -10,7 +10,7 @@ from shared.pd_exception import DatabaseConnectionRefusedException, DatabaseExce
 
 ValidSqlArgumentDescription = Any
 
-class Database():
+class Database:
     def __init__(self, db: str) -> None:
         warnings.filterwarnings('error', category=MySQLdb.Warning)
         self.name = db
@@ -178,7 +178,7 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
     raise InvalidArgumentException(f'Cannot sqlescape `{s}`')
 
 def sqllikeescape(s: str, fuzzy: bool = False) -> str:
-    if type(s) is not str:
+    if not isinstance(s, str):
         raise InvalidArgumentException('You can only use LIKE on strings')
     joiner = '%' if fuzzy else ''
     s = joiner.join(sqllikeescapesymbols(c) for c in list(s))

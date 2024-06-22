@@ -14,13 +14,13 @@ def run() -> None:
     run_elo = False
     for i in range(0, len(USERNAME_COLUMNS)):
         for j in range(i + 1, len(USERNAME_COLUMNS)):
-            sql = """
-                SELECT p1.id AS p1_id, p2.id AS p2_id, '{col1}' AS col1, '{col2}' AS col2
+            sql = f"""
+                SELECT p1.id AS p1_id, p2.id AS p2_id, '{USERNAME_COLUMNS[i]}' AS col1, '{USERNAME_COLUMNS[j]}' AS col2
                 FROM person AS p1
                 LEFT JOIN person AS p2
-                ON p1.{col1} = p2.{col2} AND p1.id <> p2.id
+                ON p1.{USERNAME_COLUMNS[i]} = p2.{USERNAME_COLUMNS[j]} AND p1.id <> p2.id
                 WHERE p1.id IS NOT NULL AND p2.id IS NOT NULL
-            """.format(col1=USERNAME_COLUMNS[i], col2=USERNAME_COLUMNS[j])
+            """
             pairs = [Container(row) for row in db().select(sql)]
             if len(pairs) > 0:
                 run_elo = True

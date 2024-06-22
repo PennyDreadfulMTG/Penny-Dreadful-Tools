@@ -45,12 +45,12 @@ def rotation_offset(code: str) -> datetime.timedelta:
 
 
 @attr.s(auto_attribs=True, slots=True)
-class DateType():
+class DateType:
     exact: str
     rough: str
 
 @attr.s(auto_attribs=True, slots=True)
-class SetInfo():
+class SetInfo:
     name: str
     code: str
     codename: str
@@ -74,7 +74,7 @@ class SetInfo():
                    )
 
 @attr.define()
-class RotationInfo():
+class RotationInfo:
     next: SetInfo
     previous: SetInfo
     calculating: bool = False

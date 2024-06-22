@@ -147,7 +147,7 @@ def preaggregate() -> None:
 
 def preaggregate_archetypes() -> None:
     table = '_arch_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             season_id INT NOT NULL,
@@ -182,9 +182,9 @@ def preaggregate_archetypes() -> None:
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         GROUP BY
             a.id,
             aca.ancestor, -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
@@ -192,16 +192,13 @@ def preaggregate_archetypes() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_archetype_person() -> None:
     # This preaggregation fails if I use the obvious name _archetype_person_stats but works with any other name. It's confusing.
     table = '_arch_person_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             person_id INT NOT NULL,
@@ -239,9 +236,9 @@ def preaggregate_archetype_person() -> None:
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         GROUP BY
             a.id,
             d.person_id,
@@ -249,15 +246,12 @@ def preaggregate_archetype_person() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_disjoint_archetypes() -> None:
     table = '_arch_disjoint_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             season_id INT NOT NULL,
@@ -288,24 +282,21 @@ def preaggregate_disjoint_archetypes() -> None:
             archetype AS a
         LEFT JOIN
             deck AS d ON a.id = d.archetype_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         GROUP BY
             a.id,
             season.season_id,
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_disjoint_archetype_person() -> None:
     table = '_arch_disjoint_person_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             person_id INT NOT NULL,
@@ -339,9 +330,9 @@ def preaggregate_disjoint_archetype_person() -> None:
             archetype AS a
         LEFT JOIN
             deck AS d ON a.id = d.archetype_id
-        {competition_join}
-        {season_join}
-        {nwdl_join}
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
         GROUP BY
             a.id,
             d.person_id,
@@ -349,15 +340,12 @@ def preaggregate_disjoint_archetype_person() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
-    """.format(table=table,
-               competition_join=query.competition_join(),
-               season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_matchups() -> None:
     table = '_matchup_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             opponent_archetype_id INT NOT NULL,
@@ -391,19 +379,19 @@ def preaggregate_matchups() -> None:
             deck AS od ON od.id = odm.deck_id
         INNER JOIN
             archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
-        {competition_join}
-        {season_join}
+        {query.competition_join()}
+        {query.season_join()}
         GROUP BY
             a.id,
             oa.id,
             season.season_id,
             ct.name
-    """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_matchups_person() -> None:
     table = '_matchup_ps_stats'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             opponent_archetype_id INT NOT NULL,
@@ -440,15 +428,15 @@ def preaggregate_matchups_person() -> None:
             deck AS od ON od.id = odm.deck_id
         INNER JOIN
             archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
-        {competition_join}
-        {season_join}
+        {query.competition_join()}
+        {query.season_join()}
         GROUP BY
             a.id,
             oa.id,
             d.person_id,
             season.season_id,
             ct.name
-    """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
+    """
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
@@ -462,7 +450,7 @@ def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_i
         where = f'({where}) AND (a.id = {archetype_id})'
     if tournament_only:
         where = f"({where}) AND (mps.deck_type = 'tournament')"
-    sql = """
+    sql = f"""
         SELECT
             archetype_id,
             a.name AS archetype_name,
@@ -479,14 +467,14 @@ def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_i
         INNER JOIN
             archetype AS oa ON opponent_archetype_id = oa.id
         WHERE
-            ({where}) AND ({season_query})
+            ({where}) AND ({query.season_query(season_id)})
         GROUP BY
             archetype_id,
             opponent_archetype_id
         ORDER BY
             wins DESC,
             oa.name
-    """.format(table=table, where=where, season_query=query.season_query(season_id))
+    """
     return [Container(m) for m in db().select(sql)]
 
 @retry_after_calling(preaggregate)

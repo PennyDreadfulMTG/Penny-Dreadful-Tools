@@ -9,7 +9,7 @@ from whoosh.query import And, FuzzyTerm, Or, Term
 from magic.whoosh_constants import WhooshConstants
 
 
-class SearchResult():
+class SearchResult:
     def __init__(
             self,
             exact: str | None,
@@ -80,7 +80,7 @@ class SearchResult():
     def __len__(self) -> int:
         return len(self.get_all_matches())
 
-class WhooshSearcher():
+class WhooshSearcher:
     DIST = 2
 
     def __init__(self) -> None:

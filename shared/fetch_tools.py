@@ -156,8 +156,7 @@ def post_discord_webhook(webhook_id: str,
                          ) -> bool:
     if not webhook_id or not webhook_token:
         return False
-    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(
-        id=webhook_id, token=webhook_token)
+    url = f'https://discordapp.com/api/webhooks/{webhook_id}/{webhook_token}'
     post(url, json_data={
         'content': message,
         'username': username,

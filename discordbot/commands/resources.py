@@ -51,10 +51,8 @@ def site_resources(args: str) -> dict[str, str]:
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith(f'/{area}/')]
     if len(matches) > 0:
-        detail = '{detail}/'.format(
-            detail=fetch_tools.escape(detail, True)) if detail else ''
-        url = fetcher.decksite_url('{season_prefix}/{area}/{detail}'.format(
-            season_prefix=season_prefix, area=fetch_tools.escape(area), detail=detail))
+        detail = f'{fetch_tools.escape(detail, True)}/' if detail else ''
+        url = fetcher.decksite_url(f'{season_prefix}/{fetch_tools.escape(area)}/{detail}')
         results[url] = args
     return results
 

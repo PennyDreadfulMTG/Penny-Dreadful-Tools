@@ -68,7 +68,7 @@ def preaggregate_played_person() -> None:
 
 @retry_after_calling(preaggregate_played_person)
 def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
-    sql = """
+    sql = f"""
         SELECT
             name,
             SUM(num_decks) AS num_decks,
@@ -82,12 +82,12 @@ def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
         WHERE
             person_id = %s
         AND
-            {season_query}
+            {query.season_query(season_id)}
         GROUP BY
             name
         HAVING
             name IS NOT NULL
-    """.format(season_query=query.season_query(season_id))
+    """
     cs = [Container(r) for r in decksite_db().select(sql, [person_id])]
     cards = oracle.cards_by_name()
     for c in cs:

@@ -57,7 +57,7 @@ def apply_rules_to_decks(decks: list[Deck]) -> None:
 def cache_all_rules() -> None:
     table = '_applied_rules'
     logger.warning(f'Creating {table}')
-    sql = """
+    sql = f"""
             CREATE TABLE IF NOT EXISTS _new{table} (
                 deck_id INT NOT NULL,
                 rule_id INT NOT NULL,
@@ -68,8 +68,8 @@ def cache_all_rules() -> None:
                 FOREIGN KEY (rule_id) REFERENCES rule (id) ON UPDATE CASCADE ON DELETE CASCADE,
                 FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
             ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
-            {apply_rules_query}
-        """.format(table=table, apply_rules_query=apply_rules_query(deck_query=classified_decks_query()))
+            {apply_rules_query(deck_query=classified_decks_query())}
+        """
     preaggregation.preaggregate(table, sql)
     logger.warning(f'Done creating {table}')
 

@@ -9,7 +9,7 @@ from magic import multiverse, oracle, seasons
 from shared import configuration, dtutil
 from shared.pd_exception import DatabaseException
 from shared_web.flask_app import PDFlask
-from shared_web.menu import Menu, Badge, MenuItem
+from shared_web.menu import Badge, Menu, MenuItem
 
 APP = PDFlask(__name__)
 APP.logger.setLevel(logging.WARN)

@@ -21,7 +21,7 @@ class Prizes(View):
             for c in week.get('competitions', []):
                 for d in c.decks:
                     prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(c, d)
-            subject = 'Penny Dreadful Prizes for Week Ending {date:%b} {date.day}'.format(date=week.end_date)
+            subject = f'Penny Dreadful Prizes for Week Ending {week.end_date:%b} {week.end_date.day}'
             body = '\n'.join([c.name for c in week.get('competitions', [])]) + '\n\n'
             body += '\n'.join([f'{k} {prizes[k]}' for k in sorted(prizes) if prizes[k] > 0])
             self.weeks.append(Container({'subject': subject, 'body': body, 'n': len(week.get('competitions', []))}))

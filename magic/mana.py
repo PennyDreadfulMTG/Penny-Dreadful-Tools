@@ -155,10 +155,10 @@ def variable(symbol: str) -> bool:
     return bool(re.match(f'^{X}$', symbol))
 
 def phyrexian(symbol: str) -> bool:
-    return bool(re.match('^({color}/)?{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol))
+    return bool(re.match(f'^({COLOR}/)?{COLOR}/{MODIFIER}$', symbol))
 
 def hybrid(symbol: str) -> bool:
-    return bool(re.match('^{color}/{color}(/{modifier})?$'.format(color=COLOR, modifier=MODIFIER), symbol))
+    return bool(re.match(f'^{COLOR}/{COLOR}(/{MODIFIER})?$', symbol))
 
 def twobrid(symbol: str) -> bool:
     return bool(re.match(f'^2/{COLOR}$', symbol))

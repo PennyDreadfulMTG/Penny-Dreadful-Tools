@@ -8,15 +8,13 @@ from werkzeug.exceptions import BadRequest
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card, clauses
+from decksite.data import card, clauses, deck, match, playability, query
 from decksite.data import competition as comp
-from decksite.data import deck, match
 from decksite.data import person as ps
-from decksite.data import playability, query
 from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.data.clauses import DEFAULT_LIVE_TABLE_PAGE_SIZE, DEFAULT_GRID_PAGE_SIZE
+from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
 from magic import image_fetcher, layout, oracle, rotation, seasons, tournaments

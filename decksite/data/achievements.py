@@ -80,11 +80,11 @@ def preaggregate_query() -> str:
     select_columns = ', '.join(cast(str, a.select_columns) for a in Achievement.all_achievements if a.in_db)
     with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
     join_clauses = ' '.join(a.join_sql for a in Achievement.all_achievements if a.join_sql is not None)
-    return """
+    return f"""
         CREATE TABLE IF NOT EXISTS _new_achievements (
             person_id INT NOT NULL,
             season_id INT NOT NULL,
-            {cc},
+            {create_columns},
             PRIMARY KEY (season_id, person_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -94,22 +94,22 @@ def preaggregate_query() -> str:
         SELECT
             p.id AS person_id,
             season.season_id,
-            {sc}
+            {select_columns}
         FROM
             person AS p
         LEFT JOIN
             deck AS d ON d.person_id = p.id
         LEFT JOIN
             deck_cache AS dc ON dc.deck_id = d.id
-        {season_join}
-        {competition_join}
+        {query.season_join()}
+        {query.competition_join()}
         {join_clauses}
         GROUP BY
             p.id,
             season.season_id
         HAVING
             season.season_id IS NOT NULL
-    """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, join_clauses=join_clauses, season_join=query.season_join(), competition_join=query.competition_join())
+    """
 
 # Abstract achievement classes
 
@@ -197,16 +197,16 @@ class Achievement:
     def detail(self, p: Person, season_id: int | None = None) -> list[Deck] | None:
         if self.detail_sql is None:
             return None
-        sql = """
+        sql = f"""
                 SELECT
-                    GROUP_CONCAT({k}_detail)
+                    GROUP_CONCAT({self.key}_detail)
                 FROM
                     _achievements
                 WHERE
-                    person_id={id} AND {season_query}
+                    person_id={p.id} AND {query.season_query(season_id)}
                 GROUP BY
                     person_id
-            """.format(k=self.key, id=p.id, season_query=query.season_query(season_id))
+            """
         ids = db().value(sql)
         result = Container()
         if ids:
@@ -544,7 +544,7 @@ class AncientGrudge(CountedAchievement):
 
     @property
     def with_sql(self) -> str:
-        return """knockouts AS
+        return f"""knockouts AS
             (
                 SELECT
                     dm1.deck_id AS winner_deck_id,
@@ -579,7 +579,7 @@ class AncientGrudge(CountedAchievement):
                     person AS p2
                 ON
                     d2.person_id = p2.id
-                {season_join}
+                {query.season_join()}
                 WHERE
                     dm1.games > dm2.games AND elimination > 0
             ),
@@ -595,7 +595,7 @@ class AncientGrudge(CountedAchievement):
                     knockouts AS k2
                 ON
                     k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
-            )""".format(season_join=query.season_join())
+            )"""
 
 class BurningVengeance(CountedAchievement):
     key = 'burning_vengeances'
@@ -714,7 +714,7 @@ class VarietyPlayer(BooleanAchievement):
                         NULL
                     END
                 """
-    with_sql = """
+    with_sql = f"""
                     first_arch_league_runs AS
                     (
                         SELECT
@@ -726,15 +726,15 @@ class VarietyPlayer(BooleanAchievement):
                             deck AS d
                         LEFT JOIN
                             deck_cache AS dc ON dc.deck_id = d.id
-                        {season_join}
-                        {competition_join}
+                        {query.season_join()}
+                        {query.competition_join()}
                         WHERE
                             ct.name = 'League' AND dc.wins + dc.losses >= 5
                         GROUP BY
                             person_id,
                             season_id,
                             archetype_id
-                    )""".format(season_join=query.season_join(), competition_join=query.competition_join())
+                    )"""
     join_sql = 'LEFT JOIN first_arch_league_runs AS falr ON d.id = falr.deck_id'
     flags = ['hide_person', 'hide_source', 'hide_top8', 'show_archetype']
 
@@ -750,7 +750,7 @@ class Specialist(BooleanAchievement):
     description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three or more times in a single season.'
     sql = 'CASE WHEN EXISTS (SELECT * FROM arch_top_n_count1 AS atnc WHERE p.id = atnc.person_id AND season.season_id = atnc.season_id AND n >= 3) THEN TRUE ELSE FALSE END'
     detail_sql = "GROUP_CONCAT(CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' AND d.archetype_id IN (SELECT archetype_id FROM arch_top_n_count2 AS atnc WHERE p.id = atnc.person_id AND season.season_id = atnc.season_id AND n >= 3) THEN d.id ELSE NULL END)"
-    with_sql = """
+    with_sql = f"""
                 top_ns AS
                     (
                         SELECT
@@ -764,8 +764,8 @@ class Specialist(BooleanAchievement):
                             deck AS d
                         ON
                             d.person_id = p.id
-                        {season_join}
-                        {competition_join}
+                        {query.season_join()}
+                        {query.competition_join()}
                         WHERE
                             d.finish <= c.top_n AND ct.name = 'Gatherling'
                     ),
@@ -777,7 +777,7 @@ class Specialist(BooleanAchievement):
                     (
                         SELECT person_id, season_id, archetype_id, COUNT(DISTINCT deck_id) AS n FROM top_ns GROUP BY person_id, season_id, archetype_id
                     )
-                """.format(season_join=query.season_join(), competition_join=query.competition_join())
+                """
     flags = ['hide_person', 'hide_source', 'show_archetype']
 
     @staticmethod

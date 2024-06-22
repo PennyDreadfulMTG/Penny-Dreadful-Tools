@@ -1,22 +1,33 @@
 [tool.ruff]
+line-length = 9999
 exclude = [
     ".git",
     "__pycache__",
     "src",
 ]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+extend-select = [
+  "UP",  # pyupgrade
+]
 ignore = [
+    "E302",
     "E402",
     "E501",
-    "E713",
 ]
 select = [
     "E",
     "F",
+    "I",
     "T2",
+    "UP",
     "W",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "rotation_script/*" = ["T201"]
 "shared/*" = ["T201"]
 "maintenance/*" = ["T201"]

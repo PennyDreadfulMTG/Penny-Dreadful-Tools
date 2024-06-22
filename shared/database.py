@@ -178,7 +178,7 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
     raise InvalidArgumentException(f'Cannot sqlescape `{s}`')
 
 def sqllikeescape(s: str, fuzzy: bool = False) -> str:
-    if type(s) is not str:
+    if not isinstance(s, str):
         raise InvalidArgumentException('You can only use LIKE on strings')
     joiner = '%' if fuzzy else ''
     s = joiner.join(sqllikeescapesymbols(c) for c in list(s))

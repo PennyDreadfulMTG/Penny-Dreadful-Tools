@@ -6,9 +6,8 @@ from flask import url_for
 
 from magic import fetcher, seasons
 from magic.models import Deck
-from shared import dtutil, logger
+from shared import dtutil, logger, repo
 from shared import redis_wrapper as redis
-from shared import repo
 from shared.container import Container
 
 

@@ -6,9 +6,8 @@ from collections import Counter
 
 from magic import fetcher, layout, oracle, seasons
 from magic.models import Card
-from shared import configuration, dtutil
+from shared import configuration, dtutil, text
 from shared import redis_wrapper as redis
-from shared import text
 from shared.fetch_tools import FetchException
 
 TOTAL_RUNS = 168

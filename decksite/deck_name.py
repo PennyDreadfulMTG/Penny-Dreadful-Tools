@@ -222,7 +222,7 @@ def add_colors_if_no_deck_name(name: str, colors: set[str]) -> str:
     return name_from_colors(colors)
 
 def add_archetype_if_just_colors(name: str, archetype: str | None) -> str:
-    if not name.replace('Mono ', '') in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
+    if name.replace('Mono ', '') not in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
         return name
     archetype_contains_color_name = False
     for k in COLOR_COMBINATIONS:

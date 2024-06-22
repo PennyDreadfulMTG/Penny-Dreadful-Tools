@@ -6,6 +6,9 @@ exclude = [
     "src",
 ]
 
+[tool.ruff.format]
+quote-style = "single"
+
 [tool.ruff.lint]
 extend-select = [
   "UP",  # pyupgrade

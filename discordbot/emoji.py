@@ -12,7 +12,7 @@ CACHE: dict[str, PartialEmoji] = {}
 CACHE_TIME: float = 0.0
 
 async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
-    global CACHE_TIME
+    global CACHE, CACHE_TIME
 
     if res := CACHE.get(emoji):
         return res
@@ -27,11 +27,8 @@ async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
         CACHE_TIME = time.time()
         for guild in client.guilds:
             emojis = await guild.fetch_all_custom_emojis()
-            res = next((x for x in emojis if x.name == emoji), None)
-            if res is not None:
-                CACHE[emoji] = res
-                return res
-        return None
+            CACHE = {x.name: x for x in emojis if x.name}
+        return CACHE.get(emoji)
     except AttributeError:
         return None
 

@@ -1,4 +1,5 @@
 import re
+import time
 
 from interactions.client import Client
 from interactions.models import PartialEmoji
@@ -8,15 +9,22 @@ from magic.models import Card
 from shared import redis_wrapper as redis
 
 CACHE: dict[str, PartialEmoji] = {}
+CACHE_TIME: float = 0.0
 
 async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
+    global CACHE_TIME
+
     if res := CACHE.get(emoji):
         return res
 
     if not client.guilds:
         return None
 
+    if CACHE_TIME > time.time() - 60 * 60:
+        return None
+
     try:
+        CACHE_TIME = time.time()
         for guild in client.guilds:
             emojis = await guild.fetch_all_custom_emojis()
             res = next((x for x in emojis if x.name == emoji), None)

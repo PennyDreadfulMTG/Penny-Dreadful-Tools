@@ -20,6 +20,7 @@ class Welcome(Extension):
         card = oracle.cards_by_name()['Back for More']
         await greeting(ctx, card)
 
+
 async def greeting(ctx: MtgContext, card: Card, text: str = '') -> None:
     file_path = image_fetcher.determine_filepath([card])
     success = await image_fetcher.download_scryfall_card_image(card, file_path, version='png')
@@ -27,6 +28,7 @@ async def greeting(ctx: MtgContext, card: Card, text: str = '') -> None:
         await ctx.send_image_with_retry(file_path, text)
     else:
         await ctx.send(text)
+
 
 def setup(bot: Client) -> None:
     Welcome(bot)

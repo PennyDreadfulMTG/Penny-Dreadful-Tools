@@ -13,6 +13,7 @@ def ad_hoc() -> None:
             print(path)
             validate_pofile(path)
 
+
 def validate_pofile(path: str) -> None:
     with open(path, mode='rb+') as f:
         catalog = pofile.read_po(f)
@@ -23,6 +24,7 @@ def validate_pofile(path: str) -> None:
         f.seek(0)
         f.truncate()
         pofile.write_po(f, catalog)
+
 
 def validate_string(message: Message, catalog: Catalog) -> None:
     if not isinstance(message.id, (str, tuple)):
@@ -57,6 +59,7 @@ def has_missing_var(english: str | tuple, string: str) -> str | None:
     if len(re.findall('%\\(num\\)d', string)) != nums:
         return 'Missing %(num)d'
     return None
+
 
 def error(message: Message, catalog: Catalog, warning: str) -> None:
     print(f'Warning: {catalog.locale} {message.id} failed tests:\n... {message.string}\n... {warning}')

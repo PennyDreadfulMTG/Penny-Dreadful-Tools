@@ -15,15 +15,18 @@ def show_format(format_name: str | None = None) -> str:
     view = Matches(format_name=format_name)
     return view.page()
 
+
 @APP.route('/people/<person>/')
 def show_person(person: str | None = None) -> str:
     view = Matches(person=person)
     return view.page()
 
+
 @APP.route('/matches/')
 def matches() -> str:
     view = Matches()
     return view.page()
+
 
 class Matches(View):
     def page_title(self) -> str:

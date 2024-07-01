@@ -20,4 +20,5 @@ def with_test_db(test: Callable) -> Callable:
         test(*args, **kwargs)
         db().execute(f'DROP DATABASE IF EXISTS {db_name}')
         configuration.CONFIG['decksite_database'] = old_db_name
+
     return wrapper

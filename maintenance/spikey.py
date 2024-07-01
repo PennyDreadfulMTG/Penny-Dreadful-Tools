@@ -5,6 +5,7 @@ from shared.pd_exception import TooFewItemsException
 DAILY = True
 REQUIRES_APP_CONTEXT = False
 
+
 # Update the list of cards that should be returned when is:spikey is searched for.
 def run() -> None:
     n, names, _cards = fetcher.search_scryfall('is:spikey', exhaustive=True)

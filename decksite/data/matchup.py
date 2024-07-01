@@ -26,6 +26,7 @@ class MatchupResults:
     def win_percent(self) -> str:
         return str(round((self.wins / (self.wins + self.losses)) * 100, 1)) if (self.wins + self.losses) > 0 else ''
 
+
 def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None = None) -> MatchupResults:
     where = 'TRUE'
     prefix = None

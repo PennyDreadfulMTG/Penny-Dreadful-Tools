@@ -6,6 +6,7 @@ from shared import redis_wrapper as redis
 
 DAILY = True
 
+
 def run() -> None:
     all_decks, _ = deck.load_decks()
     for d in all_decks:

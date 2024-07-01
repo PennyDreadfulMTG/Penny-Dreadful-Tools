@@ -5,6 +5,7 @@ TAPPEDOUT = {
     'user': 'tappedout_username',
 }
 
+
 def translate(mappings: dict[str, str], data: RawDeckDescription) -> RawDeckDescription:
     result = data.copy()
     for k, v in data.items():

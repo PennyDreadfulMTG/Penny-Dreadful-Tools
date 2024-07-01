@@ -311,9 +311,11 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('🏴‍☠️', '🏴‍☠️', ['U', 'R'], 'Pirates', 33),
 ]
 
+
 def test_replace_space_alternatives() -> None:
     assert deck_name.replace_space_alternatives('3.1.2') == '3.1.2'
     assert deck_name.replace_space_alternatives('A.very_silly_name 2.6') == 'A very silly name 2.6'
+
 
 def test_remove_season() -> None:
     assert deck_name.remove_season('GreenStompy 31', 31) == 'GreenStompy'
@@ -325,6 +327,7 @@ def test_remove_season() -> None:
     assert deck_name.remove_season('31 - Storm', 31) == '- Storm'
     assert deck_name.remove_season('31 - Storm', 32) == '31 - Storm'
 
+
 def test_remove_pd() -> None:
     assert deck_name.remove_pd('[PD2] Big Blue', 2) == 'Big Blue'
     assert deck_name.remove_pd('Red Deck Wins (PD500)', 1) == 'Red Deck Wins'
@@ -334,10 +337,12 @@ def test_remove_pd() -> None:
     assert deck_name.remove_pd('(Penny) Boros Soliders', 1) == 'Boros Soliders'
     assert deck_name.remove_pd('Metalworks pd bond and post', 1) == 'Metalworks  bond and post'  # The double space is dealt with elsewhere
 
+
 def test_normalize_version() -> None:
     assert deck_name.normalize_version('Mono Black Aristocrats (1)') == 'Mono Black Aristocrats v1'
     assert deck_name.normalize_version('Mono Black Aristocrats (1) (2)') == 'Mono Black Aristocrats v1.2'
     assert deck_name.normalize_version('Mono Black Aristocrats 20.01') == 'Mono Black Aristocrats v20.01'
+
 
 def test_remove_semver_trailing_zeroes() -> None:
     assert deck_name.remove_semver_trailing_zeroes('0.1.1') == '0.1.1'
@@ -345,36 +350,36 @@ def test_remove_semver_trailing_zeroes() -> None:
     assert deck_name.remove_semver_trailing_zeroes('1.0.2.0.1.1.0') == '1.0.2.0.1.1'
     assert deck_name.remove_semver_trailing_zeroes('1.0.2.0.0.0.0') == '1.0.2'
 
+
 def test_lowercase_version_marker() -> None:
     assert deck_name.lowercase_version_marker('Red Deck Wins V1') == 'Red Deck Wins v1'
     assert deck_name.lowercase_version_marker('Red Deck Wins v1') == 'Red Deck Wins v1'
     assert deck_name.lowercase_version_marker('Red Deck Wins Victory') == 'Red Deck Wins Victory'
+
 
 def test_parse_roman_sloppily() -> None:
     assert deck_name.parse_roman_sloppily('XVIIX') == 13
     assert deck_name.parse_roman_sloppily('vii') == 7
     assert deck_name.parse_roman_sloppily('xivii') == 16
 
+
 def test_invalid_color() -> None:
-    d = Container({'original_name': 'PD',
-                   'archetype_name': 'Control',
-                   'colors': ['U', 'X'],
-                   'season_id': 1})
+    d = Container({'original_name': 'PD', 'archetype_name': 'Control', 'colors': ['U', 'X'], 'season_id': 1})
     with pytest.raises(InvalidDataException):
         deck_name.normalize(d)
+
 
 def test_canonicalize_colors() -> None:
     assert deck_name.canonicalize_colors([]) == set()
     assert deck_name.canonicalize_colors(['White', 'Black', 'Orzhov', 'Abzan']) == {'B', 'G', 'W'}
     assert deck_name.canonicalize_colors(['White', 'White', 'White']) == {'W'}
 
+
 def test_normalize_colors() -> None:
     assert deck_name.normalize_colors('Braids B', ['B']) == 'Braids Black'
 
+
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name,season_id', TESTDATA)
 def test_normalize(original_name: str, expected: str, colors: list[str], archetype_name: str, season_id: int) -> None:
-    d = Container({'original_name': original_name,
-                   'archetype_name': archetype_name,
-                   'colors': colors or [],
-                   'season_id': season_id})
+    d = Container({'original_name': original_name, 'archetype_name': archetype_name, 'colors': colors or [], 'season_id': season_id})
     assert deck_name.normalize(d) == expected

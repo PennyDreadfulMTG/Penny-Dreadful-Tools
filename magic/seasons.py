@@ -12,15 +12,41 @@ ALL = 'ALL'
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
 SEASONS = [
-    'EMN', 'KLD',                       # 2016
-    'AER', 'AKH', 'HOU', 'XLN',         # 2017
-    'RIX', 'DOM', 'M19', 'GRN',         # 2018
-    'RNA', 'WAR', 'M20', 'ELD',         # 2019
-    'THB', 'IKO', 'M21', 'ZNR',         # 2020
-    'KHM', 'STX', 'AFR', 'MID', 'VOW',  # 2121
-    'NEO', 'SNC', 'DMU', 'BRO',         # 2022
-    'ONE', 'MOM', 'WOE', 'LCI',         # 2023
-    'MKM', 'OTJ', 'BLB', 'DSK',         # 2024
+    'EMN',
+    'KLD',  # 2016
+    'AER',
+    'AKH',
+    'HOU',
+    'XLN',  # 2017
+    'RIX',
+    'DOM',
+    'M19',
+    'GRN',  # 2018
+    'RNA',
+    'WAR',
+    'M20',
+    'ELD',  # 2019
+    'THB',
+    'IKO',
+    'M21',
+    'ZNR',  # 2020
+    'KHM',
+    'STX',
+    'AFR',
+    'MID',
+    'VOW',  # 2121
+    'NEO',
+    'SNC',
+    'DMU',
+    'BRO',  # 2022
+    'ONE',
+    'MOM',
+    'WOE',
+    'LCI',  # 2023
+    'MKM',
+    'OTJ',
+    'BLB',
+    'DSK',  # 2024
 ]
 
 NOT_SEASONS = [
@@ -38,6 +64,7 @@ OVERRIDES = {
     },
 }
 
+
 def rotation_offset(code: str) -> datetime.timedelta:
     if code in ['ONE', 'MOM']:
         return datetime.timedelta(days=14)
@@ -48,6 +75,7 @@ def rotation_offset(code: str) -> datetime.timedelta:
 class DateType:
     exact: str
     rough: str
+
 
 @attr.s(auto_attribs=True, slots=True)
 class SetInfo:
@@ -64,14 +92,16 @@ class SetInfo:
         json['mtgoCode'] = json['code']
         recursive_update.rupdate(json, OVERRIDES.get(json['name'], {}))  # type: ignore
 
-        return cls(name=json['name'],
-                   code=json['code'],
-                   codename=json['codename'],
-                   mtgo_code=json['mtgoCode'],
-                   enter_date=DateType(**json['enterDate']),
-                   exit_date=DateType(**json['exitDate']),
-                   enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0),
-                   )
+        return cls(
+            name=json['name'],
+            code=json['code'],
+            codename=json['codename'],
+            mtgo_code=json['mtgoCode'],
+            enter_date=DateType(**json['enterDate']),
+            exit_date=DateType(**json['exitDate']),
+            enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0),
+        )
+
 
 @attr.define()
 class RotationInfo:
@@ -91,6 +121,7 @@ class RotationInfo:
         self.next = calc_next()
         self.calculating = False
 
+
 def calc_next() -> SetInfo:
     try:
         return min([s for s in sets() if (s.enter_date_dt + rotation_offset(s.code)) > dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
@@ -102,6 +133,7 @@ def calc_next() -> SetInfo:
         fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
 
         return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
+
 
 def calc_prev() -> SetInfo:
     return max([s for s in sets() if (s.enter_date_dt + rotation_offset(s.code)) < dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
@@ -131,17 +163,22 @@ def sets() -> list[SetInfo]:
 def rotation_info() -> RotationInfo:
     return RotationInfo(calc_next(), calc_prev())
 
+
 def current_season_code() -> str:
     return last_rotation_ex().code
+
 
 def current_season_num() -> int:
     return season_num(current_season_code())
 
+
 def current_season_name() -> str:
     return f'Penny Dreadful {current_season_code()}'
 
+
 def next_season_num() -> int:
     return current_season_num() + 1
+
 
 def season_num(code_to_look_for: str) -> int:
     try:
@@ -149,21 +186,26 @@ def season_num(code_to_look_for: str) -> int:
     except KeyError as c:
         raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS))) from c
 
+
 def last_rotation() -> datetime.datetime:
     s = last_rotation_ex()
     return s.enter_date_dt + rotation_offset(s.code)
+
 
 def next_rotation() -> datetime.datetime:
     s = next_rotation_ex()
     return s.enter_date_dt + rotation_offset(s.code)
 
+
 def last_rotation_ex() -> SetInfo:
     rotation_info().validate()
     return rotation_info().previous
 
+
 def next_rotation_ex() -> SetInfo:
     rotation_info().validate()
     return rotation_info().next
+
 
 def message() -> str:
     upcoming = next_rotation_ex()
@@ -173,6 +215,7 @@ def message() -> str:
         s = dtutil.display_time(int(diff.total_seconds()), 1)
         return f'The next rotation is roughly {s} away'
     return f'The next rotation is in {s}'
+
 
 def season_id(v: int | str, all_return_value: int | str | None = 'all') -> int | str | None:
     """From any value return the season id which is the integer representing the season, or all_return_value (default 'all') for all time."""
@@ -195,6 +238,7 @@ def season_id(v: int | str, all_return_value: int | str | None = 'all') -> int |
         pass
     raise DoesNotExistException(f"I don't know a season called {v}")
 
+
 def season_code(v: int | str) -> str:
     """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
     sid = season_id(v)
@@ -203,12 +247,14 @@ def season_code(v: int | str) -> str:
     assert sid is not None  # For typechecking which can't understand the above if statement.
     return SEASONS[int(sid) - 1]
 
+
 def season_name(v: int | str) -> str:
     """From any value return the person-friendly name of the season, or 'All Time' for all time."""
     sid = season_id(v)
     if sid in ('all', 0):
         return 'All Time'
     return f'Season {sid}'
+
 
 def get_set_info(code: str) -> SetInfo:
     for setinfo in sets():

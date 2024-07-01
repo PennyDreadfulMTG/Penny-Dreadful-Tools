@@ -21,6 +21,7 @@ FOOTER = """
 To add this bot to your servers use this <a href='https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0'>link</a>
 """
 
+
 def generate_readme() -> int:
     readme = ''
     readme += HEADER
@@ -44,6 +45,7 @@ def generate_readme() -> int:
         print('Readme updated.')
         return 1
     return 0
+
 
 def print_commands() -> str:
     bot = Bot()

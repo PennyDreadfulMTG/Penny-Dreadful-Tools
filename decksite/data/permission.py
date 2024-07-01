@@ -8,6 +8,7 @@ class Permission(Enum):
     DEMIMOD = 'demimod'
     NONE = None
 
+
 def permission_changes(discord_id: int) -> set[Permission]:
     if not discord_id:
         return set()

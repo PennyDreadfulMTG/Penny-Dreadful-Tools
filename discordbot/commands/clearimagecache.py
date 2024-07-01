@@ -22,5 +22,6 @@ class ClearImageCache(Extension):
             os.remove(file)
         await ctx.send(f'{len(files)} cleared.')
 
+
 def setup(bot: Client) -> None:
     ClearImageCache(bot)

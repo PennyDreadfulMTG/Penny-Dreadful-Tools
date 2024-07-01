@@ -12,11 +12,13 @@ from shared.container import Container
 
 pytest.skip('These need to be rewritten', allow_module_level=True)
 
+
 @pytest.fixture(scope='module')
 def discordbot() -> Bot:
     bot = Bot()
     bot.cache.guild_cache[207281932214599682] = Guild(client=bot, id=207281932214599682, name='PDM', owner_id=154363842451734528, preferred_locale='en-US')
     return bot
+
 
 class ContextForTests(BaseContext, MtgMixin):
     sent = False
@@ -33,11 +35,10 @@ class ContextForTests(BaseContext, MtgMixin):
         self.sent_embed = 'embed' in kwargs.keys()
         self.content = content
 
-    async def trigger_typing(self) -> None:
-        ...
+    async def trigger_typing(self) -> None: ...
 
-    async def defer(self) -> None:
-        ...
+    async def defer(self) -> None: ...
+
 
 def get_params() -> list[ParameterSet | tuple[str, dict[str, Any], str | None, str | None]]:
     return [
@@ -99,6 +100,7 @@ async def test_command(discordbot: Client, cmd: str, kwargs: dict[str, Any], exp
     assert ctx.sent
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content
+
 
 def find_command(discordbot: Client, cmd: str, function_name: str | None = None) -> BaseCommand | None:
     for command in discordbot.application_commands:

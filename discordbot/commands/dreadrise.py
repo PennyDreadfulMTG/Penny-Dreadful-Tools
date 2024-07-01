@@ -12,10 +12,10 @@ link_domain = configuration.get_str('dreadrise_public_url')
 MAX_DECKS_SHOWN = 5
 MAX_DECKS_SHOWN_WITH_CONTINUATION = 3
 
+
 class Dreadrise(Extension):
     @slash_command('dreadrise', description='Query Dreadrise')
-    async def drc(self, ctx: MtgContext) -> None:
-        ...
+    async def drc(self, ctx: MtgContext) -> None: ...
 
     @drc.subcommand('search', sub_cmd_description='Card Search using Dreadrise')
     @slash_option('query', 'search query', OptionType.STRING, required=True)
@@ -60,16 +60,20 @@ class Dreadrise(Extension):
         else:
             subsample = data['sample'][:MAX_DECKS_SHOWN_WITH_CONTINUATION]
             arr = [format_deck(x) for x in subsample]
-            arr.append({'name': 'Other results', 'value': '[{n} more results found]({domain}{path}?q={query}{pd})'.format(
-                domain=link_domain,
-                n=count - MAX_DECKS_SHOWN_WITH_CONTINUATION,
-                path='/deck-search',
-                pd='&dist=penny_dreadful',
-                query=parse.quote_plus(query),
-            )})
+            arr.append(
+                {
+                    'name': 'Other results',
+                    'value': '[{n} more results found]({domain}{path}?q={query}{pd})'.format(
+                        domain=link_domain,
+                        n=count - MAX_DECKS_SHOWN_WITH_CONTINUATION,
+                        path='/deck-search',
+                        pd='&dist=penny_dreadful',
+                        query=parse.quote_plus(query),
+                    ),
+                }
+            )
 
-        embed.set_thumbnail(url='https://api.scryfall.com/cards/named?exact={card}&format=image&version=art_crop'.format(
-            card=data['sample'][0]['main_card'].replace(' ', '%20')))
+        embed.set_thumbnail(url='https://api.scryfall.com/cards/named?exact={card}&format=image&version=art_crop'.format(card=data['sample'][0]['main_card'].replace(' ', '%20')))
         for x in arr:
             embed.add_field(name=x['name'], value=x['value'], inline=False)
         await ctx.send(embeds=[embed])
@@ -114,13 +118,13 @@ def format_deck(x: dict) -> dict:
 
     return {
         'name': name_fstring.format(**name_fdict),
-        'value': '[{arch} deck by {author} ({format})]({domain}/decks/{id})'.format(
-            arch=x['tags'][0]['name'], author=x['author']['nickname'],
-            format=x['format'], id=x['deck']['deck_id'], domain=link_domain),
+        'value': '[{arch} deck by {author} ({format})]({domain}/decks/{id})'.format(arch=x['tags'][0]['name'], author=x['author']['nickname'], format=x['format'], id=x['deck']['deck_id'], domain=link_domain),
     }
+
 
 def more_results_link(args: str, total: int) -> str:
     return f'and {total - DEFAULT_CARDS_SHOWN} more.\n<{link_domain}/card-search?dist=penny_dreadful&q={fetch_tools.escape(args)}>' if total > MAX_CARDS_SHOWN else ''
+
 
 def setup(bot: Client) -> None:
     Dreadrise(bot)

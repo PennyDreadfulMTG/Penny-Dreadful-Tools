@@ -9,5 +9,6 @@ class Invite(Extension):
         """Invite me to your server."""
         await ctx.send('Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>')
 
+
 def setup(bot: Client) -> None:
     Invite(bot)

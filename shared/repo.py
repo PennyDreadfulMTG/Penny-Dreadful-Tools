@@ -21,11 +21,8 @@ if configuration.mysql_passwd.value:
 if configuration.oauth2_client_secret.value:
     REDACTED_STRINGS.add(configuration.oauth2_client_secret.value)
 
-def create_issue(content: str,
-                 author: str,
-                 location: str = 'Discord',
-                 repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                 exception: BaseException | None = None) -> Issue.Issue | None:
+
+def create_issue(content: str, author: str, location: str = 'Discord', repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: BaseException | None = None) -> Issue.Issue | None:
     labels: list[str] = []
     issue_hash = None
     if content is None or content == '':
@@ -42,9 +39,11 @@ def create_issue(content: str,
         body += exception.__class__.__name__ + '\n'
         body += str(exception) + '\n'
         body += '</summary>\n\n'
-        fmt = Format(custom_var_printers=[
-            ('headers', '...redacted...'),
-        ])
+        fmt = Format(
+            custom_var_printers=[
+                ('headers', '...redacted...'),
+            ]
+        )
         pretty = traceback_with_variables.format_exc(exception, fmt=fmt)
         body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
@@ -59,7 +58,8 @@ def create_issue(content: str,
 
     if request:
         body += '<details><summary><strong>Request Data</strong></summary>\n\n```\n'
-        body += textwrap.dedent("""
+        body += textwrap.dedent(
+            """
             Request Method: {method}
             Path: {full_path}
             Cookies: {cookies}
@@ -68,7 +68,8 @@ def create_issue(content: str,
             Person: {id}
             Referrer: {referrer}
             Request Data: {safe_data}
-        """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
+        """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form)))
+        )
         body += '\n'.join([f'{k}: {v}' for k, v in request.headers])
         body += '\n```\n\n</details>\n\n'
         ua = request.headers.get('User-Agent', '')
@@ -110,6 +111,7 @@ def create_issue(content: str,
         print(f'Problem creating issue: {e}', file=sys.stderr)
         return None
 
+
 def safe_data(data: dict[str, str]) -> dict[str, str]:
     safe = {}
     for k, v in data.items():
@@ -117,11 +119,13 @@ def safe_data(data: dict[str, str]) -> dict[str, str]:
             safe[k] = v
     return safe
 
-def get_pull_requests(start_date: datetime.datetime,
-                      end_date: datetime.datetime,
-                      max_pull_requests: int = sys.maxsize,
-                      repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                      ) -> list[PullRequest.PullRequest]:
+
+def get_pull_requests(
+    start_date: datetime.datetime,
+    end_date: datetime.datetime,
+    max_pull_requests: int = sys.maxsize,
+    repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
+) -> list[PullRequest.PullRequest]:
     gh_user = configuration.get_optional_str('github_user')
     gh_pass = configuration.get_optional_str('github_password')
     if gh_user is None or gh_pass is None:
@@ -147,6 +151,7 @@ def get_pull_requests(start_date: datetime.datetime,
     except GithubException as e:
         print('Gihub pulls error (github)', e)
     return pulls
+
 
 def format_exception(e: Exception) -> str:
     return ''.join(traceback.format_exception(type(e), e, e.__traceback__))

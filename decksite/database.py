@@ -9,6 +9,7 @@ from shared.database import Database, get_database
 
 TEST_CONTEXT = Container()
 
+
 def db() -> Database:
     ctx: Any = TEST_CONTEXT  # Fallback context for testing.
     if has_request_context():  # type: ignore
@@ -20,10 +21,13 @@ def db() -> Database:
         setattr(ctx, db_name, get_database(db_name))
     return getattr(ctx, db_name)
 
+
 def setup_in_app_context() -> None:
     from decksite import APP
+
     with APP.app_context():
         setup()
+
 
 def setup() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
@@ -42,6 +46,7 @@ def setup() -> None:
                     db().execute(stmt)
             fh.close()
             db().execute(f'INSERT INTO db_version (version) VALUES ({n})')
+
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)

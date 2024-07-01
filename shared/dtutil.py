@@ -27,41 +27,51 @@ CARDHOARDER_TZ = UTC_TZ
 GATHERLING_FORMAT = '%Y-%m-%d %H:%M:%S'
 FORM_FORMAT = '%Y-%m-%d %H:%M'
 
+
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts: int) -> datetime.datetime:
     return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc)
+
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt: datetime.datetime) -> int:
     assert dt.tzinfo is not None, 'datetime must be timezone aware.'
     return round(dt.timestamp())
 
+
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
 def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
+
 def parse_rfc3339(s: str) -> datetime.datetime:
     struct = feedparser.datetimes._parse_date(s)
     return ts2dt(int(timegm(struct)))
+
 
 def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
+
 def timezone(tzid: str) -> datetime.tzinfo:
     return pytz.timezone(tzid)
+
 
 def now(tz: Any | None = None) -> datetime.datetime:
     if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
 
+
 def day_of_week(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime('%A')
 
+
 def form_date(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime(FORM_FORMAT)
+
 
 def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
     start = now()
@@ -76,12 +86,15 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
         return 'just now'
     return f'{display_time(diff, granularity)} {suffix}'
 
+
 def display_date_with_date_and_year(dt: datetime.datetime, tz: Any = WOTC_TZ) -> str:
     s = f'{dt.astimezone(tz):%b _%d_}'
     return replace_day_with_ordinal(s)
 
+
 def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)
+
 
 def day2ordinal(m: Match) -> str:
     p = inflect.engine()
@@ -91,6 +104,7 @@ def day2ordinal(m: Match) -> str:
 IntervalsType = dict[str, tuple[Optional[int], int, Optional[int]]]
 ResultsType = list[tuple[int, str]]
 
+
 def get_intervals() -> IntervalsType:
     intervals: IntervalsType = OrderedDict()
     intervals['weeks'] = (None, 60 * 60 * 24 * 7, None)
@@ -99,6 +113,7 @@ def get_intervals() -> IntervalsType:
     intervals['minutes'] = (60, 60, 45)
     intervals['seconds'] = (60, 1, 31)
     return intervals
+
 
 def display_time(seconds: float, granularity: int = 2) -> str:
     intervals = get_intervals()
@@ -121,6 +136,7 @@ def display_time(seconds: float, granularity: int = 2) -> str:
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])
 
+
 def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: int | None, rounding_threshold: int | None) -> int:
     if rounding_threshold is None or max_units is None:
         return round(seconds / seconds_per_unit)
@@ -128,6 +144,7 @@ def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: in
     if value >= rounding_threshold:
         return max_units
     return value
+
 
 def round_up_preceding_unit(result: ResultsType) -> ResultsType:
     intervals = get_intervals()

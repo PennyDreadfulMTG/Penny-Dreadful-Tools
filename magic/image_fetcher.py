@@ -14,12 +14,15 @@ from shared.fetch_tools import FetchException, escape
 if not os.path.exists(configuration.get_str('image_dir')):
     os.makedirs(configuration.get_str('image_dir'), exist_ok=True)
 
+
 def basename(cards: list[Card]) -> str:
     return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) + (c.get('preferred_printing', '') or '') for c in cards)
+
 
 def bluebones_image(cards: list[Card]) -> str:
     c = '|'.join(c.name for c in cards)
     return f'http://magic.bluebones.net/proxies/index2.php?c={escape(c)}'
+
 
 def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
     if face == 'meld':
@@ -39,14 +42,17 @@ def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
         u += f'&face={escape(face)}'
     return u
 
+
 def mci_image(printing: Printing) -> str:
     return f'http://magiccards.info/scans/en/{printing.set_code.lower()}/{printing.number}.jpg'
+
 
 def gatherer_image(printing: Printing) -> str | None:
     multiverse_id = printing.multiverseid
     if multiverse_id and int(multiverse_id) > 0:
         return 'https://image.deckbrew.com/mtg/multiverseid/' + str(multiverse_id) + '.jpg'
     return None
+
 
 def download_bluebones_image(cards: list[Card], filepath: str) -> bool:
     print('Trying to get image for {cards}'.format(cards=' • '.join(c.name for c in cards)))
@@ -55,6 +61,7 @@ def download_bluebones_image(cards: list[Card], filepath: str) -> bool:
     except FetchException as e:
         print(f'Error: {e}')
     return fetch_tools.acceptable_file(filepath)
+
 
 async def download_scryfall_image(cards: list[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(c.name for c in cards)
@@ -70,6 +77,7 @@ async def download_scryfall_image(cards: list[Card], filepath: str, version: str
         save_composite_image(image_filepaths, filepath)
     return fetch_tools.acceptable_file(filepath)
 
+
 async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]]) -> str | None:
     if hq_data is None:
         hq_data = await fetcher.hq_artcrops()
@@ -82,6 +90,7 @@ async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]]) -> str
             return file_path
     return await download_scryfall_art_crop(c)
 
+
 async def download_scryfall_art_crop(c: Card) -> str | None:
     file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
     if not fetch_tools.acceptable_file(file_path):
@@ -90,6 +99,7 @@ async def download_scryfall_art_crop(c: Card) -> str | None:
         return file_path
     return None
 
+
 async def download_scryfall_png(c: Card) -> str | None:
     file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
     if not fetch_tools.acceptable_file(file_path):
@@ -97,6 +107,7 @@ async def download_scryfall_png(c: Card) -> str | None:
     if fetch_tools.acceptable_file(file_path):
         return file_path
     return None
+
 
 async def download_scryfall_card_image(c: Card, filepath: str, version: str = '') -> bool:
     try:
@@ -107,13 +118,14 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='back'), paths[1])
             if c.layout in layout.has_meld_back():
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='meld'), paths[1])
-            if (fetch_tools.acceptable_file(paths[0]) and fetch_tools.acceptable_file(paths[1])):
+            if fetch_tools.acceptable_file(paths[0]) and fetch_tools.acceptable_file(paths[1]):
                 save_composite_image(paths, filepath)
         else:
             await fetch_tools.store_async(scryfall_image(c, version=version), filepath)
     except FetchException as e:
         print(f'Error: {e}')
     return fetch_tools.acceptable_file(filepath)
+
 
 def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.jpg') -> str:
     imagename = basename(cards)
@@ -134,6 +146,7 @@ def download_image(cards: list[Card]) -> str | None:
         asyncio.set_event_loop(event_loop)
     return event_loop.run_until_complete(download_image_async(cards))
 
+
 async def download_image_async(cards: list[Card]) -> str | None:
     filepath = determine_filepath(cards)
     if fetch_tools.acceptable_file(filepath):
@@ -143,6 +156,7 @@ async def download_image_async(cards: list[Card]) -> str | None:
     if download_bluebones_image(cards, filepath):
         return filepath
     return None
+
 
 def save_composite_image(in_filepaths: list[str], out_filepath: str) -> None:
     try:
@@ -164,6 +178,7 @@ def save_composite_image(in_filepaths: list[str], out_filepath: str) -> None:
         new_image.paste(image, (x_offset, 0))
         x_offset += image.size[0]
     new_image.save(out_filepath)
+
 
 async def generate_banner(names: list[str], background: str, v_crop: int | None = None) -> str:
     cards = [oracle.load_card(name) for name in names]
@@ -208,6 +223,7 @@ async def generate_banner(names: list[str], background: str, v_crop: int | None 
 
     canvas.save(out_filepath)
     return out_filepath
+
 
 async def generate_discord_banner(names: list[str], background: str) -> str:
     cards = [oracle.load_card(name) for name in names]

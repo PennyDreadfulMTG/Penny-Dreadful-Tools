@@ -99,6 +99,7 @@ def test_parse3() -> None:
     assert len(d['maindeck']) == 15
     assert len(d['sideboard']) == 7
 
+
 def test_parse4() -> None:
     s = """
 
@@ -144,6 +145,7 @@ def test_parse4() -> None:
     assert len(d['maindeck']) == 15
     assert len(d['sideboard']) == 7
 
+
 def test_parse5() -> None:
     s = """
         4 Animist's Awakening
@@ -166,6 +168,7 @@ def test_parse5() -> None:
     d = decklist.parse(s)
     assert len(d['maindeck']) == 13
     assert len(d['sideboard']) == 0
+
 
 # Test that a 71 card deck includes the last 15 as sideboard
 def test_parse6() -> None:
@@ -197,6 +200,7 @@ def test_parse6() -> None:
     assert len(d['maindeck']) == 13
     assert len(d['sideboard']) == 7
 
+
 # Test a 63 card deck + 12 sideboard
 def test_parse7() -> None:
     s = """
@@ -225,6 +229,7 @@ def test_parse7() -> None:
     assert sum(d['sideboard'].values()) == 12
     assert len(d['maindeck']) == 13
     assert len(d['sideboard']) == 5
+
 
 # Test a 61 card deck + 15 sideboard with one-offs around the cut
 def test_parse8() -> None:
@@ -258,6 +263,7 @@ def test_parse8() -> None:
     assert d['maindeck']['Cryptic Serpent'] == 1
     assert d['sideboard']['Convolute'] == 1
 
+
 # Test a Gatherling deck with no sideboard
 def test_parse9() -> None:
     s = """
@@ -290,6 +296,7 @@ def test_parse9() -> None:
     assert sum(d['sideboard'].values()) == 0
     assert d['maindeck']['Shining Aerosaur'] == 2
 
+
 def test_parse10() -> None:
     s = """
         Sideboard"""
@@ -297,6 +304,7 @@ def test_parse10() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 0
     assert sum(d['sideboard'].values()) == 0
+
 
 # Test a Commander deck.
 def test_parse11() -> None:
@@ -380,6 +388,7 @@ def test_parse11() -> None:
     assert sum(d['sideboard'].values()) == 0
     assert d['maindeck']['Timber Gorge'] == 1
 
+
 # Test a deck that looks a bit like a Commander deck but isn't one.
 def test_parse12() -> None:
     s = """
@@ -418,6 +427,7 @@ def test_parse12() -> None:
     assert sum(d['maindeck'].values()) == 85
     assert sum(d['sideboard'].values()) == 15
 
+
 # Test some zeroes as are sometimes given to us by mtggoldfish.
 def test_parse13() -> None:
     s = """
@@ -454,6 +464,7 @@ def test_parse13() -> None:
     assert sum(d['maindeck'].values()) == 60
     assert len(d['maindeck']) == 15
     assert len(d['sideboard']) == 7
+
 
 def test_parse_tappedout_commander() -> None:
     s = """
@@ -547,6 +558,7 @@ def test_parse_tappedout_commander() -> None:
     assert len(d['maindeck']) == 83
     assert len(d['sideboard']) == 0
 
+
 def test_parse_scryfall() -> None:
     s = """
         4 Deeproot Champion
@@ -580,6 +592,7 @@ def test_parse_scryfall() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
+
 
 def test_parse_double_blank_line() -> None:
     s = """
@@ -615,6 +628,7 @@ def test_parse_double_blank_line() -> None:
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
 
+
 def test_explicit_main_sb() -> None:
     s = """
         Main:
@@ -642,6 +656,7 @@ def test_explicit_main_sb() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
+
 
 def test_sideboard_with_sb() -> None:
     s = """
@@ -677,6 +692,7 @@ def test_sideboard_with_sb() -> None:
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
 
+
 def test_dfcs() -> None:
     s = """
         4 Bala Ged Recovery
@@ -693,6 +709,7 @@ def test_dfcs() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 36
     assert sum(d['sideboard'].values()) == 0
+
 
 def test_no_numbers() -> None:
     s = """
@@ -778,6 +795,7 @@ def test_no_numbers() -> None:
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
 
+
 # Archidekt exports adventure cards with the adventure side as part of the name, ensure we support that.
 def test_archidekt_adventure_cards() -> None:
     s = """
@@ -792,6 +810,7 @@ def test_archidekt_adventure_cards() -> None:
     assert 'Brazen Borrower' in names
     assert 'Beanstalk Giant // Fertile Footsteps' not in names
 
+
 def test_maindeck_not_sideboard() -> None:
     s = """
         1 Countryside Crusher
@@ -802,6 +821,7 @@ def test_maindeck_not_sideboard() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 0
+
 
 def test_vivify_universes_beyond() -> None:
     s = """

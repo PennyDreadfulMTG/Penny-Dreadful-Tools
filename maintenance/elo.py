@@ -6,6 +6,7 @@ DAILY = True
 
 PEOPLE: dict[str, int] = {}
 
+
 def run() -> None:
     sql = """
         SELECT
@@ -35,6 +36,7 @@ def run() -> None:
             logger.warning(f'{p.id} currently has Elo of {p.elo} and we are setting it to {new_elo}')
             db().execute(sql, [new_elo, p.id])
 
+
 def match(m: dict[str, str]) -> None:
     if ',' not in m['games']:
         return  # Ignore byes they don't affect Elo.
@@ -48,12 +50,14 @@ def match(m: dict[str, str]) -> None:
         return  # Ignore IDs they don't affect Elo.
     adjust(winner, loser)
 
+
 def adjust(winner: str, loser: str) -> None:
     winner_elo = get_elo(winner)
     loser_elo = get_elo(loser)
     change = elo.adjustment(winner_elo, loser_elo)
     PEOPLE[winner] = winner_elo + change
     PEOPLE[loser] = loser_elo - change
+
 
 def get_elo(person_id: str) -> int:
     return PEOPLE.get(person_id, elo.STARTING_ELO)

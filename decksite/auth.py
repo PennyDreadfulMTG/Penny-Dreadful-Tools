@@ -15,7 +15,9 @@ def login_required(f: Callable) -> Callable:
         if session.get('id') is None:
             return redirect(url_for('authenticate', target=request.url))
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def demimod_required(f: Callable[..., wrappers.Response]) -> Callable[..., wrappers.Response]:
     @wraps(f)
@@ -25,7 +27,9 @@ def demimod_required(f: Callable[..., wrappers.Response]) -> Callable[..., wrapp
         if session.get('admin') is False and session.get('demimod') is False:
             return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def admin_required(f: Callable) -> Callable:
     @wraps(f)
@@ -35,7 +39,9 @@ def admin_required(f: Callable) -> Callable:
         if session.get('admin') is False:
             return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def admin_required_no_redirect(f: Callable) -> Callable:
     @wraps(f)
@@ -43,6 +49,7 @@ def admin_required_no_redirect(f: Callable) -> Callable:
         if not session.get('admin'):
             return '', 403
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -54,17 +61,21 @@ def load_person(f: Callable) -> Callable:
             if p:
                 login(p)
         return f(*args, **kwargs)
+
     return decorated_function
 
 
 def discord_id() -> int | None:
     return session.get('id')
 
+
 def person_id() -> int | None:
     return session.get('logged_person_id')
 
+
 def mtgo_username() -> str | None:
     return session.get('mtgo_username')
+
 
 def login(p: person.Person) -> None:
     session['logged_person_id'] = p.id
@@ -75,8 +86,10 @@ def login(p: person.Person) -> None:
     if locale and p.locale != locale:
         person.set_locale(p.id, locale)
 
+
 def hide_intro() -> bool:
     return session.get('hide_intro', False)
+
 
 def check_perms() -> None:
     current_id = discord_id()
@@ -87,6 +100,7 @@ def check_perms() -> None:
         return
     session['admin'] = Permission.ADMIN in changes
     session['demimod'] = Permission.DEMIMOD in changes
+
 
 def has_demimod() -> bool:
     return session.get('admin') or session.get('demimod')

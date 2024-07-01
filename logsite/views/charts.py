@@ -12,10 +12,12 @@ from .. import APP, stats
 def old_charts() -> Response:
     return redirect(url_for('charts'))
 
+
 @APP.route('/charts/')
 def charts() -> str:
     view = Charts()
     return view.page()
+
 
 class Charts(View):
     def page_title(self) -> str:

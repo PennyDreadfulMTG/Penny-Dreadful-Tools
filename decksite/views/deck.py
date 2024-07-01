@@ -48,20 +48,22 @@ class Deck(View):
             'type': 'bar',
             'labels': json.dumps(['0', '1', '2', '3', '4', '5', '6', '7+', 'X']),
             'series': json.dumps([costs.get('0', 0), costs.get('1', 0), costs.get('2', 0), costs.get('3', 0), costs.get('4', 0), costs.get('5', 0), costs.get('6', 0), costs.get('7+', 0), costs.get('X', 0)]),
-            'options': json.dumps({
-                'indexAxis': 'x',
-                'scales': {
-                    'x': {
-                        'grid': {
+            'options': json.dumps(
+                {
+                    'indexAxis': 'x',
+                    'scales': {
+                        'x': {
+                            'grid': {
+                                'display': False,
+                            },
+                        },
+                        'y': {
                             'display': False,
+                            'max': round(max(costs.values(), default=0) * 1.3),
                         },
                     },
-                    'y': {
-                        'display': False,
-                        'max': round(max(costs.values(), default=0) * 1.3),
-                    },
-                },
-            }),
+                }
+            ),
         }
 
     def og_title(self) -> str:
@@ -142,6 +144,7 @@ class Deck(View):
             cs[name] = cs.get(name, 0) + entry['n']
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
         return f'https://cardhoarder.com/decks/upload?deck={fetch_tools.escape(deck_s)}'
+
 
 class DeckEmbed(Deck):
     pass

@@ -11,11 +11,11 @@ from magic.whoosh_constants import WhooshConstants
 
 class SearchResult:
     def __init__(
-            self,
-            exact: str | None,
-            prefix_whole_word: list[str],
-            other_prefixed: list[Any],
-            fuzzy: list[tuple[str, float]],
+        self,
+        exact: str | None,
+        prefix_whole_word: list[str],
+        other_prefixed: list[Any],
+        fuzzy: list[tuple[str, float]],
     ) -> None:
         self.exact = [exact] if exact else []
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
@@ -80,6 +80,7 @@ class SearchResult:
     def __len__(self) -> int:
         return len(self.get_all_matches())
 
+
 class WhooshSearcher:
     DIST = 2
 
@@ -124,11 +125,12 @@ class WhooshSearcher:
         if self.trie.has_key(query):
             exact = self.trie.get(query)
         if self.trie.has_subtrie(query):
-            matches = self.trie.values(query)[(1 if exact else 0):]
+            matches = self.trie.values(query)[(1 if exact else 0) :]
             whole_word, subword = classify(matches, query)
             prefix_as_whole_word.extend(whole_word)
             other_prefixed.extend(subword)
         return (exact, prefix_as_whole_word, other_prefixed)
+
 
 def has(elements: list[str]) -> bool:
     return bool(elements and len(elements) > 0)
@@ -136,8 +138,9 @@ def has(elements: list[str]) -> bool:
 
 WordSubwordType = tuple[list[str], list[str]]
 
+
 def classify(matches: list[str], word: str) -> WordSubwordType:
-    regex = fr'{word}( |,)'
+    regex = rf'{word}( |,)'
     acc: WordSubwordType = ([], [])  # Name this data structure.
     for match in matches:
         if re.match(regex, match.lower()):
@@ -146,10 +149,12 @@ def classify(matches: list[str], word: str) -> WordSubwordType:
             acc[1].append(match)
     return acc
 
+
 def fuzzy_term(q: str, dist: int, field: str) -> Term:
     if len(q) <= 3:
         return Term(field, q)
     return FuzzyTerm(field, q, maxdist=dist, prefixlength=1)
+
 
 def prune_fuzzy_by_score(fuzzy: list[tuple[str, float]]) -> list[str]:
     if len(fuzzy) == 0:

@@ -15,6 +15,7 @@ class ConfigError(CommandException):
         super().__init__(message, *args)
         self.scope = scope
 
+
 class Configure(Extension):
     @slash_command()
     @slash_option('scope', "'channel' or 'server'", OptionType.STRING, True)
@@ -66,6 +67,7 @@ class Configure(Extension):
                 doc = settings.SETTINGS[name].__doc__
                 msg += f'{name}={val} (default: {default})\n> {doc}\n'
         return msg
+
 
 def setup(bot: Client) -> None:
     Configure(bot)

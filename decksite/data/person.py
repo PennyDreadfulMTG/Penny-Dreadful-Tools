@@ -13,11 +13,14 @@ from shared.pd_exception import AlreadyExistsException, DoesNotExistException
 def load_person_by_id(person_id: int, season_id: int | None = None) -> Person:
     return load_person(f'p.id = {person_id}', season_id=season_id)
 
+
 def load_person_by_mtgo_username(username: str, season_id: int | None = None) -> Person:
     return load_person(f'p.mtgo_username = {sqlescape(username, force_string=True)}', season_id=season_id)
 
+
 def load_person_by_discord_id(discord_id: int, season_id: int | None = None) -> Person:
     return load_person(f'p.discord_id = {discord_id}', season_id=season_id)
+
 
 def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Person:
     # It would probably be better if this method did not exist but for now it's required by the API.
@@ -44,19 +47,23 @@ def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Pe
         return load_person_by_discord_id(int(person), season_id=season_id)
     return load_person_by_mtgo_username(person, season_id=season_id)
 
+
 def maybe_load_person_by_discord_id(discord_id: int | None) -> Person | None:
     if discord_id is None:
         return None
     ps, _ = load_people(f'p.discord_id = {discord_id}')
     return guarantee.at_most_one(ps)
 
+
 def maybe_load_person_by_tappedout_name(username: str) -> Person | None:
     ps, _ = load_people(f'p.tappedout_username = {sqlescape(username)}')
     return guarantee.at_most_one(ps)
 
+
 def maybe_load_person_by_mtggoldfish_name(username: str) -> Person | None:
     ps, _ = load_people(f'p.mtggoldfish_username = {sqlescape(username)}')
     return guarantee.at_most_one(ps)
+
 
 def load_person(where: str, season_id: int | None = None) -> Person:
     people, _ = load_people(where, season_id=season_id)
@@ -66,6 +73,7 @@ def load_person(where: str, season_id: int | None = None) -> Person:
         person = guarantee.exactly_one(people)
     set_achievements([person], season_id)
     return person
+
 
 # Sometimes (person detail page) we want to load what we know about a person even though they had no decks in the specified season.
 def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> Person:
@@ -90,11 +98,9 @@ def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> P
         p.season_id = season_id
     return guarantee.exactly_one(people)
 
+
 # Note: This only loads people who have decks in the specified season.
-def load_people(where: str = 'TRUE',
-                order_by: str = 'num_decks DESC, p.name',
-                limit: str = '',
-                season_id: str | int | None = None) -> tuple[Sequence[Person], int]:
+def load_people(where: str = 'TRUE', order_by: str = 'num_decks DESC, p.name', limit: str = '', season_id: str | int | None = None) -> tuple[Sequence[Person], int]:
     person_query = query.person_query()
     season_join = query.season_join() if season_id else ''
     season_query = query.season_query(season_id, 'season.season_id')
@@ -141,6 +147,7 @@ def load_people(where: str = 'TRUE',
         p.season_id = season_id
     return people, 0 if not rs else rs[0]['total']
 
+
 def seasons_active(person_id: int) -> list[int]:
     sql = f"""
         SELECT
@@ -155,9 +162,11 @@ def seasons_active(person_id: int) -> list[int]:
     """
     return db().values(sql)
 
+
 def preaggregate() -> None:
     achievements.preaggregate_achievements()
     preaggregate_head_to_head()
+
 
 def preaggregate_head_to_head() -> None:
     table = '_head_to_head_stats'
@@ -203,6 +212,7 @@ def preaggregate_head_to_head() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 @retry_after_calling(achievements.preaggregate_achievements)
 def set_achievements(people: list[Person], season_id: int | None = None) -> None:
     people_by_id = {person.id: person for person in people}
@@ -212,6 +222,7 @@ def set_achievements(people: list[Person], season_id: int | None = None) -> None
         people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
         people_by_id[result['id']].achievements = result
         people_by_id[result['id']].achievements.pop('id')
+
 
 @retry_after_calling(preaggregate_head_to_head)
 def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: int | None = None) -> tuple[Sequence[Container], int]:
@@ -243,10 +254,12 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
     rs = db().select(sql)
     return [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs], 0 if not rs else rs[0]['total']
 
+
 def associate(d: deck.Deck, discord_id: int) -> int:
     person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
     return db().execute(sql, [discord_id, person_id])
+
 
 def is_allowed_to_retire(deck_id: int | None, discord_id: int | None) -> bool:
     if not deck_id:
@@ -258,6 +271,7 @@ def is_allowed_to_retire(deck_id: int | None, discord_id: int | None) -> bool:
         return True
     return any(int(deck_id) == deck.id for deck in person.decks)
 
+
 def get_or_insert_person_id(mtgo_username: str | None, tappedout_username: str | None, mtggoldfish_username: str | None) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
@@ -265,6 +279,7 @@ def get_or_insert_person_id(mtgo_username: str | None, tappedout_username: str |
         return person_id
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
+
 
 def load_aliases() -> list[Container]:
     sql = """
@@ -279,6 +294,7 @@ def load_aliases() -> list[Container]:
     """
     return [Container(r) for r in db().select(sql)]
 
+
 def add_alias(person_id: int, alias: str) -> None:
     db().begin('add_alias')
     try:
@@ -289,6 +305,7 @@ def add_alias(person_id: int, alias: str) -> None:
         pass
     db().execute('INSERT INTO person_alias (person_id, alias) VALUES (%s, %s)', [person_id, alias])
     db().commit('add_alias')
+
 
 def load_notes(person_id: int | None = None) -> list[Container]:
     where = f'subject_id = {person_id}' if person_id else 'TRUE'
@@ -317,9 +334,11 @@ def load_notes(person_id: int | None = None) -> list[Container]:
         n.display_date = dtutil.display_date(n.created_date)
     return notes
 
+
 def add_note(creator_id: int, subject_id: int, note: str) -> None:
     sql = 'INSERT INTO person_note (created_date, creator_id, subject_id, note) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)'
     db().execute(sql, [creator_id, subject_id, note])
+
 
 def link_discord(mtgo_username: str, discord_id: int) -> Person:
     person_id = deck.get_or_insert_person_id(mtgo_username, None, None)
@@ -330,16 +349,20 @@ def link_discord(mtgo_username: str, discord_id: int) -> Person:
     db().execute(sql, [discord_id, p.id])
     return p
 
+
 def unlink_discord(person_id: int) -> int:
     sql = 'UPDATE person SET discord_id = NULL WHERE id = %s'
     return db().execute(sql, [person_id])
+
 
 def remove_discord_link(discord_id: int) -> int:
     sql = 'UPDATE person SET discord_id = NULL WHERE discord_id = %s'
     return db().execute(sql, [discord_id])
 
+
 def is_banned(mtgo_username: str) -> bool:
     return db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username]) == 1
+
 
 def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     logger.warning(f'Squashing {p1id} and {p2id} on {col1} and {col2}')
@@ -350,8 +373,10 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     db().execute(f'UPDATE person SET {col2} = %s WHERE id = %s', [new_value, p1id])
     db().commit('squash')
 
+
 def set_locale(person_id: int, locale: str) -> None:
     db().execute('UPDATE person SET locale = %s WHERE id = %s', [locale, person_id])
+
 
 def load_sorters() -> list[Person]:
     sql = f"""
@@ -387,9 +412,11 @@ def load_sorters() -> list[Person]:
         sorters.append(sorter)
     return sorters
 
+
 def ban(person_id: int) -> int:
     sql = 'UPDATE person SET banned = TRUE WHERE id = %s'
     return db().execute(sql, [person_id])
+
 
 def unban(person_id: int) -> int:
     sql = 'UPDATE person SET banned = FALSE WHERE id = %s'

@@ -17,6 +17,7 @@ class Archetype(Container, NodeMixin):
 
 BASE_ARCHETYPES: dict[Archetype, Archetype] = {}
 
+
 def load_archetype(archetype: int | str) -> Archetype:
     try:
         archetype_id = int(archetype)
@@ -31,9 +32,11 @@ def load_archetype(archetype: int | str) -> Archetype:
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
     return arch
 
+
 def seasons_active(archetype_id: int) -> list[int]:
     sql = 'SELECT season_id FROM _arch_stats WHERE archetype_id = %s'
     return db().values(sql, [archetype_id])
+
 
 def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
     where = 'TRUE'
@@ -64,6 +67,7 @@ def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
     """
     return [float(v) if v else 0.0 for v in db().values(sql, [archetype_id])]
 
+
 def add(name: str, parent: int, description: str) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])
     ancestors = db().select('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
@@ -73,6 +77,7 @@ def add(name: str, parent: int, description: str) -> None:
     sql += f'({archetype_id}, {archetype_id}, 0)'
     db().execute(sql)
 
+
 def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: bool = True, similarity: int | None = None) -> None:
     db().begin('assign_archetype')
     db().execute('INSERT INTO deck_archetype_change (changed_date, deck_id, archetype_id, person_id) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)', [deck_id, archetype_id, person_id])
@@ -81,6 +86,7 @@ def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: boo
     if not reviewed and similarity is not None:
         db().execute('UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
     db().commit('assign_archetype')
+
 
 def move(archetype_id: int, parent_id: int) -> None:
     db().begin('move_archetype')
@@ -104,19 +110,24 @@ def move(archetype_id: int, parent_id: int) -> None:
     db().execute(add_sql, [archetype_id, parent_id])
     db().commit('move_archetype')
 
+
 def rename(archetype_id: int, new_name: str) -> None:
     db().execute('UPDATE archetype SET name = %s WHERE id = %s', [new_name, archetype_id])
+
 
 def update_description(archetype_id: int, description: str) -> None:
     db().execute('UPDATE archetype SET description = %s WHERE id = %s', [description, archetype_id])
 
+
 def base_archetypes() -> list[Archetype]:
     return [a for a in base_archetype_by_id().values() if a.parent is None]
+
 
 def base_archetype_by_id() -> dict[Archetype, Archetype]:
     if len(BASE_ARCHETYPES) == 0:
         rebuild_archetypes()
     return BASE_ARCHETYPES
+
 
 def base_archetypes_data(c: Competition) -> dict[str, int]:
     base_archs_by_id = base_archetype_by_id()
@@ -129,6 +140,7 @@ def base_archetypes_data(c: Competition) -> dict[str, int]:
             c.base_archetype_data[base_archetype_name] += 1
     return c.base_archetype_data
 
+
 def rebuild_archetypes() -> None:
     archetypes_by_id = {a.id: a for a in load_archetypes()}
     for k, v in archetypes_by_id.items():
@@ -137,6 +149,7 @@ def rebuild_archetypes() -> None:
             p = p.parent
         BASE_ARCHETYPES[k] = p
 
+
 def preaggregate() -> None:
     preaggregate_archetypes()
     preaggregate_archetype_person()
@@ -144,6 +157,7 @@ def preaggregate() -> None:
     preaggregate_disjoint_archetype_person()
     preaggregate_matchups()
     preaggregate_matchups_person()
+
 
 def preaggregate_archetypes() -> None:
     table = '_arch_stats'
@@ -194,6 +208,7 @@ def preaggregate_archetypes() -> None:
             season.season_id IS NOT NULL
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_archetype_person() -> None:
     # This preaggregation fails if I use the obvious name _archetype_person_stats but works with any other name. It's confusing.
@@ -249,6 +264,7 @@ def preaggregate_archetype_person() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 def preaggregate_disjoint_archetypes() -> None:
     table = '_arch_disjoint_stats'
     sql = f"""
@@ -293,6 +309,7 @@ def preaggregate_disjoint_archetypes() -> None:
             season.season_id IS NOT NULL
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_disjoint_archetype_person() -> None:
     table = '_arch_disjoint_person_stats'
@@ -343,6 +360,7 @@ def preaggregate_disjoint_archetype_person() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 def preaggregate_matchups() -> None:
     table = '_matchup_stats'
     sql = f"""
@@ -388,6 +406,7 @@ def preaggregate_matchups() -> None:
             ct.name
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_matchups_person() -> None:
     table = '_matchup_ps_stats'
@@ -439,6 +458,7 @@ def preaggregate_matchups_person() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 @retry_after_calling(preaggregate)
 def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Container]:
     if person_id:
@@ -476,6 +496,7 @@ def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_i
             oa.name
     """
     return [Container(m) for m in db().select(sql)]
+
 
 @retry_after_calling(preaggregate)
 def load_archetypes(order_by: str | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Archetype]:
@@ -521,6 +542,7 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
     """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by or 'TRUE')
     archs, _ = archetype_list_from(sql, order_by is None)
     return archs
+
 
 # Load a list of all archetypes where archetypes categories do NOT include the stats of their children. Thus Aggro is only decks assigned directly to Aggro and does not include Red Deck Wins. See also load_archetypes that does it the other way.
 @retry_after_calling(preaggregate)
@@ -586,6 +608,7 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
     """
     return archetype_list_from(sql, order_by is None)
 
+
 def archetype_list_from(sql: str, should_preorder: bool) -> tuple[list[Archetype], int]:
     rs = db().select(sql)
     archetypes = [Archetype({k: v for k, v in a.items() if k != 'total'}) for a in rs]
@@ -598,6 +621,7 @@ def archetype_list_from(sql: str, should_preorder: bool) -> tuple[list[Archetype
         archetypes = preorder(archetypes)
     return archetypes, 0 if not rs else rs[0]['total']
 
+
 def preorder(archetypes: list[Archetype]) -> list[Archetype]:
     archs = []
     roots = [a for a in archetypes if a.is_root]
@@ -605,6 +629,7 @@ def preorder(archetypes: list[Archetype]) -> list[Archetype]:
         for a in PreOrderIter(r):
             archs.append(a)
     return archs
+
 
 def load_archetype_tree() -> list[dict]:
     sql = """

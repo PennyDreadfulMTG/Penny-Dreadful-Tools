@@ -14,6 +14,7 @@ def emoji_params() -> list[tuple]:
         ('Force of Will', False, True, True, 'Penny Dreadful MID', ':no_entry_sign::lady_beetle:'),
     ]
 
+
 @pytest.mark.parametrize('cardname, verbose, show_legality, bugged, legality_format, expected', emoji_params())
 def test_info_emoji(cardname: str, verbose: bool, show_legality: bool, bugged: bool, legality_format: str, expected: str) -> None:
     c = oracle.load_card(cardname)

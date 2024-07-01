@@ -18,5 +18,6 @@ class Reboot(Extension):
         await ctx.send('Scheduling reboot')
         redis_wrapper.store('discordbot:do_reboot', True)
 
+
 def setup(bot: Client) -> None:
     Reboot(bot)

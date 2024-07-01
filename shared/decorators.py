@@ -14,6 +14,7 @@ FuncType = Callable[..., T]
 
 logger = logging.getLogger(__name__)
 
+
 def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]], FuncType[T]]:
     def decorator(decorated_func: FuncType[T]) -> FuncType[T]:
         @functools.wraps(decorated_func)
@@ -28,15 +29,19 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]
                 except DatabaseException:
                     logger.error("That didn't help, giving up.")
                     raise
+
         return wrapper
+
     return decorator
+
 
 def lock(func: FuncType[T]) -> T:
     return func()
 
+
 def interprocess_locked(path: str) -> Callable:
     """Acquires & releases a interprocess lock around call into
-       decorated function."""
+    decorated function."""
 
     lock = fasteners.InterProcessLock(path)
 

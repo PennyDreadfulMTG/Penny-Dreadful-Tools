@@ -19,6 +19,7 @@ from .views import InternalServerError, NotFound, Unauthorized
 
 sentry.init()
 
+
 class PDFlask(Flask):
     def __init__(self, import_name: str) -> None:
         shared_web_path = os.path.abspath(os.path.dirname(__file__))
@@ -143,6 +144,7 @@ class PDFlask(Flask):
         if endpoint == 'card':  # The error pages make a /cards/<name> reference, but only decksite implements it.
             return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
         return None
+
 
 def log_exception(r: Request, e: Exception) -> None:
     logger.error(f'At request path: {r.path}', repo.format_exception(e))

@@ -22,5 +22,6 @@ class Update(Extension):
         oracle.init(force=True)
         await ctx.send('Reloaded legal cards and bugs.')
 
+
 def setup(bot: Client) -> None:
     Update(bot)

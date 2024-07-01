@@ -13,21 +13,9 @@ class Swiss(Extension):
         super().__init__()
 
     @slash_command()
-    @slash_option(
-        name='num_players',
-        description='number of players in the event',
-        opt_type=OptionType.INTEGER,
-        required=True)
-    @slash_option(
-        name='num_rounds',
-        description='number of rounds of Swiss',
-        opt_type=OptionType.INTEGER,
-        required=False)
-    @slash_option(
-        name='top_n',
-        description='number of players who make it to the elimination round (ie: Top N)',
-        opt_type=OptionType.INTEGER,
-        required=False)
+    @slash_option(name='num_players', description='number of players in the event', opt_type=OptionType.INTEGER, required=True)
+    @slash_option(name='num_rounds', description='number of rounds of Swiss', opt_type=OptionType.INTEGER, required=False)
+    @slash_option(name='top_n', description='number of players who make it to the elimination round (ie: Top N)', opt_type=OptionType.INTEGER, required=False)
     async def swiss(self, ctx: MtgInteractionContext, num_players: int, num_rounds: int | None = None, top_n: int | None = None) -> None:
         """Display the record need to reach the elimination rounds for a given tournament"""
         if not num_players:
@@ -39,7 +27,7 @@ class Swiss(Extension):
             num_elimination_rounds = math.ceil(math.log2(top_n))
         else:
             num_elimination_rounds = tournaments.num_rounds_info(num_players, tournaments.StageType.ELIMINATION_ROUNDS)
-            top_n = 2 ** num_elimination_rounds
+            top_n = 2**num_elimination_rounds
         s = f'For {num_players} players and {num_rounds} rounds of swiss:\n'
         num_players_by_losses, record_required = swisscalc(num_players, num_rounds, num_elimination_rounds)
         players_in_top_n = 0
@@ -61,10 +49,11 @@ class Swiss(Extension):
                 s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
         await ctx.send(s)
 
+
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> tuple[list[int], str | None]:
-    players_in_elimination_rounds = 2 ** num_elimination_rounds
+    players_in_elimination_rounds = 2**num_elimination_rounds
     # Math from https://www.mtgsalvation.com/forums/magic-fundamentals/magic-general/325775-making-the-cut-in-swiss-tournaments
-    base = num_players / (2 ** num_rounds)
+    base = num_players / (2**num_rounds)
     num_players_by_losses = [0] * (num_rounds + 1)
     multiplier = 1.0
     total_so_far = 0
@@ -74,13 +63,14 @@ def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) ->
         numerator = wins + 1
         denominator = losses
         if denominator > 0:
-            multiplier *= (numerator / denominator)
+            multiplier *= numerator / denominator
         num_players_by_losses[losses] = base * multiplier
         if not record_required and players_in_elimination_rounds:
             total_so_far += num_players_by_losses[losses]
             if total_so_far >= players_in_elimination_rounds:
                 record_required = f'{wins}–{losses}'
     return (num_players_by_losses, record_required)
+
 
 def setup(bot: Client) -> None:
     Swiss(bot)

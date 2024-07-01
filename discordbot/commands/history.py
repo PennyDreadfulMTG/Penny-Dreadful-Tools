@@ -15,6 +15,7 @@ class History(Extension):
         """Show the legality history of the specified card and a link to its all time page."""
         await ctx.single_card_text(card, card_history)
 
+
 def card_history(c: Card) -> str:
     data: dict[int, bool] = {}
     for format_name, status in c.legalities.items():
@@ -27,6 +28,7 @@ def card_history(c: Card) -> str:
         s = ' '.join(str(i).rjust(2) if data.get(i, False) else '.' for i in range(1, seasons.current_season_num() + 1))
     s += '\n<' + fetcher.decksite_url(f'/seasons/all/cards/{fetch_tools.escape(c.name, skip_double_slash=True)}/') + '>'
     return s
+
 
 def setup(bot: Client) -> None:
     History(bot)

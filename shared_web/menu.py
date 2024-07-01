@@ -29,11 +29,13 @@ class Menu(Iterable, Sized):
     def __len__(self) -> int:
         return len(self.menu)
 
+
 @dataclass
 class Badge:
     url: str
     text: str
     class_name: str
+
 
 @dataclass
 class MenuItem:
@@ -67,6 +69,7 @@ class MenuItem:
     @property
     def admin_only(self) -> bool:
         return self.permission_required == 'demimod' or self.permission_required == 'admin'
+
 
 def normalize_endpoint(item: 'MenuItem') -> str:
     return item.endpoint.replace('seasons.', '').replace('.', '')

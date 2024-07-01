@@ -30,6 +30,7 @@ def home() -> str:
     view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats())
     return view.page()
 
+
 @APP.route('/export/<int:deck_id>/')
 @auth.load_person
 def export(deck_id: int) -> Response:
@@ -40,9 +41,11 @@ def export(deck_id: int) -> Response:
     safe_name = deck_name.file_name(d)
     return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={safe_name}.txt'})
 
+
 @APP.route('/discord/')
 def discord() -> wrappers.Response:
     return redirect('https://discord.gg/RxhTEEP')
+
 
 @APP.route('/image/<path:c>/')
 def image(c: str = '') -> wrappers.Response:
@@ -59,10 +62,12 @@ def image(c: str = '') -> wrappers.Response:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)
 
+
 @APP.route('/static/dev-db.sql.gz')
 def dev_db() -> wrappers.Response:
     path = os.path.join(str(APP.static_folder), 'dev-db.sql.gz')
     return send_file(os.path.abspath(path), mimetype='application/gzip', as_attachment=True)
+
 
 @APP.before_request
 def before_request() -> wrappers.Response | None:
@@ -79,6 +84,7 @@ def before_request() -> wrappers.Response | None:
     g.p = perf.start()
     return None
 
+
 @APP.after_request
 def after_request(response: Response) -> Response:
     requests_until_no_intro = 20  # Typically ten page views because of async requests for the status bar.
@@ -88,11 +94,13 @@ def after_request(response: Response) -> Response:
         response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 * 60 * 24 * 365 * 10)
     return response
 
+
 @APP.teardown_request
 def teardown_request(_: BaseException | None) -> None:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     db().close()
+
 
 def init(debug: bool = True, port: int | None = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

@@ -1,6 +1,7 @@
 """
 Interprets decklists of various formats, and converts it into a usable structure
 """
+
 import re
 from typing import Any
 from xml.sax import SAXException
@@ -14,6 +15,7 @@ from shared.pd_exception import InvalidDataException
 SectionType = dict[str, int]
 DecklistType = dict[str, SectionType]
 
+
 def parse_line(line: str) -> tuple[int, str]:
     match = re.match(r'(?:SB: ?)?(\d+)\s+(.*)', line)
     if match is not None:
@@ -24,6 +26,7 @@ def parse_line(line: str) -> tuple[int, str]:
         raise InvalidDataException(f'Could not parse {line}')
     return 1, match.groups()[0]
 
+
 def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():
         if 'sideboard' in line.lower().strip().strip(':') or line.strip() == '':
@@ -32,6 +35,7 @@ def parse_chunk(chunk: str, section: SectionType) -> None:
             continue
         n, name = parse_line(line)
         add_card(section, int(n), name)
+
 
 # Read a text decklist into an intermediate dict form.
 def parse(s: str) -> DecklistType:
@@ -80,11 +84,14 @@ def parse(s: str) -> DecklistType:
 
     return {'maindeck': maindeck, 'sideboard': sideboard}
 
+
 def looks_doublespaced(s: str) -> bool:
     return len(re.findall(r'\r?\n\r?\n', s)) >= len(re.findall(r'\r?\n', s)) / 2 - 1
 
+
 def remove_doublespacing(s: str) -> str:
     return re.sub(r'\r?\n\r?\n', '\n', s)
+
 
 # Parse a deck in the Magic Online XML .dek format or raise an InvalidDataException.
 def parse_xml(s: str) -> DecklistType:
@@ -99,6 +106,7 @@ def parse_xml(s: str) -> DecklistType:
         raise InvalidDataException(e) from e
     except AttributeError as e:
         raise InvalidDataException(e) from e  # Not valid MTGO .deck format
+
 
 # Load the cards in the intermediate dict form.
 def vivify(decklist: DecklistType) -> Deck:
@@ -121,11 +129,13 @@ def vivify(decklist: DecklistType) -> Deck:
             d[section].append(CardRef(name, n))
     return d
 
+
 def unvivify(deck: Deck) -> DecklistType:
     decklist: DecklistType = {}
     decklist['maindeck'] = {c['name']: c['n'] for c in deck['maindeck']}
     decklist['sideboard'] = {c['name']: c['n'] for c in deck['sideboard']}
     return decklist
+
 
 def add_card(section: dict[str, Any], n: int, name: str) -> None:
     if n > 0:

@@ -35,5 +35,6 @@ class Bug(Extension):
         else:
             await ctx.send(f'Issue has been reported at <{issue.html_url}>')
 
+
 def setup(bot: Client) -> None:
     Bug(bot)

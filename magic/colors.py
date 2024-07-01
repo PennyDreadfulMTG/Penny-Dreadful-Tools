@@ -40,6 +40,7 @@ COLOR_COMBINATIONS = {
     'Five Color': ['W', 'U', 'B', 'R', 'G'],
 }
 
+
 def find_colors(cs: list[Card]) -> tuple[list[str], list[str]]:
     colors: set[str] = set()
     colored_symbols: list[str] = []
@@ -62,6 +63,7 @@ def find_colors(cs: list[Card]) -> tuple[list[str], list[str]]:
         colored_symbols += colored_symbols_in_every_cost
     return mana.order(colors), colored_symbols
 
+
 def find_common_symbols(lists: list[list[str]]) -> list[str]:
     if not lists:
         return []
@@ -69,6 +71,7 @@ def find_common_symbols(lists: list[list[str]]) -> list[str]:
     for sublist in lists[1:]:
         common_counter &= Counter(sublist)
     return list(common_counter.elements())
+
 
 def init() -> None:
     for name, colors in COLOR_COMBINATIONS.items():

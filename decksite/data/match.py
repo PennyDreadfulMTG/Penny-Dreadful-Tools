@@ -13,14 +13,7 @@ from shared.container import Container
 from shared.pd_exception import TooFewItemsException
 
 
-def insert_match(dt: datetime.datetime,
-                 left_id: int,
-                 left_games: int,
-                 right_id: int | None,
-                 right_games: int,
-                 round_num: int | None = None,
-                 elimination: int | None = None,
-                 mtgo_match_id: int | None = None) -> int:
+def insert_match(dt: datetime.datetime, left_id: int, left_games: int, right_id: int | None, right_games: int, round_num: int | None = None, elimination: int | None = None, mtgo_match_id: int | None = None) -> int:
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     update_cache(left_id, left_games, right_games, dt=dt)
@@ -40,19 +33,23 @@ def insert_match(dt: datetime.datetime,
         redis.clear(f'decksite:deck:{right_id}')
     return match_id
 
+
 def load_match(match_id: int, deck_id: int) -> Container:
     ms, _ = load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}')
     return guarantee.exactly_one(ms)
+
 
 def load_matches_by_deck(d: deck.Deck) -> list[Container]:
     where = f'd.id = {d.id}'
     ms, _ = load_matches(where=where, season_id=None)
     return ms
 
+
 def load_matches_by_person(person_id: int, season_id: int | None = None) -> list[Container]:
     where = f'd.person_id = {person_id}'
     ms, _ = load_matches(where=where, season_id=season_id)
     return ms
+
 
 def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> tuple[list[Container], int]:
     person_query = query.person_query()
@@ -118,6 +115,7 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
     setup_matches(show_active_deck_names, matches)
     return matches, 0 if not rs else rs[0]['total']
 
+
 def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) -> None:
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
@@ -126,6 +124,7 @@ def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) ->
             m.competition_url = url_for('competition', competition_id=m.competition_id)
         if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'
+
 
 def stats() -> dict[str, int]:
     sql = """
@@ -139,6 +138,7 @@ def stats() -> dict[str, int]:
             `match`
     """
     return db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0]
+
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin('update_match')
@@ -155,10 +155,12 @@ def update_match(match_id: int, left_id: int, left_games: int, right_id: int, ri
     db().commit('update_match')
     redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
+
 def update_games(match_id: int, deck_id: int, games: int) -> int:
     sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
     args = [games, match_id, deck_id]
     return db().execute(sql, args)
+
 
 def update_cache(deck_id: int, games: int, opponent_games: int, delete: bool | None = False, dt: datetime.datetime | None = None) -> None:
     if games > opponent_games:
@@ -180,6 +182,7 @@ def update_cache(deck_id: int, games: int, opponent_games: int, delete: bool | N
     """
     db().execute(sql, args)
 
+
 def delete_match(match_id: int) -> None:
     db().begin('delete_match')
     rs = db().select('SELECT deck_id, games FROM deck_match WHERE match_id = %s', [match_id])
@@ -199,6 +202,7 @@ def delete_match(match_id: int) -> None:
     db().commit('delete_match')
     if rs:
         redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
+
 
 def winner(left_id: int, left_games: int, right_id: int, right_games: int) -> int | None:
     if left_games > right_games:

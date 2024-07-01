@@ -45,12 +45,14 @@ BASE: ColumnDescription = {
     'unique_with': None,
 }
 
+
 def base_query_properties() -> TableDescription:
     # Important that these are in this order so that 'id' from card overwrites 'id' from face.
     props = face_properties()
     props.update(card_properties())
     props.update(base_query_specific_properties())
     return props
+
 
 def base_query_lite_properties() -> TableDescription:
     # Important that these are in this order so that 'id' from card overwrites 'id' from face.
@@ -63,6 +65,7 @@ def base_query_lite_properties() -> TableDescription:
     props['flavor_names']['type'] = TEXT
     props['flavor_names']['query'] = 'flavor_names'
     return props
+
 
 def base_query_specific_properties() -> TableDescription:
     props = {}
@@ -80,6 +83,7 @@ def base_query_specific_properties() -> TableDescription:
     props['flavor_names']['query'] = 'flavor_names'
     return props
 
+
 def card_properties() -> TableDescription:
     props = {}
     for k in ['id', 'oracle_id', 'layout']:
@@ -92,6 +96,7 @@ def card_properties() -> TableDescription:
     props['oracle_id']['unique'] = True
     props['layout']['nullable'] = False
     return props
+
 
 def face_properties() -> TableDescription:
     props = {}
@@ -119,6 +124,7 @@ def face_properties() -> TableDescription:
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
+
 def set_properties() -> TableDescription:
     props = {}
     for k in ['id', 'name', 'code', 'uri', 'scryfall_uri', 'search_uri', 'released_at', 'set_type', 'card_count', 'parent_set_code', 'digital', 'foil_only', 'icon_svg_uri']:
@@ -135,6 +141,7 @@ def set_properties() -> TableDescription:
     props['uri']['unique'] = True
     props['scryfall_uri']['unique'] = True
     return props
+
 
 def printing_properties() -> TableDescription:
     props = {}
@@ -155,6 +162,7 @@ def printing_properties() -> TableDescription:
     props['flavor']['type'] = TEXT
     return props
 
+
 def color_properties() -> TableDescription:
     props = {}
     for k in ['id', 'name', 'symbol']:
@@ -163,6 +171,7 @@ def color_properties() -> TableDescription:
     props['id']['type'] = INTEGER
     props['id']['primary_key'] = True
     return props
+
 
 def card_color_properties() -> TableDescription:
     props = {}
@@ -177,6 +186,7 @@ def card_color_properties() -> TableDescription:
     props['color_id']['foreign_key'] = ('color', 'id')
     return props
 
+
 def card_type_properties(typetype: str) -> TableDescription:
     props = {}
     for k in ['id', 'card_id', typetype]:
@@ -188,6 +198,7 @@ def card_type_properties(typetype: str) -> TableDescription:
     props['card_id']['foreign_key'] = ('card', 'id')
     props['card_id']['unique_with'] = [typetype]
     return props
+
 
 def card_flavor_name_properties() -> TableDescription:
     props = {}
@@ -203,6 +214,7 @@ def card_flavor_name_properties() -> TableDescription:
     props['card_id']['unique_with'] = ['flavor_name']
     return props
 
+
 def format_properties() -> TableDescription:
     props = {}
     for k in ['id', 'name']:
@@ -212,6 +224,7 @@ def format_properties() -> TableDescription:
     props['id']['primary_key'] = True
     props['name']['unique'] = True
     return props
+
 
 def card_legality_properties() -> TableDescription:
     props = {}
@@ -229,6 +242,7 @@ def card_legality_properties() -> TableDescription:
     props['legality']['nullable'] = True
     return props
 
+
 def card_alias_properties() -> TableDescription:
     props = {}
     for k in ['id', 'card_id', 'alias']:
@@ -240,6 +254,7 @@ def card_alias_properties() -> TableDescription:
     props['card_id']['foreign_key'] = ('card', 'id')
     props['card_id']['unique_with'] = ['alias']
     return props
+
 
 def card_bug_properties() -> TableDescription:
     props = {}
@@ -257,6 +272,7 @@ def card_bug_properties() -> TableDescription:
     props['bannable']['type'] = BOOLEAN
     return props
 
+
 def name_query(column: str = 'face_name') -> str:
     uses_two_names_layouts = ', '.join(f"'{lo}'" for lo in layout.uses_two_names())
     return """
@@ -268,6 +284,7 @@ def name_query(column: str = 'face_name') -> str:
         END
     """.format(uses_two_names_layouts=uses_two_names_layouts, column=column, table='{table}')
 
+
 def cmc_query() -> str:
     sums_cmc_layouts = ', '.join(f"'{lo}'" for lo in layout.sums_cmc())
     return """
@@ -278,6 +295,7 @@ def cmc_query() -> str:
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
         END
     """.format(sums_cmc_layouts=sums_cmc_layouts, table='{table}')
+
 
 def mana_cost_query() -> str:
     has_two_mana_costs = ', '.join(f"'{lo}'" for lo in layout.has_two_mana_costs())
@@ -291,13 +309,16 @@ def mana_cost_query() -> str:
         END
     """.format(has_two_mana_costs=has_two_mana_costs, table='{table}', column='{column}')
 
+
 def type_query() -> str:
     return """
         GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
     """
 
+
 def unaccent(s: str) -> str:
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
 
 def canonicalize(name: str) -> str:
     if name.find('/') >= 0 and name.find('//') == -1:
@@ -308,6 +329,7 @@ def canonicalize(name: str) -> str:
     # Replace ligature and smart quotes.
     name = name.replace('Æ', 'Ae').replace('“', '"').replace('”', '"').replace("'", "'").replace("'", "'")
     return unaccent(name.strip().lower())
+
 
 def to_mtgo_format(s: str) -> str:
     return s.replace(' // ', '/').replace('\n', '\r\n')

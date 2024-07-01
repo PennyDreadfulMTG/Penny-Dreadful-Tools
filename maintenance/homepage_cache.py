@@ -4,6 +4,7 @@ from shared import dtutil, logger
 
 HOURLY = True
 
+
 def run() -> None:
     start_date = seasons.last_rotation()
     end_date = dtutil.now()

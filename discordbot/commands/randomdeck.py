@@ -28,5 +28,6 @@ class RandomDeck(Extension):
                 preamble = f"{blob['person']} posted this on {blob['source_name']}:\n"
             await ctx.send(preamble + blob['url'])
 
+
 def setup(bot: Client) -> None:
     RandomDeck(bot)

@@ -24,6 +24,7 @@ def parse_cardhoarder_prices(s: str) -> PriceListType:
             details.append((name, p, mtgo_set))
     return [(name_lookup(name), html.unescape(p.strip()), mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 
+
 def repair_name(name: str) -> str:
     if name == 'Tura Kenner':
         name = 'Tura Kennerüd, Skyknight'
@@ -39,8 +40,10 @@ def repair_name(name: str) -> str:
         name = '_____ Goblin'
     return name
 
+
 def is_exceptional_name(name: str) -> bool:
     return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ') or 'Reward Pack' in name
+
 
 def name_lookup(name: str) -> str:
     try:

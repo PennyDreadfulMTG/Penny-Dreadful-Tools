@@ -12,8 +12,10 @@ class Oracle(Extension):
         """Oracle text of a card."""
         await ctx.single_card_text(card, oracle_text)
 
+
 def oracle_text(c: Card) -> str:
     return c.oracle_text
+
 
 def setup(bot: Client) -> None:
     Oracle(bot)

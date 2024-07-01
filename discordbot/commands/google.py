@@ -39,5 +39,6 @@ class Google(Extension):
 
         await ctx.send(s)
 
+
 def setup(bot: Client) -> None:
     Google(bot)

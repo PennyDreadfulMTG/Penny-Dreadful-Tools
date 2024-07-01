@@ -34,11 +34,13 @@ def admin_menu() -> Menu:
     m.append(MenuItem(gettext('Rotation Speculation'), endpoint='rotation_speculation', permission_required='admin'))
     return Menu(m)
 
+
 @APP.route('/admin/')
 @auth.demimod_required
 def admin_home() -> wrappers.Response:
     view = Admin(admin_menu())
     return view.response()
+
 
 @APP.route('/admin/aliases/')
 @auth.admin_required
@@ -48,6 +50,7 @@ def edit_aliases() -> str:
     view = EditAliases(aliases, all_people)
     return view.page()
 
+
 @APP.route('/admin/aliases/', methods=['POST'])
 @fill_form('person_id', 'alias')
 @auth.admin_required
@@ -56,11 +59,13 @@ def post_aliases(person_id: int | None = None, alias: str | None = None) -> str 
         ps.add_alias(person_id, alias)
     return edit_aliases()
 
+
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
 def edit_archetypes(q: str = '', notq: str = '') -> wrappers.Response:
     view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq)
     return view.response()
+
 
 @APP.route('/admin/archetypes/', methods=['POST'])
 @auth.demimod_required
@@ -96,6 +101,7 @@ def post_archetypes() -> wrappers.Response:
         return view.response()
     return edit_archetypes(request.form.get('q', ''), request.form.get('notq', ''))
 
+
 @APP.route('/admin/rules/')
 @auth.demimod_required
 def edit_rules() -> wrappers.Response:
@@ -104,6 +110,7 @@ def edit_rules() -> wrappers.Response:
     archetypes = archs.load_archetypes(order_by='a.name')
     view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
     return view.response()
+
 
 @APP.route('/admin/rules/', methods=['POST'])
 @auth.demimod_required
@@ -115,6 +122,7 @@ def post_rules() -> wrappers.Response:
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/rules: {request.form}')
     return edit_rules()
 
+
 @APP.route('/admin/retire/')
 @auth.admin_required
 def admin_retire_deck(form: RetireForm | None = None) -> str:
@@ -122,6 +130,7 @@ def admin_retire_deck(form: RetireForm | None = None) -> str:
         form = RetireForm(request.form)
     view = AdminRetire(form)
     return view.page()
+
 
 @APP.route('/admin/retire/', methods=['POST'])
 @auth.admin_required
@@ -133,12 +142,14 @@ def do_admin_retire_deck() -> wrappers.Response:
         return redirect(url_for('admin_retire_deck'))
     return make_response(admin_retire_deck(form))
 
+
 @APP.route('/admin/matches/')
 @auth.admin_required
 def edit_matches() -> str:
     league = lg.active_league(should_load_decks=True)
     view = EditMatches(league.id, league.decks)
     return view.page()
+
 
 @APP.route('/admin/matches/', methods=['POST'])
 @auth.admin_required
@@ -158,16 +169,19 @@ def post_matches() -> wrappers.Response:
         ms.insert_match(dtutil.now(), left_id, left_games, right_id, right_games, None, None, None)
     return redirect(url_for('edit_matches'))
 
+
 @APP.route('/admin/prizes/')
 def prizes() -> str:
     tournaments_with_prizes = comp.tournaments_with_prizes()
     view = Prizes(tournaments_with_prizes)
     return view.page()
 
+
 @APP.route('/admin/rotation/')
 def rotation_checklist() -> str:
     view = RotationChecklist()
     return view.page()
+
 
 @APP.route('/admin/people/notes/')
 @auth.admin_required
@@ -176,6 +190,7 @@ def player_notes() -> str:
     all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = PlayerNotes(notes, all_people)
     return view.page()
+
 
 @APP.route('/admin/people/notes/', methods=['POST'])
 @fill_form('person_id', 'note')
@@ -187,12 +202,14 @@ def post_player_note(person_id: int, note: str) -> wrappers.Response:
     ps.add_note(creator.id, person_id, note)
     return redirect(url_for('player_notes'))
 
+
 @APP.route('/admin/unlink/')
 @auth.admin_required
 def unlink(num_affected_people: int | None = None, errors: list[str] | None = None) -> str:
     all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()
+
 
 @APP.route('/admin/unlink/', methods=['POST'])
 @auth.admin_required
@@ -209,12 +226,14 @@ def post_unlink() -> str:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)
 
+
 @APP.route('/admin/ban/')
 @auth.admin_required
 def ban(success: bool | None = None) -> str:
     all_people, _ = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Ban(all_people, success)
     return view.page()
+
 
 @APP.route('/admin/ban/', methods=['POST'])
 @auth.admin_required
@@ -241,6 +260,7 @@ def edit_league() -> str:
     view = EditLeague(lg.get_status())
     return view.page()
 
+
 @APP.route('/admin/league/', methods=['POST'])
 @auth.admin_required
 def post_league() -> str:
@@ -248,11 +268,13 @@ def post_league() -> str:
     lg.set_status(status)
     return edit_league()
 
+
 @APP.route('/admin/sorters/')
 @auth.admin_required
 def sorters() -> str:
     view = Sorters(ps.load_sorters())
     return view.page()
+
 
 def cast_int(param: Any | None) -> int:
     return int(cast(str, param))

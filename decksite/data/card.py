@@ -15,6 +15,7 @@ def preaggregate() -> None:
     preaggregate_unique()
     preaggregate_trailblazer()
 
+
 def preaggregate_card() -> None:
     table = '_card_stats'
     sql = f"""
@@ -57,6 +58,7 @@ def preaggregate_card() -> None:
             ct.name
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_card_archetype() -> None:
     table = '_card_archetype_stats'
@@ -107,6 +109,7 @@ def preaggregate_card_archetype() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 def preaggregate_card_person() -> None:
     table = '_card_person_stats'
     sql = f"""
@@ -156,6 +159,7 @@ def preaggregate_card_person() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 def preaggregate_unique() -> None:
     table = '_unique_cards'
     sql = f"""
@@ -180,6 +184,7 @@ def preaggregate_unique() -> None:
             COUNT(DISTINCT person_id) = 1
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_trailblazer() -> None:
     table = '_trailblazer_cards'
@@ -219,16 +224,17 @@ def preaggregate_trailblazer() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 @retry_after_calling(preaggregate)
 def load_cards(
-        additional_where: str = 'TRUE',
-        order_by: str = 'num_decks DESC, record, name',
-        limit: str = '',
-        archetype_id: int | None = None,
-        person_id: int | None = None,
-        season_id: int | None = None,
-        tournament_only: bool = False,
-        all_legal: bool = False,
+    additional_where: str = 'TRUE',
+    order_by: str = 'num_decks DESC, record, name',
+    limit: str = '',
+    archetype_id: int | None = None,
+    person_id: int | None = None,
+    season_id: int | None = None,
+    tournament_only: bool = False,
+    all_legal: bool = False,
 ) -> tuple[list[Card], int]:
     if person_id:
         table = '_card_person_stats'
@@ -280,6 +286,7 @@ def load_cards(
         c.played_competitively = c.wins or c.draws or c.losses
     return cs, 0 if not rs else rs[0]['total']
 
+
 @retry_after_calling(preaggregate_card)
 def load_card(name: str, tournament_only: bool = False, season_id: int | None = None) -> Card:
     cs, _ = load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only)
@@ -293,6 +300,7 @@ def load_card(name: str, tournament_only: bool = False, season_id: int | None = 
     c.win_percent = ''
     return c
 
+
 @retry_after_calling(preaggregate_unique)
 def unique_cards_played(person_id: int) -> list[str]:
     sql = """
@@ -304,6 +312,7 @@ def unique_cards_played(person_id: int) -> list[str]:
             person_id = %s
     """
     return db().values(sql, [person_id])
+
 
 @retry_after_calling(preaggregate_trailblazer)
 def trailblazer_cards(person_id: int) -> list[str]:
@@ -318,6 +327,7 @@ def trailblazer_cards(person_id: int) -> list[str]:
             d.person_id = %s
     """
     return db().values(sql, [person_id])
+
 
 def card_exists(name: str) -> bool:
     sql = 'SELECT EXISTS(SELECT * FROM deck_card WHERE card = %s LIMIT 1)'

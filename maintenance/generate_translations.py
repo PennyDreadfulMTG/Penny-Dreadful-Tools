@@ -12,9 +12,11 @@ from shared_web import template
 
 
 def ad_hoc() -> int:
-    dist = Distribution(dict(
-        name='Penny-Dreadful-Tools',
-    ))
+    dist = Distribution(
+        dict(
+            name='Penny-Dreadful-Tools',
+        )
+    )
     dist.message_extractors = {  # type: ignore
         'decksite': [
             ('**.py', 'python', {}),
@@ -39,6 +41,7 @@ def ad_hoc() -> int:
     client.update_terms('162959', './shared_web/translations/messages.pot')
     return exitcode()
 
+
 def exitcode() -> int:
     numstat = subprocess.check_output(['git', 'diff', '--numstat']).strip().decode().split('\n')
     for line in numstat:
@@ -48,6 +51,7 @@ def exitcode() -> int:
                 # POT-Creation-Date will always change, we need to check for an additional change.
                 return max(int(added), int(deleted)) - 1
     return 0
+
 
 def extract_mustache(fileobj: Any, keywords: list[str], comment_tags: list[str], options: dict[str, str]) -> Generator:
     """Extract messages from mustache files.

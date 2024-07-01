@@ -21,6 +21,7 @@ def test_legality() -> None:
     assert card.legalities['Vintage'] == 'Restricted'
     assert season_name not in card.legalities.keys()
 
+
 def test_valid_name() -> None:
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'
     assert oracle.valid_name('Far/Away') == 'Far // Away'
@@ -30,11 +31,13 @@ def test_valid_name() -> None:
     with pytest.raises(InvalidDataException):
         oracle.valid_name('Definitely // Not a Card /')
 
+
 def test_load_cards() -> None:
     cards = oracle.load_cards(['Think Twice', 'Swamp'])
     assert len(cards) == 2
     assert 'Think Twice' in [c.name for c in cards]
     assert 'Swamp' in [c.name for c in cards]
+
 
 def test_deck_sort_x_last() -> None:
     cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])
@@ -42,6 +45,7 @@ def test_deck_sort_x_last() -> None:
     cards_by_name = {c.name: c for c in cards}
     assert oracle.deck_sort(cards_by_name['Ghitu Fire']) < oracle.deck_sort(cards_by_name['Flash of Insight'])
     assert oracle.deck_sort(cards_by_name['Ghitu Fire']) > oracle.deck_sort(cards_by_name['Frantic Search'])
+
 
 # Check that the list of legal cards is being fetched correctly.
 @pytest.mark.functional

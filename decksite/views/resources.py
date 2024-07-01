@@ -8,9 +8,12 @@ class ResourceDescription(TypedDict):
     text: str
     url: str
     is_external: bool
+
+
 class SectionDescription(TypedDict):
     title: str
     items: list[ResourceDescription]
+
 
 class Resources(View):
     def sections(self) -> list[SectionDescription]:

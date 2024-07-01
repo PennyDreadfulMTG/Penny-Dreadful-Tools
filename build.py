@@ -8,6 +8,7 @@ def build() -> None:
     buildpy()
     buildjs()
 
+
 def buildpy() -> None:
     print('>>>> Installing Requirements')
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pipenv'])

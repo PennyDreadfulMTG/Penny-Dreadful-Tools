@@ -13,5 +13,6 @@ class Sync(Extension):
         await ctx.bot.sync_achievements(ctx.author, ctx.guild)
         await ctx.send('Done', ephemeral=True)
 
+
 def setup(bot: Client) -> None:
     Sync(bot)

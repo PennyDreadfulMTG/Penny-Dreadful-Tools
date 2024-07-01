@@ -18,6 +18,7 @@ TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
 TIME_SINCE_ROTATION = dtutil.now() - seasons.last_rotation()
 BANNED_CARDS = ['Cleanse', 'Crusade']  # These cards are banned, even in Freeform
 
+
 @decorators.interprocess_locked('.rotation.lock')
 @sentry.monitor('rotation_script')
 def run() -> None:
@@ -60,6 +61,7 @@ def run() -> None:
     except Exception as c:
         print(c, flush=True)
 
+
 def process(all_prices: dict[str, PriceListType]) -> int:
     seen_sets: set[str] = set()
     used_sets: set[str] = set()
@@ -97,6 +99,7 @@ def process_sets(seen_sets: set[str], used_sets: set[str], hits: set[str], ignor
     print(f'Missed:  {repr(ignored)}', flush=True)
     return n
 
+
 def make_final_list() -> None:
     _num, planes, _res = fetcher.search_scryfall('t:plane%20or%20t:phenomenon', True)
     bad_names = planes
@@ -129,6 +132,7 @@ def make_final_list() -> None:
     h.write(''.join(final))
     h.close()
 
+
 def prepare_flavornames() -> dict[str, str]:
     _num, _names, flavored = fetcher.search_scryfall('is:flavor_name', True)
     renames = {}
@@ -141,6 +145,7 @@ def prepare_flavornames() -> dict[str, str]:
             # In the future, we may need to adjust this code to match pricefiles
             renames[c.get('flavor_name') or c['card_faces'][0].get('flavor_name')] = c['name']
     return renames
+
 
 def do_push() -> None:
     print('Pushing to Github...', flush=True)

@@ -10,6 +10,7 @@ from shared import configuration, repo
 def start() -> float:
     return time.perf_counter()
 
+
 def check(start_time: float, kind: str, detail: Any, location: str) -> None:
     run_time = time.perf_counter() - start_time
     limit = configuration.get_float(kind)
@@ -22,12 +23,14 @@ def check(start_time: float, kind: str, detail: Any, location: str) -> None:
             flask_location = ''
         repo.create_issue(msg, f'{location}-perf', flask_location or location, 'PennyDreadfulMTG/perf-reports')
 
+
 def test(f: Callable, limit: float) -> None:
     begin = time.perf_counter()
     f()
     duration = time.perf_counter() - begin
     print(duration)  # noqa: T001
     assert duration <= limit
+
 
 def took(start_time: float) -> float:
     return time.perf_counter() - start_time

@@ -59,6 +59,7 @@ def manabase(form: ManabaseForm | None = None) -> str:
     view = Manabase(form)
     return view.page()
 
+
 @APP.route('/manabase/', methods=['POST'])
 def do_manabase() -> str:
     form = ManabaseForm(request.form, auth.person_id(), auth.mtgo_username())
@@ -75,6 +76,7 @@ def rotation_changes() -> str | wrappers.Response:
     view = RotationChanges()
     return view.page()
 
+
 @APP.route('/rotation/changes/files/<any(new,out):changes_type>/')
 @SEASONS.route('/rotation/changes/files/<any(new,out):changes_type>/')
 def rotation_changes_files(changes_type: str) -> Response:
@@ -82,11 +84,13 @@ def rotation_changes_files(changes_type: str) -> Response:
     s = '\n'.join(f'4 {card.to_mtgo_format(c.name)}' for c in changes)
     return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
 
+
 @APP.route('/rotation/speculation/')
 @auth.admin_required
 def rotation_speculation() -> str:
     view = RotationSpeculation(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), playability=playability.playability())
     return view.page()
+
 
 @APP.route('/rotation/speculation/files/<any(new,out):changes_type>/')
 @auth.admin_required

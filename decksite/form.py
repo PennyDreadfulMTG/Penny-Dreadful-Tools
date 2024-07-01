@@ -21,6 +21,7 @@ class Form(Container):
         self.do_validation()
         return len(self.errors) == 0
 
+
 # A form that involves consuming a decklist.
 class DecklistForm(Form):
     def __init__(self, form: ImmutableMultiDict, person_id: int | None, mtgo_username: str | None) -> None:

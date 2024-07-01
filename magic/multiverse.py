@@ -19,11 +19,12 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: dict[str, int] = {}
 
 # This is only a fallback
-KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
-               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
+KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township', 'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
+
 
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))
+
 
 async def init_async(force: bool = False) -> bool:
     try:
@@ -45,8 +46,10 @@ async def init_async(force: bool = False) -> bool:
         print('Unable to connect to Scryfall.')
     return False
 
+
 def cached_base_query(where: str = 'TRUE') -> str:
     return f'SELECT * FROM _cache_card AS c WHERE {where}'
+
 
 def base_query(where: str = '(1 = 1)') -> str:
     return """
@@ -97,12 +100,8 @@ def base_query(where: str = '(1 = 1)') -> str:
         ) AS fn ON fn.card_id = u.id
         WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
         GROUP BY u.id
-    """.format(
-        base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()),
-        format_id=get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True),
-        card_props=', '.join(f'c.{name}' for name in card.card_properties()),
-        face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']),
-        where=where)
+    """.format(base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()), format_id=get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True), card_props=', '.join(f'c.{name}' for name in card.card_properties()), face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']), where=where)
+
 
 def base_query_lite() -> str:
     return """
@@ -129,10 +128,7 @@ def base_query_lite() -> str:
                 fn.card_id
         ) AS fn ON fn.card_id = u.id
         GROUP BY u.id
-    """.format(
-        base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()),
-        card_props=', '.join(f'c.{name}' for name in card.card_properties()),
-        face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']))
+    """.format(base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()), card_props=', '.join(f'c.{name}' for name in card.card_properties()), face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']))
 
 
 async def update_database_async(new_date: datetime.datetime) -> None:
@@ -153,6 +149,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         print(f'Failed to load current bulk data, using fallback: {e}')
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
         await insert_cards(new_date, sets, all_cards)
+
 
 async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription]) -> None:
     db().begin('update_database')
@@ -178,6 +175,7 @@ async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], 
     rebuild_cache()
     db().commit('update_database')
 
+
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
 async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
@@ -196,6 +194,7 @@ async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
     get_format_id(f'Penny Dreadful {seasons.current_season_code()}', True)
     await update_bugged_cards_async()
     return [c['id'] for c in values['card']]
+
 
 async def determine_values_async(printings: list[CardDescription], next_card_id: int) -> dict[str, list[dict[str, Any]]]:
     cards: dict[str, int] = {}
@@ -216,7 +215,6 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
         'mythic': rarity_ids['Mythic Rare'],
         'special': rarity_ids['Rare'],
         'bonus': rarity_ids['Mythic Rare'],
-
     }
     sets = load_sets()
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
@@ -310,12 +308,14 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
         'flavor_name': flavor_name_values,
     }
 
+
 def face_colors(p: CardDescription) -> set[str]:
     colors = set()
     for f in p.get('card_faces', []):
         for color in f.get('colors', []):
             colors.add(color)
     return colors
+
 
 def insert_many(table: str, properties: TableDescription, values: list[dict[str, Any]], additional_columns: list[str] | None = None) -> None:
     columns = additional_columns or []
@@ -327,6 +327,7 @@ def insert_many(table: str, properties: TableDescription, values: list[dict[str,
     query += '), ('.join(', '.join(str(sqlescape(entry[column])) for column in columns) for entry in values)
     query += ')'
     db().execute(query)
+
 
 async def update_bugged_cards_async() -> None:
     bugs = await fetcher.bugged_cards_async()
@@ -344,11 +345,13 @@ async def update_bugged_cards_async() -> None:
         db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
     db().commit('update_bugged_cards')
 
+
 async def update_pd_legality_async() -> None:
     for s in seasons.SEASONS:
         await set_legal_cards_async(season=s)
         if s == seasons.current_season_code():
             break
+
 
 def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> dict[str, Any]:
     if not card_id:
@@ -368,6 +371,7 @@ def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> di
     result['position'] = position
     return result
 
+
 def multiple_faces_values(p: CardDescription, card_id: int) -> list[dict[str, Any]]:
     card_faces = p.get('card_faces')
     if card_faces is None:
@@ -382,6 +386,7 @@ def multiple_faces_values(p: CardDescription, card_id: int) -> list[dict[str, An
         position += 1
     return face_values
 
+
 def meld_face_values(p: CardDescription, cards: dict[str, int]) -> list[dict[str, Any]]:
     values = []
     all_parts = p.get('all_parts')
@@ -393,6 +398,7 @@ def meld_face_values(p: CardDescription, cards: dict[str, int]) -> list[dict[str
         values.append(single_face_value(p, card_id, 2))
     return values
 
+
 def is_meld_result(p: CardDescription) -> bool:
     all_parts = p.get('all_parts')
     if all_parts is None or not p['layout'] == 'meld':
@@ -403,8 +409,10 @@ def is_meld_result(p: CardDescription) -> bool:
         meld_result_name = next(part['name'] for part in all_parts if part['name'] in KNOWN_MELDS)
     return p['name'] == meld_result_name
 
+
 def load_sets() -> dict[str, int]:
     return {s['code']: int(s['id']) for s in db().select('SELECT id, code FROM `set`')}
+
 
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
@@ -416,12 +424,14 @@ def insert_set(s: Any) -> int:
     db().execute(sql, values)
     return db().last_insert_rowid()
 
+
 async def update_sets_async() -> dict:
     sets = load_sets()
     for s in await fetcher.all_sets_async():
         if s['code'] not in sets.keys():
             insert_set(s)
     return load_sets()
+
 
 def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int) -> dict[str, Any]:
     if not card_id or not set_id:
@@ -438,6 +448,7 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['reserved'] = 1 if p.get('reserved') else 0  # replace True and False with 1 and 0
     result['flavor_name'] = p.get('flavor_name')
     return result
+
 
 async def set_legal_cards_async(season: str | None = None) -> None:
     if season is None:
@@ -472,13 +483,11 @@ async def set_legal_cards_async(season: str | None = None) -> None:
     legal_cards = []
     for row in all_cards:
         if row['name'] in new_list:
-            legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
-                                                                          card_id=row['id']))
+            legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id, card_id=row['id']))
         elif row['flavor_names']:
             for fn in row['flavor_names'].split('|'):
                 if fn in new_list:
-                    legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
-                                                                                  card_id=row['id']))
+                    legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id, card_id=row['id']))
                     break
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
              VALUES {values}""".format(values=', '.join(legal_cards))
@@ -493,6 +502,7 @@ async def set_legal_cards_async(season: str | None = None) -> None:
         db_legal_list = [row['name'] for row in db().select(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
 
+
 def rebuild_cache() -> None:
     db().execute('DROP TABLE IF EXISTS _new_cache_card')
     db().execute('SET group_concat_max_len=100000')
@@ -505,6 +515,7 @@ def rebuild_cache() -> None:
     db().execute('RENAME TABLE _cache_card TO _old_cache_card, _new_cache_card TO _cache_card')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
 
+
 def add_to_cache(ids: list[int]) -> None:
     if not ids:
         return
@@ -513,15 +524,18 @@ def add_to_cache(ids: list[int]) -> None:
     sql = f'INSERT INTO _cache_card {query}'
     db().execute(sql)
 
+
 def database2json(propname: str) -> str:
     if propname == 'system_id':
         propname = 'id'
     return propname
 
+
 def date2int(s: str, name: str) -> str | float:
     if name == 'released_at':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s
+
 
 # I'm not sure this belong here, but it's here for now.
 def get_format_id(name: str, allow_create: bool = False) -> int:
@@ -538,14 +552,17 @@ def get_format_id(name: str, allow_create: bool = False) -> int:
         raise InvalidArgumentException(f'Unknown format: {name}')
     return FORMAT_IDS[name]
 
+
 def get_format_id_from_season_id(season_id: int) -> int:
     season_code = seasons.SEASONS[int(season_id) - 1]
     format_name = f'Penny Dreadful {season_code}'
     return get_format_id(format_name)
 
+
 def get_all_cards() -> list[Card]:
     rs = db().select(cached_base_query())
     return [Card(r) for r in rs]
+
 
 def supertypes(type_line: str) -> list[str]:
     types = type_line.split('-')[0]
@@ -555,6 +572,7 @@ def supertypes(type_line: str) -> list[str]:
         if possible in types:
             sts.append(possible)
     return sts
+
 
 def subtypes(type_line: str) -> list[str]:
     if ' - ' not in type_line:

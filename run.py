@@ -14,6 +14,7 @@ from shared import configuration, decorators, repo, sentry
 
 logging.basicConfig(level=logging.INFO)
 
+
 def wait_for_db(_: Any, __: Any, value: bool) -> None:
     if not value:
         return
@@ -21,6 +22,7 @@ def wait_for_db(_: Any, __: Any, value: bool) -> None:
 
     def attempt(interval: int = 1) -> bool:
         from shared import database, pd_exception
+
         try:
             database.get_database(configuration.get_str('magic_database'))
             return True
@@ -28,85 +30,108 @@ def wait_for_db(_: Any, __: Any, value: bool) -> None:
             print(f'DB not accepting connections.  Sleeping for {interval}.')
             time.sleep(interval)
             return False
+
     i = 1
     while not attempt(i) and i < 60:
         i = i + 1
+
 
 @click.group()
 @click.option('--wait-for-db', is_flag=True, callback=wait_for_db, expose_value=False, help='Idle until the mySQL server starts accepting connections')
 def cli() -> None:
     pass
 
+
 @cli.command()
 def discordbot() -> None:
     from discordbot import bot
+
     bot.init()
+
 
 @cli.command()
 def decksite() -> None:
     from decksite import main
+
     main.init(port=configuration.get_int('decksite_port'))
+
 
 @cli.command()
 def profiler() -> None:
     from werkzeug.middleware.profiler import ProfilerMiddleware
 
     from decksite import main
+
     main.APP.config['PROFILE'] = True
     main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30])  # type: ignore
     main.init(port=configuration.get_int('decksite_port'))
 
+
 @cli.command()
 def price_grabber() -> None:
     from price_grabber import price_grabber as grabber
+
     sentry.init()
     grabber.run()
+
 
 @cli.command()
 def srv_price() -> None:
     from price_grabber import srv_prices
+
     srv_prices.init()
+
 
 @cli.command()
 @click.argument('source')
 def scraper(source: str) -> None:
     task(['scraper', source])
 
+
 @cli.command()
 @click.argument('eventname')
 def scrape_event(eventname: str) -> None:
     task(['scraper', 'gatherling', eventname])
+
 
 @cli.command()
 @click.argument('script')
 def maintenance(script: str) -> None:
     task(['maintenance', script])
 
+
 @cli.command()
 def rotation() -> None:
     from rotation_script import rotation_script
+
     sentry.init()
     rotation_script.run()
+
 
 @cli.command()
 def logsite() -> None:
     import logsite as site
+
     site.APP.run(host='0.0.0.0', port=5001, debug=True)  # type: ignore
+
 
 @cli.command()
 @click.argument('argv', nargs=-1)
 def modo_bugs(argv: tuple[str]) -> None:
     try:
         from modo_bugs import main
+
         sentry.init()
         main.run(argv)
     except Exception as e:
         repo.create_issue(f'Exception running modo_bugs: {e}', 'modo-bugs', 'run.py', 'PennyDreadfulMTG/perf-reports', e)
 
+
 @cli.command()
 @click.option('--force', is_flag=True, help='Force a rebuild of the database')
 def init_cards(force: bool = False) -> None:
     from magic import multiverse
+
     success = multiverse.init(force=force)
     multiverse.rebuild_cache()
     sys.exit(0 if success else 1)
@@ -123,6 +148,7 @@ def task(args: list[str]) -> None:
         name = args[1].replace('-', '_')
         sentry.init()
         from magic import multiverse, oracle
+
         multiverse.init()
         if name != 'reprime_cache':
             oracle.init()
@@ -140,6 +166,7 @@ def task(args: list[str]) -> None:
             exitcode = None
             if use_app_context:
                 from decksite.main import APP
+
                 APP.logger.setLevel(logging.INFO)  # Override app setting of WARN.
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 with APP.app_context():
@@ -151,8 +178,10 @@ def task(args: list[str]) -> None:
                 sys.exit(exitcode)
     except Exception as c:
         from shared import repo
+
         repo.create_issue(f'Error running task {args}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
         raise
+
 
 def call(args: list[str], s: ModuleType) -> int:
     exitcode = -99
@@ -165,11 +194,13 @@ def call(args: list[str], s: ModuleType) -> int:
         exitcode = s.ad_hoc()
     return exitcode
 
+
 def run_all_tasks(module: Any, with_flag: str | None = None) -> None:
     error = None
     m = importlib.import_module(f'{module}')
 
     from decksite import APP
+
     APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context():
         for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):
@@ -191,6 +222,7 @@ def run_all_tasks(module: Any, with_flag: str | None = None) -> None:
                     print(f'{s.__name__} completed in {t}')
             except Exception as c:
                 from shared import repo
+
                 repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
                 error = c
 

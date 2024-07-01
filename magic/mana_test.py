@@ -9,41 +9,54 @@ def test_simple() -> None:
     with pytest.raises(mana.InvalidManaCostException):
         do_test('Not a mana symbol sequence', [])
 
+
 def test_twobrid() -> None:
     do_test('2/W2/W2/W', ['2/W', '2/W', '2/W'])
+
 
 def test_twodigit() -> None:
     do_test('{15}', ['15'])
 
+
 def test_gleemax() -> None:
     do_test('1000000', ['1000000'])
+
 
 def test_x() -> None:
     do_test('X', ['X'])
 
+
 def test_y() -> None:
     do_test('XYZ', ['X', 'Y', 'Z'])
+
 
 def test_multicolor_x() -> None:
     do_test('XRB', ['X', 'R', 'B'])
 
+
 def test_phyrexian() -> None:
     do_test('U/P', ['U/P'])
+
 
 def test_porcelain_legionnaire() -> None:
     do_test('{2}{W/P}', ['2', 'W/P'])
 
+
 def test_norns_annex() -> None:
     do_test('{3}{W/P}{W/P}', ['3', 'W/P', 'W/P'])
+
 
 def test_slitherhead() -> None:
     do_test('{B/G}', ['B/G'])
 
+
 def test_little_girl() -> None:
     do_test('{HW}', ['HW'])
 
+
 def test_hybrid_phyrexian() -> None:
     do_test('{2}{G}{G/U/P}{U}', ['2', 'G', 'G/U/P', 'U'])
+
 
 @pytest.mark.functional
 def test_everything() -> None:
@@ -51,6 +64,7 @@ def test_everything() -> None:
     for row in rs:
         if row['mana_cost']:
             mana.parse(row['mana_cost'])
+
 
 def test_colors() -> None:
     assert mana.colors(['9', 'W', 'W', 'R']) == {'required': {'W', 'R'}, 'also': set()}
@@ -62,6 +76,7 @@ def test_colors() -> None:
     assert mana.colors(['2', 'G', 'G/U/P', 'U']) == {'required': {'G', 'U'}, 'also': {'G', 'U'}}
     assert mana.colors(['W/B/P']) == {'required': set(), 'also': {'W', 'B'}}
 
+
 def test_colored_symbols() -> None:
     assert mana.colored_symbols(['9', 'W', 'W', 'R']) == {'required': ['W', 'W', 'R'], 'also': []}
     assert mana.colored_symbols(['2/W', 'G', 'X']) == {'required': ['G'], 'also': ['W']}
@@ -72,12 +87,14 @@ def test_colored_symbols() -> None:
     assert mana.colored_symbols(['2', 'G', 'G/U/P', 'U']) == {'required': ['G', 'U'], 'also': ['G', 'U']}
     assert mana.colored_symbols(['W/B/P']) == {'required': [], 'also': ['W', 'B']}
 
+
 def test_has_x() -> None:
     assert mana.has_x('{9}{X}')
     assert not mana.has_x('{1}{W}{W}')
     assert mana.has_x('{X}{Y}{R}')
     assert not mana.has_x('{C}')
     assert mana.has_x('{Y}{Z}')
+
 
 def test_order() -> None:
     assert mana.order(['U']) == ['U']
@@ -110,6 +127,7 @@ def test_order() -> None:
     assert mana.order(['C', 'G', 'R']) == ['R', 'G', 'C']
     assert mana.order(['C', 'G', 'R', 'S']) == ['R', 'G', 'C', 'S']
 
+
 def test_sort_score() -> None:
     assert mana.sort_score(['G', 'W', 'U']) > mana.sort_score(['G', 'U'])
     assert mana.sort_score(['B', 'R', 'G']) > mana.sort_score(['B', 'R'])
@@ -125,11 +143,14 @@ def test_sort_score() -> None:
     assert mana.sort_score(['G']) > mana.sort_score(['C', 'W'])
     assert mana.sort_score(['W', 'U', 'B', 'R', 'G']) > mana.sort_score(['C', 'S', 'U', 'B', 'R', 'G'])
 
+
 def test_colorless() -> None:
     assert mana.colored_symbols(['C']) == {'required': ['C'], 'also': []}
 
+
 def test_snow() -> None:
     assert mana.colored_symbols(['S']) == {'required': ['S'], 'also': []}
+
 
 def test_cmc() -> None:
     assert mana.cmc('{HW}') == 0.5
@@ -139,14 +160,17 @@ def test_cmc() -> None:
     assert mana.cmc('{2}{G}{G/U/P}{U}') == 5
     assert mana.cmc('{W/B/P}') == 1
 
+
 def test_is_phyrexian() -> None:
     assert mana.phyrexian('R/P')
     assert mana.phyrexian('G/U/P')
+
 
 def test_is_hybrid() -> None:
     assert mana.hybrid('G/U')
     assert not mana.hybrid('U/P')
     assert mana.hybrid('G/U/P')
+
 
 def do_test(s: str, expected: list[str]) -> None:
     symbols = mana.parse(s)

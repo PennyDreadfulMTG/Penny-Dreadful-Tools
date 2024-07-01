@@ -56,7 +56,7 @@ class Criterion(Token):
     def match(cls, chars: str) -> bool:
         if not Key.match(chars):
             return False
-        rest = chars[Key.length(chars):]
+        rest = chars[Key.length(chars) :]
         if not Operator.match(rest):
             return False
         return len(rest) > 0

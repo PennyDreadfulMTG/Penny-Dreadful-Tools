@@ -11,6 +11,7 @@ SIDEBOARD_WEIGHT = 0.2
 # At the time of writing (May 2024) 0.3 finds at least one key card for any archetype in any season. 0.16 finds five (for /metagame). .1 then seems like a nice baseline to make sure we get "a deck" back. Pretty arbitrary.
 USEFUL_PLAYABILITY_THRESHOLD = 0.1
 
+
 def preaggregate() -> None:
     preaggregate_legal_cards()
     preaggregate_season_count()
@@ -24,6 +25,7 @@ def preaggregate() -> None:
     preaggregate_archetype_playability()
     preaggregate_season_playability()
     preaggregate_playability()
+
 
 # Map of archetype_id => cardname where cardname is the key card for that archetype for the supplied season, or all time if 0 supplied as season_id.
 @retry_after_calling(preaggregate)
@@ -85,6 +87,7 @@ def key_cards_long(season_id: int) -> dict[int, list[str]]:
         r[row['archetype_id']] = r.get(row['archetype_id'], []) + [row['name']]
     return r
 
+
 @retry_after_calling(preaggregate)
 def playability() -> dict[str, float]:
     sql = """
@@ -95,6 +98,7 @@ def playability() -> dict[str, float]:
             _playability
     """
     return {r['name']: r['playability'] for r in db().select(sql)}
+
 
 @retry_after_calling(preaggregate)
 def season_playability(season_id: int) -> list[Container]:
@@ -113,10 +117,12 @@ def season_playability(season_id: int) -> list[Container]:
     """
     return [Container(r) for r in db().select(sql)]
 
+
 @retry_after_calling(preaggregate)
 def rank() -> dict[str, int]:
     sql = query.ranks_select()
     return {r['name']: r['rank'] for r in db().select(sql)}
+
 
 def preaggregate_legal_cards() -> None:
     sql = 'SELECT number FROM season'
@@ -148,6 +154,7 @@ def preaggregate_legal_cards() -> None:
         sql = 'INSERT INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in legal_cards)
         db().execute(sql)
 
+
 def preaggregate_season_count() -> None:
     table = '_season_count'
     season_join = query.season_join()
@@ -170,6 +177,7 @@ def preaggregate_season_count() -> None:
             season.season_id
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_season_archetype_count() -> None:
     table = '_season_archetype_count'
@@ -197,6 +205,7 @@ def preaggregate_season_archetype_count() -> None:
             d.archetype_id
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_season_card_count() -> None:
     table = '_season_card_count'
@@ -239,6 +248,7 @@ def preaggregate_season_card_count() -> None:
             NULL
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_season_archetype_card_count() -> None:
     table = '_season_archetype_card_count'
@@ -284,6 +294,7 @@ def preaggregate_season_archetype_card_count() -> None:
             NULL
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_season_archetype_playability() -> None:
     table = '_season_archetype_playability'
@@ -332,6 +343,7 @@ def preaggregate_season_archetype_playability() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 def preaggregate_archetype_count() -> None:
     table = '_archetype_count'
     sql = f"""
@@ -352,6 +364,7 @@ def preaggregate_archetype_count() -> None:
             d.archetype_id
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_card_count() -> None:
     table = '_card_count'
@@ -381,6 +394,7 @@ def preaggregate_card_count() -> None:
             dc.card
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_archetype_card_count() -> None:
     table = '_archetype_card_count'
@@ -416,6 +430,7 @@ def preaggregate_archetype_card_count() -> None:
             NULL
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_archetype_playability() -> None:
     table = '_archetype_playability'
@@ -459,6 +474,7 @@ def preaggregate_archetype_playability() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
+
 def preaggregate_season_playability() -> None:
     table = '_season_playability'
     sql = f"""
@@ -481,6 +497,7 @@ def preaggregate_season_playability() -> None:
             _season_card_count AS scc
     """
     preaggregation.preaggregate(table, sql)
+
 
 def preaggregate_playability() -> None:
     table = '_playability'

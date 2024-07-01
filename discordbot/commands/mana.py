@@ -13,5 +13,6 @@ class Mana(Extension):
         """Get Dr. Karsten's advice on number of colored sources of mana required."""
         await ctx.send_image_with_retry(os.path.join(pathlib.Path(__file__).parent.absolute(), 'img/mana-frank.png'))
 
+
 def setup(bot: Client) -> None:
     Mana(bot)

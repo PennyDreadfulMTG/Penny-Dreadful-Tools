@@ -15,5 +15,6 @@ class Hype(Extension):
         else:
             await ctx.send(f'{ctx.author.mention}: No rotation hype message.', flags=MessageFlags.EPHEMERAL)
 
+
 def setup(bot: Client) -> None:
     Hype(bot)

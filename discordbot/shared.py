@@ -10,6 +10,7 @@ def guild_id(ctx: BaseContext | TYPE_MESSAGEABLE_CHANNEL | None) -> int | None:
         return ctx.id
     return None
 
+
 def channel_id(ctx: BaseContext | TYPE_MESSAGEABLE_CHANNEL | None) -> int | None:
     if ctx is None:
         return None

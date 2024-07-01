@@ -7,6 +7,7 @@ from magic.database import db
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.
 # $ python3 dev.py test find
 
+
 def test_match() -> None:
     assert search.Key.match('c')
     assert search.Key.match('mana')
@@ -16,7 +17,9 @@ def test_match() -> None:
     assert not search.Criterion.match('magic:2uu')
     assert search.Criterion.match('tou>2')
 
+
 # START Tests from https://scryfall.com/docs/syntax
+
 
 @pytest.mark.functional
 def test_colors_and_color_identity() -> None:
@@ -38,6 +41,7 @@ def test_colors_and_color_identity() -> None:
     do_functional_test(s, ['Plains', "Tormod's Crypt"], ['Master of Etherium'])
     # "the four-color nicknames chaos, aggression, altruism, growth, artifice are supported"
 
+
 @pytest.mark.functional
 def test_types() -> None:
     s = 't:merfolk t:legend'
@@ -50,6 +54,7 @@ def test_types() -> None:
     s = 't:/pw/'
     do_functional_test(s, [], ['Ugin, the Spirit Dragon'])
 
+
 @pytest.mark.functional
 def test_card_text() -> None:
     s = 'o:draw o:creature'
@@ -59,6 +64,7 @@ def test_card_text() -> None:
 
     s = 'fo:/sacrifice ~ .* all/'
     do_functional_test(s, ['Coercive Portal', 'Planar Collapse'], ['Tomb of Urami', 'Viscera Seer'])
+
 
 @pytest.mark.functional
 def test_mana_costs() -> None:
@@ -90,6 +96,7 @@ def test_mana_costs() -> None:
     s = 'produces>g'
     do_functional_test(s, ['Aether Hub', "Arcum's Astrolabe", 'Birds of Paradise', 'Llanowar Wastes', 'Lotus Bloom', 'Pentad Prism', 'Opulent Palace', 'Vivid Marsh', 'Servant of the Conduit', 'Song of Freyalise', "Mirari's Wake", 'Gruul Signet'], ['Thran Portal', 'Ramunap Ruins', 'Rofellos, Llanowar Emissary'])
 
+
 @pytest.mark.functional
 def test_power_toughness_and_loyalty() -> None:
     s = 'pow>=8'
@@ -101,6 +108,7 @@ def test_power_toughness_and_loyalty() -> None:
 
     s = 't:planeswalker loy=3'
     do_functional_test(s, ['Jace, the Mind Sculptor', 'Liliana of the Veil'], ['Karn, the Great Creator', 'Mountain', 'Progenitus'])
+
 
 @pytest.mark.functional
 def test_multi_faced_cards() -> None:
@@ -125,6 +133,7 @@ def test_multi_faced_cards() -> None:
     s = 'is:mdfc AND is:dfc'
     do_functional_test(s, ["Agadeem's Awakening", 'Bala Ged Recovery', 'Barkchannel Pathway'], ['Delver of Secrets', 'Budoka Gardener', 'Fire // Ice'])
 
+
 @pytest.mark.functional
 def test_spells_permanents_and_effects() -> None:
     s = 'c>=br is:spell f:duel'
@@ -136,7 +145,9 @@ def test_spells_permanents_and_effects() -> None:
     s = 'is:spell'
     do_functional_test(s, ['Brainstorm', 'Invasion of Alara', 'Necropotence', 'Grizzly Bears'], ['Dungeon of the Mad Mage', 'Thran Portal', "Adriana's Valor"])
 
+
 # … Extra Cards and Funny Cards …
+
 
 @pytest.mark.functional
 def test_rarity() -> None:
@@ -148,6 +159,7 @@ def test_rarity() -> None:
     # We don't currently support `new:rarity`
     # s = 'rarity:common e:ima new:rarity'
     # do_functional_test(s, ['Darksteel Axe', 'Seeker of the Way'], ['Balustrade Spy', 'Bladewing the Risen'])
+
 
 @pytest.mark.functional
 def test_sets_and_blocks() -> None:
@@ -164,7 +176,9 @@ def test_sets_and_blocks() -> None:
     # s = 'is:datestamped is:prerelease'
     # do_functional_test(s, ['Mox Amber', 'Ulamog, the Ceaseless Hunger'], ['Mayor of Avabruck', 'Valakut, the Molten Pinnacle'])
 
+
 # … Cubes …
+
 
 @pytest.mark.functional
 def test_format_legality() -> None:
@@ -181,6 +195,7 @@ def test_format_legality() -> None:
     s = 'is:companion'
     do_functional_test(s, ['Lurrus of the Dream-Den', 'Treizeci, Sun of Serra'], ["Bear's Companion", 'K-9, Mark 1'])
 
+
 # USD/EUR/TIX prices
 # Artist, Flavor Text and Watermark
 # Border, Frame, Foil and Resolution
@@ -189,6 +204,7 @@ def test_format_legality() -> None:
 # Tagger tags
 # Reprints
 # Languages
+
 
 # Shortcuts and Nicknames
 @pytest.mark.functional
@@ -220,6 +236,7 @@ def test_shortcuts_and_nicknames() -> None:
     do_functional_test('is:battleland', ['Canopy Vista'], ['Glacial Fortress', 'Thran Portal', 'Blood Moon'])
     # do_functional_test('is:masterpiece, [], [])
 
+
 @pytest.mark.functional
 def test_negating_conditions() -> None:
     s = '-fire c:r t:instant'
@@ -231,12 +248,15 @@ def test_negating_conditions() -> None:
     s = 'not:permanent c:b cmc=1 Dark'
     do_functional_test(s, ['Darkness', 'Dark Ritual'], ['Darkest Hour'])
 
+
 # Regular Expressions
+
 
 def test_regular_expressions() -> None:
     s = 'fo:/unclosed'
     with pytest.raises(search.InvalidSearchException):
         do_test(s, '')
+
 
 @pytest.mark.functional
 def test_regular_expressions_functional() -> None:
@@ -289,12 +309,14 @@ def test_regular_expressions_functional() -> None:
 
 # Exact Names
 
+
 @pytest.mark.functional
 def test_using_or() -> None:
     s = 't:fish or t:bird'
     do_functional_test(s, [], [])
     s = 't:land (a:titus or a:avon)'
     do_functional_test(s, [], [])
+
 
 @pytest.mark.functional
 def test_nesting_conditions() -> None:
@@ -303,10 +325,12 @@ def test_nesting_conditions() -> None:
     s = 'through (depths or sands or mists)'
     do_functional_test(s, ['Peer Through Depths', 'Reach Through Mists', 'Sift Through Sands'], ['Dig Through Time', 'Through the Breach'])
 
+
 # Display Keywords
 
 
 # END Tests from https://scryfall.com/docs/syntax
+
 
 @pytest.mark.functional
 def test_colors_with_ints() -> None:
@@ -314,6 +338,7 @@ def test_colors_with_ints() -> None:
     do_functional_test('c=5 t:legendary -t:creature', ['Genju of the Realm'], ['Coalition Victory', 'Garth One-Eye', 'Legacy Weapon'])
     do_functional_test('ci<4 ci>1 t:instant cmc=2', ['Abrupt Decay', "Assassin's Trophy", 'Agony Warp', 'Ancient Grudge', 'Resounding Roar'], ['Abeyance'])
     do_functional_test('c<4 c>1 t:instant cmc=2', ['Abrupt Decay', "Assassin's Trophy", 'Agony Warp'], ['Abeyance', 'Ancient Grudge', 'Resounding Roar'])
+
 
 @pytest.mark.functional
 def test_past_seasons() -> None:
@@ -324,6 +349,7 @@ def test_past_seasons() -> None:
     do_functional_test('f:"penny dreadful all"', ['Mother of Runes', 'Necropotence'], ['Black Lotus'])
     do_functional_test('f:"pdsall"', ['Mother of Runes', 'Necropotence'], ['Black Lotus'])
 
+
 @pytest.mark.functional
 def test_oracle_and_fulloracle() -> None:
     do_functional_test('o:"clue token"', ['Fae Offering'], ['Briarbridge Tracker', 'Black Lotus'])
@@ -331,18 +357,22 @@ def test_oracle_and_fulloracle() -> None:
     do_functional_test('o:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
     do_functional_test('fo:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
 
+
 @pytest.mark.functional
 def test_parentheses_functional() -> None:
     with pytest.raises(search.InvalidSearchException):
         do_functional_test('(', [], [])
     do_functional_test('"("', ["Erase (Not the Urza's Legacy One)"], ['Fae Offering'])
 
+
 @pytest.mark.functional
 def test_edition_functional() -> None:
     do_functional_test('e:ktk', ['Flooded Strand', 'Treasure Cruise', 'Zurgo Helmsmasher'], ['Life from the Loam', 'Scalding Tarn', 'Zurgo Bellstriker'])
 
+
 def test_edition() -> None:
     do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = 'ktk' OR code = 'ktk')))")
+
 
 def test_special_chars() -> None:
     do_test('o:a_c%', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%a\\_c\\%%%%')")
@@ -352,56 +382,71 @@ def test_special_chars() -> None:
 def test_tilde_functional() -> None:
     do_functional_test('o:"sacrifice ~"', ['Abandoned Outpost', 'Black Lotus'], ['Cartel Aristocrat', 'Life from the Loam'])
 
+
 def test_tilde() -> None:
     expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, '%%'))"
     do_test('o:"sacrifice ~"', expected)
+
 
 @pytest.mark.functional
 def test_double_tilde_functional() -> None:
     do_functional_test('o:"sacrifice ~: ~ deals 2 damage to any target"', ['Blazing Torch', 'Inferno Fist'], ['Black Lotus', 'Cartel Aristocrat'])
 
+
 def test_double_tilde() -> None:
     expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to any target%%'))"
     do_test('o:"sacrifice ~: ~ deals 2 damage to any target"', expected)
+
 
 @pytest.mark.functional
 def test_color() -> None:
     do_functional_test('c<=w t:creature', ['Icehide Golem', 'Thalia, Guardian of Thraben'], ['Delver of Secrets', 'Duskwatch Recruiter', 'Enlightened Tutor', 'Mantis Rider'])
 
+
 @pytest.mark.functional
 def test_only_multicolored_functional() -> None:
     do_functional_test('c:m', ['Bant Charm', 'Murderous Redcap'], ['Door to Nothingness', 'Fires of Undeath', 'Lightning Bolt'])
 
+
 def test_only_multicolored() -> None:
     do_test('c:m', '(c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) >= 2))')
+
 
 def test_multicolored_with_other_colors() -> None:
     with pytest.raises(search.InvalidValueException):
         do_test('c:bm', '')
 
+
 @pytest.mark.functional
 def test_multicolored_coloridentity_functional() -> None:
     do_functional_test('ci>=b', ['Dark Ritual', 'Golos, Tireless Pilgrim', 'Murderous Redcap', 'Swamp'], ['Black Lotus', 'Daze', 'Plains'])
 
+
 def test_multicolored_coloridentity() -> None:
     do_test('ci>=b', '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 3)))')
+
 
 @pytest.mark.functional
 def test_exclusivemulitcolored_same_functional() -> None:
     do_functional_test('ci!b', ['Dark Ritual', 'Swamp'], ['Black Lotus', 'Golos, Tireless Pilgrim', 'Muderous Redcap'])
 
+
 def test_exclusivemulitcolored_same() -> None:
     do_test('ci!b', '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 3))) AND (c.id IN (SELECT card_id FROM card_color_identity GROUP BY card_id HAVING COUNT(card_id) <= 1))')
 
+
 def test_mulitcolored_multiple() -> None:
     do_test('c=br', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
+
 
 @pytest.mark.functional
 def test_multicolored_exclusive_functional() -> None:
     do_functional_test('c!br', ["Kroxa, Titan of Death's Hunger", 'Fulminator Mage', 'Murderous Redcap'], ['Bosh, Iron Golem', 'Dark Ritual', 'Fires of Undeath'])
 
+
 def test_multicolored_exclusive() -> None:
     do_test('c!br', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
+
 
 @pytest.mark.functional
 def test_color_identity_functional() -> None:
@@ -411,6 +456,7 @@ def test_color_identity_functional() -> None:
     do_functional_test('cid=u', yes, no)
     do_functional_test('id=u', yes, no)
 
+
 def test_color_identity() -> None:
     where = '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2))) AND (c.id IN (SELECT card_id FROM card_color_identity GROUP BY card_id HAVING COUNT(card_id) <= 1))'
     do_test('ci=u', where)
@@ -418,190 +464,246 @@ def test_color_identity() -> None:
     do_test('id=u', where)
     do_test('commander=u', where)
 
+
 @pytest.mark.functional
 def test_color_identity_two_colors() -> None:
     do_functional_test('id:uw', ['Brainstorm', 'Dream Trawler', 'Island', 'Wastes'], ['Forbidden Alchemy', 'Lightning Bolt', 'Watery Grave'])
+
 
 @pytest.mark.functional
 def test_color_identity_colorless_functional() -> None:
     do_functional_test('ci:c', ['Lodestone Golem', 'Wastes'], ['Academy Ruins', 'Bosh, Iron Golem', 'Lightning Bolt', 'Plains'])
 
+
 def test_color_identity_colorless() -> None:
     do_test('ci:c', '(NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 3))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 5))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 4))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 1))) AND (c.id NOT IN (SELECT card_id FROM card_color_identity))')
+
 
 @pytest.mark.functional
 def test_color_exclusively_functional() -> None:
     do_functional_test('c!r', ['Gut Shot', 'Lightning Bolt'], ['Bosh, Iron Golem', 'Lightning Helix', 'Mountain', 'Mox Ruby'])
 
+
 def test_color_exclusively() -> None:
     do_test('c!r', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 1))')
+
 
 @pytest.mark.functional
 def test_color_exclusively2_functional() -> None:
     do_functional_test('c!rg', ['Assault // Battery', 'Destructive Revelry', 'Tattermunge Maniac'], ['Ancient Grudge', 'Lightning Bolt', 'Taiga'])
 
+
 def test_color_exclusively2() -> None:
     do_test('c!rg', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
+
 
 def test_colorless_with_color() -> None:
     with pytest.raises(search.InvalidValueException):
         do_test('c:cr', '')
 
+
 def test_colorless_exclusivity() -> None:
     do_test('c!c', '(c.id NOT IN (SELECT card_id FROM card_color))')
+
 
 def test_colorless_exclusivity2() -> None:
     with pytest.raises(search.InvalidValueException):
         do_test('c!cr', '')
 
+
 @pytest.mark.functional
 def test_multiple_colors_functional() -> None:
     do_functional_test('c:rgw', ['Naya Charm', 'Progenitus', 'Reaper King', 'Transguild Courier'], ["Atarka's Command", 'Jegantha, the Wellspring'])
 
+
 def test_multiple_colors() -> None:
     do_test('c:rgw', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 1)))')
+
 
 def test_mana() -> None:
     do_test('mana=2WW', "(mana_cost = '{2}{W}{W}')")
 
+
 def test_mana2() -> None:
     do_test('mana=X2/W2/WRB', "(mana_cost = '{X}{2/W}{2/W}{R}{B}')")
+
 
 def test_mana3() -> None:
     do_test('mana=XRB', "(mana_cost = '{X}{R}{B}')")
 
+
 def test_mana4() -> None:
     do_test('mana=15', "(mana_cost = '{15}')")
+
 
 def test_mana5() -> None:
     do_test('mana=U/P', "(mana_cost = '{U/P}')")
 
+
 def test_mana6() -> None:
     do_test('mana:c', "(mana_cost LIKE '%%{C}%%')")
+
 
 def test_mana7() -> None:
     do_test('mana:uu', "(mana_cost LIKE '%%{U}{U}%%')")
 
+
 def test_mana8() -> None:
     do_test('mana:g/u/p', "(mana_cost LIKE '%%{G/U/P}%%')")
+
 
 @pytest.mark.functional
 def test_hybrid_phyrexian_mana() -> None:
     do_functional_test('mana:g/u/p', ['Tamiyo, Compleated Sage'], ['Corrosive Gale', 'Gitaxian Probe'])
 
+
 # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8975
 # def test_mana8() -> None:
 #     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
+
 
 def test_uppercase() -> None:
     pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', [f'{seasons.current_season_name()}%%'])
     do_test('F:pd', f"(c.id IN (SELECT card_id FROM card_legality WHERE format_id IN ({pd_id}) AND legality <> 'Banned'))")
 
+
 def test_subtype() -> None:
     do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%%warrior%%'))")
+
 
 def test_not() -> None:
     do_test('t:creature -t:artifact t:legendary', "(type_line LIKE '%%creature%%') AND NOT (type_line LIKE '%%artifact%%') AND (type_line LIKE '%%legendary%%')")
 
+
 def test_not_cmc() -> None:
     do_test('-cmc=2', 'NOT (cmc IS NOT NULL AND cmc = 2)')
+
 
 def test_cmc() -> None:
     do_test('cmc>2', '(cmc IS NOT NULL AND cmc > 2)')
     do_test('cmc=0', '(cmc IS NOT NULL AND cmc = 0)')
 
+
 def test_not_text() -> None:
     do_test('o:haste -o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%haste%%') AND NOT (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%deathtouch%%') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%trample%%') AND NOT (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%first strike%%') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
+
 
 @pytest.mark.functional
 def test_color_not_text_functional() -> None:
     do_functional_test('c:b -c:r o:trample', ['Abyssal Persecutor', 'Driven // Despair'], ['Child of Alara', 'Chromanticore'])
 
+
 def test_color_not_text() -> None:
     do_test('c:b -c:r o:trample', "((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND NOT ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%trample%%')")
+
 
 @pytest.mark.functional
 def test_color_functional() -> None:
     do_functional_test('c:g', ['Destructive Revelry', 'Rofellos, Llanowar Emissary', 'Tattermunge Maniac'], ['Ancient Grudge', 'Forest', 'Lightning Bolt'])
 
+
 def test_color_green() -> None:
     do_test('c:g', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)))')
+
 
 def test_or() -> None:
     do_test('a OR b', "(name LIKE '%%a%%') OR (name LIKE '%%b%%')")
 
+
 def test_bad_or() -> None:
     do_test('orgg', "(name LIKE '%%orgg%%')")
+
 
 def test_or_without_args() -> None:
     with pytest.raises(search.InvalidSearchException):
         do_test('or GG', '')
 
+
 def test_not_without_args() -> None:
     with pytest.raises(search.InvalidSearchException):
         do_test('c:r NOT', '')
 
+
 def test_or_with_args() -> None:
     do_test('AA or GG', "(name LIKE '%%aa%%') OR (name LIKE '%%gg%%')")
+
 
 def test_text() -> None:
     do_test('o:"target attacking"', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%target attacking%%')")
     do_test('fulloracle:"target attacking"', "(oracle_text LIKE '%%target attacking%%')")
 
+
 def test_name() -> None:
     do_test('tension turtle', "(name LIKE '%%tension%%') AND (name LIKE '%%turtle%%')")
 
+
 def test_parentheses() -> None:
     do_test('x OR (a OR (b AND c))', "(name LIKE '%%x%%') OR ((name LIKE '%%a%%') OR ((name LIKE '%%b%%') AND (name LIKE '%%c%%')))")
+
 
 @pytest.mark.functional
 def test_toughness_functional() -> None:
     do_functional_test('c:r tou>2', ['Bonecrusher Giant', "Kroxa, Titan of Death's Hunger"], ['Endurance', 'Ragavan, Nimble Pilferer', 'Wurmcoil Engine'])
 
+
 def test_toughness() -> None:
     do_test('c:r tou>2', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (toughness IS NOT NULL AND toughness > 2)')
+
 
 def test_type() -> None:
     do_test('t:"human wizard"', "(type_line LIKE '%%human wizard%%')")
 
+
 def test_power() -> None:
     do_test('t:wizard pow<2', "(type_line LIKE '%%wizard%%') AND (power IS NOT NULL AND power < 2)")
+
 
 def test_mana_with_other() -> None:
     do_test('t:creature mana=WW o:lifelink', "(type_line LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
 
+
 def test_mana_alone() -> None:
     do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")
 
+
 def test_or_and_parentheses() -> None:
     do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness > 2) OR (power IS NOT NULL AND power > 2)))")
+
 
 @pytest.mark.functional
 def test_not_color_functional() -> None:
     do_functional_test('c:r -c:u', ['Lightning Bolt', 'Lightning Helix'], ['Bosh, Iron Golem', 'Electrolyze'])
 
+
 def test_not_color() -> None:
     do_test('c:r -c:u', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND NOT ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 2)))')
+
 
 @pytest.mark.functional
 def test_complex_functional() -> None:
     do_functional_test('c:u OR (c:g tou>3)', ['Dragonlord Atarka', 'Endurance', 'Force of Negation', 'Teferi, Time Raveler', 'Venser, Shaper Savant'], ['Acidic Slime', 'Black Lotus', 'Giant Growth', 'Lightning Bolt', 'Wrenn and Six'])
 
+
 def test_complex() -> None:
     do_test('c:u OR (c:g tou>3)', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 2))) OR (((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))) AND (toughness IS NOT NULL AND toughness > 3))')
+
 
 def test_is_hybrid() -> None:
     do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")
 
+
 def test_is_hybrid_functional() -> None:
     do_functional_test('is:hybrid c:w', ['Spectral Procession', 'Figure of Destiny'], ['Shadow of Doubt', 'Isamaru, Hound of Konda'])
+
 
 def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id IN (4) AND legality <> 'Banned')))")
 
+
 @pytest.mark.functional()
 def test_smart_quotes() -> None:
     do_functional_test('o:“Art rampage”', ['Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental'], [])
+
 
 @pytest.mark.functional
 def test_format_functional() -> None:
@@ -614,9 +716,11 @@ def test_format_functional() -> None:
     do_functional_test('format:pd', legal, not_legal)
     do_functional_test('legal:pd', legal, not_legal)
 
+
 @pytest.mark.functional
 def test_is_commander_illegal_commander_functional() -> None:
     do_functional_test('c:g cmc=2 is:commander', ['Ayula, Queen Among Bears', 'Gaddock Teeg'], ['Fblthp, the Lost', 'Rofellos, Llanowar Emissary'])
+
 
 def test_is_spikey() -> None:
     where = search.parse(search.tokenize('is:spikey'))
@@ -624,9 +728,11 @@ def test_is_spikey() -> None:
     assert 'Balance' in where
     assert "name = 'Yawgmoth''s Will'" in where
 
+
 @pytest.mark.functional
 def test_is_outlaw() -> None:
     do_functional_test('is:outlaw', ['Malcolm, Alluring Scoundrel', 'Shardless Agent', 'Faerie Vandal', 'Murderous Redcap', 'Faerie Dreamthief'], ['Ponder', 'Deep-Cavern Bat', 'Delver of Secrets'])
+
 
 def test_parse_season() -> None:
     assert search.parse_season('pdsall') == 'ALL'
@@ -656,6 +762,7 @@ def test_parse_season() -> None:
         search.parse_season('foopd1')
     assert search.parse_season('pd1') == 'EMN'
 
+
 def do_functional_test(query: str, yes: list[str], no: list[str], check_scryfall: bool = False) -> None:
     found = search.search(query)
     for name in yes:
@@ -666,6 +773,7 @@ def do_functional_test(query: str, yes: list[str], no: list[str], check_scryfall
         _, scryfall_names, _ = fetcher.search_scryfall(query)
         expected = set(scryfall_names)
         assert expected == found  # If you're getting a test failure here but your query isn't wrong, per se, it's because you're checking scryfall on something with too many results.
+
 
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))

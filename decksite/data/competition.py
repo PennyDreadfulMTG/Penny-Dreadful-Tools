@@ -14,13 +14,7 @@ from shared.container import Container
 from shared.database import sqlescape
 
 
-def get_or_insert_competition(start_date: datetime.datetime,
-                              end_date: datetime.datetime,
-                              name: str,
-                              competition_series: str,
-                              url: str | None,
-                              top_n: Top,
-                              competition_flag: CompetitionFlag | None = None) -> int:
+def get_or_insert_competition(start_date: datetime.datetime, end_date: datetime.datetime, name: str, competition_series: str, url: str | None, top_n: Top, competition_flag: CompetitionFlag | None = None) -> int:
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
@@ -43,8 +37,10 @@ def get_or_insert_competition(start_date: datetime.datetime,
     db().commit('insert_competition')
     return competition_id
 
+
 def load_competition(competition_id: int, should_load_decks: bool = True) -> Competition:
     return guarantee.exactly_one(load_competitions(f'c.id = {sqlescape(competition_id)}', should_load_decks=should_load_decks))
+
 
 def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = '', season_id: int | None = None, should_load_decks: bool | None = False) -> list[Competition]:
     sql = """
@@ -92,6 +88,7 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = ''
         load_decks(competitions)
     return competitions
 
+
 def load_decks(competitions: list[Competition]) -> None:
     if not competitions:
         return
@@ -102,6 +99,7 @@ def load_decks(competitions: list[Competition]) -> None:
         c.decks = []
     for d in decks:
         competitions_by_id[d.competition_id].decks.append(d)
+
 
 def tournaments_with_prizes() -> list[Competition]:
     where = """
@@ -114,6 +112,7 @@ def tournaments_with_prizes() -> list[Competition]:
             c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where, should_load_decks=True)
+
 
 def series(season_id: int | None = None) -> list[dict[str, Any]]:
     competition_join = query.competition_join()
@@ -138,6 +137,7 @@ def series(season_id: int | None = None) -> list[dict[str, Any]]:
             cs.day_of_week
     """
     return [Container(r) for r in db().select(sql)]
+
 
 def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: str | int | None = None) -> tuple[Sequence[Container], int]:
     person_query = query.person_query()
@@ -200,6 +200,7 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
     rs = db().select(sql)
     entries = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
     return entries, 0 if not rs else rs[0]['total']
+
 
 def set_doorprize(competition_name: str, winner: str) -> None:
     sql = """

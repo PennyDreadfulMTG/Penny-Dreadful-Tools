@@ -24,6 +24,7 @@ class Status(Enum):
     CLOSED = 0
     OPEN = 1
 
+
 class SignUpForm(DecklistForm):
     def __init__(self, form: ImmutableMultiDict, person_id: int | None, mtgo_username: str | None) -> None:
         super().__init__(form, person_id, mtgo_username)
@@ -48,6 +49,7 @@ class SignUpForm(DecklistForm):
         self.parse_and_validate_decklist()
         self.identifier = identifier(self)
 
+
 class DeckCheckForm(DecklistForm):
     def __init__(self, form: ImmutableMultiDict, person_id: int | None, mtgo_username: str | None) -> None:
         super().__init__(form, person_id, mtgo_username)
@@ -57,6 +59,7 @@ class DeckCheckForm(DecklistForm):
         self.parse_and_validate_decklist()
         if len(self.errors) == 0:
             self.validation_ok_message = 'The deck is legal'
+
 
 class ReportForm(Form):
     def __init__(self, form: ImmutableMultiDict, deck_id: int | None = None, person_id: int | None = None) -> None:
@@ -97,11 +100,9 @@ class ReportForm(Form):
         if self.entry == self.opponent:
             self.errors['opponent'] = "You can't play yourself"
 
+
 class RetireForm(Form):
-    def __init__(self,
-                 form: ImmutableMultiDict,
-                 deck_id: int | None = None,
-                 discord_user: int | None = None) -> None:
+    def __init__(self, form: ImmutableMultiDict, deck_id: int | None = None, discord_user: int | None = None) -> None:
         super().__init__(form)
         person_object = None
         if discord_user is not None:
@@ -123,14 +124,17 @@ class RetireForm(Form):
         elif not person.is_allowed_to_retire(self.entry, self.discord_user):
             self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another Magic Online user'
 
+
 def signup(form: SignUpForm) -> deck.Deck:
     form.mtgo_username = form.mtgo_username.strip()
     form.name = form.name.strip()
     return deck.add_deck(form)
 
+
 def identifier(params: dict[str, str]) -> str:
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
+
 
 def deck_options(decks: list[deck.Deck], v: str, viewer_id: int | None, show_details: bool) -> list[dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
@@ -140,12 +144,14 @@ def deck_options(decks: list[deck.Deck], v: str, viewer_id: int | None, show_det
         r.append({'text': deck_option_text(d, viewer_id, show_details), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw})
     return r
 
+
 def deck_option_text(d: deck.Deck, viewer_id: int | None, show_details: bool) -> str:
     if d.person_id == viewer_id:
         return d.name
     elif show_details:
         return f'{d.person} ({d.name}, {d.id})'
     return d.person
+
 
 def active_decks(additional_where: str = 'TRUE') -> list[deck.Deck]:
     where = f"""
@@ -172,11 +178,14 @@ def active_decks(additional_where: str = 'TRUE') -> list[deck.Deck]:
     decks, _ = deck.load_decks(where)
     return sorted(decks, key=lambda d: f'{d.person.ljust(100)}{d.name}')
 
+
 def active_decks_by(mtgo_username: str) -> list[deck.Deck]:
     return active_decks(f'p.mtgo_username = {sqlescape(mtgo_username, force_string=True)}')
 
+
 def active_decks_by_person(person_id: int) -> list[deck.Deck]:
     return active_decks(f'p.id = {person_id}')
+
 
 def report(form: ReportForm) -> bool:
     try:
@@ -244,12 +253,14 @@ def report(form: ReportForm) -> bool:
         db().release_lock(f'deck_id:{form.opponent}')
         db().release_lock(f'deck_id:{form.entry}')
 
+
 def winner_and_loser(params: Container) -> tuple[int | None, int | None]:
     if params.entry_games > params.opponent_games:
         return (params.entry, params.opponent)
     if params.opponent_games > params.entry_games:
         return (params.opponent, params.entry)
     return (None, None)
+
 
 def active_competition_id_query() -> str:
     return """
@@ -261,6 +272,7 @@ def active_competition_id_query() -> str:
         AND
             id IN ({competition_ids_by_type_select})
         """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+
 
 def active_league(should_load_decks: bool = False) -> competition.Competition:
     where = f'c.id = ({active_competition_id_query()})'
@@ -274,6 +286,7 @@ def active_league(should_load_decks: bool = False) -> competition.Competition:
             raise InvalidDataException(f'No competition id with {start_date}, {end_date}, {name}')
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
+
 
 def determine_end_of_league(start_date: datetime.datetime, next_rotation: datetime.datetime, lookahead: bool = True) -> datetime.datetime:
     if start_date >= next_rotation:
@@ -299,6 +312,7 @@ def determine_end_of_league(start_date: datetime.datetime, next_rotation: dateti
             end_date = next_end_date
     return end_date
 
+
 def determine_league_name(start_date: datetime.datetime, end_date: datetime.datetime) -> str:
     local_start_date = start_date.replace(tzinfo=dtutil.UTC_TZ).astimezone(tz=dtutil.WOTC_TZ)
     local_end_date = end_date.replace(tzinfo=dtutil.UTC_TZ).astimezone(tz=dtutil.WOTC_TZ)
@@ -312,10 +326,12 @@ def determine_league_name(start_date: datetime.datetime, end_date: datetime.date
         key_date = local_end_date
     return f'League {calendar.month_name[key_date.month]} {key_date.year}'
 
+
 def retire_deck(d: Deck) -> None:
     sql = 'UPDATE `deck` SET `retired` = 1, updated_date = UNIX_TIMESTAMP(NOW()) WHERE id = %s'
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
+
 
 def random_legal_deck() -> Deck | None:
     where = f'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {seasons.current_season_num()})'
@@ -327,10 +343,12 @@ def random_legal_deck() -> Deck | None:
         # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
         return None
 
+
 def get_status() -> Status:
     sql = f'SELECT is_locked FROM competition WHERE id IN ({active_competition_id_query()})'
     is_locked = db().value(sql)
     return Status.CLOSED if is_locked else Status.OPEN
+
 
 def set_status(status: Status) -> None:
     current = active_league()

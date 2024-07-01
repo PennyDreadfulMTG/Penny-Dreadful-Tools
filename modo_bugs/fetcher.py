@@ -13,6 +13,7 @@ from shared import configuration, fetch_tools, lazy
 
 logger = logging.getLogger(__name__)
 
+
 @attrs.define
 class ForumPost:
     title: str
@@ -20,9 +21,10 @@ class ForumPost:
     url: str
     # votes: str
 
+
 def search_scryfall(query: str) -> tuple[int, list[str], list[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
-       second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
+    second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':
         return 0, [], []
     logger.info(f'Searching scryfall for `{query}`')
@@ -43,8 +45,10 @@ def search_scryfall(query: str) -> tuple[int, list[str], list[str]]:
         if scr_card['layout'] in ['transform', 'flip', 'modal_dfc']:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
+
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return result_json['total_cards'], result_cardnames, result_json.get('warnings', [])
+
 
 def catalog_cardnames() -> list[str]:
     result_json = fetch_tools.fetch_json('https://api.scryfall.com/catalog/card-names')
@@ -53,6 +57,7 @@ def catalog_cardnames() -> list[str]:
         if ' // ' in n:
             names.extend(n.split(' // '))
     return names
+
 
 def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool:
     text = f'---\ntitle: {title}\nredirect_to:\n - {redirect}\n'
@@ -77,6 +82,7 @@ def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool
         return True
     return False
 
+
 def find_announcements() -> tuple[str | None, bool]:
     articles = [a for a in get_article_archive() if is_announcement(a)]
     if not articles:
@@ -88,6 +94,7 @@ def find_announcements() -> tuple[str | None, bool]:
     new = update_redirect('announcements', title, link, has_build_notes=str(bn))
     return (link, new)
 
+
 def is_announcement(a: tuple[str, str]) -> bool:
     if a[0].startswith('Magic Online Weekly Announcements'):
         return True
@@ -95,10 +102,12 @@ def is_announcement(a: tuple[str, str]) -> bool:
         return True
     return False
 
+
 def parse_article_item_extended(a: Tag) -> tuple[Tag, str]:
     title = a.find_all('h3')[0]
     link = 'https://www.mtgo.com' + a.find_all('a')[0]['href']
     return (title, link)
+
 
 @lazy.lazy_property
 def get_article_archive() -> list[tuple[str, str]]:
@@ -113,11 +122,12 @@ def get_article_archive() -> list[tuple[str, str]]:
     scripts = soup.find_all('script')
     findblob = re.compile(r'window.DGC.archive.articles = (.*?}]);', re.MULTILINE)
     for s in scripts:
-        if (m := findblob.search(s.contents[0])):
+        if m := findblob.search(s.contents[0]):
             blob = m.group(1)
             j = json.loads(blob)
             return [(p['title'], 'https://www.mtgo.com/news/' + p['pageName']) for p in j]
     return []
+
 
 def get_daybreak_label(url: str) -> str | None:
     time.sleep(1)
@@ -137,6 +147,7 @@ def get_daybreak_label(url: str) -> str | None:
         return label.text
 
     return None
+
 
 def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:
     time.sleep(1)  # Try not to get blocked by the Daybreak forums.
@@ -162,6 +173,7 @@ def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:
             url = 'https://forums.mtgo.com' + next.attrs['href']
             posts.extend(get_forum_posts(url, True))
     return posts
+
 
 def forum_to_discord(post: ForumPost) -> None:
     """Post to Discord webhook when new posts are flagged by Daybreak"""

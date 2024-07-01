@@ -30,6 +30,7 @@ class Resources(Extension):
                 s += f'{text}: <{url}>\n'
         await ctx.send(s)
 
+
 def site_resources(args: str) -> dict[str, str]:
     results = {}
     match = re.match('^s? ?([0-9]*|all) +', args)
@@ -62,18 +63,15 @@ def resources_resources(args: str) -> dict[str, str]:
     words = args.split()
     for title, items in fetcher.resources().items():
         for text, url in items.items():
-            asked_for_this_section_only = len(
-                words) == 1 and roughly_matches(title, words[0])
-            asked_for_this_section_and_item = len(words) == 2 and roughly_matches(
-                title, words[0]) and roughly_matches(text, words[1])
-            asked_for_this_item_only = len(
-                words) == 1 and roughly_matches(text, words[0])
-            the_whole_thing_sounds_right = roughly_matches(
-                text, ' '.join(words))
+            asked_for_this_section_only = len(words) == 1 and roughly_matches(title, words[0])
+            asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
+            asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
+            the_whole_thing_sounds_right = roughly_matches(text, ' '.join(words))
             the_url_matches = roughly_matches(url, ' '.join(words))
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right or the_url_matches:
                 results[url] = text
     return results
+
 
 def setup(bot: Client) -> None:
     Resources(bot)

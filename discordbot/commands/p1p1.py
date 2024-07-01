@@ -21,5 +21,6 @@ class P1P1(Extension):
         await ctx.post_cards(cards[5:10])
         await ctx.post_cards(cards[10:])
 
+
 def setup(bot: Client) -> None:
     P1P1(bot)

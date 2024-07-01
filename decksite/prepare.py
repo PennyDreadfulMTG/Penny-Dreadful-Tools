@@ -16,9 +16,11 @@ from shared.pd_exception import InvalidDataException
 
 # Take 'raw' items from the database and decorate them for use and display.
 
+
 def prepare_cards(cs: list[Card], tournament_only: bool = False, season_id: int | str | None = None) -> None:
     for c in cs:
         prepare_card(c, tournament_only, season_id)
+
 
 def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     season_name = seasons.current_season_name()
@@ -40,9 +42,11 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | 
     else:
         c.display_rank = str(c.rank)
 
+
 def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     c.url = url_for_card(c, tournament_only, season_id)
     c.img_url = url_for_image(c.name)
+
 
 def url_for_image(name: str) -> str:
     if g.get('url_cache') is None:
@@ -50,6 +54,7 @@ def url_for_image(name: str) -> str:
     if g.url_cache.get('card_image') is None:
         g.url_cache['card_image'] = url_for('image', c='--cardname--')
     return g.url_cache['card_image'].replace('--cardname--', name)
+
 
 def url_for_card(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> str:
     if g.get('url_cache') is None:
@@ -61,9 +66,11 @@ def url_for_card(c: Card, tournament_only: bool = False, season_id: int | str | 
             g.url_cache['card_page'] = url_for('seasons.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
     return g.url_cache['card_page'].replace('--cardname--', urllib.parse.quote(c.name))
 
+
 def prepare_decks(ds: list[Deck]) -> None:
     for d in ds:
         prepare_deck(d)
+
 
 def prepare_deck(d: Deck) -> None:
     season_name = seasons.current_season_name()
@@ -113,6 +120,7 @@ def prepare_deck(d: Deck) -> None:
             total += c['n'] * c.card.cmc
     d.average_cmc = round(total / max(1, num_cards), 2)
 
+
 def prepare_people(ps: Sequence[Person]) -> None:
     for p in ps:
         if p.get('mtgo_username'):
@@ -121,11 +129,13 @@ def prepare_people(ps: Sequence[Person]) -> None:
             p.url = f'/people/id/{p.id}/'
         p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)
 
+
 def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
     for entry in leaderboard:
         if entry.get('finish', 9) <= 8:
             entry.position = chr(9311 + entry.finish)  # ①, ②, ③, …
         entry.url = url_for('seasons.person', person_id=entry.person_id, season_id=entry.season_id)
+
 
 def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
     for m in ms:
@@ -150,9 +160,11 @@ def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
         if show_rounds:
             m.display_round = display_round(m)
 
+
 def prepare_archetypes(archetypes: list[Archetype], current_id: int | None, tournament_only: bool, season_id: int | str | None) -> None:
     for a in archetypes:
         prepare_archetype(a, archetypes, current_id, tournament_only, season_id)
+
 
 def prepare_archetype(a: archetype.Archetype, archetypes: list[archetype.Archetype], current_id: int | None, tournament_only: bool, season_id: int | str | None) -> None:
     a.current = a.id == current_id
@@ -162,6 +174,7 @@ def prepare_archetype(a: archetype.Archetype, archetypes: list[archetype.Archety
         b['url'] = url_for('seasons.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
         # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
         b['depth'] = b.depth
+
 
 def display_round(m: Container) -> str:
     if not m.get('elimination'):
@@ -173,6 +186,7 @@ def display_round(m: Container) -> str:
     if int(m.elimination) == 2:
         return 'F'
     raise InvalidDataException(f'Do not recognize round in {m}')
+
 
 def set_stars_and_top8(d: Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:
@@ -208,6 +222,7 @@ def set_stars_and_top8(d: Deck) -> None:
     if len(d.stars_safe) > 0:
         d.stars_safe = f'<span class="stars" title="Success Rating">{d.stars_safe}</span>'
 
+
 def colors_html(colors: list[str], colored_symbols: list[str]) -> str:
     total = len(colored_symbols)
     s = '<div class="mana-bar">'
@@ -220,9 +235,11 @@ def colors_html(colors: list[str], colored_symbols: list[str]) -> str:
             s += f'<span class="stacked-bar mana-{color}" style="flex-grow: {width}"></span>'
     return s + '</div>'
 
+
 def set_season_icon(d: Deck) -> None:
     code = seasons.season_code(d.season_id)
     d.season_icon = season_icon_link(code)
+
 
 def set_legal_icons(o: Card | Deck) -> None:
     o.legal_icons = ''
@@ -230,6 +247,7 @@ def set_legal_icons(o: Card | Deck) -> None:
     pd_formats.sort(key=lambda code: -seasons.SEASONS.index(code))
     for code in pd_formats:
         o.legal_icons += season_icon_link(code)
+
 
 def season_icon_link(code: str) -> str:
     color = 'rare' if code in seasons.current_season_name() else 'common'

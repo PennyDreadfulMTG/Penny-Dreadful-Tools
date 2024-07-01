@@ -166,11 +166,13 @@ class Bot(Client):
             if c > 0 and reaction.emoji.name == '❎':
                 await reaction.message.delete()
 
+
 def init() -> None:
     client = Bot()
     logging.info('Connecting to Discord')
     asyncio.run(prepare_database_async())
     client.start(configuration.token.value)
+
 
 async def prepare_database_async() -> None:
     logging.info('Initializing Cards DB')
@@ -185,6 +187,7 @@ def is_pd_server(guild: Guild | None) -> bool:
     if not guild:
         return False
     return guild.id == configuration.pd_server_id.value
+
 
 async def get_role(guild: Guild, rolename: str, create: bool = False) -> Role | None:
     for r in guild.roles:

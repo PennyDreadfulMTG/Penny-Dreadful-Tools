@@ -27,7 +27,7 @@ async def find_emoji(emoji: str, client: Client) -> PartialEmoji | None:
         CACHE_TIME = time.time()
         for guild in client.guilds:
             emojis = await guild.fetch_all_custom_emojis()
-            CACHE = {x.name: x for x in emojis if x.name}
+            CACHE.update({x.name: x for x in emojis if x.name})
         return CACHE.get(emoji)
     except AttributeError:
         return None

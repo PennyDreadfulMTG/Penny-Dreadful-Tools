@@ -192,19 +192,15 @@ async def generate_banner(names: list[str], background: str, v_crop: int | None 
 
     n = math.ceil(len(cards) / 2)
     x = 800
+    y = 30
+    card_size = (160, 213)
     for c in cards[:n]:
-        ip = await download_scryfall_png(c)
-        with Image.open(ip) as img:
-            img = img.resize((160, 213), Image.Resampling.LANCZOS)
-            canvas.paste(img, (x, 30))
-            x = x + img.width + 10
+        await paste_card(canvas, c, x, y, card_size)
+
     x = 900
+    y = 60
     for c in cards[n:]:
-        ip = await download_scryfall_png(c)
-        with Image.open(ip) as img:
-            img = img.resize((160, 213), Image.Resampling.LANCZOS)
-            canvas.paste(img, (x, 60))
-            x = x + img.width + 10
+        await paste_card(canvas, c, x, y, card_size)
 
     canvas.save(out_filepath)
     return out_filepath
@@ -230,20 +226,26 @@ async def generate_discord_banner(names: list[str], background: str) -> str:
             canvas.paste(img)
 
     n = math.ceil(len(cards) / 2)
+    card_size = (320, 426)
     x = 200
+    y = 500
     for c in cards[:n]:
-        ip = await download_scryfall_png(c)
-        with Image.open(ip) as img:
-            img = img.resize((320, 426), Image.Resampling.LANCZOS)
-            canvas.paste(img, (x, 500))
-            x = x + img.width + 10
+        await paste_card(canvas, c, x, y, card_size)
+
     x = 300
+    y = 600
     for c in cards[n:]:
-        ip = await download_scryfall_png(c)
-        with Image.open(ip) as img:
-            img = img.resize((320, 426), Image.Resampling.LANCZOS)
-            canvas.paste(img, (x, 600))
-            x = x + img.width + 10
+        await paste_card(canvas, c, x, y, card_size)
 
     canvas.save(out_filepath)
     return out_filepath
+
+async def paste_card(canvas: Image.Image, c: Card, x: int, y: int, card_size: tuple[int, int]) -> bool:
+    ip = await download_scryfall_png(c)
+    if not ip:
+        return False
+    with Image.open(ip) as img:
+        img = img.resize(card_size, Image.Resampling.LANCZOS)
+        canvas.paste(img, (x, y))
+        x = x + img.width + 10
+    return True

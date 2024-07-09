@@ -48,14 +48,6 @@ def gatherer_image(printing: Printing) -> str | None:
         return 'https://image.deckbrew.com/mtg/multiverseid/' + str(multiverse_id) + '.jpg'
     return None
 
-def download_bluebones_image(cards: list[Card], filepath: str) -> bool:
-    print('Trying to get image for {cards}'.format(cards=' • '.join(c.name for c in cards)))
-    try:
-        fetch_tools.store(bluebones_image(cards), filepath)
-    except FetchException as e:
-        print(f'Error: {e}')
-    return fetch_tools.acceptable_file(filepath)
-
 async def download_scryfall_image(cards: list[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(c.name for c in cards)
     print(f'Trying to get scryfall images for {card_names}')
@@ -139,8 +131,6 @@ async def download_image_async(cards: list[Card]) -> str | None:
     if fetch_tools.acceptable_file(filepath):
         return filepath
     if await download_scryfall_image(cards, filepath, version='border_crop'):
-        return filepath
-    if download_bluebones_image(cards, filepath):
         return filepath
     return None
 

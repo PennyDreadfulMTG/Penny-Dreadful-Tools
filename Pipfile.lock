@@ -954,11 +954,12 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:042c4702efa9f7d3c48d3a69341c209381b125faa6dbf3ebe56bc7e40ae05c23",
-                "sha256:87805c36970047247c8afe614d4e3af8eceafc1ebba0c679fe75ddd1d575e871"
+                "sha256:49315be72c55a6a37d62819e3573f6b416aca00721f7e3e31a008d928bf64022",
+                "sha256:53326ea2ebec768070a94bee4e1b9194c9646ea0c2bd72422785bd0f9abfad7b"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==2.31.0"
+            "version": "==2.32.0"
         },
         "google-auth-httplib2": {
             "hashes": [

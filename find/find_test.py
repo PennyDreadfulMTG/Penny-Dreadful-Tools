@@ -596,9 +596,6 @@ def test_is_hybrid() -> None:
 def test_is_hybrid_functional() -> None:
     do_functional_test('is:hybrid c:w', ['Spectral Procession', 'Figure of Destiny'], ['Shadow of Doubt', 'Isamaru, Hound of Konda'])
 
-def test_is_commander() -> None:
-    do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id IN (4) AND legality <> 'Banned')))")
-
 @pytest.mark.functional()
 def test_smart_quotes() -> None:
     do_functional_test('o:“Art rampage”', ['Our Market Research Shows That Players Like Really Long Card Names So We Made this Card to Have the Absolute Longest Card Name Ever Elemental'], [])

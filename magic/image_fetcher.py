@@ -185,12 +185,12 @@ async def generate_banner(names: list[str], background: str, v_crop: int | None 
     y = 30
     card_size = (160, 213)
     for c in cards[:n]:
-        await paste_card(canvas, c, x, y, card_size)
+        x = await paste_card(canvas, c, x, y, card_size)
 
     x = 900
     y = 60
     for c in cards[n:]:
-        await paste_card(canvas, c, x, y, card_size)
+        x = await paste_card(canvas, c, x, y, card_size)
 
     canvas.save(out_filepath)
     return out_filepath
@@ -220,22 +220,22 @@ async def generate_discord_banner(names: list[str], background: str) -> str:
     x = 200
     y = 500
     for c in cards[:n]:
-        await paste_card(canvas, c, x, y, card_size)
+        x = await paste_card(canvas, c, x, y, card_size)
 
     x = 300
     y = 600
     for c in cards[n:]:
-        await paste_card(canvas, c, x, y, card_size)
+        x = await paste_card(canvas, c, x, y, card_size)
 
     canvas.save(out_filepath)
     return out_filepath
 
-async def paste_card(canvas: Image.Image, c: Card, x: int, y: int, card_size: tuple[int, int]) -> bool:
+async def paste_card(canvas: Image.Image, c: Card, x: int, y: int, card_size: tuple[int, int]) -> int:
     ip = await download_scryfall_png(c)
     if not ip:
-        return False
+        return x
     with Image.open(ip) as img:
         img = img.resize(card_size, Image.Resampling.LANCZOS)
         canvas.paste(img, (x, y))
         x = x + img.width + 10
-    return True
+    return x

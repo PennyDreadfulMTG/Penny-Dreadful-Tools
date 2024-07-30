@@ -1,5 +1,6 @@
 from decksite.data import card, deck, preaggregation
 from decksite.database import db
+from find import search
 from magic import oracle
 from magic.decklist import parse_line
 from magic.models import Deck
@@ -9,6 +10,7 @@ from shared.decorators import retry_after_calling
 from shared.pd_exception import InvalidDataException
 
 IGNORE: list[str] = ['Commander', 'Unclassified']
+COMPANIONS = search.search('is:companion')
 
 def excluded_archetype_names() -> list[str]:
     return IGNORE
@@ -240,10 +242,12 @@ def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, 
     sql = 'DELETE FROM rule_card WHERE rule_id = %s'
     db().execute(sql, [rule_id])
     for n, c in inc:
-        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, TRUE)'
+        sideboard = 'TRUE' if c in COMPANIONS else 'FALSE'
+        sql = f'INSERT INTO rule_card (rule_id, card, n, include, sideboard) VALUES (%s, %s, %s, TRUE, {sideboard})'
         db().execute(sql, [rule_id, oracle.valid_name(c), n])
     for n, c in exc:
-        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
+        sideboard = 'TRUE' if c in COMPANIONS else 'FALSE'
+        sql = f'INSERT INTO rule_card (rule_id, card, n, include, sideboard) VALUES (%s, %s, %s, FALSE, {sideboard})'
         db().execute(sql, [rule_id, oracle.valid_name(c), n])
     sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
     if not inc and not exc:
@@ -256,7 +260,7 @@ def classified_decks_query() -> str:
 
 def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str:
     card_name = "REPLACE(deck_card.card, 'Snow-Covered ', '')"
-    return f"""
+    sql = f"""
         WITH rule_card_count AS
         (
             SELECT
@@ -305,7 +309,7 @@ def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str
             ON
                 rule.id = rule_card_count.id
             WHERE
-                NOT deck_card.sideboard AND deck_card.n >= inclusions.n AND {deck_query} AND {rule_query}
+                inclusions.sideboard = deck_card.sideboard AND deck_card.n >= inclusions.n AND {deck_query} AND {rule_query}
             GROUP BY
                 deck.id, rule.id
             HAVING
@@ -346,3 +350,4 @@ def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str
         HAVING
             COUNT({card_name}) = 0
     """
+    return sql

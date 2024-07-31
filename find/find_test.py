@@ -54,7 +54,7 @@ def test_types() -> None:
 def test_card_text() -> None:
     s = 'o:draw o:creature'
     do_functional_test(s, ['Edric, Spymaster of Trest', 'Grim Backwoods', 'Mystic Remora'], ['Ancestral Recall', 'Honor of the Pure'])
-    s = 'o:"~ enters the battlefield tapped"'
+    s = 'o:"~ enters tapped"'
     do_functional_test(s, ['Arcane Sanctum', 'Diregraf Ghoul', 'Golgari Guildgate'], ['Tarmogoyf'])
 
     s = 'fo:/sacrifice ~ .* all/'

@@ -2681,12 +2681,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:90570f0578ed67bb25ada9b3d1432e6727178d2408a7051b27e4a712731df30a",
-                "sha256:ae61c528111a9450e149aedbc1ab0f7874f9bb0dc8f14c3cd200a1f82457050b"
+                "sha256:85ba28e9461bb1be86ebba4db0f1c2408f2b11115b1966334ea9dc464e29303e",
+                "sha256:a7775376f36e0ff09bcad236bf265777590a66b11623e48c20bfc30f1444ea36"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==71.1.0.20240724"
+            "version": "==71.1.0.20240726"
         },
         "typing-extensions": {
             "hashes": [

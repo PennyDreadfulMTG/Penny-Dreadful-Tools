@@ -13,6 +13,7 @@ from magic import card_price, fetcher, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices
 from shared import configuration, decorators, dtutil, fetch_tools, repo, sentry, text
 from shared import redis_wrapper as redis
+from shared.pd_exception import NotConfiguredException
 
 TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
 TIME_SINCE_ROTATION = dtutil.now() - seasons.last_rotation()
@@ -44,6 +45,8 @@ def run() -> None:
         rotation.clear_redis(clear_files=True)
 
     all_prices = {}
+    if not configuration.cardhoarder_urls.get():
+        raise NotConfiguredException('Did not find any Cardhoarder URLs')
     for url in configuration.cardhoarder_urls.get():
         s = fetch_tools.fetch(url)
         s = ftfy.fix_encoding(s)

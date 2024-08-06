@@ -431,6 +431,7 @@ def is_subquery(subquery_name: str) -> str:
         'fetchland': 't:land o:/{T}, Pay 1 life, Sacrifice ~: Search your library for an? [a-z]+ or [a-z]+ card, put it onto the battlefield, then shuffle./',
         'filterland': r't:land (o:/\sm, {T}: Add \sc\sc/ OR o:/\sm, {T}: Add five mana in any combination of colors./)',
         'gainland': 't:land o:"When ~ enters, you gain 1 life."',
+        'historic': 't:artifact OR t:legendary OR t:saga',
         'outlaw': 't:Assassin OR t:Mercenary OR t:Pirate OR t:Rogue OR t:Warlock',
         'painland': r't:land o:/Add \{.\} or \{.\}. ~ deals 1 damage to you./ -o:"~ enters tapped"',
         'permanent': 't:artifact OR t:creature OR t:enchantment OR t:land OR t:planeswalker',

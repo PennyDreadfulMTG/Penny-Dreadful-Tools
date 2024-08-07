@@ -149,11 +149,14 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
         clear_redis()
     runs, runs_percent, cs = read_rotation_files()
     runs_remaining = TOTAL_RUNS - runs
-    newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == TOTAL_RUNS / 2]
+    threshold = int(TOTAL_RUNS / 2)
+    newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == threshold]
     newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
+    max_hits_in_undecided = max([c.hits for c in cs if c.status == 'Undecided'], default=0)
+    soonest_new_card = threshold - max_hits_in_undecided
     s = f'Rotation run number {runs} completed.'
     if hype_command:
         s = f'{runs} rotation checks have completed.'
@@ -167,7 +170,8 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
     if len(newly_eliminated) > 0:
         newly_eliminated_s = list_of_most_interesting(newly_eliminated)
         s += f'\nEliminated: {newly_eliminated_s}.'
-    s += f'\nUndecided: {num_undecided}.\n'
+    s += f'\nUndecided: {num_undecided}.'
+    s += f'\nNext new cards confirmed in {soonest_new_card} runs time.\n'
     if runs_percent >= 50:
         s += f"<{fetcher.decksite_url('/rotation/')}>"
     return s

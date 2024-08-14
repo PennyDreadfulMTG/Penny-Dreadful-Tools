@@ -38,9 +38,6 @@ def update_index(index: FileIndex, cards: list[Card]) -> None:
             names.append(card.name)  # Split and aftermath cards
         if card.name.startswith('The '):
             names.append(card.name.replace('The ', ''))
-        if card.name == 'Waste Land' or card.name == 'Bind // Liberate':
-            # Skip a couple of CMB1 cards that counterfeit "real" cards.
-            continue
         asciiname = anyascii(card.name)
         if asciiname != card.name:
             names.append(asciiname)

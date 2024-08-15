@@ -22,6 +22,9 @@ FORMAT_IDS: dict[str, int] = {}
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
                'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
 
+# Playtest cards that cause enough problems we'd rather skip them than include them.
+BAD_PLAYTEST_CARDS = ['Bind // Liberate', 'Waste Land', 'Keeper of the Crown // Coronation of the Wilds', 'Boulder Jockey', 'Convention Maro']
+
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))
 
@@ -228,6 +231,13 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
                 continue
 
             if p.get('layout') not in layout.uses_canonical_namespace():
+                continue
+
+            if p.get('name') in BAD_PLAYTEST_CARDS:
+                continue
+
+            # A list of playtest cards that cause problems (to ignore). When Scryfall update bulk data to flag these we can remove this hardcoding in favor of something better.
+            if p.get('name') in ['Bind // Liberate', 'Waste Land', 'Convention Maro', 'Keeper of Crowns']:
                 continue
 
             # Exclude "Card"s which is a whole group of weird things, and also any tokens that have a playable layout.

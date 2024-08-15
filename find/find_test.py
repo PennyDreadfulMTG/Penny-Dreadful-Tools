@@ -510,6 +510,11 @@ def test_cmc() -> None:
     do_test('cmc>2', '(cmc IS NOT NULL AND cmc > 2)')
     do_test('cmc=0', '(cmc IS NOT NULL AND cmc = 0)')
 
+@pytest.mark.functional
+def test_cmc_functional() -> None:
+    do_functional_test('cmc=odd c:u t:human', ['Aether Channeler', 'Agent of Treachery'], ['Academy Loremaster', 'Novice Inspector', 'Ponder'])
+    do_functional_test('cmc=EVEN pow>5', ['Horned Loch-Whale', 'Grave Titan'], ['Void Winnower', 'Thran Portal', 'Luminarch Aspirant'])
+
 def test_not_text() -> None:
     do_test('o:haste -o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%haste%%') AND NOT (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%deathtouch%%') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%trample%%') AND NOT (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%first strike%%') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
 

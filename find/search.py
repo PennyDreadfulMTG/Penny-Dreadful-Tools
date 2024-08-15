@@ -241,6 +241,9 @@ def math_where(column: str, operator: str, term: str) -> str:
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
+    if term in ['odd', 'even']:
+        val = 1 if term == 'odd' else 0
+        return f'({column} IS NOT NULL AND FLOOR({column}) AND MOD(FLOOR({column}), 2) = {val})'
     return f'({column} IS NOT NULL AND {column} {operator} {sqlescape(term)})'
 
 def color_where(subtable: str, operator: str, term: str) -> str:

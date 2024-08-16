@@ -13,6 +13,9 @@ from traceback_with_variables.core import Format
 
 from shared import configuration, dtutil
 
+GITHUB_MAX_TITLE_LEN = 256
+GITHUB_MAX_BODY_LEN = 65536
+
 REDACTED_STRINGS = set()
 if configuration.token.value:
     REDACTED_STRINGS.add(configuration.token.value)
@@ -78,17 +81,22 @@ def create_issue(content: str,
             labels.append('Search Engine')
 
     print(title + '\n' + body, file=sys.stderr)
+    if not configuration.create_github_issues.value:
+        print('Not creating github issue - configured to not do so')
+        return None
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
-        return None
-    if not configuration.create_github_issues.value:
-        print('Not creating github issue')
+        print('Not creating github issue - missing username or password')
         return None
 
     for secret in REDACTED_STRINGS:
         if secret and secret in body:
             body = body.replace(secret, 'REDACTED')
 
+    if len(title) > GITHUB_MAX_TITLE_LEN:
+        title = title[0:GITHUB_MAX_TITLE_LEN - 4] + '…'
+    if len(body) > GITHUB_MAX_BODY_LEN:
+        body = body[0:GITHUB_MAX_BODY_LEN - 4] + '…'
     try:
         g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
         git_repo = g.get_repo(repo_name)

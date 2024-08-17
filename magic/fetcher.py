@@ -22,9 +22,9 @@ from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
+from shared.custom_types import BugData, ForumData
 from shared.fetch_tools import FetchException
 from shared.pd_exception import InvalidArgumentException, InvalidDataException, NotConfiguredException, TooFewItemsException
-from shared.types import BugData, ForumData
 
 
 async def achievement_cache_async() -> dict[str, dict[str, str]]:

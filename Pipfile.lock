@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7962610d662bfd1ca29c3a360ebdb7c03bb407a59b1238a9bd007f2ea31318cc"
+            "sha256": "ced7cb3caf9173c577793991266a1a5e1e68a67c7b4acf68984959fc4ef3040d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -558,7 +558,9 @@
             "version": "==1.2.1"
         },
         "coverage": {
-            "extras": [],
+            "extras": [
+
+            ],
             "hashes": [
                 "sha256:06a737c882bd26d0d6ee7269b20b12f14a8704807a01056c80bb881a4b2ce6ca",
                 "sha256:07e2ca0ad381b91350c0ed49d52699b625aab2b44b65e1b4e02fa9df0e92ad2d",
@@ -2378,11 +2380,12 @@
         },
         "requirements-parser": {
             "hashes": [
-                "sha256:c55ad80ed7c441fabaaad563931dc4538027989b81be698780a43f1c9fa1c2b2",
-                "sha256:ce58a31dd0405413a6e1233bda5ea2667a7ec838679f65055eca75bc5ddb8e70"
+                "sha256:35f36dc969d14830bf459803da84f314dc3d17c802592e9e970f63d0359e5920",
+                "sha256:50379eb50311834386c2568263ae5225d7b9d0867fb55cf4ecc93959de2c2684"
             ],
             "index": "pypi",
-            "version": "==0.10.2"
+            "markers": "python_version >= '3.8' and python_version < '4.0'",
+            "version": "==0.11.0"
         },
         "rpds-py": {
             "hashes": [

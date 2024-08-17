@@ -43,8 +43,14 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 - Install Docker (https://www.docker.com/get-started)
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
+- cd Penny-Dreadful-Tools
+- cp .env.example .env
 - docker-compose build
 - docker-compose up
+
+The first run will download a copy of the prod decksite db and set it up as well as build cards db from scryfall data so it will take a while.
+
+After this the website is available at http://127.0.0.1/
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install python 3.10

@@ -44,6 +44,7 @@ async def fetch_async(url: str) -> str:
     logger.info(f'Async fetching {url}')
     try:
         async with aiohttp.ClientSession() as aios:
+            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
             response = await aios.get(url)
             return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError, aiohttp.ClientConnectorError) as e:
@@ -53,6 +54,7 @@ async def post_async_with_json(url: str, data: dict) -> str:
     logger.info(f'Async posting to {url}')
     try:
         async with aiohttp.ClientSession() as aios:
+            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
             response = await aios.post(url, json=data)
             return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:

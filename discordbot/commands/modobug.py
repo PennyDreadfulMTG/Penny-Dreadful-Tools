@@ -10,8 +10,8 @@ from discordbot.command import MtgContext, MtgInteractionContext
 from magic import fetcher
 from magic.models import Card
 from shared import configuration, fetch_tools
+from shared.custom_types import BugData, ForumData
 from shared.pd_exception import OperationalException
-from shared.types import BugData, ForumData
 
 
 class ModoBugs(Extension):

@@ -10,8 +10,8 @@ import requests
 from github.Issue import Issue
 
 from shared import configuration
+from shared.custom_types import BugData
 from shared.lazy import lazy_property
-from shared.types import BugData
 
 from . import fetcher, repo, strings
 from .strings import BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX, REGEX_CARDREF

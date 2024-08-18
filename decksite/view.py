@@ -1,4 +1,3 @@
-import html
 import sys
 from typing import Any, TypedDict, cast
 
@@ -9,7 +8,7 @@ from flask_babel import gettext, ngettext
 from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare
-from decksite.data import archetype, competition
+from decksite.data import competition
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
@@ -227,13 +226,6 @@ class View(BaseView):
             c.competition_ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = c.type == 'League'
-            title_safe = ''
-            try:
-                for k, v in archetype.base_archetypes_data(c).items():
-                    if v > 0:
-                        title_safe += f'{v} {html.escape(k)}<br>'
-            except KeyError:
-                archetype.rebuild_archetypes()
 
     def prepare_people(self) -> None:
         prepare.prepare_people(getattr(self, 'people', []))

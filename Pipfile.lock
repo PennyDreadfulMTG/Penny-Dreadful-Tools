@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "24f9dddd83617eebe5d8257545dda43fe36e8c5b4a344c0a19fc183597ed6108"
+            "sha256": "7a36ab956fd3887b7abe87249c102fa0ede1ba4130924954a5e2b1d2d27eb514"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -322,7 +322,6 @@
                 "sha256:02134e8439cdc2ffb62023ce1debca2944c3f289d66bb17ead3ab3dede74b292",
                 "sha256:2cc24fb4cbe39633fb7badd9db9ca6295d766d9c2995f245725a46715d050f2a"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==5.5.0"
         },
@@ -958,11 +957,12 @@
         },
         "google-api-python-client": {
             "hashes": [
-                "sha256:0bb973adccbe66a3d0a70abe4e49b3f2f004d849416bfec38d22b75649d389d8",
-                "sha256:aeb4bb99e9fdd241473da5ff35464a0658fea0db76fe89c0f8c77ecfc3813404"
+                "sha256:0f225b1f45d5a6f8c2a400f48729f5d6da9a81138e81e0478d61fdd8edf6563a",
+                "sha256:43c05322b91791204465291b3852718fae38d4f84b411d8be847c4f86882652a"
             ],
             "index": "pypi",
-            "version": "==2.140.0"
+            "markers": "python_version >= '3.7'",
+            "version": "==2.141.0"
         },
         "google-auth": {
             "hashes": [
@@ -2386,6 +2386,7 @@
                 "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==2.32.3"
         },
         "requests-oauthlib": {

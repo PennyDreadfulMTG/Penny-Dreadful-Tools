@@ -63,7 +63,8 @@ class PDFlask(Flask):
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
             return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
         referrer = ', referrer: ' + request.referrer if request.referrer else ''
-        logger.warning('404 Not Found ' + request.path + referrer)
+        remote_addr = ', remote_addr: ' + request.environ.get('REMOTE_ADDR', '') if request.environ.get('REMOTE_ADDR') else ''
+        logger.warning('404 Not Found ' + request.path + referrer + remote_addr)
         if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)
         view = NotFound(e)

@@ -20,4 +20,4 @@ def init() -> None:
     multiverse.init()
     oracle.init()
     sentry.init()
-    SRV.run(port=5800, host='0.0.0.0')
+    SRV.run(port=8080, host='0.0.0.0')

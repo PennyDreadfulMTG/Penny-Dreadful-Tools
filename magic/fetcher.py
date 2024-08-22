@@ -78,7 +78,7 @@ def card_aliases() -> list[list[str]]:
         return list(csv.reader(f, dialect='excel-tab'))
 
 def card_price(cardname: str) -> PriceDataType:
-    return fetch_tools.fetch_json('http://vorpald20.com:5800/{}/'.format(cardname.replace('//', '-split-')))
+    return fetch_tools.fetch_json('http://pennydreadfulmagic.com:8080/{}/'.format(cardname.replace('//', '-split-')))
 
 def cardfeed() -> dict[str, list[dict[str, str | int | bool]]]:
     return fetch_tools.fetch_json(decksite_url('/api/cardfeed'))

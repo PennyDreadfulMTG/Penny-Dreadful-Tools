@@ -26,4 +26,3 @@ def check_sql_injection(locale: str | None) -> str | None:
 
 def init(babel: Babel) -> None:
     LANGUAGES.extend([str(locale) for locale in babel.list_translations()])
-    babel.localeselector(get_locale)

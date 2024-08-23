@@ -53,9 +53,8 @@ class PDFlask(Flask):
 
         translations = os.path.abspath(os.path.join(shared_web_path, 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
-        self.babel = Babel(self, locale_selector=localization.get_locale)
-        with self.app_context():
-            localization.init(self.babel)
+        self.babel = Babel(self)
+        localization.init(self.babel)
         self.api_root = Blueprint('api', import_name, url_prefix='/api')
         self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
         self.register_blueprint(self.api_root)

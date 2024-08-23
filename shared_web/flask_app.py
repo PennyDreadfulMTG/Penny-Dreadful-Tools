@@ -10,14 +10,14 @@ from flask_restx import Api
 from github.GithubException import GithubException
 from werkzeug import exceptions, wrappers
 
-from shared import configuration, logger, repo, sentry
+from shared import configuration, logger, repo
 from shared.pd_exception import DoesNotExistException
 
 from . import api, localization, oauth
 from .api import generate_error, return_json
 from .views import InternalServerError, NotFound, Unauthorized
 
-sentry.init()
+# sentry.init()
 
 class PDFlask(Flask):
     def __init__(self, import_name: str) -> None:

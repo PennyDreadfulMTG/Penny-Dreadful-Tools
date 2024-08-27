@@ -1091,11 +1091,11 @@
         },
         "interactions.py": {
             "hashes": [
-                "sha256:46b506f53d763dfe28bdfe38ad8906445f5486fe1ff468398b62bab0e62bd80d",
-                "sha256:5779c31ad71e531bf4ead2827df60fac335379b233351722b458d464ce7993b3"
+                "sha256:1a23921d978ff2063bcefcfd9003e2030cbd83d813340bd5bd7ad3c411d4ba8e",
+                "sha256:a566c9e6911fc458f290d26a50b130c905fce751864e8cb1cb3660592f7db099"
             ],
             "markers": "python_version >= '3.10'",
-            "version": "==5.13.1"
+            "version": "==5.13.2"
         },
         "isort": {
             "hashes": [

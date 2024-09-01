@@ -14,7 +14,6 @@ For properties see concrete uses in decktable, cardtable, metagamegrid, etc.
 
 */
 
-// eslint-disable-next-line no-unused-vars
 export class DataManager extends React.Component {
     constructor(props) {
         super(props);

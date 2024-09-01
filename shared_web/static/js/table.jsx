@@ -12,7 +12,6 @@ For properties see concrete uses in decktable, cardtable, etc.
 
 */
 
-// eslint-disable-next-line no-unused-vars
 export class Table extends DataManager {
     render() {
         const { loading, objects, pageSizeChanged, queryChanged } = super.preRender();

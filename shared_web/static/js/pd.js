@@ -1,5 +1,4 @@
 /*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound, setDarkMode */
-/* eslint-disable max-lines */
 window.PD = {};
 
 PD.init = function() {
@@ -510,7 +509,6 @@ PD.renderCharts = function() {
                 options.plugins.tooltip.callbacks.label = (v) => PD.formatPercentage(v.raw);
             }
         }
-        // eslint-disable-next-line new-cap
         // eslint-disable-next-line no-new
         new Chart(ctx, {
             type,

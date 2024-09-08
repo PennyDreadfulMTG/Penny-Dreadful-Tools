@@ -33,6 +33,7 @@ WHITELIST = [
     'Orzhov Tokens 1.1: Not Even Sure if I Need the Black',
     'Happy Season 33!',
     "Datro's Idea, Tom's Manabase (I Am the Thomas Edison Of PD)",
+    'G L I M P S E',
 ]
 
 PROFANITY_WHITELIST = [

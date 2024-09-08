@@ -37,6 +37,10 @@ def repair_name(name: str) -> str:
         name = name[:-9]
     elif name == 'Sticker Goblin':
         name = '_____ Goblin'
+    elif name == 'Ratonhnhaké:ton':
+        name = 'Ratonhnhaké꞉ton'  # The colon here is a special char.
+    elif name == 'Name Sticker Goblin':
+        name = '"Name Sticker" Goblin'
     return name
 
 def is_exceptional_name(name: str) -> bool:

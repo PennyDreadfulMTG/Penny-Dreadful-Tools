@@ -32,6 +32,7 @@ WHITELIST = [
     'No Green Jeskai Ascendancy',
     'Orzhov Tokens 1.1: Not Even Sure if I Need the Black',
     'Happy Season 33!',
+    "Datro's Idea, Tom's Manabase (I Am the Thomas Edison Of PD)",
 ]
 
 PROFANITY_WHITELIST = [

@@ -35,6 +35,7 @@ WHITELIST = [
     "Datro's Idea, Tom's Manabase (I Am the Thomas Edison Of PD)",
     'G L I M P S E',
     "U Know What Colors I'm Playing",
+    'The World is So Black and White',
 ]
 
 PROFANITY_WHITELIST = [

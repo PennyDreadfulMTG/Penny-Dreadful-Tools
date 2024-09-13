@@ -36,6 +36,7 @@ def main() -> None:
                 bad.append(url)
 
     for url in bad:
+        print(f'Rejecting {url}')
         del known[url]
 
     with open('forums.json', 'w') as fp:

@@ -7,6 +7,8 @@ from . import repo
 
 
 def main() -> None:
+    print('Verification is currently disabled because GitHub projects does not support this any more')
+    return
     manifest = requests.get('http://mtgo.patch.daybreakgames.com/patch/mtg/live/client/MTGO.application')
     tree = etree.fromstring(manifest.content)
     identity = tree.find('{urn:schemas-microsoft-com:asm.v1}assemblyIdentity')

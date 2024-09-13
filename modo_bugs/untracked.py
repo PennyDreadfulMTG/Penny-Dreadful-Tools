@@ -17,7 +17,7 @@ def main() -> None:
     for their_bug in their_untracked_bugs:
         print(f'[{their_bug["status"]}] {their_bug["title"]}\n{their_bug["url"]}\n')
     print("= All of our bugs they aren't tracking:\n")
-    for our_bug in our_bugs:
+    for our_bug in our_untracked_bugs:
         print(f'[{our_bug["card"]}] {our_bug["description"]}\n{our_bug["url"]}\n')
 
 

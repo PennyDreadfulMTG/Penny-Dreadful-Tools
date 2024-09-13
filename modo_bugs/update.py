@@ -68,6 +68,8 @@ def main() -> None:
 
 def verification_numbers() -> None:
     print('Populating Verification Model')
+    print('Skipping this because GitHub projects does not work like this any more :(')
+    return
     project = repo.get_verification_project()
     for col in project.get_columns():
         if col.name == 'Needs Testing':

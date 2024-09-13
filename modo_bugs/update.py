@@ -24,7 +24,7 @@ def cardnames() -> list[str]:
 @lazy_property
 def pd_legal_cards() -> list[str]:
     print('Fetching http://pdmtgo.com/legal_cards.txt')
-    return requests.get('http://pdmtgo.com/legal_cards.txt').text.split('\n')
+    return requests.get('http://pdmtgo.com/legal_cards.txt').text.splitlines()
 
 
 ALL_BUGS: list[BugData] = []

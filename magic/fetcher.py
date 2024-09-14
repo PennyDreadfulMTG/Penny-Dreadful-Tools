@@ -287,6 +287,11 @@ async def dreadrise_search_decks(query: str, max_decks: int) -> dict:
 async def dreadrise_search_matchups(q1: str, q2: str, max_count: int) -> dict:
     return await dreadrise_search_json('/api/deck-search/matchups', max_count, q1=q1, q2=q2)
 
+def playability() -> dict[str, int]:
+    d = fetch_tools.fetch_json(decksite_url('/api/cardfeed'))
+    cards = d['cards']
+    return {card['name']: card['rank'] for card in cards}
+
 def rulings(cardname: str) -> list[dict[str, str]]:
     card = fetch_tools.fetch_json(f'https://api.scryfall.com/cards/named?exact={cardname}')
     return fetch_tools.fetch_json(card['uri'] + '/rulings')['data']

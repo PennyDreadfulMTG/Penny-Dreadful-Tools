@@ -13,7 +13,7 @@ def main() -> None:
     with open('bugs.json') as f:
         bugs = f.read()
 
-    posts = fetcher.get_forum_posts('https://forums.mtgo.com/index.php?forums/bug-reports.16/', True)
+    posts = fetcher.get_all_forum_posts()
     checked = [p.url for p in posts]
     bad = []
     for p in posts:

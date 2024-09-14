@@ -11,6 +11,9 @@ from bs4.element import Tag
 
 from shared import configuration, fetch_tools, lazy
 
+BUG_REPORTS_FORUM_BASE_URL = 'https://forums.mtgo.com'
+BUG_REPORT_FORUM_BASE_PATH = '/index.php?forums/bug-reports.16/'
+
 logger = logging.getLogger(__name__)
 
 @attrs.define
@@ -138,7 +141,30 @@ def get_daybreak_label(url: str) -> str | None:
 
     return None
 
-def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:
+def get_all_forum_posts() -> list[ForumPost]:
+    posts = []
+    sections = get_section_urls()
+    for url in sections:
+        logger.info(f'Going to get all threads in section {url}')
+        posts += get_forum_posts(url)
+    return posts
+
+def get_section_urls() -> list[str]:
+    html = fetch_tools.fetch(BUG_REPORTS_FORUM_BASE_URL + BUG_REPORT_FORUM_BASE_PATH)
+    soup = BeautifulSoup(html, 'html.parser')
+    section_urls = []
+
+    for node in soup.find_all('a', class_='subNodeLink--forum'):
+        url = BUG_REPORTS_FORUM_BASE_URL + node['href']
+        section_urls.append(url)
+
+    for node in soup.find_all('div', class_='node--forum'):
+        url = BUG_REPORTS_FORUM_BASE_URL + node.find('h3', class_='node-title').find('a')['href']
+        section_urls.append(url)
+
+    return section_urls
+
+def get_forum_posts(url: str) -> list[ForumPost]:
     time.sleep(1)  # Try not to get blocked by the Daybreak forums.
     html = fetch_tools.fetch(url)
     soup = BeautifulSoup(html, 'html.parser')
@@ -150,17 +176,17 @@ def get_forum_posts(url: str, all_pages: bool) -> list[ForumPost]:
         # votes = post.find('span', class_='js-voteCount').text
         title = post.find('div', class_='structItem-title')
         t = title.find('a')
-        if t.attrs['href'].startswith('/index.php?forums/bug-reports.16'):
+        if t.attrs['href'].startswith('/index.php?forums'):
             label = t.text
             t = t.find_next_sibling('a')
         url = 'https://forums.mtgo.com' + t.attrs['href']
         name = t.text
         posts.append(ForumPost(name, label, url))
-    if all_pages:
-        next = soup.find('a', class_='pageNav-jump--next')
-        if next is not None:
-            url = 'https://forums.mtgo.com' + next.attrs['href']
-            posts.extend(get_forum_posts(url, True))
+    next = soup.find('a', class_='pageNav-jump--next')
+    if next is not None:
+        logger.info(f'Next page: {next.attrs["href"]}')
+        url = 'https://forums.mtgo.com' + next.attrs['href']
+        posts.extend(get_forum_posts(url))
     return posts
 
 def forum_to_discord(post: ForumPost) -> None:

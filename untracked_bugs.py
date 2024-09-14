@@ -1,4 +1,7 @@
+from decksite.data import playability
 from shared import fetch_tools
+
+# A little script to run to try and marry up our (modo-bugs) bugs with their (Darybreak MTGO bug form) bugs
 
 
 def main() -> None:
@@ -13,12 +16,14 @@ def main() -> None:
                 print('Maybe\n', our_bug['description'], '\nis tracked by them as\n', their_bug['title'])
                 print(their_bug['url'])
                 print(our_bug['url'] + '\n')
-    print("= All of their bugs we aren't tracking:\n")
+    print(f"= All of their bugs we aren't tracking ({len(their_untracked_bugs)}):\n")
     for their_bug in their_untracked_bugs:
         print(f'[{their_bug["status"]}] {their_bug["title"]}\n{their_bug["url"]}\n')
-    print("= All of our bugs they aren't tracking:\n")
+    print(f"= All of our bugs they aren't tracking ({len(our_untracked_bugs)}):\n")
+    ranks = playability.rank()
+    our_untracked_bugs.sort(key=lambda bug: (not bug['pd_legal'], ranks.get(bug['card'], float('inf')) or float('inf')))
     for our_bug in our_untracked_bugs:
-        print(f'[{our_bug["card"]}] {our_bug["description"]}\n{our_bug["url"]}\n')
+        print(f'[{our_bug["card"]}][{"LEGAL" if our_bug["pd_legal"] else "NOT LEGAL"}][Rank {ranks.get(our_bug["card"], float("inf"))}] {our_bug["description"]}\n{our_bug["url"]}\n')
 
 
 if __name__ == '__main__':

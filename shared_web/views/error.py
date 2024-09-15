@@ -11,6 +11,7 @@ class ErrorView(BaseView):
     def __init__(self) -> None:
         super().__init__()
         self.is_error_page = True
+        self.season_id = 0
 
     def make_card(self, c: str | Container) -> Container:
         # If the server is throwing errors, we don't want to rely on oracle.

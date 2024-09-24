@@ -1,6 +1,8 @@
+import csv
 import html
 import re
 import traceback
+from io import StringIO
 
 from magic import card, multiverse
 from magic.database import db
@@ -14,10 +16,13 @@ CARDS: dict[str, str] = {}
 
 def parse_cardhoarder_prices(s: str) -> PriceListType:
     details = []
-    for line in s.splitlines()[2:]:  # Skipping date and header line.
-        if line.count('\t') != 6:
+    reader = csv.reader(StringIO(s), delimiter='\t', quotechar='"', doublequote=True)
+    next(reader)  # Skip date line
+    next(reader)  # Skip header line
+    for line in reader:
+        if len(line) != 7:
             raise InvalidDataException(f'Bad line (cardhoarder): {line}')
-        _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')
+        _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line
         name = html.unescape(name.strip())
         name = repair_name(name)
         if int(quantity) > 0 and not mtgo_set.startswith('CH-') and mtgo_set != 'VAN' and mtgo_set != 'EVENT' and not re.search(r'(Booster|Commander Deck|Commander:|Theme Deck|Draft Pack|Duel Decks|Reward Pack|Intro Pack|Tournament Pack|Premium Deck Series:|From the Vault)', name):

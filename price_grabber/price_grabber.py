@@ -25,7 +25,7 @@ def fetch() -> None:
         for _, url in enumerate(ch_urls):
             s = fetch_tools.fetch(url)
             s = ftfy.fix_encoding(s)
-            timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
+            timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '"%Y-%m-%dT%H:%M:%S+00:00"', dtutil.CARDHOARDER_TZ))
             all_prices[url] = parser.parse_cardhoarder_prices(s)
     if not timestamps:
         raise TooFewItemsException(f'Did not get any prices when fetching {itertools.chain(configuration.cardhoarder_urls.get())} ({all_prices})')

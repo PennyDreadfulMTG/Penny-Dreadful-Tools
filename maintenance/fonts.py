@@ -12,6 +12,7 @@ from fontTools.ttLib.scaleUpem import scale_upem
 from regex import regex
 
 from decksite.database import db
+from magic import oracle
 
 # Called as a maintenance task this will output to stdout an HTML file.
 # Part of that (marked) should be copy-and-pasted into pd.css.
@@ -54,10 +55,13 @@ def ad_hoc(*args: str) -> None:
     base_only = 'base-only' in args
     # Some symbols we use outside of deck names
     base_graphemes = find_base_graphemes()
+    # Any symbols used in card names
+    from_card_names, card_names = card_name_graphemes()
     # And all the symbols we use in deck names
     from_deck_names, deck_names = (set(), set()) if base_only else deck_name_graphemes()
-    all_graphemes = base_graphemes | from_deck_names
-    print('\nLooking for', len(all_graphemes), 'graphemes -', len(base_graphemes), 'base graphemes, and', len(from_deck_names), 'from deck names\n', file=sys.stderr)
+    all_graphemes = base_graphemes | from_card_names | from_deck_names
+    print('\nLooking for', len(all_graphemes), 'graphemes -', len(base_graphemes), 'base graphemes, and', len(from_card_names), 'from card names, and', len(from_deck_names), 'from deck names\n', file=sys.stderr)
+    print('\nOnly from cards: ', from_card_names - base_graphemes - from_deck_names, '\n', file=sys.stderr)
     # Make a copy of all_graphemes for processing BUT exclude things like APOSTROPHE+COMBINING GRAVE ACCENT (U+39 and U+768)
     # which will overwrite main-text's apostrophe with one from a font that supports that combination. This makes all apostrophes
     # in the site look wrong for the sake of a single deck name – https://pennydreadfulmagic.com/decks/10989/
@@ -102,6 +106,14 @@ def ad_hoc(*args: str) -> None:
     else:
         print_css(font_info, deck_names, encoded)
     print_report(font_info, remaining_graphemes)
+
+def card_name_graphemes() -> tuple[set[str], set[str]]:
+    seen, names = set(), set()
+    for name in oracle.cards_by_name().keys():
+        for grapheme in regex.findall(r'\X', name):
+            seen.add(grapheme)
+            names.add(name)
+    return seen, names
 
 def deck_name_graphemes() -> tuple[set[str], set[str]]:
     sql = 'SELECT id, name FROM deck'

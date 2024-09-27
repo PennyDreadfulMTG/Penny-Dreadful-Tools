@@ -7,6 +7,8 @@ def sanitize(s: str) -> str:
         s = s.encode('latin-1').decode('utf-8')
     except UnicodeDecodeError:
         pass
+    except UnicodeEncodeError:
+        pass
     return html.unescape(s)
 
 def unambiguous_prefixes(words: list[str]) -> list[str]:

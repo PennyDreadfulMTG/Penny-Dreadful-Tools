@@ -8,6 +8,40 @@ from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
 
+def load_competition_cards(competition_id: int, order_by: str, limit: str) -> tuple[list[Card], int]:
+    sql = f"""
+        SELECT
+            dc.card AS name,
+            COUNT(DISTINCT d.id) AS num_decks,
+            IFNULL(SUM(dsum.wins), 0) AS wins,
+            IFNULL(SUM(dsum.losses), 0) AS losses,
+            IFNULL(SUM(dsum.draws), 0) AS draws,
+            SUM(IFNULL(dsum.wins, 0) - IFNULL(dsum.losses, 0)) AS record,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            IFNULL(ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1), '') AS win_percent,
+            COUNT(*) OVER () AS total
+        FROM
+            deck AS d
+        INNER JOIN
+            deck_card AS dc ON d.id = dc.deck_id
+        {deck.nwdl_join()}
+        WHERE
+            d.competition_id = %s
+        GROUP BY
+            dc.card
+        ORDER BY
+            {order_by}
+        {limit}
+    """
+    rs = db().select(sql, [competition_id])
+    cs = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
+    cards = oracle.cards_by_name()
+    for c in cs:
+        c.update(cards[c.name])
+        c.played_competitively = c.wins or c.draws or c.losses
+    return cs, 0 if not rs else rs[0]['total']
+
 def preaggregate() -> None:
     preaggregate_card()
     preaggregate_card_archetype()
@@ -225,12 +259,15 @@ def load_cards(
         order_by: str = 'num_decks DESC, record, name',
         limit: str = '',
         archetype_id: int | None = None,
+        competition_id: int | None = None,
         person_id: int | None = None,
         season_id: int | None = None,
         tournament_only: bool = False,
         all_legal: bool = False,
 ) -> tuple[list[Card], int]:
-    if person_id:
+    if competition_id:
+        return load_competition_cards(competition_id, order_by, limit)
+    elif person_id:
         table = '_card_person_stats'
         where = f'person_id = {sqlescape(person_id)}'
         group_by = 'person_id, cs.name'

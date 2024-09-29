@@ -11,6 +11,7 @@ class Competition(View):
         super().__init__()
         self.competition = competition
         self.competitions = [self.competition]
+        self.competition_id = self.competition.id
         self.hide_source = True
         self.has_external_source = competition.type != 'League'
         if competition.type == 'League':

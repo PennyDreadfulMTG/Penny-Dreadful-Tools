@@ -59,7 +59,6 @@ export class DataManager extends React.Component {
             "achievementKey": this.props.achievementKey,
             "allLegal": this.props.allLegal,
             "archetypeId": this.props.archetypeId,
-            "competitionId": this.props.competitionId,
             "baseQuery": this.props.baseQuery,
             "cardName": this.props.cardName,
             "competitionId": this.props.competitionId,

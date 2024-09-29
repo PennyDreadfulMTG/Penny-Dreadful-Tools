@@ -36,6 +36,7 @@ def load_competition_archetypes(competition_id: int) -> list[Archetype]:
         SELECT
             a.id,
             a.name,
+            aca.ancestor AS parent_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(dsum.wins), 0) AS wins,
             IFNULL(SUM(dsum.losses), 0) AS losses,
@@ -44,21 +45,27 @@ def load_competition_archetypes(competition_id: int) -> list[Archetype]:
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type,
-            IFNULL(ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1), '') AS win_percent,
+            COUNT(*) OVER () AS total
         FROM
             archetype AS a
+        LEFT JOIN
+            archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
         LEFT JOIN
             deck AS d ON a.id = d.archetype_id
         {query.competition_join()}
         {query.season_join()}
         {deck.nwdl_join()}
         WHERE
-            competition_id = %s
+            competition_id = {competition_id}
         GROUP BY
             a.id
+        ORDER BY
+            num_decks DESC,
+            name
     """
-    archetypes = db().select(sql, [competition_id])
-    return [Archetype(a) for a in archetypes]
+    archs, _ = archetype_list_from(sql, True)
+    return archs
 
 def seasons_active(archetype_id: int) -> list[int]:
     sql = 'SELECT season_id FROM _arch_stats WHERE archetype_id = %s'

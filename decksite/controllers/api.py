@@ -189,6 +189,7 @@ def cards2_api() -> Response:
         {
             'allLegal': <bool>,
             'baseQuery': <str>,
+            'competitionId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,
@@ -209,6 +210,7 @@ def cards2_api() -> Response:
     order_by = clauses.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     archetype_id = request.args.get('archetypeId') or None
+    competition_id = request.args.get('competitionId') or None
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
@@ -216,7 +218,7 @@ def cards2_api() -> Response:
     q = request.args.get('q', '').strip()
     additional_where, message = clauses.card_search_where(q, base_query, 'cs.name') if q or base_query else ('TRUE', '')
     all_legal = request.args.get('allLegal', False)
-    cs, total = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)
+    cs, total = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, competition_id=competition_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)
     prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)

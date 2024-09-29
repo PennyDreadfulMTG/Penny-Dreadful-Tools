@@ -1,6 +1,7 @@
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
 from decksite.data import achievements as achs
+from decksite.data import archetype
 from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import person as ps
@@ -17,7 +18,8 @@ def competitions() -> str:
 @APP.route('/competitions/<competition_id>/')
 @cached()
 def competition(competition_id: int) -> str:
-    view = Competition(comp.load_competition(competition_id, should_load_decks=False))
+    ars = archetype.load_competition_archetypes(competition_id)
+    view = Competition(comp.load_competition(competition_id, should_load_decks=False), ars)
     return view.page()
 
 @APP.route('/tournaments/')

@@ -31,6 +31,35 @@ def load_archetype(archetype: int | str) -> Archetype:
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
     return arch
 
+def load_competition_archetypes(competition_id: int) -> list[Archetype]:
+    sql = f"""
+        SELECT
+            a.id,
+            a.name,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(dsum.wins), 0) AS wins,
+            IFNULL(SUM(dsum.losses), 0) AS losses,
+            IFNULL(SUM(dsum.draws), 0) AS draws,
+            SUM(CASE WHEN dsum.wins >= 5 AND dsum.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type,
+            IFNULL(ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1), '') AS win_percent
+        FROM
+            archetype AS a
+        LEFT JOIN
+            deck AS d ON a.id = d.archetype_id
+        {query.competition_join()}
+        {query.season_join()}
+        {deck.nwdl_join()}
+        WHERE
+            competition_id = %s
+        GROUP BY
+            a.id
+    """
+    archetypes = db().select(sql, [competition_id])
+    return [Archetype(a) for a in archetypes]
+
 def seasons_active(archetype_id: int) -> list[int]:
     sql = 'SELECT season_id FROM _arch_stats WHERE archetype_id = %s'
     return db().values(sql, [archetype_id])

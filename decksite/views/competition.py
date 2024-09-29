@@ -1,12 +1,13 @@
 from typing import Any
 
+from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Competition as Comp
 from shared import dtutil
 
 
 class Competition(View):
-    def __init__(self, competition: Comp) -> None:
+    def __init__(self, competition: Comp, archetypes: list[Archetype]) -> None:
         super().__init__()
         self.competition = competition
         self.competitions = [self.competition]
@@ -18,7 +19,7 @@ class Competition(View):
             self.hide_top8 = True
             self.has_leaderboard = True
         self.date = dtutil.display_date(competition.start_date)
-        self.sponsor_name = competition.sponsor_name
+        self.archetypes = archetypes
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)

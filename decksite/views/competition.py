@@ -20,6 +20,7 @@ class Competition(View):
             self.has_leaderboard = True
         self.date = dtutil.display_date(competition.start_date)
         self.archetypes = archetypes
+        self.show_archetype_tree = len(self.archetypes) > 0
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)

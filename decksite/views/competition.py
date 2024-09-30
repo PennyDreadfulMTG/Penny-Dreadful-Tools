@@ -22,6 +22,8 @@ class Competition(View):
         self.date = dtutil.display_date(competition.start_date)
         self.archetypes = archetypes
         self.show_archetype_tree = len(self.archetypes) > 0
+        self.hide_perfect_runs = self.tournament_only = competition.type != 'League'
+        self.league_only = self.hide_tournament_results = competition.type == 'League'
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)

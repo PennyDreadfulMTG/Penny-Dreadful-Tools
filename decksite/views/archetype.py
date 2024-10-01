@@ -14,6 +14,7 @@ from shared.pd_exception import DoesNotExistException
 
 class Matchups(TypedDict):
     is_matchups: bool
+    hide_tournament_results: bool
     archetypes: list[archs.Archetype]
 
 class Archetype(View):
@@ -30,6 +31,7 @@ class Archetype(View):
                 break
         self.matchups: Matchups = {
             'is_matchups': True,
+            'hide_tournament_results': True,
             'archetypes': copy.deepcopy(archetypes),  # Take a copy of the archetypes, so we can update their stats without interfering with the other section.
         }
         matchups_by_id = {m.id: m for m in matchups}

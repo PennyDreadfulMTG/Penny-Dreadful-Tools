@@ -8,12 +8,18 @@ const renderHeaderRow = (table) => (
         <th className="n num-decks" onClick={table.sort.bind(table, "numDecks", "DESC")}># Decks</th>
         <th className="n card-record" onClick={table.sort.bind(table, "record", "DESC")}>Record</th>
         <th className="n win-percent" onClick={table.sort.bind(table, "winPercent", "DESC")}>Win %</th>
-        <th className="n tournament-wins" onClick={table.sort.bind(table, "tournamentWins", "DESC")}>
-            <abbr title="Tournament wins">①</abbr>
-        </th>
-        <th className="n tournament-top-8s" onClick={table.sort.bind(table, "tournamentTop8s", "DESC")}>
-            <abbr title="Tournament Top 8s">⑧</abbr>
-        </th>
+        { table.props.leagueOnly
+            ? null
+            : <th className="n tournament-wins" onClick={table.sort.bind(table, "tournamentWins", "DESC")}>
+                <abbr title="Tournament wins">①</abbr>
+            </th>
+        }
+        { table.props.leagueOnly
+            ? null
+            : <th className="n tournament-top-8s" onClick={table.sort.bind(table, "tournamentTop8s", "DESC")}>
+                <abbr title="Tournament Top 8s">⑧</abbr>
+            </th>
+        }
         { table.props.tournamentOnly
             ? null
             : <th className="n perfect-runs" onClick={table.sort.bind(table, "perfectRuns", "DESC")}><abbr title="League 5-0 runs">5–0s</abbr></th>
@@ -27,18 +33,24 @@ const renderRow = (table, card) => (
         <td className="n">{card.numDecks}</td>
         <td className="n">{renderRecord(card)}</td>
         <td className="n">{renderWinPercent(card)}</td>
-        <td className="n">
-            { card.tournamentWins > 0
-                ? card.tournamentWins
-                : ""
-            }
-        </td>
-        <td className="n">
-            { card.tournamentTop8s > 0
-                ? card.tournamentTop8s
-                : ""
-            }
-        </td>
+        { table.props.leagueOnly
+            ? null
+            : <td className="n">
+                { card.tournamentWins > 0
+                    ? card.tournamentWins
+                    : ""
+                }
+            </td>
+        }
+        { table.props.leagueOnly
+            ? null
+            : <td className="n">
+                { card.tournamentTop8s > 0
+                    ? card.tournamentTop8s
+                    : ""
+                }
+            </td>
+        }
         { table.props.tournamentOnly
             ? null
             : <td className="n">

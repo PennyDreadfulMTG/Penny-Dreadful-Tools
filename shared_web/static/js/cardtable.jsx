@@ -40,14 +40,14 @@ const renderRow = (table, card) => (
                     ? card.tournamentWins
                     : ""
                 }
-                </td>
+            </td>
         }
         { table.props.leagueOnly
             ? null
             : <td className="n">
                 { card.tournamentTop8s > 0
-                ? card.tournamentTop8s
-                : ""
+                    ? card.tournamentTop8s
+                    : ""
                 }
             </td>
         }

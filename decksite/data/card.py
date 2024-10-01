@@ -25,7 +25,8 @@ def load_competition_cards(competition_id: int, order_by: str, limit: str) -> tu
         FROM
             deck AS d
         INNER JOIN
-            deck_card AS dc ON d.id = dc.deck_id
+            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
+            (SELECT DISTINCT card, deck_id FROM deck_card WHERE deck_id IN (SELECT id FROM deck WHERE competition_id = %s)) AS dc ON d.id = dc.deck_id
         {deck.nwdl_join()}
         WHERE
             d.competition_id = %s
@@ -35,7 +36,7 @@ def load_competition_cards(competition_id: int, order_by: str, limit: str) -> tu
             {order_by}
         {limit}
     """
-    rs = db().select(sql, [competition_id])
+    rs = db().select(sql, [competition_id, competition_id])
     cs = [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs]
     cards = oracle.cards_by_name()
     for c in cs:
@@ -81,7 +82,7 @@ def preaggregate_card() -> None:
         FROM
             deck AS d
         INNER JOIN
-            -- Eiliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
+            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
             (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
         {query.competition_join()}
         {query.season_join()}

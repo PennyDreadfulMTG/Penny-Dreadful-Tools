@@ -1,5 +1,6 @@
 import datetime
 import json
+import threading
 from typing import Any, cast
 
 from flask import Response, request, session, url_for
@@ -637,10 +638,14 @@ def doorprize() -> Response:
 @APP.route('/api/rotation/clear_cache')
 @APP.route('/api/rotation/clear_cache/')
 def rotation_clear_cache() -> Response:
+    thread = threading.Thread(target=clear_cache_task)
+    thread.start()  # Start background thread
+    return return_json({'success': True})
+
+def clear_cache_task() -> None:
     rotation.clear_redis()
     rotation.rotation_redis_store()
     rot.force_cache_update()
-    return return_json({'success': True})
 
 @APP.route('/api/cards')
 @APP.route('/api/cards/')

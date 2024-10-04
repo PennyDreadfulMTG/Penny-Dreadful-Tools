@@ -24,14 +24,15 @@ class Seasons(View):
             season.update(season_stats)
             if season.get('start_date') is None:
                 continue
-            season['matches_per_day'] = round(season['num_matches'] / season['length_in_days'])
-            season['decks_per_day'] = round(season['num_decks'] / season['length_in_days'])
+            safe_length_in_days = max(1, season['length_in_days'])
+            season['matches_per_day'] = round(season['num_matches'] / safe_length_in_days)
+            season['decks_per_day'] = round(season['num_decks'] / safe_length_in_days)
             season['num_legal_cards'] = cards_count.get(str(season_info['legality_name']), 0)
             for k, v in season.items():
                 if isinstance(v, int):
                     season[k] = f'{v:,}'  # Human-friendly number formatting like "29,000".
             season['start_date_display'] = dtutil.display_date(season['start_date'])
-            season['length_in_days'] = season['length_in_days'] + ' days'
+            season['length_in_days'] = season['length_in_days'] + ' day' + ('s' if season['length_in_days'] != 1 else '')
             if season.get('end_date'):
                 season['end_date_display'] = dtutil.display_date(season['end_date'])
             else:

@@ -137,8 +137,11 @@ def prepare_flavornames() -> dict[str, str]:
     renames = {}
     for c in flavored:
         if c['layout'] == 'reversible_card':
-            renames[c['card_faces'][0]['flavor_name']] = c['card_faces'][0]['name']
-            renames[c['card_faces'][1]['flavor_name']] = c['card_faces'][1]['name']
+            try:
+                renames[c['card_faces'][0]['flavor_name']] = c['card_faces'][0]['name']
+                renames[c['card_faces'][1]['flavor_name']] = c['card_faces'][1]['name']
+            except KeyError:
+                pass
         else:
             # So far, we don't need to worry about DFCs with flavor names, as none are available on MTGO.
             # In the future, we may need to adjust this code to match pricefiles

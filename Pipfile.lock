@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cecd68150fdc74d4bf7ae9956c07c5a33807d8a6e6d6ad3e9dff3263bea1d995"
+            "sha256": "376f3d1095bafa92c1c743cb1946b434fe5c1d03ce241cd2b7386f29157dc5f0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -2016,12 +2016,12 @@
         },
         "plumbum": {
             "hashes": [
-                "sha256:6092c85ab970b7a7a9d5d85c75200bc93be82b33c9bdf640ffa87d2d7c8709f0",
-                "sha256:8595d36dae2472587d6f59789c8d7b26250f45f6f6ed75ccb378de59ee7b9cf9"
+                "sha256:9fd0d3b0e8d86e4b581af36edf3f3bbe9d1ae15b45b8caab28de1bcb27aaa7f5",
+                "sha256:e640062b72642c3873bd5bdc3effed75ba4d3c70ef6b6a7b907357a84d909219"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.6'",
-            "version": "==1.8.3"
+            "markers": "python_version >= '3.8'",
+            "version": "==1.9.0"
         },
         "poeditor": {
             "hashes": [

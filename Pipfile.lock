@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "376f3d1095bafa92c1c743cb1946b434fe5c1d03ce241cd2b7386f29157dc5f0"
+            "sha256": "9888ce927d4de811a1b49d0c9abbf3a059027c840f8cb445806cc6d56ffac170"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -181,12 +181,12 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:5eba185467253501b62a9f113c263524b4f5d55e1b30456370eed4cdbd6438fd",
-                "sha256:e73d0b62dd680a7c07cb2cd0ce3c22570b044dd01bd994bc3a2dd16c6cbba162"
+                "sha256:5cfc40ae9f68311075d27ef68a4841bdc5cc7f6cf86671b49f00607d30188e2d",
+                "sha256:a9d1c946ada25098d790e079ba2a1b112157278f3fb7e718ae6a9252f5835dc8"
             ],
             "index": "pypi",
             "markers": "python_full_version >= '3.9.0'",
-            "version": "==3.3.4"
+            "version": "==3.3.5"
         },
         "async-timeout": {
             "hashes": [

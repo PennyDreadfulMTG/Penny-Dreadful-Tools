@@ -23,7 +23,8 @@ KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the 
                'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
 
 # Playtest cards that cause enough problems we'd rather skip them than include them.
-BAD_PLAYTEST_CARDS = ['Bind // Liberate', 'Waste Land', 'Keeper of the Crown // Coronation of the Wilds', 'Boulder Jockey', 'Convention Maro', 'Glimpse, the Unthinkable', 'Gather, the Townsfolk']
+BAD_PLAYTEST_CARDS = ['Bind // Liberate', 'Waste Land', 'Keeper of the Crown // Coronation of the Wilds', 'Boulder Jockey', 'Convention Maro',
+                       'Glimpse, the Unthinkable', 'Gather, the Townsfolk', 'Rampant, Growth']
 
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))

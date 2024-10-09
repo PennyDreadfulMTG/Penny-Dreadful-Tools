@@ -3632,12 +3632,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:af2a105be6d504339bfed81319cc8e8697865f0ee5c6baa63658f127b33b9e63",
-                "sha256:cdf445b5161bf17753500713a475ab79a45bd0d87728b8bfcecd86e2fbf66402"
+                "sha256:16d9e3ab37abb7339d98ea2ba857b7098ff2a1f8e9d89795876075cab34c6e67",
+                "sha256:8de8698195ec96370be175864555df5313e6d47f6342bd44e7d31e8d0c60fa01"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.16.21.20240513"
+            "version": "==1.16.21.20241009"
         },
         "types-toml": {
             "hashes": [

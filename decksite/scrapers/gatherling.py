@@ -106,9 +106,9 @@ class Standing:
     games_won: int
     games_played: int
     byes: int
-    OP_Match: str
-    PL_Game: str
-    OP_Game: str
+    OP_Match: float
+    PL_Game: float
+    OP_Game: float
     seed: int
 
 @pydantic.dataclasses.dataclass

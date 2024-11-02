@@ -172,7 +172,6 @@ def process(response: APIResponse) -> None:
         process_tournament(name, event)
 
 def process_tournament(name: str, event: Event) -> None:
-    db().begin('tournament')
     name_safe = sqlescape(name)
     cs = competition.load_competitions(f'c.name = {name_safe}')
     if len(cs) > 0:
@@ -182,6 +181,7 @@ def process_tournament(name: str, event: Event) -> None:
     except ValueError as e:
         raise InvalidDataException(f'Could not parse tournament date `{event.start}`') from e
     fs = determine_finishes(event.standings, event.finalists)
+    db().begin('tournament')
     competition_id = insert_competition(name, date, event)
     decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, event.players)
     insert_matches(date, decks_by_gatherling_username, event.matches, event.mainrounds + event.finalrounds)

@@ -2960,12 +2960,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:2949913a518d5285ce00a3b7d88961c80a6e72ffb8f3da0a3f5650ea533bd45e",
-                "sha256:6721ac0f1a620321e2ccd87a9a747c4a383dc381f78d894ce37f2455b45fcf1c"
+                "sha256:080883032fb26dfb91c748f69e4efbb202aeeb3f9e95e68bf7352b7ab215069f",
+                "sha256:c5a98b3308fea29d26228978bd83f6ea262d2fd4d967e34e8e49d04708bb3022"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==75.2.0.20241025"
+            "version": "==75.3.0.20241105"
         },
         "typing-extensions": {
             "hashes": [

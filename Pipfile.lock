@@ -3734,12 +3734,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:16d9e3ab37abb7339d98ea2ba857b7098ff2a1f8e9d89795876075cab34c6e67",
-                "sha256:8de8698195ec96370be175864555df5313e6d47f6342bd44e7d31e8d0c60fa01"
+                "sha256:8b4b29e5c8fe7f1131be8f3cb7cedbcd8bb889707336f32c3fb332c9b1c71991",
+                "sha256:ce3534c38079ec3242f4a20376283eb265a3837f80592b0ecacb14bd41acc29e"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.16.21.20241009"
+            "version": "==1.16.21.20241105"
         },
         "types-toml": {
             "hashes": [

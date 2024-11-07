@@ -2948,12 +2948,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:080883032fb26dfb91c748f69e4efbb202aeeb3f9e95e68bf7352b7ab215069f",
-                "sha256:c5a98b3308fea29d26228978bd83f6ea262d2fd4d967e34e8e49d04708bb3022"
+                "sha256:bc6de6e2bcb6d610556304d0a69fe4ca208ac4896162647314ecfd9fd73d8550",
+                "sha256:f66710e1cd4a936e5fcc12d4e49be1a67c34372cf753e87ebe704426451b4012"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==75.3.0.20241105"
+            "version": "==75.3.0.20241107"
         },
         "typing-extensions": {
             "hashes": [

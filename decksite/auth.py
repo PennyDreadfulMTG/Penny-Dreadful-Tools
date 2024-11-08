@@ -88,5 +88,15 @@ def check_perms() -> None:
     session['admin'] = Permission.ADMIN in changes
     session['demimod'] = Permission.DEMIMOD in changes
 
+# We used to store the session cookie under "pennydreadfulmagic.com" but we want it under ".pennydreadfulmagic.com".
+def migrate_session(response: wrappers.Response) -> None:
+    # Copy all cookies we can see because some may be under pennydreadfulmagic.com instead of .pennydreadfulmagic.com
+    for key, value in request.cookies.items():
+        response.set_cookie(key, value)
+
+    # Explicitly delete all cookies under old domain
+    for key in request.cookies.keys():
+        response.set_cookie(key, '', domain='pennydreadfulmagic.com', expires=0)
+
 def has_demimod() -> bool:
     return session.get('admin') or session.get('demimod')

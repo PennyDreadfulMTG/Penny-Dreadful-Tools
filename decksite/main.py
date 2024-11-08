@@ -81,6 +81,7 @@ def before_request() -> wrappers.Response | None:
 
 @APP.after_request
 def after_request(response: Response) -> Response:
+    auth.migrate_session(response)
     requests_until_no_intro = 20  # Typically ten page views because of async requests for the status bar.
     views = int(request.cookies.get('views', 0)) + 1
     response.set_cookie('views', str(views))

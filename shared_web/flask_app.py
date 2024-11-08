@@ -89,11 +89,14 @@ class PDFlask(Flask):
         return view.page()
 
     def logout(self) -> wrappers.Response:
-        oauth.logout()
         target = request.args.get('target', 'home')
         if bool(urllib.parse.urlparse(target).netloc):
-            return redirect(target)
-        return redirect(url_for(target))
+            response = redirect(target)
+        else:
+            response = redirect(url_for(target))
+        oauth.logout()
+        response.set_cookie('session', '', domain='pennydreadfulmagic.com', expires=0)
+        return response
 
     def authenticate(self) -> wrappers.Response:
         target = request.args.get('target')

@@ -92,8 +92,14 @@ class PDFlask(Flask):
         oauth.logout()
         target = request.args.get('target', 'home')
         if bool(urllib.parse.urlparse(target).netloc):
-            return redirect(target)
-        return redirect(url_for(target))
+            response = redirect(target)
+        else:
+            response = redirect(url_for(target))
+        # Clean up any session cookie set with no domain created when the site was misconfigured.
+        # If we don't then you won't actually log out, we'll keep respecting the no-domain cookie.
+        # The cookies we actually want are set with domain=.pennydreadfulmagic.com so they work on subdomains.
+        response.delete_cookie('session', domain=None)
+        return response
 
     def authenticate(self) -> wrappers.Response:
         target = request.args.get('target')

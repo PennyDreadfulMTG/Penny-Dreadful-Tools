@@ -1,3 +1,4 @@
+import os
 import time
 from collections.abc import Callable
 from typing import Any
@@ -11,6 +12,8 @@ def start() -> float:
     return time.perf_counter()
 
 def check(start_time: float, kind: str, detail: Any, location: str) -> None:
+    if os.getenv('SKIP_PERF_CHECKS'):
+        return
     run_time = time.perf_counter() - start_time
     limit = configuration.get_float(kind)
     if limit is not None and run_time > limit:

@@ -638,14 +638,15 @@ def doorprize() -> Response:
 @APP.route('/api/rotation/clear_cache')
 @APP.route('/api/rotation/clear_cache/')
 def rotation_clear_cache() -> Response:
-    thread = threading.Thread(target=clear_cache_task)
+    hard = request.args.get('hard', '0') == '1'
+    thread = threading.Thread(target=clear_cache_task, args=(hard,))
     thread.start()  # Start background thread
     return return_json({'success': True})
 
-def clear_cache_task() -> None:
+def clear_cache_task(hard: bool) -> None:
     rotation.clear_redis()
     rotation.rotation_redis_store()
-    rot.force_cache_update()
+    rot.force_cache_update(hard=hard)
 
 @APP.route('/api/cards')
 @APP.route('/api/cards/')

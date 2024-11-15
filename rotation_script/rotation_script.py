@@ -43,6 +43,11 @@ def run() -> None:
 
     if n == 0:
         rotation.clear_redis(clear_files=True)
+        try:
+            url = f'{fetcher.decksite_url()}/api/rotation/clear_cache?hard=1'
+            fetch_tools.fetch(url)
+        except Exception as c:
+            print(c, flush=True)
 
     all_prices = {}
     if not configuration.cardhoarder_urls.get():

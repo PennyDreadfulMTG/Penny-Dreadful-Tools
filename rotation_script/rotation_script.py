@@ -9,6 +9,7 @@ from collections import Counter
 
 import ftfy
 
+from decksite.data import rotation as rt
 from magic import card_price, fetcher, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices
 from shared import configuration, decorators, dtutil, fetch_tools, repo, sentry, text
@@ -42,10 +43,9 @@ def run() -> None:
         return
 
     if n == 0:
-        rotation.clear_redis(clear_files=True)
         try:
-            url = f'{fetcher.decksite_url()}/api/rotation/clear_cache?hard=1'
-            fetch_tools.fetch(url)
+            rotation.clear_redis(clear_files=True)
+            rt.force_cache_update(hard=True)
         except Exception as c:
             print(c, flush=True)
 
@@ -63,8 +63,7 @@ def run() -> None:
         do_push()
 
     try:
-        url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
-        fetch_tools.fetch(url)
+        rt.force_cache_update()
     except Exception as c:
         print(c, flush=True)
 

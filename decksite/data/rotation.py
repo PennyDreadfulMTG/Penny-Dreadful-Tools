@@ -50,8 +50,9 @@ def load_rotation_summary() -> tuple[int, int]:
         return 0, 0
     return int(row['runs'] or 0), int(row['num_cards'] or 0)
 
-# If the latest rotation run screwed up try running this.
-# If you add a Run_xxx.txt file or mess with an existing one, you will need to run this with hard=True.
+# To trigger manually without having to be in a python shell, hit /api/rotation/clear_cache in a browser.
+# If you have edited the existing Run_xxx.txt files you will need to run this in an interpreter with hard=True.
+# We don't do this for the API call because it will timeout once there are some reasonable number of runs.
 @decorators.interprocess_locked('.rotation-cache.lock')
 def force_cache_update(hard: bool = False) -> None:
     season_id = seasons.next_season_num()

@@ -135,6 +135,7 @@ deny-imports =
     # maintenance can (and does) use anything
 
     rotation_script=analysis
+    rotation_script=decksite
     rotation_script=discordsite
     rotation_script=find
     rotation_script=logsite

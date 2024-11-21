@@ -1,6 +1,6 @@
 import datetime
 import json
-import threading
+import subprocess
 from typing import Any, cast
 
 from flask import Response, request, session, url_for
@@ -18,7 +18,7 @@ from decksite.data.achievements import Achievement
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
-from magic import image_fetcher, layout, oracle, rotation, seasons, tournaments
+from magic import image_fetcher, layout, oracle, seasons, tournaments
 from magic.colors import find_colors
 from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
@@ -639,14 +639,10 @@ def doorprize() -> Response:
 @APP.route('/api/rotation/clear_cache/')
 def rotation_clear_cache() -> Response:
     hard = request.args.get('hard', '0') == '1'
-    thread = threading.Thread(target=clear_cache_task, args=(hard,))
-    thread.start()  # Start background thread
+    task = 'clear_rotation_cache_hard' if hard else 'clear_rotation_cache'
+    cmd = ['pipenv', 'run', 'python', 'run.py', 'maintenance', task]
+    subprocess.Popen(cmd)
     return return_json({'success': True})
-
-def clear_cache_task(hard: bool) -> None:
-    rotation.clear_redis()
-    rotation.rotation_redis_store()
-    rot.force_cache_update(hard=hard)
 
 @APP.route('/api/cards')
 @APP.route('/api/cards/')

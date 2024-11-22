@@ -58,15 +58,16 @@ def run() -> None:
         all_prices[url] = parse_cardhoarder_prices(s)
 
     run_number = process(all_prices)
-    if run_number == rotation.TOTAL_RUNS:
-        make_final_list()
-        do_push()
 
     try:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
         fetch_tools.fetch(url)
     except Exception as c:
         print(c, flush=True)
+
+    if run_number == rotation.TOTAL_RUNS:
+        make_final_list()
+        do_push()
 
 def process(all_prices: dict[str, PriceListType]) -> int:
     seen_sets: set[str] = set()

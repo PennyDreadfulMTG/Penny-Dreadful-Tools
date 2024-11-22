@@ -191,7 +191,7 @@ https://pennydreadfulmagic.com/admin/rotation/
     else:
         checklist += '- [ ] restart discordbot\n'
         print('Added to checklist!', flush=True)
-    ds = os.path.expanduser('/penny/decksite/')
+    ds = os.path.expanduser('/home/pdadmin/decksite/')
     failed = False
     try:
         if os.path.exists(ds):

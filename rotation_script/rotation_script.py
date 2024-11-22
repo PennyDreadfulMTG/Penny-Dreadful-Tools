@@ -178,8 +178,8 @@ def do_push() -> None:
 
 https://pennydreadfulmagic.com/admin/rotation/
 
-- [ ] upload legal_cards.txt to S3
-- [ ] upload {setcode}_legal_cards.txt to S3
+- [ ] upload legal_cards.txt to S3 (set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
+- [ ] upload {setcode}_legal_cards.txt to S3 (set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
 - [ ] ping scryfall
 - [ ] email mtggoldfish
 """

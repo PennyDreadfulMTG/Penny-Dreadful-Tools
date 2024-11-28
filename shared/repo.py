@@ -49,6 +49,7 @@ def create_issue(content: str,
             ('headers', '...redacted...'),
         ])
         pretty = traceback_with_variables.format_exc(exception, fmt=fmt)
+        pretty.append(title)
         body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'
@@ -57,7 +58,6 @@ def create_issue(content: str,
         pretty = traceback.format_list(stack)
         if request:
             pretty.append(request.full_path)
-        pretty.append(title)
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Location Hash: {issue_hash}\n'
 

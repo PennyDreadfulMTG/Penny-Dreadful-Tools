@@ -22,10 +22,6 @@ FORMAT_IDS: dict[str, int] = {}
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
                'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
 
-# Playtest cards that cause enough problems we'd rather skip them than include them.
-BAD_PLAYTEST_CARDS = ['Bind // Liberate', 'Waste Land', 'Keeper of the Crown // Coronation of the Wilds', 'Boulder Jockey', 'Convention Maro',
-                      'Glimpse, the Unthinkable', 'Gather, the Townsfolk', 'Rampant, Growth', 'The Colossal Dreadmaw']
-
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))
 
@@ -234,7 +230,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             if p.get('layout') not in layout.uses_canonical_namespace():
                 continue
 
-            if p.get('name') in BAD_PLAYTEST_CARDS:
+            if 'playtest' in p.get('promo_types', []):
                 continue
 
             # A list of playtest cards that cause problems (to ignore). When Scryfall update bulk data to flag these we can remove this hardcoding in favor of something better.

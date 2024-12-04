@@ -49,7 +49,7 @@ def create_issue(content: str,
             ('headers', '...redacted...'),
         ])
         pretty = traceback_with_variables.format_exc(exception, fmt=fmt)
-        pretty.append(title)
+        pretty += '\n' + title
         body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'

@@ -3761,12 +3761,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:8b4b29e5c8fe7f1131be8f3cb7cedbcd8bb889707336f32c3fb332c9b1c71991",
-                "sha256:ce3534c38079ec3242f4a20376283eb265a3837f80592b0ecacb14bd41acc29e"
+                "sha256:1f662347a8f3b2bf30517d629d82f591420df29811794b0bf3804e14d716f6e0",
+                "sha256:a4947c2bdcd9ab69d44466a533a15839ff48ddc27223615cb8145d73ab805bc2"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==1.16.21.20241105"
+            "version": "==1.17.0.20241205"
         },
         "types-toml": {
             "hashes": [

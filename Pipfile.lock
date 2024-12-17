@@ -669,12 +669,12 @@
         },
         "croniter": {
             "hashes": [
-                "sha256:7d9b1ef25b10eece48fdf29d8ac52f9b6252abff983ac614ade4f3276294019e",
-                "sha256:eb28439742291f6c10b181df1a5ecf421208b1fc62ef44501daec1780a0b09e9"
+                "sha256:2f878c3856f17896979b2a4379ba1f09c83e374931ea15cc835c5dd2eee9b368",
+                "sha256:37c504b313956114a983ece2c2b07790b1f1094fe9d81cc94739214748255577"
             ],
             "index": "pypi",
             "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
-            "version": "==5.0.1"
+            "version": "==6.0.0"
         },
         "cryptography": {
             "hashes": [

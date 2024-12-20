@@ -2469,12 +2469,23 @@ Season Symbols
 */
 
 .ss::before {
+    font-family: Keyrune;
     margin-right: 0.178em;
     vertical-align: -0.1em; /* None of the standard keyword values for vertical-align successfully line up the text and the image center. */
 }
 
 .ss {
     margin-right: 0.317rem;
+}
+
+.ss-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.ss-num {
+    font-family: var(--main-text-font-family);
+    font-size: var(--table-font-size);
 }
 
 /*

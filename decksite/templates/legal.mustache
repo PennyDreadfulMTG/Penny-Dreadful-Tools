@@ -3,7 +3,7 @@
 
     <p><span title="{{#public}}{{name}}{{/public}}{{^public}}This deck{{/public}}</span> is {{^pd_legal}}<b>not</b> {{/pd_legal}} currently Penny Dreadful legal">{{#pd_legal}}✅{{/pd_legal}}{{^pd_legal}}🚫 Not{{/pd_legal}} Legal</span></p>
     {{#has_legal_format}}
-        {{#legal_icons}}<p>{{{legal_icons}}}</p>{{/legal_icons}}
+        {{#legal_icons}}<p class="ss-grid">{{{legal_icons}}}</p>{{/legal_icons}}
         <div class="other-legal-formats">
             {{#non_pd_legal_formats}}
                 <div class="legal-format">{{.}}</div>

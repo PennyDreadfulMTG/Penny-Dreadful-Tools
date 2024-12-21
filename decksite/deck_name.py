@@ -273,6 +273,11 @@ def normalize_version(name: str) -> str:
     if re.search(r'\d.*[a-uw-z,-].*\d', name, flags=re.IGNORECASE):
         return name
     name = normalize_parenthetical_versions(name)
+    # Convert trailing sequences of digits and spaces into dotted versions
+    trailing_nums = re.search(r'(\d+(?:\s+\d+)+)$', name)
+    if trailing_nums:
+        dotted_nums = re.sub(r'\s+', '.', trailing_nums.group(1))
+        name = name[:trailing_nums.start(1)] + dotted_nums
     patterns = [
         r'(\W?)[\[({]?(?:v|ver|version|rev|mk) ?(\d[\.\d]*)(?:[])}]|\b)',  # Explicitly marked as a version
         r'(\s)[\[({]?(\d[\.\d]*)[])}]?$',  # Number at end of name

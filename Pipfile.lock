@@ -2456,12 +2456,12 @@
         },
         "pystache": {
             "hashes": [
-                "sha256:810556d6588e6717abe2c10b8e8a907b7889cf11e06fa0589136ab7fed5c7adb",
-                "sha256:b042d2eb5f2d9a00d0151d1283df621510bbf7e9877d1f9fc622b9905cb87024"
+                "sha256:08562f53b3afd9b55c1eb1d4980f4ced68e07dbed3aceffda8bb600286b93f76",
+                "sha256:55d8bb5aac450389369584b1627cecbe9069e13a09471a8fe783c44b64e94d5a"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==0.6.6"
+            "version": "==0.6.7"
         },
         "pytest": {
             "hashes": [

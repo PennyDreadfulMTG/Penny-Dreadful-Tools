@@ -25,7 +25,7 @@ WORKDIR /pdm
 COPY Pipfile Pipfile.lock ./
 RUN pipenv sync
 
-COPY dev.py run.py analysis/ decksite/ find/ logsite/ magic/ maintenance/ shared*/ card_aliases.tsv hq_artcrops.json ./
+COPY dev.py run.py analysis/ decksite/ find/ logsite*/ magic/ maintenance/ shared*/ card_aliases.tsv hq_artcrops.json ./
 COPY ./.git/ ./
 
-CMD [ "pipenv", "run", "python", "run.py", "--wait-for-db", "decksite" ]
+ENTRYPOINT ["pipenv", "run", "python", "run.py", "--wait-for-db"]

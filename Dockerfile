@@ -1,22 +1,24 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs12 AS python
+FROM python:3.10-bookworm AS python-build
+RUN pip install pipenv
 
 WORKDIR /pdm
-RUN pip install pipenv
 COPY Pipfile Pipfile.lock ./
 RUN pipenv sync
-CMD ["/bin/bash"]
 
-FROM nikolaik/python-nodejs:python3.10-nodejs12 AS js
+
+FROM node:22-bookworm AS js-build
 
 WORKDIR /restore
 COPY package*.json ./
 RUN npm ci --verbose
 
-FROM nikolaik/python-nodejs:python3.10-nodejs12
 
-COPY --from=python /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
-COPY --from=python /root/.local/share/virtualenvs/ /root/.local/share/virtualenvs/
-COPY --from=js /restore/node_modules /pdm/node_modules
+FROM python:3.10-bookworm
+RUN pip install pipenv
+
+COPY --from=python-build /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=python-build /root/.local/share/virtualenvs/ /root/.local/share/virtualenvs/
+COPY --from=js-build /restore/node_modules /pdm/node_modules
 
 WORKDIR /pdm
 

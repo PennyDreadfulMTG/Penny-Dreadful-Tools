@@ -52,7 +52,7 @@ pull_request_rules:
       delete_head_branch: {}
   - name: automatic merge for master when CI passes and approved + automatic merge
       for master when CI passes and trusted comitter
-    conditions: 
+    conditions:
         - author=@PennyDreadfulMTG/automerge
     actions:
-      queue: 
+      queue:

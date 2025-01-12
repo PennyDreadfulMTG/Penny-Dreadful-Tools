@@ -75,6 +75,8 @@ def upload() -> Response:
 @APP.route('/export/<match_id>/')
 def export(match_id: int) -> tuple[str, int, dict[str, str]]:
     local = match.get_match(match_id)
+    if local is None:
+        return return_json({'success': False})
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,
         comment=local.comment,

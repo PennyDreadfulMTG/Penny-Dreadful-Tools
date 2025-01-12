@@ -115,7 +115,12 @@ def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
-    return safe_name.strip('-')
+    safe_name = safe_name.strip('-')
+
+    if safe_name == '':
+        return 'untitled'
+    else:
+        return safe_name
 
 def replace_space_alternatives(name: str) -> str:
     name = name.replace('_', ' ')

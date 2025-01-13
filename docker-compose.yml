@@ -54,18 +54,26 @@ services:
   #     - ./discordbot:/pdm/discordbot
   #     - ./magic:/pdm/magic
   #     - ./shared:/pdm/shared
+
   db:
     build: docker_dev/mysql
     env_file: .env
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
+
   adminer:
     image: adminer
     ports:
       - 8080:8080
+
   redis:
     image: redis
     ports:
       - 6379:6379
+
+volumes:
+  db_data:

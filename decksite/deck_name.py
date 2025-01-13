@@ -2,6 +2,7 @@ import re
 from collections import OrderedDict
 
 import titlecase
+from anyascii import anyascii
 from better_profanity import profanity
 
 from magic import mana
@@ -114,7 +115,7 @@ def normalize(d: Deck) -> str:
 def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
-    safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
+    safe_name = re.sub(':', '', anyascii(safe_name), flags=re.IGNORECASE)
     return safe_name.strip('-')
 
 def replace_space_alternatives(name: str) -> str:

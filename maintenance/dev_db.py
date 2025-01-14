@@ -17,7 +17,7 @@ def run() -> None:
     if not (host or usr or pwd or db):
         safe_pwd = 'PRESENT' if pwd else 'MISSING'
         raise InvalidArgumentException(f'Unable to dump dev db with {host} {usr} pwd:{safe_pwd} {db}')
-    base_command = ['mysqldump', '-h', host, '-u', usr, f'-p{pwd}']
+    base_command = ['mariadb-dump', '-h', host, '-u', usr, f'-p{pwd}']
     try:
         structure = subprocess.check_output(base_command + ['--no-data', db])
         data = subprocess.check_output(base_command + [f'--ignore-table={db}.person_note', db])

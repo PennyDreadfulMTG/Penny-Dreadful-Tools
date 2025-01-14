@@ -64,6 +64,8 @@ create_github_issues = BoolSetting('create_github_issues', True)
 redis_enabled = BoolSetting('redis_enabled', True)
 # == Mysql ==
 mysql_host = StrSetting('mysql_host', 'localhost')
+# Warning: this is ignored for dev db backup and may be ignored for main db connection
+# if "localhost" is specified. Mariadb will use a socket not a TCP connection.
 mysql_port = IntSetting('mysql_port', 3306)
 mysql_user = StrSetting('mysql_user', 'pennydreadful')
 mysql_passwd = StrSetting('mysql_passwd', '')

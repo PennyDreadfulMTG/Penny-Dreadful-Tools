@@ -20,6 +20,8 @@ services:
       - ./maintenance:/pdm/maintenance
       - ./shared:/pdm/shared
       - ./shared_web:/pdm/shared_web
+      - node_modules:/pdm/node_modules
+      - compiled_js:/pdm/shared_web/static/dist
 
   logsite:
     build: .
@@ -39,6 +41,26 @@ services:
       - ./logsite:/pdm/logsite
       - ./shared:/pdm/shared
       - ./shared_web:/pdm/shared_web
+      - node_modules:/pdm/node_modules
+      - compiled_js:/pdm/shared_web/static/dist
+
+  assets:
+    image: node:22-alpine
+    working_dir: /pdm
+    command:
+      - sh
+      - -c
+      - |
+        npm install
+        npm run babel
+        npm run watch
+    volumes:
+      - ./decksite/webpack.config.js:/pdm/decksite/webpack.config.js
+      - ./package.json:/pdm/package.json
+      - ./package-lock.json:/pdm/package-lock.json
+      - ./shared_web:/pdm/shared_web
+      - node_modules:/pdm/node_modules
+      - compiled_js:/pdm/shared_web/static/dist
 
   # discordbot:
   #   build: .
@@ -77,3 +99,5 @@ services:
 
 volumes:
   db_data:
+  node_modules:
+  compiled_js:

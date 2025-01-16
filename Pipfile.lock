@@ -2482,11 +2482,12 @@
         },
         "referencing": {
             "hashes": [
-                "sha256:25b42124a6c8b632a425174f24087783efb348a6f1e0008e63cd4466fedf703c",
-                "sha256:eda6d3234d62814d1c64e305c1331c9a3a6132da475ab6382eaa997b21ee75de"
+                "sha256:01fc2916bab821aa3284d645bbbb41ba39609e7ff47072416a39ec2fb04d10d9",
+                "sha256:246db964bb6101905167895cd66499cfb2aabc5f83277d008c52afe918ef29ba"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==0.35.1"
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==0.36.0"
         },
         "regex": {
             "hashes": [
@@ -2722,7 +2723,6 @@
                 "sha256:fda7cb070f442bf80b642cd56483b5548e43d366fe3f39b98e67cce780cded00",
                 "sha256:feea821ee2a9273771bae61194004ee2fc33f8ec7db08117ef9147d4bbcbca8e"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==0.22.3"
         },

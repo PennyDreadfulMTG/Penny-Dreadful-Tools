@@ -21,7 +21,7 @@ SEASONS = [
     'NEO', 'SNC', 'DMU', 'BRO',         # 2022
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
-    'DFT', 'TDM', 'FIN', 'EOE',         # 2025
+    'DFT', 'TDM', 'FIN', 'EOE', 'SPM',  # 2025
 ]
 
 NOT_SEASONS = [

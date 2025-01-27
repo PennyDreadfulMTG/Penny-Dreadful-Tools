@@ -2192,11 +2192,12 @@
         },
         "proto-plus": {
             "hashes": [
-                "sha256:c91fc4a65074ade8e458e95ef8bac34d4008daa7cce4a12d6707066fca648961",
-                "sha256:fbb17f57f7bd05a68b7707e745e26528b0b3c34e378db91eef93912c54982d91"
+                "sha256:6e93d5f5ca267b54300880fff156b6a3386b3fa3f43b1da62e680fc0c586ef22",
+                "sha256:bf2dfaa3da281fc3187d12d224c707cb57214fb2c22ba854eb0c105a3fb2d4d7"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==1.25.0"
+            "version": "==1.26.0"
         },
         "protobuf": {
             "hashes": [

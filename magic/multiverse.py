@@ -237,10 +237,6 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             if 'playtest' in p.get('promo_types', []):
                 continue
 
-            # A list of playtest cards that cause problems (to ignore). When Scryfall update bulk data to flag these we can remove this hardcoding in favor of something better.
-            if p.get('name') in ['Bind // Liberate', 'Waste Land', 'Convention Maro', 'Keeper of Crowns']:
-                continue
-
             # Exclude "Card"s which is a whole group of weird things, and also any tokens that have a playable layout.
             if re.search(r'\b(token|card)\b', p.get('type_line', ''), re.IGNORECASE):
                 continue

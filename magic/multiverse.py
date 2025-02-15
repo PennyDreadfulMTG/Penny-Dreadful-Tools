@@ -223,6 +223,10 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
 
     for p in printings:
         try:
+            # HACK to workaround Scryfall snafu
+            if p.get('layout') == 'double_sided':
+                p['layout'] = 'normal'
+
             if p.get('layout') not in layout.all_layouts():
                 layout.report_missing_layout(p.get('layout'))
                 continue
@@ -231,10 +235,6 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
                 continue
 
             if 'playtest' in p.get('promo_types', []):
-                continue
-
-            # A list of playtest cards that cause problems (to ignore). When Scryfall update bulk data to flag these we can remove this hardcoding in favor of something better.
-            if p.get('name') in ['Bind // Liberate', 'Waste Land', 'Convention Maro', 'Keeper of Crowns']:
                 continue
 
             # Exclude "Card"s which is a whole group of weird things, and also any tokens that have a playable layout.

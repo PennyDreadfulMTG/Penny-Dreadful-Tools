@@ -358,7 +358,7 @@ def test_tilde() -> None:
 
 @pytest.mark.functional
 def test_double_tilde_functional() -> None:
-    do_functional_test('o:"sacrifice ~: ~ deals 2 damage to any target"', ['Blazing Torch', 'Inferno Fist'], ['Black Lotus', 'Cartel Aristocrat'])
+    do_functional_test('o:"sacrifice ~: ~ deals 2 damage to any target"', ['Blazing Torch'], ['Black Lotus', 'Cartel Aristocrat', 'Inferno Fist'])
 
 def test_double_tilde() -> None:
     expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to any target%%'))"

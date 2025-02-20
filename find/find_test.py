@@ -57,7 +57,7 @@ def test_card_text() -> None:
     # s = 'o:"~ enters tapped"'
     # do_functional_test(s, ['Arcane Sanctum', 'Diregraf Ghoul', 'Golgari Guildgate'], ['Tarmogoyf'])
 
-    s = 'fo:/sacrifice ~ .* all/'
+    s = 'fo:/sacrifice this .* all/'
     do_functional_test(s, ['Coercive Portal', 'Planar Collapse'], ['Tomb of Urami', 'Viscera Seer'])
 
 @pytest.mark.functional
@@ -350,15 +350,11 @@ def test_special_chars() -> None:
 
 @pytest.mark.functional
 def test_tilde_functional() -> None:
-    do_functional_test('o:"sacrifice ~"', ['Abandoned Outpost', 'Black Lotus'], ['Cartel Aristocrat', 'Life from the Loam'])
+    do_functional_test('o:"sacrifice this"', ['Abandoned Outpost', 'Black Lotus'], ['Cartel Aristocrat', 'Life from the Loam'])
 
 def test_tilde() -> None:
     expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, '%%'))"
     do_test('o:"sacrifice ~"', expected)
-
-@pytest.mark.functional
-def test_double_tilde_functional() -> None:
-    do_functional_test('o:"sacrifice ~: ~ deals 2 damage to any target"', ['Blazing Torch'], ['Black Lotus', 'Cartel Aristocrat', 'Inferno Fist'])
 
 def test_double_tilde() -> None:
     expected = "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to any target%%'))"

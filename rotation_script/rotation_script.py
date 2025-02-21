@@ -1,5 +1,7 @@
+import asyncio
 import datetime
 import fileinput
+import functools
 import glob
 import os
 import pathlib
@@ -8,6 +10,7 @@ import subprocess
 from collections import Counter
 
 import ftfy
+import sentry_sdk
 
 from magic import card_price, fetcher, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices
@@ -15,8 +18,12 @@ from shared import configuration, decorators, dtutil, fetch_tools, repo, sentry,
 from shared import redis_wrapper as redis
 from shared.pd_exception import NotConfiguredException
 
-TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
-TIME_SINCE_ROTATION = dtutil.now() - seasons.last_rotation()
+TIME_UNTIL_FULL_ROTATION = seasons.next_rotation() - dtutil.now()
+TIME_SINCE_FULL_ROTATION = dtutil.now() - seasons.last_rotation()
+TIME_UNTIL_SUPPLEMENTAL_ROTATION = seasons.next_supplemental() - dtutil.now()
+TIME_SINCE_SUPPLEMENTAL_ROTATION = dtutil.now() - seasons.last_supplemental()
+TIME_UNTIL_ROTATION = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION)
+TIME_SINCE_ROTATION = min(TIME_SINCE_FULL_ROTATION, TIME_SINCE_SUPPLEMENTAL_ROTATION)
 BANNED_CARDS = ['Cleanse', 'Crusade']  # These cards are banned, even in Freeform
 
 @decorators.interprocess_locked('.rotation.lock')
@@ -75,7 +82,7 @@ def process(all_prices: dict[str, PriceListType]) -> int:
                 continue
             cents = int(float(p) * 100)
             seen_sets.add(mtgo_set)
-            if cents <= card_price.MAX_PRICE_CENTS:
+            if cents <= card_price.MAX_PRICE_CENTS and is_good_set(mtgo_set):
                 hits.add(name)
                 used_sets.add(mtgo_set)
     ignored = seen_sets - used_sets
@@ -100,6 +107,15 @@ def process_sets(seen_sets: set[str], used_sets: set[str], hits: set[str], ignor
     print(f'Missed:  {repr(ignored)}', flush=True)
     return n
 
+@functools.cache
+def is_supplemental() -> bool:
+    return TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7) or abs(TIME_SINCE_SUPPLEMENTAL_ROTATION) < datetime.timedelta(1)
+
+def is_good_set(set_code: str) -> bool:
+    if is_supplemental():
+        return set_code == seasons.next_supplemental_ex().mtgo_code
+    return True  # Supplemental sets are too far in the future to be priced, so we just accept everything
+
 def make_final_list() -> None:
     _num, planes, _res = fetcher.search_scryfall('t:plane%20or%20t:phenomenon', True)
     bad_names = planes
@@ -122,12 +138,20 @@ def make_final_list() -> None:
         if count >= rotation.TOTAL_RUNS / 2:
             passed.append(name)
     final = list(passed)
+    if is_supplemental():
+        temp = set(passed)
+        legal_cards = asyncio.get_event_loop().run_until_complete(fetcher.legal_cards_async())
+        final = list(temp.union([c + '\n' for c in legal_cards]))
+
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
     print(f'Generated legal_cards.txt.  {len(passed)}/{len(scores)} cards.', flush=True)
-    setcode = seasons.next_rotation_ex().mtgo_code
+    if is_supplemental():
+        setcode = seasons.last_rotation_ex().mtgo_code
+    else:
+        setcode = seasons.next_rotation_ex().mtgo_code
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
@@ -157,7 +181,13 @@ def do_push() -> None:
         os.chdir(gh_repo)
         subprocess.run(['git', 'pull'], check=True)
 
-    setcode = seasons.next_rotation_ex().mtgo_code
+    if is_supplemental():
+        setcode = rotation.last_rotation_ex().mtgo_code
+        rottype = 'supplemental'
+    else:
+        setcode = rotation.next_rotation_ex().mtgo_code
+        rottype = 'rotation'
+
     files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']
     for fn in files:
         source = os.path.join(configuration.get_str('legality_dir'), fn)
@@ -166,10 +196,14 @@ def do_push() -> None:
 
     os.chdir(gh_repo)
     subprocess.run(['git', 'add'] + files, check=True)
-    subprocess.run(['git', 'commit', '-m', f'{setcode} rotation'], check=True)
-    subprocess.run(['git', 'push'], check=True)
+    subprocess.run(['git', 'commit', '-m', f'{setcode} {rottype}'], check=True)
+    try:
+        subprocess.run(['git', 'push'], check=True)
+    except Exception as c:
+        print(c, flush=True)
+        sentry_sdk.capture_exception(c)
     print('done!\nGoing through checklist...', flush=True)
-    checklist = f"""{setcode} rotation checklist
+    checklist = f"""{setcode} {rottype} checklist
 
 https://pennydreadfulmagic.com/admin/rotation/
 

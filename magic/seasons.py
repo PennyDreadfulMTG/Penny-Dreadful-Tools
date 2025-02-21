@@ -82,8 +82,8 @@ class SetInfo:
 class RotationInfo:
     next: SetInfo
     previous: SetInfo
-    next_supplemental: SetInfo | None = None
-    previous_supplemental: SetInfo | None = None
+    next_supplemental: SetInfo | None
+    previous_supplemental: SetInfo
     calculating: bool = False
 
     def validate(self) -> None:
@@ -104,20 +104,20 @@ def calc_next(supplemental: bool) -> SetInfo:
     try:
         return min([s for s in sets(supplemental) if (s.enter_date_dt + rotation_offset(s.code)) > dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
     except ValueError:
-        fake_enter_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90)
-        fake_exit_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
+        fake_enter_date_dt = calc_prev(None).enter_date_dt + datetime.timedelta(days=90)
+        fake_exit_date_dt = calc_prev(None).enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
         fake_exit_year = fake_exit_date_dt.year
         fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
         fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
 
         return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
 
-def calc_prev(supplemental: bool) -> SetInfo:
+def calc_prev(supplemental: bool | None) -> SetInfo:
     return max([s for s in sets(supplemental) if (s.enter_date_dt + rotation_offset(s.code)) < dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
 
 
 @functools.lru_cache
-def sets(supplemental: bool) -> list[SetInfo]:
+def sets(supplemental: bool | None) -> list[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
@@ -126,7 +126,9 @@ def sets(supplemental: bool) -> list[SetInfo]:
 
     last = set_info[0]
     for s in set_info:
-        if supplemental and s.code not in SUPPLEMENTAL_SETS:
+        if supplemental is None:
+            pass
+        elif supplemental and s.code not in SUPPLEMENTAL_SETS:
             continue
         elif not supplemental and s.code in SUPPLEMENTAL_SETS:
             continue
@@ -172,21 +174,19 @@ def next_supplemental_ex() -> SetInfo | None:
     rotation_info().validate()
     return rotation_info().next_supplemental
 
-def next_supplemental() -> datetime.datetime | None:
+def next_supplemental() -> datetime.datetime:
     s = next_supplemental_ex()
     if s:
         return s.enter_date_dt + rotation_offset(s.code)
-    return None
+    return datetime.datetime.max
 
-def last_supplemental_ex() -> SetInfo | None:
+def last_supplemental_ex() -> SetInfo:
     rotation_info().validate()
     return rotation_info().previous_supplemental
 
-def last_supplemental() -> datetime.datetime | None:
+def last_supplemental() -> datetime.datetime:
     s = last_supplemental_ex()
-    if s:
-        return s.enter_date_dt + rotation_offset(s.code)
-    return None
+    return s.enter_date_dt + rotation_offset(s.code)
 
 def last_rotation_ex() -> SetInfo:
     rotation_info().validate()

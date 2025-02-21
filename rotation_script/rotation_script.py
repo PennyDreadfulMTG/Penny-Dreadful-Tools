@@ -119,7 +119,9 @@ def is_supplemental() -> bool:
 
 def is_good_set(set_code: str) -> bool:
     if is_supplemental():
-        return set_code == seasons.next_supplemental_ex().mtgo_code
+        upcoming_supp_set = seasons.next_supplemental_ex()
+        assert upcoming_supp_set is not None
+        return set_code == upcoming_supp_set.mtgo_code
     return True  # Supplemental sets are too far in the future to be priced, so we just accept everything
 
 def make_final_list() -> None:
@@ -188,10 +190,10 @@ def do_push() -> None:
         subprocess.run(['git', 'pull'], check=True)
 
     if is_supplemental():
-        setcode = rotation.last_rotation_ex().mtgo_code
+        setcode = seasons.last_rotation_ex().mtgo_code
         rottype = 'supplemental'
     else:
-        setcode = rotation.next_rotation_ex().mtgo_code
+        setcode = seasons.next_rotation_ex().mtgo_code
         rottype = 'rotation'
 
     files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']

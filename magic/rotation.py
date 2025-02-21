@@ -180,7 +180,7 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
 def list_of_most_interesting(cs: list[Card]) -> str:
     max_shown = 25
     redis_key = 'discordbot:rotation:cardranks'
-    ranks = redis.get_dict(redis_key)
+    ranks = redis.get_dict(redis_key) or {}
     if not ranks:
         try:
             ranks = {c.get('name'): c.get('rank') for c in fetcher.cardfeed()['cards']}

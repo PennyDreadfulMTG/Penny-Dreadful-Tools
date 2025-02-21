@@ -32,7 +32,7 @@ ALL_BUGS: list[BugData] = []
 VERIFICATION_BY_ISSUE: dict[int, str] = {}
 
 if sys.stdout.encoding != 'utf-8':
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)  # type: ignore
 
 def main() -> None:
     if not configuration.get('github_user') or not configuration.get('github_password'):

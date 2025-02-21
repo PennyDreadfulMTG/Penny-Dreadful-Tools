@@ -26,7 +26,7 @@ SEASONS = [
 
 SUPPLEMENTAL_SETS = [
     'MAT',  # March of the Machines Aftermath, mini-set
-    'TDM', 'EOE', # 2025
+    'TDM', 'EOE',  # 2025
 ]
 
 OVERRIDES = {

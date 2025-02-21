@@ -1,9 +1,10 @@
 services:
-  web:
+  decksite:
     build: .
+    command:
+      - decksite
     ports:
       - "80:80"
-      - "5000:5000"
     depends_on:
       - db
       - redis
@@ -13,13 +14,54 @@ services:
       - redis_host=redis
     volumes:
       - ./decksite:/pdm/decksite
-      - ./logsite:/pdm/logsite
+      - ./find:/pdm/find
+      - ./images:/pdm/images
       - ./magic:/pdm/magic
       - ./maintenance:/pdm/maintenance
-      - ./find:/pdm/find
       - ./shared:/pdm/shared
       - ./shared_web:/pdm/shared_web
-      - ./images:/pdm/images
+      - node_modules:/pdm/node_modules
+      - compiled_js:/pdm/shared_web/static/dist
+
+  logsite:
+    build: .
+    command:
+      - logsite
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    environment:
+      - mysql_host=db
+      - redis_host=redis
+    volumes:
+      - ./logsite_migrations:/pdm/logsite_migrations
+      - ./logsite:/pdm/logsite
+      - ./shared:/pdm/shared
+      - ./shared_web:/pdm/shared_web
+      - node_modules:/pdm/node_modules
+      - compiled_js:/pdm/shared_web/static/dist
+
+  assets:
+    image: node:22-alpine
+    working_dir: /pdm
+    command:
+      - sh
+      - -c
+      - |
+        npm install
+        npm run babel
+        npm run watch
+    volumes:
+      - ./decksite/webpack.config.js:/pdm/decksite/webpack.config.js
+      - ./package.json:/pdm/package.json
+      - ./package-lock.json:/pdm/package-lock.json
+      - ./shared_web:/pdm/shared_web
+      - node_modules:/pdm/node_modules
+      - compiled_js:/pdm/shared_web/static/dist
+
   # discordbot:
   #   build: .
   #   command: ["pipenv", "run", "python", "run.py", "--wait-for-db", "discordbot"]
@@ -34,18 +76,28 @@ services:
   #     - ./discordbot:/pdm/discordbot
   #     - ./magic:/pdm/magic
   #     - ./shared:/pdm/shared
+
   db:
     build: docker_dev/mysql
     env_file: .env
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
+
   adminer:
     image: adminer
     ports:
       - 8080:8080
+
   redis:
     image: redis
     ports:
       - 6379:6379
+
+volumes:
+  db_data:
+  node_modules:
+  compiled_js:

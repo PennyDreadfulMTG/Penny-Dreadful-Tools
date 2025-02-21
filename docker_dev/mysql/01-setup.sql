@@ -9,5 +9,4 @@ GRANT CREATE ON *.* TO 'pennydreadful'@'%';
 
 CREATE DATABASE decksite;
 CREATE DATABASE cards;
-CREATE DATABASE pdlogs;
 CREATE DATABASE prices;

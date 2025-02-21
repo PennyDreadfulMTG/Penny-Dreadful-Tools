@@ -267,7 +267,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('depravity 500', 'Depravity 500', [], None, 6),
     ('catch 22', 'Catch 22', [], None, 22),
     ('the 0.02 tix printing of kaya was finally available', 'The 0.02 Tix Printing of Kaya Was Finally Available', [], None, 23),
-    ('crackling drake beatdown 1.3 3', 'Crackling Drake Beatdown v1.3 v3', [], None, 23),
+    ('crackling drake beatdown 1.3 3', 'Crackling Drake Beatdown v1.3.3', [], None, 23),
     ('70 rev 5 2.0', '70 Rev 5 2.0', [], None, 23),
     ('significantly worse 3 drops than season 19', 'Significantly Worse 3 Drops Than Season 19', [], None, 23),
     ('dr who: season 3, episode 10', 'Dr Who: Season 3, Episode 10', [], None, 23),
@@ -309,6 +309,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Kiki-Titi', 'Kiki-Titi', ['U', 'R'], 'Izzet Twin', 32),
     ('Greasefag', 'Orzhov Greasefang', ['W', 'B'], 'Greasefang', 33),
     ('🏴‍☠️', '🏴‍☠️', ['U', 'R'], 'Pirates', 33),
+    ('S36 Human v1 1', 'Human v1.1', ['W'], 'Mono White Humans', 36),
 ]
 
 def test_replace_space_alternatives() -> None:

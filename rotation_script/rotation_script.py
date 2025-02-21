@@ -50,6 +50,11 @@ def run() -> None:
 
     if n == 0:
         rotation.clear_redis(clear_files=True)
+        try:
+            url = f'{fetcher.decksite_url()}/api/rotation/clear_cache?hard=1'
+            fetch_tools.fetch(url)
+        except Exception as c:
+            print(c, flush=True)
 
     all_prices = {}
     if not configuration.cardhoarder_urls.get():
@@ -60,15 +65,16 @@ def run() -> None:
         all_prices[url] = parse_cardhoarder_prices(s)
 
     run_number = process(all_prices)
-    if run_number == rotation.TOTAL_RUNS:
-        make_final_list()
-        do_push()
 
     try:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
         fetch_tools.fetch(url)
     except Exception as c:
         print(c, flush=True)
+
+    if run_number == rotation.TOTAL_RUNS:
+        make_final_list()
+        do_push()
 
 def process(all_prices: dict[str, PriceListType]) -> int:
     seen_sets: set[str] = set()
@@ -207,8 +213,8 @@ def do_push() -> None:
 
 https://pennydreadfulmagic.com/admin/rotation/
 
-- [ ] upload legal_cards.txt to S3
-- [ ] upload {setcode}_legal_cards.txt to S3
+- [ ] upload legal_cards.txt to S3 (set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
+- [ ] upload {setcode}_legal_cards.txt to S3 (set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
 - [ ] ping scryfall
 - [ ] email mtggoldfish
 """
@@ -220,7 +226,7 @@ https://pennydreadfulmagic.com/admin/rotation/
     else:
         checklist += '- [ ] restart discordbot\n'
         print('Added to checklist!', flush=True)
-    ds = os.path.expanduser('/penny/decksite/')
+    ds = os.path.expanduser('/home/pdadmin/decksite/')
     failed = False
     try:
         if os.path.exists(ds):

@@ -2,6 +2,7 @@ import re
 from collections import OrderedDict
 
 import titlecase
+from anyascii import anyascii
 from better_profanity import profanity
 
 from magic import mana
@@ -114,7 +115,7 @@ def normalize(d: Deck) -> str:
 def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
-    safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
+    safe_name = re.sub(':', '', anyascii(safe_name), flags=re.IGNORECASE)
     return safe_name.strip('-')
 
 def replace_space_alternatives(name: str) -> str:
@@ -273,6 +274,11 @@ def normalize_version(name: str) -> str:
     if re.search(r'\d.*[a-uw-z,-].*\d', name, flags=re.IGNORECASE):
         return name
     name = normalize_parenthetical_versions(name)
+    # Convert trailing sequences of digits and spaces into dotted versions
+    trailing_nums = re.search(r'(\d+(?:\s+\d+)+)$', name)
+    if trailing_nums:
+        dotted_nums = re.sub(r'\s+', '.', trailing_nums.group(1))
+        name = name[:trailing_nums.start(1)] + dotted_nums
     patterns = [
         r'(\W?)[\[({]?(?:v|ver|version|rev|mk) ?(\d[\.\d]*)(?:[])}]|\b)',  # Explicitly marked as a version
         r'(\s)[\[({]?(\d[\.\d]*)[])}]?$',  # Number at end of name

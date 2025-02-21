@@ -234,4 +234,4 @@ def set_legal_icons(o: Card | Deck) -> None:
 def season_icon_link(code: str) -> str:
     color = 'rare' if code in seasons.current_season_name() else 'common'
     n = seasons.SEASONS.index(code.upper()) + 1
-    return f'<a href="/seasons/{n}/"><i class="ss ss-{code.lower()} ss-{color} ss-grad">S{n}</i></a>'
+    return f'<a href="/seasons/{n}/"><i class="ss ss-{code.lower()} ss-{color} ss-grad"><span class="ss-num">{n}</span></i></a>'

@@ -1,9 +1,12 @@
 import asyncio
 import hashlib
+import io
 import math
 import os
 import re
+import urllib.request
 
+import aiohttp
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from magic import card, fetcher, layout, oracle
@@ -231,10 +234,26 @@ async def generate_discord_banner(names: list[str], background: str) -> str:
     return out_filepath
 
 async def paste_card(canvas: Image.Image, c: Card, x: int, y: int, card_size: tuple[int, int]) -> int:
-    ip = await download_scryfall_png(c)
-    if not ip:
+    url = scryfall_image(c, version='png')
+
+    try:
+        async with aiohttp.ClientSession() as aios:
+            response = await aios.get(url)
+
+            data = io.BytesIO()
+            while True:
+                chunk = await response.content.read(1024)
+                if not chunk:
+                    break
+                data.write(chunk)
+
+    except (urllib.error.HTTPError, aiohttp.ClientError) as e:
+        raise FetchException(e) from e
+
+    if not data:
         return x
-    with Image.open(ip) as img:
+
+    with Image.open(data) as img:
         img = img.resize(card_size, Image.Resampling.LANCZOS)
         canvas.paste(img, (x, y))
         x = x + img.width + 10

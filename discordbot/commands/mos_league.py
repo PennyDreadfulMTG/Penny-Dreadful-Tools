@@ -70,7 +70,7 @@ class MosLeague(Extension):
                     potential.remove(players[m['playera']])
 
             if potential:
-                ctx.send(f'League pop between <@{p['discord_id']}> and <@{ctx.author_id}>')
+                ctx.send(f"League pop between <@{p['discord_id']}> and <@{ctx.author_id}>")
                 return
 
         await ctx.send('You are now in queue.', ephemeral=True)

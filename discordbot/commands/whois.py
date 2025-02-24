@@ -36,10 +36,10 @@ async def whois_discord(user: User) -> str:
     person = await fetcher.gatherling_whois(discord_id=user.id)
     name = person.get('mtgo_username')
     if name:
-        return f"{user.mention} is **{name}** on MTGO"
+        return f'{user.mention} is **{name}** on MTGO'
     name = person.get('name')
     if name:
-        return f"{user.mention} is **{name}** on Gatherling"
+        return f'{user.mention} is **{name}** on Gatherling'
 
     return f"I don't know who {user.mention} is :frowning:"
 

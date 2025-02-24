@@ -21,11 +21,12 @@ SEASONS = [
     'NEO', 'SNC', 'DMU', 'BRO',         # 2022
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
-    'DFT', 'TDM', 'FIN', 'EOE',         # 2025
+    'DFT', 'FIN', 'SPM', 'UUB',         # 2025
 ]
 
-NOT_SEASONS = [
-    'March of the Machine: The Aftermath',  # Epilogue set, not rotation worthy
+SUPPLEMENTAL_SETS = [
+    'MAT',  # March of the Machines Aftermath, mini-set
+    'TDM', 'EOE',  # 2025
 ]
 
 OVERRIDES = {
@@ -63,6 +64,9 @@ class SetInfo:
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
         json['mtgoCode'] = json['code']
+        if json['name'] is None:
+            json['name'] = json['codename']
+
         recursive_update.rupdate(json, OVERRIDES.get(json['name'], {}))  # type: ignore
 
         return cls(name=json['name'],
@@ -78,6 +82,8 @@ class SetInfo:
 class RotationInfo:
     next: SetInfo
     previous: SetInfo
+    next_supplemental: SetInfo | None
+    previous_supplemental: SetInfo
     calculating: bool = False
 
     def validate(self) -> None:
@@ -88,28 +94,30 @@ class RotationInfo:
 
     def recalculate(self) -> None:
         self.calculating = True
-        self.previous = calc_prev()
-        self.next = calc_next()
+        self.previous = calc_prev(False)
+        self.next = calc_next(False)
+        self.previous_supplemental = calc_prev(True)
+        self.next_supplemental = calc_next(True)
         self.calculating = False
 
-def calc_next() -> SetInfo:
+def calc_next(supplemental: bool) -> SetInfo:
     try:
-        return min([s for s in sets() if (s.enter_date_dt + rotation_offset(s.code)) > dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
+        return min([s for s in sets(supplemental) if (s.enter_date_dt + rotation_offset(s.code)) > dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
     except ValueError:
-        fake_enter_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90)
-        fake_exit_date_dt = calc_prev().enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
+        fake_enter_date_dt = calc_prev(None).enter_date_dt + datetime.timedelta(days=90)
+        fake_exit_date_dt = calc_prev(None).enter_date_dt + datetime.timedelta(days=90 + 365 + 365)
         fake_exit_year = fake_exit_date_dt.year
         fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
         fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
 
         return SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
 
-def calc_prev() -> SetInfo:
-    return max([s for s in sets() if (s.enter_date_dt + rotation_offset(s.code)) < dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
+def calc_prev(supplemental: bool | None) -> SetInfo:
+    return max([s for s in sets(supplemental) if (s.enter_date_dt + rotation_offset(s.code)) < dtutil.now()], key=lambda s: s.enter_date_dt + rotation_offset(s.code))
 
 
 @functools.lru_cache
-def sets() -> list[SetInfo]:
+def sets(supplemental: bool | None) -> list[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
@@ -118,7 +126,11 @@ def sets() -> list[SetInfo]:
 
     last = set_info[0]
     for s in set_info:
-        if s.name in NOT_SEASONS:
+        if supplemental is None:
+            pass
+        elif supplemental and s.code not in SUPPLEMENTAL_SETS:
+            continue
+        elif not supplemental and s.code in SUPPLEMENTAL_SETS:
             continue
         if s.enter_date_dt.timestamp() == 0:
             s.enter_date_dt = last.enter_date_dt + datetime.timedelta(days=90)
@@ -130,7 +142,7 @@ def sets() -> list[SetInfo]:
 
 @functools.lru_cache
 def rotation_info() -> RotationInfo:
-    return RotationInfo(calc_next(), calc_prev())
+    return RotationInfo(calc_next(False), calc_prev(False), calc_next(True), calc_prev(True))
 
 def current_season_code() -> str:
     return last_rotation_ex().code
@@ -156,6 +168,24 @@ def last_rotation() -> datetime.datetime:
 
 def next_rotation() -> datetime.datetime:
     s = next_rotation_ex()
+    return s.enter_date_dt + rotation_offset(s.code)
+
+def next_supplemental_ex() -> SetInfo | None:
+    rotation_info().validate()
+    return rotation_info().next_supplemental
+
+def next_supplemental() -> datetime.datetime:
+    s = next_supplemental_ex()
+    if s:
+        return s.enter_date_dt + rotation_offset(s.code)
+    return datetime.datetime.max
+
+def last_supplemental_ex() -> SetInfo:
+    rotation_info().validate()
+    return rotation_info().previous_supplemental
+
+def last_supplemental() -> datetime.datetime:
+    s = last_supplemental_ex()
     return s.enter_date_dt + rotation_offset(s.code)
 
 def last_rotation_ex() -> SetInfo:
@@ -212,7 +242,10 @@ def season_name(v: int | str) -> str:
     return f'Season {sid}'
 
 def get_set_info(code: str) -> SetInfo:
-    for setinfo in sets():
+    for setinfo in sets(True):
+        if setinfo.code == code:
+            return setinfo
+    for setinfo in sets(False):
         if setinfo.code == code:
             return setinfo
     raise DoesNotExistException(f'Could not find Set Info about {code}')

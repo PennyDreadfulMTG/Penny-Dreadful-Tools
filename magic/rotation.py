@@ -26,7 +26,8 @@ def in_rotation() -> bool:
     if configuration.always_show_rotation.value:
         return True
     until_rotation = seasons.next_rotation() - dtutil.now()
-    return until_rotation < datetime.timedelta(7)
+    until_supplemental_rotation = seasons.next_supplemental() - dtutil.now()
+    return until_rotation < datetime.timedelta(7) or until_supplemental_rotation < datetime.timedelta(7)
 
 def files() -> list[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))
@@ -179,7 +180,7 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
 def list_of_most_interesting(cs: list[Card]) -> str:
     max_shown = 25
     redis_key = 'discordbot:rotation:cardranks'
-    ranks = redis.get_dict(redis_key)
+    ranks = redis.get_dict(redis_key) or {}
     if not ranks:
         try:
             ranks = {c.get('name'): c.get('rank') for c in fetcher.cardfeed()['cards']}

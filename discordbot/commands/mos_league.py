@@ -13,6 +13,7 @@ TTL = 30 * 60
 
 class MosLeague(Extension):
     queues: defaultdict[int, list[TTLItem[int]]] = defaultdict(list)
+
     @slash_command(scopes=[711238742270017547])
     async def queue(self, ctx: MtgContext) -> None:
         pass
@@ -23,7 +24,6 @@ class MosLeague(Extension):
         if ctx.channel_id != tournament_channel_id:
             await ctx.send(f'This command can only be used in <#{tournament_channel_id}>', ephemeral=True)
             return
-
 
         _queue = self.queues[ctx.channel_id]
         queue = []
@@ -70,11 +70,10 @@ class MosLeague(Extension):
                     potential.remove(players[m['playera']])
 
             if potential:
-                ctx.send(f"League pop between <@{p['discord_id']}> and <@{ctx.author_id}>")
+                await ctx.send(f"League pop between <@{p['discord_id']}> and <@{ctx.author_id}>")
                 return
 
         await ctx.send('You are now in queue.', ephemeral=True)
-
 
     @queue.subcommand(sub_cmd_name='leave', sub_cmd_description='Leave the queue')
     async def queue_leave(self, ctx: MtgContext) -> None:
@@ -92,5 +91,5 @@ class MosLeague(Extension):
 async def get_current_league() -> Container:
     active = await fetcher.gatherling_active_events()
     for event in active:
-        if event['series'] == "Pre-Modern Monthly League" and event["mainstruct"] == "League":
+        if event['series'] == 'Pre-Modern Monthly League' and event['mainstruct'] == 'League':
             return event

@@ -15,6 +15,7 @@ from urllib import parse
 
 import feedparser
 import pytz
+from interactions import Snowflake
 
 from magic import layout
 from magic.abc import CardDescription, PriceDataType
@@ -125,7 +126,7 @@ def gatherling_deck_comments(d: Deck) -> list[str]:
         return result.group(1).replace('<br />', '\n').split('\n')
     return []
 
-async def gatherling_whois(name: str | None = None, discord_id: str | None = None) -> Container:
+async def gatherling_whois(name: str | None = None, discord_id: str | int | Snowflake | None = None) -> Container:
     if discord_id:
         url = f'https://gatherling.com/api.php?action=whois&discordid={discord_id}'
     elif name:

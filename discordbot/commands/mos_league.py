@@ -59,9 +59,9 @@ class MosLeague(Extension):
 
         if queue:
             potential = set()
-            for p in league['players']:
-                if int(p['discord_id']) in queue:
-                    potential.add(p)
+            for lp in league['players']:
+                if int(lp['discord_id']) in queue:
+                    potential.add(lp)
 
             for m in league['matches']:
                 if m['playera'] == player_name:
@@ -70,7 +70,8 @@ class MosLeague(Extension):
                     potential.remove(players[m['playera']])
 
             if potential:
-                await ctx.send(f"League pop between <@{p['discord_id']}> and <@{ctx.author_id}>")
+                lp = potential.pop()
+                await ctx.send(f"League pop between <@{lp['discord_id']}> and <@{ctx.author_id}>")
                 return
 
         await ctx.send('You are now in queue.', ephemeral=True)
@@ -93,3 +94,4 @@ async def get_current_league() -> Container:
     for event in active:
         if event['series'] == 'Pre-Modern Monthly League' and event['mainstruct'] == 'League':
             return event
+    return None

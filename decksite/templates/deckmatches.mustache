@@ -14,7 +14,7 @@
     </thead>
     <tbody>
         {{#matches}}
-            <tr data-href="{{opponent_deck_url}}" class="clickable">
+            <tr {{#opponent_deck_url}}data-href="{{opponent_deck_url}}" class="clickable"{{/opponent_deck_url}}>
                 {{#has_rounds}}
                     <td class="n" data-text="{{round}}">{{display_round}}</td>
                 {{/has_rounds}}

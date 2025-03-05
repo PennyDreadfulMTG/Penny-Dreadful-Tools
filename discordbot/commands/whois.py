@@ -31,11 +31,17 @@ async def whois_mtgo(args: str) -> str:
 
 async def whois_discord(user: User) -> str:
     person = await fetcher.person_data_async(user.id)
-    if not_found(person) or person.get('name') is None:
-        msg = f"I don't know who {user.mention} is :frowning:"
-    else:
-        msg = f"{user.mention} is **{person['name']}** on MTGO"
-    return msg
+    if person and person.get('name'):
+        return f"{user.mention} is **{person['name']}** on MTGO"
+    person = await fetcher.gatherling_whois(discord_id=user.id)
+    name = person.get('mtgo_username')
+    if name:
+        return f'{user.mention} is **{name}** on MTGO'
+    name = person.get('name')
+    if name:
+        return f'{user.mention} is **{name}** on Gatherling'
+
+    return f"I don't know who {user.mention} is :frowning:"
 
 def not_found(person: dict[str, Any]) -> bool:
     return person is None or (person.get('error') is not None and person.get('code') == 'NOTFOUND')

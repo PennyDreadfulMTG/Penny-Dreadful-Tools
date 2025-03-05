@@ -83,13 +83,15 @@ class MosLeague(Extension):
             await ctx.send(f'This command can only be used in <#{tournament_channel_id}>', ephemeral=True)
             return
 
-        if ctx.author_id not in self.queues[ctx.channel_id]:
+        entry = [i for i in self.queues[ctx.channel_id] if i.value == ctx.author_id]
+        if not entry:
             await ctx.send('You are not in the queue', ephemeral=True)
             return
 
-        self.queues[ctx.channel_id].remove(ctx.author_id)
+        self.queues[ctx.channel_id].remove(entry[0])
+        await ctx.send('You have left the queue', ephemeral=True)
 
-async def get_current_league() -> Container:
+async def get_current_league() -> Container | None:
     active = await fetcher.gatherling_active_events()
     for event in active:
         if event['series'] == 'Pre-Modern Monthly League' and event['mainstruct'] == 'League':

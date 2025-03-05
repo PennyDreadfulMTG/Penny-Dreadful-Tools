@@ -223,10 +223,6 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
 
     for p in printings:
         try:
-            # HACK to workaround Scryfall snafu
-            if p.get('layout') == 'double_sided':
-                p['layout'] = 'normal'
-
             if p.get('layout') not in layout.all_layouts():
                 layout.report_missing_layout(p.get('layout'))
                 continue

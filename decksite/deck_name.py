@@ -37,6 +37,7 @@ WHITELIST = [
     'G L I M P S E',
     "U Know What Colors I'm Playing",
     'The World is So Black and White',
+    'only 3',
 ]
 
 PROFANITY_WHITELIST = [

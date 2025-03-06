@@ -144,6 +144,7 @@ def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
         if m.get('opponent_deck_id'):
             m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
         else:
+            m.opponent_deck_name = '-'
             m.opponent_deck_url = False
         if m.get('mtgo_id'):
             m.log_url = fetcher.logsite_url('/match/{id}/'.format(id=m.get('mtgo_id')))

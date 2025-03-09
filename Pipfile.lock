@@ -2957,12 +2957,12 @@
         },
         "traceback-with-variables": {
             "hashes": [
-                "sha256:a98566d3931d151f43b1307e228b13fff5022a5c67defc3f53dbde64e8128e0b",
-                "sha256:ca1ab9cd2871c3be3bbc57bb7b2dfe4b427763f81da6c632663d27231eaab132"
+                "sha256:750457dd847f12d444320c9d24a4972912fcc64868c98b44f8a79ca2fd698257",
+                "sha256:a61fd30f21e231b42d9e3cd32c818fb0340a904cbca669f92784cd81c204bf5d"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==2.1.1"
+            "version": "==2.2.0"
         },
         "typeguard": {
             "hashes": [

@@ -2966,11 +2966,12 @@
         },
         "typeguard": {
             "hashes": [
-                "sha256:0d22a89d00b453b47c49875f42b6601b961757541a2e1e0ef517b6e24213c21b",
-                "sha256:9324ec07a27ec67fc54a9c063020ca4c0ae6abad5e9f0f9804ca59aee68c6e21"
+                "sha256:77a78f11f09777aeae7fa08585f33b5f4ef0e7335af40005b0c422ed398ff48c",
+                "sha256:a6f1065813e32ef365bc3b3f503af8a96f9dd4e0033a02c28c4a4983de8c6c49"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==4.4.1"
+            "version": "==4.4.2"
         },
         "types-setuptools": {
             "hashes": [

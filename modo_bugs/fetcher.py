@@ -100,8 +100,8 @@ def is_announcement(a: tuple[str, str]) -> bool:
 
 def parse_article_item_extended(a: Tag) -> tuple[Tag, str]:
     title = a.find_all('h3')[0]
-    link = 'https://www.mtgo.com' + a.find_all('a')[0]['href']
-    return (title, link)
+    link = 'https://www.mtgo.com' + a.find_all('a')[0]['href']  # type: ignore
+    return (title, link)  # type: ignore
 
 @lazy.lazy_property
 def get_article_archive() -> list[tuple[str, str]]:
@@ -112,11 +112,11 @@ def get_article_archive() -> list[tuple[str, str]]:
     soup = BeautifulSoup(html, 'html.parser')
     links = soup.find_all('a', class_='article-link')
     if links:
-        return [parse_article_item_extended(a) for a in links]
+        return [parse_article_item_extended(a) for a in links]  # type: ignore
     scripts = soup.find_all('script')
     findblob = re.compile(r'window.DGC.archive.articles = (.*?}]);', re.MULTILINE)
     for s in scripts:
-        if (m := findblob.search(s.contents[0])):
+        if (m := findblob.search(s.contents[0])):  # type: ignore
             blob = m.group(1)
             j = json.loads(blob)
             return [(p['title'], 'https://www.mtgo.com/news/' + p['pageName']) for p in j]
@@ -155,11 +155,11 @@ def get_section_urls() -> list[str]:
     section_urls = []
 
     for node in soup.find_all('a', class_='subNodeLink--forum'):
-        url = BUG_REPORTS_FORUM_BASE_URL + node['href']
+        url = BUG_REPORTS_FORUM_BASE_URL + node['href']  # type: ignore
         section_urls.append(url)
 
     for node in soup.find_all('div', class_='node--forum'):
-        url = BUG_REPORTS_FORUM_BASE_URL + node.find('h3', class_='node-title').find('a')['href']
+        url = BUG_REPORTS_FORUM_BASE_URL + node.find('h3', class_='node-title').find('a')['href']  # type: ignore
         section_urls.append(url)
 
     return section_urls
@@ -171,11 +171,11 @@ def get_forum_posts(url: str) -> list[ForumPost]:
     posts = []
     threads = soup.find_all('div', class_='structItem--thread')
     for p in threads:
-        post: Tag = p
+        post: Tag = p  # type: ignore
         label = None
         # votes = post.find('span', class_='js-voteCount').text
         title = post.find('div', class_='structItem-title')
-        t = title.find('a')
+        t = title.find('a')  # type: ignore
         if t.attrs['href'].startswith('/index.php?forums'):
             label = t.text
             t = t.find_next_sibling('a')
@@ -184,8 +184,8 @@ def get_forum_posts(url: str) -> list[ForumPost]:
         posts.append(ForumPost(name, label, url))
     next = soup.find('a', class_='pageNav-jump--next')
     if next is not None:
-        logger.info(f'Next page: {next.attrs["href"]}')
-        url = 'https://forums.mtgo.com' + next.attrs['href']
+        logger.info(f'Next page: {next.attrs["href"]}')  # type: ignore
+        url = 'https://forums.mtgo.com' + next.attrs['href']  # type: ignore
         posts.extend(get_forum_posts(url))
     return posts
 

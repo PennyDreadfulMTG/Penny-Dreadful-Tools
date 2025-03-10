@@ -313,7 +313,7 @@ class MtgMixin:
 @attr.define(init=False)
 class MtgInteractionContext(SlashContext, MtgMixin):
     @property
-    def bot(self) -> "Bot":
+    def bot(self) -> 'Bot':
         return self.client  # type: ignore
 
 @attr.define(init=False)

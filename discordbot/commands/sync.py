@@ -1,4 +1,4 @@
-from interactions import Client, Extension, slash_command
+from interactions import Client, Extension, Member, slash_command
 
 from discordbot.command import MtgInteractionContext
 from shared import configuration, redis_wrapper
@@ -10,6 +10,8 @@ class Sync(Extension):
         """Sync your achievements"""
         key = f'discordbot:achievements:players:{ctx.author.id}'
         redis_wrapper.clear(key)
+        assert isinstance(ctx.author, Member)
+        assert ctx.guild is not None
         await ctx.bot.sync_achievements(ctx.author, ctx.guild)
         await ctx.send('Done', ephemeral=True)
 

@@ -15,6 +15,8 @@ from shared import configuration, dtutil, fetch_tools, redis_wrapper, repo
 
 
 class BackgroundTasks(Extension):
+    rotation_hype_channel: GuildText
+
     @listen()
     async def on_startup(self) -> None:
         self.do_banner.start()
@@ -165,14 +167,15 @@ class BackgroundTasks(Extension):
             logging.warning('rotation hype channel is not configured')
             return
         try:
-            self.rotation_hype_channel = await self.bot.fetch_channel(rotation_hype_channel_id)
+            channel = await self.bot.fetch_channel(rotation_hype_channel_id)
+            if not isinstance(channel, GuildText):
+                logging.warning('rotation hype channel is not a text channel')
+                return
+            self.rotation_hype_channel = channel
         except Forbidden:
             configuration.write('rotation_hype_channel_id', 0)
             return
 
-        if not isinstance(self.rotation_hype_channel, GuildText):
-            logging.warning('rotation hype channel is not a text channel')
-            return
         self.background_task_rotation_hype.start()
 
     @Task.create(IntervalTrigger(hours=1))

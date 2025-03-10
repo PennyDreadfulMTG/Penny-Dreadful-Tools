@@ -4,7 +4,7 @@ import logging
 import re
 from collections.abc import Callable, Sequence
 from copy import copy
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 import attr
 import whoosh
@@ -21,6 +21,9 @@ from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
 from shared.lazy import lazy_property
 from shared.settings import with_config_file
+
+if TYPE_CHECKING:
+    from discordbot.bot import Bot
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -306,10 +309,12 @@ class MtgMixin:
     async def post_nothing(self: 'MtgContext') -> None:  # type: ignore
         await post_nothing(self)
 
+
 @attr.define(init=False)
 class MtgInteractionContext(SlashContext, MtgMixin):
-    pass
-
+    @property
+    def bot(self) -> "Bot":
+        return self.client  # type: ignore
 
 @attr.define(init=False)
 class MtgMessageContext(PrefixedContext, MtgMixin):

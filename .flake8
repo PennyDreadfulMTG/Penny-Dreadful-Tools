@@ -8,7 +8,6 @@ per-file-ignores =
     build.py:T201
     conftest.py:T201
     dev.py:T201
-    generate_readme.py:T201
     run.py:T201
     analysis/*:T201
     logsite/*:T201

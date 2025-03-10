@@ -98,10 +98,13 @@ def is_announcement(a: tuple[str, str]) -> bool:
         return True
     return False
 
-def parse_article_item_extended(a: Tag) -> tuple[Tag, str]:
+def parse_article_item_extended(a: Tag) -> tuple[str, str]:
     title = a.find_all('h3')[0]
-    link = 'https://www.mtgo.com' + a.find_all('a')[0]['href']  # type: ignore
-    return (title, link)  # type: ignore
+    assert isinstance(title, Tag)
+    a_tag = a.find_all('a')[0]
+    assert isinstance(a_tag, Tag)
+    link = 'https://www.mtgo.com' + str(a_tag['href'])
+    return (title.text, link)
 
 @lazy.lazy_property
 def get_article_archive() -> list[tuple[str, str]]:
@@ -112,11 +115,16 @@ def get_article_archive() -> list[tuple[str, str]]:
     soup = BeautifulSoup(html, 'html.parser')
     links = soup.find_all('a', class_='article-link')
     if links:
-        return [parse_article_item_extended(a) for a in links]  # type: ignore
+        r = []
+        for a in links:
+            assert isinstance(a, Tag)
+            r.append(parse_article_item_extended(a))
+        return r
     scripts = soup.find_all('script')
     findblob = re.compile(r'window.DGC.archive.articles = (.*?}]);', re.MULTILINE)
     for s in scripts:
-        if (m := findblob.search(s.contents[0])):  # type: ignore
+        assert isinstance(s, Tag)
+        if (m := findblob.search(str(s.contents[0]))):
             blob = m.group(1)
             j = json.loads(blob)
             return [(p['title'], 'https://www.mtgo.com/news/' + p['pageName']) for p in j]

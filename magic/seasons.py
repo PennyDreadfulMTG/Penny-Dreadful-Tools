@@ -197,13 +197,20 @@ def next_rotation_ex() -> SetInfo:
     return rotation_info().next
 
 def message() -> str:
+    full = next_rotation()
+    supplemental = next_supplemental()
+    now = dtutil.now()
+    sdiff = supplemental - now
+    diff = full - now
+    full_display = dtutil.display_time(diff.total_seconds())
+    if sdiff < diff:
+        sup_display = dtutil.display_time(sdiff.total_seconds())
+        return f'The supplemental rotation is in {sup_display} (The next full rotation is in {full_display})'
     upcoming = next_rotation_ex()
-    diff = next_rotation() - dtutil.now()
-    s = dtutil.display_time(int(diff.total_seconds()))
     if upcoming.code == '???':
-        s = dtutil.display_time(int(diff.total_seconds()), 1)
-        return f'The next rotation is roughly {s} away'
-    return f'The next rotation is in {s}'
+        full_display = dtutil.display_time(int(diff.total_seconds()), 1)
+        return f'The next rotation is roughly {full_display} away'
+    return f'The next rotation is in {full_display}'
 
 def season_id(v: int | str, all_return_value: int | str | None = 'all') -> int | str | None:
     """From any value return the season id which is the integer representing the season, or all_return_value (default 'all') for all time."""

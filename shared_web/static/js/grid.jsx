@@ -12,7 +12,6 @@ For properties see concrete uses in metagamegrid.
 
 */
 
-// eslint-disable-next-line no-unused-vars
 export class Grid extends DataManager {
     sort(sortBy, sortOrder = "AUTO") {
         this.setState({ sortBy, sortOrder, "page": 0 });

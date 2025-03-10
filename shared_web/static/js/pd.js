@@ -1,5 +1,5 @@
 /*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound, setDarkMode */
-/* eslint-disable max-lines */
+
 window.PD = {};
 
 PD.init = function() {
@@ -270,12 +270,14 @@ PD.afterRuleUpdate = function(data) {
     if (data.success) {
         window.location = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
     } else {
-        alert(data.msg); // eslint-disable-line no-alert
+        // eslint-disable-next-line no-alert
+        alert(data.msg);
     }
 };
 
 PD.ruleUpdateFailure = function(_xhr, textStatus, errorThrown) {
-    alert(textStatus + " " + errorThrown); // eslint-disable-line no-alert
+    // eslint-disable-next-line no-alert
+    alert(textStatus + " " + errorThrown);
 };
 
 PD.loadDeck = function() {
@@ -295,7 +297,8 @@ PD.initDoubleReportCheck = function () {
         const opponent = $selected.text();
         const opponentDeckId = $selected.val();
         if (opponents[opponent] && opponents[opponent].toString() !== opponentDeckId.toString()) {
-            return confirm("A match against " + opponent + " on another deck has already been reported. Did you play them again?");  // eslint-disable-line no-alert
+            // eslint-disable-next-line no-alert
+            return confirm("A match against " + opponent + " on another deck has already been reported. Did you play them again?");
         }
         return true;
     });
@@ -452,6 +455,7 @@ PD.initPersonNotes = function() {
 
 PD.formatPercentage = function (value) {
     return new Intl.NumberFormat(
+        // Passing undefined here means "use browser locale" – https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat
         // eslint-disable-next-line no-undefined
         undefined,
         // Choose the options that get us closest to our desired style – a percentage that tells you enough to be useful but no unnecessary decimal places or trailing zeroes.
@@ -510,7 +514,8 @@ PD.renderCharts = function() {
                 options.plugins.tooltip.callbacks.label = (v) => PD.formatPercentage(v.raw);
             }
         }
-        // eslint-disable-next-line new-cap
+
+
         // eslint-disable-next-line no-new
         new Chart(ctx, {
             type,

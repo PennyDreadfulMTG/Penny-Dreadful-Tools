@@ -314,7 +314,7 @@ class MtgMixin:
 class MtgInteractionContext(SlashContext, MtgMixin):
     @property
     def bot(self) -> 'Bot':
-        return self.client  # type: ignore
+        return self.client
 
 @attr.define(init=False)
 class MtgMessageContext(PrefixedContext, MtgMixin):

@@ -19,7 +19,7 @@ def main(changes: list[str]) -> None:
 def scrape(url: str) -> None:
     soup = BeautifulSoup(fetch_tools.fetch(url), 'html.parser')
     for b in soup.find_all('h2'):
-        parse_header(b)
+        parse_header(b)  # type: ignore
 
 def parse_header(h: Tag) -> None:
     logger.debug(h)

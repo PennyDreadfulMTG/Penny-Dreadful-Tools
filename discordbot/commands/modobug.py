@@ -71,7 +71,7 @@ class ModoBugs(Extension):
                         yes = Button(label='These are the same issue', emoji='✅', style=3)
                         no = Button(label='These are different issues', emoji='❌', style=4)
                         msg = await ctx.send(embed=e, components=[yes, no])
-                        on_pressed = await self.bot.wait_for_component(msg, components=[yes, no], timeout=None)  # type: ignore
+                        on_pressed = await self.bot.wait_for_component(msg, components=[yes, no], timeout=None)
                         await msg.edit(components=[])
                         pressed = on_pressed.ctx
                         if yes.custom_id == pressed.custom_id:

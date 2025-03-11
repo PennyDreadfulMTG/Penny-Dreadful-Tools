@@ -191,6 +191,7 @@ def list_of_most_interesting(cs: list[Card]) -> str:
         except FetchException as e:
             logging.warning(f'Failed to fetch card ranks: {e}')
     if ranks:
+        print(cs)
         cs.sort(key=lambda c: (ranks.get(c.name) or 999999, c.name))
     if len(cs) > max_shown:
         return ' • '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'

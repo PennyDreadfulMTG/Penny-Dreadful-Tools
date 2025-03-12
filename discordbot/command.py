@@ -4,7 +4,7 @@ import logging
 import re
 from collections.abc import Callable, Sequence
 from copy import copy
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, cast
 
 import attr
 import whoosh
@@ -314,7 +314,7 @@ class MtgMixin:
 class MtgInteractionContext(SlashContext, MtgMixin):
     @property
     def bot(self) -> 'Bot':
-        return self.client
+        return cast('Bot', self.client)
 
 @attr.define(init=False)
 class MtgMessageContext(PrefixedContext, MtgMixin):

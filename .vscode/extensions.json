@@ -1,8 +1,11 @@
 {
-  "recommendations": [
-    "editorconfig.editorconfig",
-    "dawhite.mustache",
-    "ms-python.python",
-    "allenshuber.quote-flipper"
-  ]
+    "recommendations": [
+		"editorconfig.editorconfig",
+		"dawhite.mustache",
+		"ms-python.python",
+		"allenshuber.quote-flipper",
+		"ms-python.python",
+		"ms-python.mypy-type-checker",
+		"charliermarsh.ruff"
+	]
 }

@@ -1,7 +1,22 @@
 {
-    "python.testing.pytestArgs": [
-        "."
-    ],
-    "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": ["."],
+
+    "ruff.enable": true,
+
+    "mypy-type-checker.enabled": true,
+    "mypy-type-checker.args": [
+        "--ignore-missing-imports",
+        "--follow-imports=silent",
+        "--show-column-numbers",
+        "--show-error-codes",
+        "--disallow-untyped-calls",
+        "--warn-redundant-casts",
+        "--disallow-incomplete-defs",
+        "--check-untyped-defs",
+        "--disallow-untyped-defs",
+        "--strict-equality",
+        "--disallow-any-generics"
+    ]
 }

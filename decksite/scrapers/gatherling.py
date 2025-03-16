@@ -226,6 +226,8 @@ def insert_competition(name: str, date: datetime.datetime, event: Event) -> int:
         competition_flag = CompetitionFlag.KICK_OFF
     if 'Penny Dreadful 500' in name:
         competition_flag = CompetitionFlag.PENNY_DREADFUL_500
+    if 'Super Saturday' in name:
+        competition_flag = CompetitionFlag.SUPER_SATURDAY
     return competition.get_or_insert_competition(date, date, name, event.series, url, top_n, competition_flag)
 
 def insert_decks(competition_id: int, date: datetime.datetime, ds: list[GatherlingDeck], fs: FinalStandings, players: list[Player]) -> dict[GatherlingUsername, deck.Deck]:

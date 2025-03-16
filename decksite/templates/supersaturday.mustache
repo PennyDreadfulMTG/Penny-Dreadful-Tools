@@ -1,0 +1,33 @@
+<article>
+    <section>
+        <ul>
+            <li>MTGO-sponsored tournament</li>
+            <li>4900 Play Points in prizes</li>
+            <li>Free entry</li>
+            <li>{{{date_info_safe}}}</li>
+            <li>Sign up is on <a class="external force-link-style" href="https://gatherling.com/">Gatherling</a></li>
+            <li>Pairings and announcements on <a class="force-link-style" href="/discord/">Discord</a></li>
+        </ul>
+    </section>
+    {{> newtopd}}
+    <section>
+        <h2>{{_ Prizes}}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="n">Finish</th>
+                    <th class="n">Prize</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {{#prizes}}
+                        <tr>
+                            <td class="n">{{finish}}</td>
+                            <td class="n">{{prize}}</td>
+                        </tr>
+                    {{/prizes}}
+            </tbody>
+        </table>
+        <p>Prizes from our sponsor <a class="external" href="https://mtgo.com/">MTGO</a> in Play Points.</p>
+    </section>
+</article>

@@ -72,6 +72,8 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> l
         pdsat_name = 'The Penny Dreadful 500'
     elif is_kick_off_week(start):
         pdsat_name = 'Season Kick Off'
+    elif is_super_saturday_week(start):
+        pdsat_name = 'MTGO Super Saturday'
     else:
         pdsat_name = 'Penny Dreadful Saturdays'
     pdsat_time = (SAT, pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index])
@@ -86,7 +88,7 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> l
 # Note: if the start date of next season is not known then the date of the PD 500 cannot be known and in such a case this return None.
 def pd500_date() -> datetime.datetime:
     if seasons.next_rotation_ex().codename == '???':
-        return datetime.datetime(1970, 1, 1, tzinfo=dtutil.GATHERLING_TZ)
+        return dtutil.GATHERLING_TZ.localize(datetime.datetime(1970, 1, 1))
 
     end_of_season = seasons.next_rotation()
     return end_of_season - datetime.timedelta(days=5, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
@@ -94,6 +96,12 @@ def pd500_date() -> datetime.datetime:
 def is_pd500_week(start: datetime.datetime) -> bool:
     date_of_pd500 = pd500_date()
     return start <= date_of_pd500 <= start + datetime.timedelta(days=7)
+
+def is_pd500(c: Competition) -> bool:
+    return 'Penny Dreadful 500' in c.name
+
+def pd500_prizes() -> Prizes:
+    return display_prizes(prizes_by_finish(Competition({'name': 'Penny Dreadful 500'})))
 
 # Note: this may be in the past. It always gives the date for the current season.
 def kick_off_date() -> datetime.datetime:
@@ -104,17 +112,24 @@ def is_kick_off_week(start: datetime.datetime) -> bool:
     date_of_kick_off = kick_off_date()
     return start <= date_of_kick_off <= start + datetime.timedelta(days=7)
 
-def is_pd500(c: Competition) -> bool:
-    return 'Penny Dreadful 500' in c.name
-
 def is_kick_off(c: Competition) -> bool:
     return 'Kick Off' in c.name or 'Kickoff' in c.name
 
-def pd500_prizes() -> Prizes:
-    return display_prizes(prizes_by_finish(Competition({'name': 'Penny Dreadful 500'})))
-
 def kick_off_prizes() -> Prizes:
     return display_prizes(prizes_by_finish(Competition({'name': 'Kick Off'})))
+
+def super_saturday_date() -> datetime.datetime:
+    return dtutil.GATHERLING_TZ.localize(datetime.datetime(2025, 3, 29, 13, 30))
+
+def is_super_saturday_week(start: datetime.datetime) -> bool:
+    date_of_super_saturday = super_saturday_date()
+    return start <= date_of_super_saturday <= start + datetime.timedelta(days=7)
+
+def is_super_saturday(c: Competition) -> bool:
+    return 'Super Saturday' in c.name
+
+def super_saturday_prizes() -> Prizes:
+    return display_prizes(prizes_by_finish(Competition({'name': 'MTGO Super Saturday'})))
 
 def normal_prizes() -> Prizes:
     return display_prizes(prizes_by_finish(Competition({'name': ''})))
@@ -147,6 +162,8 @@ def prize_by_finish(c: Competition, finish: int) -> int:
         return pd500_prize(finish)
     if is_kick_off(c):
         return kick_off_prize(finish)
+    if is_super_saturday(c):
+        return super_saturday_prize(finish)
     return normal_prize(finish)
 
 def pd500_prize(f: int) -> int:
@@ -188,6 +205,19 @@ def kick_off_prize(f: int) -> int:
         return 2
     if f <= 32:
         return 1
+    return 0
+
+def super_saturday_prize(f: int) -> int:
+    if f == 1:
+        return 1240  # 2x 500 + 2x 120
+    if f == 2:
+        return 740   # 1x 500 + 2x 120
+    if f <= 4:
+        return 500   # 1x 500
+    if f <= 8:
+        return 240   # 2x 120
+    if f <= 16:
+        return 120   # 1x 120
     return 0
 
 def normal_prize(f: int) -> int:

@@ -5,7 +5,7 @@ from decksite.data import archetype
 from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import person as ps
-from decksite.views import PD500, Achievements, Competition, Competitions, KickOff, TournamentHosting, TournamentLeaderboards, Tournaments
+from decksite.views import PD500, Achievements, Competition, Competitions, KickOff, SuperSaturday, TournamentHosting, TournamentLeaderboards, Tournaments
 
 
 @APP.route('/competitions/')
@@ -53,6 +53,12 @@ def pd500() -> str:
 @cached()
 def kickoff() -> str:
     view = KickOff()
+    return view.page()
+
+@APP.route('/tournaments/super-saturday/')
+@cached()
+def super_saturday() -> str:
+    view = SuperSaturday()
     return view.page()
 
 @APP.route('/achievements/')

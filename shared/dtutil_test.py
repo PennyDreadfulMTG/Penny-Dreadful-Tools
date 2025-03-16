@@ -113,5 +113,5 @@ def test_round_value_appropriately() -> None:
 
 def test_display_date_with_date_and_year() -> None:
     tz = dtutil.GATHERLING_TZ
-    dt = datetime.datetime(2023, 5, 6, tzinfo=tz)
+    dt = tz.localize(datetime.datetime(2023, 5, 6))
     assert dtutil.display_date_with_date_and_year(dt, tz) == 'May 6th'

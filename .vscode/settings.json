@@ -1,7 +1,12 @@
 {
-    "python.linting.pylintEnabled": false,
-    "python.linting.mypyEnabled": true,
-    "python.linting.mypyArgs": [
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": ["."],
+
+    "ruff.enable": true,
+
+    "mypy-type-checker.enabled": true,
+    "mypy-type-checker.args": [
         "--ignore-missing-imports",
         "--follow-imports=silent",
         "--show-column-numbers",
@@ -13,12 +18,5 @@
         "--disallow-untyped-defs",
         "--strict-equality",
         "--disallow-any-generics"
-    ],
-    "python.testing.pytestArgs": [
-        "."
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "python.linting.flake8Enabled": true
+    ]
 }

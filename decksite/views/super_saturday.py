@@ -20,6 +20,7 @@ class SuperSaturday(View):
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
         self.prizes = tournaments.super_saturday_prizes()
+        self.hide_cardhoarder = True
 
         # Set up the "Past Winners" table
         self.past_winners = {

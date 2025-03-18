@@ -88,7 +88,7 @@ jobs:
         python-version: '3.10'
         cache: 'pipenv'
     - name: Setup Node.js environment
-      uses: actions/setup-node@v4.2.0
+      uses: actions/setup-node@v4.3.0
       with:
         node-version: 18.16.0
     - name: Install dependencies

@@ -163,6 +163,9 @@ class View(BaseView):
         if tournaments.is_kick_off_week(now):
             date = dtutil.display_date_with_date_and_year(tournaments.kick_off_date())
             return template.render_name('kickoffnotice', {'url': url_for('kickoff'), 'date': date})
+        if tournaments.is_super_saturday_week(now):
+            date = dtutil.display_date_with_date_and_year(tournaments.super_saturday_date())
+            return template.render_name('supersaturdaynotice', {'url': url_for('super_saturday'), 'date': date})
         return ''
 
     def page_title(self) -> str | None:

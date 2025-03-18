@@ -131,14 +131,14 @@ def card_name_graphemes() -> tuple[set[str], set[str]]:
     return seen, names
 
 def deck_name_graphemes() -> tuple[set[str], set[str]]:
-    sql = 'SELECT id, name FROM deck'
+    sql = 'SELECT deck_id, normalized_name FROM deck_cache'
     rs = db().select(sql)
     seen, names = set(), set()
     for row in rs:
-        name = row['name']
+        name = row['normalized_name']
         for grapheme in regex.findall(r'\X', name):
             if grapheme not in seen:
-                print(f"{grapheme} {named(grapheme)} ({points(grapheme)}) from {row['id']} ({name})", file=sys.stderr)
+                print(f"{grapheme} {named(grapheme)} ({points(grapheme)}) from {row['deck_id']} ({name})", file=sys.stderr)
                 seen.add(grapheme)
                 names.add(name)
     return seen, names

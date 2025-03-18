@@ -3775,12 +3775,12 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:00f750132769f1c65a4f7240bc84f13985b4da774bd17dfbe5d9cd442746bd49",
-                "sha256:32ca4a35430e8b94f6603b35beb7f56c32260ddddd4f4bb305fdf8f92358b87e"
+                "sha256:04dba4907c5415777083f9548693c6d9f80ec53adcaff55a38526a3f8ddcae04",
+                "sha256:97e0e35184c6fe14e3a5014512057f2c57bb0c6582d63c1cfcc4809f82180449"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==2025.1.0.20250204"
+            "version": "==2025.1.0.20250318"
         },
         "types-redis": {
             "hashes": [

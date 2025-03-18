@@ -2,6 +2,7 @@ from typing import Any
 
 from decksite.data.archetype import Archetype
 from decksite.view import View
+from magic import tournaments
 from magic.models import Competition as Comp
 from shared import dtutil
 
@@ -24,6 +25,7 @@ class Competition(View):
         self.show_archetype_tree = len(self.archetypes) > 0
         self.hide_perfect_runs = self.tournament_only = competition.type != 'League'
         self.league_only = self.hide_tournament_results = competition.type == 'League'
+        self.hide_cardhoarder = tournaments.is_super_saturday(self.competition)
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)

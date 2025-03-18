@@ -9,10 +9,12 @@
                         {{/submenu}}
                     </section>
                 {{/menu}}
-                <section>
-                    <p>Penny Dreadful tournaments and league are sponsored by <a class="external" href="https://cardhoarder.com/">Cardhoarder</a>.</p>
-                    <p><a href="https://cardhoarder.com/"><img class="sponsor-logo" src="{{cardhoarder_logo_url}}" alt="" width="470" height="366"></a></p>
-                </section>
+                {{^hide_cardhoarder}}
+                    <section>
+                        <p>Penny Dreadful tournaments and league are sponsored by <a class="external" href="https://cardhoarder.com/">Cardhoarder</a>.</p>
+                        <p><a href="https://cardhoarder.com/"><img class="sponsor-logo" src="{{cardhoarder_logo_url}}" alt="" width="470" height="366"></a></p>
+                    </section>
+                {{/hide_cardhoarder}}
                 <section>
                     <p>Popup card images courtesy of <a href="https://deckbox.org/">deckbox.org</a>.</p>
                 </section>

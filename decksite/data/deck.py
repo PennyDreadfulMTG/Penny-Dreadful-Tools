@@ -1,5 +1,6 @@
 import hashlib
 import json
+import subprocess
 import time
 from typing import TypedDict
 
@@ -14,7 +15,7 @@ from shared import dtutil, guarantee, logger
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
@@ -378,6 +379,7 @@ def add_deck(params: RawDeckDescription) -> Deck:
     d = load_deck(deck_id)
     prime_cache(d)
     db().commit('add_deck')
+    maybe_regenerate_symbols_font(params['name'])
     return d
 
 def prime_cache(d: Deck) -> None:
@@ -402,6 +404,23 @@ def prime_cache(d: Deck) -> None:
     db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), season_id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, season_id])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
+
+def maybe_regenerate_symbols_font(name: str) -> None:
+    try:
+        # If the name has no unusual chars, don't regenerate the font
+        name.encode('latin-1')
+        return
+    except UnicodeEncodeError:
+        pass
+    # Even if it results in temporary imperfections let's not do this more than once at a time.
+    try:
+        db().get_lock('font_generation', 60 * 15)
+    except LockNotAcquiredException:
+        return
+    # Fire off a background job to generate the font, it takes too long (10s) to do on user time during deck creation.
+    cmd = ['pipenv', 'run', 'python', 'run.py', 'maintenance', 'fonts']
+    subprocess.Popen(cmd)
+    db().release_lock('font_generation')
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
     try:

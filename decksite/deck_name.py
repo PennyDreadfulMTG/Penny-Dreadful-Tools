@@ -38,6 +38,7 @@ WHITELIST = [
     "U Know What Colors I'm Playing",
     'The World is So Black and White',
     'only 3',
+    'Withnail and I',
 ]
 
 PROFANITY_WHITELIST = [

@@ -296,7 +296,7 @@ def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: st
 
                     @font-face {{
                         font-family: main-text;
-                        src: url('file://{get_font_paths()[0]}');
+                        src: url('file://{os.path.abspath(get_font_paths()[0])}');
                     }}
 
                     /* BEGIN COPY AND PASTE OUTPUT FOR pd.css */

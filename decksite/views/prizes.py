@@ -19,6 +19,9 @@ class Prizes(View):
             if week.end_date > dtutil.now(dtutil.WOTC_TZ):
                 pass
             for c in week.get('competitions', []):
+                # These are paid in Play Points codes, not Cardhoarder credit, just skip for now.
+                if tournaments.is_super_saturday(c):
+                    continue
                 for d in c.decks:
                     prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(c, d)
             subject = f'Penny Dreadful Prizes for Week Ending {week.end_date:%b} {week.end_date.day}'

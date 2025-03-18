@@ -62,6 +62,7 @@ class View(BaseView):
         self.is_home_page = False
         self.tournament_rounds_info: list[dict[str, int | str]] = []
         self.matches: list[Container] = []
+        self.hide_cardhoarder = False
 
     def season_id(self) -> int:
         return get_season_id()

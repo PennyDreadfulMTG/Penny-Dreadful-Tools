@@ -28,6 +28,9 @@ decksite/images/*-cmc.png
 # JS build output
 shared_web/static/dist/
 
+# Font subsetting output
+shared_web/static/fonts/symbols.woff2
+
 # Dev db output
 shared_web/static/dev-db.sql.gz
 

@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from flask import current_app, make_response, url_for, wrappers
@@ -44,6 +45,13 @@ class BaseView:
 
     def git_branch(self) -> str:
         return current_app.config['branch']
+
+    def font_url(self) -> str:
+        try:
+            mtime = int(os.path.getmtime('shared_web/static/fonts/symbols.woff2'))
+        except OSError:
+            mtime = 0
+        return url_for('static', filename='fonts/symbols.woff2', v=mtime)
 
     def css_url(self) -> str:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))

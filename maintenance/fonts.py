@@ -9,21 +9,31 @@ from fontTools import subset
 from fontTools.merge import Merger, Options
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.scaleUpem import scale_upem
+from fontTools.ttLib.woff2 import compress
 from regex import regex
 
 from decksite.database import db
 from magic import oracle
+from shared.pd_exception import InvalidDataException
 
-# Called as a maintenance task this will output to stdout an HTML file.
-# Part of that (marked) should be copy-and-pasted into pd.css.
-# Instead, you can call it from the commandline something like this:
+# The basic function of this script is to generate a woff2 font covering all the symbols we use on the site,
+# including in user-submitted deck names, and output it to static/fonts/symbols.woff2. It will always output
+# this file.
 #
-# $ PYTHONPATH=. pipenv run python3 maintenance/fonts.py  >/tmp/index.html && open /tmp/index.html
+# It can also be used to inspect the symbols in question and their representation in the fonts we have available.
 #
+# Called with the show flag we will output an HTML file showing the symbols as currently rendered.
+# $ PYTHONPATH=. pipenv run python3 maintenance/fonts.py show >/tmp/index.html && open /tmp/index.html
+#
+# Called with the options flag we will output an HTML file showing the symbols
+# $ PYTHONPATH=. pipenv run python3 maintenance/fonts.py options >/tmp/index.html && open /tmp/index.html
 # to see all the possibilities and maybe update the PREFER dict below.
+#
+# base-only can also be provided in the args list in order to only use the base symbols (not those from deck names).
 #
 # Relies on find_base_graphemes being kept up to date with the symbols we are using across the site.
 
+# Override our default preferences where we've decided to use a specific font for a symbol.
 # Prefer the simplest, lightest, but largest, version of each symbol
 PREFER = {
     '☀': 'NotoEmoji',
@@ -51,6 +61,7 @@ GraphemeToFontMapping = dict[str, list[str]]
 FontInfo = list[tuple[str, str, set[str], set[str], str]]
 
 def ad_hoc(*args: str) -> None:
+    show_mode = 'show' in args
     options_mode = 'options' in args
     base_only = 'base-only' in args
     # Some symbols we use outside of deck names
@@ -99,12 +110,16 @@ def ad_hoc(*args: str) -> None:
         if not options_mode and not remaining_graphemes:
             break
     merged = merge_fonts([f[1] for f in used_fonts])
-    merged.save('/tmp/merged.ttf')
-    encoded = encode(merged)
-    if options_mode:
-        print_options(graphemes_to_fonts, font_info)
-    else:
+    _, ttf_path = tempfile.mkstemp(suffix='.ttf')
+    merged.save(ttf_path)
+    woff2_path = os.path.join('shared_web', 'static', 'fonts', 'symbols.woff2')
+    compress(ttf_path, woff2_path)
+    if show_mode:
+        with open(woff2_path, 'rb') as f:
+            encoded = encode(TTFont(f))
         print_css(font_info, deck_names, encoded)
+    elif options_mode:
+        print_options(graphemes_to_fonts, font_info)
     print_report(font_info, remaining_graphemes)
 
 def card_name_graphemes() -> tuple[set[str], set[str]]:
@@ -116,34 +131,34 @@ def card_name_graphemes() -> tuple[set[str], set[str]]:
     return seen, names
 
 def deck_name_graphemes() -> tuple[set[str], set[str]]:
-    sql = 'SELECT id, name FROM deck'
+    sql = 'SELECT deck_id, normalized_name FROM deck_cache'
     rs = db().select(sql)
     seen, names = set(), set()
     for row in rs:
-        name = row['name']
+        name = row['normalized_name']
         for grapheme in regex.findall(r'\X', name):
             if grapheme not in seen:
-                print(f"{grapheme} {named(grapheme)} ({points(grapheme)}) from {row['id']} ({name})", file=sys.stderr)
+                print(f"{grapheme} {named(grapheme)} ({points(grapheme)}) from {row['deck_id']} ({name})", file=sys.stderr)
                 seen.add(grapheme)
                 names.add(name)
     return seen, names
 
-
-# You need to get these fonts/alter these paths before running this script.
 def get_font_paths() -> list[str]:
+    source_path = os.path.join('shared_web', 'static', 'fonts', 'sources')
+    # These are explicitly listed in order of preference, changing the order changes the behavior of this script.
     return [
-        '/Users/bakert/Downloads/main-text.ttf',
-        '/Users/bakert/notofonts.github.io/megamerge/NotoSansLiving-Regular.ttf',
+        os.path.join(source_path, 'main-text.ttf'),
+        os.path.join(source_path, 'NotoSansLiving-Regular.ttf'),
         # You must use the static version of these fonts not the variable versions even though it means you need more fonts.
         # These were downloaded from Google fonts, not from the noto-cjk repo which doesn't seem to have them in this format.
-        '/Users/bakert/Downloads/NotoSansJP-Regular.ttf',
-        '/Users/bakert/Downloads/NotoSansSC-Regular.ttf',
-        '/Users/bakert/notofonts.github.io/megamerge/NotoSansHistorical-Regular.ttf',
-        '/Users/bakert/notofonts.github.io/fonts/NotoSansSymbols/hinted/ttf/NotoSansSymbols-Regular.ttf',
-        '/Users/bakert/notofonts.github.io/fonts/NotoSansSymbols2/hinted/ttf/NotoSansSymbols2-Regular.ttf',
-        '/Users/bakert/Downloads/Noto_Emoji/static/NotoEmoji-Regular.ttf',
-        '/Users/bakert/Downloads/Segoe UI Symbol.ttf',
-        '/Users/bakert/Downloads/symbola/Symbola.ttf',
+        os.path.join(source_path, 'NotoSansJP-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansSC-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansHistorical-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansSymbols-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansSymbols2-Regular.ttf'),
+        os.path.join(source_path, 'NotoEmoji-Regular.ttf'),
+        os.path.join(source_path, 'Segoe UI Symbol.ttf'),
+        os.path.join(source_path, 'Symbola.ttf'),
     ]
 
 def find_graphemes(font: TTFont, name: str, options_mode: bool, to_find: set[str]) -> set[str]:
@@ -181,6 +196,7 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
     finally:
         os.remove(tmp_in)
         os.remove(tmp_out)
+
 
 def find_base_graphemes() -> set[str]:
     return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅☰🏠☼🌙')
@@ -280,7 +296,7 @@ def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: st
 
                     @font-face {{
                         font-family: main-text;
-                        src: url('file://{get_font_paths()[0]}');
+                        src: url('file://{os.path.abspath(get_font_paths()[0])}');
                     }}
 
                     /* BEGIN COPY AND PASTE OUTPUT FOR pd.css */
@@ -376,6 +392,7 @@ def print_report(font_info: FontInfo, remaining_graphemes: set[str]) -> None:
             print(name.rjust(longest), str(len(found)).rjust(5), str(len(used)).rjust(4), ''.join(sorted(used)), file=sys.stderr)
     if remaining_graphemes:
         print('\nWARNING! DID NOT FIND THE FOLLOWING GRAPHEMES:', remaining_graphemes, file=sys.stderr)
+        raise InvalidDataException('Missing graphemes, requires human intervention to add a new font probably')
     print(file=sys.stderr)
 
 def named(grapheme: str) -> str:

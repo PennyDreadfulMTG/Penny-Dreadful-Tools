@@ -1,5 +1,6 @@
 import datetime
 import functools
+import sys
 
 import attr
 
@@ -134,7 +135,7 @@ def sets(supplemental: bool | None) -> list[SetInfo]:
             continue
         if s.enter_date_dt.timestamp() == 0:
             s.enter_date_dt = last.enter_date_dt + datetime.timedelta(days=90)
-            print(f'guessing {s.name} enter date: {s.enter_date_dt}')
+            print(f'guessing {s.name} enter date: {s.enter_date_dt}', file=sys.stderr)
         releases.append(s)
         last = s
     return releases

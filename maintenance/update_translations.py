@@ -35,7 +35,7 @@ def ad_hoc() -> None:
     compiler.directory = os.path.join('shared_web', 'translations')
     compiler.domain = 'messages'
     compiler.run()  # type: ignore
-    # hack for English - We need an empty folder so that Enlish shows up in the 'Known Languages' list.
+    # hack for English - We need an empty folder so that English shows up in the 'Known Languages' list.
     path = os.path.join('shared_web', 'translations', 'en', 'LC_MESSAGES')
     if not os.path.exists(path):
         os.makedirs(path)

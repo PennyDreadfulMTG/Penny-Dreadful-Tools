@@ -49,7 +49,7 @@ class BaseView:
     def font_url(self) -> str:
         try:
             mtime = int(os.path.getmtime('shared_web/static/fonts/symbols.woff2'))
-        except (OSError, FileNotFoundError):
+        except OSError:
             mtime = 0
         return url_for('static', filename='fonts/symbols.woff2', v=mtime)
 

@@ -116,7 +116,7 @@ def ad_hoc(*args: str) -> None:
     compress(ttf_path, woff2_path)
     if show_mode:
         with open(woff2_path, 'rb') as f:
-            encoded = encode(merged)
+            encoded = encode(TTFont(f))
         print_css(font_info, deck_names, encoded)
     elif options_mode:
         print_options(graphemes_to_fonts, font_info)
@@ -147,19 +147,19 @@ def get_font_paths() -> list[str]:
     source_path = os.path.join('shared_web', 'static', 'fonts', 'sources')
     # These are explicitly listed in order of preference, changing the order changes the behavior of this script.
     return [
-       os.path.join(source_path, 'main-text.ttf'),
-       os.path.join(source_path, 'NotoSansLiving-Regular.ttf'),
-       # You must use the static version of these fonts not the variable versions even though it means you need more fonts.
-       # These were downloaded from Google fonts, not from the noto-cjk repo which doesn't seem to have them in this format.
-       os.path.join(source_path, 'NotoSansJP-Regular.ttf'),
-       os.path.join(source_path, 'NotoSansSC-Regular.ttf'),
-       os.path.join(source_path, 'NotoSansHistorical-Regular.ttf'),
-       os.path.join(source_path, 'NotoSansSymbols-Regular.ttf'),
-       os.path.join(source_path, 'NotoSansSymbols2-Regular.ttf'),
-       os.path.join(source_path, 'NotoEmoji-Regular.ttf'),
-       os.path.join(source_path, 'Segoe UI Symbol.ttf'),
-       os.path.join(source_path, 'Symbola.ttf'),
-   ]
+        os.path.join(source_path, 'main-text.ttf'),
+        os.path.join(source_path, 'NotoSansLiving-Regular.ttf'),
+        # You must use the static version of these fonts not the variable versions even though it means you need more fonts.
+        # These were downloaded from Google fonts, not from the noto-cjk repo which doesn't seem to have them in this format.
+        os.path.join(source_path, 'NotoSansJP-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansSC-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansHistorical-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansSymbols-Regular.ttf'),
+        os.path.join(source_path, 'NotoSansSymbols2-Regular.ttf'),
+        os.path.join(source_path, 'NotoEmoji-Regular.ttf'),
+        os.path.join(source_path, 'Segoe UI Symbol.ttf'),
+        os.path.join(source_path, 'Symbola.ttf'),
+    ]
 
 def find_graphemes(font: TTFont, name: str, options_mode: bool, to_find: set[str]) -> set[str]:
     found = set()

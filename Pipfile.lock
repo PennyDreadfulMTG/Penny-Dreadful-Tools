@@ -2402,12 +2402,12 @@
         },
         "pystache": {
             "hashes": [
-                "sha256:08562f53b3afd9b55c1eb1d4980f4ced68e07dbed3aceffda8bb600286b93f76",
-                "sha256:55d8bb5aac450389369584b1627cecbe9069e13a09471a8fe783c44b64e94d5a"
+                "sha256:3707518e6a4d26dd189b07c10c669b1fc17df72684617c327bd3550e7075c72c",
+                "sha256:7211e000974a6e06bce2d4d5cad8df03bcfffefd367209117376e4527a1c3cb8"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==0.6.7"
+            "version": "==0.6.8"
         },
         "pytest": {
             "hashes": [

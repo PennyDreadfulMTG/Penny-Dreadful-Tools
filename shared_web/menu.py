@@ -7,7 +7,7 @@ from shared.pd_exception import InvalidArgumentException
 
 
 @dataclass
-class Menu(Iterable, Sized):
+class Menu(Iterable['MenuItem'], Sized):
     menu: list['MenuItem'] = field(default_factory=list)
     current_endpoint: str | None = None
 

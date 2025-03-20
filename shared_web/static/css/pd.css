@@ -296,7 +296,7 @@ p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date, .deck-name, .rotation p, .stats p, .metagame .archetype {
+table, ul.decklist.li, .news .date, .deck-name, .rotation p, .stats p, .metagame .archetype, .menu .item {
     font-variant-numeric: normal;
 }
 

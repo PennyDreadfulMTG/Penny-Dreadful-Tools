@@ -96,7 +96,13 @@ async def download_scryfall_png(c: Card) -> str | None:
 async def download_scryfall_card_image(c: Card, filepath: str, version: str = '') -> bool:
     try:
         if c.is_double_sided():
-            paths = [re.sub(f'.{version}$', f'.a.{version}', filepath), re.sub(f'.{version}$', f'.b.{version}', filepath)]
+            split = os.path.splitext(filepath)
+
+            if f'.{version}' in filepath:
+                paths = [f'{split[0]}.a{split[1]}', f'{split[0]}.b{split[1]}']
+            else:
+                paths = [f'{split[0]}.{version}.a{split[1]}', f'{split[0]}.{version}.b{split[1]}']
+
             await fetch_tools.store_async(scryfall_image(c, version=version), paths[0])
             if c.layout in layout.has_single_back():
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='back'), paths[1])

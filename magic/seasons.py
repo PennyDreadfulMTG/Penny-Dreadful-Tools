@@ -22,7 +22,7 @@ SEASONS = [
     'NEO', 'SNC', 'DMU', 'BRO',         # 2022
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
-    'DFT', 'FIN', 'SPM', 'UUB',         # 2025
+    'DFT', 'FIN', 'SPM', 'TLA',         # 2025
 ]
 
 SUPPLEMENTAL_SETS = [

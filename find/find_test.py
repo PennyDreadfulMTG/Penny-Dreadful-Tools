@@ -658,6 +658,10 @@ def test_parse_season() -> None:
         search.parse_season('foopd1')
     assert search.parse_season('pd1') == 'EMN'
 
+def test_incomplete_query() -> None:
+    with pytest.raises(search.InvalidSearchException):
+        do_test('c:', '')
+
 def do_functional_test(query: str, yes: list[str], no: list[str], check_scryfall: bool = False) -> None:
     found = search.search(query)
     for name in yes:

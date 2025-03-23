@@ -73,6 +73,9 @@ def build_menu() -> Menu:
             MenuItem(gettext('Gatherling'), url='https://gatherling.com/'),
             MenuItem(gettext('Achievements'), endpoint='achievements'),
             MenuItem(gettext('Hosting'), endpoint='hosting'),
+            MenuItem(gettext('Season Kick Off'), endpoint='kickoff'),
+            MenuItem(gettext('Penny Dreadful 500'), endpoint='pd500'),
+            MenuItem(gettext('Super Saturday'), endpoint='super_saturday'),
         ])),
         MenuItem(gettext('Resources'), endpoint='resources', submenu=Menu(resources_submenu_items)),
         MenuItem(gettext('About'), endpoint='about', submenu=Menu([

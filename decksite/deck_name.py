@@ -184,7 +184,7 @@ def normalize_colors(name: str, colors: list[str]) -> str:
     pattern = r'(^| )' + word + '( |$)'
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
-        name = name.replace(color_word, '')
+        name = name.replace(color_word, '', 1)
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not any(abbrev for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev.lower())) and word.lower() != 'colorless':
         name = f'Mono {name}'
     return re.sub(' +', ' ', name.strip())

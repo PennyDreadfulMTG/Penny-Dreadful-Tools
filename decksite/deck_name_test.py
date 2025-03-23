@@ -310,6 +310,9 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Greasefag', 'Orzhov Greasefang', ['W', 'B'], 'Greasefang', 33),
     ('🏴‍☠️', '🏴‍☠️', ['U', 'R'], 'Pirates', 33),
     ('S36 Human v1 1', 'Human v1.1', ['W'], 'Mono White Humans', 36),
+    ('Blue', 'Mono Blue Tempo', ['U'], 'Mono Blue Tempo', 37),
+    ('U BLUE', 'Mono Blue Tempo', ['U'], 'Mono Blue Tempo', 37),
+    ('Blue-Red Uber-Control', 'Izzet Uber-Control', ['U', 'R'], 'Izzet Control', 37),
 ]
 
 def test_replace_space_alternatives() -> None:

@@ -611,11 +611,11 @@ html.dark-mode {
     --soft-tangerine-darker: oklch(65% 0.06 309.48);
     --true-black: #fff; /* White. Only for use at less than 1 opacity, for scrim and similar. */
 
-    --w-mana: #c4c2a8;
-    --u-mana: #7fb8d4;
-    --b-mana: #a09b9a;
-    --r-mana: #d48873;
-    --g-mana: #78a88c;
+    --w-mana: #fffcdb;
+    --u-mana: #ace2fb;
+    --b-mana: #6c5b57;
+    --r-mana: #f37b5a;
+    --g-mana: #39dcaf;
 
     --key-light-shadow-color: rgb(255 255 255 / 30%);
     --ambient-light-shadow-color: rgba(255 255 255 / 15%);

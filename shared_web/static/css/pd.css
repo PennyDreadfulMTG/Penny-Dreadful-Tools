@@ -627,12 +627,6 @@ html.dark-mode .hamburger {
     color: var(--black);
 }
 
-html.dark-mode img,
-html.dark-mode .metagame-grid .card,
-html.dark-mode header::before {
-    filter: brightness(50%);
-}
-
 /* Override third party CSS. */
 .deckbox_i_tooltip, .deckbox_t_tooltip {
     background-color: var(--background) !important;

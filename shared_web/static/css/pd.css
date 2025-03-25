@@ -602,21 +602,20 @@ Color attributes are mostly found with their related structural elements in this
 /* Dark Mode */
 
 html.dark-mode {
-    --white: oklch(18.22% 0 0); /* Night */
-    --black: oklch(64.01% 0 0); /* Battleship gray */
-    --light-gray: oklch(35.62% 0 0); /* Onyx */
-    --dark-gray: oklch(46.76% 0 0); /* Davy's gray */
-    --red: oklch(47.08% 0.137 24); /* Auburn */
-    --soft-tangerine: oklch(42.05% 0.06 309.48); /* English violet */
-    --soft-tangerine-darker: oklch(50% 0.06 309.48);
+    --white: oklch(15% 0 0); /* Night */
+    --black: oklch(85% 0 0); /* Silver */
+    --light-gray: oklch(45% 0 0); /* Davy's Gray */
+    --dark-gray: oklch(65% 0 0); /* Battleship Gray */
+    --red: oklch(60% 0.137 24); /* Indian Red */
+    --soft-tangerine: oklch(55% 0.06 309.48); /* Chinese Violet */
+    --soft-tangerine-darker: oklch(65% 0.06 309.48);
     --true-black: #fff; /* White. Only for use at less than 1 opacity, for scrim and similar. */
 
-    /* Desaturated and dimmed version of mana colors. */
-    --w-mana: #b3b39b;
-    --u-mana: #7898a5;
-    --b-mana: #898482;
-    --r-mana: #a57b6b;
-    --g-mana: #6f8a7a;
+    --w-mana: #c4c2a8;
+    --u-mana: #7fb8d4;
+    --b-mana: #a09b9a;
+    --r-mana: #d48873;
+    --g-mana: #78a88c;
 
     --key-light-shadow-color: rgb(255 255 255 / 30%);
     --ambient-light-shadow-color: rgba(255 255 255 / 15%);

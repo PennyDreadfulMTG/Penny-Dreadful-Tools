@@ -161,9 +161,10 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     ),
     'rotation': (
         f"""
-        Legality is set a week after the release of a Standard-legal set on Magic Online.
+        Legality is set a week after the release of most Standard-legal sets on Magic Online.
         Prices are checked every hour for a week from the set release. Anything {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the season.
         Any version of a card on the legal cards list is legal.
+        For Standard-legal set releases where we do not rotate, a supplemental rotation (adding cards from that set only) will take place a week after the release.
         """,
         {},
     ),
@@ -177,6 +178,13 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     'speculation': (
         """
         Please don't buy unconfirmed cards (marked ❓ during rotation), you may prevent them from becoming legal.
+        """,
+        {},
+    ),
+    'supplemental': (
+        f"""
+        A supplemental rotation takes place a week after the release of a Standard-legal set on Magic Online for which we are not rotating.
+        Prices are checked every hour for a week from the set release. Anything {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the rest of the season.
         """,
         {},
     ),

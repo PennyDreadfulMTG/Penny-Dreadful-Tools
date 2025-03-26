@@ -41,6 +41,8 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 ## Development Environment Setup
 
+### Docker Compose
+
 - Install Docker (https://www.docker.com/get-started)
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
@@ -62,7 +64,15 @@ After this, various components will be available in your browser:
 
 The database will be running on port 3306 with username 'pennydreadful' and the password from the .env file.
 
+To build the custom font file, run
+```
+docker compose exec decksite pipenv run python3 dev.py buildfonts
+```
+
+### Non-Docker development
+
 If you plan on running things outside of the containers (eg: dev.py or logsite):
+
 - Install python 3.10
 - Install pipenv
 - Install npm

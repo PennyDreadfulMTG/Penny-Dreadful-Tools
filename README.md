@@ -64,24 +64,10 @@ After this, various components will be available in your browser:
 
 The database will be running on port 3306 with username 'pennydreadful' and the password from the .env file.
 
-To build the custom font file, run
+You can run any of the comamnds in dev.py via
 ```
-docker compose exec decksite pipenv run python3 dev.py buildfonts
+docker-compose exec decksite pipenv run python3 dev.py name-of-task
 ```
-
-### Non-Docker development
-
-If you plan on running things outside of the containers (eg: dev.py or logsite):
-
-- Install python 3.10
-- Install pipenv
-- Install npm
-- Install git
-- Install git-lfs
-- git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
-- cd Penny-Dreadful-Tools
-- pipenv install
-- pipenv run python dev.py build
 
 ## Configuring Environment
 

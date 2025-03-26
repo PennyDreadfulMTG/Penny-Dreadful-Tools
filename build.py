@@ -24,7 +24,11 @@ def buildjs() -> None:
 
 def buildfonts() -> None:
     print('>>>> Enabling lfs if necessary')
-    subprocess.check_call(['git', 'lfs', 'install'])
+    try:
+        subprocess.check_call(['git', 'lfs', 'install', '--force'])
+    except subprocess.CalledProcessError:
+        # fallback if hook already exists or anything else goes wrong
+        subprocess.check_call(['git', 'lfs', 'update', '--force'])
     print('>>>> Getting font binaries')
     subprocess.check_call(['git', 'lfs', 'pull'])
     print('>>>> Building local font subset')

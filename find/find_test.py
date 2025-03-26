@@ -657,6 +657,11 @@ def test_parse_season() -> None:
     with pytest.raises(search.InvalidValueException):
         search.parse_season('foopd1')
     assert search.parse_season('pd1') == 'EMN'
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('pdjdksfalfjs9')
+    with pytest.raises(search.InvalidValueException):
+        search.parse_season('pds')
+
 
 def test_incomplete_query() -> None:
     with pytest.raises(search.InvalidSearchException):

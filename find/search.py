@@ -485,14 +485,17 @@ def parse_season(term: str) -> str:
     spaceless = term.replace(' ', '')
     try:
         m = re.match(r'(pd|penny)(dreadful)?(s|season)?(...|\d+)?$', spaceless)
-        if m and (m.group(3) is m.group(4) is None):
-            return seasons.current_season_code()
         if not m:
             raise ValueError
+        if m.group(3) is m.group(4) is None:
+            return seasons.current_season_code()
+        if m.group(3) is not None and m.group(4) is None:
+            raise InvalidValueException('Missing Penny Dreadful season identifier')
         code = m.group(4)
-        if code == 'all':
-            return seasons.ALL
-        return seasons.season_code(int(code))
+        try:
+            return seasons.season_code(code)
+        except DoesNotExistException as e:
+            raise InvalidValueException(str(e)) from e
     except (AttributeError, IndexError, ValueError, DoesNotExistException):
         pass
     raise InvalidValueException(f"Could not get a Penny Dreadful season from '{term}'")

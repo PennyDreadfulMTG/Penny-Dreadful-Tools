@@ -48,7 +48,11 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - docker-compose build
 - docker-compose up
 
-The first run will download a copy of the prod decksite db and set it up as well as build cards db from scryfall data so it will take a while.
+The first run will download a copy of the prod decksite db and set it up as well as build cards db from scryfall data so it will take a while. Set PDM_DOWNLOAD_DEVDB in .env to something other than "true" to skip. The download has been known to fail. You can download it from <https://pennydreadfulmagic.com/static/dev-db.sql.gz> and restore it after gunzipping with something like:
+
+-  mysql -h 127.0.0.1 -P 3306 -u pennydreadful -p --ssl=0  decksite <~/path/to/dev-db.sql
+
+The database password can be found in your .env file.
 
 After this, various components will be available in your browser:
 
@@ -56,10 +60,14 @@ After this, various components will be available in your browser:
 - The admin panel at <http://127.0.0.1:8080>
 - The logsite at <http://127.0.0.1:5001>
 
+The database will be running on port 3306 with username 'pennydreadful' and the password from the .env file.
+
 If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install python 3.10
 - Install pipenv
 - Install npm
+- Install git
+- Install git-lfs
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
 - pipenv install
@@ -83,6 +91,8 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install python 3.10
 - Install pipenv
 - Install npm
+- Install git
+- Install git-lfs
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
 - pipenv install

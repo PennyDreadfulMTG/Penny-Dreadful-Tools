@@ -1,6 +1,9 @@
 FROM python:3.10-bookworm
 RUN pip install pipenv
 
+RUN apt-get update && \
+    apt-get install -y git-lfs
+
 WORKDIR /pdm
 
 COPY Pipfile Pipfile.lock ./

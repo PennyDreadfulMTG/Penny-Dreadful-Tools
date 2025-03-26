@@ -44,6 +44,10 @@ def buildpy() -> None:
 def buildjs() -> None:
     builddotpy.buildjs()
 
+@cli.command()
+def buildfonts() -> None:
+    builddotpy.buildfonts()
+
 def do_lint() -> None:
     """
     Invoke linter with our preferred options

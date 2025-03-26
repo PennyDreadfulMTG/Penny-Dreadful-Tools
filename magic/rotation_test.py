@@ -54,7 +54,7 @@ def test_list_of_most_interesting() -> None:
     somewhat_playable_card = Card({'name': 'Fling'})
 
     s = rotation.list_of_most_interesting(never_before_legal_cards + [super_playable_card, somewhat_playable_card])
-    good_cards = 'Mox Jet • Black Lotus • Counterspell • Fling'
+    good_cards = 'Black Lotus • Mox Jet • Counterspell • Fling'
     assert s == good_cards
 
     garbage_cards = [

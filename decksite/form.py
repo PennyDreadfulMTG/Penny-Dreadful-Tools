@@ -38,6 +38,8 @@ class DecklistForm(Form):
             self.has_recent_decks = len(self.recent_decks) > 0
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
+        elif not hasattr(self, 'mtgo_username'):
+            self.mtgo_username = ''
         self.decklist = form.get('decklist', '').strip()
         self.deck = Container()
         self.cards: DecklistType = {}

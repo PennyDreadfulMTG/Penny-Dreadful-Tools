@@ -50,9 +50,27 @@ pull_request_rules:
       merge:
         method: rebase
       delete_head_branch: {}
-  - name: automatic merge for master when CI passes and approved + automatic merge
-      for master when CI passes and trusted comitter
+  - name: automatic merge for master when CI passes and approved + automatic merge for master
+      when CI passes and trusted comitter
     conditions:
-        - author=@PennyDreadfulMTG/automerge
+      - author=@PennyDreadfulMTG/automerge
     actions:
       queue:
+priority_rules:
+  - name: priority for queue `duplicated default from automatic merge for master when CI passes
+      and approved`
+    conditions:
+      - "#approved-reviews-by>=1"
+      - "#review-requested=0"
+      - "#changes-requested-reviews-by=0"
+      - "#commented-reviews-by=0"
+      - status-success=mypy
+      - status-success=lint
+      - status-success=test
+      - status-success=jslint
+    priority: 2500
+  - name: priority for queue `trusted`
+    conditions:
+      - author=@PennyDreadfulMTG/automerge
+      - base=master
+    priority: 2250

@@ -1,7 +1,13 @@
 <section>
     <h2>Decks</h2>
     {{> livedecktable}}
-    {{#sponsor_name}}<p>Sponsored by {{sponsor_name}}</p>{{/sponsor_name}}
+    {{#hide_cardhoarder}}
+        <p>Sponsored by {{Magic Online}}</p>
+    {{/hide_cardhoarder}}
+    {{^hide_cardhoarder}}
+        {{#sponsor_name}}<p>Sponsored by {{sponsor_name}}</p>{{/sponsor_name}}
+    {{/hide_cardhoarder}}
+
 </section>
 {{#has_leaderboard}}
     <section>

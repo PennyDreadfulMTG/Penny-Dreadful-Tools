@@ -2801,7 +2801,6 @@
                 "sha256:18fd474d4a82a5f83dac888df697af65afa82dec7323d09c3e37d1f14288da54",
                 "sha256:3e386e96793c8702ae83d17b853fb93d3e09ef82ec62722e61da5cd22376dcd8"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==78.1.0"
         },
@@ -2951,12 +2950,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:b2be66f550f95f3cad2a7d46177b273c7e9c80df7d257fa57addbbcfc8126a9e",
-                "sha256:bf454b2a49b8cfd7ebcf5844d4dd5fe4c8666782df1e3663c5866fd51a47460e"
+                "sha256:31e62950c38b8cc1c5114b077504e36426860a064287cac11b9666ab3a483234",
+                "sha256:ea47eab891afb506f470eee581dcde44d64dc99796665da794da6f83f50f6776"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==76.0.0.20250313"
+            "version": "==78.1.0.20250329"
         },
         "typing-extensions": {
             "hashes": [

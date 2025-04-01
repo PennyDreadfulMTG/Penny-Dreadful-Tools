@@ -18,7 +18,7 @@ test = "python dev.py test"
 init-cards = "python run.py init-cards"
 
 [dev-packages]
-flake8 = "==7.1.2"
+flake8 = "==7.2.0"
 flake8-quotes = "*"
 flake8-bugbear = "*"
 flake8-commas = "*"

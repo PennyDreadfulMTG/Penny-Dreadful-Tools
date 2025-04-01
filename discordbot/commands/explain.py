@@ -184,7 +184,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     'supplemental': (
         f"""
         A supplemental rotation takes place a week after the release of a Standard-legal set on Magic Online for which we are not rotating.
-        Prices are checked every hour for a week from the set release. Anything {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the rest of the season.
+        Prices are checked every hour for a week from the set release. Any card from the new set that is {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the rest of the season.
         """,
         {},
     ),

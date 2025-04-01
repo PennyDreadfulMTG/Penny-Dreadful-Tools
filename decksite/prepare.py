@@ -188,10 +188,10 @@ def set_stars_and_top8(d: Deck) -> None:
     elif d.finish == 5 and d.competition_top_n >= 5:
         d.top8_safe = '<span title="Losing Quarterfinalist">⑧</span>'
         d.stars_safe = '★'
-    elif d.finish and d.finish <= 16 and ('Penny Dreadful 500' in d.competition_name or 'Kick Off' in d.competition_name):
+    elif d.finish and d.finish <= 16 and has_top_16(d.competition_name):
         d.top8_safe = '<span title="Top 16">⑯</span>'
         d.stars_safe = '★'
-    elif d.finish and d.finish <= 32 and 'Kick Off' in d.competition_name:
+    elif d.finish and d.finish <= 32 and has_top_32(d.competition_name):
         d.top8_safe = '<span title="Top 32">Ⓣ</span>'
         d.stars_safe = '★'
     else:
@@ -208,6 +208,12 @@ def set_stars_and_top8(d: Deck) -> None:
 
     if len(d.stars_safe) > 0:
         d.stars_safe = f'<span class="stars" title="Success Rating">{d.stars_safe}</span>'
+
+def has_top_16(competition_name: str) -> bool:
+    return 'Penny Dreadful 500' in competition_name or 'Kick Off' in competition_name or 'Super Saturday' in competition_name
+
+def has_top_32(competition_name: str) -> bool:
+    return 'Kick Off' in competition_name
 
 def colors_html(colors: list[str], colored_symbols: list[str]) -> str:
     total = len(colored_symbols)

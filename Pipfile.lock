@@ -3902,12 +3902,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:e482df1d439375f4b7c1f2540b1b8584aea82850164a296203ead4a7024fe14f",
-                "sha256:eeb240f9faec63ddd0498d6c0b6abd0496b154a66f960c004d4d733cf31bb4bd"
+                "sha256:0bbb20fc34a18163afe7cac70b85864bd6937e6d73413c5b8f424def28760ae8",
+                "sha256:82076f86e6e672a95adbf8b52625b1b3c72a8b9a893180344c1a02a6daabead6"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.17.0.20250304"
+            "version": "==1.17.0.20250403"
         },
         "types-toml": {
             "hashes": [

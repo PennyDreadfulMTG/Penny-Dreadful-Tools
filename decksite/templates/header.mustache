@@ -3,7 +3,9 @@
     <head>
         <meta charset="utf-8">
         <title>{{title}}</title>
-        <link rel="preload" href="{{font_url}}" as="font" type="font/woff2" crossorigin="anonymous">
+        {{#font_urls}}
+            <link rel="preload" href="{{.}}" as="font" type="font/woff2" crossorigin="anonymous">
+        {{/font_urls}}
         <link rel="stylesheet" type="text/css" href="{{css_url}}">
         <link rel="stylesheet" type="text/css" href="/banner/banner.css">
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/keyrune@latest/css/keyrune.css">

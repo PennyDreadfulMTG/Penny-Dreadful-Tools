@@ -2513,6 +2513,7 @@ Season Symbols
 }
 
 .ss-num {
+    color: var(--text);
     font-family: var(--main-text-font-family);
     font-size: var(--table-font-size);
 }

@@ -4,12 +4,10 @@ import sys
 import textwrap
 import traceback
 
-import traceback_with_variables
 from flask import request, session
 from github import Github, Issue, PullRequest
 from github.GithubException import GithubException
 from requests.exceptions import RequestException
-from traceback_with_variables.core import Format
 
 from shared import configuration, dtutil
 
@@ -28,7 +26,7 @@ def create_issue(content: str,
                  author: str,
                  location: str = 'Discord',
                  repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                 exception: BaseException | None = None) -> Issue.Issue | None:
+                 exception: Exception | None = None) -> Issue.Issue | None:
     labels: list[str] = []
     issue_hash = None
     if content is None or content == '':
@@ -45,20 +43,20 @@ def create_issue(content: str,
         body += exception.__class__.__name__ + '\n'
         body += str(exception) + '\n'
         body += '</summary>\n\n'
-        fmt = Format(custom_var_printers=[
-            ('headers', '...redacted...'),
-        ])
-        pretty = traceback_with_variables.format_exc(exception, fmt=fmt)
+        pretty = format_exception(exception)
+        if request and request.headers:
+            for _, v in request.headers.items():
+                pretty = pretty.replace(str(v), '...header value redacted...')
         pretty += '\n' + title
-        body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
-        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
+        body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + pretty + '\n\n```\n\n</details>\n\n'
+        issue_hash = hashlib.sha1(pretty.encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'
     elif repo_name == 'PennyDreadfulMTG/perf-reports':
         stack = traceback.extract_stack()[:-6]
-        pretty = traceback.format_list(stack)
+        pretty_list = traceback.format_list(stack)
         if request:
-            pretty.append(request.full_path)
-        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
+            pretty_list.append(request.full_path)
+        issue_hash = hashlib.sha1(''.join(pretty_list).encode()).hexdigest()
         body += f'Location Hash: {issue_hash}\n'
 
     if request:
@@ -156,6 +154,7 @@ def get_pull_requests(start_date: datetime.datetime,
     except GithubException as e:
         print('Gihub pulls error (github)', e)
     return pulls
+
 
 def format_exception(e: Exception) -> str:
     return ''.join(traceback.format_exception(type(e), e, e.__traceback__))

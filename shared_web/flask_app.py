@@ -61,7 +61,7 @@ class PDFlask(Flask):
         self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
         self.register_blueprint(self.api_root)
 
-    def not_found(self, e: Exception) -> Response | tuple[str, int]:
+    def not_found(self, e: exceptions.NotFound) -> Response | tuple[str, int]:
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
             return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
         referrer = ', referrer: ' + request.referrer if request.referrer else ''
@@ -72,11 +72,12 @@ class PDFlask(Flask):
         view = NotFound(e)
         return view.page(), 404
 
-    def internal_server_error(self, e: Exception) -> tuple[str, int] | Response:
-        log_exception(request, e)
+    def internal_server_error(self, e: exceptions.InternalServerError) -> tuple[str, int] | Response:
+        exc = e.original_exception if hasattr(e, 'original_exception') else e
+        log_exception(request, exc)
         path = request.path
         try:
-            repo.create_issue(f'500 error at {path}\n {e}', session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
+            repo.create_issue(f'500 error at {path}\n {exc}', session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=exc)
         except GithubException:
             logger.error('Github error', e)
         if request.path.startswith('/api/'):

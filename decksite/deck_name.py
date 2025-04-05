@@ -83,6 +83,7 @@ def normalize(d: Deck) -> str:
         name = titlecase.titlecase(name)
         if whitelisted(name):
             return name.replace('#General', '#general')
+        name = remove_emoji_colors(name)
         name = replace_space_alternatives(name)
         name = remove_pd(name, d.season_id)
         name = remove_brackets(name)
@@ -119,6 +120,13 @@ def file_name(d: Deck) -> str:
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub(':', '', anyascii(safe_name), flags=re.IGNORECASE)
     return safe_name.strip('-')
+
+def remove_emoji_colors(name: str) -> str:
+    # Remove skin tone modifiers
+    name = re.sub(r'[\U0001F3FB-\U0001F3FF]', '', name)
+    # Remove force color variant selector (U+FE0F)
+    return name.replace('\ufe0f', '')
+
 
 def replace_space_alternatives(name: str) -> str:
     name = name.replace('_', ' ')

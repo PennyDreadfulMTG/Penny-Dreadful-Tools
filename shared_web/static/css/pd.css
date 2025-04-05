@@ -174,54 +174,11 @@ footer a:hover {
 }
 
 /* Fonts */
+
 :root {
-    --heading-font-family: NotoEmoji, NotoSansLiving, NotoSansJP, NotoSansSC, NotoSansHistorical, NotoSansSymbols, NotoSansSymbols2, SegoeUISymbol, Symbola, heading-caps, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --main-text-font-family: NotoEmoji, NotoSansLiving, NotoSansJP, NotoSansSC, NotoSansHistorical, NotoSansSymbols, NotoSansSymbols2, SegoeUISymbol, Symbola, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-@font-face {
-    font-family: 'NotoEmoji';
-    src: url('/static/fonts/NotoEmoji.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'NotoSansLiving';
-    src: url('/static/fonts/NotoSansLiving.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'NotoSansJP';
-    src: url('/static/fonts/NotoSansJP.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'NotoSansSC';
-    src: url('/static/fonts/NotoSansSC.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'NotoSansHistorical';
-    src: url('/static/fonts/NotoSansHistorical.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'NotoSansSymbols';
-    src: url('/static/fonts/NotoSansSymbols.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'NotoSansSymbols2';
-    src: url('/static/fonts/NotoSansSymbols2.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'SegoeUISymbol';
-    src: url('/static/fonts/SegoeUISymbol.woff2') format('woff2');
-}
-
-@font-face {
-    font-family: 'Symbola';
-    src: url('/static/fonts/Symbola.woff2') format('woff2');
+    --heading-font-family: symbols, heading-caps, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    /* If you make changes here also change the Chart.js fontFamily in pd.js */
+    --main-text-font-family: symbols, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @font-face {

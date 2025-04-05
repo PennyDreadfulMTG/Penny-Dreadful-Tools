@@ -44,9 +44,6 @@ def create_issue(content: str,
         body += str(exception) + '\n'
         body += '</summary>\n\n'
         pretty = format_exception(exception)
-        if request and request.headers:
-            for _, v in request.headers.items():
-                pretty = pretty.replace(str(v), '...header value redacted...')
         pretty += '\n' + title
         body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + pretty + '\n\n```\n\n</details>\n\n'
         issue_hash = hashlib.sha1(pretty.encode()).hexdigest()

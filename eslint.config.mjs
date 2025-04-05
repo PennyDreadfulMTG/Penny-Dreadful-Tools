@@ -5,6 +5,13 @@ import react from 'eslint-plugin-react';
 
 export default [
     js.configs.recommended,
+    {
+        settings: {
+            react: {
+                version: "detect",
+            },
+        },
+    },
     react.configs.flat.recommended,
     {
 
@@ -12,12 +19,6 @@ export default [
 
         plugins: {
             react,
-        },
-
-        settings: {
-            react: {
-                version: "detect",
-            },
         },
 
         languageOptions: {

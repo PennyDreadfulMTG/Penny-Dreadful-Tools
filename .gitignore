@@ -29,7 +29,7 @@ decksite/images/*-cmc.png
 shared_web/static/dist/
 
 # Font subsetting output
-shared_web/static/fonts/symbols.woff2
+shared_web/static/fonts/*.woff2
 
 # Dev db output
 shared_web/static/dev-db.sql.gz

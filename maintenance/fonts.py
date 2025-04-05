@@ -5,12 +5,12 @@ import sys
 import tempfile
 import unicodedata
 
+import grapheme
 from fontTools import subset
 from fontTools.merge import Merger, Options
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.scaleUpem import scale_upem
 from fontTools.ttLib.woff2 import compress
-from regex import regex
 
 from decksite.database import db
 from magic import oracle
@@ -60,6 +60,10 @@ PREFER = {
 GraphemeToFontMapping = dict[str, list[str]]
 FontInfo = list[tuple[str, str, set[str], set[str], str]]
 
+def get_font_name(path: str) -> str:
+    return os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
+
+
 def ad_hoc(*args: str) -> None:
     show_mode = 'show' in args
     options_mode = 'options' in args
@@ -84,7 +88,7 @@ def ad_hoc(*args: str) -> None:
     metrics: dict[str, int] = {}
     used_fonts = []
     for path in get_font_paths():
-        name = os.path.basename(path).replace('-Regular', '').replace('.ttf', '').replace(' ', '')
+        name = get_font_name(path)
         font = TTFont(path)
         if not metrics:
             metrics = get_vertical_metrics(font)
@@ -103,21 +107,19 @@ def ad_hoc(*args: str) -> None:
             # Force them to have the same vertical metrics as main-text to prevent wild line height and other issues.
             adjusted = adjust_vertical_metrics(subsetted, metrics)
             used_fonts.append((name, adjusted))
-            encoded = encode(adjusted)
+            woff2_path = os.path.join('shared_web', 'static', 'fonts', f'{name}.woff2')
+            _, ttf_path = tempfile.mkstemp(suffix='.ttf')
+            adjusted.save(ttf_path)
+            compress(ttf_path, woff2_path)
+            with open(woff2_path, 'rb') as f:
+                encoded = encode(TTFont(f))
             css = font_face(name, encoded)
         if options_mode or needed_found_graphemes:
             font_info.append((name, path, found_graphemes, needed_found_graphemes, css))
         if not options_mode and not remaining_graphemes:
             break
-    merged = merge_fonts([f[1] for f in used_fonts])
-    _, ttf_path = tempfile.mkstemp(suffix='.ttf')
-    merged.save(ttf_path)
-    woff2_path = os.path.join('shared_web', 'static', 'fonts', 'symbols.woff2')
-    compress(ttf_path, woff2_path)
     if show_mode:
-        with open(woff2_path, 'rb') as f:
-            encoded = encode(TTFont(f))
-        print_css(font_info, deck_names, encoded)
+        print_css(font_info, deck_names)
     elif options_mode:
         print_options(graphemes_to_fonts, font_info)
     print_report(font_info, remaining_graphemes)
@@ -125,8 +127,8 @@ def ad_hoc(*args: str) -> None:
 def card_name_graphemes() -> tuple[set[str], set[str]]:
     seen, names = set(), set()
     for name in oracle.cards_by_name().keys():
-        for grapheme in regex.findall(r'\X', name):
-            seen.add(grapheme)
+        for g in grapheme.graphemes(name):
+            seen.add(g)
             names.add(name)
     return seen, names
 
@@ -136,10 +138,10 @@ def deck_name_graphemes() -> tuple[set[str], set[str]]:
     seen, names = set(), set()
     for row in rs:
         name = row['normalized_name']
-        for grapheme in regex.findall(r'\X', name):
-            if grapheme not in seen:
-                print(f"{grapheme} {named(grapheme)} ({points(grapheme)}) from {row['deck_id']} ({name})", file=sys.stderr)
-                seen.add(grapheme)
+        for g in grapheme.graphemes(name):
+            if g not in seen:
+                print(f'{g} {named(g)} ({points(g)}) from {row["deck_id"]} ({name})', file=sys.stderr)
+                seen.add(g)
                 names.add(name)
     return seen, names
 
@@ -164,15 +166,15 @@ def get_font_paths() -> list[str]:
 def find_graphemes(font: TTFont, name: str, options_mode: bool, to_find: set[str]) -> set[str]:
     found = set()
     for table in font['cmap'].tables:
-        for grapheme in to_find:
-            has_preferred = PREFER.get(grapheme)
-            if not options_mode and has_preferred and PREFER.get(grapheme) != name:
+        for g in to_find:
+            has_preferred = PREFER.get(g)
+            if not options_mode and has_preferred and PREFER.get(g) != name:
                 continue
-            for c in grapheme:
+            for c in g:
                 if ord(c) not in table.cmap.keys():
                     break
             else:
-                found.add(grapheme)
+                found.add(g)
     return found
 
 def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
@@ -186,10 +188,10 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
         args = [
             tmp_in,
             f'--text={text}',
-            '--no-layout-closure',
             f'--output-file={tmp_out}',
             '--flavor=woff2',
         ]
+
         subset.main(args)
         subsetted_font = TTFont(tmp_out)
         return subsetted_font
@@ -277,11 +279,15 @@ def font_face(name: str, encoded: str) -> str:
 }}
     """
 
-def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: str) -> None:
-    ff = font_face('symbols', encoded_merged_font)
+def print_css(font_info: FontInfo, deck_names: set[str]) -> None:
+    css = '\n'.join(css for _, _, _, _, css in font_info if css)
     sample_graphemes = [(name, ''.join(f'<span title="{points(grapheme)}">{html.escape(grapheme)}</span>' for grapheme in sorted(used))) for name, _, _, used, _ in font_info]
     samples = ''.join(f'<p>{html.escape(name)} {sample}</p>' for name, sample in sample_graphemes)
     deck_name_samples = '\n'.join(f'<p>{html.escape(name)}</p>' for name in deck_names)
+
+    font_names = [get_font_name(path) for path in get_font_paths()]
+    font_stack = ', '.join(font_names + ['fantasy'])
+
     print(f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -290,7 +296,7 @@ def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: st
                 <title>Penny Dreadful Font Test</title>
                 <style>
                     * {{
-                        font-family: symbols, main-text, fantasy; /* fantasy as base font so we can use js to detect misses, see below. */
+                        font-family: {font_stack}; /* fantasy as base font so we can use js to detect misses, see below. */
                         font-size: 20px;
                     }}
 
@@ -299,12 +305,7 @@ def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: st
                         src: url('file://{os.path.abspath(get_font_paths()[0])}');
                     }}
 
-                    /* BEGIN COPY AND PASTE OUTPUT FOR pd.css */
-
-{ff}
-
-                    /* END COPY AND PASTE OUTPUT FOR pd.css */
-
+                    {css}
                 </style>
             </head>
             <body>
@@ -364,7 +365,7 @@ def print_options(grapheme_to_fonts: GraphemeToFontMapping, font_info: FontInfo)
         print(f"""
             @font-face {{
                 font-family: '{name}';
-                src: url('file://{path}') format('truetype');
+                src: url('file://{os.path.abspath(path)}') format('truetype');
             }}
         """)
     print("""
@@ -372,12 +373,12 @@ def print_options(grapheme_to_fonts: GraphemeToFontMapping, font_info: FontInfo)
             </head>
             <body>
     """)
-    for grapheme in sorted(grapheme_to_fonts):
-        if 'main-text' in grapheme_to_fonts[grapheme]:
+    for g in sorted(grapheme_to_fonts):
+        if 'main-text' in grapheme_to_fonts[g]:
             continue
-        print(f'<p><span style="width: 40em; display: inline-block; text-align: right;">{html.escape(named(grapheme))} ({html.escape(points(grapheme))})</span> ')
-        for name in grapheme_to_fonts[grapheme]:
-            print(f'<span title="{html.escape(name)}" style="font-family: {html.escape(name)}">{html.escape(grapheme)}</span>')
+        print(f'<p><span style="width: 40em; display: inline-block; text-align: right;">{html.escape(named(g))} ({html.escape(points(g))})</span> ')
+        for name in grapheme_to_fonts[g]:
+            print(f'<span title="{html.escape(name)}" style="font-family: {html.escape(name)}">{html.escape(g)}</span>')
         print('</p>')
     print("""
             </body>

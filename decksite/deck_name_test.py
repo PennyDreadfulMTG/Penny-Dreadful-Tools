@@ -308,11 +308,18 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Teaching Mystical Erections', 'Teaching Mystical', ['U', 'B'], 'Dimir Control', 32),
     ('Kiki-Titi', 'Kiki-Titi', ['U', 'R'], 'Izzet Twin', 32),
     ('Greasefag', 'Orzhov Greasefang', ['W', 'B'], 'Greasefang', 33),
-    ('🏴‍☠️', '🏴‍☠️', ['U', 'R'], 'Pirates', 33),
+    ('🏴‍☠️', '🏴\u200d☠', ['U', 'R'], 'Pirates', 33),
     ('S36 Human v1 1', 'Human v1.1', ['W'], 'Mono White Humans', 36),
     ('Blue', 'Mono Blue Tempo', ['U'], 'Mono Blue Tempo', 37),
     ('U BLUE', 'Mono Blue Tempo', ['U'], 'Mono Blue Tempo', 37),
     ('Blue-Red Uber-Control', 'Izzet Uber-Control', ['U', 'R'], 'Izzet Control', 37),
+    ('Deck with 👍\ufe0f', 'Deck With 👍', None, None, 1),
+    ('Deck with 👍', 'Deck With 👍', None, None, 1),
+    ('Deck with 👍🏽', 'Deck With 👍', None, None, 1),
+    ('Deck with 👍🏽\ufe0f', 'Deck With 👍', None, None, 1),
+    ('🏴\u200d☠️', '🏴\u200d☠', ['U', 'R'], 'Pirates', 33),  # Pirate flag without force color
+    ('👨\u200d👩\u200d👧\u200d👦', '👨\u200d👩\u200d👧\u200d👦', None, None, 1),  # Family
+    ('👨\ufe0f\u200d💻\ufe0f', '👨\u200d💻', None, None, 1),  # Person at computer
 ]
 
 def test_replace_space_alternatives() -> None:

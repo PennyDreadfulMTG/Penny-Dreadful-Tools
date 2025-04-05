@@ -46,17 +46,12 @@ class BaseView:
     def git_branch(self) -> str:
         return current_app.config['branch']
 
-    def font_urls(self) -> list[str]:
-        font_names = ['NotoEmoji', 'NotoSansLiving', 'NotoSansJP', 'NotoSansSC', 'NotoSansHistorical', 'NotoSansSymbols', 'NotoSansSymbols2', 'SegoeUISymbol', 'Symbola']
-        urls = []
-        for name in font_names:
-            try:
-                path = f'shared_web/static/fonts/{name}.woff2'
-                mtime = int(os.path.getmtime(path))
-            except OSError:
-                mtime = 0
-            urls.append(url_for('static', filename=f'fonts/{name}.woff2', v=mtime))
-        return urls
+    def font_url(self) -> str:
+        try:
+            mtime = int(os.path.getmtime('shared_web/static/fonts/symbols.woff2'))
+        except OSError:
+            mtime = 0
+        return url_for('static', filename='fonts/symbols.woff2', v=mtime)
 
     def css_url(self) -> str:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))

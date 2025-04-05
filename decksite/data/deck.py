@@ -15,7 +15,7 @@ from shared import dtutil, guarantee, logger
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, LockNotAcquiredException
+from shared.pd_exception import DatabaseException, InvalidDataException, LockNotAcquiredException
 
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
@@ -374,8 +374,15 @@ def add_deck(params: RawDeckDescription) -> Deck:
         get_deckhash(cards),
     ]
     db().begin('add_deck')
-    deck_id = db().insert(sql, values)
-    add_cards(deck_id, cards)
+    try:
+        deck_id = db().insert(sql, values)
+        add_cards(deck_id, cards)
+    except DatabaseException as e:
+        if 'Duplicate entry' not in str(e):
+            raise
+        deck_id = get_deck_id(params['source'], params['identifier'])
+        if deck_id is None:
+            raise
     d = load_deck(deck_id)
     prime_cache(d)
     db().commit('add_deck')

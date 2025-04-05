@@ -48,10 +48,10 @@ def do_lint() -> None:
     """
     Invoke linter with our preferred options
     """
-    print('>>>> Running flake8')
+    print('>>>> Running lint')
     pipenv = local['pipenv']
     try:
-        pipenv['run', 'python', '-m', 'flake8', '--exclude=node_modules,.venv'] & FG
+        pipenv['run', 'python', '-m', 'ruff', 'check', '.'] & FG
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 

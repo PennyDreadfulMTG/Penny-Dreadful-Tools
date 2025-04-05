@@ -36,7 +36,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip pipenv wheel pydantic
         if [ -f Pipfile ]; then pipenv sync --dev; fi
-    - name: Run flake8
+    - name: Run lint
       run: pipenv run python dev.py lint
 
   test:

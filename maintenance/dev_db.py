@@ -26,4 +26,4 @@ def run() -> None:
             f.write(data)
     except subprocess.CalledProcessError:
         # Avoid logging the password to perf-reports by raising a different exception. See #6930.
-        raise OperationalException('Failed to backup dev db')  # noqa: R100
+        raise OperationalException('Failed to backup dev db')

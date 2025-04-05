@@ -18,16 +18,15 @@ class Prizes(View):
             prizes: dict[str, int] = {}
             if week.end_date > dtutil.now(dtutil.WOTC_TZ):
                 pass
-            for c in week.get('competitions', []):
-                # These are paid in Play Points codes, not Cardhoarder credit, just skip for now.
-                if tournaments.is_super_saturday(c):
-                    continue
+            # Super Saturdays are paid in Play Points codes, not Cardhoarder credit, skip them for now.
+            competitions = [c for c in week.get('competitions', []) if not tournaments.is_super_saturday(c)]
+            for c in competitions:
                 for d in c.decks:
                     prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(c, d)
             subject = f'Penny Dreadful Prizes for Week Ending {week.end_date:%b} {week.end_date.day}'
-            body = '\n'.join([c.name for c in week.get('competitions', [])]) + '\n\n'
+            body = '\n'.join([c.name for c in competitions]) + '\n\n'
             body += '\n'.join([f'{k} {prizes[k]}' for k in sorted(prizes) if prizes[k] > 0])
-            self.weeks.append(Container({'subject': subject, 'body': body, 'n': len(week.get('competitions', []))}))
+            self.weeks.append(Container({'subject': subject, 'body': body, 'n': len(competitions)}))
 
     def page_title(self) -> str:
         return 'Prizes'

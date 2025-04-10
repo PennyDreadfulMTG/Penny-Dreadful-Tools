@@ -11,11 +11,11 @@ from github.GithubException import GithubException
 from werkzeug import exceptions, wrappers
 
 from shared import configuration, logger, repo, sentry
-from shared.pd_exception import DoesNotExistException
+from shared.pd_exception import BadRequestException, DoesNotExistException
 
 from . import api, localization, oauth
 from .api import generate_error, return_json
-from .views import InternalServerError, NotFound, Unauthorized
+from .views import BadRequest, InternalServerError, NotFound, Unauthorized
 
 sentry.init()
 
@@ -24,6 +24,8 @@ class PDFlask(Flask):
         shared_web_path = os.path.abspath(os.path.dirname(__file__))
         static_folder = os.path.join(shared_web_path, 'static')
         super().__init__(import_name, static_folder=static_folder)
+        super().register_error_handler(BadRequestException, self.bad_request)
+        super().register_error_handler(exceptions.BadRequest, self.bad_request)
         super().register_error_handler(DoesNotExistException, self.not_found)
         super().register_error_handler(exceptions.NotFound, self.not_found)
         super().register_error_handler(exceptions.InternalServerError, self.internal_server_error)
@@ -61,16 +63,26 @@ class PDFlask(Flask):
         self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
         self.register_blueprint(self.api_root)
 
+    def bad_request(self, e: BadRequestException) -> Response | tuple[str, int]:
+        logger.warning('400 Bad Request ' + self.client_error_log_message(request))
+        if request.path.startswith('/api/'):
+            return return_json(generate_error('BADREQUEST', 'Bad Request'), status=400)
+        view = BadRequest(e)
+        return view.page(), 400
+
     def not_found(self, e: exceptions.NotFound) -> Response | tuple[str, int]:
+        logger.warning('404 Not Found ' + self.client_error_log_message(request))
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
             return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
-        referrer = ', referrer: ' + request.referrer if request.referrer else ''
-        remote_addr = ', remote_addr: ' + request.environ.get('REMOTE_ADDR', '') if request.environ.get('REMOTE_ADDR') else ''
-        logger.warning('404 Not Found ' + request.path + referrer + remote_addr)
         if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)
         view = NotFound(e)
         return view.page(), 404
+
+    def client_error_log_message(self, request: Request) -> str:
+        referrer = ', referrer: ' + request.referrer if request.referrer else ''
+        remote_addr = ', remote_addr: ' + request.environ.get('REMOTE_ADDR', '') if request.environ.get('REMOTE_ADDR') else ''
+        return request.path + referrer + remote_addr
 
     def internal_server_error(self, e: exceptions.InternalServerError) -> tuple[str, int] | Response:
         exc = e.original_exception if hasattr(e, 'original_exception') else e

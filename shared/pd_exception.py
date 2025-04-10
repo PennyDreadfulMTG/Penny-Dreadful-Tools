@@ -45,3 +45,6 @@ class NotConfiguredException(PDException):
 
 class TestFailedException(PDException):
     pass
+
+class BadRequestException(PDException):
+    pass

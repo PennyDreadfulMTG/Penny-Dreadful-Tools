@@ -7,7 +7,7 @@ from decksite.data import deck
 from magic import decklist, legality, seasons
 from magic.decklist import DecklistType
 from shared.container import Container
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import BadRequestException, InvalidDataException
 
 
 class Form(Container):
@@ -18,7 +18,10 @@ class Form(Container):
         self.warnings: dict[str, str] = {}
 
     def validate(self) -> bool:
-        self.do_validation()
+        try:
+            self.do_validation()
+        except AttributeError as e:
+            raise BadRequestException('Missing field: ' + str(e)) from e
         return len(self.errors) == 0
 
 # A form that involves consuming a decklist.

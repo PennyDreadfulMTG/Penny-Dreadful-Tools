@@ -22,12 +22,16 @@ def interesting(playability: dict[str, float], c: Card, speculation: bool = True
         return 'moderately-played'
     return None
 
-def in_rotation() -> bool:
+def in_rotation(full_only: bool = False) -> bool:
     if configuration.always_show_rotation.value:
         return True
     until_rotation = seasons.next_rotation() - dtutil.now()
+    if until_rotation < datetime.timedelta(7):
+        return True
+    if full_only:
+        return False
     until_supplemental_rotation = seasons.next_supplemental() - dtutil.now()
-    return until_rotation < datetime.timedelta(7) or until_supplemental_rotation < datetime.timedelta(7)
+    return until_supplemental_rotation < datetime.timedelta(7)
 
 def files() -> list[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))

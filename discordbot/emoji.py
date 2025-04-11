@@ -61,7 +61,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
             s += ':white_check_mark:'
         else:
             s += ':no_entry_sign:'
-        if rotation.in_rotation() and not no_rotation_hype:
+        if rotation.in_rotation(full_only=True) and not no_rotation_hype:
             rot_emoji = get_future_legality(c)
             s += rot_emoji
         if not legal and verbose and not rot_emoji:

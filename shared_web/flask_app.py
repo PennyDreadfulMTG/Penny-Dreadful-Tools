@@ -85,7 +85,7 @@ class PDFlask(Flask):
         return request.path + referrer + remote_addr
 
     def internal_server_error(self, e: exceptions.InternalServerError) -> tuple[str, int] | Response:
-        exc = e.original_exception if hasattr(e, 'original_exception') else e
+        exc = e.original_exception if hasattr(e, 'original_exception') and e.original_exception is not None else e
         log_exception(request, exc)
         path = request.path
         try:

@@ -366,19 +366,26 @@ header {
     display: flex;
 }
 
+@media only screen and (max-width: 640px) {
+  header {
+    flex-wrap: wrap;
+  }
+}
+
 header h1, header .search {
     padding: 3rem 0 1rem 0;
 }
 
 @media only screen and (max-width: 900px) {
     header h1, header .search, header .hamburger {
-        padding: 1rem 0;
+        padding: 0 0 1rem 0;
     }
 }
 
-header h1 {
-    flex-grow: 0;
-    flex-shrink: 0;
+header .header-row {
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow-x: hidden;
 }
 
 header .search {
@@ -652,6 +659,7 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
    See: https://webdesign.tutsplus.com/articles/the-truth-about-multiple-h1-tags-in-the-html5-era--webdesign-16824 */
 header h1 {
     border: 0;
+    display: inline-block;
     font-family: var(--heading-font-family);
     font-variant-numeric: oldstyle-nums;
     font-weight: normal;
@@ -851,7 +859,7 @@ When you are in a middle width the main menu is always shown but the submenu is 
 
 /* Once you reach a certain width we hide the hamburger and instead show the main menu strip. */
 @media only screen and (min-width: 901px) {
-    .hamburger {
+    header .hamburger {
         display: none;
     }
     nav, .menu {
@@ -1016,9 +1024,10 @@ html.dark-mode .icon.dark-mode-toggle::before {
 }
 
 .hamburger {
-    cursor: pointer;
-    font-size: var(--large-font-size); /* Matching header h1 */
-    margin-right: 1em;
+  cursor: pointer;
+  display: inline-block;
+  font-size: var(--large-font-size); /* Matching header h1 */
+  margin-right: 1em;
 }
 
 /*
@@ -2233,17 +2242,13 @@ Search
 
 */
 
-.search {
+@media only screen and (min-width: 640px) {
+  .search {
     /* Mirror h1 margins and padding as this floats alongside the logo. */
     margin-bottom: 0;
     margin-left: 3rem;
     text-align: right; /* Make the search box appear on the right. */
-}
-
-@media only screen and (max-width: 640px) {
-    .search {
-        display: none;
-    }
+  }
 }
 
 /* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */

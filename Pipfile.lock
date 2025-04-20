@@ -138,10 +138,11 @@
         },
         "aniso8601": {
             "hashes": [
-                "sha256:3c943422efaa0229ebd2b0d7d223effb5e7c89e24d2267ebe76c61a2d8e290cb",
-                "sha256:ff1d0fc2346688c62c0151547136ac30e322896ed8af316ef7602c47da9426cf"
+                "sha256:25488f8663dd1528ae1f54f94ac1ea51ae25b4d531539b8bc707fed184d16845",
+                "sha256:eb19717fd4e0db6de1aab06f12450ab92144246b257423fe020af5748c0cb89e"
             ],
-            "version": "==10.0.0"
+            "index": "pypi",
+            "version": "==10.0.1"
         },
         "annotated-types": {
             "hashes": [

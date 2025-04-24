@@ -2812,12 +2812,12 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:759e019c41551a21519a95e6cef6d91fb4af1054761923dadaee2e6eca9c02c7",
-                "sha256:e99390e3f217d13ddcbaeaed08789f1ca614d663b345b9da42e35ad6b60d696a"
+                "sha256:90f4f883f9eff294aff59af3d58c2d1b64e3927b28d5ada2b9b41f5aeda47daf",
+                "sha256:c58935bfff8af6a0856d37e8adebdbc7b3281c2b632ec823ef03cd108d216ff0"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==2.26.1"
+            "version": "==2.27.0"
         },
         "setuptools": {
             "hashes": [
@@ -3029,7 +3029,6 @@
                 "sha256:414bc6535b787febd7567804cc015fee39daab8ad86268f1310a9250697de466",
                 "sha256:4e16665048960a0900c702d4a66415956a584919c03361cac9f1df5c5dd7e813"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==2.4.0"
         },

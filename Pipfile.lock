@@ -2974,12 +2974,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:55238c0b18cdc08dd26c32d6d8385ca1ea59b93dde760dae96d15868b7911990",
-                "sha256:9c9f699a5914d2ed97f02ee749fb2c7bc2898f8dad03b5dd74b74d4f80e29972"
+                "sha256:9bbcdcea88d1fda4b0f1371488333f606c78a8b10154a42530ed926ecf3242cb",
+                "sha256:a4de44f1110f531e7f9453d72999437a1caa6052609e2c7c859dd6613ab0d593"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==79.0.0.20250422"
+            "version": "==80.0.0.20250429"
         },
         "typing-extensions": {
             "hashes": [

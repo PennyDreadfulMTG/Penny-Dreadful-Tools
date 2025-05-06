@@ -2830,7 +2830,6 @@
                 "sha256:31e2c58dbb67c99c289f51c16d899afedae292b978f8051efaf6262d8212f927",
                 "sha256:ea8e00d7992054c4c592aeb892f6ad51fe1b4d90cc6947cc45c45717c40ec537"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==80.3.1"
         },

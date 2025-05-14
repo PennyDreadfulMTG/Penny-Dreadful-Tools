@@ -2834,12 +2834,12 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:31e2c58dbb67c99c289f51c16d899afedae292b978f8051efaf6262d8212f927",
-                "sha256:ea8e00d7992054c4c592aeb892f6ad51fe1b4d90cc6947cc45c45717c40ec537"
+                "sha256:d3b6ba519cc2b1e0b14195ef1a9560f675b1f873dc0d42969e139b2b58e763d6",
+                "sha256:e8fb83ffb2011d786ab2a38d63c33c261cc5862522a6b57ac8f7e7ffeff2336b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==80.3.1"
+            "version": "==80.7.0"
         },
         "sgmllib3k": {
             "hashes": [

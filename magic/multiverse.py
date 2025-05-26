@@ -294,7 +294,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             if p.get('flavor_name'):
                 flavor_names[p['flavor_name']] = card_id
         except Exception as e:
-            print(f'Exception `{e}` while importing card: {repr(p)}')
+            print(f'Exception `{e} ({type(e)})` while importing card: {repr(p)}')
             raise InvalidDataException() from e
 
     for p in meld_result_printings:

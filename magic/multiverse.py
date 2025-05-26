@@ -20,7 +20,7 @@ FORMAT_IDS: dict[str, int] = {}
 
 # This is only a fallback
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
-               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
+               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia', 'Ragnarok, Divine Deliverance']
 
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))
@@ -294,7 +294,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             if p.get('flavor_name'):
                 flavor_names[p['flavor_name']] = card_id
         except Exception as e:
-            print(f'Exception `{e}` while importing card: {repr(p)}')
+            print(f'Exception `{e} ({type(e)})` while importing card: {repr(p)}')
             raise InvalidDataException() from e
 
     for p in meld_result_printings:

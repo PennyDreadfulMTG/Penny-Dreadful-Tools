@@ -119,7 +119,8 @@ def kick_off_prizes() -> Prizes:
     return display_prizes(prizes_by_finish(Competition({'name': 'Kick Off'})))
 
 def super_saturday_date() -> datetime.datetime:
-    return dtutil.GATHERLING_TZ.localize(datetime.datetime(2025, 3, 29, 13, 30))
+    #return dtutil.GATHERLING_TZ.localize(datetime.datetime(2025, 3, 29, 13, 30))
+    return dtutil.GATHERLING_TZ.localize(datetime.datetime(2025, 5, 31, 13, 30))
 
 def is_super_saturday_week(start: datetime.datetime) -> bool:
     date_of_super_saturday = super_saturday_date()

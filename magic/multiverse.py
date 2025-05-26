@@ -20,7 +20,7 @@ FORMAT_IDS: dict[str, int] = {}
 
 # This is only a fallback
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
-               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia']
+               'Urza, Planeswalker', 'Mishra, Lost to Phyrexia', 'Ragnarok, Divine Deliverance']
 
 def init(force: bool = False) -> bool:
     return asyncio.run(init_async(force))

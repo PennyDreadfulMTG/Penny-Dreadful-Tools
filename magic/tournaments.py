@@ -208,17 +208,28 @@ def kick_off_prize(f: int) -> int:
         return 1
     return 0
 
+# def super_saturday_prize(f: int) -> int:
+#     if f == 1:
+#         return 1240  # 2x 500 + 2x 120
+#     if f == 2:
+#         return 740   # 1x 500 + 2x 120
+#     if f <= 4:
+#         return 500   # 1x 500
+#     if f <= 8:
+#         return 240   # 2x 120
+#     if f <= 16:
+#         return 120   # 1x 120
+#     return 0
+
 def super_saturday_prize(f: int) -> int:
     if f == 1:
-        return 1240  # 2x 500 + 2x 120
+        return 960
     if f == 2:
-        return 740   # 1x 500 + 2x 120
+        return 480
     if f <= 4:
-        return 500   # 1x 500
+        return 240
     if f <= 8:
-        return 240   # 2x 120
-    if f <= 16:
-        return 120   # 1x 120
+        return 120
     return 0
 
 def normal_prize(f: int) -> int:

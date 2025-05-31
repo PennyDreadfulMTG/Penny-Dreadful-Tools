@@ -603,7 +603,7 @@ msgstr ""
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
 "To find a game sign up and then create a game in Constructed, Specialty, "
-"Freeform Tournament Practice with \"Penny Dreadful League\" as the "
+"Freeform Best-of-Three with \"Penny Dreadful League\" as the "
 "comment."
 msgstr ""
 
@@ -764,7 +764,7 @@ msgid ""
 "The easiest way to find a match to to simply play PD games with your "
 "league deck.  PDBot will alert you if both players are registered in "
 "league. Add \"Penny Dreadful League\" in a comment on your match in "
-"Constructed, Specialty, Freeform Tournament Practice to make your "
+"Constructed, Specialty, Freeform Best-of-Three to make your "
 "intentions clear."
 msgstr ""
 

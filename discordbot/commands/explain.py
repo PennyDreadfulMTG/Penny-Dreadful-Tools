@@ -67,7 +67,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """
         Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
         You play five matches per run. You can join the league at any time.
-        To find a game sign up and then create a game in Constructed, Specialty, Freeform Tournament Practice with "Penny Dreadful League" as the comment.
+        To find a game sign up and then create a game in Constructed, Specialty, Freeform Best-of-Three with "Penny Dreadful League" as the comment.
         Top 8 finishers on each month's league leaderboard win credit with Cardhoarder.
         """,
         {
@@ -112,7 +112,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     ),
     'playing': (
         """
-        To get a match go to Constructed, Specialty, Freeform Tournament Practice on MTGO and create a match with "Penny Dreadful" in the comments.
+        To get a match go to Constructed, Specialty, Freeform Best-of-Three on MTGO and create a match with "Penny Dreadful" in the comments.
         """,
         {},
     ),

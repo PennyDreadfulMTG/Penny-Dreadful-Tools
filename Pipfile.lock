@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c6ca4ce4fdcd02194228d22e59ec314b9ab5ae903e2f3a0c1175c923c924f8bd"
+            "sha256": "fb84ae82d0d8645bb6e0b495cbac8fb5e00a828b77dc206ce86f7658c1453bf5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1068,20 +1068,19 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:810a63ac95f3c441b7c0e43d344e372887f62ce9071ba972eacf32672e072de9",
-                "sha256:81718493daf06d96d6bc76a91c23874dbf2fac0adbbf542831b805ee6e974696"
+                "sha256:1db79d1281dcf9f3d10023283299ba38f3dc9f639ec41085968fd23e5bcf512e",
+                "sha256:9b548e688702f82a34ed8409fb8a6961166f0b7795032f0be8f48308dff4333a"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==2.24.2"
+            "version": "==2.25.0"
         },
         "google-api-python-client": {
             "hashes": [
-                "sha256:75f3a1856f11418ea3723214e0abc59d9b217fd7ed43dcf743aab7f06ab9e2b1",
-                "sha256:7bf518a0527ad23322f070fa69f4f24053170d5c766821dc970ff0571ec22748"
+                "sha256:057a5c08d28463c6b9eb89746355de5f14b7ed27a65c11fdbf1d06c66bb66b23"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==2.170.0"
+            "version": "==2.171.0"
         },
         "google-auth": {
             "hashes": [
@@ -2286,7 +2285,6 @@
                 "sha256:ef91363ad4faba7b25d844ef1ada59ff1604184c0bcd8b39b8a6bef15e1af238",
                 "sha256:fa18533a299d7ab6c55a238bf8629311439995f2e7eca5caaff08663606e9015"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==5.29.5"
         },
@@ -3107,7 +3105,6 @@
                 "sha256:480c2ed180878955863323eea31b0ede668795de182617fef9c6ca09e6ec9d0e",
                 "sha256:962201ba1c4edcab02e60f9a0d3821e82dfc5d2d6662a21abd533879bdb8a686"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==4.2.0"
         },

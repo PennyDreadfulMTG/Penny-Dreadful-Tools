@@ -366,19 +366,13 @@ header {
     display: flex;
 }
 
-@media only screen and (max-width: 640px) {
-  header {
-    flex-wrap: wrap;
-  }
-}
-
 header h1, header .search {
     padding: 3rem 0 1rem 0;
 }
 
 @media only screen and (max-width: 900px) {
     header h1, header .search, header .hamburger {
-        padding: 0 0 1rem 0;
+        padding: 1rem 0;
     }
 }
 
@@ -2239,13 +2233,17 @@ Search
 
 */
 
-@media only screen and (min-width: 640px) {
-  .search {
+.search {
     /* Mirror h1 margins and padding as this floats alongside the logo. */
     margin-bottom: 0;
     margin-left: 3rem;
     text-align: right; /* Make the search box appear on the right. */
-  }
+}
+
+@media only screen and (max-width: 640px) {
+    .search {
+        display: none;
+    }
 }
 
 /* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */

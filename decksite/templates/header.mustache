@@ -30,14 +30,12 @@
     <body>
         <div class="page">
             <header class="season-{{season_id}}">
-              <div class="header-row">
                 <div class="hamburger">☰</div>
                 {{> language_switcher}}
                 <h1><a href="{{home_url}}">Penny Dreadful Magic</a></h1>
-              </div>
-              <div class="search">
-                <input class="typeahead" type="text" placeholder="Search">
-              </div>
+                <div class="search">
+                    <input class="typeahead" type="text" placeholder="Search">
+                </div>
             </header>
             <main>
                 {{> intro}}

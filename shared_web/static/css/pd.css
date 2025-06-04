@@ -382,10 +382,9 @@ header h1, header .search {
     }
 }
 
-header .header-row {
-  flex-grow: 0;
-  flex-shrink: 0;
-  overflow-x: hidden;
+header h1 {
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 header .search {
@@ -659,7 +658,6 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
    See: https://webdesign.tutsplus.com/articles/the-truth-about-multiple-h1-tags-in-the-html5-era--webdesign-16824 */
 header h1 {
     border: 0;
-    display: inline-block;
     font-family: var(--heading-font-family);
     font-variant-numeric: oldstyle-nums;
     font-weight: normal;
@@ -859,7 +857,7 @@ When you are in a middle width the main menu is always shown but the submenu is 
 
 /* Once you reach a certain width we hide the hamburger and instead show the main menu strip. */
 @media only screen and (min-width: 901px) {
-    header .hamburger {
+    .hamburger {
         display: none;
     }
     nav, .menu {
@@ -1024,10 +1022,9 @@ html.dark-mode .icon.dark-mode-toggle::before {
 }
 
 .hamburger {
-  cursor: pointer;
-  display: inline-block;
-  font-size: var(--large-font-size); /* Matching header h1 */
-  margin-right: 1em;
+    cursor: pointer;
+    font-size: var(--large-font-size); /* Matching header h1 */
+    margin-right: 1em;
 }
 
 /*

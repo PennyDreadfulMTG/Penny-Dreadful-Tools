@@ -3053,11 +3053,12 @@
         },
         "typeguard": {
             "hashes": [
-                "sha256:77a78f11f09777aeae7fa08585f33b5f4ef0e7335af40005b0c422ed398ff48c",
-                "sha256:a6f1065813e32ef365bc3b3f503af8a96f9dd4e0033a02c28c4a4983de8c6c49"
+                "sha256:7d8b4a3d280257fd1aa29023f22de64e29334bda0b172ff1040f05682223795e",
+                "sha256:be72b9c85f322c20459b29060c5c099cd733d5886c4ee14297795e62b0c0d59b"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==4.4.2"
+            "version": "==4.4.3"
         },
         "types-setuptools": {
             "hashes": [

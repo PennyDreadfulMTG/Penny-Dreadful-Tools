@@ -222,8 +222,6 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
 
     for p in printings:
-        if p['name'] == 'Norin the Wary':
-            p['layout'] = 'normal'
         try:
             if p.get('layout') not in layout.all_layouts():
                 layout.report_missing_layout(p.get('layout'))

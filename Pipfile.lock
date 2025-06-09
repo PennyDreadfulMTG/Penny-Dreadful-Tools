@@ -796,10 +796,12 @@
         },
         "editorconfig": {
             "hashes": [
-                "sha256:8739052279699840065d3a9f5c125d7d5a98daeefe53b0e5274261d77cb49aa2",
-                "sha256:fe491719c5f65959ec00b167d07740e7ffec9a3f362038c72b289330b9991dfc"
+                "sha256:1eda9c2c0db8c16dbd50111b710572a5e6de934e39772de1959d41f64fc17c82",
+                "sha256:23c08b00e8e08cc3adcddb825251c497478df1dada6aefeb01e626ad37303745"
             ],
-            "version": "==0.17.0"
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==0.17.1"
         },
         "emoji": {
             "hashes": [

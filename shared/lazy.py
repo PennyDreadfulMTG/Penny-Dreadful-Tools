@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import TypeVar, cast
+from typing import TypeVar
 
 T = TypeVar('T')
 
@@ -12,4 +12,5 @@ def lazy_property(fn: Callable[[], T]) -> Callable[[], T]:
         if not hasattr(fn, attr_name):
             setattr(fn, attr_name, fn())
         return getattr(fn, attr_name)
-    return cast(Callable[[], T], _lazy_property)
+
+    return _lazy_property

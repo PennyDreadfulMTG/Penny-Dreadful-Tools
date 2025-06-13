@@ -1224,11 +1224,11 @@
         },
         "interactions.py": {
             "hashes": [
-                "sha256:46b506f53d763dfe28bdfe38ad8906445f5486fe1ff468398b62bab0e62bd80d",
-                "sha256:5779c31ad71e531bf4ead2827df60fac335379b233351722b458d464ce7993b3"
+                "sha256:a868b88d0257191b2d9bf78f14a96516afa98b15461bfbfcb16f34d6e426ba47",
+                "sha256:d1911bf95ae447103c945b8cebceadc6a4e9c6d05c2c1d1f7915f6f20c47d854"
             ],
             "markers": "python_version >= '3.10'",
-            "version": "==5.13.1"
+            "version": "==5.14.0"
         },
         "isort": {
             "hashes": [
@@ -3334,7 +3334,6 @@
                 "sha256:fe41919b9d899661c5c28a8b4b0acf704510b88f27f0934ac7a7bebdd8938d5e",
                 "sha256:ff70f32aa316393eaf8222d518ce9118148eddb8a53073c2403863b41033eed5"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==1.20.1"
         }

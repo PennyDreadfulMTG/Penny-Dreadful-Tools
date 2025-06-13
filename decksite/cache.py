@@ -83,8 +83,8 @@ def cached_impl(cacheable: bool = False,
                     # - Added the headers to the response object instead of the
                     # headers dict so they get cached too
                     # - If you can find any faster random algorithm go for it.
-                    response.headers.add('ETag', binascii.hexlify(os.urandom(4)))
-                    response.headers.add('X-Last-Modified', str(now))
+                    response.headers.add('ETag', binascii.hexlify(os.urandom(4)))  # type: ignore
+                    response.headers.add('X-Last-Modified', str(now))  # type: ignore
                     CACHE.set(cache_key, response, timeout=actual_server_timeout)
 
             response.headers.extend(headers)

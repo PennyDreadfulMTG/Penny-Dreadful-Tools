@@ -2312,12 +2312,12 @@
         },
         "pydantic": {
             "hashes": [
-                "sha256:7f853db3d0ce78ce8bbb148c401c2cdd6431b3473c0cdff2755c7690952a7b7a",
-                "sha256:f9c26ba06f9747749ca1e5c94d6a85cb84254577553c8785576fd38fa64dc0f7"
+                "sha256:d989c3c6cb79469287b1569f7447a17848c998458d49ebe294e975b9baf0f0db",
+                "sha256:dde5df002701f6de26248661f6835bbe296a47bf73990135c7d07ce741b9623b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==2.11.5"
+            "version": "==2.11.7"
         },
         "pydantic-core": {
             "hashes": [

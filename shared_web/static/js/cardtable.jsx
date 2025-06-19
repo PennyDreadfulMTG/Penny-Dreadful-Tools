@@ -28,7 +28,7 @@ const renderHeaderRow = (table) => (
 );
 
 const renderRow = (table, card) => (
-    <tr key={card.name}  onClick={() => window.location.href = card.url} className="clickable">
+    <tr key={card.name} className="clickable">
         <td className="name">{renderCard(card)}</td>
         <td className="n">{card.numDecks}</td>
         <td className="n">{renderRecord(card)}</td>

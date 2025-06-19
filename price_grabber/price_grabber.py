@@ -8,7 +8,7 @@ from magic import multiverse, oracle, seasons
 from price_grabber import parser, price
 from shared import configuration, dtutil, fetch_tools
 from shared.database import get_database
-from shared.pd_exception import DatabaseException, TooFewItemsException
+from shared.pd_exception import DatabaseException, NotConfiguredException, TooFewItemsException
 
 DATABASE = get_database(configuration.get_str('prices_database'))
 
@@ -21,14 +21,15 @@ def run() -> None:
 def fetch() -> None:
     all_prices, timestamps = {}, []
     ch_urls = configuration.cardhoarder_urls.get()
-    if ch_urls:
-        for _, url in enumerate(ch_urls):
-            s = fetch_tools.fetch(url)
-            s = ftfy.fix_encoding(s)
-            timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '"%Y-%m-%dT%H:%M:%S+00:00"', dtutil.CARDHOARDER_TZ))
-            all_prices[url] = parser.parse_cardhoarder_prices(s)
+    if not ch_urls:
+        raise NotConfiguredException('No URLs found to get prices from')
+    for _, url in enumerate(ch_urls):
+        s = fetch_tools.fetch(url)
+        s = ftfy.fix_encoding(s)
+        timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '"%Y-%m-%dT%H:%M:%S+00:00"', dtutil.CARDHOARDER_TZ))
+        all_prices[url] = parser.parse_cardhoarder_prices(s)
     if not timestamps:
-        raise TooFewItemsException(f'Did not get any prices when fetching {itertools.chain(configuration.cardhoarder_urls.get())} ({all_prices})')
+        raise TooFewItemsException(f'Did not get any prices when fetching {list(itertools.chain(configuration.cardhoarder_urls.get()))} ({all_prices})')
     count = store(min(timestamps), all_prices)
     cleanup(count)
 

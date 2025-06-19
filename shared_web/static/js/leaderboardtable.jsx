@@ -19,7 +19,7 @@ const renderHeaderRow = (table) => (
 );
 
 const renderRow = (table, entry) => (
-    <tr key={entry.personId}  onClick={() => window.location.href = entry.url} className="clickable">
+    <tr key={entry.personId} className="clickable">
         <td className="marginalia">{entry.position}</td>
         <td className="name"><a href={entry.url}>{entry.person}</a></td>
         { table.props.skinnyView

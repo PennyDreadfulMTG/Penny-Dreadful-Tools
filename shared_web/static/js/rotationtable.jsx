@@ -13,7 +13,7 @@ const renderHeaderRow = (table) => (
 );
 
 const renderRow = (table, card) => (
-    <tr key={card.name} className={"legality-" + card.status.toLowerCase().replaceAll(" ", "-") + " clickable"} onClick={() => window.location.href = card.url}>
+    <tr key={card.name} className={"legality-" + card.status.toLowerCase().replaceAll(" ", "-") + " clickable"}>
         <td>
             { card.hitInLastRun
                 ? <span title="Present in last run" className="last-run">↑</span>

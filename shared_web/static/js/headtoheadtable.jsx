@@ -12,7 +12,7 @@ const renderHeaderRow = (table) => (
 );
 
 const renderRow = (table, entry) => (
-    <tr key={entry.oppMtgoUsername}  onClick={() => window.location.href = entry.oppUrl} className="clickable">
+    <tr key={entry.oppMtgoUsername} className="clickable">
         <td className="name"><a href={entry.oppUrl}>{entry.oppMtgoUsername}</a></td>
         <td className="n"><a href={entry.url}>{entry.numMatches}</a></td>
         <td className="n">{renderRecord({...entry,...{"showRecord": true}})}</td>

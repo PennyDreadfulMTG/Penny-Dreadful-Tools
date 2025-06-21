@@ -335,8 +335,12 @@ PD.localizeTimes = function() {
 
 PD.initLinks = function() {
     document.querySelectorAll("[data-href]").forEach((elem) => {
-        elem.addEventListener("click", () => {
-            window.location.href = elem.getAttribute("data-href");
+        elem.addEventListener("click", (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                window.open(elem.getAttribute("data-href"), "_blank");
+            } else {
+                window.location.href = elem.getAttribute("data-href");
+            }
         });
     });
 };

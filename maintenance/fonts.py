@@ -1,6 +1,7 @@
 import base64
 import html
 import os
+import pathlib
 import sys
 import tempfile
 import unicodedata
@@ -55,6 +56,7 @@ PREFER = {
     '🛏': 'NotoEmoji',
     '🪦': 'NotoEmoji',
     '🏠': 'SegoeUISymbol',
+    '5⃣': 'NotoSansSymbols2',
 }
 
 GraphemeToFontMapping = dict[str, list[str]]
@@ -212,6 +214,10 @@ def encode(font: TTFont) -> str:
     finally:
         os.remove(tmp_in)
 
+def file_url(relative_path: str) -> str:
+    return f'file://{pathlib.Path(relative_path).resolve()}'
+
+
 def get_vertical_metrics(font: TTFont) -> dict[str, int]:
     hhea = font['hhea']
     os2 = font['OS/2']
@@ -296,7 +302,7 @@ def print_css(font_info: FontInfo, deck_names: set[str], encoded_merged_font: st
 
                     @font-face {{
                         font-family: main-text;
-                        src: url('file://{os.path.abspath(get_font_paths()[0])}');
+                        src: url('{file_url(get_font_paths()[0])}');
                     }}
 
                     /* BEGIN COPY AND PASTE OUTPUT FOR pd.css */
@@ -364,7 +370,7 @@ def print_options(grapheme_to_fonts: GraphemeToFontMapping, font_info: FontInfo)
         print(f"""
             @font-face {{
                 font-family: '{name}';
-                src: url('file://{path}') format('truetype');
+                src: url('{file_url(path)}') format('truetype');
             }}
         """)
     print("""

@@ -56,7 +56,6 @@ PREFER = {
     '🛏': 'NotoEmoji',
     '🪦': 'NotoEmoji',
     '🏠': 'SegoeUISymbol',
-    '5⃣': 'NotoSansSymbols2',
 }
 
 GraphemeToFontMapping = dict[str, list[str]]
@@ -80,7 +79,7 @@ def ad_hoc(*args: str) -> None:
     # in the site look wrong for the sake of a single deck name – https://pennydreadfulmagic.com/decks/10989/
     # At some point we should find a more general solution in case it happens with other characters
     # and if at all possible stop rendering this deck name (partially) in system fonts.
-    remaining_graphemes = {grapheme for grapheme in all_graphemes if "'" not in grapheme}
+    remaining_graphemes = {grapheme for grapheme in all_graphemes if "'" not in grapheme and '5' not in grapheme}
     graphemes_to_fonts: GraphemeToFontMapping = {}
     font_info: FontInfo = []
     metrics: dict[str, int] = {}

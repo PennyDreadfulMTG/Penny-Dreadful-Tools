@@ -75,7 +75,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Copy `.env.example` to `.env` and alter the value for "token" to this value. (or to "token" in config.json if not in docker setup)
 - Do the same for the discord client_id and client_secret
 - Optionally take a look at shared/configuration.py and enter any required non-default information into `.env`
-- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
+- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline tool, gh: <https://cli.github.com/>
 
 ## Manual Development Environment Setup (Non-docker instructions)
 
@@ -123,7 +123,7 @@ There are various levels of granularity but in general use you want:
 
 - pipenv run python dev.py test # Runs the unit tests, type checking, lint.
 
-Check the dev.py source code for the full set of options including `unit`, `types`, `lint` (covered by `test` above) as well as `functional` (integration tests), `perf` (performance tests). `release` will take you all the way from your committed change to a PR via the tests (needs GitHub's commandline `gh`/`hub` installed).
+Check the dev.py source code for the full set of options including `unit`, `types`, `lint` (covered by `test` above) as well as `functional` (integration tests), `perf` (performance tests). `release` will take you all the way from your committed change to a PR via the tests (needs GitHub's commandline `gh` installed).
 
 ## Working on React components
 

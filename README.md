@@ -75,7 +75,6 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Still under the OAuth2 section, add a redirect with the following URI `http://127.0.0.1/authenticate/callback/`
 - Go to the Bot section of your application
 - Reset the token, use it to fill out `token` in `.env`
-- In the root folder of the project copy `config.json.example` to `config.json` and alter the oauth and token values to the ones you put in `.env`
 - Optionally, add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
 - Optionally, take a look at shared/configuration.py and enter any required non-default information into `.env`
 - You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>

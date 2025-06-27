@@ -52,7 +52,7 @@ The first run will download a copy of the prod decksite db and set it up as well
 
 After this, various components will be available in your browser:
 
-- The decksite (PDM) at <http://127.0.0.1:80>
+- The decksite (PDM) at <http://127.0.0.1:80> (to be able to login see [Configuring Environment](#configuring-environment))
 - The admin panel at <http://127.0.0.1:8080>
 - The logsite at <http://127.0.0.1:5001>
 
@@ -67,15 +67,17 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 ## Configuring Environment
 
-- Add a bot at <https://discordapp.com/developers/applications/me>
-- Add a bot user for the bot
-- Add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
-- Go to the Bot section.
-- Click to reveal the token (not secret) on <https://discordapp.com/developers/applications/me>
-- Copy `.env.example` to `.env` and alter the value for "token" to this value. (or to "token" in config.json if not in docker setup)
-- Do the same for the discord client_id and client_secret
-- Optionally take a look at shared/configuration.py and enter any required non-default information into `.env`
-- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline tool, gh: <https://cli.github.com/>
+- Add a new application at <https://discordapp.com/developers/applications/me>
+- Go to the OAuth2 section in your application
+- Reset the client secret
+- In the root folder of the project copy `.env.example` to `.env`
+- In `.env` set `oauth2_client_id` and `oauth2_client_secret` to the client id and client secret found in the OAuth2 section
+- Still under the OAuth2 section, add a redirect with the following URI `http://127.0.0.1/authenticate/callback/`
+- Go to the Bot section of your application
+- Reset the token, use it to fill out `token` in `.env`
+- Optionally, add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
+- Optionally, take a look at shared/configuration.py and enter any required non-default information into `.env`
+- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
 
 ## Manual Development Environment Setup (Non-docker instructions)
 

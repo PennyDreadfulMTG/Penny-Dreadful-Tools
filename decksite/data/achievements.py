@@ -846,3 +846,31 @@ class PD500Winner(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 victory', '%(num)d victories', n)
+
+class KickoffTop8(CountedAchievement):
+    key = 'kickoff_top8s'
+    title = 'Season Kick Off Top 8'
+    description_safe = 'Top 8 the Season Kick Off.'
+    sql = "COUNT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND c.name LIKE '%%Kick Off%%' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND c.name LIKE '%%Kick Off%%' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source']
+
+    def leaderboard_heading(self) -> str:
+        return gettext('Top 8s')
+
+    def localised_display(self, n: int) -> str:
+        return ngettext('1 Top 8', '%(num)d Top 8s', n)
+
+class KickoffWinner(CountedAchievement):
+    key = 'kickoff_wins'
+    title = 'Season Kick Off Winner'
+    description_safe = 'Win the Season Kick Off.'
+    sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.name LIKE '%%Kick Off%%' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.name LIKE '%%Kick Off%%' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source']
+
+    def leaderboard_heading(self) -> str:
+        return gettext('Victories')
+
+    def localised_display(self, n: int) -> str:
+        return ngettext('1 victory', '%(num)d victories', n)

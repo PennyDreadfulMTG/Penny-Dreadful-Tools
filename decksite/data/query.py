@@ -43,6 +43,8 @@ def competition_join() -> str:
             competition_series AS cs ON cs.id = c.competition_series_id
         LEFT JOIN
             competition_type AS ct ON ct.id = cs.competition_type_id
+        LEFT JOIN
+            competition_flag AS cf ON cf.id = c.competition_flag_id
     """
 
 def season_query(season_id: str | int | None, column_name: str = 'season_id') -> str:

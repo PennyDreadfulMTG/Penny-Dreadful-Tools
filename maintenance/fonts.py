@@ -74,12 +74,13 @@ def ad_hoc(*args: str) -> None:
     all_graphemes = base_graphemes | from_card_names | from_deck_names
     print('\nLooking for', len(all_graphemes), 'graphemes -', len(base_graphemes), 'base graphemes, and', len(from_card_names), 'from card names, and', len(from_deck_names), 'from deck names\n', file=sys.stderr)
     print('\nOnly from cards: ', from_card_names - base_graphemes - from_deck_names, '\n', file=sys.stderr)
-    # Make a copy of all_graphemes for processing BUT exclude things like APOSTROPHE+COMBINING GRAVE ACCENT (U+39 and U+768)
-    # which will overwrite main-text's apostrophe with one from a font that supports that combination. This makes all apostrophes
-    # in the site look wrong for the sake of a single deck name – https://pennydreadfulmagic.com/decks/10989/
-    # At some point we should find a more general solution in case it happens with other characters
-    # and if at all possible stop rendering this deck name (partially) in system fonts.
-    remaining_graphemes = {grapheme for grapheme in all_graphemes if "'" not in grapheme and '5' not in grapheme}
+    # Make a copy of all_graphemes for processing BUT exclude anything that is found in main-text because we never want those
+    # to be overriddren by things like APOSTROPHE+COMBINING GRAVE ACCENT (U+39 and U+768) which will overwrite main-text's apostrophe
+    # with one from a font that supports that combination. This makes all apostrophes in the site look wrong for the sake of a single
+    # deck name – https://pennydreadfulmagic.com/decks/10989/
+    # See also https://pennydreadfulmagic.com/decks/264833/ and https://pennydreadfulmagic.com/decks/265643/ which break '5' and '2'.
+    main_text_graphemes = find_graphemes(TTFont(get_font_paths()[0]), 'main-text', False, all_graphemes)
+    remaining_graphemes = {grapheme for grapheme in all_graphemes if not any(c in grapheme for c in main_text_graphemes)}
     graphemes_to_fonts: GraphemeToFontMapping = {}
     font_info: FontInfo = []
     metrics: dict[str, int] = {}

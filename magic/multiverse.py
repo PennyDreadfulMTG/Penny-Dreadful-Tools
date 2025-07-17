@@ -223,8 +223,13 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
     sets = load_sets()
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
 
+    BAD_DRAGONS = ['Bloomvine Regent', 'Marang River Regent']
+
     for p in printings:
         try:
+            if p.get('name') in BAD_DRAGONS:
+                p['layout'] = 'adventure'
+
             if p.get('layout') not in layout.all_layouts():
                 layout.report_missing_layout(p.get('layout'))
                 continue

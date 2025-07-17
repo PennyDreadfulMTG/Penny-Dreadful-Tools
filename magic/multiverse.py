@@ -34,13 +34,14 @@ async def init_async(force: bool = False) -> bool:
                 return False
             print('Database update required')
             try:
-                await update_database_async(last_updated)
-                await set_legal_cards_async()
+                success = await update_database_async(last_updated)
+                if success:
+                    await set_legal_cards_async()
             finally:
                 # if the above fails for some reason, then things are probably bad
                 # but we can't even start up a shell to fix unless the _cache_card table exists
                 rebuild_cache()
-            return True
+            return success
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
     return False
@@ -135,7 +136,7 @@ def base_query_lite() -> str:
         face_props=', '.join(f'f.{name}' for name in card.face_properties() if name not in ['id', 'name']))
 
 
-async def update_database_async(new_date: datetime.datetime) -> None:
+async def update_database_async(new_date: datetime.datetime) -> bool:
     try:
         sets = await fetcher.all_sets_async()
         if os.path.exists('scryfall-default-cards.json'):
@@ -145,7 +146,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
             all_cards, download_uri = await fetcher.all_cards_async()
     except Exception as e:
         print(f'Aborting database update because fetching from Scryfall failed: {e}')
-        return
+        return False
     try:
         await insert_cards(new_date, sets, all_cards)
         configuration.last_good_bulk_data.value = download_uri
@@ -153,6 +154,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         print(f'Failed to load current bulk data, using fallback: {e}')
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
         await insert_cards(new_date, sets, all_cards)
+    return True
 
 async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription]) -> None:
     db().begin('update_database')
@@ -221,8 +223,13 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
     sets = load_sets()
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
 
+    BAD_DRAGONS = ['Bloomvine Regent', 'Marang River Regent']
+
     for p in printings:
         try:
+            if p.get('name') in BAD_DRAGONS:
+                p['layout'] = 'adventure'
+
             if p.get('layout') not in layout.all_layouts():
                 layout.report_missing_layout(p.get('layout'))
                 continue

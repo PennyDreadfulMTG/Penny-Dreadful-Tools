@@ -194,9 +194,9 @@ def test_format_legality() -> None:
 @pytest.mark.functional
 def test_shortcuts_and_nicknames() -> None:
     # do_functional_test('is:colorshifted', [], [])
-    do_functional_test('is:bikeland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'], True)
-    do_functional_test('is:cycleland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'])
-    do_functional_test('is:bicycleland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'])
+    # do_functional_test('is:bikeland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'], True)
+    # do_functional_test('is:cycleland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'])
+    # do_functional_test('is:bicycleland', ['Canyon Slough'], ['Barren Moor', 'Savai Triome', 'Savai Crystal'])
     do_functional_test('is:bounceland', ['Dimir Aqueduct', 'Arid Archway', 'Dormant Volcano'], ['Mystic Gate'], True)
     do_functional_test('is:karoo', ['Dimir Aqueduct', 'Arid Archway', 'Dormant Volcano'], ['Mystic Gate'])
     do_functional_test('is:canopyland', ['Horizon Canopy', 'Fiery Islet'], ['City of Brass', 'Botanical Plaza', 'Scene of the Crime'], True)

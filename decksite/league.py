@@ -109,7 +109,7 @@ class RetireForm(Form):
         if person_object:
             self.decks = active_decks_by_person(person_object.id)
         else:
-            self.decks = active_decks()
+            self.decks = active_decks_unowned()
         self.entry_options = deck_options(self.decks, self.get('entry', deck_id), person_object.id if person_object else None, True)
         self.discord_user = discord_user
         if len(self.decks) == 0:
@@ -177,6 +177,11 @@ def active_decks_by(mtgo_username: str) -> list[deck.Deck]:
 
 def active_decks_by_person(person_id: int) -> list[deck.Deck]:
     return active_decks(f'p.id = {person_id}')
+
+def active_decks_unowned() -> list[deck.Deck]:
+    # This is unoptimized, but it shouldn't be called much.
+    return [d for d in active_decks() if not d.is_person_associated()]
+
 
 def report(form: ReportForm) -> bool:
     try:

@@ -244,7 +244,7 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
     return [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs], 0 if not rs else rs[0]['total']
 
 def associate(d: deck.Deck, discord_id: int) -> int:
-    person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)
+    person_id = db().value('SELECT person_id FROM deck WHERE id = %s AND discord_id IS NULL', [d.id], fail_on_missing=True)
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
     return db().execute(sql, [discord_id, person_id])
 

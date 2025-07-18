@@ -7,7 +7,7 @@ from shared import dtutil, guarantee, logger
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
-from shared.pd_exception import AlreadyExistsException, DoesNotExistException
+from shared.pd_exception import AlreadyExistsException, DatabaseException, DoesNotExistException
 
 
 def load_person_by_id(person_id: int, season_id: int | None = None) -> Person:
@@ -244,9 +244,20 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
     return [Container({k: v for k, v in r.items() if k != 'total'}) for r in rs], 0 if not rs else rs[0]['total']
 
 def associate(d: deck.Deck, discord_id: int) -> int:
-    person_id = db().value('SELECT person_id FROM deck WHERE id = %s AND discord_id IS NULL', [d.id], fail_on_missing=True)
-    sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
-    return db().execute(sql, [discord_id, person_id])
+    sql = """
+        UPDATE
+            person
+        SET
+            discord_id = %s
+        WHERE
+            id = (SELECT d.person_id FROM deck d WHERE d.id = %s)
+        AND
+            discord_id IS NULL
+    """
+    try:
+        return db().execute(sql, [discord_id, d.id])
+    except DatabaseException:
+        return 0
 
 def is_allowed_to_retire(deck_id: int | None, discord_id: int | None) -> bool:
     if not deck_id:

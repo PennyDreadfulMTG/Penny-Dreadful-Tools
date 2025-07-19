@@ -54,7 +54,7 @@ def upload() -> Response:
     if error:
         return error
     match_id = int(request.form['match_id'])
-    if match_id in [219603564, 264878023]:
+    if match_id in [219603564, 264878023, 279111370]:
         return return_json({'success': True})  # Prevent infinite 500 errors.
 
     try:

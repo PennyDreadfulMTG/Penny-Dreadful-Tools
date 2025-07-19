@@ -30,7 +30,11 @@ def load_from_file() -> None:
 
 def import_from_pdbot(match_id: int) -> None:
     url = f'https://pdbot.pennydreadfulmagic.com/logs/{match_id}'
-    lines = fetch_tools.fetch(url).split('\n')
+    s = fetch_tools.fetch(url)
+    # Stop infinite retries for a badly formatted match
+    if 'Azorious Lutri Control by jonsnow214 (264254) vs Mono Black Control by shizleboy (264269)' in s:
+        return
+    lines = s.split('\n')
     import_log(lines, match_id)
 
 def import_log(lines: list[str], match_id: int) -> match.Match:

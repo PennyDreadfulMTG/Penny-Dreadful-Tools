@@ -12,7 +12,7 @@ OAUTH2_CLIENT_ID = configuration.oauth2_client_id.value
 OAUTH2_CLIENT_SECRET = configuration.oauth2_client_secret.value
 
 def setup_authentication() -> tuple[str, str]:
-    scope = ['identify', 'guilds']
+    scope = ['identify']
     discord = make_session(scope=scope)
     return discord.authorization_url(AUTHORIZATION_BASE_URL)
 

@@ -3816,12 +3816,12 @@
         },
         "types-cffi": {
             "hashes": [
-                "sha256:3c401b22f45b7873e66586c00c2722415d6138e8e89cdc9b030e68337796d66a",
-                "sha256:67c6b271253efcc7f37938873cb3d56ee47dc3536cfa3dd75e14aec64358abe0"
+                "sha256:0cfb62718c8a1a612d709c4eff186e8fb6f024be0da2bc3f9a8763ebf34772d0",
+                "sha256:b8e891fc3dcaa41a83f2a20f01ce88ec6e51a058889613306c2690d73b22e8d5"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.17.0.20250801"
+            "version": "==1.17.0.20250805"
         },
         "types-chardet": {
             "hashes": [

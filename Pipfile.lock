@@ -136,12 +136,12 @@
         },
         "alembic": {
             "hashes": [
-                "sha256:18ad13c1f40a5796deee4b2346d1a9c382f44b8af98053897484fa6cf88025e4",
-                "sha256:70a7c7829b792de52d08ca0e3aefaf060687cb8ed6bebfa557e597a1a5e5a481"
+                "sha256:a88bb7f6e513bd4301ecf4c7f2206fe93f9913f9b48dac3b78babde2d6fe765e",
+                "sha256:e845dfe090c5ffa7b92593ae6687c5cb1a101e91fa53868497dbd79847f9dbe3"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.16.3"
+            "version": "==1.16.5"
         },
         "aniso8601": {
             "hashes": [
@@ -1200,7 +1200,6 @@
                 "sha256:f10fd42b5ee276335863712fa3da6608e93f70629c631bf77145021600abc23c",
                 "sha256:f28588772bb5fb869a8eb331374ec06f24a83a9c25bfa1f38b6993afe9c1e968"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==3.2.4"
         },

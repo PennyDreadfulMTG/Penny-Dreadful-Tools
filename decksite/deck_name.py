@@ -48,6 +48,12 @@ PROFANITY_WHITELIST = [
     'hell',
     'weed',
     'titi',
+    'gay',
+    'gays',
+    'lesbian',
+    'lesbians',
+    'queer',
+    'queers',
 ]
 
 PROFANITY_BLACKLIST = [

@@ -143,6 +143,7 @@ class BackgroundTasks(Extension):
         guild = self.tournament_reminders_channel.guild
         events = await guild.list_scheduled_events()
         upcoming_tournaments = tournaments.upcoming_tournament_info()
+        upcoming_gatherling_events = await fetcher.gatherling_upcoming_events()
         for info in upcoming_tournaments:
             if info['next_tournament_name'] == info['series_name']:
                 name = f'{info["next_tournament_name"]} {seasons.current_season_num()}.{info["week_number"]}'
@@ -151,9 +152,14 @@ class BackgroundTasks(Extension):
                 name = f'{info["next_tournament_name"]} (Season {seasons.current_season_num()})'
 
             created = any(e.name == name for e in events)
+            g_event = next((e for e in upcoming_gatherling_events if e['name'] == name), None)
             if not created:
                 try:
-                    expected_duration = datetime.timedelta(hours=3)  # Maybe vary this based on event name?
+                    if g_event:
+                        rounds = g_event['mainrounds'] + g_event['finalrounds']
+                    else:
+                        rounds = 6
+                    expected_duration = datetime.timedelta(minutes=35 * rounds)  # It's a guess, but it'll average out pretty well
                     if info['sponsor_name']:
                         message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
                     else:

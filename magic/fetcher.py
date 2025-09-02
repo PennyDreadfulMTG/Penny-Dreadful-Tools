@@ -141,6 +141,12 @@ async def gatherling_active_events() -> list[Container]:
     data: dict = await fetch_tools.fetch_json_async(url)
     return [Container(d) for d in data.values()]
 
+async def gatherling_upcoming_events() -> list[Container]:
+    url = 'https://gatherling.com/api.php?action=upcoming_events'
+    data: dict = await fetch_tools.fetch_json_async(url)
+    return [Container(d) for d in data.values()]
+
+
 def hq_artcrops() -> dict[str, tuple[str, int]]:
     with open('hq_artcrops.json') as f:
         return json.load(f)

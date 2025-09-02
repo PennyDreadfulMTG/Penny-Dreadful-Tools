@@ -3,6 +3,7 @@ import datetime
 import logging
 import os
 import sys
+import urllib.parse
 
 from interactions import MISSING, Absent, Client, Extension, listen
 from interactions.client.errors import Forbidden
@@ -96,6 +97,7 @@ class BackgroundTasks(Extension):
         self.tournament_reminders_channel = channel
         self.background_task_tournament_reminders.start()
         self.background_task_tournament_events.start()
+        await self.background_task_tournament_events()
 
     @Task.create(IntervalTrigger(minutes=1))
     async def background_task_tournament_reminders(self) -> IntervalTrigger:
@@ -140,26 +142,35 @@ class BackgroundTasks(Extension):
     async def background_task_tournament_events(self) -> None:
         guild = self.tournament_reminders_channel.guild
         events = await guild.list_scheduled_events()
-        info = tournaments.next_tournament_info()
-        created = any(e.name == info['next_tournament_name'] for e in events)
-        if not created:
-            try:
-                expected_duration = datetime.timedelta(hours=3)  # Maybe vary this based on event name?
-                if info['sponsor_name']:
-                    message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
-                else:
-                    message = 'A free tournament'
+        upcoming_tournaments = tournaments.upcoming_tournament_info()
+        for info in upcoming_tournaments:
+            if info['next_tournament_name'] == info['series_name']:
+                name = f'{info["next_tournament_name"]} {seasons.current_season_num()}.{info["week_number"]}'
+            else:
+                # Special Named PD Sat
+                name = f'{info["next_tournament_name"]} (Season {seasons.current_season_num()})'
 
-                await guild.create_scheduled_event(
-                    name=info['next_tournament_name'],
-                    description=message,
-                    start_time=timestamp_converter(info['time']),
-                    end_time=timestamp_converter(info['time'] + expected_duration),
-                    event_type=ScheduledEventType.EXTERNAL,
-                    external_location='https://gatherling.com',
-                )
-            except Forbidden:
-                logging.warning('Can\t create scheduled events')
+            created = any(e.name == name for e in events)
+            if not created:
+                try:
+                    expected_duration = datetime.timedelta(hours=3)  # Maybe vary this based on event name?
+                    if info['sponsor_name']:
+                        message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
+                    else:
+                        message = 'A free tournament'
+
+                    urlencoded_name = urllib.parse.quote(name)
+                    await guild.create_scheduled_event(
+                        name=name,
+                        description=message,
+                        start_time=timestamp_converter(info['time']),
+                        end_time=timestamp_converter(info['time'] + expected_duration),
+                        event_type=ScheduledEventType.EXTERNAL,
+                        external_location=f'https://gatherling.com/eventreport.php?event={urlencoded_name}',
+                    )
+                except Forbidden:
+                    logging.warning('Can\t create scheduled events')
+                    return
 
     async def prepare_hype(self) -> None:
         rotation_hype_channel_id = configuration.get_int('rotation_hype_channel_id')

@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - name: Set up Python 3.10
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.10.6'
         cache: 'pipenv'
@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - name: Set up Python 3.10
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.10'
         cache: 'pipenv'
@@ -52,7 +52,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Set up Python 3.10
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.10'
         cache: 'pipenv'
@@ -85,7 +85,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - name: Set up Python 3.10
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.10'
         cache: 'pipenv'

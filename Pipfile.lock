@@ -3039,12 +3039,12 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:13b6d6cfdae65d61fe1396a061cf9113b20f0ec1bcb257f3826b88f01bb55720",
-                "sha256:241b41e059632fe1f7c54ae6e1b93af9456aebdfc297be9cf7ecfd6da5167e8e"
+                "sha256:2c661a482dd5accf3df58464f31733545745bb4d5cf8f5e46e0e1c4eed88479f",
+                "sha256:89c1ed205d5c25926558b64a9bed8a5b4fb295b007cecc32c0ec4bf7694da2e1"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==2.35.1"
+            "version": "==2.37.0"
         },
         "setuptools": {
             "hashes": [

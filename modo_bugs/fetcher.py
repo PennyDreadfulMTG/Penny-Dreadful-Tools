@@ -86,7 +86,7 @@ def find_announcements() -> tuple[str | None, bool]:
         return (None, False)
     (title, link) = articles[0]
     logger.info(f'Found: {title} ({link})')
-    time.sleep(1)
+    time.sleep(5)
     bn = 'PATCH NOTES' in fetch_tools.fetch(link)
     new = update_redirect('announcements', title, link, has_build_notes=str(bn))
     return (link, new)
@@ -131,7 +131,7 @@ def get_article_archive() -> list[tuple[str, str]]:
     return []
 
 def get_daybreak_label(url: str) -> str | None:
-    time.sleep(1)
+    time.sleep(5)
     html = fetch_tools.fetch(url)
     soup = BeautifulSoup(html, 'html.parser')
     label = soup.find('span', class_='label--primary')
@@ -173,7 +173,7 @@ def get_section_urls() -> list[str]:
     return section_urls
 
 def get_forum_posts(url: str) -> list[ForumPost]:
-    time.sleep(1)  # Try not to get blocked by the Daybreak forums.
+    time.sleep(5)  # Try not to get blocked by the Daybreak forums.
     html = fetch_tools.fetch(url)
     soup = BeautifulSoup(html, 'html.parser')
     posts = []

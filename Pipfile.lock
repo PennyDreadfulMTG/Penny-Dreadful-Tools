@@ -1222,11 +1222,12 @@
         },
         "httplib2": {
             "hashes": [
-                "sha256:d10443a2bdfe0ea5dbb17e016726146d48b574208dafd41e854cf34e7d78842c",
-                "sha256:d5b23c11fcf8e57e00ff91b7008656af0f6242c8886fd97065c97509e4e548c5"
+                "sha256:050bde6a332824b05a3deef5238f2b0372f71af46f8ca2190c2cb1f66aa376cd",
+                "sha256:62a665905c1f1d1069c34f933787d2a4435c67c0bc2b323645dcfbb64661b5ec"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==0.30.0"
+            "version": "==0.30.2"
         },
         "idna": {
             "hashes": [

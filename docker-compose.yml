@@ -88,7 +88,7 @@ services:
       - "3306:3306"
 
   adminer:
-    image: ghcr.io/shyim/adminerevo:latest
+    image: adminer
     ports:
       - 8080:8080
 

@@ -21,7 +21,7 @@ class Configure(Extension):
     @slash_option('setting', 'key=value', OptionType.STRING, True)
     @check(is_owner())
     async def configure(self, ctx: MtgContext, scope: str, setting: str) -> None:
-        await ctx.send('Temporarily disabled please contact bakert@gmail.com')
+        await ctx.send('Temporarily disabled please contact hello@pennydreadfulmagic.com')
         # if isinstance(ctx.author, User):
         #     await ctx.send("Can't configure DMs right now, sorry")
         #     return

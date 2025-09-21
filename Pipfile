@@ -18,7 +18,7 @@ test = "python dev.py test"
 init-cards = "python run.py init-cards"
 
 [dev-packages]
-mypy = "==1.18.1"
+mypy = "==1.18.2"
 types-flask = "*"
 types-Markdown = "*"
 types-pytz = "*"

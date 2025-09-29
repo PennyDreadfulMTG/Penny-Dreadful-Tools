@@ -236,6 +236,9 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
                 layout.report_missing_layout(p.get('layout'))
                 continue
 
+            if p.get('layout') == 'reversible_card':
+                continue  # More trouble than it's worth for now.
+
             if p.get('layout') not in layout.uses_canonical_namespace():
                 continue
 

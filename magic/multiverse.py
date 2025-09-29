@@ -142,6 +142,7 @@ async def update_database_async(new_date: datetime.datetime) -> bool:
         if os.path.exists('scryfall-default-cards.json'):
             with open('scryfall-default-cards.json', encoding='utf-8') as f:
                 all_cards = json.load(f)
+                download_uri = None
         else:
             all_cards, download_uri = await fetcher.all_cards_async()
     except Exception as e:
@@ -149,7 +150,8 @@ async def update_database_async(new_date: datetime.datetime) -> bool:
         return False
     try:
         await insert_cards(new_date, sets, all_cards)
-        configuration.last_good_bulk_data.value = download_uri
+        if download_uri:
+            configuration.last_good_bulk_data.value = download_uri
     except Exception as e:
         print(f'Failed to load current bulk data, using fallback: {e}')
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)

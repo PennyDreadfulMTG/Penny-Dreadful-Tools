@@ -30,6 +30,10 @@ SUPPLEMENTAL_SETS = [
     'TDM', 'EOE',  # 2025
 ]
 
+IGNORED_SETS = [
+    'OM1',  # Through the Omenpaths, equivalent to SPM
+]
+
 OVERRIDES = {
     'Dominaria': {  # Dominaria had a weird setcode in MTGO/Arena
         'mtgoCode': 'DAR',
@@ -126,7 +130,7 @@ def sets(supplemental: bool | None) -> list[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
-    set_info = [SetInfo.parse(s) for s in info['sets']]
+    set_info = [SetInfo.parse(s) for s in info['sets'] if s['code'] not in IGNORED_SETS]
     releases = []
 
     last = set_info[0]

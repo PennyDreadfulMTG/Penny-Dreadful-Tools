@@ -41,7 +41,7 @@
     "eslint": "^9.36.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.4.0",
-    "react": "^19.1.1",
+    "react": "^19.2.0",
     "react-dom": "^19.1.1",
     "style-loader": "^4.0.0",
     "webpack": "^5.102.0",

@@ -23,11 +23,13 @@ SEASONS = [
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
     'DFT', 'FIN', 'SPM', 'TLA',         # 2025
+    'Wrestling', 'Yachting',            # 2026
 ]
 
 SUPPLEMENTAL_SETS = [
     'MAT',  # March of the Machines Aftermath, mini-set
     'TDM', 'EOE',  # 2025
+    'Unknown UB Set', 'Ziplining' # 2026
 ]
 
 IGNORED_SETS = [
@@ -135,6 +137,12 @@ def sets(supplemental: bool | None) -> list[SetInfo]:
 
     last = set_info[0]
     for s in set_info:
+        if s.codename in SEASONS and s.code is not None:
+            SEASONS[SEASONS.index(s.codename)] = s.code
+            print(f'Updating season code {s.codename} to {s.code}', file=sys.stderr)
+        elif s.codename in SUPPLEMENTAL_SETS and s.code is not None:
+            SUPPLEMENTAL_SETS[SUPPLEMENTAL_SETS.index(s.codename)] = s.code
+            print(f'Updating supplemental set code {s.codename} to {s.code}', file=sys.stderr)
         if supplemental is None:
             pass
         elif supplemental and s.code not in SUPPLEMENTAL_SETS:

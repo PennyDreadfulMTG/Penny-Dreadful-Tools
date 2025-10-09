@@ -4311,12 +4311,12 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:adfaa9568caf35e03d80ffa4ed765c33b282579c869b40bf4b6009c7d8db3fb1",
-                "sha256:f4f7f0398cb79304e88397336e642b15e96fbeacf5b96d7625da366b069d2d18"
+                "sha256:2494f4c2a58ada0edfe01ea84b58468732e43394c572d9cf5b1dd06d86c487a3",
+                "sha256:efe03064ecd0ffb0f7afe133990a2398d8493d8d1c1cc10ff3dfe476d57ba44f"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.17.0.20250515"
+            "version": "==1.17.0.20251009"
         },
         "types-toml": {
             "hashes": [

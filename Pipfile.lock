@@ -2770,6 +2770,7 @@
                 "sha256:ff548c908caffd9455fd1342366bcf8a1ec8a3fca42f35c7fc60883d6a901074",
                 "sha256:fff2b76c8e172d34771cd4d4f0ade08072385310f214f823b5a6ad4006890d32"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==2.41.1"
         },

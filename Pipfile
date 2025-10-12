@@ -40,7 +40,7 @@ mypy-extensions = "*"
 [packages]
 aiohttp = "*"
 anytree = "==2.13.0"
-astroid = "==4.0.0"
+astroid = "==4.0.1"
 attrs = "==25.4.0"
 beautifulsoup4 = "==4.13.5"
 better-profanity = "==0.7.0"

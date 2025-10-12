@@ -1320,11 +1320,12 @@
         },
         "immutabledict": {
             "hashes": [
-                "sha256:c56a26ced38c236f79e74af3ccce53772827cef5c3bce7cab33ff2060f756373",
-                "sha256:d91017248981c72eb66c8ff9834e99c2f53562346f23e7f51e7a5ebcf66a3bcc"
+                "sha256:97c31d098a2c850e93a958badeef765e4736ed7942ec73e439facd764a3a7217",
+                "sha256:cb6ed3090df593148f94cb407d218ca526fd2639694afdb553dc4f50ce6feeca"
             ],
-            "markers": "python_version >= '3.8'",
-            "version": "==4.2.1"
+            "index": "pypi",
+            "markers": "python_version >= '3.8' and python_version < '4.0'",
+            "version": "==4.2.2"
         },
         "importlib-resources": {
             "hashes": [

@@ -170,12 +170,12 @@
         },
         "alembic": {
             "hashes": [
-                "sha256:a88bb7f6e513bd4301ecf4c7f2206fe93f9913f9b48dac3b78babde2d6fe765e",
-                "sha256:e845dfe090c5ffa7b92593ae6687c5cb1a101e91fa53868497dbd79847f9dbe3"
+                "sha256:4652a0b3e19616b57d652b82bfa5e38bf5dbea0813eed971612671cb9e90c0fe",
+                "sha256:80523bc437d41b35c5db7e525ad9d908f79de65c27d6a5a5eab6df348a352d99"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.9'",
-            "version": "==1.16.5"
+            "markers": "python_version >= '3.10'",
+            "version": "==1.17.0"
         },
         "aniso8601": {
             "hashes": [

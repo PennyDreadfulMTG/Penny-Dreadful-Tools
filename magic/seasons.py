@@ -29,7 +29,7 @@ SEASONS = [
 SUPPLEMENTAL_SETS = [
     'MAT',  # March of the Machines Aftermath, mini-set
     'TDM', 'EOE',  # 2025
-    'Unknown UB Set', 'Ziplining' # 2026
+    'TMT', 'Ziplining' # 2026
 ]
 
 IGNORED_SETS = [

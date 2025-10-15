@@ -25,3 +25,8 @@ updates:
   allow:
   - dependency-type: direct
   - dependency-type: indirect
+  groups:
+    pydantic-related:
+      patterns:
+        - "pydantic"
+        - "pydantic-core"

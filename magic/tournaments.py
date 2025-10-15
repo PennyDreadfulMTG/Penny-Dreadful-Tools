@@ -111,10 +111,7 @@ def pd500_date() -> datetime.datetime:
         return dtutil.GATHERLING_TZ.localize(datetime.datetime(1970, 1, 1))
 
     end_of_season = seasons.next_rotation()
-    pd500_normal = end_of_season - datetime.timedelta(days=5, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
-
-    # FIXME: revert after PD38
-    return pd500_normal - datetime.timedelta(days=7)
+    return end_of_season - datetime.timedelta(days=5, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 
 def week_number(date: datetime.datetime) -> int:

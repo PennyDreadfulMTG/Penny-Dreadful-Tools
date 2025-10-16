@@ -4,7 +4,7 @@ import json
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, TypeVar
 
 from shared.pd_exception import InvalidDataException
 
@@ -158,7 +158,7 @@ class StrSetting(Setting[str]):
         return self.set(value)
 
 
-class OptionalStrSetting(Setting[Optional[str]]):
+class OptionalStrSetting(Setting[str | None]):
     pass
 
 class ListSetting(Setting[list[U]]):

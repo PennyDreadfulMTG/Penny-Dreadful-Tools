@@ -4,7 +4,7 @@ import logging
 import re
 from collections.abc import Callable, Sequence
 from copy import copy
-from typing import TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING, cast
 
 import attr
 import whoosh
@@ -321,4 +321,4 @@ class MtgMessageContext(PrefixedContext, MtgMixin):
     pass
 
 
-MtgContext = Union[MtgMessageContext, MtgInteractionContext]
+MtgContext = MtgMessageContext | MtgInteractionContext

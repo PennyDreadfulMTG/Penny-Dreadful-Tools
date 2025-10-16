@@ -2,7 +2,7 @@ import datetime
 import sys
 from enum import Enum
 from itertools import groupby
-from typing import Any, Union
+from typing import Any
 
 import inflect
 from dateutil import rrule
@@ -13,7 +13,7 @@ from shared import dtutil, guarantee
 from shared.container import Container
 
 TournamentDateType = tuple[int, str, datetime.datetime]
-Prizes = list[dict[str, Union[str, object]]]
+Prizes = list[dict[str, str | object]]
 
 FNM = 1
 SAT = 2

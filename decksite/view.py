@@ -7,7 +7,7 @@ from flask import request, session, url_for
 from flask_babel import gettext, ngettext
 from werkzeug.routing import BuildError
 
-from decksite import APP, get_season_id, prepare
+from decksite import APP, auth, get_season_id, prepare
 from decksite.data import competition
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.deck_type import DeckType
@@ -262,6 +262,9 @@ class View(BaseView):
 
     def babel_languages(self) -> list[Locale]:
         return APP.babel.list_translations()
+
+    def logged_in(self) -> bool:
+        return bool(auth.person_id())
 
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')

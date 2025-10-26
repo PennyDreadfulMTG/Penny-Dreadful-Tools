@@ -3463,12 +3463,12 @@
         },
         "traceback-with-variables": {
             "hashes": [
-                "sha256:750457dd847f12d444320c9d24a4972912fcc64868c98b44f8a79ca2fd698257",
-                "sha256:a61fd30f21e231b42d9e3cd32c818fb0340a904cbca669f92784cd81c204bf5d"
+                "sha256:ab6d75c72d26d61217962d11db44c98c62dccd2fedb2d4fb0ae4f9faf9db23c2",
+                "sha256:ea7c695f9b401762f68f75df0439d661112b8dbd58bcd6910e402cff925ad7e0"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.6'",
-            "version": "==2.2.0"
+            "markers": "python_version >= '3.7'",
+            "version": "==2.2.1"
         },
         "typeguard": {
             "hashes": [

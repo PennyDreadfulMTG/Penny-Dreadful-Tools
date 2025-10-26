@@ -31,7 +31,9 @@
         <div class="page">
             <header class="season-{{season_id}}">
                 <div class="hamburger">☰</div>
-                {{> language_switcher}}
+                {{#logged_in}}
+                    {{> language_switcher}}
+                {{/logged_in}}
                 <h1><a href="{{home_url}}">Penny Dreadful Magic</a></h1>
                 <div class="search">
                     <input class="typeahead" type="text" placeholder="Search">

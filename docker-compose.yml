@@ -91,6 +91,7 @@ services:
     image: adminer
     ports:
       - 8080:8080
+    command: [ "php", "-d", "upload_max_filesize = 10G", "-d", "post_max_size = 10G", "-S", "[::]:8080", "-t", "/var/www/html" ]
 
   redis:
     image: redis

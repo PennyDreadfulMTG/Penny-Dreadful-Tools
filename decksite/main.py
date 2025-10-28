@@ -17,7 +17,7 @@ from decksite.database import db
 from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
-from shared import dtutil, logger, perf
+from shared import logger, perf
 from shared.pd_exception import TooFewItemsException
 
 
@@ -79,14 +79,9 @@ def before_request() -> wrappers.Response | None:
     g.p = perf.start()
     return None
 
-@APP.after_request
-def after_request(response: Response) -> Response:
-    requests_until_no_intro = 20  # Typically ten page views because of async requests for the status bar.
-    views = int(request.cookies.get('views', 0)) + 1
-    response.set_cookie('views', str(views))
-    if views >= requests_until_no_intro:
-        response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 * 60 * 24 * 365 * 10)
-    return response
+# @APP.after_request
+# def after_request(response: Response) -> Response:
+#     return response
 
 @APP.teardown_request
 def teardown_request(_: BaseException | None) -> None:

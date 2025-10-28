@@ -2,7 +2,7 @@ import re
 import xml.etree.ElementTree as etree
 from collections.abc import Callable
 from re import Match
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import flask
 import pystache
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 __SEARCHPATH: list[str] = []
 
-StringConverterFunction = Optional[Callable[[str], str]]
+StringConverterFunction = Callable[[str], str] | None
 
 def render_name(template: str, *context: ContextStack) -> str:
     try:

@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import time
+from typing import cast
 
 import attrs
 from bs4 import BeautifulSoup
@@ -179,20 +180,28 @@ def get_forum_posts(url: str) -> list[ForumPost]:
     posts = []
     threads = soup.find_all('div', class_='structItem--thread')
     for p in threads:
-        post: Tag = p  # type: ignore
+        post: Tag = p
         label = None
         # votes = post.find('span', class_='js-voteCount').text
         title = post.find('div', class_='structItem-title')
-        t = title.find('a')  # type: ignore
-        if t.attrs['href'].startswith('/index.php?forums'):
+        if title is None:
+            continue
+        t = title.find('a')
+        if t is None:
+            continue
+        href = cast(str, t.attrs['href'])
+        if href.startswith('/index.php?forums'):
             label = t.text
             t = t.find_next_sibling('a')
-        url = 'https://forums.mtgo.com' + t.attrs['href']
+            if t is None:
+                continue
+        url = 'https://forums.mtgo.com' + href
         name = t.text
         posts.append(ForumPost(name, label, url))
+
     next = soup.find('a', class_='pageNav-jump--next')
     if next is not None:
-        logger.info(f'Next page: {next.attrs["href"]}')  # type: ignore
+        logger.info(f'Next page: {next.attrs["href"]}')
         url = 'https://forums.mtgo.com' + next.attrs['href']  # type: ignore
         posts.extend(get_forum_posts(url))
     return posts

@@ -717,7 +717,15 @@ def person_status() -> Response:
         time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)
         if time_until_league_end <= datetime.timedelta(days=2):
             r['league_end'] = dtutil.display_time(time_until_league_end / datetime.timedelta(seconds=1), granularity=2)
-    return return_json(r)
+    response = return_json(r)
+
+    # Track number of requests to hide intro after a certain number
+    requests_until_no_intro = 10
+    views = int(request.cookies.get('views', 0)) + 1
+    response.set_cookie('views', str(views))
+    if views >= requests_until_no_intro:
+        response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 * 60 * 24 * 365 * 10)
+    return response
 
 def guarantee_at_most_one_or_retire(decks: list[Deck]) -> Deck | None:
     try:

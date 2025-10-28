@@ -1,18 +1,18 @@
 {{#show_matches}}
     <section>
-        <p>Before you retire your deck, please check that all of your matches have been reported correctly.</p>
+        <p>{{_ Before you retire your deck, please check that all of your matches have been reported correctly.}}</p>
         {{#has_matches}}
             {{> deckmatches}}
         {{/has_matches}}
         {{^has_matches}}
-            <p>This deck has no reported matches.</p>
+            <p>{{_ This deck has no reported matches.}}</p>
         {{/has_matches}}
-        <p><a href="{{report_url}}">Report a Match</a></p>
+        <p><a href="{{report_url}}">{{_ Report a Match}}</a></p>
 {{/show_matches}}
 <section>
     <form method="post">
         <div>
-            <label for="entry">Deck to Retire</label>
+            <label for="entry">{{_ Deck to Retire}}</label>
             <select class="{{#form.errors.entry}}error {{/form.errors.entry}}deckselect" name="entry" id="entry">
                 <option value="">Choose…</option>
                 {{#form.entry_options}}

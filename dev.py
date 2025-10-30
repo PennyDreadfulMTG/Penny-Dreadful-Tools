@@ -44,6 +44,10 @@ def buildpy() -> None:
 def buildjs() -> None:
     builddotpy.buildjs()
 
+@cli.command()
+def buildfonts() -> None:
+    builddotpy.buildfonts()
+
 def do_lint() -> None:
     """
     Invoke linter with our preferred options
@@ -241,10 +245,7 @@ def push() -> None:
 
 def do_pull_request(argv: list[str]) -> None:
     print('>>>> Pull request')
-    try:
-        subprocess.check_call(['hub', 'pull-request', *argv])
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        subprocess.check_call(['gh', 'pr', 'create'])
+    subprocess.check_call(['gh', 'pr', 'create'])
 
 @cli.command()
 @click.argument('argv', nargs=-1)

@@ -7,6 +7,7 @@ ON_WINDOWS = sys.platform == 'win32'
 def build() -> None:
     buildpy()
     buildjs()
+    buildfonts()
 
 def buildpy() -> None:
     print('>>>> Installing Requirements')
@@ -19,6 +20,19 @@ def buildjs() -> None:
     subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     print('>>>> Building javascript')
     subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)
+
+
+def buildfonts() -> None:
+    print('>>>> Enabling lfs if necessary')
+    try:
+        subprocess.check_call(['git', 'lfs', 'install', '--force'])
+    except subprocess.CalledProcessError:
+        # fallback if hook already exists or anything else goes wrong
+        subprocess.check_call(['git', 'lfs', 'update', '--force'])
+    print('>>>> Getting font binaries')
+    subprocess.check_call(['git', 'lfs', 'pull'])
+    print('>>>> Building local font subset')
+    subprocess.check_call(['pipenv', 'run', 'python', 'run.py', 'maintenance', 'fonts'])
 
 
 if __name__ == '__main__':

@@ -116,7 +116,7 @@ def pd500_date() -> datetime.datetime:
 
 def week_number(date: datetime.datetime) -> int:
     start_of_season = seasons.last_rotation()
-    return (date - start_of_season).days // 7
+    return (date - start_of_season).days // 7 + 1
 
 
 def is_pd500_week(start: datetime.datetime) -> bool:

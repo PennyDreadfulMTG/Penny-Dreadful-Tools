@@ -59,6 +59,7 @@ jobs:
     - uses: getong/mariadb-action@v1.11
       with:
         mysql root password: bad-password
+        mariadb version: 11
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip pipenv wheel

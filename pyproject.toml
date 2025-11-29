@@ -1,5 +1,8 @@
+[tool.isort]
+line_length = 320
+
 [tool.ruff]
-line-length = 9999
+line-length = 320
 exclude = [
     ".git",
     "__pycache__",

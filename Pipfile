@@ -40,7 +40,7 @@ mypy-extensions = "*"
 [packages]
 anytree = "==2.13.0"
 attrs = "==25.4.0"
-beautifulsoup4 = "==4.14.2"
+beautifulsoup4 = "==4.14.3"
 better-profanity = "==0.7.0"
 cachelib = "==0.13.0"
 click = "==8.3.1"

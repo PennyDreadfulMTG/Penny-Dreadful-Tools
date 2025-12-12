@@ -57,7 +57,7 @@ After this, various components will be available in your browser:
 - The logsite at <http://127.0.0.1:5001>
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
-- Install python 3.10
+- Install python 3.13
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
@@ -82,7 +82,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 ## Manual Development Environment Setup (Non-docker instructions)
 
 - Install MariaDB 10.0+
-- Install python 3.10
+- Install python 3.13
 - Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>

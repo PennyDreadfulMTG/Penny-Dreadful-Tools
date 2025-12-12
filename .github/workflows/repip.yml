@@ -1,8 +1,8 @@
 name: Repin pip dependencies
 
 on:
-  push:
-    branches: [ master ]
+  # push:
+  #   branches: [ master ]
 
 jobs:
   build:
@@ -11,10 +11,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-    - name: Set up Python 3.10
+    - name: Set up Python 3.13
       uses: actions/setup-python@v6
       with:
-        python-version: '3.10'
+        python-version: '3.13'
         cache: 'pipenv'
     - name: Install dependencies
       run: |

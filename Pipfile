@@ -102,6 +102,7 @@ manabase-solver = "*"
 brotli = "*"
 scipy = "*"
 regex = "*"
+audioop-lts = "*"
 
 [requires]
 python_version = "3.13"

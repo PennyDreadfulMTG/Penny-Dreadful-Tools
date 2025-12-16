@@ -1223,12 +1223,12 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:896c8b3652f9d2878c0aa2ddc2818ecd393b8bcbcec5c7fe83e118f4f104745a",
-                "sha256:9d84767412e82942d387a404103859628b53687f832a2a10139075002821f50d"
+                "sha256:82344e86dc00410ef5382d99be677c6043d72e502b625aa4f4afa0bdacca0f36",
+                "sha256:90d3f41b6b72ea72dd9811e765699ee491ab24139f34ebf1ca2b9cc0c38708f3"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==2.44.0"
+            "version": "==2.45.0"
         },
         "google-auth-httplib2": {
             "hashes": [

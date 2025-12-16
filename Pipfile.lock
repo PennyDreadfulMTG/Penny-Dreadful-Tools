@@ -1226,17 +1226,17 @@
                 "sha256:82344e86dc00410ef5382d99be677c6043d72e502b625aa4f4afa0bdacca0f36",
                 "sha256:90d3f41b6b72ea72dd9811e765699ee491ab24139f34ebf1ca2b9cc0c38708f3"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==2.45.0"
         },
         "google-auth-httplib2": {
             "hashes": [
-                "sha256:1be94c611db91c01f9703e7f62b0a59bbd5587a95571c7b6fade510d648bc08b",
-                "sha256:5ef03be3927423c87fb69607b42df23a444e434ddb2555b73b3679793187b7de"
+                "sha256:177898a0175252480d5ed916aeea183c2df87c1f9c26705d74ae6b951c268b0b",
+                "sha256:426167e5df066e3f5a0fc7ea18768c08e7296046594ce4c8c409c2457dd1f776"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.7'",
-            "version": "==0.2.1"
+            "version": "==0.3.0"
         },
         "googleapis-common-protos": {
             "hashes": [

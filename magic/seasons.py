@@ -23,11 +23,17 @@ SEASONS = [
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
     'DFT', 'FIN', 'SPM', 'TLA',         # 2025
+    'Wrestling', 'Yachting',            # 2026
 ]
 
 SUPPLEMENTAL_SETS = [
     'MAT',  # March of the Machines Aftermath, mini-set
     'TDM', 'EOE',  # 2025
+    'TMT', 'Ziplining' # 2026
+]
+
+IGNORED_SETS = [
+    'OM1',  # Through the Omenpaths, equivalent to SPM
 ]
 
 OVERRIDES = {
@@ -42,7 +48,11 @@ OVERRIDES = {
 }
 
 def rotation_offset(code: str) -> datetime.timedelta:
-    if code in ['ONE', 'MOM', 'EOE']:
+    if code in ['ONE', 'MOM']:
+        return datetime.timedelta(days=14)
+    elif code in SEASONS and SEASONS.index(code) >= SEASONS.index('SPM'):
+        return datetime.timedelta(days=14)
+    elif code in SUPPLEMENTAL_SETS and SUPPLEMENTAL_SETS.index(code) >= SUPPLEMENTAL_SETS.index('EOE'):
         return datetime.timedelta(days=14)
     return datetime.timedelta(days=7)
 
@@ -122,11 +132,17 @@ def sets(supplemental: bool | None) -> list[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
-    set_info = [SetInfo.parse(s) for s in info['sets']]
+    set_info = [SetInfo.parse(s) for s in info['sets'] if s['code'] not in IGNORED_SETS]
     releases = []
 
     last = set_info[0]
     for s in set_info:
+        if s.codename in SEASONS and s.code is not None:
+            SEASONS[SEASONS.index(s.codename)] = s.code
+            print(f'Updating season code {s.codename} to {s.code}', file=sys.stderr)
+        elif s.codename in SUPPLEMENTAL_SETS and s.code is not None:
+            SUPPLEMENTAL_SETS[SUPPLEMENTAL_SETS.index(s.codename)] = s.code
+            print(f'Updating supplemental set code {s.codename} to {s.code}', file=sys.stderr)
         if supplemental is None:
             pass
         elif supplemental and s.code not in SUPPLEMENTAL_SETS:

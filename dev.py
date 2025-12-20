@@ -105,9 +105,9 @@ def mypy(argv: list[str], strict: bool = False, typeshedding: bool = False) -> N
 
 @cli.command()
 def upload_coverage() -> None:
+    from shared import fetch_tools
     try:
         print('>>>> Upload coverage')
-        from shared import fetch_tools
         fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
         python3 = local['python3']
         python3['-m', 'coverage', 'xml', '-i']

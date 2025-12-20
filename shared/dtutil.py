@@ -3,7 +3,7 @@ import re
 from calendar import timegm
 from collections import OrderedDict
 from re import Match
-from typing import Any, Optional
+from typing import Any
 
 import feedparser
 import inflect
@@ -88,7 +88,7 @@ def day2ordinal(m: Match) -> str:
     return p.ordinal(str(int(m.group(1))))
 
 
-IntervalsType = dict[str, tuple[Optional[int], int, Optional[int]]]
+IntervalsType = dict[str, tuple[int | None, int, int | None]]
 ResultsType = list[tuple[int, str]]
 
 def get_intervals() -> IntervalsType:

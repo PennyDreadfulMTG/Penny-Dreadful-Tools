@@ -5,6 +5,7 @@ from flask import url_for
 from decksite.data import archetype, person
 from magic import fetcher, oracle
 from shared import configuration
+from shared.pd_exception import InvalidDataException
 
 DAILY = True
 REQUIRES_APP_CONTEXT = True
@@ -18,12 +19,16 @@ def archetypes() -> list[dict[str, str]]:
     archs = archetype.load_archetypes()
     for a in archs:
         urls.append({'name': a.name, 'type': 'Archetype', 'url': url_for('archetype', archetype_id=a.name)})
+    if not archs:
+        raise InvalidDataException('No archetypes found for typeahead generation')
     return urls
 
 def cards() -> list[dict[str, str]]:
     urls = []
     for name in oracle.cards_by_name():
         urls.append({'name': name, 'type': 'Card', 'url': url_for('card', name=name)})
+    if not urls:
+        raise InvalidDataException('No cards found for typeahead generation')
     return urls
 
 def people() -> list[dict[str, str]]:
@@ -31,6 +36,8 @@ def people() -> list[dict[str, str]]:
     ps, _ = person.load_people()
     for p in ps:
         urls.append({'name': p.name, 'type': 'Person', 'url': url_for('person', mtgo_username=p.name)})
+    if not urls:
+        raise InvalidDataException('No people found for typeahead generation')
     return urls
 
 def resources() -> list[dict[str, str]]:

@@ -46,15 +46,15 @@
     <h2>Season {{season_id}}</h2>
     <p>Season {{season_id}} began {{season_start_display}} and ends {{season_end_display}}.</p>
     <ul>
-        <li><a href="{{scryfall_url}}">Legal cards (scryfall)</a></li>
-        <li><a href="{{legal_cards_url}}">Legal cards (text)</a></li>
+        <li><a href="{{scryfall_url}}">{{_ Legal cards (scryfall)}}</a></li>
+        <li><a href="{{legal_cards_url}}">{{_ Legal cards (text)}}</a></li>
     </ul>
     {{#in_rotation}}
         <p><a href="{{rotation_url}}">{{rotation_msg}}</a></p>
     {{/in_rotation}}
 </section>
 <section class="stats">
-    <h2>Community Stats</h2>
+    <h2>{{_ Community Stats}}</h2>
     {{#community_stats}}
         <p>{{header}}</p>
         <ul>

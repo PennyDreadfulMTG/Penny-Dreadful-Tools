@@ -827,3 +827,14 @@ def test_vivify_universes_beyond() -> None:
     assert v.maindeck[0].n == 4
     assert v.maindeck[1].name == 'Swamp'
     assert v.maindeck[1].n == 56
+
+def test_spiderman_noir() -> None:
+    s = """
+        4 Kroble, Envoy of the Bog
+        56 Swamp
+        """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    v = decklist.vivify(d)
+    assert v.maindeck[0].name == 'Spider-Man Noir'
+    assert v.maindeck[0].n == 4

@@ -25,7 +25,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/run.py",
             "args": [
-                "init-cards"
+                "init-cards",
+                "--force"
             ],
             "stopOnEntry": true
         },

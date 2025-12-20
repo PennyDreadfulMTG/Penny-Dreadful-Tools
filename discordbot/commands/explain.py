@@ -26,7 +26,6 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
             'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),
             'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/',
         },
-
     ),
     'deckbuilding': (
         """
@@ -129,7 +128,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
         This credit will appear when you trade with one of their bots on Magic Online.
         One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
-        Prizes are credited once a week usually on the Friday or Saturday following the tournament but may sometimes take longer.
+        Prize delivery can take a week or two from the day of the tournament.
         """,
         {
             'More Info': fetcher.decksite_url('/tournaments/'),
@@ -139,7 +138,6 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """
         """,
         {},
-
     ),
     'replay': (
         """
@@ -150,8 +148,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     'reporting': (
         """
         """,
-        {
-        },
+        {},
     ),
     'retire': (
         'To retire from a league run message PDBot on MTGO with `!retire`. If you have authenticated with Discord on pennydreadfulmagic.com you can say `!retire` on Discord or retire on the website.',

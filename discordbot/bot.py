@@ -56,7 +56,12 @@ class Bot(Client):
         if event.message.author.bot:
             return
         if event.message.channel is None:
-            logging.warn(f'Got Message with no channel: {event.message}')
+            logging.warning(f'Got Message with no channel: {event.message}')
+        if event.message.channel.id == configuration.honeypot_channel_id.value:
+            author = event.message.author
+            if isinstance(author, Member):
+                await author.ban(delete_message_days=1, reason='Spambot detected by posting in honeypot channel')
+            return
 
         ctx = command.MtgMessageContext.from_message(self, event.message)
         await command.respond_to_card_names(ctx)

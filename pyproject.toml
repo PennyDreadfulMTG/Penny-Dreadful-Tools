@@ -1,5 +1,8 @@
+[tool.isort]
+line_length = 320
+
 [tool.ruff]
-line-length = 9999
+line-length = 320
 exclude = [
     ".git",
     "__pycache__",
@@ -39,6 +42,7 @@ select = [
 "build.py" = ["T201"]
 "*_test.py" = ["T201"]
 "magic/multiverse.py" = ["T201"]
+"magic/seasons.py" = ["E501"]
 "modo_bugs/*" = ["T201"]
 "run.py" = ["T201"]
 "analysis/*" = ["T201"]

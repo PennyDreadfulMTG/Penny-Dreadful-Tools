@@ -3456,12 +3456,12 @@
         },
         "types-setuptools": {
             "hashes": [
-                "sha256:05da599f5a062bbee3e83d60318576ba23111a768b7a2e46aa11644109c5d17f",
-                "sha256:fecf4b9ebfc4cdd9cd38b898b653ad197507d7a62d465a168b709c56e94b02c4"
+                "sha256:1b36db79d724c2287d83dc052cf887b47c0da6a2fff044378be0b019545f56e6",
+                "sha256:d3411059ae2f5f03985217d86ac6084efea2c9e9cacd5f0869ef950f308169b2"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==80.9.0.20251221"
+            "version": "==80.9.0.20251223"
         },
         "typing-extensions": {
             "hashes": [

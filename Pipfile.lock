@@ -1303,11 +1303,12 @@
         },
         "httplib2": {
             "hashes": [
-                "sha256:ac7ab497c50975147d4f7b1ade44becc7df2f8954d42b38b3d69c515f531135c",
-                "sha256:b9cd78abea9b4e43a7714c6e0f8b6b8561a6fc1e95d5dbd367f5bf0ef35f5d24"
+                "sha256:21591655ac54953624c6ab8d587c71675e379e31e2cfe3147c83c11e9ef41f92",
+                "sha256:d520d22fa7e50c746a7ed856bac298c4300105d01bc2d8c2580a9b57fb9ed617"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==0.31.0"
+            "version": "==0.31.1"
         },
         "idna": {
             "hashes": [
@@ -2852,7 +2853,6 @@
                 "sha256:023b5e7e5520ad96642e2c6db4cb683d3970bd640cdf7115049a6e9c3682df82",
                 "sha256:47fad0f17ac1e2cad3de3b458570fbc9b03560aa029ed5e16ee5554da9a2251c"
             ],
-            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==3.3.1"
         },

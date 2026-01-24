@@ -23,7 +23,7 @@ if not os.path.exists('configs'):
     os.mkdir('configs')
 
 @contextmanager
-def with_config_file(namespace: Any) -> Generator[None, None, None]:
+def with_config_file(namespace: Any) -> Generator[None]:
     if namespace is None:
         yield
         return

@@ -1,7 +1,7 @@
 [project]
 name = "Penny-Dreadful-Tools"
 version = "2026.1.0"
-requires-python = "~=3.13"
+requires-python = "~=3.13.0"
 dependencies = [
     "anytree==2.13.0",
     "attrs==25.4.0",

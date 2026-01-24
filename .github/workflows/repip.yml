@@ -1,6 +1,7 @@
 name: Repin pip dependencies
 
 on:
+  workflow_dispatch:
   # push:
   #   branches: [ master ]
 

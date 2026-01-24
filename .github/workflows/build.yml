@@ -65,7 +65,7 @@ jobs:
     - run: uv run python run.py init-cards
     - name: Run pytest
       run: |
-        uv run python dev.py pytest
+        uv run pytest
     - uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}

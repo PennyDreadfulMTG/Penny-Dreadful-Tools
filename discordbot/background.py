@@ -146,7 +146,7 @@ class BackgroundTasks(Extension):
         upcoming_gatherling_events = await fetcher.gatherling_upcoming_events()
         for info in upcoming_tournaments:
             if info['next_tournament_name'] == info['series_name']:
-                name = f'{info["next_tournament_name"]} {seasons.current_season_num()}.{info["week_number"]}'
+                name = f'{info["next_tournament_name"]} {seasons.current_season_num()}.{str(info["week_number"]).zfill(2)}'
             else:
                 # Special Named PD Sat
                 name = f'{info["next_tournament_name"]} (Season {seasons.current_season_num()})'

@@ -6,6 +6,7 @@ verify_ssl = true
 [scripts]
 discordbot = "python run.py discordbot"
 decksite = "python run.py decksite"
+logsite = "python run.py logsite"
 maintenance = "python run.py maintenance"
 scraper = "python run.py scraper"
 modo-bugs = "python run.py modo-bugs"
@@ -85,8 +86,8 @@ Flask-SQLAlchemy = "*"
 Markdown = "==3.4.4"
 Pillow = "*"
 PyGithub = "==1.59.1"
-SQLAlchemy = "==2.0.20"
-SQLAlchemy-Utils = "==0.41.1"
+SQLAlchemy = ">=2.0.20"
+SQLAlchemy-Utils = ">=0.41.1"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 pydantic = "*"

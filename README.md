@@ -58,12 +58,12 @@ After this, various components will be available in your browser:
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install python 3.13
-- Install pipenv
+- Install uv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
-- pipenv install
-- pipenv run python dev.py build
+- uv sync
+- uv run python dev.py build
 
 ## Configuring Environment
 

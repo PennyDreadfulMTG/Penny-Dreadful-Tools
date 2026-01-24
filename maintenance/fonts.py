@@ -24,10 +24,10 @@ from shared.pd_exception import InvalidDataException
 # It can also be used to inspect the symbols in question and their representation in the fonts we have available.
 #
 # Called with the show flag we will output an HTML file showing the symbols as currently rendered.
-# $ PYTHONPATH=. pipenv run python3 maintenance/fonts.py show >/tmp/index.html && open /tmp/index.html
+# $ PYTHONPATH=. uv run python3 maintenance/fonts.py show >/tmp/index.html && open /tmp/index.html
 #
 # Called with the options flag we will output an HTML file showing the symbols
-# $ PYTHONPATH=. pipenv run python3 maintenance/fonts.py options >/tmp/index.html && open /tmp/index.html
+# $ PYTHONPATH=. uv run python3 maintenance/fonts.py options >/tmp/index.html && open /tmp/index.html
 # to see all the possibilities and maybe update the PREFER dict below.
 #
 # base-only can also be provided in the args list in order to only use the base symbols (not those from deck names).

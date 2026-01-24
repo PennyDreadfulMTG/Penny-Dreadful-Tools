@@ -4,7 +4,7 @@ import json
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 from shared.pd_exception import InvalidDataException
 
@@ -47,7 +47,7 @@ def save_cfg(cfg: Any) -> None:
     with open('config.json', 'w') as fh:
         fh.write(json.dumps(cfg, indent=4, sort_keys=True))
 
-class Setting(Generic[T]):
+class Setting[T]:
     def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str | None = None) -> None:
         self.key = key
         self.default_value = default_value

@@ -50,8 +50,6 @@ OVERRIDES = {
 def rotation_offset(code: str) -> datetime.timedelta:
     if code in ['ONE', 'MOM']:
         return datetime.timedelta(days=14)
-    elif code in SEASONS and SEASONS.index(code) >= SEASONS.index('ECL'):
-        return datetime.timedelta(days=21)
     elif code in SEASONS and SEASONS.index(code) >= SEASONS.index('SPM'):
         return datetime.timedelta(days=14)
     elif code in SUPPLEMENTAL_SETS and SUPPLEMENTAL_SETS.index(code) >= SUPPLEMENTAL_SETS.index('EOE'):

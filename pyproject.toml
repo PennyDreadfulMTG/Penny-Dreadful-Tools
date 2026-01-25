@@ -45,7 +45,7 @@ dependencies = [
     "Flask",
     "Flask-Babel",
     "Flask-Migrate",
-    "Flask-Session==0.5.0",
+    "Flask-Session==0.8.0",
     "Flask-SQLAlchemy",
     "Markdown==3.4.4",
     "Pillow",

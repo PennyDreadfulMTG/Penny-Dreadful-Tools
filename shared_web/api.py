@@ -20,7 +20,7 @@ def process_github_webhook() -> Response:
                 subprocess.check_output(['git', 'fetch'])
                 subprocess.check_output(['git', 'reset', '--hard', 'origin/{}'.format(current_app.config['branch'])])
                 try:
-                    subprocess.check_output([sys.executable, '-m', 'pipenv', 'install', '--system'])
+                    subprocess.check_output([sys.executable, '-m', 'uv', 'sync'])
                 except subprocess.CalledProcessError:
                     pass
                 try:

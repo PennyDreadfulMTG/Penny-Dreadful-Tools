@@ -10,8 +10,8 @@ def build() -> None:
 
 def buildpy() -> None:
     print('>>>> Installing Requirements')
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pipenv'])
-    subprocess.check_call(['pipenv', 'sync', '--dev'])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'uv'])
+    subprocess.check_call(['uv', 'sync', '--dev'])
 
 
 def buildjs() -> None:

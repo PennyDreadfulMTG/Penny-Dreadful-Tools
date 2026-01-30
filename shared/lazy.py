@@ -3,7 +3,7 @@ from typing import TypeVar
 
 T = TypeVar('T')
 
-def lazy_property(fn: Callable[[], T]) -> Callable[[], T]:
+def lazy_property[T](fn: Callable[[], T]) -> Callable[[], T]:
     """Decorator that makes a property lazy-evaluated.
     """
     attr_name = '_lazy_' + fn.__name__

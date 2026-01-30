@@ -640,7 +640,7 @@ def doorprize() -> Response:
 def rotation_clear_cache() -> Response:
     hard = request.args.get('hard', '0') == '1'
     task = 'clear_rotation_cache_hard' if hard else 'clear_rotation_cache'
-    cmd = ['pipenv', 'run', 'python', 'run.py', 'maintenance', task]
+    cmd = ['uv', 'run', 'python', 'run.py', 'maintenance', task]
     subprocess.Popen(cmd)
     return return_json({'success': True})
 
@@ -714,7 +714,7 @@ def person_status() -> Response:
         r['archetypes_to_tag'] = total
     active_league = league.active_league()
     if active_league:
-        time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)
+        time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.UTC)
         if time_until_league_end <= datetime.timedelta(days=2):
             r['league_end'] = dtutil.display_time(time_until_league_end / datetime.timedelta(seconds=1), granularity=2)
     response = return_json(r)

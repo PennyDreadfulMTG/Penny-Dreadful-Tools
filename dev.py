@@ -49,9 +49,9 @@ def do_lint() -> None:
     Invoke linter with our preferred options
     """
     print('>>>> Running lint')
-    pipenv = local['pipenv']
+    uv = local['uv']
     try:
-        pipenv['run', 'python', '-m', 'ruff', 'check', '.'] & FG
+        uv['run', 'python', '-m', 'ruff', 'check', '.'] & FG
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 
@@ -162,11 +162,11 @@ def test(argv: list[str]) -> None:
 
 def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
-    pipenv = local['pipenv']
+    uv = local['uv']
     if fix:
-        pipenv['run', 'isort', '.', '--skip=node_modules'] & FG
+        uv['run', 'isort', '.', '--skip=node_modules'] & FG
     else:
-        pipenv['run', 'isort', '.', '--check', '--skip=node_modules'] & FG
+        uv['run', 'isort', '.', '--check', '--skip=node_modules'] & FG
 
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
@@ -375,9 +375,9 @@ def repip() -> None:
             remote = version.Version(info['info']['version'])
             print(f'==\n{name}\nInstalled:\t{installed}\nPyPI:\t\t{remote}\n==')
             if remote > installed:
-                pipenv = local['pipenv']
+                uv = local['uv']
                 try:
-                    pipenv['install', f'{name}=={remote}'] & FG
+                    uv['install', f'{name}=={remote}'] & FG
                 except ProcessExecutionError as e:
                     sys.exit(e.retcode)
 

@@ -29,7 +29,7 @@ FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts: int) -> datetime.datetime:
-    return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(ts, datetime.UTC)
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt: datetime.datetime) -> int:
@@ -54,7 +54,7 @@ def timezone(tzid: str) -> datetime.tzinfo:
 
 def now(tz: Any | None = None) -> datetime.datetime:
     if tz is None:
-        tz = datetime.timezone.utc
+        tz = datetime.UTC
     return datetime.datetime.now(tz)
 
 def day_of_week(dt: datetime.datetime, tz: Any) -> str:

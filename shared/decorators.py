@@ -31,7 +31,7 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]
         return wrapper
     return decorator
 
-def lock(func: FuncType[T]) -> T:
+def lock[T](func: FuncType[T]) -> T:
     return func()
 
 def interprocess_locked(path: str) -> Callable:

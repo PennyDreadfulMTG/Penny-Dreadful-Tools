@@ -4,7 +4,7 @@ import io
 import math
 import os
 import re
-import urllib.request
+import urllib.error
 
 import aiohttp
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -221,8 +221,8 @@ async def generate_discord_banner(names: list[str], background: str) -> str:
     file_path = await download_art_crop(c, hq_artcrops)
     if file_path:
         with Image.open(file_path) as img:
-            img = ImageOps.fit(img, (1920, 1080))
-            canvas.paste(img)
+            newimg = ImageOps.fit(img, (1920, 1080))
+            canvas.paste(newimg)
 
     n = math.ceil(len(cards) / 2)
     card_size = (320, 426)
@@ -260,7 +260,7 @@ async def paste_card(canvas: Image.Image, c: Card, x: int, y: int, card_size: tu
         return x
 
     with Image.open(data) as img:
-        img = img.resize(card_size, Image.Resampling.LANCZOS)
-        canvas.paste(img, (x, y))
-        x = x + img.width + 10
+        newimg = img.resize(card_size, Image.Resampling.LANCZOS)
+        canvas.paste(newimg, (x, y))
+        x = x + newimg.width + 10
     return x

@@ -425,7 +425,7 @@ def maybe_regenerate_symbols_font(name: str) -> None:
     except LockNotAcquiredException:
         return
     # Fire off a background job to generate the font, it takes too long (10s) to do on user time during deck creation.
-    cmd = ['pipenv', 'run', 'python', 'run.py', 'maintenance', 'fonts']
+    cmd = ['uv', 'run', 'python', 'run.py', 'maintenance', 'fonts']
     subprocess.Popen(cmd)
     db().release_lock('font_generation')
 

@@ -1,5 +1,5 @@
 import json
-from typing import Any, AnyStr, TypeVar
+from typing import Any, TypeVar
 
 import redis as redislib
 
@@ -104,7 +104,7 @@ def get_container_list(key: str) -> list[Container] | None:
 
 T = TypeVar('T', dict, list, str, bool, int, covariant=True)
 
-def store(key: str, val: T, **kwargs: Any) -> T:
+def store[T: (dict, list, str, bool, int)](key: str, val: T, **kwargs: Any) -> T:
     if REDIS is not None:
         try:
             REDIS.set(key, json.dumps(val, default=extra_serializer), **kwargs)
@@ -124,7 +124,7 @@ def increment(key: str, **kwargs: Any) -> int | None:
             pass
     return None
 
-def clear(*keys_list: AnyStr) -> None:
+def clear[AnyStr: (bytes, str)](*keys_list: AnyStr) -> None:
     if REDIS is not None:
         if len(keys_list) == 0:
             # redis errors on a delete with no arguments, but we don't have to

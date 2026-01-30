@@ -1,10 +1,10 @@
 import subprocess
 from collections.abc import Generator
-from distutils.dist import Distribution
 from typing import Any
 
 import pystache
 from babel.messages import frontend
+from distutils.dist import Distribution
 from poeditor.client import POEditorAPI
 
 from shared import configuration

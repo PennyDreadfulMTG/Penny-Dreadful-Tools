@@ -13,7 +13,7 @@ dependencies = [
     "feedparser==6.0.12",
     "flask-restx",
     "ftfy==6.3.1",
-    "pip-check-reqs==2.5.5",
+    "pip-check-reqs==2.5.6",
     "google-api-python-client==2.189.0",
     "inflect==7.5.0",
     "isort==7.0.0",

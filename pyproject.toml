@@ -57,7 +57,7 @@ dependencies = [
     "pydantic",
     "pystache",
     "fasteners",
-    "interactions.py==5.13.1",
+    "interactions.py==5.16.0",
     "tomli",
     "orjson",
     "traceback-with-variables",

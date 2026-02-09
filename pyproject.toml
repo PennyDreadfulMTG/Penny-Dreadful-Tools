@@ -47,7 +47,7 @@ dependencies = [
     "Flask-Migrate",
     "Flask-Session==0.8.0",
     "Flask-SQLAlchemy",
-    "Markdown==3.10.1",
+    "Markdown==3.10.2",
     "Pillow",
     "PyGithub==1.59.1",
     "SQLAlchemy>=2.0.20",

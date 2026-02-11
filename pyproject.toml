@@ -49,7 +49,7 @@ dependencies = [
     "Flask-SQLAlchemy",
     "Markdown==3.10.2",
     "Pillow",
-    "PyGithub==1.59.1",
+    "PyGithub==2.8.1",
     "SQLAlchemy>=2.0.20",
     "SQLAlchemy-Utils>=0.41.1",
     "Whoosh==2.7.4",

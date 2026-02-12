@@ -14,7 +14,7 @@ dependencies = [
     "flask-restx",
     "ftfy==6.3.1",
     "pip-check-reqs==2.5.6",
-    "google-api-python-client==2.189.0",
+    "google-api-python-client==2.190.0",
     "inflect==7.5.0",
     "isort==7.0.0",
     "jsbeautifier==1.15.4",

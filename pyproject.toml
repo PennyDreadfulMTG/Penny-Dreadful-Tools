@@ -4,7 +4,7 @@ version = "2026.1.0"
 requires-python = "~=3.13.0"
 dependencies = [
     "anytree==2.13.0",
-    "attrs==25.4.0",
+    "attrs==26.1.0",
     "beautifulsoup4==4.14.3",
     "better-profanity",
     "cachelib==0.13.0",

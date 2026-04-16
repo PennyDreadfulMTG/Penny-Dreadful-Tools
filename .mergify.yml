@@ -49,8 +49,7 @@ pull_request_rules:
     actions:
       merge:
         method: rebase
-      delete_head_branch: {}
-  - name: automatic merge for master when CI passes and approved + automatic merge for master
+  - name: automatic merge for master when CI passes and approved + automatic merge for master 
       when CI passes and trusted comitter
     conditions:
       - author=@PennyDreadfulMTG/automerge
@@ -69,8 +68,10 @@ priority_rules:
       - status-success=test
       - status-success=jslint
     priority: 2500
+    allow_checks_interruption: true
   - name: priority for queue `trusted`
     conditions:
       - author=@PennyDreadfulMTG/automerge
       - base=master
     priority: 2250
+    allow_checks_interruption: true

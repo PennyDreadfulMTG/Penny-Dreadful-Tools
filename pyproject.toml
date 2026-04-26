@@ -19,7 +19,7 @@ dependencies = [
     "isort==8.0.1",
     "jsbeautifier==1.15.4",
     "lxml",
-    "matplotlib==3.10.8",
+    "matplotlib==3.10.9",
     "munch==4.0.0",
     "mysqlclient==2.2.8",
     "plumbum==1.10.0",

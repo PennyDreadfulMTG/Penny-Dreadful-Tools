@@ -838,3 +838,17 @@ def test_spiderman_noir() -> None:
     v = decklist.vivify(d)
     assert v.maindeck[0].name == 'Spider-Man Noir'
     assert v.maindeck[0].n == 4
+
+def test_prepared() -> None:
+    s = """
+        1 Cheerful Osteomancer
+        1 Emeritus of Ideation // Ancestral Recall
+        58 Island
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    v = decklist.vivify(d)
+    assert v.maindeck[0].name == 'Cheerful Osteomancer'
+    assert v.maindeck[0].n == 1
+    assert v.maindeck[1].name == 'Emeritus of Ideation'
+    assert v.maindeck[1].n == 1

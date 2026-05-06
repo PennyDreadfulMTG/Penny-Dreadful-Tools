@@ -58,6 +58,7 @@ LAYOUTS: dict[str, Layout] = {
     'split': Layout(has_two_names=True, uses_two_names=True, sums_cmc=True, has_two_mana_costs=True),
     'token': Layout(playable=False, uses_canonical_namespace=False),
     'transform': Layout(has_two_names=True, has_single_back=True),
+    'prepare': Layout(has_two_names=True, has_two_mana_costs=True),
     'vanguard': Layout(playable=False),
 }
 

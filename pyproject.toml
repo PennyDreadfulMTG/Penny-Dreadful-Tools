@@ -5,7 +5,7 @@ requires-python = "~=3.13.0"
 dependencies = [
     "anytree==2.13.0",
     "attrs==26.1.0",
-    "beautifulsoup4==4.14.3",
+    "beautifulsoup4==4.15.0",
     "better-profanity",
     "cachelib==0.14.0",
     "click==8.4.1",

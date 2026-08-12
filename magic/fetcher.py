@@ -37,11 +37,11 @@ async def all_cards_async(force_last_good: bool = False) -> tuple[list[CardDescr
     if force_last_good:
         response = None
     else:
-        response = await fetch_tools.fetch_json_async(download_uri)
+        response = await fetch_tools.fetch_jsonl_async(download_uri)
     if not isinstance(response, list):
         try:
             backup = configuration.last_good_bulk_data.value
-            return await fetch_tools.fetch_json_async(backup), backup
+            return await fetch_tools.fetch_jsonl_async(backup), backup
         except Exception as c:
             raise FetchException(f'Default Cards not in expected format. Got {response}') from c
     return response, download_uri
@@ -62,7 +62,7 @@ async def bulk_data_uri() -> str:
     endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
     for e in endpoints['data']:
         if e['type'] == 'default_cards':
-            return e['download_uri']
+            return e['jsonl_download_uri']
     else:
         raise FetchException('Unable to find Default Cards')
 

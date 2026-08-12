@@ -1,3 +1,4 @@
+import gzip
 import json
 import logging
 import os
@@ -50,6 +51,18 @@ async def fetch_async(url: str) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError, aiohttp.ClientConnectorError) as e:
         raise FetchException(e) from e
 
+async def fetch_async_gz(url: str) -> str:
+    logger.info(f'Async fetching {url}')
+    try:
+        async with aiohttp.ClientSession() as aios:
+            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
+            response = await aios.get(url)
+            compressed = await response.read()
+            return gzip.decompress(compressed).decode('utf-8')
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError, aiohttp.ClientConnectorError) as e:
+        raise FetchException(e) from e
+
+
 async def post_async_with_json(url: str, data: dict) -> str:
     logger.info(f'Async posting to {url}')
     try:
@@ -79,6 +92,17 @@ async def fetch_json_async(url: str) -> Any:
     except json.decoder.JSONDecodeError:
         logger.error(f'Failed to load JSON:\n{blob}')
         raise
+
+async def fetch_jsonl_async(url: str) -> list[Any]:
+    try:
+        blob = await fetch_async_gz(url)
+        if blob:
+            return [json.loads(line) for line in blob.splitlines()]
+        return []
+    except json.decoder.JSONDecodeError:
+        logger.error(f'Failed to load JSONL:\n{blob}')
+        raise
+
 
 async def post_json_async(url: str, data: dict) -> Any:
     try:

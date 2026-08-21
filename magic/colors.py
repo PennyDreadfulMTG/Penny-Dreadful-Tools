@@ -48,7 +48,7 @@ def find_colors(cs: list[Card]) -> tuple[list[str], list[str]]:
         card_colored_symbols = []
         if "you may pay {0} rather than pay this spell's mana cost" in c.oracle_text:
             continue  # Mostly for Ravenous Trap which people sideboard off color to play for the alternative cost.
-        if c.name in ['Damn', 'Dread Return', 'Simian Spirit Guide']:
+        if c.name in ['Damn', 'Dread Return', 'Simian Spirit Guide', 'Worldgorger Dragon']:
             continue  # Cards that you might play without hardcasting/using the front side.
         if 'you may begin the game with it on the battlefield' in c.oracle_text:
             continue  # You can play off-color leylines

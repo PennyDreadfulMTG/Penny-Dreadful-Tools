@@ -15,7 +15,8 @@ class EditRules(View):
                  overlooked_decks: list[Deck],
                  rules: list[Container],
                  archetypes: list[Archetype],
-                 excluded_archetype_info: list[Container]) -> None:
+                 excluded_archetype_info: list[Container],
+                 errors: list[str] | None = None) -> None:
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total
@@ -44,6 +45,9 @@ class EditRules(View):
             ai.url = url_for('.archetype', archetype_id=ai.id)
         self.excluded_archetypes = excluded_archetype_info
         self.has_excluded_archetypes = len(self.excluded_archetypes) > 0
+        self.errors = errors or []
+        self.archetype_error = len(self.errors) > 0
+        self.archetype_required = True
 
     def page_title(self) -> str:
         return 'Edit Rules'

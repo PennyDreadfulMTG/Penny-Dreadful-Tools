@@ -41,6 +41,7 @@ LAYOUTS: dict[str, Layout] = {
     'double_faced_token': Layout(playable=False, has_two_names=True, has_single_back=True, uses_canonical_namespace=False),
     'emblem': Layout(playable=False),
     'flip': Layout(has_two_names=True),
+    'front_card': Layout(playable=False, uses_canonical_namespace=False),
     'host': Layout(playable=False),
     'leveler': Layout(),
     'meld': Layout(has_two_names=True, has_meld_back=True),
@@ -48,6 +49,7 @@ LAYOUTS: dict[str, Layout] = {
     'mutate': Layout(),
     'normal': Layout(),
     'planar': Layout(playable=False),
+    'prepare': Layout(has_two_names=True, has_two_mana_costs=True),
     'prototype': Layout(),
     # We don't quite tell the truth about 'reversible_card'. These cards DO have canonical namespace names.
     # But including them alongside their identically-named non-reversible originals causes duplicates to get added to the db which breaks things.

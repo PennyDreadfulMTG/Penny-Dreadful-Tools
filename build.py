@@ -23,7 +23,7 @@ def buildjs() -> None:
 
 def buildfonts() -> None:
     print('>>>> Building local font subset')
-    subprocess.check_call(['uv', 'run', 'python', 'run.py', 'maintenance', 'fonts'])
+    subprocess.check_call(['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', 'fonts'])
 
 
 if __name__ == '__main__':

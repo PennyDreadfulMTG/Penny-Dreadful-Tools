@@ -63,7 +63,7 @@ After this, various components will be available in your browser:
 Once the cards and deck databases are initialized, generate the custom symbols font from another terminal:
 
 ```
-docker compose exec decksite uv run python dev.py buildfonts
+docker compose exec decksite uv run --frozen python dev.py buildfonts
 ```
 
 ### Non-Docker development
@@ -119,8 +119,8 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
   - gunzip /tmp/dev-db.sql.gz
   - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
   - mysql -u <mysql_user> -p<mysql_passwd> -e "CREATE DATABASE <decksite_test_database>"
-- Initialize the cards database with `uv run python run.py init-cards`.
-- Generate the custom symbols font with `uv run python dev.py buildfonts`.
+- Initialize the cards database with `uv run --frozen python run.py init-cards`.
+- Generate the custom symbols font with `uv run --frozen python dev.py buildfonts`.
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
 
 ## Running Decksite (pennydreadfulmagic.com)

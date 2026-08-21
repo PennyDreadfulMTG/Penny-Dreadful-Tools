@@ -41,12 +41,16 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 ## Development Environment Setup
 
+### Docker Compose
+
 - Install Docker (https://www.docker.com/get-started)
+- Install [Git LFS](https://git-lfs.com/)
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
+- git lfs pull
 - cp .env.example .env
-- docker-compose build
-- docker-compose up
+- docker compose build
+- docker compose up
 
 The first run will download a copy of the prod decksite db and set it up as well as build cards db from scryfall data so it will take a while.
 
@@ -56,12 +60,23 @@ After this, various components will be available in your browser:
 - The admin panel at <http://127.0.0.1:8080>
 - The logsite at <http://127.0.0.1:5001>
 
+Once the cards and deck databases are initialized, generate the custom symbols font from another terminal:
+
+```
+docker compose exec decksite uv run python dev.py buildfonts
+```
+
+### Non-Docker development
+
 If you plan on running things outside of the containers (eg: dev.py or logsite):
+
 - Install python 3.13
 - Install uv
 - Install npm
+- Install [Git LFS](https://git-lfs.com/)
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
+- git lfs pull
 - uv sync
 - uv run python dev.py build
 
@@ -85,8 +100,10 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install python 3.13
 - Install uv
 - Install npm
+- Install [Git LFS](https://git-lfs.com/)
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
+- git lfs pull
 - uv sync
 - uv run python build.py
 - Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
@@ -102,6 +119,8 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
   - gunzip /tmp/dev-db.sql.gz
   - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
   - mysql -u <mysql_user> -p<mysql_passwd> -e "CREATE DATABASE <decksite_test_database>"
+- Initialize the cards database with `uv run python run.py init-cards`.
+- Generate the custom symbols font with `uv run python dev.py buildfonts`.
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
 
 ## Running Decksite (pennydreadfulmagic.com)

@@ -96,6 +96,7 @@ def create_issue(content: str,
     try:
         g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
         git_repo = g.get_repo(repo_name)
+        issue: Issue.Issue
         if repo_name == 'PennyDreadfulMTG/perf-reports':
             labels.append(location)
             if exception:
@@ -135,10 +136,12 @@ def get_pull_requests(start_date: datetime.datetime,
         g = Github(gh_user, gh_pass)
         git_repo = g.get_repo(repo_name)
         for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
-            if not pull.merged_at:
+            merged_at = pull.merged_at
+            updated_at = pull.updated_at
+            if merged_at is None or updated_at is None:
                 continue
-            merged_dt = dtutil.UTC_TZ.localize(pull.merged_at)
-            updated_dt = dtutil.UTC_TZ.localize(pull.updated_at)
+            merged_dt = dtutil.UTC_TZ.localize(merged_at)
+            updated_dt = dtutil.UTC_TZ.localize(updated_at)
             if merged_dt > end_date:
                 continue
             if updated_dt < start_date:

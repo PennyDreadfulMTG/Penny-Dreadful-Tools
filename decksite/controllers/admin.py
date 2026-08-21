@@ -98,11 +98,11 @@ def post_archetypes() -> wrappers.Response:
 
 @APP.route('/admin/rules/')
 @auth.demimod_required
-def edit_rules() -> wrappers.Response:
+def edit_rules(errors: list[str] | None = None) -> wrappers.Response:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
     archetypes = archs.load_archetypes(order_by='a.name')
-    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info(), errors)
     return view.response()
 
 @APP.route('/admin/rules/', methods=['POST'])
@@ -112,7 +112,7 @@ def post_rules() -> wrappers.Response:
         rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
         rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
     else:
-        raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/rules: {request.form}')
+        return edit_rules(['Please select an archetype.'])
     return edit_rules()
 
 @APP.route('/admin/retire/')

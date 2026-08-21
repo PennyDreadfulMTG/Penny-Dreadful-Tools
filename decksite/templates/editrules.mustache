@@ -122,6 +122,9 @@
 </section>
 <section>
     <h2>New Rule</h2>
+    {{#errors}}
+        <p id="archetype-error" class="error">{{.}}</p>
+    {{/errors}}
     <form method="post">
         <div>
             <label>Archetype</label>

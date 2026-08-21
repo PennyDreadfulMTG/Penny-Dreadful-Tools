@@ -23,13 +23,13 @@ SEASONS = [
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
     'DFT', 'FIN', 'SPM', 'TLA',         # 2025
-    'ECL', 'Yachting',                  # 2026
+    'ECL', 'SOS', 'HOB',                # 2026
 ]
 
 SUPPLEMENTAL_SETS = [
     'MAT',  # March of the Machines Aftermath, mini-set
     'TDM', 'EOE',  # 2025
-    'TMT', 'Ziplining' # 2026
+    'TMT', 'MSH', 'FRA', # 2026
 ]
 
 IGNORED_SETS = [

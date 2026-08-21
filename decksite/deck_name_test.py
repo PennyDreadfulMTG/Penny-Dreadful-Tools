@@ -374,6 +374,13 @@ def test_invalid_color() -> None:
     with pytest.raises(InvalidDataException):
         deck_name.normalize(d)
 
+def test_file_name_removes_punctuation() -> None:
+    d = Container({'original_name': "Thalia Can't Be a Villain, Surely",
+                   'archetype_name': None,
+                   'colors': [],
+                   'season_id': 39})
+    assert deck_name.file_name(d) == 'Thalia-Cant-Be-a-Villain-Surely'
+
 def test_canonicalize_colors() -> None:
     assert deck_name.canonicalize_colors([]) == set()
     assert deck_name.canonicalize_colors(['White', 'Black', 'Orzhov', 'Abzan']) == {'B', 'G', 'W'}

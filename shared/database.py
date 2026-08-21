@@ -60,8 +60,6 @@ class Database:
         except MySQLdb.Error as e:
             if e.args[0] == 1146:
                 raise DatabaseNoSuchTableException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
-            if e.args[0] == 2006:
-                self.connect()
             raise DatabaseException(f'Failed to execute `{sql}` with `{args}` because of `{e}`') from e
 
     def execute_with_reconnect(self, sql: str, args: list[ValidSqlArgumentDescription] | None = None, fetch_rows: bool | None = False) -> tuple[int, list[ValidSqlArgumentDescription]]:
@@ -79,9 +77,14 @@ class Database:
                     result = (n, [])
                 break
             except OperationalError as e:
-                if 'MySQL server has gone away' in str(e):
+                if e.args[0] == 2006 and not self.open_transactions:
                     print('MySQL server has gone away: trying to reconnect')
                     self.connect()
+                elif e.args[0] == 2006:
+                    open_transactions = self.open_transactions.copy()
+                    self.open_transactions = []
+                    self.connect()
+                    raise DatabaseException(f'MySQL server went away during open transactions `{open_transactions}`; they have been rolled back') from e
                 else:
                     # raise any other exception
                     raise

@@ -1,3 +1,8 @@
+import datetime
+from unittest.mock import AsyncMock, Mock
+
+import pytest
+
 from discordbot import command
 from discordbot.commands import resources
 
@@ -75,3 +80,29 @@ def test_escape_underscores() -> None:
     assert r == ':white_check_mark:'
     r = command.escape_underscores('Adamaro, First to Desire :white_check_mark:')
     assert r == 'Adamaro, First to Desire :white_check_mark:'
+
+def test_no_warning_for_recent_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
+    now = datetime.datetime(2026, 8, 21, tzinfo=datetime.UTC)
+    monkeypatch.setattr(command.dtutil, 'now', lambda: now)
+    monkeypatch.setattr(command.database, 'last_updated', lambda: now - command.MAX_CARD_INFORMATION_AGE)
+
+    assert command.stale_card_information_warning() == ''
+
+def test_warning_for_stale_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
+    now = datetime.datetime(2026, 8, 21, tzinfo=datetime.UTC)
+    monkeypatch.setattr(command.dtutil, 'now', lambda: now)
+    monkeypatch.setattr(command.database, 'last_updated', lambda: now - datetime.timedelta(days=29))
+
+    assert command.stale_card_information_warning() == '\nWARNING: card information is 4 weeks old'
+
+@pytest.mark.asyncio
+async def test_no_matches_includes_card_information_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+    message = Mock()
+    message.add_reaction = AsyncMock()
+    channel = Mock()
+    channel.send = AsyncMock(return_value=message)
+    monkeypatch.setattr(command, 'stale_card_information_warning', lambda: '\nWARNING: card information is 4 weeks old')
+
+    await command.post_nothing(channel)
+
+    channel.send.assert_awaited_once_with(file=None, content='No matches.\nWARNING: card information is 4 weeks old')

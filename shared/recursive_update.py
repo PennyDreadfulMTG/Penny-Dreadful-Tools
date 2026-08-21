@@ -1,13 +1,10 @@
 import collections.abc
 import warnings
 from collections.abc import Mapping, MutableMapping
-from typing import Any, TypeVar
-
-K = TypeVar('K')
-V = Any
+from typing import Any
 
 
-def rupdate(base: MutableMapping[K, V], new_data: Mapping[K, V]) -> MutableMapping[K, V]:
+def rupdate[K](base: MutableMapping[K, Any], new_data: Mapping[K, Any]) -> MutableMapping[K, Any]:
     for k, v in new_data.items():
         if isinstance(v, collections.abc.Mapping):
             base[k] = rupdate(base.get(k, {}), v)

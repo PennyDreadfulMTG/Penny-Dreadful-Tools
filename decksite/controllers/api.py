@@ -640,7 +640,7 @@ def doorprize() -> Response:
 def rotation_clear_cache() -> Response:
     hard = request.args.get('hard', '0') == '1'
     task = 'clear_rotation_cache_hard' if hard else 'clear_rotation_cache'
-    cmd = ['uv', 'run', 'python', 'run.py', 'maintenance', task]
+    cmd = ['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', task]
     subprocess.Popen(cmd)
     return return_json({'success': True})
 

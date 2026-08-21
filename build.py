@@ -11,8 +11,7 @@ def build() -> None:
 
 def buildpy() -> None:
     print('>>>> Installing Requirements')
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'uv'])
-    subprocess.check_call(['uv', 'sync', '--dev'])
+    subprocess.check_call(['uv', 'sync', '--frozen', '--dev'])
 
 
 def buildjs() -> None:
@@ -24,7 +23,7 @@ def buildjs() -> None:
 
 def buildfonts() -> None:
     print('>>>> Building local font subset')
-    subprocess.check_call(['uv', 'run', 'python', 'run.py', 'maintenance', 'fonts'])
+    subprocess.check_call(['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', 'fonts'])
 
 
 if __name__ == '__main__':

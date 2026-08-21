@@ -1,8 +1,10 @@
+import gzip
 import json
 import logging
 import os
+import tempfile
 import urllib.request
-from typing import Any
+from typing import Any, BinaryIO
 
 import aiohttp
 import requests
@@ -79,6 +81,25 @@ async def fetch_json_async(url: str) -> Any:
     except json.decoder.JSONDecodeError:
         logger.error(f'Failed to load JSON:\n{blob}')
         raise
+
+def load_jsonl_gzip(blob: BinaryIO) -> list[Any]:
+    with gzip.open(blob, mode='rt', encoding='utf-8') as lines:
+        return [json.loads(line) for line in lines if line.strip()]
+
+async def fetch_jsonl_gzip_async(url: str) -> list[Any]:
+    logger.info(f'Async fetching {url}')
+    try:
+        async with aiohttp.ClientSession() as aios:
+            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
+            response = await aios.get(url)
+            response.raise_for_status()
+            with tempfile.TemporaryFile() as compressed:
+                async for chunk in response.content.iter_chunked(1024 * 1024):
+                    compressed.write(chunk)
+                compressed.seek(0)
+                return load_jsonl_gzip(compressed)
+    except (aiohttp.ClientError, OSError, json.decoder.JSONDecodeError) as e:
+        raise FetchException(e) from e
 
 async def post_json_async(url: str, data: dict) -> Any:
     try:

@@ -9,6 +9,12 @@ on:
   schedule:
     - cron: '0 17 * * 2'
 
+# Keep automated dependency updates from filling all available runners while
+# allowing human-authored changes to run without a concurrency limit.
+concurrency:
+  group: ${{ github.actor == 'dependabot[bot]' && 'dependabot-ci' || github.run_id }}
+  queue: max
+
 jobs:
   analyze:
     name: Analyze

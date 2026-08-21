@@ -74,7 +74,7 @@ async def test_failed_reboot_sends_short_public_error(monkeypatch: pytest.Monkey
     assert '\n' not in message
     assert len(message) <= error_handling.MAX_PUBLIC_ERROR_LENGTH
     assert 'many' not in message
-    assert 'RebootUpdateError: git pull exited with status 1' in message
+    assert 'RebootUpdateError: git pull exited with status' in message
     bot.stop.assert_not_awaited()
 
 

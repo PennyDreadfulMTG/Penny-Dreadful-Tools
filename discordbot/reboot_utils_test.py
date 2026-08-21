@@ -30,7 +30,7 @@ async def test_update_reports_pull_failure_and_does_not_sync(monkeypatch: pytest
     assert '\n' not in message
     assert len(message) <= 200
     assert 'fatal: pull failed' not in message
-    assert 'RebootUpdateError: git pull exited with status 1' in message
+    assert 'RebootUpdateError: git pull exited with status' in message
     run_command.assert_awaited_once_with('git', 'pull')
 
 

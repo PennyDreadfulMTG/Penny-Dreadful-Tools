@@ -28,6 +28,7 @@ def test_public_message_is_short_and_one_line() -> None:
     assert 'Error code' in message
     assert error_handling.LOG_FILE in message
     assert f'`{error_handling.LOG_FILE}`' in message
+    assert message.endswith('…`.')
 
 
 def test_public_message_derives_hint_from_exception() -> None:

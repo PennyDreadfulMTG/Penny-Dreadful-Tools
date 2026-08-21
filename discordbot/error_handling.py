@@ -37,7 +37,9 @@ def public_message(error: Exception, hint: str | None = None) -> str:
         hint_wrapper = ' Hint: ``.'
         available = MAX_PUBLIC_ERROR_LENGTH - len(message) - len(hint_wrapper)
         if available > 0:
-            message += f' Hint: `{hint[:available]}`.'
+            if len(hint) > available:
+                hint = hint[: max(available - 1, 0)].rstrip() + '…'
+            message += f' Hint: `{hint}`.'
     return message
 
 

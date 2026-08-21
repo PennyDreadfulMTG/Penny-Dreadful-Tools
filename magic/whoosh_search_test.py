@@ -1,7 +1,9 @@
 import unittest
+from pathlib import Path
 
 import pytest
 import whoosh
+from whoosh.index import create_in
 
 from magic import whoosh_write
 from magic.whoosh_search import WhooshSearcher
@@ -113,3 +115,35 @@ class WhooshSearchTest(unittest.TestCase):
 
 def is_included(name: str, cards: list[str]) -> bool:
     return len([x for x in cards if x == name]) >= 1
+
+def test_canonical_name_wins_alias_collision(tmp_path: Path) -> None:
+    ix = create_in(tmp_path, whoosh_write.WhooshWriter().schema)
+    writer = ix.writer()
+    for card_id, canonical_name, name in [
+        (1, 'Brainstorm', 'Brainstorm'),
+        (2, 'Harmonized Trio', 'Harmonized Trio'),
+        (2, 'Harmonized Trio', 'Brainstorm'),
+        (3, 'Graf Rats', 'Chittering Host'),
+        (4, 'Midnight Scavengers', 'Chittering Host'),
+    ]:
+        writer.update_document(
+            id=card_id,
+            canonical_name=canonical_name,
+            name=name,
+            name_tokenized=name,
+            name_stemmed=name,
+            name_normalized=name,
+        )
+    writer.commit()
+
+    searcher = WhooshSearcher.__new__(WhooshSearcher)
+    searcher.ix = ix
+    searcher.initialize_trie()
+
+    result = searcher.search('Brainstorm')
+    assert result.get_best_match() == 'Brainstorm'
+    assert result.get_all_matches() == ['Brainstorm', 'Harmonized Trio']
+
+    result = searcher.search('Chittering Host')
+    assert result.get_best_match() == 'Midnight Scavengers'
+    assert result.get_all_matches() == ['Midnight Scavengers', 'Graf Rats']

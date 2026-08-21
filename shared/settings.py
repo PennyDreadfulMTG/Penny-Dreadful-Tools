@@ -8,16 +8,16 @@ from typing import Any, TypeVar
 
 from shared.pd_exception import InvalidDataException
 
-SETTINGS = {}
-CONFIGURABLE_NAMES = []
+SETTINGS: dict[str, Any] = {}
+CONFIGURABLE_NAMES: list[str] = []
 CONFIG: dict[str, Any] = {}
 NS_CONFIG: dict[str, Any] = {}
 
 T = TypeVar('T')
 U = TypeVar('U')
 
-ADDITIONAL_FILES = []
-LOADED_FILES = set()
+ADDITIONAL_FILES: list[str] = []
+LOADED_FILES: set[str] = set()
 
 if not os.path.exists('configs'):
     os.mkdir('configs')

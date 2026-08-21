@@ -3,7 +3,7 @@ from collections import Counter
 from magic import mana
 from magic.models import Card
 
-COLOR_COMBINATIONS_LOWER = {}
+COLOR_COMBINATIONS_LOWER: dict[str, list[str]] = {}
 
 COLOR_COMBINATIONS = {
     'Colorless': ['C'],

@@ -2,17 +2,17 @@ import asyncio
 import datetime
 import logging
 import os
-import sys
 import urllib.parse
 
 from interactions import MISSING, Absent, Client, Extension, listen
 from interactions.client.errors import Forbidden
 from interactions.client.utils import timestamp_converter
-from interactions.models.discord import Embed, GuildText, ScheduledEventType
+from interactions.models.discord import Embed, GuildText, MessageableMixin, ScheduledEventType
 from interactions.models.internal.tasks import IntervalTrigger, Task
 
+from discordbot import error_handling, reboot_utils
 from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
-from shared import configuration, dtutil, fetch_tools, redis_wrapper, repo
+from shared import configuration, dtutil, fetch_tools, redis_wrapper
 
 
 class BackgroundTasks(Extension):
@@ -22,15 +22,24 @@ class BackgroundTasks(Extension):
     async def on_startup(self) -> None:
         self.do_banner.start()
 
-        self.do_reboot_key = 'discordbot:do_reboot'
+        self.do_reboot_key = reboot_utils.REBOOT_KEY
         if redis_wrapper.get_bool(self.do_reboot_key):
             redis_wrapper.clear(self.do_reboot_key)
+        redis_wrapper.clear(reboot_utils.REBOOT_CHANNEL_KEY)
+        await self.announce_reboot_complete()
         self.background_task_reboot.start()
 
         await self.prepare_tournaments()
         await self.prepare_hype()
         await self.prepare_league_end()
         await self.prepare_mos()
+
+    async def announce_reboot_complete(self) -> None:
+        reboot_complete_channel_id = redis_wrapper.get_int(reboot_utils.REBOOT_COMPLETE_CHANNEL_KEY)
+        if reboot_complete_channel_id is not None:
+            redis_wrapper.clear(reboot_utils.REBOOT_COMPLETE_CHANNEL_KEY)
+            loaded_commit = getattr(self.bot, 'commit_id', 'unknown')
+            await self.send_reboot_message(reboot_complete_channel_id, f'Reboot complete. Loaded `{loaded_commit[:8]}`')
 
     @Task.create(IntervalTrigger(hours=12))
     async def do_banner(self) -> None:
@@ -69,16 +78,37 @@ class BackgroundTasks(Extension):
     async def background_task_reboot(self) -> None:
         if redis_wrapper.get_bool(self.do_reboot_key):
             logging.info('Got request to reboot from redis')
+            channel_id = redis_wrapper.get_int(reboot_utils.REBOOT_CHANNEL_KEY)
             try:
-                p = await asyncio.create_subprocess_shell('git pull')
-                await p.wait()
-                p = await asyncio.create_subprocess_shell(f'{sys.executable} -m uv sync')
-                await p.wait()
+                failure = await reboot_utils.update()
+                if failure:
+                    logging.error('Reboot update failed. Error code %s: %s', error_handling.error_code(failure), error_handling.redact(failure.diagnostic))
+                    if channel_id is not None:
+                        await self.send_reboot_message(channel_id, error_handling.public_message(failure))
+                    redis_wrapper.clear(self.do_reboot_key, reboot_utils.REBOOT_CHANNEL_KEY)
+                    return
             except Exception as c:
-                repo.create_issue('Bot error while rebooting', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
-            redis_wrapper.clear(self.do_reboot_key)
-            await self.bot.stop()
-            sys.exit(0)
+                error_handling.log_exception(c, 'Unexpected error while rebooting')
+                if channel_id is not None:
+                    await self.send_reboot_message(channel_id, error_handling.public_message(c))
+                redis_wrapper.clear(self.do_reboot_key, reboot_utils.REBOOT_CHANNEL_KEY)
+                return
+            redis_wrapper.clear(self.do_reboot_key, reboot_utils.REBOOT_CHANNEL_KEY)
+            if channel_id is not None:
+                redis_wrapper.store(reboot_utils.REBOOT_COMPLETE_CHANNEL_KEY, channel_id, ex=3600)
+            try:
+                await asyncio.wait_for(self.bot.stop(), timeout=reboot_utils.SHUTDOWN_TIMEOUT_SECONDS)
+            except TimeoutError:
+                logging.warning('Graceful reboot shutdown timed out; forcing process exit')
+            os._exit(0)
+
+    async def send_reboot_message(self, channel_id: int, message: str) -> None:
+        try:
+            channel = await self.bot.fetch_channel(channel_id)
+            if isinstance(channel, MessageableMixin):
+                await channel.send(message)
+        except Exception as e:
+            error_handling.log_exception(e, f'Could not send reboot status to channel {channel_id}')
 
     async def prepare_tournaments(self) -> None:
         tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')

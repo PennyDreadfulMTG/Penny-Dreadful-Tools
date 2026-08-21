@@ -1,14 +1,16 @@
 import asyncio
+import datetime
 import logging
 import subprocess
-from typing import Any
+from typing import Any, cast
 
 from interactions import Client, listen
-from interactions.api.events import MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
+from interactions.api.events import CommandError, MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
+from interactions.client.errors import CommandCheckFailure, CommandOnCooldown, MaxConcurrencyReached
 from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
 
 import discordbot.commands
-from discordbot import command
+from discordbot import command, error_handling
 from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, whoosh_write
 from shared import configuration, perf, repo
@@ -18,13 +20,17 @@ from shared.settings import with_config_file
 
 class Bot(Client):
     def __init__(self, **kwargs: Any) -> None:
+        error_handling.configure_logging()
         self.launch_time = perf.start()
-        commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
-        redis.store('discordbot:commit_id', commit_id)
+        self.started_at = datetime.datetime.now(datetime.UTC)
+        self.commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        self._shutdown_lock = asyncio.Lock()
+        self._shutdown_complete = False
+        redis.store('discordbot:commit_id', self.commit_id)
 
         intents = Intents(Intents.DEFAULT | Intents.MESSAGES | Intents.GUILD_PRESENCES | Intents.MESSAGE_CONTENT)
 
-        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, slash_context=command.MtgInteractionContext, **kwargs)
+        super().__init__(intents=intents, sync_interactions=True, delete_unused_application_cmds=True, send_command_tracebacks=False, slash_context=command.MtgInteractionContext, **kwargs)
         self.achievement_cache: dict[str, dict[str, str]] = {}
         discordbot.commands.setup(self)
         if configuration.bot_debug.value:
@@ -38,7 +44,15 @@ class Bot(Client):
         self.add_global_autocomplete(command.autocomplete_card)
 
     async def stop(self) -> None:
-        await super().stop()
+        async with self._shutdown_lock:
+            if self._shutdown_complete:
+                return
+            self._ready.clear()
+            # interactions.py closes HTTP before the gateway, allowing the
+            # heartbeat task to write to an already-closing WebSocket.
+            await self._connection_state.stop()
+            await self.http.close()
+            self._shutdown_complete = True
 
     @listen()
     async def on_ready(self) -> None:
@@ -50,6 +64,21 @@ class Bot(Client):
     @listen()
     async def on_startup(self) -> None:
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
+
+    @listen(disable_default_listeners=True)
+    async def on_command_error(self, event: CommandError) -> None:
+        ctx = cast(command.MtgInteractionContext, event.ctx)
+        if isinstance(event.error, CommandOnCooldown):
+            await ctx.send(f'This command is on cooldown. Try again in {int(event.error.cooldown.get_cooldown_time())} seconds.')
+            return
+        if isinstance(event.error, MaxConcurrencyReached):
+            await ctx.send('This command is already busy. Please try again shortly.')
+            return
+        if isinstance(event.error, CommandCheckFailure):
+            await ctx.send('You do not have permission to run this command.')
+            return
+        error_handling.log_exception(event.error, f'Unhandled error in /{ctx.invoke_target}')
+        await ctx.send(error_handling.public_message(event.error))
 
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:

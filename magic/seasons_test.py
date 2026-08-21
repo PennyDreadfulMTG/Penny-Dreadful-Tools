@@ -1,7 +1,14 @@
+import datetime
+
 import pytest
 
 from magic import seasons
 from shared.pd_exception import DoesNotExistException, InvalidDataException
+
+
+def set_info(code: str, enter_date_dt: datetime.datetime) -> seasons.SetInfo:
+    date = seasons.DateType('', '')
+    return seasons.SetInfo(code, code, code, code, date, date, enter_date_dt)
 
 
 def test_seasons_enum_uptodate() -> None:
@@ -12,6 +19,22 @@ def test_seasons_enum_uptodate() -> None:
     if seasons.next_rotation_ex().code in ['???', None]:
         return
     assert seasons.next_rotation_ex().code in seasons.SEASONS
+
+def test_rotation_info_recalculates_after_supplemental_rotation(monkeypatch: pytest.MonkeyPatch) -> None:
+    now = datetime.datetime(2026, 8, 21, tzinfo=datetime.UTC)
+    next_rotation = set_info('FULL', now + datetime.timedelta(days=30))
+    previous_rotation = set_info('PREV', now - datetime.timedelta(days=30))
+    expired_supplemental = set_info('OLD', now - datetime.timedelta(days=8))
+    next_supplemental = set_info('NEW', now + datetime.timedelta(days=60))
+    info = seasons.RotationInfo(next_rotation, previous_rotation, expired_supplemental, previous_rotation)
+
+    monkeypatch.setattr(seasons.dtutil, 'now', lambda: now)
+    monkeypatch.setattr(seasons, 'calc_next', lambda supplemental: next_supplemental if supplemental else next_rotation)
+    monkeypatch.setattr(seasons, 'calc_prev', lambda supplemental: expired_supplemental if supplemental else previous_rotation)
+
+    info.validate()
+
+    assert info.next_supplemental == next_supplemental
 
 def test_season_id() -> None:
     assert seasons.season_id(1) == 1

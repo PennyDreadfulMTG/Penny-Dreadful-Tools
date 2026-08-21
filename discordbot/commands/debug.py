@@ -7,6 +7,7 @@ from interactions.client import Client
 from interactions.client.errors import CommandCheckFailure, ExtensionLoadException
 from interactions.models import check, is_owner
 
+from discordbot import error_handling
 from discordbot.command import MtgContext
 
 
@@ -25,9 +26,11 @@ class PDDebug(Extension):
                     if ctx.message:
                         await ctx.message.add_reaction('▶')
                 except ExtensionLoadException as c:
-                    await ctx.send(str(c))
+                    error_handling.log_exception(c, f'Could not load extension {module}')
+                    await ctx.send(error_handling.public_message(c, f'Could not load {module}'))
             else:
-                await ctx.send(str(e))
+                error_handling.log_exception(e, f'Could not reload extension {module}')
+                await ctx.send(error_handling.public_message(e, f'Could not reload {module}'))
 
     @regrow.error
     async def regrow_error(self, error: Exception, ctx: MtgContext) -> None:

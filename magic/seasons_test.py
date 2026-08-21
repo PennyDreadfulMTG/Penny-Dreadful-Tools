@@ -1,7 +1,7 @@
 import pytest
 
 from magic import seasons
-from shared.pd_exception import DoesNotExistException
+from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 
 def test_seasons_enum_uptodate() -> None:
@@ -27,6 +27,10 @@ def test_season_id() -> None:
     assert seasons.season_id('hou') == 5
     assert seasons.season_id('ALL') == 'all'
     assert seasons.season_id('all') == 'all'
+
+def test_season_num_rejects_unknown_code() -> None:
+    with pytest.raises(InvalidDataException, match='not-a-season'):
+        seasons.season_num('not-a-season')
 
 def test_season_code() -> None:
     assert seasons.season_code(1) == 'EMN'

@@ -1,4 +1,4 @@
-<select name="{{prefix}}archetype_id">
+<select name="{{prefix}}archetype_id" {{#archetype_required}}required{{/archetype_required}} {{#archetype_error}}class="error" aria-describedby="archetype-error"{{/archetype_error}}>
     <option value="">[Select]</option>
     {{#archetypes}}
         <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>

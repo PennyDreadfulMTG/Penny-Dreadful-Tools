@@ -25,12 +25,12 @@ def ad_hoc() -> int:
             ('**.mustache', extract_mustache, {}),
         ],
     }
-    compiler = frontend.extract_messages(dist)  # type: ignore
-    compiler.initialize_options()  # type: ignore
+    compiler = frontend.extract_messages(dist)
+    compiler.initialize_options()
     compiler.output_file = './shared_web/translations/messages.pot'
     compiler.input_paths = ['decksite', 'logsite']
-    compiler.finalize_options()  # type: ignore
-    compiler.run()  # type: ignore
+    compiler.finalize_options()
+    compiler.run()
 
     api_key = configuration.get('poeditor_api_key')
     if api_key is None:

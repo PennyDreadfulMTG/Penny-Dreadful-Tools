@@ -13,10 +13,11 @@ from shared import perf
 from shared.pd_exception import OperationalException
 
 logger = logging.getLogger(__name__)
+USER_AGENT = 'PennyDreadfulMagic'
 
 
 def fetch(url: str, character_encoding: str | None = None, force: bool = False, retry: bool = False, session: requests.Session | None = None) -> str:
-    headers = {}
+    headers = {'User-Agent': USER_AGENT}
     if force:
         headers['Cache-Control'] = 'no-cache'
     logger.info('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
@@ -46,7 +47,7 @@ async def fetch_async(url: str) -> str:
     logger.info(f'Async fetching {url}')
     try:
         async with aiohttp.ClientSession() as aios:
-            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
+            aios.headers['User-Agent'] = USER_AGENT
             response = await aios.get(url)
             return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError, aiohttp.ClientConnectorError) as e:
@@ -56,7 +57,7 @@ async def post_async_with_json(url: str, data: dict) -> str:
     logger.info(f'Async posting to {url}')
     try:
         async with aiohttp.ClientSession() as aios:
-            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
+            aios.headers['User-Agent'] = USER_AGENT
             response = await aios.post(url, json=data)
             return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
@@ -90,7 +91,7 @@ async def fetch_jsonl_gzip_async(url: str) -> list[Any]:
     logger.info(f'Async fetching {url}')
     try:
         async with aiohttp.ClientSession() as aios:
-            aios.headers['User-Agent'] = 'PennyDreadfulMagic'
+            aios.headers['User-Agent'] = USER_AGENT
             response = await aios.get(url)
             response.raise_for_status()
             with tempfile.TemporaryFile() as compressed:

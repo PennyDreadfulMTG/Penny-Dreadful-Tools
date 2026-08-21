@@ -8,6 +8,7 @@ def build() -> None:
     buildpy()
     buildjs()
 
+
 def buildpy() -> None:
     print('>>>> Installing Requirements')
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'uv'])
@@ -19,6 +20,11 @@ def buildjs() -> None:
     subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     print('>>>> Building javascript')
     subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)
+
+
+def buildfonts() -> None:
+    print('>>>> Building local font subset')
+    subprocess.check_call(['uv', 'run', 'python', 'run.py', 'maintenance', 'fonts'])
 
 
 if __name__ == '__main__':

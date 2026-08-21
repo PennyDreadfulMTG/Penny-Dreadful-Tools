@@ -70,21 +70,6 @@ dependencies = [
     "audioop-lts",
 ]
 
-[project.scripts]
-# discordbot = "run:discordbot"
-# decksite = "run:decksite"
-# logsite = "run:logsite"
-# maintenance = "run:maintenance"
-# scraper = "run:scraper"
-# modo-bugs = "run:modo-bugs"
-# price-grabber = "run:price-grabber"
-# rotation = "run:rotation"
-# srv-price = "run:srv-price"
-# mypy = "dev:mypy"
-# lint = "dev:lint"
-# test = "dev:test"
-# init-cards = "run:init-cards"
-
 [tool.isort]
 line_length = 320
 

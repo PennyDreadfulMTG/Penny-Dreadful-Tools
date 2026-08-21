@@ -20,6 +20,7 @@ def test_find_colors() -> None:
     bedeck_bedazzle = oracle.load_card('Bedeck // Bedazzle')
     leyline_of_lifeforce = oracle.load_card('Leyline of Lifeforce')
     leyline_of_the_guildpact = oracle.load_card('Leyline of the Guildpact')
+    worldgorger_dragon = oracle.load_card('Worldgorger Dragon')
 
     assert (['U'], ['U', 'U', 'U', 'U']) == colors.find_colors([delver_of_secrets, delver_of_secrets, delver_of_secrets, delver_of_secrets])
     assert (['R'], ['R']) == colors.find_colors([dead_gone])
@@ -39,5 +40,6 @@ def test_find_colors() -> None:
     assert ([], []) == colors.find_colors([bedeck_bedazzle])
     assert ([], []) == colors.find_colors([leyline_of_lifeforce])
     assert ([], []) == colors.find_colors([leyline_of_lifeforce, leyline_of_the_guildpact])
+    assert ([], []) == colors.find_colors([worldgorger_dragon])
 
     assert (['W', 'U', 'R'], ['W', 'W', 'U', 'R']) == colors.find_colors([bedeck_bedazzle, bedeck_bedazzle, archangel_avacyn, delver_of_secrets, dead_gone])

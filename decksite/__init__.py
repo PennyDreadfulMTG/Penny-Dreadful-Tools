@@ -97,6 +97,6 @@ except DatabaseException as e:
     multiverse.init()
     oracle.init()
 
-from decksite.controllers import admin  # isort:skip
-from .data import deck  # isort:skip # noqa: F401
+from decksite.controllers import admin  # noqa: I001
+from .data import deck  # noqa: F401
 APP.config['menu'] = build_menu

@@ -64,7 +64,7 @@ services:
 
   # discordbot:
   #   build: .
-  #   command: ["uv", "run", "python", "run.py", "--wait-for-db", "discordbot"]
+  #   command: ["uv", "run", "--frozen", "python", "run.py", "--wait-for-db", "discordbot"]
   #   depends_on:
   #     - db
   #     - redis

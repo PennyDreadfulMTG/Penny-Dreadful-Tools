@@ -12,12 +12,12 @@ from magic.whoosh_constants import WhooshConstants
 class SearchResult:
     def __init__(
             self,
-            exact: str | None,
+            exact: list[str],
             prefix_whole_word: list[str],
             other_prefixed: list[Any],
             fuzzy: list[tuple[str, float]],
     ) -> None:
-        self.exact = [exact] if exact else []
+        self.exact = exact if exact else []
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
         self.other_prefixed = other_prefixed if other_prefixed else []
         self.fuzzy = prune_fuzzy_by_score(fuzzy if fuzzy else [])
@@ -89,9 +89,20 @@ class WhooshSearcher:
 
     def initialize_trie(self) -> None:
         self.trie = pygtrie.CharTrie()
+        canonical_matches: dict[str, list[str]] = {}
+        alias_matches: dict[str, list[str]] = {}
         with self.ix.reader() as reader:
             for doc in reader.iter_docs():
-                self.trie[list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text] = doc[1]['canonical_name']
+                name = list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text
+                canonical_name = doc[1]['canonical_name']
+                canonical = list(WhooshConstants.normalized_analyzer(canonical_name))[0].text == name
+                matches_by_name = canonical_matches if canonical else alias_matches
+                matches = matches_by_name.setdefault(name, [])
+                if canonical_name not in matches:
+                    # The old one-value trie kept the last indexed match. Retain that ordering within each group while ensuring canonical names precede aliases.
+                    matches.insert(0, canonical_name)
+        for name in canonical_matches.keys() | alias_matches.keys():
+            self.trie[name] = canonical_matches.get(name, []) + alias_matches.get(name, [])
 
     def search(self, w: str) -> SearchResult:
         if not self.ix.up_to_date():
@@ -117,14 +128,14 @@ class WhooshSearcher:
             fuzzy = [(r['canonical_name'], r.score) for r in searcher.search(query, limit=40)]
         return SearchResult(exact, prefix_whole_word, other_prefixed, fuzzy)
 
-    def find_matches_by_prefix(self, query: str) -> tuple[str | None, list[str], list[str]]:
-        exact = None
+    def find_matches_by_prefix(self, query: str) -> tuple[list[str], list[str], list[str]]:
+        exact = []
         prefix_as_whole_word = []
         other_prefixed = []
         if self.trie.has_key(query):
             exact = self.trie.get(query)
         if self.trie.has_subtrie(query):
-            matches = self.trie.values(query)[(1 if exact else 0):]
+            matches = list(itertools.chain.from_iterable(self.trie.values(query)[(1 if exact else 0):]))
             whole_word, subword = classify(matches, query)
             prefix_as_whole_word.extend(whole_word)
             other_prefixed.extend(subword)

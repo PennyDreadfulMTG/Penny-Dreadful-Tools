@@ -241,13 +241,8 @@ async def autocomplete_card(ctx: AutocompleteContext) -> None:
     if not card:
         await ctx.send(choices=[])
         return
-    choices = []
     results = searcher().search(card)
-    choices.extend(results.exact)
-    choices.extend(results.prefix_whole_word)
-    choices.extend(results.other_prefixed)
-    choices.extend(results.fuzzy)
-    choices = [*set(choices)]
+    choices = list(dict.fromkeys(results.get_all_matches()))
     await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
 
 class MtgMixin:

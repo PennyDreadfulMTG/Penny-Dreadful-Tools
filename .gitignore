@@ -40,6 +40,9 @@ whoosh_index/
 # Task locking
 /.task.lock
 
+# Local/production Discord bot log
+/discordbot.log
+
 # i18n
 *.mo
 *.po

@@ -1,11 +1,10 @@
-import logging
-import traceback
 from typing import Any
 
 from interactions import Client, Extension, OptionType, check, is_owner, slash_option
 from interactions.client.errors import CommandException
 from interactions.models import slash_command
 
+from discordbot import error_handling
 from discordbot.command import MtgContext
 from shared import settings
 
@@ -53,9 +52,8 @@ class Configure(Extension):
         elif isinstance(error, CommandException):
             await ctx.send(self.help_message(None))
         else:
-            logging.error(error)
-            traceback.print_exception(type(error), error, error.__traceback__)
-            await ctx.send('There was an error processing your command')
+            error_handling.log_exception(error, 'Unhandled error in /configure')
+            await ctx.send(error_handling.public_message(error))
 
     def help_message(self, scope: Any) -> str:
         msg = '/configure {server|channel} {SETTING=VALUE}\n\n'

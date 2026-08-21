@@ -1,7 +1,36 @@
-import pytest
+from unittest.mock import Mock, patch
 
-from shared.database import sqlescape, sqllikeescape
-from shared.pd_exception import InvalidArgumentException
+import pytest
+from MySQLdb import OperationalError
+
+from shared.database import Database, sqlescape, sqllikeescape
+from shared.pd_exception import DatabaseException, InvalidArgumentException
+
+
+def test_execute_reconnects_and_retries_when_server_has_gone_away() -> None:
+    db = Database.__new__(Database)
+    db.cursor = Mock()
+    db.cursor.execute.side_effect = [OperationalError(2006, 'Server has gone away'), 1]
+    db.open_transactions = []
+
+    with patch.object(db, 'connect') as connect:
+        assert db.execute_with_reconnect('SELECT 1') == (1, [])
+
+    connect.assert_called_once_with()
+    assert db.cursor.execute.call_count == 2
+
+def test_execute_does_not_retry_when_server_goes_away_during_transaction() -> None:
+    db = Database.__new__(Database)
+    db.cursor = Mock()
+    db.cursor.execute.side_effect = OperationalError(2006, 'Server has gone away')
+    db.open_transactions = ['transaction']
+
+    with patch.object(db, 'connect') as connect, pytest.raises(DatabaseException, match='during open transactions'):
+        db.execute_with_reconnect('INSERT INTO example VALUES (1)')
+
+    connect.assert_called_once_with()
+    assert db.cursor.execute.call_count == 1
+    assert db.open_transactions == []
 
 
 def test_sqlescape() -> None:

@@ -98,7 +98,10 @@ class RotationInfo:
     calculating: bool = False
 
     def validate(self) -> None:
-        if (self.next.enter_date_dt + rotation_offset(self.next.code)) > dtutil.now():
+        now = dtutil.now()
+        next_rotation_is_upcoming = (self.next.enter_date_dt + rotation_offset(self.next.code)) > now
+        next_supplemental_is_upcoming = self.next_supplemental is None or (self.next_supplemental.enter_date_dt + rotation_offset(self.next_supplemental.code)) > now
+        if next_rotation_is_upcoming and next_supplemental_is_upcoming:
             return
         if not self.calculating:
             self.recalculate()

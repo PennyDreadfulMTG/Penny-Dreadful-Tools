@@ -15,7 +15,7 @@ from interactions.models import DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContex
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
-from magic import card, card_price, fetcher, image_fetcher, oracle, whoosh_write
+from magic import card, card_price, database, fetcher, image_fetcher, oracle, whoosh_write
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
+MAX_CARD_INFORMATION_AGE = datetime.timedelta(days=2)
 DISAMBIGUATION_EMOJIS = [':one:', ':two:', ':three:', ':four:', ':five:']
 DISAMBIGUATION_EMOJIS_BY_NUMBER = {1: '1⃣', 2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣'}
 DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣': 1, '2⃣': 2, '3⃣': 3, '4⃣': 4, '5⃣': 5}
@@ -149,8 +150,15 @@ async def post_nothing(channel: PrefixedContext | InteractionContext | TYPE_MESS
         text = f'{replying_to.mention}: No matches.'
     else:
         text = 'No matches.'
+    text += stale_card_information_warning()
     message = await send(channel, text)
     await message.add_reaction('❎')
+
+def stale_card_information_warning() -> str:
+    age = dtutil.now() - database.last_updated()
+    if age > MAX_CARD_INFORMATION_AGE:
+        return f'\nWARNING: card information is {dtutil.display_time(age.total_seconds(), 1)} old'
+    return ''
 
 
 async def send(channel: PrefixedContext | InteractionContext | TYPE_MESSAGEABLE_CHANNEL, content: str, file: File | None = None) -> Message:
@@ -265,7 +273,7 @@ class MtgMixin:
         name = c.name
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = await emoji.replace_emoji(f(c), self.bot)
-        message = f'**{name}** {info_emoji} {text}'
+        message = f'**{name}** {info_emoji} {text}{stale_card_information_warning()}'
         await self.send(message)
 
     async def post_cards(self: 'MtgContext', cards: list[Card], replying_to: User | Member | None = None, additional_text: str = '') -> None:  # type: ignore
@@ -301,6 +309,7 @@ class MtgMixin:
             else:
                 text += 'No image available.'
         text += additional_text
+        text += stale_card_information_warning()
         if image_file is None:
             await send(self, text)
         else:

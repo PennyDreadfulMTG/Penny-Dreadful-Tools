@@ -18,13 +18,16 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: '3.13'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v9
+      with:
+        version: '0.9.26'
+        enable-cache: true
     - uses: PennyDreadfulMTG/setup-linters@main
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip uv wheel
-        if [ -f pyproject.toml ]; then uv sync --dev; fi
+      run: uv sync --frozen --dev
     - name: Run mypy
-      run: uv run python dev.py mypy
+      run: uv run --frozen python dev.py mypy
   lint:
     name: lint
     runs-on: ubuntu-latest
@@ -35,13 +38,16 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: '3.13'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v9
+      with:
+        version: '0.9.26'
+        enable-cache: true
     - uses: PennyDreadfulMTG/setup-linters@main
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip uv wheel pydantic
-        if [ -f pyproject.toml ]; then uv sync --dev; fi
+      run: uv sync --frozen --dev
     - name: Run lint
-      run: uv run python dev.py lint
+      run: uv run --frozen python dev.py lint
 
   test:
     name: test
@@ -59,19 +65,22 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: '3.13'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v9
+      with:
+        version: '0.9.26'
+        enable-cache: true
     - uses: getong/mariadb-action@v1.11
       with:
         mysql root password: bad-password
         mariadb version: 11
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip uv wheel
-        if [ -f pyproject.toml ]; then uv sync --dev; fi
+      run: uv sync --frozen --dev
     - uses: PennyDreadfulMTG/setup-linters@main
-    - run: uv run python run.py init-cards
+    - run: uv run --frozen python run.py init-cards
     - name: Run pytest
       run: |
-        uv run pytest
+        uv run --frozen pytest
     - uses: codecov/codecov-action@v7
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -92,13 +101,16 @@ jobs:
       uses: actions/setup-python@v7
       with:
         python-version: '3.13'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v9
+      with:
+        version: '0.9.26'
+        enable-cache: true
     - name: Setup Node.js environment
       uses: actions/setup-node@v7.0.0
       with:
         node-version: 24.12.0
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip uv wheel
-        python build.py
+      run: python build.py
     - name: Run jslint
-      run: uv run python dev.py jslint
+      run: uv run --frozen python dev.py jslint

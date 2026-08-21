@@ -53,9 +53,9 @@ def do_lint() -> None:
     Invoke linter with our preferred options
     """
     print('>>>> Running lint')
-    uv = local['uv']
+    python = local[sys.executable]
     try:
-        uv['run', 'python', '-m', 'ruff', 'check', '.'] & FG
+        python['-m', 'ruff', 'check', '.'] & FG
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
 
@@ -166,11 +166,14 @@ def test(argv: list[str]) -> None:
 
 def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
-    uv = local['uv']
+    args = ['-m', 'ruff', 'check', '.', '--select', 'I']
     if fix:
-        uv['run', 'isort', '.', '--skip=node_modules'] & FG
-    else:
-        uv['run', 'isort', '.', '--check', '--skip=node_modules'] & FG
+        args.append('--fix')
+    python = local[sys.executable]
+    try:
+        python[args] & FG
+    except ProcessExecutionError as e:
+        sys.exit(e.retcode)
 
 @cli.command()
 @click.option('--fix', is_flag=True, default=False)
@@ -330,10 +333,7 @@ def do_full_check(argv: list[str]) -> None:
     do_sort(False)
     do_check(argv)
 
-# `full-check` differs from `check` in that it additionally checks import sorting.
-# This is not strictly necessary because a bot will follow up any PR with another PR to correct import sorting.
-# If you want to avoid that subsequent PR you can use `sort` and/or `full-check` to find import sorting issues.
-# This adds 4s to the 18s run time of `check` on my laptop.
+# `full-check` runs a focused import-order check before the broader checks in `check`.
 @cli.command()
 @click.argument('argv', nargs=-1)
 def full_check(argv: list[str]) -> None:
@@ -353,37 +353,6 @@ def swagger() -> None:
     with decksite.APP.app_context():
         with open('decksite_api.yml', 'w') as f:
             f.write(json.dumps(decksite.APP.api.__schema__))
-
-
-@cli.command()
-def repip() -> None:
-    """
-    Sometimes, we need to pin to a dev commit of a dependency to fix a bug.
-    This is a CI task to undo that when the next release lands
-    """
-    from importlib.metadata import version as _v
-
-    import pipfile
-    from packaging import version
-
-    from shared import fetch_tools
-    reqs = pipfile.load()
-    default = reqs.data['default']
-    for i in default.items():
-        name: str = i[0]
-        val: str | dict = i[1]
-        if isinstance(val, dict) and 'git' in val.keys():
-            print('> ' + repr(i))
-            installed = version.Version(_v(name))
-            info = fetch_tools.fetch_json(f'https://pypi.org/pypi/{name}/json')
-            remote = version.Version(info['info']['version'])
-            print(f'==\n{name}\nInstalled:\t{installed}\nPyPI:\t\t{remote}\n==')
-            if remote > installed:
-                uv = local['uv']
-                try:
-                    uv['install', f'{name}=={remote}'] & FG
-                except ProcessExecutionError as e:
-                    sys.exit(e.retcode)
 
 
 if __name__ == '__main__':

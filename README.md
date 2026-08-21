@@ -77,8 +77,8 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
 - git lfs pull
-- uv sync
-- uv run python dev.py build
+- uv sync --frozen --dev
+- uv run --frozen python dev.py build
 
 ## Configuring Environment
 
@@ -104,8 +104,8 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - cd Penny-Dreadful-Tools
 - git lfs pull
-- uv sync
-- uv run python build.py
+- uv sync --frozen --dev
+- uv run --frozen python build.py
 - Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
   - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
@@ -125,34 +125,34 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 ## Running Decksite (pennydreadfulmagic.com)
 
-- uv run python run.py decksite
+- uv run --frozen python run.py decksite
 - Visit <http://localhost:5000/>
 
 ## Running Logsite (logs.pennydreadfulmagic.com)
 
-- uv run python run.py logsite
+- uv run --frozen python run.py logsite
 - Visit <http://localhost:5001/>
 
 ## Running Discordbot
 
-- uv run python run.py discordbot
+- uv run --frozen python run.py discordbot
 - Visit your Discord server.
 
 ## Running the tests
 
 There are various levels of granularity but in general use you want:
 
-- uv run python dev.py test # Runs the unit tests, type checking, lint.
+- uv run --frozen python dev.py test # Runs the unit tests, type checking, lint.
 
 Check the dev.py source code for the full set of options including `unit`, `types`, `lint` (covered by `test` above) as well as `functional` (integration tests), `perf` (performance tests). `release` will take you all the way from your committed change to a PR via the tests (needs GitHub's commandline `gh` installed).
 
 ## Working on React components
 
 - Run logsite
-- uv run python dev.py watch # Builds bundle.js after every file change. Uses development build so that you get source maps - useful line numbers and error messages, unlike build/buildjs.
+- uv run --frozen python dev.py watch # Builds bundle.js after every file change. Uses development build so that you get source maps - useful line numbers and error messages, unlike build/buildjs.
 
 ## Decksite performance testing/monitoring
 
 - You can run decksite in profiling mode with:
-    - $ uv run python3 ~/pd/run.py profiler
+    - $ uv run --frozen python3 ~/pd/run.py profiler
 - You can be warned about slowness by setting `slow_query`, `slow_page` and `slow_fetch` limits in conifg.json

@@ -41,6 +41,7 @@ LAYOUTS: dict[str, Layout] = {
     'double_faced_token': Layout(playable=False, has_two_names=True, has_single_back=True, uses_canonical_namespace=False),
     'emblem': Layout(playable=False),
     'flip': Layout(has_two_names=True),
+    'front_card': Layout(playable=False, uses_canonical_namespace=False),
     'host': Layout(playable=False),
     'leveler': Layout(),
     'meld': Layout(has_two_names=True, has_meld_back=True),

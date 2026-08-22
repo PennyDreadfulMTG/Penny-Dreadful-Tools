@@ -65,11 +65,23 @@ def _in_clause(values: Collection[Any]) -> str:
     return ', '.join(['%s'] * len(values))
 
 
+def _indexed_exact_in(column: str, values: Collection[Any]) -> tuple[str, list[Any]]:
+    candidates = list(values)
+    placeholders = _in_clause(candidates)
+    # The first predicate lets a normal collation index find a candidate superset;
+    # the second retains the migration's exact, case-sensitive matching semantics.
+    return (
+        f'{column} IN ({placeholders}) AND BINARY {column} IN ({placeholders})',
+        candidates + candidates,
+    )
+
+
 def _select_alias_rows(table: str, column: str, columns: str, aliases: dict[str, str]) -> list[dict[str, Any]]:
     if not aliases:
         return []
-    sql = f'SELECT {columns} FROM {table} WHERE BINARY {column} IN ({_in_clause(aliases)})'
-    return db().select(sql, list(aliases))
+    predicate, args = _indexed_exact_in(column, aliases)
+    sql = f'SELECT {columns} FROM {table} WHERE {predicate}'
+    return db().select(sql, args)
 
 
 def _deck_groups(aliases: dict[str, str]) -> dict[tuple[int, int, str], list[dict[str, Any]]]:
@@ -116,9 +128,10 @@ def _rotation_groups(aliases: dict[str, str]) -> dict[tuple[int, int, str], list
     if not affected_keys:
         return {}
     relevant_names = set(aliases).union(aliases.values())
+    predicate, args = _indexed_exact_in('name', relevant_names)
     rows = db().select(
-        f'SELECT number, name, season_id FROM rotation_runs WHERE BINARY name IN ({_in_clause(relevant_names)})',
-        list(relevant_names),
+        f'SELECT number, name, season_id FROM rotation_runs WHERE {predicate}',
+        args,
     )
     groups: dict[tuple[int, int, str], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
@@ -187,9 +200,10 @@ def _create_backups(migration: MigrationPlan) -> None:
 
     if migration.rotation_groups:
         names = set(migration.aliases).union(migration.aliases.values())
+        predicate, args = _indexed_exact_in('name', names)
         database.execute(
-            f'INSERT IGNORE INTO {BACKUP_PREFIX}rotation_runs SELECT * FROM rotation_runs WHERE BINARY name IN ({_in_clause(names)})',
-            list(names),
+            f'INSERT IGNORE INTO {BACKUP_PREFIX}rotation_runs SELECT * FROM rotation_runs WHERE {predicate}',
+            args,
         )
 
 
@@ -225,11 +239,15 @@ def _apply_rotation_groups(groups: dict[tuple[int, int, str], list[dict[str, Any
         db().execute(
             '''
                 INSERT IGNORE INTO rotation_runs (number, name, season_id)
-                SELECT number, %s, season_id FROM rotation_runs WHERE BINARY name = BINARY %s
+                SELECT number, %s, season_id FROM rotation_runs
+                WHERE name = %s AND BINARY name = BINARY %s
             ''',
-            [canonical, alias],
+            [canonical, alias, alias],
         )
-        db().execute('DELETE FROM rotation_runs WHERE BINARY name = BINARY %s', [alias])
+        db().execute(
+            'DELETE FROM rotation_runs WHERE name = %s AND BINARY name = BINARY %s',
+            [alias, alias],
+        )
 
 
 def _backup_deck_ids() -> set[int]:

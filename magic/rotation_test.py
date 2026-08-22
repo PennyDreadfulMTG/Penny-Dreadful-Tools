@@ -44,6 +44,37 @@ def test_last_run_number() -> None:
     if real_legality_dir:
         configuration.CONFIG['legality_dir'] = real_legality_dir
 
+
+@pytest.mark.asyncio
+async def test_rotation_hype_message_elides_next_confirmation_when_no_cards_are_undecided(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(rotation, 'read_rotation_files', lambda: (rotation.TOTAL_RUNS, 100, []))
+    monkeypatch.setattr(rotation.fetcher, 'decksite_url', lambda path: path)
+
+    message = await rotation.rotation_hype_message(True)
+
+    assert message is not None
+    assert '\nUndecided: 0.\n' in message
+    assert 'Next new cards confirmed' not in message
+
+
+@pytest.mark.asyncio
+async def test_rotation_hype_message_includes_next_confirmation_when_cards_are_undecided(monkeypatch: pytest.MonkeyPatch) -> None:
+    card = Card({
+        'name': 'Still Undecided',
+        'hit_in_last_run': False,
+        'hits': 80,
+        'hits_needed': 4,
+        'status': 'Undecided',
+    }, predetermined_values=True)
+    monkeypatch.setattr(rotation, 'read_rotation_files', lambda: (100, 60, [card]))
+    monkeypatch.setattr(rotation.fetcher, 'decksite_url', lambda path: path)
+
+    message = await rotation.rotation_hype_message(True)
+
+    assert message is not None
+    assert '\nUndecided: 1.\nNext new cards confirmed in 4 runs time.\n' in message
+
+
 @pytest.mark.skip('Because CloudFlare sometimes blocks API access from Github workflow this test is flakey')
 @pytest.mark.functional
 def test_list_of_most_interesting() -> None:

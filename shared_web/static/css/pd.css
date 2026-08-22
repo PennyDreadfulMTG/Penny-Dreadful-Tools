@@ -542,7 +542,7 @@ Color attributes are mostly found with their related structural elements in this
     color-scheme: light dark;
 
     /* Site colors. (Names from http://coolors.co/) */
-    /* If you make changes here be sure to update the Chart.js color and backgroundColor in pd.js. */
+    /* Chart.js resolves its colors from these variables in pd.js. */
     --white: oklch(98.21% 0 0); /* Snow */
     --black: oklch(33.03% 0.06 20.81); /* Acajou */
     --light-gray: oklch(94.91% 0 0); /* Isabelline */

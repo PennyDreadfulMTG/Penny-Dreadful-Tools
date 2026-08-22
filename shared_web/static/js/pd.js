@@ -174,6 +174,7 @@ PD.initDarkModeToggle = function() {
             const isDark = document.documentElement.classList.contains("dark-mode");
             localStorage.setItem("prefersDarkMode", (!isDark).toString());
             setDarkMode();
+            PD.updateChartColors();
             return false;
         };
     });
@@ -476,8 +477,44 @@ PD.formatPercentage = function (value) {
         .replace(/^0%$/, "0"); // Replace literal "0%" with "0" as zero is unitless.
 };
 
+PD.getChartColors = function() {
+    const probe = document.createElement("span");
+    probe.hidden = true;
+    document.body.append(probe);
+    const resolve = (property) => {
+        probe.style.color = `var(${property})`;
+        return getComputedStyle(probe).color;
+    };
+    const colors = {
+        background: resolve("--highlight"),
+        border: resolve("--light-border"),
+        text: resolve("--text")
+    };
+    probe.remove();
+    return colors;
+};
+
+PD.updateChartColors = function() {
+    const colors = PD.getChartColors();
+    Chart.defaults.borderColor = colors.border;
+    Chart.defaults.color = colors.text;
+    Object.values(Chart.instances).forEach((chart) => {
+        chart.options.borderColor = colors.border;
+        chart.options.color = colors.text;
+        Object.values(chart.options.scales).forEach((scale) => {
+            scale.border.color = colors.border;
+            scale.grid.color = colors.border;
+            scale.ticks.color = colors.text;
+        });
+        chart.data.datasets.forEach((dataset) => {
+            dataset.backgroundColor = colors.background;
+        });
+        chart.update();
+    });
+};
+
 PD.renderCharts = function() {
-    const isDark = document.documentElement.classList.contains("dark-mode");
+    const colors = PD.getChartColors();
     // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
     Chart.register(ChartDataLabels);
     // Because we don't want to wait for window.onload (css and images loaded) we hardcode here to avoid loading the browser default values from Safari.
@@ -496,7 +533,8 @@ PD.renderCharts = function() {
     Chart.defaults.plugins.datalabels.align = "end";
     Chart.defaults.plugins.tooltip.displayColors = false;
     Chart.defaults.plugins.colors.enabled = false;
-    Chart.defaults.color = isDark ? "#8C8C8C" : "#502828";
+    Chart.defaults.borderColor = colors.border;
+    Chart.defaults.color = colors.text;
     $(".chart").each(function() {
         var type = $(this).data("type"),
             labels = $(this).data("labels"),
@@ -525,7 +563,7 @@ PD.renderCharts = function() {
             type,
             "data": {
                 labels,
-                datasets: [{ data: series, backgroundColor: isDark ? "#574466" : "#f9d0a9" }]
+                datasets: [{ data: series, backgroundColor: colors.background }]
             },
             options
         });

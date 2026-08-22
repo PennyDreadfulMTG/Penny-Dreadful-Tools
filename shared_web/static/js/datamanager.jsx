@@ -19,6 +19,8 @@ export class DataManager extends React.Component {
         super(props);
         this.state = {
             error: "",
+            sortBy: props.initialSortBy,
+            sortOrder: props.initialSortOrder,
             loadedOnce: false,
             message: "",
             objects: [],
@@ -144,6 +146,8 @@ DataManager.propTypes = {
     "hidePerson": PropTypes.string,
     "hideSource": PropTypes.string,
     "hideTop8": PropTypes.string,
+    "initialSortBy": PropTypes.string,
+    "initialSortOrder": PropTypes.oneOf(["ASC", "DESC", "AUTO"]),
     "leagueOnly": PropTypes.string,
     "pageSize": PropTypes.string.isRequired,
     "personId": PropTypes.string,

@@ -1,10 +1,30 @@
 from datetime import timedelta
 
 import pytest
+from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite import league
 from shared import dtutil
 from shared.pd_exception import InvalidArgumentException
+
+
+def test_edit_match_form_validates_scores() -> None:
+    form = league.EditMatchForm(ImmutableMultiDict({'left_id': '1', 'right_id': '2', 'left_games': '', 'right_games': 'one'}))
+    assert not form.validate()
+    assert form.errors == {'left_games': 'Please enter a score.', 'right_games': 'Score must be a whole number.'}
+
+    form = league.EditMatchForm(ImmutableMultiDict({'left_id': '1', 'right_id': '2', 'left_games': '0', 'right_games': '2'}))
+    assert form.validate()
+
+
+def test_edit_match_form_requires_two_different_decks() -> None:
+    form = league.EditMatchForm(ImmutableMultiDict({'left_id': '', 'right_id': 'one', 'left_games': '2', 'right_games': '1'}))
+    assert not form.validate()
+    assert form.errors == {'left_id': 'Please select a deck.', 'right_id': 'Please select a valid deck.'}
+
+    form = league.EditMatchForm(ImmutableMultiDict({'left_id': '1', 'right_id': '1', 'left_games': '2', 'right_games': '1'}))
+    assert not form.validate()
+    assert form.errors == {'right_id': 'Please select two different decks.'}
 
 
 def test_determine_end_of_league() -> None:

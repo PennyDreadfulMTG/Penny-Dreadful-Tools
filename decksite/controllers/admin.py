@@ -13,7 +13,7 @@ from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import person as ps
 from decksite.data import rule as rs
-from decksite.league import RetireForm
+from decksite.league import EditMatchForm, RetireForm
 from decksite.views import Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague, EditMatches, EditRules, PlayerNotes, Prizes, RotationChecklist, Sorters, Unlink
 from decksite.views.archetype_search import ArchetypeSearch
 from magic import oracle
@@ -155,9 +155,11 @@ def do_admin_retire_deck() -> wrappers.Response:
 
 @APP.route('/admin/matches/')
 @auth.admin_required
-def edit_matches() -> str:
+def edit_matches(form: EditMatchForm | None = None) -> str:
+    if form is None:
+        form = EditMatchForm(request.form)
     league = lg.active_league(should_load_decks=True)
-    view = EditMatches(league.id, league.decks)
+    view = EditMatches(league.id, league.decks, form)
     return view.page()
 
 @APP.route('/admin/matches/', methods=['POST'])
@@ -168,10 +170,13 @@ def post_matches() -> wrappers.Response:
     if request.form.get('action') == 'delete':
         ms.delete_match(match_id)
         return redirect(url_for('edit_matches'))
-    left_id = cast_int(request.form.get('left_id'))
-    left_games = cast_int(request.form.get('left_games'))
-    right_id = cast_int(request.form.get('right_id'))
-    right_games = cast_int(request.form.get('right_games'))
+    form = EditMatchForm(request.form)
+    if not form.validate():
+        return make_response(edit_matches(form))
+    left_games = cast_int(form.left_games)
+    right_games = cast_int(form.right_games)
+    left_id = cast_int(form.left_id)
+    right_id = cast_int(form.right_id)
     if request.form.get('action') == 'change':
         ms.update_match(match_id, left_id, left_games, right_id, right_games)
     elif request.form.get('action') == 'add':

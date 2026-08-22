@@ -4,8 +4,9 @@ import pytest
 
 from decksite.controllers import admin
 from decksite.data import deck
+from decksite.league import EditMatchForm
 from decksite.main import APP
-from decksite.views import EditArchetypes, EditRules
+from decksite.views import EditArchetypes, EditMatches, EditRules
 from shared.pd_exception import InvalidDataException
 
 
@@ -72,3 +73,44 @@ def test_post_rules_requires_archetype(monkeypatch: pytest.MonkeyPatch) -> None:
         response = cast(Any, admin.post_rules).__wrapped__()
     assert 'Please select an archetype.' in response
     assert '<select name="archetype_id" required class="error" aria-describedby="archetype-error">' in response
+
+
+@pytest.mark.parametrize('action', ['add', 'change'])
+@pytest.mark.parametrize('missing_score', ['left_games', 'right_games'])
+def test_post_matches_requires_both_scores(monkeypatch: pytest.MonkeyPatch, action: str, missing_score: str) -> None:
+    def edit_matches(form: EditMatchForm | None = None) -> str:
+        assert form is not None
+        return EditMatches(0, [], form).render_content()
+
+    monkeypatch.setattr(admin, 'edit_matches', edit_matches)
+    data = {'action': action, 'match_id': '3', 'left_id': '1', 'left_games': '2', 'right_id': '2', 'right_games': '1'}
+    data.pop(missing_score)
+    with APP.test_request_context('/admin/matches/', method='POST', data=data):
+        response = cast(Any, admin.post_matches).__wrapped__()
+    html = response.get_data(as_text=True)
+    missing_side = missing_score.removesuffix('_games').replace('_', '-')
+    present_score = '1' if missing_score == 'left_games' else '2'
+    present_side = 'right' if missing_score == 'left_games' else 'left'
+    assert f'<div id="{missing_side}-games-error" class="error">Please enter a score.</div>' in html
+    assert f'<div id="{present_side}-games-error"' not in html
+    assert f'name="{present_side}_games" value="{present_score}"' in html
+    assert ' required' not in html
+
+
+@pytest.mark.parametrize('action', ['add', 'change'])
+@pytest.mark.parametrize('missing_deck', ['left_id', 'right_id'])
+def test_post_matches_requires_both_decks(monkeypatch: pytest.MonkeyPatch, action: str, missing_deck: str) -> None:
+    def edit_matches(form: EditMatchForm | None = None) -> str:
+        assert form is not None
+        return EditMatches(0, [], form).render_content()
+
+    monkeypatch.setattr(admin, 'edit_matches', edit_matches)
+    data = {'action': action, 'match_id': '3', 'left_id': '1', 'left_games': '2', 'right_id': '2', 'right_games': '1'}
+    data.pop(missing_deck)
+    with APP.test_request_context('/admin/matches/', method='POST', data=data):
+        response = cast(Any, admin.post_matches).__wrapped__()
+    html = response.get_data(as_text=True)
+    missing_side = missing_deck.removesuffix('_id')
+    present_side = 'right' if missing_deck == 'left_id' else 'left'
+    assert f'<div id="{missing_side}-id-error" class="error">Please select a deck.</div>' in html
+    assert f'<div id="{present_side}-id-error"' not in html

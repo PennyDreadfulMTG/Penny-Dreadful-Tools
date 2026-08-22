@@ -185,6 +185,9 @@ class View(BaseView):
     def decks_url(self) -> str:
         return url_for('decks')
 
+    def metagame_url(self) -> str:
+        return url_for('metagame')
+
     def current_league_url(self) -> str:
         return url_for('current_league')
 

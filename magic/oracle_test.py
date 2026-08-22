@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 import pytest
 
 from magic import oracle, seasons
@@ -35,6 +37,10 @@ def test_load_cards() -> None:
     assert len(cards) == 2
     assert 'Think Twice' in [c.name for c in cards]
     assert 'Swamp' in [c.name for c in cards]
+
+@pytest.mark.parametrize('names', [[], (), {}, iter(())])
+def test_load_cards_empty_iterable(names: Iterable[str]) -> None:
+    assert oracle.load_cards(names) == []
 
 def test_deck_sort_x_last() -> None:
     cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])

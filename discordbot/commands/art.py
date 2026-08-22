@@ -16,6 +16,7 @@ class Art(Extension):
         """Display the artwork of the requested card."""
 
         if card is not None:
+            await ctx.defer()
             file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([card]))
             success = await image_fetcher.download_scryfall_card_image(card, file_path, version='art_crop')
             if success:

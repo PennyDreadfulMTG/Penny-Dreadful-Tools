@@ -10,6 +10,42 @@ ALIASES = {
 }
 
 
+def test_exact_name_predicates_are_indexable() -> None:
+    predicate, args = canonicalize_card_names._indexed_exact_in('name', ['Alias', 'alias'])
+
+    assert predicate == 'name IN (%s, %s) AND BINARY name IN (%s, %s)'
+    assert args == ['Alias', 'alias', 'Alias', 'alias']
+
+
+def test_rotation_apply_uses_indexed_exact_name_predicates(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[str, list[str]]] = []
+
+    class RecordingDatabase:
+        def execute(self, sql: str, args: list[str]) -> None:
+            calls.append((' '.join(sql.split()), args))
+
+    monkeypatch.setattr(canonicalize_card_names, 'db', lambda: RecordingDatabase())
+
+    canonicalize_card_names._apply_rotation_groups({
+        (1, 99, 'Agent Venom'): [
+            {'number': 1, 'name': 'Rhilex the Accursed', 'season_id': 99},
+        ],
+    })
+
+    assert calls == [
+        (
+            'INSERT IGNORE INTO rotation_runs (number, name, season_id) '
+            'SELECT number, %s, season_id FROM rotation_runs '
+            'WHERE name = %s AND BINARY name = BINARY %s',
+            ['Agent Venom', 'Rhilex the Accursed', 'Rhilex the Accursed'],
+        ),
+        (
+            'DELETE FROM rotation_runs WHERE name = %s AND BINARY name = BINARY %s',
+            ['Rhilex the Accursed', 'Rhilex the Accursed'],
+        ),
+    ]
+
+
 def _insert_deck(identifier: str, featured_card: str | None = None) -> int:
     person_id = db().insert('INSERT INTO person (name, mtgo_username) VALUES (%s, %s)', [identifier, identifier])
     source_id = db().value("SELECT id FROM source WHERE name = 'Tapped Out'")

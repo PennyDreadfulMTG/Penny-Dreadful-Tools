@@ -1,6 +1,5 @@
 import hashlib
 import json
-import subprocess
 import time
 from typing import TypedDict
 
@@ -16,6 +15,7 @@ from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import DatabaseException, InvalidDataException, LockNotAcquiredException
+from shared_web import fonts
 
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
@@ -424,9 +424,7 @@ def maybe_regenerate_symbols_font(name: str) -> None:
         db().get_lock('font_generation', 60 * 15)
     except LockNotAcquiredException:
         return
-    # Fire off a background job to generate the font, it takes too long (10s) to do on user time during deck creation.
-    cmd = ['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', 'fonts']
-    subprocess.Popen(cmd)
+    fonts.regenerate_symbols_font()
     db().release_lock('font_generation')
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:

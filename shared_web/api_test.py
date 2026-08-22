@@ -1,4 +1,3 @@
-import subprocess
 import sys
 from unittest import mock
 
@@ -14,7 +13,7 @@ def test_push_deployment_rebuilds_symbols_font() -> None:
     with (
         app.test_request_context('/api/gitpull', method='POST', headers={'X-GitHub-Event': 'push'}, json={'ref': 'refs/heads/master'}),
         mock.patch.object(api.subprocess, 'check_output') as check_output,
-        mock.patch.object(api.subprocess, 'Popen') as popen,
+        mock.patch.object(api.fonts, 'regenerate_symbols_font') as regenerate_symbols_font,
     ):
         response = api.process_github_webhook()
 
@@ -25,9 +24,4 @@ def test_push_deployment_rebuilds_symbols_font() -> None:
         mock.call([sys.executable, '-m', 'uv', 'sync', '--frozen']),
         mock.call(['npm', 'run-script', 'build']),
     ]
-    popen.assert_called_once_with(
-        ['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', 'fonts'],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    regenerate_symbols_font.assert_called_once_with()

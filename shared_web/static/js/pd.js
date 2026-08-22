@@ -556,6 +556,18 @@ PD.renderCharts = function() {
                 options.plugins.tooltip.callbacks.label = (v) => PD.formatPercentage(v.raw);
             }
         }
+        if (options.pd?.tooltip?.additional_series) {
+            const tooltip = options.pd.tooltip;
+            options.plugins.tooltip.callbacks = options.plugins.tooltip.callbacks || {};
+            options.plugins.tooltip.callbacks.label = (v) => {
+                const additionalValue = tooltip.additional_series[v.dataIndex],
+                    additionalText = additionalValue === null ? "N/A" : PD.formatPercentage(additionalValue);
+                return [
+                    tooltip.label + ": " + PD.formatPercentage(v.raw),
+                    tooltip.additional_label + ": " + additionalText
+                ];
+            };
+        }
 
 
         // eslint-disable-next-line no-new

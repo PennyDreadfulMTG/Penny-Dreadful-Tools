@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 import titlecase
 from anytree import NodeMixin
 from anytree.iterators import PreOrderIter
@@ -13,6 +15,11 @@ from shared.pd_exception import DoesNotExistException
 
 class Archetype(Container, NodeMixin):
     pass
+
+
+class SeasonStats(TypedDict):
+    meta_share: float
+    win_rate: float | None
 
 
 BASE_ARCHETYPES: dict[Archetype, Archetype] = {}
@@ -72,7 +79,7 @@ def seasons_active(archetype_id: int) -> list[int]:
     sql = 'SELECT season_id FROM _arch_stats WHERE archetype_id = %s'
     return db().values(sql, [archetype_id])
 
-def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
+def season_stats(archetype_id: int, tournament_only: bool = False) -> list[SeasonStats]:
     where = 'TRUE'
     if tournament_only:
         where = "deck_type = 'tournament'"
@@ -89,7 +96,8 @@ def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
                 season.id
         )
         SELECT
-            CASE WHEN st.num_matches = 0 THEN 0 ELSE SUM(a.wins + a.losses + a.draws) / st.num_matches END AS meta_share
+            CASE WHEN st.num_matches = 0 THEN 0 ELSE SUM(a.wins + a.losses + a.draws) / st.num_matches END AS meta_share,
+            SUM(a.wins) / NULLIF(SUM(a.wins + a.losses), 0) AS win_rate
         FROM
             season_totals AS st
         LEFT JOIN
@@ -99,7 +107,13 @@ def meta_share(archetype_id: int, tournament_only: bool = False) -> list[float]:
         ORDER BY
             st.season_id;
     """
-    return [float(v) if v else 0.0 for v in db().values(sql, [archetype_id])]
+    return [
+        {
+            'meta_share': float(row['meta_share']) if row['meta_share'] else 0.0,
+            'win_rate': float(row['win_rate']) if row['win_rate'] is not None else None,
+        }
+        for row in db().select(sql, [archetype_id])
+    ]
 
 def add(name: str, parent: int, description: str) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])

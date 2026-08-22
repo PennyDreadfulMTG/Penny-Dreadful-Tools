@@ -46,6 +46,23 @@ def test_validate_card_names_canonicalizes_and_ignores_blank_lines(monkeypatch: 
     assert errors == ['Card not found: Not a Card']
 
 
+def test_all_admin_routes_require_permission() -> None:
+    unprotected_routes = sorted({
+        rule.rule
+        for rule in APP.url_map.iter_rules()
+        if rule.rule.startswith('/admin') and getattr(APP.view_functions[rule.endpoint], 'permission_required', None) not in {'admin', 'demimod'}
+    })
+    assert unprotected_routes == []
+
+
+@pytest.mark.parametrize('path', ['/admin/banners/', '/admin/prizes/', '/admin/rotation/'])
+def test_admin_information_pages_require_login(path: str) -> None:
+    response = APP.test_client().get(path)
+    assert response.status_code == 302
+    assert response.location is not None
+    assert response.location.startswith('/authenticate/?target=')
+
+
 def test_post_rules_requires_archetype(monkeypatch: pytest.MonkeyPatch) -> None:
     def edit_rules(errors: list[str] | None = None) -> str:
         return EditRules(0, 0, [], [], [], [], [], [], errors).render_content()

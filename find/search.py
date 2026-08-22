@@ -442,6 +442,7 @@ def is_subquery(subquery_name: str) -> str:
         'gainland': 't:land o:"When this land enters, you gain 1 life."',
         'historic': 't:artifact OR t:legendary OR t:saga',
         'outlaw': 't:Assassin OR t:Mercenary OR t:Pirate OR t:Rogue OR t:Warlock',
+        'party': 't:creature (t:Cleric OR t:Rogue OR t:Warrior OR t:Wizard OR o:/^Changeling/ OR o:"is also a Cleric, Rogue, Warrior, and Wizard.")',
         'painland': r't:land o:/Add \{.\} or \{.\}. this land deals 1 damage to you./ -o:"this land enters tapped"',
         'permanent': 't:artifact OR t:creature OR t:enchantment OR t:land OR t:planeswalker',
         'scryland': 't:land "Temple of" o:"When this land enters, scry 1"',

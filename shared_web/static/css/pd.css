@@ -563,6 +563,7 @@ Color attributes are mostly found with their related structural elements in this
     --line: var(--black);
     --highlight: var(--soft-tangerine);
     --highlight-border: var(--soft-tangerine-darker);
+    --current-season-icon: #a58e4a; /* Keyrune rare gold. */
     --selected: var(--light-gray);
     --inactive: var(--dark-gray);
     --disabled: var(--light-gray);
@@ -613,6 +614,7 @@ html.dark-mode {
     --red: oklch(60% 0.137 24); /* Indian Red */
     --soft-tangerine: oklch(55% 0.06 309.48); /* Chinese Violet */
     --soft-tangerine-darker: oklch(65% 0.06 309.48);
+    --current-season-icon: #c4ae69;
     --true-black: #fff; /* White. Only for use at less than 1 opacity, for scrim and similar. */
 
     --w-mana: #fffcdb;
@@ -2484,9 +2486,29 @@ Season Symbols
     color: var(--inactive);
 }
 
-.current-season-icon {
-    background-color: var(--highlight);
+.season-icon-link {
+    white-space: nowrap;
+}
+
+.ss-grid .season-icon-link {
     border-radius: var(--text-rounded-corners);
+    display: inline-block;
+    justify-self: start;
+    line-height: var(--table-line-height);
+    margin-right: 0.317rem;
+    padding: 0.178em 0.317rem;
+}
+
+.ss-grid .season-icon-link .season-icon {
+    margin-right: 0;
+}
+
+main .ss-grid a.season-icon-link:hover {
+    background-color: var(--highlight);
+}
+
+.season-icon-link.current-season-icon .season-icon::before {
+    color: var(--current-season-icon);
 }
 
 .ss-grid {

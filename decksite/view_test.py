@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from decksite import view
 from decksite.main import APP
@@ -33,9 +33,9 @@ def test_seasonized_url_for_app() -> None:
         assert view.seasonized_url(seasons.current_season_num()) == '/decks/'
 
 
-def test_font_url_matches_css_url() -> None:
-    with APP.test_request_context('/'):
-        assert BaseView().font_url() == '/static/fonts/symbols.woff2'
+def test_font_url_cache_busts_regenerated_font() -> None:
+    with APP.test_request_context('/'), patch('shared_web.base_view.os.path.getmtime', return_value=123):
+        assert BaseView().font_url() == '/static/fonts/symbols.woff2?v=123'
 
 def test_seasonized_url_for_seasons() -> None:
     with APP.test_request_context('/seasons/2/decks/'):

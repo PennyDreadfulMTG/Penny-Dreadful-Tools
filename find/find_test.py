@@ -627,6 +627,10 @@ def test_is_outlaw() -> None:
     do_functional_test('is:outlaw', ['Malcolm, Alluring Scoundrel', 'Shardless Agent', 'Faerie Vandal', 'Murderous Redcap', 'Faerie Dreamthief'], ['Ponder', 'Deep-Cavern Bat', 'Delver of Secrets'])
 
 @pytest.mark.functional
+def test_is_party() -> None:
+    do_functional_test('is:party', ['Mother of Runes', "Thieves' Guild Enforcer", 'Kargan Intimidator', 'Snapcaster Mage', 'Changeling Outcast', 'Stonework Packbeast'], ['Ponder', 'Knowledge Exploitation'])
+
+@pytest.mark.functional
 def test_is_historic() -> None:
     do_functional_test('is:historic', ['Black Lotus', 'Batterskull', 'Karakas', 'Isamaru, Hound of Konda', 'Founding the Third Path'], ['Pacifism', 'Greater Auramancy', 'Figure of Destiny'])
 

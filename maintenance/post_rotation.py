@@ -1,6 +1,7 @@
 import asyncio
 
 from decksite import league
+from decksite.data import playability
 from magic import multiverse
 from shared import dtutil
 from shared import redis_wrapper as redis
@@ -21,6 +22,7 @@ def ad_hoc() -> None:
     event_loop.run_until_complete(multiverse.update_pd_legality_async())  # PD previous lists
     insert_seasons.run()  # Make sure Season table is up to date
     multiverse.rebuild_cache()
+    playability.preaggregate_legal_cards()  # Make unplayed cards available on /rotation/changes immediately.
     if redis.REDIS:  # Clear the redis cache
         redis.REDIS.flushdb()
     league_end = league.active_league().end_date

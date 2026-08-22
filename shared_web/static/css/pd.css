@@ -2993,6 +2993,45 @@ Used for Unique Cards Played and Cards Played First list on person detail page.
     list-style-type: none;
 }
 
+.card-list-count,
+.trailblazer-season {
+    color: var(--deemphasized-text);
+}
+
+.trailblazer-card-lists {
+    width: min(18rem, 100%);
+}
+
+.trailblazer-card-list {
+    padding-left: 0;
+}
+
+.trailblazer-card-list li {
+    align-items: baseline;
+    column-gap: 0.75em;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.trailblazer-card-list .card {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trailblazer-season {
+    font-variant-numeric: tabular-nums;
+}
+
+.trailblazer-card-list-toggle {
+    display: inline-block;
+    margin-left: var(--spacing-text);
+}
+
+.trailblazer-card-list.is-collapsed .additional-trailblazer-card {
+    display: none;
+}
+
 /*
 
 Charts

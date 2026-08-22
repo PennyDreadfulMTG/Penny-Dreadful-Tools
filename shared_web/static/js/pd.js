@@ -532,11 +532,14 @@ PD.updateChartColors = function() {
     });
 };
 
-PD.renderCharts = function() {
+PD.renderCharts = async function() {
+    // Canvas text does not repaint when a web font finishes loading. Wait for
+    // fonts before the first draw so a hard refresh cannot capture fallbacks.
+    await document.fonts.ready;
     const colors = PD.getChartColors();
     // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
     Chart.register(ChartDataLabels);
-    // Because we don't want to wait for window.onload (css and images loaded) we hardcode here to avoid loading the browser default values from Safari.
+    // Keep this hardcoded rather than waiting for window.onload (CSS and images loaded).
     // Should be kept in sync with CSS.
     Chart.defaults.font.family = 'symbols, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif';
     Chart.defaults.font.size = "15px";

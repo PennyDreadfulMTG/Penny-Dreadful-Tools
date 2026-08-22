@@ -70,7 +70,7 @@ def update_rotation_runs() -> None:
     for path in rotation.files():
         f = open(path)
         number = rotation.run_number_from_path(path)
-        cs = [(number, line.strip()) for line in f.readlines()]
+        cs = [(number, oracle.canonical_name_or_self(line.strip())) for line in f.readlines()]
         sql = 'INSERT IGNORE INTO rotation_runs (number, name, season_id) VALUES '
         sql += ', '.join(f'({number}, {sqlescape(name)}, {season_id})' for number, name in cs)
         db().execute(sql)

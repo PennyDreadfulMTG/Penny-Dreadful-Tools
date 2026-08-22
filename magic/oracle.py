@@ -43,6 +43,12 @@ def valid_name(name: str) -> str:
             return CARDS_BY_NAME[k].name
     raise InvalidDataException(f'Did not find any cards looking for `{name}`')
 
+def canonical_name_or_self(name: str) -> str:
+    try:
+        return valid_name(name)
+    except InvalidDataException:
+        return name
+
 def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name) or load_cards([name])[0]
 

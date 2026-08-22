@@ -23,6 +23,33 @@ def test_canonical_legal_name_preserves_unknown_names(monkeypatch: pytest.Monkey
     monkeypatch.setattr(rotation_script.oracle, 'valid_name', unknown)
     assert rotation_script.canonical_legal_name('A Future Card', {}) == 'A Future Card'
 
+def test_process_writes_one_canonical_hit_for_equivalent_names(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured_hits: set[str] = set()
+    monkeypatch.setattr(rotation_script.oracle, 'canonical_name_or_self', lambda name: 'Agent Venom' if name == 'Rhilex the Accursed' else name)
+    monkeypatch.setattr(rotation_script, 'is_good_set', lambda _set_code: True)
+
+    def process_sets(_seen: set[str], _used: set[str], hits: set[str], _ignored: set[str]) -> int:
+        captured_hits.update(hits)
+        return 1
+
+    monkeypatch.setattr(rotation_script, 'process_sets', process_sets)
+    prices = {
+        'prices': [
+            ('Agent Venom', '0.01', 'TST'),
+            ('Rhilex the Accursed', '0.01', 'TST'),
+            ('A Future Card', '0.01', 'TST'),
+        ],
+    }
+
+    assert rotation_script.process(prices) == 1
+    assert captured_hits == {'Agent Venom', 'A Future Card'}
+
+def test_file_sha256(tmp_path: Path) -> None:
+    path = tmp_path / 'legal_cards.txt'
+    path.write_text('Agent Venom\n', encoding='utf-8')
+
+    assert rotation_script.file_sha256(str(path)) == 'fb5349f0ac8f2d4ca12c9278ebc1f5aa918b9cafbb2533a5ee3f25212d8c4c81'
+
 def test_make_final_list_combines_equivalent_printing_names(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     (tmp_path / 'Run_001.txt').write_text('Rhilex the Accursed\n', encoding='utf-8')
     (tmp_path / 'Run_002.txt').write_text('Agent Venom\n', encoding='utf-8')

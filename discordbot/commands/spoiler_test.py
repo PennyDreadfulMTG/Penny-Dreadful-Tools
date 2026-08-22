@@ -20,10 +20,13 @@ async def test_spoiler_does_not_send_invalid_image(monkeypatch: pytest.MonkeyPat
     ctx = SimpleNamespace(
         author=SimpleNamespace(mention='<@123>'),
         bot=Mock(),
+        defer=AsyncMock(),
         send=AsyncMock(),
     )
-    monkeypatch.setattr(spoiler.fetch_tools, 'fetch_json', Mock(return_value=card))
-    monkeypatch.setattr(spoiler.fetch_tools, 'store_image', Mock(side_effect=FetchException('invalid image')))
+    fetch_card = AsyncMock(return_value=card)
+    monkeypatch.setattr(spoiler.fetch_tools, 'fetch_json_async', fetch_card)
+    download_image = AsyncMock(side_effect=FetchException('invalid image'))
+    monkeypatch.setattr(spoiler.asyncio, 'to_thread', download_image)
     monkeypatch.setattr(spoiler.configuration, 'get', Mock(return_value='/tmp'))
     monkeypatch.setattr(spoiler.emoji, 'replace_emoji', AsyncMock(return_value='Unnatural Summons 1GU'))
     import_card = AsyncMock()
@@ -31,5 +34,8 @@ async def test_spoiler_does_not_send_invalid_image(monkeypatch: pytest.MonkeyPat
 
     await spoiler.Spoiler.spoiler.callback(SimpleNamespace(), ctx, 'Unnatural Summons')
 
+    ctx.defer.assert_awaited_once_with()
+    fetch_card.assert_awaited_once_with('https://api.scryfall.com/cards/named?fuzzy=Unnatural Summons')
+    download_image.assert_awaited_once_with(spoiler.fetch_tools.store_image, 'https://example.com/not-an-image.jpg', '/tmp/ydsk_27.jpg')
     ctx.send.assert_awaited_once_with(content='Unnatural Summons 1GU\nImage unavailable.')
     import_card.assert_awaited_once_with('Unnatural Summons')

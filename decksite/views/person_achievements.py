@@ -14,5 +14,12 @@ class PersonAchievements(View):
         if len([a for a in achievements if a.legend]) == 0:
             self.no_achievements = True
 
+    def prepare_decks(self) -> None:
+        super().prepare_decks()
+        for achievement in self.achievements:
+            if achievement.detail is not None:
+                achievement.detail.hide_active_runs = self.hide_active_runs
+                self.prepare_active_runs(achievement.detail)
+
     def page_title(self) -> str:
         return f'{self.person.name} Achievements'

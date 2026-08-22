@@ -217,6 +217,7 @@ def add_rule(archetype_id: int) -> int:
 def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
     inc = []
     exc = []
+    cards = set()
     for line in include.strip().splitlines():
         try:
             inc.append(parse_line(line))
@@ -224,6 +225,11 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, st
             return False, f"Couldn't find a card count and name on line: {line}"
         if not card.card_exists(inc[-1][1]):
             return False, f'Card not found in any deck: {line}'
+        canonical_name = oracle.valid_name(inc[-1][1])
+        if canonical_name in cards:
+            return False, f'Card appears more than once in rule: {canonical_name}'
+        cards.add(canonical_name)
+        inc[-1] = (inc[-1][0], canonical_name)
     for line in exclude.strip().splitlines():
         try:
             exc.append(parse_line(line))
@@ -231,6 +237,11 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, st
             return False, f"Couldn't find a card count and name on line: {line}"
         if not card.card_exists(exc[-1][1]):
             return False, f'Card not found in any deck {line}'
+        canonical_name = oracle.valid_name(exc[-1][1])
+        if canonical_name in cards:
+            return False, f'Card appears more than once in rule: {canonical_name}'
+        cards.add(canonical_name)
+        exc[-1] = (exc[-1][0], canonical_name)
     update_cards(rule_id, inc, exc)
     return True, ''
 

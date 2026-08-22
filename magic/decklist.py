@@ -100,21 +100,24 @@ def parse_xml(s: str) -> DecklistType:
     except AttributeError as e:
         raise InvalidDataException(e) from e  # Not valid MTGO .deck format
 
-# Load the cards in the intermediate dict form.
-def vivify(decklist: DecklistType) -> Deck:
+# Resolve all accepted names to the single name used for validation and storage.
+def normalize(decklist: DecklistType) -> DecklistType:
     validated: DecklistType = {'maindeck': {}, 'sideboard': {}}
     invalid_names = set()
     for section in ['maindeck', 'sideboard']:
         for name, n in decklist.get(section, {}).items():
             try:
                 canonical_name = oracle.valid_name(name)
-                if validated[section].get(canonical_name):
-                    raise InvalidDataException(f'More than one entry for {canonical_name} in {section}')
-                validated[section][canonical_name] = n
+                add_card(validated[section], n, canonical_name)
             except InvalidDataException:
                 invalid_names.add(name)
     if invalid_names:
         raise InvalidDataException('Invalid cards: {invalid_names}'.format(invalid_names='; '.join(invalid_names)))
+    return validated
+
+# Load the cards in the intermediate dict form.
+def vivify(decklist: DecklistType) -> Deck:
+    validated = normalize(decklist)
     d = Deck({'maindeck': [], 'sideboard': []})
     for section in ['maindeck', 'sideboard']:
         for name, n in validated.get(section, {}).items():

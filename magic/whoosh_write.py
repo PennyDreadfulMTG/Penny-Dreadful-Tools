@@ -43,7 +43,7 @@ def update_index(index: FileIndex, cards: list[Card]) -> None:
         asciiname = anyascii(card.name)
         if asciiname != card.name:
             names.append(asciiname)
-        for name in names:
+        for name in dict.fromkeys(names):
             document = {}
             document['id'] = card.id
             document['name'] = name

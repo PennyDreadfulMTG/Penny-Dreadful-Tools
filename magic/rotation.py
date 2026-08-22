@@ -68,14 +68,13 @@ def rotation_redis_store() -> tuple[int, int, list[Card]]:
             print('WARNING: Could not find legality_dir.')
         return (0, 0, [])
     with open(fs[-1]) as f:
-        latest_list = f.read().splitlines()
+        latest_list = [oracle.canonical_name_or_self(line) for line in f.read().splitlines()]
     cs = oracle.cards_by_name()
     for filename in fs:
         for line in get_file_contents(filename):
             line = text.sanitize(line)
             line = line.strip()
-            if c := cs.get(line):
-                line = c.name
+            line = oracle.canonical_name_or_self(line)
             lines.append(line)
     scores = Counter(lines).most_common()
     runs = scores[0][1]

@@ -10,7 +10,7 @@ from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db
 from magic.models import Card
-from shared import configuration, dtutil
+from shared import configuration, dtutil, fetch_tools
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -139,10 +139,10 @@ def base_query_lite() -> str:
 async def update_database_async(new_date: datetime.datetime) -> bool:
     try:
         sets = await fetcher.all_sets_async()
-        if os.path.exists('scryfall-default-cards.json'):
-            with open('scryfall-default-cards.json', encoding='utf-8') as f:
-                all_cards = json.load(f)
-                download_uri = None
+        local_cards = load_local_cards()
+        if local_cards is not None:
+            all_cards = local_cards
+            download_uri = None
         else:
             all_cards, download_uri = await fetcher.all_cards_async()
     except Exception as e:
@@ -157,6 +157,15 @@ async def update_database_async(new_date: datetime.datetime) -> bool:
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
         await insert_cards(new_date, sets, all_cards)
     return True
+
+def load_local_cards() -> list[CardDescription] | None:
+    if os.path.exists('scryfall-default-cards.jsonl.gz'):
+        with open('scryfall-default-cards.jsonl.gz', 'rb') as f:
+            return fetch_tools.load_jsonl_gzip(f)
+    if os.path.exists('scryfall-default-cards.json'):
+        with open('scryfall-default-cards.json', encoding='utf-8') as f:
+            return json.load(f)
+    return None
 
 async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription]) -> None:
     db().begin('update_database')
@@ -203,7 +212,9 @@ async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
 
 async def determine_values_async(printings: list[CardDescription], next_card_id: int) -> dict[str, list[dict[str, Any]]]:
     cards: dict[str, int] = {}
+    canonical_names: dict[str, int] = {}
     flavor_names: dict[str, int] = {}
+    ambiguous_aliases: set[str] = set()
     card_values: list[dict[str, Any]] = []
     face_values: list[dict[str, Any]] = []
     meld_result_printings: list[CardDescription] = []
@@ -263,13 +274,13 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
             if p['name'] in cards:
                 card_id = cards[p['name']]
                 printing_values.append(printing_value(p, card_id, set_id, rarity_id))
-                if p.get('flavor_name'):
-                    flavor_names[p['flavor_name']] = card_id
+                add_aliases(p, card_id, flavor_names, ambiguous_aliases)
                 continue
 
             card_id = next_card_id
             next_card_id += 1
             cards[p['name']] = card_id
+            canonical_names[canonical_name(p)] = card_id
             card_values.append({'id': card_id, 'oracle_id': p['oracle_id'], 'layout': p['layout']})
 
             if is_meld_result(p):  # We don't make entries for a meld result until we know the card_ids of the front faces.
@@ -300,10 +311,7 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
 
             cards[p['name']] = card_id
             printing_values.append(printing_value(p, card_id, set_id, rarity_id))
-            if p.get('flavor_name'):
-                flavor_names[p['flavor_name']] = card_id
-            if p.get('printed_name') and p.get('lang') == 'en' and p['printed_name'] != p['name']:
-                flavor_names[p['printed_name']] = card_id
+            add_aliases(p, card_id, flavor_names, ambiguous_aliases)
         except Exception as e:
             print(f'Exception `{e} ({type(e)})` while importing card: {repr(p)}')
             raise InvalidDataException() from e
@@ -311,7 +319,11 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
     for p in meld_result_printings:
         face_values += meld_face_values(p, cards)
 
-    flavor_name_values = [{'card_id': card_id, 'flavor_name': flavor_name} for flavor_name, card_id in flavor_names.items()]
+    flavor_name_values = [
+        {'card_id': card_id, 'flavor_name': flavor_name}
+        for flavor_name, card_id in flavor_names.items()
+        if canonical_names.get(flavor_name, card_id) == card_id
+    ]
 
     return {
         'card': card_values,
@@ -323,6 +335,46 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
         'card_legality': card_legality_values,
         'flavor_name': flavor_name_values,
     }
+
+def add_aliases(p: CardDescription, card_id: int, aliases: dict[str, int], ambiguous_aliases: set[str]) -> None:
+    for alias in card_aliases(p):
+        if alias in ambiguous_aliases:
+            continue
+        existing_card_id = aliases.get(alias)
+        if existing_card_id is not None and existing_card_id != card_id:
+            aliases.pop(alias)
+            ambiguous_aliases.add(alias)
+            continue
+        aliases[alias] = card_id
+
+def card_aliases(p: CardDescription) -> set[str]:
+    aliases = set()
+    flavor_name = p.get('flavor_name')
+    if flavor_name and flavor_name != p['name']:
+        aliases.add(flavor_name)
+    printed_name = p.get('printed_name')
+    if p.get('lang') == 'en' and printed_name and printed_name != p['name']:
+        aliases.add(printed_name)
+
+    faces = p.get('card_faces', [])
+    for face in faces:
+        printed_name = face.get('printed_name')
+        if p.get('lang') == 'en' and printed_name and printed_name != face['name']:
+            aliases.add(printed_name)
+
+    if p.get('lang') == 'en':
+        face_aliases = [face.get('printed_name') for face in faces]
+        if face_aliases and all(face_aliases):
+            combined_alias = ' // '.join(face_aliases)
+            if combined_alias != p['name']:
+                aliases.add(combined_alias)
+    return aliases
+
+def canonical_name(p: CardDescription) -> str:
+    faces = p.get('card_faces', [])
+    if faces and p.get('layout') not in layout.uses_two_names():
+        return faces[0]['name']
+    return p['name']
 
 def face_colors(p: CardDescription) -> set[str]:
     colors = set()

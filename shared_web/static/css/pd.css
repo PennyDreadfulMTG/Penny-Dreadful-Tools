@@ -148,6 +148,10 @@ blockquote {
     padding: 1em;
 }
 
+.notice a {
+    text-decoration: underline;
+}
+
 main p, footer p {
     /*
         A space equal to 50-100% of the body text size will usually suffice. The larger the point size, the more space you'll need between paragraphs to make a visible difference.

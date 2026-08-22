@@ -20,6 +20,7 @@ def test_all_admin_routes_require_permission() -> None:
 def test_admin_information_pages_require_login(path: str) -> None:
     response = APP.test_client().get(path)
     assert response.status_code == 302
+    assert response.location is not None
     assert response.location.startswith('/authenticate/?target=')
 
 

@@ -33,7 +33,9 @@ def update_index(index: FileIndex, cards: list[Card]) -> None:
     # We exclude emblems here to stop them showing up as
     cards = [c for c in cards if layout.is_playable_layout(c.layout)]
     for card in cards:
-        names = card.names
+        names = list(card.names)
+        if card.flavor_names:
+            names.extend(card.flavor_names.split('|'))
         if card.name not in names:
             names.append(card.name)  # Split and aftermath cards
         if card.name.startswith('The '):

@@ -103,11 +103,9 @@ class PDFlask(Flask):
 
     def logout(self) -> wrappers.Response:
         oauth.logout()
-        target = request.args.get('target', 'home')
-        if bool(urllib.parse.urlparse(target).netloc):
-            response = redirect(target)
-        else:
-            response = redirect(url_for(target))
+        target = request.args.get('target')
+        url = self.redirect_target(target) or url_for('home')
+        response = redirect(url)
         # Clean up any session cookie set with no domain created when the site was misconfigured.
         # If we don't then you won't actually log out, we'll keep respecting the no-domain cookie.
         # The cookies we actually want are set with domain=.pennydreadfulmagic.com so they work on subdomains.
@@ -118,8 +116,11 @@ class PDFlask(Flask):
         target = request.args.get('target')
         authorization_url, state = oauth.setup_authentication()
         session['oauth2_state'] = state
-        if target is not None:
-            session['target'] = target
+        safe_target = self.redirect_target(target)
+        if safe_target is not None:
+            session['target'] = safe_target
+        else:
+            session.pop('target', None)
         response = redirect(authorization_url)
         # Google doesn't like the discordapp.com page we redirect to being disallowed in discordapp.com's robots.txt without `X-Robots-Tag: noindex` in our response.
         # See https://support.google.com/webmasters/answer/93710
@@ -130,11 +131,27 @@ class PDFlask(Flask):
         if request.values.get('error'):
             return redirect(url_for('unauthorized', error=request.values['error']))
         oauth.setup_session(request.url)
-        url = session.get('target')
-        if url is None:
-            url = url_for('home')
-        session['target'] = None
+        target = session.pop('target', None)
+        url = self.redirect_target(target) or url_for('home')
         return redirect(url)
+
+    def redirect_target(self, target: str | None) -> str | None:
+        if target is None:
+            return None
+        if target in self.view_functions:
+            return url_for(target)
+        try:
+            parsed_target = urllib.parse.urlsplit(target)
+            parsed_host = urllib.parse.urlsplit(request.host_url)
+        except ValueError:
+            return None
+        decoded_path = urllib.parse.unquote(parsed_target.path)
+        if not decoded_path.startswith('/') or decoded_path.startswith('//') or '\\' in decoded_path:
+            return None
+        if parsed_target.scheme or parsed_target.netloc:
+            if parsed_target.scheme.lower() not in {'http', 'https'} or parsed_target.netloc.lower() != parsed_host.netloc.lower():
+                return None
+        return urllib.parse.urlunsplit(('', '', parsed_target.path, parsed_target.query, parsed_target.fragment))
 
     def robots_txt(self) -> Response:
         """

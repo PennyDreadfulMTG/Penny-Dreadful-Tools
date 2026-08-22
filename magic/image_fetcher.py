@@ -18,7 +18,11 @@ if not os.path.exists(configuration.get_str('image_dir')):
     os.makedirs(configuration.get_str('image_dir'), exist_ok=True)
 
 def basename(cards: list[Card]) -> str:
-    return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) + (c.get('preferred_printing', '') or '') for c in cards)
+    return '_'.join(
+        re.sub('[^a-z-]', '-', card.canonicalize(c.name))
+        + (f'-{preferred_printing}' if (preferred_printing := c.get('preferred_printing')) else '')
+        for c in cards
+    )
 
 def bluebones_image(cards: list[Card]) -> str:
     c = '|'.join(c.name for c in cards)
@@ -33,7 +37,7 @@ def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
         name = c.name
     p = oracle.get_printing(c, c.get('preferred_printing'))
     if p is not None:
-        u = f'https://api.scryfall.com/cards/{p.set_code}/{p.number}?format=image'
+        u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&set={escape(p.set_code)}&format=image'
     else:
         u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
     if version:

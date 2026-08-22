@@ -1,10 +1,11 @@
+import asyncio
 import logging
 
 from interactions import Client, Extension
 from interactions.models import File, slash_command
 
 from discordbot import emoji
-from discordbot.command import MtgContext, slash_card_option
+from discordbot.command import MtgInteractionContext, slash_card_option
 from magic import oracle
 from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException
@@ -13,12 +14,13 @@ from shared.fetch_tools import FetchException
 class Spoiler(Extension):
     @slash_command()
     @slash_card_option()
-    async def spoiler(self, ctx: MtgContext, card: str) -> None:
+    async def spoiler(self, ctx: MtgInteractionContext, card: str) -> None:
         """Request a card from an upcoming set."""
         if not card:
             await ctx.send(f'{ctx.author.mention}: Please specify a card name.')
             return
-        sfcard = fetch_tools.fetch_json(f'https://api.scryfall.com/cards/named?fuzzy={card}')
+        await ctx.defer()
+        sfcard = await fetch_tools.fetch_json_async(f'https://api.scryfall.com/cards/named?fuzzy={card}')
         if sfcard['object'] == 'error':
             await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))
             return
@@ -31,7 +33,7 @@ class Spoiler(Extension):
             c = sfcard
         image_available = True
         try:
-            fetch_tools.store_image(c['image_uris']['normal'], imagepath)
+            await asyncio.to_thread(fetch_tools.store_image, c['image_uris']['normal'], imagepath)
         except FetchException as e:
             logging.warning('Could not download image for %s: %s', sfcard['name'], e)
             image_available = False

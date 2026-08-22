@@ -78,7 +78,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
     'netdecking': (
         """
         Netdecking is both allowed and encouraged. Most deck creators are happy when others play their decks.
-        You can get a glimpse of the meta via the metagame link below. Sort by win percent to find the best-performing decks.
+        You can get a glimpse of the meta via the metagame link below.
         """,
         {
             'Metagame': fetcher.decksite_url('/metagame/'),

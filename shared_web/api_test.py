@@ -1,3 +1,4 @@
+import subprocess
 import sys
 from unittest import mock
 
@@ -13,6 +14,7 @@ def test_push_deployment_rebuilds_symbols_font() -> None:
     with (
         app.test_request_context('/api/gitpull', method='POST', headers={'X-GitHub-Event': 'push'}, json={'ref': 'refs/heads/master'}),
         mock.patch.object(api.subprocess, 'check_output') as check_output,
+        mock.patch.object(api.subprocess, 'Popen') as popen,
     ):
         response = api.process_github_webhook()
 
@@ -21,6 +23,11 @@ def test_push_deployment_rebuilds_symbols_font() -> None:
         mock.call(['git', 'fetch']),
         mock.call(['git', 'reset', '--hard', 'origin/master']),
         mock.call([sys.executable, '-m', 'uv', 'sync', '--frozen']),
-        mock.call([sys.executable, 'run.py', 'maintenance', 'fonts']),
         mock.call(['npm', 'run-script', 'build']),
     ]
+    popen.assert_called_once_with(
+        [sys.executable, 'run.py', 'maintenance', 'fonts'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )

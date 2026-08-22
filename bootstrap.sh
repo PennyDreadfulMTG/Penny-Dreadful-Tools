@@ -17,8 +17,4 @@ echo "${APP[*]}"
 cd "$(dirname "$0")"
 git pull --ff-only
 uv sync --frozen
-if [[ " ${APP[*]} " == *" decksite "* ]]
-then
-    uv run --frozen python run.py maintenance fonts
-fi
 uv run --frozen run.py "${APP[@]}"

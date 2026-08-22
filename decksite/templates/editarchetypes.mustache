@@ -85,11 +85,21 @@
     <form method="post">
         <div>
             <label for="q">With these cards (separated by newlines)</label>
-            <textarea name="q">{{query}}</textarea>
+            <textarea name="q" id="q"{{#has_query_errors}} class="error" aria-invalid="true" aria-describedby="q-error"{{/has_query_errors}}>{{query}}</textarea>
+            {{#has_query_errors}}
+                <div id="q-error" class="error">
+                    {{#query_errors}}<div>{{.}}</div>{{/query_errors}}
+                </div>
+            {{/has_query_errors}}
         </div>
         <div>
             <label for="notq">Without these cards</label>
-            <textarea name="notq">{{notquery}}</textarea>
+            <textarea name="notq" id="notq"{{#has_notquery_errors}} class="error" aria-invalid="true" aria-describedby="notq-error"{{/has_notquery_errors}}>{{notquery}}</textarea>
+            {{#has_notquery_errors}}
+                <div id="notq-error" class="error">
+                    {{#notquery_errors}}<div>{{.}}</div>{{/notquery_errors}}
+                </div>
+            {{/has_notquery_errors}}
         </div>
         <button type="submit">Search by Card</button>
     </form>

@@ -26,7 +26,7 @@ def test_push_deployment_rebuilds_symbols_font() -> None:
         mock.call(['npm', 'run-script', 'build']),
     ]
     popen.assert_called_once_with(
-        [sys.executable, 'run.py', 'maintenance', 'fonts'],
+        ['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', 'fonts'],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         start_new_session=True,

@@ -24,7 +24,7 @@ def process_github_webhook() -> Response:
                 except subprocess.CalledProcessError:
                     pass
                 subprocess.Popen(
-                    [sys.executable, 'run.py', 'maintenance', 'fonts'],
+                    ['uv', 'run', '--frozen', 'python', 'run.py', 'maintenance', 'fonts'],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                     start_new_session=True,

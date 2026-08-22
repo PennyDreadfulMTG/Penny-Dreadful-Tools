@@ -16,10 +16,11 @@ from decksite.data import rule as rs
 from decksite.league import RetireForm
 from decksite.views import Admin, AdminRetire, Ban, EditAliases, EditArchetypes, EditLeague, EditMatches, EditRules, PlayerNotes, Prizes, RotationChecklist, Sorters, Unlink
 from decksite.views.archetype_search import ArchetypeSearch
+from magic import oracle
 from magic.models import Deck
 from shared import dtutil
 from shared import redis_wrapper as redis
-from shared.pd_exception import InvalidArgumentException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException
 from shared_web.decorators import fill_form
 from shared_web.menu import Menu, MenuItem
 
@@ -58,9 +59,22 @@ def post_aliases(person_id: int | None = None, alias: str | None = None) -> str 
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
-def edit_archetypes(q: str = '', notq: str = '') -> wrappers.Response:
-    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq)
+def edit_archetypes(q: str = '', notq: str = '', query_errors: list[str] | None = None, notquery_errors: list[str] | None = None) -> wrappers.Response:
+    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq, query_errors, notquery_errors)
     return view.response()
+
+def validate_card_names(raw_names: str) -> tuple[list[str], list[str]]:
+    names = []
+    errors = []
+    for name in raw_names.splitlines():
+        name = name.strip()
+        if not name:
+            continue
+        try:
+            names.append(oracle.valid_name(name))
+        except InvalidDataException:
+            errors.append(f'Card not found: {name}')
+    return names, errors
 
 @APP.route('/admin/archetypes/', methods=['POST'])
 @auth.demimod_required
@@ -77,7 +91,13 @@ def post_archetypes() -> wrappers.Response:
                 archs.assign(int(deck_id), int(archetype_id), auth.person_id())
                 redis.clear(f'decksite:deck:{deck_id}')
     elif request.form.get('q') is not None and request.form.get('notq') is not None:
-        search_results = ds.load_decks_by_cards(cast(str, request.form.get('q')).splitlines(), cast(str, request.form.get('notq')).splitlines())
+        q = cast(str, request.form.get('q'))
+        notq = cast(str, request.form.get('notq'))
+        names, query_errors = validate_card_names(q)
+        not_names, notquery_errors = validate_card_names(notq)
+        if query_errors or notquery_errors:
+            return edit_archetypes(q, notq, query_errors, notquery_errors)
+        search_results = ds.load_decks_by_cards(names, not_names)
     elif request.form.get('find_conflicts') is not None:
         search_results = ds.load_conflicted_decks()
     elif request.form.get('rename_to') is not None:

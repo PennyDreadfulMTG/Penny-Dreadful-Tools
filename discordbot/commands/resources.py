@@ -1,3 +1,4 @@
+import asyncio
 import re
 
 from interactions import Client, Extension
@@ -19,7 +20,7 @@ class Resources(Extension):
             resource = ''
         if len(resource) > 0:
             results.update(resources_resources(resource))
-            results.update(site_resources(resource))
+            results.update(await asyncio.to_thread(site_resources, resource))
         s = ''
         if len(results) == 0:
             s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))

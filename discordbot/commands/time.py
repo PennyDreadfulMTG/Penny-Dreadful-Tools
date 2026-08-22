@@ -1,10 +1,11 @@
+import asyncio
 import logging
 import re
 
 from interactions import Client, Extension
 from interactions.models import OptionType, slash_command, slash_option
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgInteractionContext
 from discordbot.shared import guild_id
 from magic import fetcher
 from shared import configuration
@@ -15,15 +16,16 @@ from shared.settings import with_config_file
 class Time(Extension):
     @slash_command('time')
     @slash_option('place', 'Where are you checking the time?', OptionType.STRING, required=True)
-    async def time(self, ctx: MtgContext, place: str) -> None:
+    async def time(self, ctx: MtgInteractionContext, place: str) -> None:
         """Current time in location."""
         if not place:
             await ctx.send(f'{ctx.author.mention}: No location provided. Please type !time followed by the location you want the time for.')
             return
+        await ctx.defer()
         try:
             with with_config_file(guild_id(ctx.channel)), with_config_file(ctx.channel.id):
                 twentyfour = configuration.use_24h.value
-            ts = fetcher.time(place, twentyfour)
+            ts = await asyncio.to_thread(fetcher.time, place, twentyfour)
             times_s = ''
             for t, zones in ts.items():
                 cities = sorted({re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones})

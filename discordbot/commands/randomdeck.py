@@ -1,16 +1,17 @@
 from interactions import Client, Extension
 from interactions.models import slash_command
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgInteractionContext
 from magic import fetcher
 from shared import fetch_tools
 
 
 class RandomDeck(Extension):
     @slash_command('random-deck')
-    async def randomdeck(self, ctx: MtgContext) -> None:
+    async def randomdeck(self, ctx: MtgInteractionContext) -> None:
         """A random deck from the current season."""
-        blob = fetch_tools.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
+        await ctx.defer()
+        blob = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/randomlegaldeck'))
         if 'error' in blob or 'url' not in blob:
             await ctx.send(f'{ctx.author.mention}: Error fetching random legal deck (' + blob.get('msg', 'Unknown') + ')')
         else:

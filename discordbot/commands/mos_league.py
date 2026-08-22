@@ -4,7 +4,7 @@ from collections import defaultdict
 from interactions.client.utils import TTLItem
 from interactions.models import Extension, slash_command
 
-from discordbot.command import MtgContext
+from discordbot.command import MtgContext, MtgInteractionContext
 from magic import fetcher
 from shared import configuration
 from shared.container import Container
@@ -19,7 +19,7 @@ class MosLeague(Extension):
         pass
 
     @queue.subcommand(sub_cmd_name='join', sub_cmd_description='Join the queue')
-    async def queue_join(self, ctx: MtgContext) -> None:
+    async def queue_join(self, ctx: MtgInteractionContext) -> None:
         tournament_channel_id = configuration.get_int('mos_premodern_channel_id')
         if ctx.channel_id != tournament_channel_id:
             await ctx.send(f'This command can only be used in <#{tournament_channel_id}>', ephemeral=True)
@@ -38,6 +38,7 @@ class MosLeague(Extension):
             await ctx.send('You are already in the queue', ephemeral=True)
             return
 
+        await ctx.defer(ephemeral=True)
         league = await get_current_league()
         if not league:
             await ctx.send('The league is currently closed', ephemeral=True)

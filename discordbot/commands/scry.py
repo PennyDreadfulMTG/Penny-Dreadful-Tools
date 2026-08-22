@@ -1,3 +1,5 @@
+import asyncio
+
 from interactions import Client, Extension
 from interactions.models import OptionType, auto_defer, slash_command, slash_option
 
@@ -12,7 +14,7 @@ class Scry(Extension):
     @auto_defer()
     async def scry(self, ctx: MtgContext, query: str) -> None:
         """Card search using Scryfall."""
-        how_many, cardnames, _results = fetcher.search_scryfall(query)
+        how_many, cardnames, _results = await asyncio.to_thread(fetcher.search_scryfall, query)
         cbn = oracle.cards_by_name()
         cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
         await ctx.post_cards(cards, ctx.author, more_results_link(query, how_many))

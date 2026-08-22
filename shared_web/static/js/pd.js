@@ -7,6 +7,7 @@ PD.init = function() {
     PD.initMenu();
     PD.initDoubleReportCheck();
     PD.initAchievements();
+    PD.initTrailblazerCardLists();
     PD.initTables();
     PD.initDetails();
     PD.initDarkModeToggle();
@@ -86,6 +87,24 @@ PD.initAchievements = function() {
 
 PD.onMoreInfoClick = function() {
     $(this).siblings(".more-info").slideToggle();
+};
+
+PD.initTrailblazerCardLists = function() {
+    document.querySelectorAll(".trailblazer-card-list-toggle").forEach((toggle) => {
+        const list = document.getElementById(toggle.getAttribute("aria-controls"));
+        if (!list) {
+            return;
+        }
+        list.classList.add("is-collapsed");
+        toggle.hidden = false;
+        toggle.onclick = (event) => {
+            event.preventDefault();
+            const expanded = toggle.getAttribute("aria-expanded") === "true";
+            list.classList.toggle("is-collapsed", expanded);
+            toggle.setAttribute("aria-expanded", (!expanded).toString());
+            toggle.textContent = expanded ? `Show all ${toggle.dataset.count}…` : "Show fewer";
+        };
+    });
 };
 
 PD.initTables = function() {

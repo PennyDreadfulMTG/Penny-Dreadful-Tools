@@ -1199,6 +1199,11 @@ div.live {
     margin-bottom: 1em; /* Same as `main table`'s margin-bottom so that top table extras are the same distance from the table as the pagination at the bottom. */
 }
 
+.grid-header {
+    flex-wrap: wrap;
+    row-gap: 1em;
+}
+
 .live .table-header .message, .grid-header .message {
     margin-left: 1rem;
     margin-right: 1rem;
@@ -1225,7 +1230,7 @@ tr.clickable:hover td.marginalia {
 }
 
 .grid-header .sort {
-    flex: 1;
+    flex: 1 1 auto;
     text-align: right;
 }
 

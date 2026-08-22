@@ -1997,7 +1997,7 @@ button, input, form label, select, textarea {
 }
 
 textarea, input[type=text], select {
-    background-color: inherit;
+    background-color: var(--light-gray);
 }
 
 button {

@@ -562,7 +562,9 @@ msgid ""
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
-msgid "Browse [Decklists]({decks_url}) from tournaments, leagues and elsewhere"
+msgid ""
+"Browse the [Metagame]({metagame_url}) for popular archetypes and successful "
+"decklists."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1

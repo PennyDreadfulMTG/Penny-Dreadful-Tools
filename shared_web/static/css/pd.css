@@ -666,6 +666,14 @@ header h1 {
     text-transform: lowercase;
 }
 
+/* Let the site title wrap instead of overflowing the header on narrow phones. */
+@media only screen and (max-width: 640px) {
+    header h1 {
+        flex-shrink: 1;
+        margin-right: 0;
+    }
+}
+
 h1, h2 {
     color: inherit;
 }

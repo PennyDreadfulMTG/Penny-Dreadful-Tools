@@ -30,9 +30,8 @@ def person(mtgo_username: str | None = None, person_id: int | None = None) -> st
     all_archetypes = archs.load_archetypes(season_id=get_season_id())
     trailblazer_cards = cs.trailblazer_cards(p.id)
     unique_cards = cs.unique_cards_played(p.id)
-    your_cards = {'unique': unique_cards, 'trailblazer': trailblazer_cards}
     seasons_active = ps.seasons_active(p.id)
-    view = Person(p, person_archetypes, all_archetypes, your_cards, seasons_active, get_season_id())
+    view = Person(p, person_archetypes, all_archetypes, trailblazer_cards, unique_cards, seasons_active, get_season_id())
     return view.page()
 
 @APP.route('/people/<mtgo_username>/achievements/')

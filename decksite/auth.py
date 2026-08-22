@@ -25,6 +25,7 @@ def demimod_required(f: Callable[..., wrappers.Response]) -> Callable[..., wrapp
         if session.get('admin') is False and session.get('demimod') is False:
             return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
+    setattr(decorated_function, 'permission_required', 'demimod')
     return decorated_function
 
 def admin_required(f: Callable) -> Callable:
@@ -35,6 +36,7 @@ def admin_required(f: Callable) -> Callable:
         if session.get('admin') is False:
             return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
+    setattr(decorated_function, 'permission_required', 'admin')
     return decorated_function
 
 def admin_required_no_redirect(f: Callable) -> Callable:
@@ -43,6 +45,7 @@ def admin_required_no_redirect(f: Callable) -> Callable:
         if not session.get('admin'):
             return '', 403
         return f(*args, **kwargs)
+    setattr(decorated_function, 'permission_required', 'admin')
     return decorated_function
 
 

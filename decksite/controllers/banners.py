@@ -4,7 +4,7 @@ import os
 
 from flask import Response, make_response, send_file
 
-from decksite import APP, get_season_id
+from decksite import APP, auth, get_season_id
 from decksite.data import playability
 from decksite.views import Banners
 from magic import fetcher, image_fetcher, oracle, seasons
@@ -15,6 +15,7 @@ from shared_web.api import return_json
 
 
 @APP.route('/admin/banners/')
+@auth.admin_required
 def banner_stats() -> str:
     banners = []
     hq_crops = fetcher.hq_artcrops().keys()

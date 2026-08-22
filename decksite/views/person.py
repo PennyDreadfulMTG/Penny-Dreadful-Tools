@@ -6,15 +6,18 @@ from typing import Any
 import titlecase
 from flask import url_for
 
+from decksite import prepare
 from decksite.data import person as ps
 from decksite.data.achievements import Achievement
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic import oracle, seasons
 
+TRAILBLAZER_CARD_PREVIEW_SIZE = 12
+
 
 class Person(View):
-    def __init__(self, person: ps.Person, archetypes: list[Archetype], all_archetypes: list[Archetype], your_cards: dict[str, list[str]], seasons_active: Sequence[int], season_id: int | None) -> None:
+    def __init__(self, person: ps.Person, archetypes: list[Archetype], all_archetypes: list[Archetype], trailblazer_card_seasons: dict[str, int], unique_card_names: list[str], seasons_active: Sequence[int], season_id: int | None) -> None:
         super().__init__()
         self.all_archetypes = all_archetypes
         self.person = person
@@ -59,9 +62,19 @@ class Person(View):
         self.add_note_url = url_for('post_player_note')
         self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == seasons.current_season_num() else season_id)
         self.is_person_page = True
-        self.trailblazer_cards = oracle.load_cards(your_cards['trailblazer'])
+        self.trailblazer_cards = oracle.load_cards(trailblazer_card_seasons)
+        for card in self.trailblazer_cards:
+            first_played_season_id = trailblazer_card_seasons[card.name]
+            card.first_played_season_id = first_played_season_id
+            card.first_played_season_name = seasons.season_name(first_played_season_id)
+            card.first_played_season_icon = prepare.season_icon_link(seasons.season_code(first_played_season_id))
+        self.trailblazer_cards.sort(key=lambda card: (-card.first_played_season_id, card.name))
+        for i, card in enumerate(self.trailblazer_cards):
+            card.additional_trailblazer_card = i >= TRAILBLAZER_CARD_PREVIEW_SIZE
+        self.num_trailblazer_cards = len(self.trailblazer_cards)
+        self.has_additional_trailblazer_cards = self.num_trailblazer_cards > TRAILBLAZER_CARD_PREVIEW_SIZE
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0
-        self.unique_cards = oracle.load_cards(your_cards['unique'])
+        self.unique_cards = oracle.load_cards(unique_card_names)
         self.has_unique_cards = len(self.unique_cards) > 0
         self.cards = self.trailblazer_cards + self.unique_cards
         self.seasons_active: list[dict[str, object]] = []

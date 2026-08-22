@@ -62,13 +62,19 @@
     </section>
 {{/has_unique_cards}}
 {{#has_trailblazer_cards}}
-    <section class="card-lists">
-        <h2>Cards Played First</h2>
-        <ul>
+    <section class="card-lists trailblazer-card-lists">
+        <h2>Cards Played First <span class="card-list-count">· {{num_trailblazer_cards}}</span></h2>
+        <ul class="trailblazer-card-list" id="trailblazer-card-list">
             {{#trailblazer_cards}}
-                <li><a class="card" href="{{url}}">{{name}}</a></li>
+                <li{{#additional_trailblazer_card}} class="additional-trailblazer-card"{{/additional_trailblazer_card}}>
+                    <a class="card" href="{{url}}">{{name}}</a>
+                    <span class="trailblazer-season" title="First played in {{first_played_season_name}}">{{{first_played_season_icon}}}</span>
+                </li>
             {{/trailblazer_cards}}
         </ul>
+        {{#has_additional_trailblazer_cards}}
+            <a class="trailblazer-card-list-toggle" href="#trailblazer-card-list" aria-controls="trailblazer-card-list" aria-expanded="false" data-count="{{num_trailblazer_cards}}" hidden>Show all {{num_trailblazer_cards}}…</a>
+        {{/has_additional_trailblazer_cards}}
     </section>
 {{/has_trailblazer_cards}}
 <section class="admin">

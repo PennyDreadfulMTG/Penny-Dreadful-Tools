@@ -316,6 +316,20 @@ def test_colors_with_ints() -> None:
     do_functional_test('c<4 c>1 t:instant cmc=2', ['Abrupt Decay', "Assassin's Trophy", 'Agony Warp'], ['Abeyance', 'Ancient Grudge', 'Resounding Roar'])
 
 @pytest.mark.functional
+def test_numeric_color_count_with_colon_functional() -> None:
+    do_functional_test('c:2', ['Murderous Redcap', 'Terminate'], ['Lightning Bolt', 'Progenitus'])
+
+def test_numeric_color_count_with_colon() -> None:
+    do_test('c:2', 'c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) = 2)')
+
+@pytest.mark.functional
+def test_fewer_than_one_color_functional() -> None:
+    do_functional_test('c<1', ['Plains', "Tormod's Crypt"], ['Lightning Bolt', 'Murderous Redcap'])
+
+def test_fewer_than_one_color() -> None:
+    do_test('c<1', '(c.id NOT IN (SELECT card_id FROM card_color))')
+
+@pytest.mark.functional
 def test_past_seasons() -> None:
     do_functional_test('f:pds1', ['Mother of Runes'], ['Necropotence'])
     do_functional_test('f:pds5', ['Necropotence'], ['Mother of Runes'])
@@ -368,8 +382,15 @@ def test_color() -> None:
 def test_only_multicolored_functional() -> None:
     do_functional_test('c:m', ['Bant Charm', 'Murderous Redcap'], ['Door to Nothingness', 'Fires of Undeath', 'Lightning Bolt'])
 
+@pytest.mark.functional
+def test_multicolored_name_functional() -> None:
+    do_functional_test('c:multicolored', ['Bant Charm', 'Murderous Redcap'], ['Door to Nothingness', 'Fires of Undeath', 'Lightning Bolt'])
+
 def test_only_multicolored() -> None:
     do_test('c:m', '(c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) >= 2))')
+
+def test_multicolored_name() -> None:
+    do_test('c:multicolored', '(c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) >= 2))')
 
 def test_multicolored_with_other_colors() -> None:
     with pytest.raises(search.InvalidValueException):

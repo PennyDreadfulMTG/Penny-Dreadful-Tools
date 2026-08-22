@@ -182,6 +182,9 @@ class View(BaseView):
     def learn_more_url(self) -> str:
         return url_for('about', hide_intro=True)
 
+    def decks_url(self) -> str:
+        return url_for('decks')
+
     def metagame_url(self) -> str:
         return url_for('metagame')
 

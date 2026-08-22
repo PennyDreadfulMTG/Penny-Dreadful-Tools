@@ -84,7 +84,7 @@ class Person(View):
                 continue
             active = season_id in seasons_active
             if setcode:
-                class_name = f'ss-{setcode.lower()} ' + ('ss-common' if active else 'inactive')
+                class_name = f'ss-{setcode.lower()} season-icon' + ('' if active else ' inactive')
             else:
                 class_name = ''
             season = {

@@ -2468,6 +2468,19 @@ Season Symbols
     margin-right: 0.317rem;
 }
 
+.season-icon {
+    color: var(--text);
+}
+
+.season-icon.inactive {
+    color: var(--inactive);
+}
+
+.current-season-icon {
+    background-color: var(--highlight);
+    border-radius: var(--text-rounded-corners);
+}
+
 .ss-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

@@ -28,10 +28,6 @@ if TYPE_CHECKING:
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
 MAX_CARD_INFORMATION_AGE = datetime.timedelta(days=2)
-DISAMBIGUATION_EMOJIS = [':one:', ':two:', ':three:', ':four:', ':five:']
-DISAMBIGUATION_EMOJIS_BY_NUMBER = {1: '1⃣', 2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣'}
-DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣': 1, '2⃣': 2, '3⃣': 3, '4⃣': 4, '5⃣': 5}
-
 HELP_GROUPS: set[str] = set()
 
 @lazy_property
@@ -113,15 +109,6 @@ def simplify_string(s: str) -> str:
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-def disambiguation(cards: list[str]) -> str:
-    if len(cards) > 5:
-        return ','.join(cards)
-    return ' '.join([' '.join(x) for x in zip(DISAMBIGUATION_EMOJIS, cards)])
-
-async def disambiguation_reactions(message: Message, cards: list[str]) -> None:
-    for i in range(1, len(cards) + 1):
-        await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
-
 async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, command: str) -> Card | None:
     if not args:
         await send(channel, f'{author.mention}: Please specify a card name.')
@@ -130,8 +117,7 @@ async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], mode, preferred_printing)[0]
     if result.is_ambiguous():
-        message = await send(channel, f'{author.mention}: Ambiguous name for {command}. Suggestions: {disambiguation(result.get_ambiguous_matches()[0:5])} (click number below)')
-        await disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
+        await send(channel, f'{author.mention}: Ambiguous name for {command}. Please use the slash command and choose one of its suggestions.')
     else:
         await send(channel, f'{author.mention}: No matches.')
     return None

@@ -350,9 +350,9 @@ def retire_deck(d: Deck) -> None:
 def random_legal_deck() -> Deck | None:
     where = f'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {seasons.current_season_num()})'
     having = f'(d.competition_id NOT IN ({active_competition_id_query()}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'
+    ds, _ = deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')
     try:
-        ds, _ = deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]
-        return ds
+        return ds[0]
     except IndexError:
         # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
         return None

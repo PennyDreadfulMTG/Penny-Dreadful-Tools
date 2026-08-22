@@ -12,11 +12,10 @@ from collections import Counter
 import ftfy
 import sentry_sdk
 
-from magic import card_price, fetcher, rotation, seasons
+from magic import card_price, fetcher, oracle, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices
-from shared import configuration, decorators, dtutil, fetch_tools, repo, sentry, text
-from shared import redis_wrapper as redis
-from shared.pd_exception import NotConfiguredException
+from shared import configuration, decorators, dtutil, fetch_tools, redis_wrapper, repo, sentry, text
+from shared.pd_exception import InvalidDataException, NotConfiguredException
 
 TIME_UNTIL_FULL_ROTATION = seasons.next_rotation() - dtutil.now()
 TIME_SINCE_FULL_ROTATION = dtutil.now() - seasons.last_rotation()
@@ -129,6 +128,7 @@ def make_final_list() -> None:
     bad_names = planes
     bad_names.extend(BANNED_CARDS)
     renames = prepare_flavornames()
+    oracle.init(force=True)
 
     files = rotation.files()
     lines: list[str] = []
@@ -136,9 +136,8 @@ def make_final_list() -> None:
         line = text.sanitize(line)
         if line.strip() in bad_names:
             continue
-        if line.strip() in renames:
-            line = renames[line.strip()] + '\n'
-        lines.append(line)
+        name = canonical_legal_name(line.strip(), renames)
+        lines.append(name + '\n')
     scores = Counter(lines).most_common()
 
     passed: list[str] = []
@@ -149,7 +148,7 @@ def make_final_list() -> None:
     if is_supplemental():
         temp = set(passed)
         legal_cards = asyncio.get_event_loop().run_until_complete(fetcher.legal_cards_async())
-        final = list(temp.union([c + '\n' for c in legal_cards]))
+        final = list(temp.union([canonical_legal_name(c, renames) + '\n' for c in legal_cards]))
 
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
@@ -163,6 +162,13 @@ def make_final_list() -> None:
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
+
+def canonical_legal_name(name: str, renames: dict[str, str]) -> str:
+    name = renames.get(name, name)
+    try:
+        return oracle.valid_name(name)
+    except InvalidDataException:
+        return name
 
 def prepare_flavornames() -> dict[str, str]:
     _num, _names, flavored = fetcher.search_scryfall('is:flavor_name', True)
@@ -221,8 +227,8 @@ https://pennydreadfulmagic.com/admin/rotation/
 - [ ] email mtggoldfish
 """
     print('Rebooting Discord bot...', flush=True)
-    if redis.get_str('discordbot:commit_id'):
-        redis.store('discordbot:do_reboot', True)
+    if redis_wrapper.get_str('discordbot:commit_id'):
+        redis_wrapper.store('discordbot:do_reboot', True)
         print('Done!', flush=True)
         checklist += '- [x] restart discordbot\n'
     else:

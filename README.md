@@ -146,6 +146,18 @@ There are various levels of granularity but in general use you want:
 
 Check the dev.py source code for the full set of options including `unit`, `types`, `lint` (covered by `test` above) as well as `functional` (integration tests), `perf` (performance tests). `release` will take you all the way from your committed change to a PR via the tests (needs GitHub's commandline `gh` installed).
 
+### Validating card-import changes
+
+Changes to the Scryfall importer should also be checked with two disposable databases made from exactly the same bulk data:
+
+1. Create a worktree at `origin/master` and place the same `scryfall-default-cards.json` and `sets.json` in both worktree roots. The candidate also accepts Scryfall's compressed `scryfall-default-cards.jsonl.gz` format.
+2. Force an import from the master worktree into a database named `pd_alias_shadow_master` and from the candidate into `pd_alias_shadow_candidate`. Shadow database names deliberately use the `pd_alias_shadow_` prefix to keep them separate from development and production data.
+3. From the candidate worktree, run `uv run python dev.py compare-card-databases pd_alias_shadow_master pd_alias_shadow_candidate`.
+
+The comparison fails if canonical card data was removed or changed, if an existing alias or legality was removed, or if aliases became ambiguous. It permits and reports newly recognized aliases and legality rows derived from those aliases.
+
+After importing current cards, run `uv run pytest magic/omenpaths_test.py rotation_script/rotation_script_test.py` for the focused acceptance cases. They cover normal and double-faced alternate names, mixed-name aggregation, the shared four-copy limit across main deck and sideboard, canonical deck and legal-list output, legacy name matching, and search indexing. The full `uv run pytest` suite remains the final regression gate.
+
 ## Working on React components
 
 - Run logsite

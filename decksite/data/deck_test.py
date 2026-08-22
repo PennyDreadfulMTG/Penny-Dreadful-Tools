@@ -1,6 +1,11 @@
 from unittest import mock
 
-from decksite.data import deck
+import pytest
+
+from decksite.data import clauses, deck
+from decksite.database import db
+from decksite.testutil import with_test_db
+from magic import decklist, oracle
 from magic.models import Card, Deck
 from shared.container import Container
 
@@ -59,3 +64,43 @@ def test_set_colors() -> None:
         d = Deck({'maindeck': [Container({'card': c, 'n': 4}) for c in cs], 'sideboard': []})
         deck.set_colors(d)
         assert d.colors == output
+
+def test_equivalent_names_have_the_same_deck_hash(monkeypatch: pytest.MonkeyPatch) -> None:
+    aliases = {
+        'Spider-Man Noir': 'Spider-Man Noir',
+        'Kroble, Envoy of the Bog': 'Spider-Man Noir',
+    }
+    monkeypatch.setattr(oracle, 'valid_name', aliases.__getitem__)
+    spider_man = {'maindeck': {'Spider-Man Noir': 4}, 'sideboard': {}}
+    omenpaths = {'maindeck': {'Kroble, Envoy of the Bog': 4}, 'sideboard': {}}
+    assert deck.get_deckhash(decklist.normalize(spider_man)) == deck.get_deckhash(decklist.normalize(omenpaths))
+
+@with_test_db
+@pytest.mark.functional
+def test_equivalent_names_are_stored_and_found_as_one_identity(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(deck, 'prime_cache', lambda _deck: None)
+    common: deck.RawDeckDescription = {
+        'name': 'Alias integration test',
+        'url': 'https://example.com/deck',
+        'source': 'League',
+        'mtgo_username': 'AliasTester',
+    }
+    omenpaths_params: deck.RawDeckDescription = common | {
+        'identifier': 'omenpaths-name',
+        'cards': {'maindeck': {'Kroble, Envoy of the Bog': 4, 'Swamp': 56}, 'sideboard': {}},
+    }
+    spiderman_params: deck.RawDeckDescription = common | {
+        'identifier': 'spiderman-name',
+        'cards': {'maindeck': {'Spider-Man Noir': 4, 'Swamp': 56}, 'sideboard': {}},
+    }
+    omenpaths = deck.add_deck(omenpaths_params)
+    spiderman = deck.add_deck(spiderman_params)
+
+    assert omenpaths.decklist_hash == spiderman.decklist_hash
+    stored_cards = db().select('SELECT card, n FROM deck_card WHERE deck_id = %s ORDER BY card', [omenpaths.id])
+    assert list(stored_cards) == [
+        {'card': 'Spider-Man Noir', 'n': 4},
+        {'card': 'Swamp', 'n': 56},
+    ]
+    matching_ids = db().values(f'SELECT id FROM deck AS d WHERE {clauses.card_where("Kroble, Envoy of the Bog")}')
+    assert set(matching_ids) == {omenpaths.id, spiderman.id}

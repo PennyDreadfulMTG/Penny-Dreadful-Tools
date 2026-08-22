@@ -7,7 +7,7 @@ from decksite import deck_name
 from decksite.data import query, season
 from decksite.data.top import Top
 from decksite.database import db
-from magic import legality, mana, oracle, seasons
+from magic import decklist, legality, mana, oracle, seasons
 from magic.colors import find_colors
 from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, logger
@@ -318,7 +318,7 @@ def add_deck(params: RawDeckDescription) -> Deck:
         raise InvalidDataException(f'Did not find a username in {params}')
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
-    cards = params['cards']
+    cards = decklist.normalize(params['cards'])
     if deck_id:
         db().begin('replace_deck_cards')
         db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [get_deckhash(cards), deck_id])

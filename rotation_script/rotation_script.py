@@ -3,6 +3,7 @@ import datetime
 import fileinput
 import functools
 import glob
+import hashlib
 import os
 import pathlib
 import shutil
@@ -12,10 +13,9 @@ from collections import Counter
 import ftfy
 import sentry_sdk
 
-from magic import card_price, fetcher, rotation, seasons
+from magic import card_price, fetcher, oracle, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices
-from shared import configuration, decorators, dtutil, fetch_tools, repo, sentry, text
-from shared import redis_wrapper as redis
+from shared import configuration, decorators, dtutil, fetch_tools, redis_wrapper, repo, sentry, text
 from shared.pd_exception import NotConfiguredException
 
 TIME_UNTIL_FULL_ROTATION = seasons.next_rotation() - dtutil.now()
@@ -48,6 +48,7 @@ def run() -> None:
         print(f'ETA: {dtutil.display_time(int(time_until.total_seconds()))}')
         return
 
+    oracle.init()
     if n == 0:
         rotation.clear_redis(clear_files=True)
         try:
@@ -89,7 +90,7 @@ def process(all_prices: dict[str, PriceListType]) -> int:
             cents = int(float(p) * 100)
             seen_sets.add(mtgo_set)
             if cents <= card_price.MAX_PRICE_CENTS and is_good_set(mtgo_set):
-                hits.add(name)
+                hits.add(oracle.canonical_name_or_self(name))
                 used_sets.add(mtgo_set)
     ignored = seen_sets - used_sets
     return process_sets(seen_sets, used_sets, hits, ignored)
@@ -129,6 +130,7 @@ def make_final_list() -> None:
     bad_names = planes
     bad_names.extend(BANNED_CARDS)
     renames = prepare_flavornames()
+    oracle.init(force=True)
 
     files = rotation.files()
     lines: list[str] = []
@@ -136,9 +138,8 @@ def make_final_list() -> None:
         line = text.sanitize(line)
         if line.strip() in bad_names:
             continue
-        if line.strip() in renames:
-            line = renames[line.strip()] + '\n'
-        lines.append(line)
+        name = canonical_legal_name(line.strip(), renames)
+        lines.append(name + '\n')
     scores = Counter(lines).most_common()
 
     passed: list[str] = []
@@ -149,7 +150,7 @@ def make_final_list() -> None:
     if is_supplemental():
         temp = set(passed)
         legal_cards = asyncio.get_event_loop().run_until_complete(fetcher.legal_cards_async())
-        final = list(temp.union([c + '\n' for c in legal_cards]))
+        final = list(temp.union([canonical_legal_name(c, renames) + '\n' for c in legal_cards]))
 
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
@@ -163,6 +164,10 @@ def make_final_list() -> None:
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
+
+def canonical_legal_name(name: str, renames: dict[str, str]) -> str:
+    name = renames.get(name, name)
+    return oracle.canonical_name_or_self(name)
 
 def prepare_flavornames() -> dict[str, str]:
     _num, _names, flavored = fetcher.search_scryfall('is:flavor_name', True)
@@ -211,18 +216,20 @@ def do_push() -> None:
         print(c, flush=True)
         sentry_sdk.capture_exception(c)
     print('done!\nGoing through checklist...', flush=True)
+    checksums = {fn: file_sha256(os.path.join(configuration.get_str('legality_dir'), fn)) for fn in files}
     checklist = f"""{setcode} {rottype} checklist
 
 https://pennydreadfulmagic.com/admin/rotation/
 
-- [ ] upload legal_cards.txt to S3 (set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
-- [ ] upload {setcode}_legal_cards.txt to S3 (set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
+- [ ] upload the generated legal_cards.txt to S3 (SHA-256 `{checksums['legal_cards.txt']}`; set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
+- [ ] upload the generated {setcode}_legal_cards.txt to S3 (SHA-256 `{checksums[f'{setcode}_legal_cards.txt']}`; set Content-Type to 'text/plain; charset=utf-8' in Metadata, System)
+- [ ] verify the local, GitHub Pages, and S3 copies have those SHA-256 checksums
 - [ ] ping scryfall
 - [ ] email mtggoldfish
 """
     print('Rebooting Discord bot...', flush=True)
-    if redis.get_str('discordbot:commit_id'):
-        redis.store('discordbot:do_reboot', True)
+    if redis_wrapper.get_str('discordbot:commit_id'):
+        redis_wrapper.store('discordbot:do_reboot', True)
         print('Done!', flush=True)
         checklist += '- [x] restart discordbot\n'
     else:
@@ -256,3 +263,10 @@ https://pennydreadfulmagic.com/admin/rotation/
     print('Sending checklist to Github...', flush=True)
     repo.create_issue(checklist, 'rotation script', 'rotation')
     print('Done!', flush=True)
+
+def file_sha256(path: str) -> str:
+    digest = hashlib.sha256()
+    with open(path, 'rb') as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()

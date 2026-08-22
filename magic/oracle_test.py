@@ -3,6 +3,7 @@ from collections.abc import Iterable
 import pytest
 
 from magic import oracle, seasons
+from magic.models import Card
 from shared.pd_exception import InvalidDataException
 
 
@@ -31,6 +32,24 @@ def test_valid_name() -> None:
     assert oracle.valid_name('Torrent Sculptor/Flamethrower Sonata') == 'Torrent Sculptor'
     with pytest.raises(InvalidDataException):
         oracle.valid_name('Definitely // Not a Card /')
+
+def test_valid_name_returns_canonical_name_for_alias_front(monkeypatch: pytest.MonkeyPatch) -> None:
+    card = Card({'name': 'Peter Parker', 'flavor_names': 'Surris, Spidersilk Innovator'})
+    monkeypatch.setitem(oracle.CARDS_BY_NAME, 'Surris, Spidersilk Innovator', card)
+    assert oracle.valid_name('Surris, Spidersilk Innovator // Surris, Silk-Tech Vanguard') == 'Peter Parker'
+
+def test_init_rebuilds_names_and_ignores_alias_collisions(monkeypatch: pytest.MonkeyPatch) -> None:
+    canonical = Card({'name': 'Shared Name'})
+    aliased = Card({'name': 'Other Card', 'flavor_names': 'Shared Name|Alternate Name'})
+    monkeypatch.setattr(oracle, 'CARDS_BY_NAME', {'Stale Alias': aliased})
+    monkeypatch.setattr(oracle, 'load_cards', lambda: [canonical, aliased])
+    monkeypatch.setattr(oracle, 'load_cards_with_flavor_names', lambda: [aliased])
+
+    oracle.init(force=True)
+
+    assert 'Stale Alias' not in oracle.CARDS_BY_NAME
+    assert oracle.CARDS_BY_NAME['Shared Name'] is canonical
+    assert oracle.CARDS_BY_NAME['Alternate Name'] is aliased
 
 def test_load_cards() -> None:
     cards = oracle.load_cards(['Think Twice', 'Swamp'])

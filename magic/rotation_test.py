@@ -45,6 +45,28 @@ def test_last_run_number() -> None:
         configuration.CONFIG['legality_dir'] = real_legality_dir
 
 
+def test_rotation_summary_combines_aliases_and_marks_latest_hit(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    first = tmp_path / 'Run_001.txt'
+    second = tmp_path / 'Run_002.txt'
+    first.write_text('Agent Venom\n', encoding='utf-8')
+    second.write_text('Rhilex the Accursed\n', encoding='utf-8')
+    card = Card({'name': 'Agent Venom', 'layout': 'normal'}, predetermined_values=True)
+    monkeypatch.setattr(rotation, 'files', lambda: [str(first), str(second)])
+    monkeypatch.setattr(rotation.oracle, 'canonical_name_or_self', lambda name: 'Agent Venom' if name == 'Rhilex the Accursed' else name)
+    monkeypatch.setattr(rotation.oracle, 'cards_by_name', lambda: {'Agent Venom': card})
+    monkeypatch.setattr(rotation.redis, 'get_list', lambda _key: None)
+    monkeypatch.setattr(rotation.redis, 'store', lambda _key, value, **_kwargs: value)
+    monkeypatch.setattr(rotation.redis, 'sadd', lambda *_args, **_kwargs: None)
+
+    runs, _runs_percent, cards = rotation.rotation_redis_store()
+
+    assert runs == 2
+    assert len(cards) == 1
+    assert cards[0].name == 'Agent Venom'
+    assert cards[0].hits == 2
+    assert cards[0].hit_in_last_run is True
+
+
 @pytest.mark.asyncio
 async def test_rotation_hype_message_elides_next_confirmation_when_no_cards_are_undecided(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(rotation, 'read_rotation_files', lambda: (rotation.TOTAL_RUNS, 100, []))

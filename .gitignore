@@ -57,6 +57,8 @@ whoosh_index/
 
 # Scryfall
 /scryfall-default-cards.json
+/scryfall-default-cards.jsonl.gz
+/sets.json
 
 # MTGJSON
 AllCards-x.json

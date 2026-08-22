@@ -16,10 +16,14 @@ CARDS_BY_NAME: dict[str, Card] = {}
 
 def init(force: bool = False) -> None:
     if len(CARDS_BY_NAME) == 0 or force:
+        CARDS_BY_NAME.clear()
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
         for c in load_cards_with_flavor_names():
             for fn in c.flavor_names.split('|'):
+                existing = CARDS_BY_NAME.get(fn)
+                if existing is not None and existing.name != c.name:
+                    continue
                 CARDS_BY_NAME[fn] = c
 
 def valid_name(name: str) -> str:
@@ -30,14 +34,20 @@ def valid_name(name: str) -> str:
     except ValueError:
         front = name
     if front in CARDS_BY_NAME:
-        return front
+        return CARDS_BY_NAME[front].name
     canonicalized_name = card.canonicalize(name)
     canonicalized_front = card.canonicalize(front)
     for k in CARDS_BY_NAME:
         canonicalized = card.canonicalize(k)
         if canonicalized_name == canonicalized or canonicalized_front == canonicalized:
-            return k
+            return CARDS_BY_NAME[k].name
     raise InvalidDataException(f'Did not find any cards looking for `{name}`')
+
+def canonical_name_or_self(name: str) -> str:
+    try:
+        return valid_name(name)
+    except InvalidDataException:
+        return name
 
 def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name) or load_cards([name])[0]

@@ -74,20 +74,28 @@ def cards(deck_type: str | None = None) -> str:
 @SEASONS.route('/cards/<path:name>/')
 @SEASONS.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @cached()
-def card(name: str, deck_type: str | None = None) -> str:
+def card(name: str, deck_type: str | None = None) -> str | wrappers.Response:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     try:
-        c = cs.load_card(parse_card_name(name), tournament_only=tournament_only, season_id=get_season_id())
+        submitted_name = decode_card_name(name)
+        canonical_name = parse_card_name(name)
+        if submitted_name != canonical_name:
+            assert request.endpoint is not None
+            return redirect(url_for(request.endpoint, name=canonical_name, deck_type=deck_type))
+        c = cs.load_card(canonical_name, tournament_only=tournament_only, season_id=get_season_id())
         view = Card(c, tournament_only)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e
 
 def parse_card_name(name: str) -> str:
+    return oracle.valid_name(decode_card_name(name))
+
+def decode_card_name(name: str) -> str:
     name = urllib.parse.unquote_plus(name)
     if name.startswith(' '):  # Handle "+2 Mace".
         name = '+' + name.lstrip()
-    return oracle.valid_name(name)
+    return name
 
 @APP.route('/archetypes/')
 @APP.route('/archetypes/<any(tournament,league):deck_type>/')

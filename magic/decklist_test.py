@@ -1,6 +1,8 @@
 import textwrap
 
-from magic import decklist
+import pytest
+
+from magic import decklist, oracle
 
 
 def test_parse() -> None:
@@ -838,6 +840,39 @@ def test_spiderman_noir() -> None:
     v = decklist.vivify(d)
     assert v.maindeck[0].name == 'Spider-Man Noir'
     assert v.maindeck[0].n == 4
+
+def test_spiderman_and_omenpaths_names_are_combined(monkeypatch: pytest.MonkeyPatch) -> None:
+    aliases = {
+        'Spider-Man Noir': 'Spider-Man Noir',
+        'Kroble, Envoy of the Bog': 'Spider-Man Noir',
+        'Swamp': 'Swamp',
+    }
+    monkeypatch.setattr(oracle, 'valid_name', aliases.__getitem__)
+    s = """
+        2 Spider-Man Noir
+        2 Kroble, Envoy of the Bog
+        56 Swamp
+        """
+    d = decklist.parse(textwrap.dedent(s))
+    v = decklist.vivify(d)
+    spider_man_noir = next(c for c in v.maindeck if c.name == 'Spider-Man Noir')
+    assert spider_man_noir.n == 4
+    assert len(v.maindeck) == 2
+
+def test_normalize_combines_any_names_with_the_same_identity(monkeypatch: pytest.MonkeyPatch) -> None:
+    aliases = {
+        'Spider-Man Noir': 'Spider-Man Noir',
+        'Kroble, Envoy of the Bog': 'Spider-Man Noir',
+    }
+    monkeypatch.setattr(oracle, 'valid_name', aliases.__getitem__)
+    raw = {
+        'maindeck': {'Spider-Man Noir': 2, 'Kroble, Envoy of the Bog': 2},
+        'sideboard': {'Kroble, Envoy of the Bog': 1},
+    }
+    assert decklist.normalize(raw) == {
+        'maindeck': {'Spider-Man Noir': 4},
+        'sideboard': {'Spider-Man Noir': 1},
+    }
 
 def test_prepared() -> None:
     s = """

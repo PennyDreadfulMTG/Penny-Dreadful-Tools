@@ -5,9 +5,9 @@ from decksite.data.query import person_query
 from decksite.deck_type import DeckType
 from decksite.tournament import CompetitionFlag
 from find import search
-from magic import rotation
+from magic import oracle, rotation
 from shared.database import sqlescape, sqllikeescape
-from shared.pd_exception import InvalidArgumentException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 # Form SQL WHERE, ORDER BY and LIMIT clauses, sometimes by making db queries.
 
@@ -259,6 +259,10 @@ def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'
 
 def card_where(name: str) -> str:
+    try:
+        name = oracle.valid_name(name)
+    except InvalidDataException:
+        return 'FALSE'
     return f'd.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(name)})'
 
 # Returns two values, a SQL WHERE clause and a message about that clause (possibly an error message) suitable for display.

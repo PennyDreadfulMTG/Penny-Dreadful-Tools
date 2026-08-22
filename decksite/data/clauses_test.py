@@ -35,6 +35,17 @@ def test_card_search_where() -> None:
     assert {found.group(1), found.group(2)} == {'Blood Moon', 'Magus of the Moon'}
     assert ('FALSE', "Using 'm' with other colors is not supported, use 'color>b' instead") == clauses.card_search_where('c:bm')
 
+def test_card_where_resolves_alias(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(clauses.oracle, 'valid_name', lambda _name: 'Spider-Man Noir')
+    assert clauses.card_where('Kroble, Envoy of the Bog') == "d.id IN (SELECT deck_id FROM deck_card WHERE card = 'Spider-Man Noir')"
+
+def test_card_where_rejects_unknown_name(monkeypatch: pytest.MonkeyPatch) -> None:
+    def invalid_name(_name: str) -> str:
+        raise clauses.InvalidDataException()
+
+    monkeypatch.setattr(clauses.oracle, 'valid_name', invalid_name)
+    assert clauses.card_where('Definitely Not a Card') == 'FALSE'
+
 def test_limit() -> None:
     args = {'page': '1', 'pageSize': '150'}
     assert clauses.pagination(args) == (1, 150, 'LIMIT 150, 150')

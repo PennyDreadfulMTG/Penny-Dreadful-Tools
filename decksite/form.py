@@ -4,7 +4,7 @@ from typing import Any
 from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite.data import deck
-from magic import decklist, legality, seasons
+from magic import card, decklist, legality, oracle, seasons
 from magic.decklist import DecklistType
 from shared.container import Container
 from shared.pd_exception import BadRequestException, InvalidDataException
@@ -94,3 +94,35 @@ class DecklistForm(Form):
         if len(playable_bugs) > 0:
             self.warnings['decklist'] = 'Deck contains playable bugs'
             self.card_warnings['Warnings_Bugs'] = playable_bugs
+        self.use_submitted_aliases_in_card_messages()
+
+    def use_submitted_aliases_in_card_messages(self) -> None:
+        aliases = submitted_aliases(self.cards)
+        self.card_errors = card_messages_with_submitted_aliases(self.card_errors, aliases)
+        self.card_warnings = card_messages_with_submitted_aliases(self.card_warnings, aliases)
+
+def submitted_aliases(cards: DecklistType) -> dict[str, set[str]]:
+    aliases: dict[str, set[str]] = {}
+    for section in ['maindeck', 'sideboard']:
+        for submitted_name in cards.get(section, {}):
+            try:
+                canonical_name = oracle.valid_name(submitted_name)
+            except InvalidDataException:
+                continue
+            # A normal double-faced card can be submitted as "Front // Back" even
+            # though Columbus names the identity after its front face. That is not
+            # an alternate name and should not produce a parenthetical explanation.
+            submitted_front = submitted_name.split(' // ')[0]
+            if card.canonicalize(submitted_front) != card.canonicalize(canonical_name):
+                aliases.setdefault(canonical_name, set()).add(submitted_name)
+    return aliases
+
+def card_messages_with_submitted_aliases(messages: dict[str, set[str]], aliases: dict[str, set[str]]) -> dict[str, set[str]]:
+    return {
+        message_type: {
+            f"{canonical_name} (entered as {'; '.join(sorted(aliases[canonical_name]))})"
+            if aliases.get(canonical_name) else canonical_name
+            for canonical_name in names
+        }
+        for message_type, names in messages.items()
+    }

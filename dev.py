@@ -211,6 +211,15 @@ def dev_db() -> None:
             if stmt.strip() != '':
                 decksite.database.db().execute(stmt)
 
+@cli.command()
+@click.argument('baseline')
+@click.argument('candidate')
+def compare_card_databases(baseline: str, candidate: str) -> None:
+    """Compare a master and candidate card import made from identical inputs."""
+    from maintenance import card_database_diff
+    if not card_database_diff.compare(baseline, candidate):
+        sys.exit(1)
+
 def do_push() -> None:
     print('>>>> Pushing')
     branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()

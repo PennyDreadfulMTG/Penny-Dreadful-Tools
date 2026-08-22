@@ -176,7 +176,9 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
         newly_eliminated_s = list_of_most_interesting(newly_eliminated)
         s += f'\nEliminated: {newly_eliminated_s}.'
     s += f'\nUndecided: {num_undecided}.'
-    s += f'\nNext new cards confirmed in {soonest_new_card} runs time.\n'
+    if num_undecided > 0:
+        s += f'\nNext new cards confirmed in {soonest_new_card} runs time.'
+    s += '\n'
     if runs_percent >= 50:
         s += f"<{fetcher.decksite_url('/rotation/')}>"
     return s

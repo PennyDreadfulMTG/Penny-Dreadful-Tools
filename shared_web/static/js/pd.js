@@ -7,6 +7,7 @@ PD.init = function() {
     PD.initMenu();
     PD.initDoubleReportCheck();
     PD.initAchievements();
+    PD.initTrailblazerCardLists();
     PD.initTables();
     PD.initDetails();
     PD.initDarkModeToggle();
@@ -86,6 +87,24 @@ PD.initAchievements = function() {
 
 PD.onMoreInfoClick = function() {
     $(this).siblings(".more-info").slideToggle();
+};
+
+PD.initTrailblazerCardLists = function() {
+    document.querySelectorAll(".trailblazer-card-list-toggle").forEach((toggle) => {
+        const list = document.getElementById(toggle.getAttribute("aria-controls"));
+        if (!list) {
+            return;
+        }
+        list.classList.add("is-collapsed");
+        toggle.hidden = false;
+        toggle.onclick = (event) => {
+            event.preventDefault();
+            const expanded = toggle.getAttribute("aria-expanded") === "true";
+            list.classList.toggle("is-collapsed", expanded);
+            toggle.setAttribute("aria-expanded", (!expanded).toString());
+            toggle.textContent = expanded ? `Show all ${toggle.dataset.count}…` : "Show fewer";
+        };
+    });
 };
 
 PD.initTables = function() {
@@ -174,6 +193,7 @@ PD.initDarkModeToggle = function() {
             const isDark = document.documentElement.classList.contains("dark-mode");
             localStorage.setItem("prefersDarkMode", (!isDark).toString());
             setDarkMode();
+            PD.updateChartColors();
             return false;
         };
     });
@@ -476,11 +496,50 @@ PD.formatPercentage = function (value) {
         .replace(/^0%$/, "0"); // Replace literal "0%" with "0" as zero is unitless.
 };
 
-PD.renderCharts = function() {
-    const isDark = document.documentElement.classList.contains("dark-mode");
+PD.getChartColors = function() {
+    const probe = document.createElement("span");
+    probe.hidden = true;
+    document.body.append(probe);
+    const resolve = (property) => {
+        probe.style.color = `var(${property})`;
+        return getComputedStyle(probe).color;
+    };
+    const colors = {
+        background: resolve("--highlight"),
+        border: resolve("--light-border"),
+        text: resolve("--text")
+    };
+    probe.remove();
+    return colors;
+};
+
+PD.updateChartColors = function() {
+    const colors = PD.getChartColors();
+    Chart.defaults.borderColor = colors.border;
+    Chart.defaults.color = colors.text;
+    Object.values(Chart.instances).forEach((chart) => {
+        chart.options.borderColor = colors.border;
+        chart.options.color = colors.text;
+        Object.values(chart.options.scales).forEach((scale) => {
+            scale.border.color = colors.border;
+            scale.grid.color = colors.border;
+            scale.ticks.color = colors.text;
+        });
+        chart.data.datasets.forEach((dataset) => {
+            dataset.backgroundColor = colors.background;
+        });
+        chart.update();
+    });
+};
+
+PD.renderCharts = async function() {
+    // Canvas text does not repaint when a web font finishes loading. Wait for
+    // fonts before the first draw so a hard refresh cannot capture fallbacks.
+    await document.fonts.ready;
+    const colors = PD.getChartColors();
     // Note that changes made to Chart defaults here affect logs.pennydreadfulmagic.com/charts/ as well as decksite.
     Chart.register(ChartDataLabels);
-    // Because we don't want to wait for window.onload (css and images loaded) we hardcode here to avoid loading the browser default values from Safari.
+    // Keep this hardcoded rather than waiting for window.onload (CSS and images loaded).
     // Should be kept in sync with CSS.
     Chart.defaults.font.family = 'symbols, main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif';
     Chart.defaults.font.size = "15px";
@@ -496,7 +555,8 @@ PD.renderCharts = function() {
     Chart.defaults.plugins.datalabels.align = "end";
     Chart.defaults.plugins.tooltip.displayColors = false;
     Chart.defaults.plugins.colors.enabled = false;
-    Chart.defaults.color = isDark ? "#8C8C8C" : "#502828";
+    Chart.defaults.borderColor = colors.border;
+    Chart.defaults.color = colors.text;
     $(".chart").each(function() {
         var type = $(this).data("type"),
             labels = $(this).data("labels"),
@@ -518,6 +578,18 @@ PD.renderCharts = function() {
                 options.plugins.tooltip.callbacks.label = (v) => PD.formatPercentage(v.raw);
             }
         }
+        if (options.pd?.tooltip?.additional_series) {
+            const tooltip = options.pd.tooltip;
+            options.plugins.tooltip.callbacks = options.plugins.tooltip.callbacks || {};
+            options.plugins.tooltip.callbacks.label = (v) => {
+                const additionalValue = tooltip.additional_series[v.dataIndex],
+                    additionalText = additionalValue === null ? "N/A" : PD.formatPercentage(additionalValue);
+                return [
+                    tooltip.label + ": " + PD.formatPercentage(v.raw),
+                    tooltip.additional_label + ": " + additionalText
+                ];
+            };
+        }
 
 
         // eslint-disable-next-line no-new
@@ -525,7 +597,7 @@ PD.renderCharts = function() {
             type,
             "data": {
                 labels,
-                datasets: [{ data: series, backgroundColor: isDark ? "#574466" : "#f9d0a9" }]
+                datasets: [{ data: series, backgroundColor: colors.background }]
             },
             options
         });

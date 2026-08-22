@@ -345,18 +345,21 @@ def unique_cards_played(person_id: int) -> list[str]:
     return db().values(sql, [person_id])
 
 @retry_after_calling(preaggregate_trailblazer)
-def trailblazer_cards(person_id: int) -> list[str]:
+def trailblazer_cards(person_id: int) -> dict[str, int]:
     sql = """
         SELECT
-            card
+            tc.card,
+            dc.season_id
         FROM
             _trailblazer_cards AS tc
         INNER JOIN
             deck AS d ON tc.deck_id = d.id
+        INNER JOIN
+            deck_cache AS dc ON tc.deck_id = dc.deck_id
         WHERE
             d.person_id = %s
     """
-    return db().values(sql, [person_id])
+    return {r['card']: r['season_id'] for r in db().select(sql, [person_id])}
 
 def card_exists(name: str) -> bool:
     sql = 'SELECT EXISTS(SELECT * FROM deck_card WHERE card = %s LIMIT 1)'

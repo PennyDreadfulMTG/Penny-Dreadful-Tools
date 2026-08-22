@@ -519,7 +519,7 @@ msgstr ""
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
 "Check out the [guide to Magic "
-"Online](https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit)."
+"Online](https://www.mtgo.com/getting-started/getting-started-home)."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -562,7 +562,9 @@ msgid ""
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
-msgid "Browse [Decklists]({decks_url}) from tournaments, leagues and elsewhere"
+msgid ""
+"Browse the [Metagame]({metagame_url}) for popular archetypes and successful "
+"decklists."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1

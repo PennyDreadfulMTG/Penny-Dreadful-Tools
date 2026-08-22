@@ -106,6 +106,8 @@ const renderSort = (grid) => (
             <Grid
                 className="metagame-grid"
                 endpoint="/api/archetypes2/"
+                initialSortBy="quality"
+                initialSortOrder="AUTO"
                 renderItem={renderItem}
                 renderSort={renderSort}
                 reloadCards={true}

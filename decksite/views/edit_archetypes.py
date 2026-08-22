@@ -7,7 +7,7 @@ from decksite.view import View
 
 
 class EditArchetypes(View):
-    def __init__(self, archetypes: list[Archetype], q: str, notq: str) -> None:
+    def __init__(self, archetypes: list[Archetype], q: str, notq: str, query_errors: list[str] | None = None, notquery_errors: list[str] | None = None) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)
@@ -32,6 +32,10 @@ class EditArchetypes(View):
         self.edit_rules_url = url_for('edit_rules')
         self.query = q
         self.notquery = notq
+        self.query_errors = query_errors or []
+        self.notquery_errors = notquery_errors or []
+        self.has_query_errors = bool(self.query_errors)
+        self.has_notquery_errors = bool(self.notquery_errors)
 
     def page_title(self) -> str:
         return 'Edit Archetypes'

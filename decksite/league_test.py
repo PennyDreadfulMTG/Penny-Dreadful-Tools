@@ -4,6 +4,7 @@ import pytest
 from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite import league
+from magic.models import Deck
 from shared import dtutil
 from shared.pd_exception import InvalidArgumentException
 
@@ -74,3 +75,12 @@ def test_determine_league_name() -> None:
     start_date = dtutil.parse('2022-09-16 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
     end_date = dtutil.parse('2022-10-31 23:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
     assert league.determine_league_name(start_date, end_date) == 'League October 2022'
+
+
+@pytest.mark.parametrize('decks', [[Deck({})], []])
+def test_random_legal_deck(monkeypatch: pytest.MonkeyPatch, decks: list[Deck]) -> None:
+    monkeypatch.setattr(league.seasons, 'current_season_num', lambda: 42)
+    monkeypatch.setattr(league, 'active_competition_id_query', lambda: '1, 2')
+    monkeypatch.setattr(league.deck, 'load_decks', lambda **kwargs: (decks, len(decks)))
+
+    assert league.random_legal_deck() is (decks[0] if decks else None)

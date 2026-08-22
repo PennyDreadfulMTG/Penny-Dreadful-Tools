@@ -5,7 +5,8 @@ import logging
 from os import path
 
 from interactions import Client, SlashContext
-from interactions.models import InteractionCommand
+from interactions.api.events import Component
+from interactions.models import Button, ButtonStyle, InteractionCommand
 
 from discordbot import command
 from magic.models import Card
@@ -43,8 +44,22 @@ class CardConverter:
             if result.has_match() and not result.is_ambiguous():
                 return command.cards_from_names_with_mode([result.get_best_match()], mode, printing)[0]
             if result.is_ambiguous():
-                message = await ctx.send(f'{ctx.author.mention}: Ambiguous name for {ctx.invoke_target}. Suggestions: {command.disambiguation(result.get_ambiguous_matches()[0:5])}')
-                await command.disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
+                matches = result.get_ambiguous_matches()[:5]
+                buttons = [Button(style=ButtonStyle.SECONDARY, label=card_name[:80]) for card_name in matches]
+                message = await ctx.send(f'{ctx.author.mention}: Ambiguous name for {ctx.invoke_target}. Choose a card:', components=[buttons])
+
+                def chosen_by_author(event: Component) -> bool:
+                    return event.ctx.author.id == ctx.author.id
+
+                try:
+                    event = await ctx.client.wait_for_component(message, components=buttons, check=chosen_by_author, timeout=60)
+                except TimeoutError:
+                    await message.edit(content=f'{ctx.author.mention}: Card selection expired.', components=[])
+                    return None
+
+                selected = next(i for i, button in enumerate(buttons) if button.custom_id == event.ctx.custom_id)
+                await event.ctx.edit_origin(content=f'{ctx.author.mention}: Selected **{matches[selected]}**.', components=[])
+                return command.cards_from_names_with_mode([matches[selected]], mode, printing)[0]
             else:
                 message = await ctx.send(f'{ctx.author.mention}: No matches.')
                 await message.add_reaction('❎')

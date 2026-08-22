@@ -159,12 +159,14 @@ def post_matches() -> wrappers.Response:
     return redirect(url_for('edit_matches'))
 
 @APP.route('/admin/prizes/')
+@auth.admin_required
 def prizes() -> str:
     tournaments_with_prizes = comp.tournaments_with_prizes()
     view = Prizes(tournaments_with_prizes)
     return view.page()
 
 @APP.route('/admin/rotation/')
+@auth.admin_required
 def rotation_checklist() -> str:
     view = RotationChecklist()
     return view.page()

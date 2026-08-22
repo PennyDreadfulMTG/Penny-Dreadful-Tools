@@ -70,6 +70,9 @@ def test_resources_matching_in_url() -> None:
     results = resources.resources_resources('starcitygames')
     assert results['https://old.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'
 
+    results = resources.resources_resources('magic online guide')
+    assert results['https://www.mtgo.com/getting-started/getting-started-home'] == 'Magic Online guide'
+
 def test_escape_underscores() -> None:
     r = command.escape_underscores('simple_test')
     assert r == 'simple\\_test'

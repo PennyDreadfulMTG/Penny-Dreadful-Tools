@@ -9,8 +9,8 @@ from shared import dtutil
 class Seasons(View):
     def __init__(self, stats: dict[int, dict[str, int | datetime.datetime]]) -> None:
         super().__init__()
-        seasons = self.all_seasons()
-        seasons.pop()  # Don't show "all time" on this page as it is not fully supported yet.
+        # Don't show "all time" on this page as it is not fully supported yet.
+        seasons = [season for season in self.all_seasons() if season['num'] is not None]
         cards_count: dict[str, int] = {}
         for c in oracle.CARDS_BY_NAME.values():
             for f, is_legal in c.legalities.items():

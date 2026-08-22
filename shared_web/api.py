@@ -9,6 +9,7 @@ from flask import Response, current_app, request
 from shared import configuration
 from shared.container import Container
 from shared.serialization import extra_serializer
+from shared_web import fonts
 
 
 def process_github_webhook() -> Response:
@@ -23,12 +24,7 @@ def process_github_webhook() -> Response:
                     subprocess.check_output([sys.executable, '-m', 'uv', 'sync', '--frozen'])
                 except subprocess.CalledProcessError:
                     pass
-                subprocess.Popen(
-                    [sys.executable, 'run.py', 'maintenance', 'fonts'],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                    start_new_session=True,
-                )
+                fonts.regenerate_symbols_font()
                 try:
                     subprocess.check_output(['npm', 'run-script', 'build'])
                 except subprocess.CalledProcessError:

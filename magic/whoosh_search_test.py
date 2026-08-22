@@ -6,6 +6,7 @@ import whoosh
 from whoosh.index import create_in
 
 from magic import whoosh_write
+from magic.models import Card
 from magic.whoosh_search import WhooshSearcher
 
 
@@ -147,3 +148,21 @@ def test_canonical_name_wins_alias_collision(tmp_path: Path) -> None:
     result = searcher.search('Chittering Host')
     assert result.get_best_match() == 'Midnight Scavengers'
     assert result.get_all_matches() == ['Midnight Scavengers', 'Graf Rats']
+
+def test_flavor_name_is_searchable(tmp_path: Path) -> None:
+    ix = create_in(tmp_path, whoosh_write.WhooshWriter().schema)
+    card = Card({
+        'id': 1,
+        'name': "Greymond, Avacyn's Stalwart",
+        'names': "Greymond, Avacyn's Stalwart",
+        'flavor_names': 'Rick, Steadfast Leader',
+        'layout': 'normal',
+    })
+    whoosh_write.update_index(ix, [card])
+
+    searcher = WhooshSearcher.__new__(WhooshSearcher)
+    searcher.ix = ix
+    searcher.initialize_trie()
+
+    result = searcher.search('Rick, Steadfast Leader')
+    assert result.get_best_match() == "Greymond, Avacyn's Stalwart"

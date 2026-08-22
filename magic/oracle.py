@@ -43,10 +43,10 @@ def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name) or load_cards([name])[0]
 
 def load_cards(names: Iterable[str] | None = None, where: str | None = None) -> list[Card]:
-    if names == []:
-        return []
-    if names:
+    if names is not None:
         setnames = set(names)
+        if not setnames:
+            return []
     else:
         setnames = set()
     if setnames:

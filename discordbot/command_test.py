@@ -1,10 +1,11 @@
 import datetime
+from typing import Any
 from unittest.mock import AsyncMock, Mock
 
 import pytest
 
 from discordbot import command
-from discordbot.commands import resources
+from discordbot.commands import CardConverter, resources
 
 
 def test_roughly_matches() -> None:
@@ -94,6 +95,56 @@ def test_warning_for_stale_card_information(monkeypatch: pytest.MonkeyPatch) -> 
     monkeypatch.setattr(command.database, 'last_updated', lambda: now - datetime.timedelta(days=29))
 
     assert command.stale_card_information_warning() == '\nWARNING: card information is 4 weeks old'
+
+@pytest.mark.asyncio
+async def test_card_converter_uses_buttons_for_ambiguous_names(monkeypatch: pytest.MonkeyPatch) -> None:
+    matches = ['Brainstone', 'Brainstorm', 'Harmonized Trio', 'Brain Freeze', 'Brain Maggot', 'Brain Pry']
+    shown_matches = matches[:5]
+    result = Mock()
+    result.has_match.return_value = True
+    result.is_ambiguous.return_value = True
+    result.get_ambiguous_matches.return_value = matches
+    selected_card = Mock()
+    monkeypatch.setattr(command, 'results_from_queries', lambda _: [(result, '', None)])
+    cards_from_names = Mock(return_value=[selected_card])
+    monkeypatch.setattr(command, 'cards_from_names_with_mode', cards_from_names)
+
+    ctx = Mock()
+    ctx.author.id = 123
+    ctx.author.mention = '<@123>'
+    ctx.invoke_target = 'history'
+    message = Mock()
+    message.edit = AsyncMock()
+    ctx.send = AsyncMock(return_value=message)
+    pressed_ctx = Mock()
+    pressed_ctx.author.id = 123
+    pressed_ctx.edit_origin = AsyncMock()
+
+    async def choose_second(message_arg: object, components: list[Any], check: Any, timeout: int) -> object:
+        assert message_arg == message
+        assert timeout == 60
+        matching_event = Mock()
+        matching_event.ctx = pressed_ctx
+        other_event = Mock()
+        other_event.ctx.author.id = 456
+        assert check(matching_event)
+        assert not check(other_event)
+        pressed_ctx.custom_id = components[1].custom_id
+        return matching_event
+
+    ctx.client.wait_for_component = AsyncMock(side_effect=choose_second)
+
+    converted = await CardConverter.convert(ctx, 'brain')
+
+    assert converted == selected_card
+    sent_components = ctx.send.await_args.kwargs['components']
+    assert len(sent_components) == 1
+    assert [button.label for button in sent_components[0]] == shown_matches
+    assert all(button.emoji is None for button in sent_components[0])
+    cards_from_names.assert_called_once_with(['Brainstorm'], '', None)
+    pressed_ctx.edit_origin.assert_awaited_once_with(content='<@123>: Selected **Brainstorm**.', components=[])
+    event = ctx.client.wait_for_component.await_args
+    assert event.kwargs['components'][1].custom_id is not None
 
 @pytest.mark.asyncio
 async def test_no_matches_includes_card_information_warning(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -1,3 +1,5 @@
+import logging
+
 from interactions import Client, Extension
 from interactions.models import File, slash_command
 
@@ -5,6 +7,7 @@ from discordbot import emoji
 from discordbot.command import MtgContext, slash_card_option
 from magic import oracle
 from shared import configuration, fetch_tools
+from shared.fetch_tools import FetchException
 
 
 class Spoiler(Extension):
@@ -26,9 +29,17 @@ class Spoiler(Extension):
             c = sfcard['card_faces'][0]
         else:
             c = sfcard
-        fetch_tools.store(c['image_uris']['normal'], imagepath)
+        image_available = True
+        try:
+            fetch_tools.store_image(c['image_uris']['normal'], imagepath)
+        except FetchException as e:
+            logging.warning('Could not download image for %s: %s', sfcard['name'], e)
+            image_available = False
         text = await emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), ctx.bot)
-        await ctx.send(file=File(imagepath), content=text)
+        if image_available:
+            await ctx.send(file=File(imagepath), content=text)
+        else:
+            await ctx.send(content=f'{text}\nImage unavailable.')
         await oracle.scryfall_import_async(sfcard['name'])
 
 def setup(bot: Client) -> None:

@@ -8,6 +8,7 @@ from typing import Any, BinaryIO
 
 import aiohttp
 import requests
+from PIL import Image, UnidentifiedImageError
 
 from shared import perf
 from shared.pd_exception import OperationalException
@@ -135,6 +136,38 @@ def store(url: str, path: str) -> requests.Response:
         raise FetchException(e) from e
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e) from e
+
+def store_image(url: str, path: str) -> requests.Response:
+    """Download an image without leaving an error response or partial file at ``path``."""
+    logger.info(f'Storing image {url} in {path}')
+    temporary_path = ''
+    try:
+        response = requests.get(url, headers={'User-Agent': USER_AGENT}, stream=True)
+        response.raise_for_status()
+        content_type = response.headers.get('Content-Type', '').split(';', maxsplit=1)[0].strip().lower()
+        if not content_type.startswith('image/'):
+            raise FetchException(f'Expected an image from {url}, got `{content_type or "no content type"}`')
+
+        directory = os.path.dirname(os.path.abspath(path))
+        with tempfile.NamedTemporaryFile(dir=directory, delete=False) as fout:
+            temporary_path = fout.name
+            for chunk in response.iter_content(1024):
+                fout.write(chunk)
+
+        if not acceptable_file(temporary_path):
+            raise FetchException(f'Image from {url} was empty or unexpectedly small')
+        with Image.open(temporary_path) as image:
+            image.verify()
+        os.replace(temporary_path, path)
+        temporary_path = ''
+        return response
+    except FetchException:
+        raise
+    except (OSError, UnidentifiedImageError, requests.exceptions.RequestException) as e:
+        raise FetchException(f'Could not download a valid image from {url}: {e}') from e
+    finally:
+        if temporary_path and os.path.exists(temporary_path):
+            os.remove(temporary_path)
 
 
 async def store_async(url: str, path: str) -> aiohttp.ClientResponse:

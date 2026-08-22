@@ -1,7 +1,29 @@
+from unittest.mock import Mock
+
 from decksite import view
 from decksite.main import APP
+from decksite.views.person_achievements import PersonAchievements
 from magic import seasons
+from shared.container import Container
 from shared_web import template
+
+
+def test_person_achievements_prepare_active_runs() -> None:
+    active_decks = [Mock(), Mock()]
+    for deck in active_decks:
+        deck.is_in_current_run.return_value = True
+    completed_deck = Mock()
+    completed_deck.is_in_current_run.return_value = False
+    detail = Container({'decks': active_decks + [completed_deck]})
+    achievement = Container({'detail': detail, 'legend': 'Achievement earned'})
+    person = Container({'name': 'Achievement Hunter'})
+
+    with APP.test_request_context('/'):
+        achievement_view = PersonAchievements(person, [achievement], [])
+        achievement_view.prepare_decks()
+
+    assert detail.active_runs_text == '2 active league runs'
+    assert detail.decks == [completed_deck]
 
 
 def test_seasonized_url_for_app() -> None:

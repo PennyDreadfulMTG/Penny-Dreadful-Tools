@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from flask import current_app, make_response, url_for, wrappers
@@ -46,9 +47,11 @@ class BaseView:
         return current_app.config['branch']
 
     def font_url(self) -> str:
-        # This must exactly match the @font-face URL in pd.css so the browser can
-        # reuse the preloaded response rather than downloading the font again.
-        return url_for('static', filename='fonts/symbols.woff2')
+        try:
+            mtime = int(os.path.getmtime('shared_web/static/fonts/symbols.woff2'))
+        except OSError:
+            mtime = 0
+        return url_for('static', filename='fonts/symbols.woff2', v=mtime)
 
     def css_url(self) -> str:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))

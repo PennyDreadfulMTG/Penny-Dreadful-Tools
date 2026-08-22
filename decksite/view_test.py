@@ -6,6 +6,7 @@ from decksite.views.person_achievements import PersonAchievements
 from magic import seasons
 from shared.container import Container
 from shared_web import template
+from shared_web.base_view import BaseView
 
 
 def test_person_achievements_prepare_active_runs() -> None:
@@ -30,6 +31,11 @@ def test_seasonized_url_for_app() -> None:
     with APP.test_request_context('/decks/'):
         assert view.seasonized_url(1) == '/seasons/1/decks/'
         assert view.seasonized_url(seasons.current_season_num()) == '/decks/'
+
+
+def test_font_url_matches_css_url() -> None:
+    with APP.test_request_context('/'):
+        assert BaseView().font_url() == '/static/fonts/symbols.woff2'
 
 def test_seasonized_url_for_seasons() -> None:
     with APP.test_request_context('/seasons/2/decks/'):

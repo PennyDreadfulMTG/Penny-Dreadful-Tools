@@ -23,6 +23,7 @@ def process_github_webhook() -> Response:
                     subprocess.check_output([sys.executable, '-m', 'uv', 'sync', '--frozen'])
                 except subprocess.CalledProcessError:
                     pass
+                subprocess.check_output([sys.executable, 'run.py', 'maintenance', 'fonts'])
                 try:
                     subprocess.check_output(['npm', 'run-script', 'build'])
                 except subprocess.CalledProcessError:

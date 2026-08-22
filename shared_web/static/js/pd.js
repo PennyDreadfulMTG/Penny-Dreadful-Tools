@@ -191,7 +191,7 @@ PD.initTooltips = function() {
         Tipped.delegate("main [title]", {
             "showDelay": 500,
             "size": "large",
-            maxWidth: "200"
+            maxWidth: "250"
         });
         $("body").off();
     });

@@ -10,8 +10,13 @@ def test_season_icon_link_uses_site_colors(monkeypatch: pytest.MonkeyPatch) -> N
     current = prepare.season_icon_link('KLD')
     previous = prepare.season_icon_link('EMN')
 
-    assert 'class="ss ss-kld season-icon current-season-icon"' in current
+    assert 'class="season-icon-link current-season-icon"' in current
+    assert 'class="season-icon-link"' in previous
+    assert 'title="Current season"' in current
+    assert 'title="Current season"' not in previous
+    assert 'class="ss ss-kld season-icon"' in current
     assert 'class="ss ss-emn season-icon"' in previous
+    assert 'current-season-icon' not in previous
     assert 'ss-common' not in previous
     assert 'ss-rare' not in current
     assert 'ss-grad' not in current

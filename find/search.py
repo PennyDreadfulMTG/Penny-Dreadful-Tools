@@ -248,8 +248,14 @@ def math_where(column: str, operator: str, term: str) -> str:
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     all_colors = {'w', 'u', 'b', 'r', 'g'}
+    if term == 'multicolored':
+        term = 'm'
     try:
         season_id = int(term)
+        if operator == ':':
+            operator = '='
+        if operator == '<' and season_id == 1 and subtable in ['color', 'color_identity']:
+            return subtable_where(subtable, 'c')
         return f'c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) {operator} {season_id})'
     except ValueError:
         pass

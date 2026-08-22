@@ -1,6 +1,31 @@
+from unittest import mock
+
 from decksite.data import deck
 from magic.models import Card, Deck
 from shared.container import Container
+
+
+def test_maybe_regenerate_symbols_font_for_unusual_character() -> None:
+    with (
+        mock.patch.object(deck, 'db') as db,
+        mock.patch.object(deck.fonts, 'regenerate_symbols_font') as regenerate_symbols_font,
+    ):
+        deck.maybe_regenerate_symbols_font('Sparkles ✨')
+
+    db.return_value.get_lock.assert_called_once_with('font_generation', 60 * 15)
+    regenerate_symbols_font.assert_called_once_with()
+    db.return_value.release_lock.assert_called_once_with('font_generation')
+
+
+def test_maybe_regenerate_symbols_font_ignores_latin_1() -> None:
+    with (
+        mock.patch.object(deck, 'db') as db,
+        mock.patch.object(deck.fonts, 'regenerate_symbols_font') as regenerate_symbols_font,
+    ):
+        deck.maybe_regenerate_symbols_font('Déjà Vu')
+
+    db.assert_not_called()
+    regenerate_symbols_font.assert_not_called()
 
 
 def test_set_colors() -> None:

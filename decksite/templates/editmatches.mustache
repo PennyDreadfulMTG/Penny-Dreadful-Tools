@@ -1,20 +1,32 @@
 <section>
     <h2>Add Match</h2>
     <form method="post">
-        <select name="left_id">
+        <select {{#form.errors.left_id}}class="error" aria-describedby="left-id-error" {{/form.errors.left_id}}name="left_id">
             {{#decks}}
                 <option value="{{id}}" class="person">{{person}} ({{name}}, {{display_date}}, {{id}}{{#retired}}, Retired{{/retired}}, {{wins}}–{{losses}})</option>
             {{/decks}}
         </select>
-        <input type="number" name="left_games">
-        <input type="number" name="right_games">
-        <select name="right_id">
+        <input {{#form.errors.left_games}}class="error" aria-describedby="left-games-error" {{/form.errors.left_games}}type="number" name="left_games" value="{{form.left_games}}">
+        <input {{#form.errors.right_games}}class="error" aria-describedby="right-games-error" {{/form.errors.right_games}}type="number" name="right_games" value="{{form.right_games}}">
+        <select {{#form.errors.right_id}}class="error" aria-describedby="right-id-error" {{/form.errors.right_id}}name="right_id">
             {{#decks}}
                 <option value="{{id}}" class="person">{{person}} ({{name}}, {{display_date}}, {{id}})</option>
             {{/decks}}
         </select>
         <button type="submit" name="action" value="add">Add Match</button>
     </form>
+    {{#form.errors.left_id}}
+        <div id="left-id-error" class="error">{{.}}</div>
+    {{/form.errors.left_id}}
+    {{#form.errors.left_games}}
+        <div id="left-games-error" class="error">{{.}}</div>
+    {{/form.errors.left_games}}
+    {{#form.errors.right_games}}
+        <div id="right-games-error" class="error">{{.}}</div>
+    {{/form.errors.right_games}}
+    {{#form.errors.right_id}}
+        <div id="right-id-error" class="error">{{.}}</div>
+    {{/form.errors.right_id}}
 </section>
 <section>
     <h2>Current League Matches</h2>

@@ -58,6 +58,31 @@ class DeckCheckForm(DecklistForm):
         if len(self.errors) == 0:
             self.validation_ok_message = 'The deck is legal'
 
+
+class EditMatchForm(Form):
+    def do_validation(self) -> None:
+        for field in ['left_id', 'right_id']:
+            deck_id = self.get(field, '')
+            if len(deck_id) == 0:
+                self.errors[field] = 'Please select a deck.'
+                continue
+            try:
+                int(deck_id)
+            except ValueError:
+                self.errors[field] = 'Please select a valid deck.'
+        if not self.errors.get('left_id') and not self.errors.get('right_id') and self.left_id == self.right_id:
+            self.errors['right_id'] = 'Please select two different decks.'
+        for field in ['left_games', 'right_games']:
+            score = self.get(field, '')
+            if len(score) == 0:
+                self.errors[field] = 'Please enter a score.'
+                continue
+            try:
+                int(score)
+            except ValueError:
+                self.errors[field] = 'Score must be a whole number.'
+
+
 class ReportForm(Form):
     def __init__(self, form: ImmutableMultiDict, deck_id: int | None = None, person_id: int | None = None) -> None:
         super().__init__(form)

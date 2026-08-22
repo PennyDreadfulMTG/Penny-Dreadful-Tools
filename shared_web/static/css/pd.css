@@ -2149,7 +2149,8 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 .intro {
     background: var(--tertiary-background);
     border: 0.05rem solid var(--border);
-    max-width: var(--max-readable-line-length);
+    box-sizing: border-box;
+    max-width: calc(var(--max-readable-line-length) + 4.1rem); /* Preserve the readable content width while including the padding and border in the box's width. */
     padding: 2rem;
     position: relative; /* So that we can absolutely position the dismiss x in the corner. */
     width: 100%;
@@ -2158,12 +2159,6 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 .intro-container {
     display: none; /* Starts hidden and then we check if we should show it in js to avoid annoying regular visitors. */
     padding: 2rem 0; /* Compensate for the lack of top padding on section at most sizes, to make sure intro box does not touch menu or expose gray background. */
-}
-
-@media only screen and (max-width: 800px) {
-    .intro {
-        max-width: 70%; /* Don't go off the right hand side of the page. */
-    }
 }
 
 .tagline {

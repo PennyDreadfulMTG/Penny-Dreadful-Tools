@@ -76,7 +76,7 @@ async def bulk_data_uri() -> str:
 
 async def bugged_cards_async() -> list[BugData] | None:
     try:
-        bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+        bugs = await fetch_tools.fetch_json_async('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     except FetchException:
         print("WARNING: Couldn't fetch bugs")
         bugs = None
@@ -102,7 +102,7 @@ def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
 
 async def daybreak_forums_async() -> dict[str, ForumData] | None:
     try:
-        bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/forums.json')
+        bugs = await fetch_tools.fetch_json_async('https://pennydreadfulmtg.github.io/modo-bugs/forums.json')
     except FetchException:
         print("WARNING: Couldn't fetch forums")
         bugs = None

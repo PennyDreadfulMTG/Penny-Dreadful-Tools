@@ -1,3 +1,5 @@
+import asyncio
+
 from interactions.client import Client
 from interactions.models import Extension, auto_defer, slash_command
 
@@ -13,10 +15,10 @@ class Rulings(Extension):
     @auto_defer()
     async def rulings(self, ctx: MtgContext, card: Card) -> None:
         """Rulings for a card."""
-        await ctx.single_card_text(card, card_rulings)
+        raw_rulings = await asyncio.to_thread(fetcher.rulings, card.name)
+        await ctx.single_card_text(card, lambda c: card_rulings(c, raw_rulings))
 
-def card_rulings(c: Card) -> str:
-    raw_rulings = fetcher.rulings(c.name)
+def card_rulings(c: Card, raw_rulings: list[dict[str, str]]) -> str:
     comments = [r['comment'] for r in raw_rulings]
     if len(comments) > 3:
         n = len(comments) - 2

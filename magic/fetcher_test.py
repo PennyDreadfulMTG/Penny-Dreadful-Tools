@@ -1,6 +1,29 @@
+from collections.abc import Awaitable, Callable
+from unittest.mock import AsyncMock
+
 import pytest
 
 from magic import fetcher
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ('helper', 'url'),
+    [
+        (fetcher.bugged_cards_async, 'https://pennydreadfulmtg.github.io/modo-bugs/bugs.json'),
+        (fetcher.daybreak_forums_async, 'https://pennydreadfulmtg.github.io/modo-bugs/forums.json'),
+    ],
+)
+async def test_modo_bug_helpers_fetch_asynchronously(
+    monkeypatch: pytest.MonkeyPatch,
+    helper: Callable[[], Awaitable[object]],
+    url: str,
+) -> None:
+    fetch_json = AsyncMock(return_value={})
+    monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json_async', fetch_json)
+
+    assert await helper() == {}
+    fetch_json.assert_awaited_once_with(url)
 
 
 @pytest.mark.asyncio

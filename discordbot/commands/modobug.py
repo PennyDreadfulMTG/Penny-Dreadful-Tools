@@ -1,3 +1,4 @@
+import asyncio
 import functools
 
 from github import Github
@@ -30,6 +31,7 @@ class ModoBugs(Extension):
     @modobug.subcommand('triage')
     async def triage(self, ctx: MtgInteractionContext) -> None:
         """Some things your can do to help"""
+        await ctx.defer()
         bugs = await fetcher.bugged_cards_async()
         forums = await fetcher.daybreak_forums_async()
 
@@ -75,10 +77,7 @@ class ModoBugs(Extension):
                         await msg.edit(components=[])
                         pressed = on_pressed.ctx
                         if yes.custom_id == pressed.custom_id:
-                            issue = get_repo().get_issue(b['issue_number'])
-                            if issue is None:
-                                continue
-                            issue.edit(body=issue.body + '\n\n' + f['url'])
+                            await asyncio.to_thread(associate_thread, b, f)
                         elif no.custom_id == pressed.custom_id:
                             self.blacklist.add((b['url'], f['url']))
 
@@ -106,6 +105,11 @@ def valid_thread(post: ForumData) -> bool:
     if post['status'] in ['Fixed', 'Not A Bug']:
         return False
     return True
+
+def associate_thread(bug: BugData, post: ForumData) -> None:
+    issue = get_repo().get_issue(bug['issue_number'])
+    if issue is not None:
+        issue.edit(body=issue.body + '\n\n' + post['url'])
 
 @functools.lru_cache
 def get_github() -> Github | None:

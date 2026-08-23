@@ -915,9 +915,16 @@ When you are in a middle width the main menu is always shown but the submenu is 
     nav:has(li:hover > .item + .submenu) {
         width: var(--main-menu-width);
     }
+    nav li > .item + .submenu {
+        display: block;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        width: var(--submenu-width);
+    }
     nav li:hover > .item + .submenu {
-        top: 0;
-        position: absolute;
+        opacity: 1;
+        pointer-events: auto;
     }
 }
 

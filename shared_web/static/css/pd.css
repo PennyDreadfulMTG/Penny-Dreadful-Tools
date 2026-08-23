@@ -604,6 +604,11 @@ Color attributes are mostly found with their related structural elements in this
     cursor: default;
 }
 
+.alternate-card-name {
+    color: var(--deemphasized-text);
+    font-size: var(--table-font-size);
+}
+
 /* Dark Mode */
 
 html.dark-mode {

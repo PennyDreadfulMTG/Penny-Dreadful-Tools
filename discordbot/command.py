@@ -51,12 +51,12 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
             return
         results = results_from_queries(queries)
         cards = []
-        for i in results:
+        for query, i in zip(queries, results):
             (r, mode, preferred_printing) = i
             if r.has_match() and not r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode, preferred_printing))
+                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode, preferred_printing, query))
             elif r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
+                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing, query))
         await ctx.post_cards(cards, ctx.author)
 
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> list[str]:
@@ -67,14 +67,30 @@ def parse_queries(content: str, scryfall_compatability_mode: bool) -> list[str]:
         queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: Sequence[str | None], mode: str, preferred_printing: str | None = None) -> list[Card]:
-    return [copy_with_mode(oracle.load_card(c), mode, preferred_printing) for c in cards if c is not None]
+def cards_from_names_with_mode(cards: Sequence[str | None], mode: str, preferred_printing: str | None = None, requested_name: str | None = None) -> list[Card]:
+    return [copy_with_mode(oracle.load_card(c), mode, preferred_printing, requested_name) for c in cards if c is not None]
 
-def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str | None = None) -> Card:
+def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str | None = None, requested_name: str | None = None) -> Card:
     c = copy(oracle_card)
     c['mode'] = mode
+    if requested_name:
+        _requested_mode, name, _requested_printing = parse_mode(requested_name)
+        alternate_name = oracle.matching_official_alternate_name(c, name)
+        if alternate_name:
+            c['display_name'] = alternate_name
+            if preferred_printing is None:
+                printing = oracle.preferred_printing_for_alternate_name(c, alternate_name)
+                if printing is not None:
+                    preferred_printing = str(printing.set_code)
+                    c['preferred_printing_system_id'] = str(printing.system_id)
     c['preferred_printing'] = preferred_printing
     return c
+
+def card_name_for_display(c: Card) -> str:
+    display_name = c.get('display_name')
+    if display_name and display_name != c.name:
+        return f'{display_name} ({c.name})'
+    return str(c.name)
 
 def parse_mode(query: str) -> tuple[str, str, str | None]:
     mode = ''
@@ -115,7 +131,7 @@ async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str
         return None
     result, mode, preferred_printing = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
-        return cards_from_names_with_mode([result.get_best_match()], mode, preferred_printing)[0]
+        return cards_from_names_with_mode([result.get_best_match()], mode, preferred_printing, args)[0]
     if result.is_ambiguous():
         await send(channel, f'{author.mention}: Ambiguous name for {command}. Please use the slash command and choose one of its suggestions.')
     else:
@@ -125,7 +141,7 @@ async def single_card_or_send_error(channel: TYPE_MESSAGEABLE_CHANNEL, args: str
 async def single_card_text(client: Client, channel: TYPE_MESSAGEABLE_CHANNEL, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
-        name = c.name
+        name = card_name_for_display(c)
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = await emoji.replace_emoji(f(c), client)
         message = f'**{name}** {info_emoji} {text}'
@@ -163,9 +179,9 @@ async def single_card_text_internal(client: Client, requested_card: Card, legali
     mana = mana.replace('|', ' // ').removeprefix(' // ').removesuffix(' // ')  # Strip leading/trailing // for lands (See #9147)
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True, legality_format=legality_format)
     if requested_card.get('mode', None) == '$':
-        text = f'{requested_card.name} {legal} — {card_price.card_price_string(requested_card)}'
+        text = f'{card_name_for_display(requested_card)} {legal} — {card_price.card_price_string(requested_card)}'
     else:
-        text = f'{requested_card.name} {mana} — {requested_card.type_line}{legal}'
+        text = f'{card_name_for_display(requested_card)} {mana} — {requested_card.type_line}{legal}'
     if requested_card.bugs:
         for bug in requested_card.bugs:
             text += '\n:lady_beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
@@ -223,13 +239,21 @@ def make_choice(value: str, name: str | None = None) -> dict[str, int | float | 
 
 @global_autocomplete('card')
 async def autocomplete_card(ctx: AutocompleteContext) -> None:
-    card = ctx.kwargs.get('card')
-    if not card:
+    query = ctx.kwargs.get('card')
+    if not query:
         await ctx.send(choices=[])
         return
-    results = searcher().search(card)
+    results = searcher().search(query)
     choices = list(dict.fromkeys(results.get_all_matches()))
-    await ctx.send(choices=list(make_choice(c) for c in choices[:20]))
+    formatted_choices = []
+    for canonical_name in choices[:20]:
+        c = oracle.load_card(canonical_name)
+        alternate_name = oracle.matching_official_alternate_name(c, query, allow_prefix=True)
+        if alternate_name:
+            formatted_choices.append(make_choice(alternate_name, f'{alternate_name} — {canonical_name}'))
+        else:
+            formatted_choices.append(make_choice(canonical_name))
+    await ctx.send(choices=formatted_choices)
 
 class MtgMixin:
     async def send_image_with_retry(self: 'MtgContext', image_file: str, text: str = '') -> None:  # type: ignore
@@ -251,7 +275,7 @@ class MtgMixin:
         elif not isinstance(self.channel, (DM, DMGroup)) and str(self.channel.guild.id) in not_pd:
             show_legality = False
 
-        name = c.name
+        name = card_name_for_display(c)
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = await emoji.replace_emoji(f(c), self.bot)
         message = f'**{name}** {info_emoji} {text}{stale_card_information_warning()}'
@@ -273,7 +297,7 @@ class MtgMixin:
         if len(cards) == 1:
             text = await single_card_text_internal(self.bot, cards[0], legality_format)
         else:
-            text = ' • '.join('{name} {legal} {price}'.format(name=card.name, legal=(emoji.info_emoji(card, legality_format=legality_format)), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')).strip() for card in cards)
+            text = ' • '.join('{name} {legal} {price}'.format(name=card_name_for_display(card), legal=(emoji.info_emoji(card, legality_format=legality_format)), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')).strip() for card in cards)
         if len(cards) > MAX_CARDS_SHOWN:
             image_file = None
         else:

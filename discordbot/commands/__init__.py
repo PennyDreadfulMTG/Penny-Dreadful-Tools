@@ -42,7 +42,7 @@ class CardConverter:
         try:
             result, mode, printing = command.results_from_queries([argument])[0]
             if result.has_match() and not result.is_ambiguous():
-                return command.cards_from_names_with_mode([result.get_best_match()], mode, printing)[0]
+                return command.cards_from_names_with_mode([result.get_best_match()], mode, printing, argument)[0]
             if result.is_ambiguous():
                 matches = result.get_ambiguous_matches()[:5]
                 buttons = [Button(style=ButtonStyle.SECONDARY, label=card_name[:80]) for card_name in matches]
@@ -59,7 +59,7 @@ class CardConverter:
 
                 selected = next(i for i, button in enumerate(buttons) if button.custom_id == event.ctx.custom_id)
                 await event.ctx.edit_origin(content=f'{ctx.author.mention}: Selected **{matches[selected]}**.', components=[])
-                return command.cards_from_names_with_mode([matches[selected]], mode, printing)[0]
+                return command.cards_from_names_with_mode([matches[selected]], mode, printing, argument)[0]
             else:
                 message = await ctx.send(f'{ctx.author.mention}: No matches.')
                 await message.add_reaction('❎')

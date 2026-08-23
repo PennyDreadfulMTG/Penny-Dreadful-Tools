@@ -10,7 +10,7 @@
         </thead>
         <tbody>
             {{#notes}}
-                <tr class="wide">
+                <tr class="wide clickable" data-href="{{subject_url}}">
                     <td class="person"><a href="{{subject_url}}">{{subject}}</a></td>
                     <td class="person"><a href="{{creator_url}}">{{creator}}</a></td>
                     <td data-text="{{date_sort}}">

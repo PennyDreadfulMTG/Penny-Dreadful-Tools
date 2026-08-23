@@ -10,7 +10,7 @@ dependencies = [
     "cachelib==0.14.0",
     "click==8.4.2",
     "coverage==7.14.1",
-    "feedparser==6.0.12",
+    "feedparser==6.0.14",
     "flask-restx",
     "ftfy==6.3.1",
     "pip-check-reqs==2.5.6",

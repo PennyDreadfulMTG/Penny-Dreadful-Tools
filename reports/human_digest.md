@@ -1,11 +1,27 @@
 # Human digest
 
-- #12669 — Product call: sub-problem (1) <span> in <ol> is a real small fix, but (2) needs a decision between an invalid-HTML CSS trick and adding JS. Worth splitting. (2026-08-23T21:37:58Z)
+## Settled by bakert 2026-08-23
 
-- #12670 — Product call: restructure the menu z-index stacking context, or just document the active-hover levels? Author flagged it; no obviously-correct answer. (2026-08-23T21:37:58Z)
+- **#12670 — menu z-index stacking context.** Queued as a fix, with his constraint:
+  restructure properly ONLY if low risk; the fixer must abort rather than force it, and
+  must not fall back to merely documenting the levels. Held: will not dispatch until the
+  Phase 2 go. Constraint is stored at `evidence/12670.json#triage[1]` so it reaches the
+  fixer prompt verbatim.
+- **#12669 — `<span>` in `<ol>` / `<label>` wrapping `<ol>`.** Punted; out of scope.
+- **#12671 — needs a site colour scheme first.** Punted; out of scope.
+- **#12758 — multilingual font in the language switcher.** Punted; out of scope.
 
-- #12671 — Blocked on design: the issue itself says the site has no suitable colour yet. Needs a palette decision before any code. (2026-08-23T21:37:58Z)
+Punted items stay `deferred_human`, appear as report-only in the final campaign report,
+get no GitHub action, and are not re-triaged.
 
-- #12710 — Product call: move regex/brotli to dev deps, or automate the fonts task server-side? Mutually exclusive approaches. (2026-08-23T21:37:58Z)
+## Still open
 
-- #12758 — Design call: author already tried the simple font fix and disliked it. Needs a direction (override font / dedicated multilingual font / icons). (2026-08-23T21:37:59Z)
+- **#12710 — regex/brotli deps vs automating the fonts task.** bakert is checking whether
+  a post-deploy fonts run already exists in server-side deploy infrastructure outside this
+  repo. Not settled; do not report as decided.
+
+## Awaiting bakert
+
+- Phase 2 go, and which shape: everything, or triage + closures only (no new fix
+  dispatches) to keep his review load flat.
+- Whether to keep CI-repair fixers alive during the hold for PRs he is already reviewing.

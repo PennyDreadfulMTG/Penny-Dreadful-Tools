@@ -11165,7 +11165,7 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T23:15:14Z",
+          "checked_at": "2026-08-23T23:25:16Z",
           "failed": [],
           "state": "green"
         },
@@ -11384,7 +11384,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-23T23:15:13Z",
+          "checked_at": "2026-08-23T23:25:15Z",
           "failed": [],
           "state": "green"
         },
@@ -11528,7 +11528,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-23T23:15:12Z",
+          "checked_at": "2026-08-23T23:25:14Z",
           "failed": [],
           "state": "green"
         },
@@ -11760,7 +11760,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-23T23:15:11Z",
+          "checked_at": "2026-08-23T23:25:13Z",
           "failed": [],
           "state": "green"
         },
@@ -11834,7 +11834,7 @@
         "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
         "ci": {
-          "checked_at": "2026-08-23T23:15:10Z",
+          "checked_at": "2026-08-23T23:25:12Z",
           "failed": [],
           "state": "green"
         },
@@ -11896,6 +11896,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:30:25Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T23:24:00Z"
         }
       ],
       "issue": 12666,
@@ -11908,11 +11912,12 @@
         "adopted": false,
         "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
         "ci": {
-          "checked_at": "2026-08-23T23:15:10Z",
+          "checked_at": "2026-08-23T23:24:00Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "fa15f067",
+        "merged_at": "2026-08-23T23:23:38Z",
         "number": 14965,
         "opened_at": "2026-08-23T22:23:01Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14965"
@@ -11963,7 +11968,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Product call: sub-problem (1) <span> in <ol> is a real small fix, but (2) needs a decision between an invalid-HTML CSS trick and adding JS. Worth splitting.",
+      "notes": "bakert: deliberately punted. Not part of this campaign. Report-only in the final write-up; no GitHub action, no re-triage.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
@@ -12004,6 +12009,11 @@
           "event": "ADJUDICATED",
           "status": "deferred_human",
           "ts": "2026-08-23T21:37:58Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-08-23T23:28:19Z"
         }
       ],
       "issue": 12670,
@@ -12011,14 +12021,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Product call: restructure the menu z-index stacking context, or just document the active-hover levels? Author flagged it; no obviously-correct answer.",
+      "notes": "bakert: proper stacking-context restructure ONLY if low risk; fixer must abort-escalate rather than force it. Queued during the hold; will not dispatch until he gives the go (spawning is off).",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "deferred_human",
+      "status": "fix_pending",
       "title": "Figure out z-index in the main menu",
       "verdict": null
     },
@@ -12059,7 +12069,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Blocked on design: the issue itself says the site has no suitable colour yet. Needs a palette decision before any code.",
+      "notes": "bakert: deliberately punted. Not part of this campaign. Report-only in the final write-up; no GitHub action, no re-triage.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
@@ -12268,7 +12278,7 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T23:15:09Z",
+          "checked_at": "2026-08-23T23:25:11Z",
           "failed": [],
           "state": "green"
         },
@@ -12402,7 +12412,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Product call: move regex/brotli to dev deps, or automate the fonts task server-side? Mutually exclusive approaches.",
+      "notes": "ADJUDICATION PENDING: bakert is checking whether a post-deploy fonts run exists in server-side deploy infra outside this repo. Do not action or report as settled until he answers.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
@@ -12548,7 +12558,7 @@
         "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
         "ci": {
-          "checked_at": "2026-08-23T23:15:07Z",
+          "checked_at": "2026-08-23T23:25:09Z",
           "failed": [],
           "state": "green"
         },
@@ -13330,7 +13340,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Design call: author already tried the simple font fix and disliked it. Needs a direction (override font / dedicated multilingual font / icons).",
+      "notes": "bakert: deliberately punted. Not part of this campaign. Report-only in the final write-up; no GitHub action, no re-triage.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
@@ -22279,10 +22289,10 @@
     }
   },
   "last_bundle_at": null,
-  "last_master_sha": "b8b15f980b5eb6159204b3e30242b00ae0cce5aa",
-  "last_mirror_at": "2026-08-23T23:06:26Z",
-  "last_seq": 1389,
-  "last_snapshot_at": "2026-08-23T23:19:31Z",
+  "last_master_sha": "152d36e62bf70b5b9f82ae1cfe0622f08d6d5d76",
+  "last_mirror_at": "2026-08-23T23:21:51Z",
+  "last_seq": 1426,
+  "last_snapshot_at": "2026-08-23T23:28:29Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

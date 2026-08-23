@@ -1395,3 +1395,32 @@
 {"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1395, "ts": "2026-08-23T23:20:43Z"}
 {"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1396, "ts": "2026-08-23T23:20:44Z"}
 {"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1397, "ts": "2026-08-23T23:20:45Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1398, "ts": "2026-08-23T23:21:51Z"}
+{"event": "MASTER_ADVANCED", "seq": 1399, "sha": "3947f53ff27fd7c3e0a6f1b3081a472b113c0ced", "ts": "2026-08-23T23:23:55Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1400, "ts": "2026-08-23T23:23:58Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1401, "ts": "2026-08-23T23:24:00Z"}
+{"event": "PR_MERGED", "issue": 12666, "merged_at": "2026-08-23T23:23:38Z", "pr": 14965, "seq": 1402, "ts": "2026-08-23T23:24:00Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1403, "ts": "2026-08-23T23:24:01Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1404, "ts": "2026-08-23T23:24:02Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1405, "ts": "2026-08-23T23:24:02Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1406, "ts": "2026-08-23T23:24:03Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1407, "ts": "2026-08-23T23:24:04Z"}
+{"event": "MASTER_ADVANCED", "seq": 1408, "sha": "152d36e62bf70b5b9f82ae1cfe0622f08d6d5d76", "ts": "2026-08-23T23:25:04Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1409, "ts": "2026-08-23T23:25:09Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1410, "ts": "2026-08-23T23:25:11Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1411, "ts": "2026-08-23T23:25:12Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1412, "ts": "2026-08-23T23:25:13Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1413, "ts": "2026-08-23T23:25:14Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1414, "ts": "2026-08-23T23:25:15Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1415, "ts": "2026-08-23T23:25:16Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1415, "seq": 1416, "ts": "2026-08-23T23:25:16Z"}
+{"event": "ADJUDICATED", "issue": 12670, "note": "bakert: proper stacking-context restructure ONLY if low risk; fixer must abort-escalate rather than force it. Queued during the hold; will not dispatch until he gives the go (spawning is off).", "seq": 1417, "status": "fix_pending", "ts": "2026-08-23T23:28:19Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1417, "seq": 1418, "ts": "2026-08-23T23:28:19Z"}
+{"event": "ADJUDICATED", "issue": 12669, "note": "bakert: deliberately punted. Not part of this campaign. Report-only in the final write-up; no GitHub action, no re-triage.", "seq": 1419, "ts": "2026-08-23T23:28:28Z", "verb": "annotate"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1419, "seq": 1420, "ts": "2026-08-23T23:28:28Z"}
+{"event": "ADJUDICATED", "issue": 12671, "note": "bakert: deliberately punted. Not part of this campaign. Report-only in the final write-up; no GitHub action, no re-triage.", "seq": 1421, "ts": "2026-08-23T23:28:29Z", "verb": "annotate"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1421, "seq": 1422, "ts": "2026-08-23T23:28:29Z"}
+{"event": "ADJUDICATED", "issue": 12758, "note": "bakert: deliberately punted. Not part of this campaign. Report-only in the final write-up; no GitHub action, no re-triage.", "seq": 1423, "ts": "2026-08-23T23:28:29Z", "verb": "annotate"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1423, "seq": 1424, "ts": "2026-08-23T23:28:29Z"}
+{"event": "ADJUDICATED", "issue": 12710, "note": "ADJUDICATION PENDING: bakert is checking whether a post-deploy fonts run exists in server-side deploy infra outside this repo. Do not action or report as settled until he answers.", "seq": 1425, "ts": "2026-08-23T23:28:29Z", "verb": "annotate"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1425, "seq": 1426, "ts": "2026-08-23T23:28:29Z"}

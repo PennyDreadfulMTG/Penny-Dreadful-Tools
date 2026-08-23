@@ -35,6 +35,25 @@
       "proposed_comment": null,
       "recorded_at": "2026-08-23T21:36:27Z",
       "risk": "low"
+    },
+    {
+      "batch_id": "opus-adjudication",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bakert chose the restructure over documenting the z-index levels",
+          "ref": "#12670",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": "bakert's constraint, which overrides your own judgement of scope: restructure the menu's CSS stacking context properly ONLY if you can do it at low risk. The nonstandard z-index: 5 on the desktop hover submenu and z-index: 4 on the expanding nav (shared_web/static/css/pd.css, see the z-index comment block near line 1480) are the target. If a clean restructure is not clearly low risk -- if it needs broad CSS changes, or you cannot convince yourself the menu still layers correctly in every state -- then STOP and report outcome: abort-escalate. Do NOT force it through, and do NOT settle for merely documenting the existing levels; that option was considered and rejected.",
+      "notes": "Queued by bakert from the human digest during the Phase 2 hold.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T23:28:19Z",
+      "risk": "medium",
+      "source": "bakert adjudication of the human digest"
     }
   ],
   "verify": []

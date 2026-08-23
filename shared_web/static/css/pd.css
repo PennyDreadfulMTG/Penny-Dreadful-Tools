@@ -491,6 +491,7 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
 
 .versus {
     text-align: center;
+    font-variant-numeric: normal;
 }
 
 .matchup-calculator button {

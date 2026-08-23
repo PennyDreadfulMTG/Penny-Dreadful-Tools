@@ -316,6 +316,7 @@ def promo_explanation() -> tuple[str, dict[str, str]]:
         'Buried Alive',
         'Crystal Vein',
         'Lake of the Dead',
+        'Price of Progress',
     ]
     legal_cheap_promos = [c for c in oracle.load_cards(have_cheap_promos) if c.pd_legal]
     if len(legal_cheap_promos) > 0:

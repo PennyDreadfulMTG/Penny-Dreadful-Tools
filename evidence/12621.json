@@ -19,6 +19,26 @@
         "detail": "690 passed, 1 skipped, 89 deselected",
         "result": "passed"
       }
+    },
+    {
+      "batch_id": "u-12621-1",
+      "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
+      "files_changed": 1,
+      "head_sha": "6393631eef7920cee610e361955cf3c4a1e9222b",
+      "issue": 12621,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "playability() is annotated dict[str,float] but returned decimal.Decimal from the DECIMAL(6,5) DB column; the PR's similarity_score then did 1.0/decimal_value which raised TypeError. Fixed by adding float() cast in playability() so the return type matches its annotation. One-line change in decksite/data/playability.py.",
+      "outcome": "pushed",
+      "pr_body": null,
+      "pr_title": null,
+      "recorded_at": "2026-08-23T22:39:00Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "690 passed, 1 skipped",
+        "result": "passed"
+      }
     }
   ],
   "issue": 12621,

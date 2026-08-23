@@ -19,6 +19,26 @@
         "detail": "687 passed, 1 skipped, 89 deselected in 18.96s",
         "result": "passed"
       }
+    },
+    {
+      "batch_id": "u-12778-1",
+      "branch": "sweep/12778-clickable-table-row-improvements",
+      "files_changed": 2,
+      "head_sha": "5137ff25c3b727ec64086fb597511686cde9ac95",
+      "issue": 12778,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Merge conflict in player_notes.py and playernotes.mustache: master had added url_for()-based URL generation and anchor links inside cells while the PR added clickable-row data-href attributes. Resolution keeps master's url_for approach for subject_url/creator_url and combines PR's clickable class/data-href on the <tr> with master's <a href> links inside cells. The PR's pd.js initLinks early-return for interactive elements ensures the anchor links inside clickable rows still work correctly.",
+      "outcome": "pushed",
+      "pr_body": null,
+      "pr_title": null,
+      "recorded_at": "2026-08-23T22:39:00Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "688 passed, 1 skipped",
+        "result": "passed"
+      }
     }
   ],
   "issue": 12778,

@@ -1224,3 +1224,57 @@
 {"changes": {"ci_recheck_minutes": 5}, "event": "CONFIG_CHANGED", "seq": 1224, "ts": "2026-08-23T22:36:43Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1224, "seq": 1225, "ts": "2026-08-23T22:36:43Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1225, "seq": 1226, "ts": "2026-08-23T22:36:44Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1227, "ts": "2026-08-23T22:36:45Z"}
+{"event": "MASTER_ADVANCED", "seq": 1228, "sha": "9e0b23b74447f68374e7a38e4de3a60b000e7723", "ts": "2026-08-23T22:36:46Z"}
+{"event": "CI_CHECKED", "issue": 12714, "pr": 14960, "seq": 1229, "ts": "2026-08-23T22:36:47Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1230, "ts": "2026-08-23T22:36:49Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1231, "ts": "2026-08-23T22:36:50Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1232, "ts": "2026-08-23T22:36:50Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1233, "ts": "2026-08-23T22:36:51Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1234, "ts": "2026-08-23T22:36:52Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1235, "ts": "2026-08-23T22:36:54Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1236, "ts": "2026-08-23T22:36:55Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1237, "ts": "2026-08-23T22:36:56Z"}
+{"event": "CI_CHECKED", "issue": 12618, "pr": 14970, "seq": 1238, "ts": "2026-08-23T22:36:57Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1239, "ts": "2026-08-23T22:37:59Z"}
+{"batch_id": "u-12778-1", "event": "RESULT_RECORDED", "head_sha": "5137ff25c3b727ec64086fb597511686cde9ac95", "issue": 12778, "kind": "fix", "pr_branch": "sweep/12778-clickable-table-row-improvements", "seq": 1240, "status": "fix_pushed", "ts": "2026-08-23T22:39:00Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1241, "ts": "2026-08-23T22:39:00Z", "workspace_id": "47495e7e-bccc-43d5-b724-b993727e6fbf"}
+{"batch_id": "u-12621-1", "event": "RESULT_RECORDED", "head_sha": "6393631eef7920cee610e361955cf3c4a1e9222b", "issue": 12621, "kind": "fix", "pr_branch": "sweep/12621-when-calculating-similarity-use-the-inve", "seq": 1242, "status": "fix_pushed", "ts": "2026-08-23T22:39:00Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1243, "ts": "2026-08-23T22:39:00Z", "workspace_id": "7feda093-4223-4e45-b127-c84b6fe13281"}
+{"adopted": true, "branch": "sweep/12778-clickable-table-row-improvements", "event": "PR_OPENED", "head_sha": "5137ff25c3b727ec64086fb597511686cde9ac95", "issue": 12778, "number": 14951, "seq": 1244, "ts": "2026-08-23T22:39:01Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14951"}
+{"event": "ESCALATED", "issue": 12778, "kind": "fix-validation", "question": "Adopted PR #14951 on sweep/12778-clickable-table-row-improvements is NOT a draft, so Mergify can merge it. Draft it or confirm it is intended.", "seq": 1245, "ts": "2026-08-23T22:39:01Z"}
+{"adopted": true, "branch": "sweep/12621-when-calculating-similarity-use-the-inve", "event": "PR_OPENED", "head_sha": "6393631eef7920cee610e361955cf3c4a1e9222b", "issue": 12621, "number": 14969, "seq": 1246, "ts": "2026-08-23T22:39:02Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14969"}
+{"event": "CI_CHECKED", "issue": 12761, "pr": 14952, "seq": 1247, "ts": "2026-08-23T22:39:04Z"}
+{"event": "PR_CI_GREEN", "issue": 12708, "pr": 14964, "seq": 1248, "ts": "2026-08-23T22:39:07Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1249, "ts": "2026-08-23T22:39:08Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1250, "ts": "2026-08-23T22:39:12Z"}
+{"event": "MASTER_ADVANCED", "seq": 1251, "sha": "d995e1c870708dd164994af6827ce5ecfea9077e", "ts": "2026-08-23T22:40:12Z"}
+{"event": "CI_CHECKED", "issue": 12761, "pr": 14952, "seq": 1252, "ts": "2026-08-23T22:40:14Z"}
+{"event": "CI_CHECKED", "issue": 12714, "pr": 14960, "seq": 1253, "ts": "2026-08-23T22:40:17Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1254, "ts": "2026-08-23T22:40:18Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1255, "ts": "2026-08-23T22:40:19Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1256, "ts": "2026-08-23T22:40:20Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1257, "ts": "2026-08-23T22:40:22Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1258, "ts": "2026-08-23T22:40:23Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1259, "ts": "2026-08-23T22:40:24Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1260, "ts": "2026-08-23T22:40:26Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1261, "ts": "2026-08-23T22:40:27Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1262, "ts": "2026-08-23T22:40:28Z"}
+{"event": "PR_MERGED", "issue": 12618, "merged_at": "2026-08-23T22:39:07Z", "pr": 14970, "seq": 1263, "ts": "2026-08-23T22:40:29Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1264, "ts": "2026-08-23T22:40:30Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1265, "ts": "2026-08-23T22:41:33Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1266, "ts": "2026-08-23T22:42:38Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1266, "seq": 1267, "ts": "2026-08-23T22:42:38Z"}
+{"event": "PR_CI_GREEN", "issue": 12621, "pr": 14969, "seq": 1268, "ts": "2026-08-23T22:43:42Z"}
+{"event": "CI_CHECKED", "issue": 12761, "pr": 14952, "seq": 1269, "ts": "2026-08-23T22:45:46Z"}
+{"event": "PR_MERGED", "issue": 12714, "merged_at": "2026-08-23T22:45:45Z", "pr": 14960, "seq": 1270, "ts": "2026-08-23T22:45:49Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1271, "ts": "2026-08-23T22:45:50Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1272, "ts": "2026-08-23T22:45:51Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1273, "ts": "2026-08-23T22:45:52Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1274, "ts": "2026-08-23T22:45:54Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1275, "ts": "2026-08-23T22:45:55Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1276, "ts": "2026-08-23T22:45:56Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1277, "ts": "2026-08-23T22:45:57Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1278, "ts": "2026-08-23T22:45:58Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1279, "ts": "2026-08-23T22:46:00Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1279, "seq": 1280, "ts": "2026-08-23T22:46:23Z"}

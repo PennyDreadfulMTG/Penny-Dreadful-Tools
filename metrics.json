@@ -1,21 +1,21 @@
 {
-  "active_workspaces": 2,
-  "alert": "unregistered workspace(s) in project: Investigating Dependabot PR queues (8f077848), Reviewing UI date changes (8cd4064e), Troubleshoot missing admin route (433197db)",
+  "active_workspaces": 0,
+  "alert": "unregistered workspace(s) in project: Refining machine guess behavior (3a5f43b9), Investigating Dependabot PR queues (8f077848), Reviewing UI date changes (8cd4064e)",
   "caps": {
     "closures_today": 0,
     "prs_today": 22
   },
   "counts": {
     "deferred_human": 6,
-    "fix_leased": 2,
+    "escalated": 1,
     "pending": 659,
-    "pr_open": 19,
+    "pr_open": 20,
     "reported": 7,
     "verified": 6
   },
-  "heartbeat": "2026-08-23T22:36:17Z",
+  "heartbeat": "2026-08-23T22:46:00Z",
   "max_open_prs": 30,
-  "open_escalations": 0,
+  "open_escalations": 1,
   "open_sweep_prs": null,
   "pause_until": null,
   "paused": false,
@@ -27,8 +27,8 @@
     "workspaces_created": 39
   },
   "unregistered_workspaces": [
+    "Refining machine guess behavior (3a5f43b9)",
     "Investigating Dependabot PR queues (8f077848)",
-    "Reviewing UI date changes (8cd4064e)",
-    "Troubleshoot missing admin route (433197db)"
+    "Reviewing UI date changes (8cd4064e)"
   ]
 }

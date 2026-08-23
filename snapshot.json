@@ -11148,7 +11148,7 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T22:33:07Z",
+          "checked_at": "2026-08-23T22:46:00Z",
           "failed": [],
           "state": "green"
         },
@@ -11234,6 +11234,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:28:14Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:40:29Z"
         }
       ],
       "issue": 12618,
@@ -11246,11 +11250,12 @@
         "adopted": false,
         "branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc",
         "ci": {
-          "checked_at": "2026-08-23T22:28:14Z",
+          "checked_at": "2026-08-23T22:40:29Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d",
+        "merged_at": "2026-08-23T22:39:07Z",
         "number": 14970,
         "opened_at": "2026-08-23T22:23:15Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14970"
@@ -11336,35 +11341,39 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-08-23T22:33:10Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-08-23T22:39:00Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:39:02Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:43:42Z"
         }
       ],
       "issue": 12621,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "u-12621-1",
-        "expires_at": "2026-08-24T00:03:10Z",
-        "granted_at": "2026-08-23T22:33:10Z",
-        "kind": "fix",
-        "session_id": "9c70ba52-e3e5-4138-9f74-12265ce78384",
-        "workspace_id": "7feda093-4223-4e45-b127-c84b6fe13281"
-      },
+      "lease": null,
       "notes": null,
       "pr": {
-        "adopted": false,
+        "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-23T22:23:28Z",
-          "failed": [
-            "test"
-          ],
-          "state": "failed"
+          "checked_at": "2026-08-23T22:43:42Z",
+          "failed": [],
+          "state": "green"
         },
-        "head_sha": "16752a75",
+        "head_sha": "6393631eef7920cee610e361955cf3c4a1e9222b",
         "number": 14969,
-        "opened_at": "2026-08-23T22:23:12Z",
+        "opened_at": "2026-08-23T22:39:02Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14969"
       },
       "stage_attempts": {
@@ -11372,7 +11381,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "pr_open",
       "title": "When calculating similarity use the inverse of playability of a card to weight rarer cards more heavily",
       "verdict": null
     },
@@ -11485,7 +11494,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-23T22:29:21Z",
+          "checked_at": "2026-08-23T22:45:58Z",
           "failed": [],
           "state": "green"
         },
@@ -11700,7 +11709,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-23T22:30:27Z",
+          "checked_at": "2026-08-23T22:45:57Z",
           "failed": [],
           "state": "green"
         },
@@ -11774,7 +11783,7 @@
         "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
         "ci": {
-          "checked_at": "2026-08-23T22:30:26Z",
+          "checked_at": "2026-08-23T22:45:56Z",
           "failed": [],
           "state": "green"
         },
@@ -11848,7 +11857,7 @@
         "adopted": false,
         "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
         "ci": {
-          "checked_at": "2026-08-23T22:30:25Z",
+          "checked_at": "2026-08-23T22:45:55Z",
           "failed": [],
           "state": "green"
         },
@@ -12175,6 +12184,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T22:35:13Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:39:07Z"
         }
       ],
       "issue": 12708,
@@ -12187,8 +12200,9 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T22:36:17Z",
-          "state": "pending"
+          "checked_at": "2026-08-23T22:45:54Z",
+          "failed": [],
+          "state": "green"
         },
         "head_sha": "3436d9f4742f9d36536f818a4dea86508bcc2863",
         "number": 14964,
@@ -12260,7 +12274,7 @@
         "adopted": false,
         "branch": "sweep/12709-the-admin-menu-list-page-could-should-hi",
         "ci": {
-          "checked_at": "2026-08-23T22:28:09Z",
+          "checked_at": "2026-08-23T22:45:52Z",
           "failed": [],
           "state": "green"
         },
@@ -12382,7 +12396,7 @@
         "adopted": false,
         "branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li",
         "ci": {
-          "checked_at": "2026-08-23T22:31:00Z",
+          "checked_at": "2026-08-23T22:45:51Z",
           "failed": [],
           "state": "green"
         },
@@ -12456,7 +12470,7 @@
         "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
         "ci": {
-          "checked_at": "2026-08-23T22:26:56Z",
+          "checked_at": "2026-08-23T22:45:50Z",
           "failed": [],
           "state": "green"
         },
@@ -12561,6 +12575,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:28:07Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:45:49Z"
         }
       ],
       "issue": 12714,
@@ -12573,11 +12591,12 @@
         "adopted": false,
         "branch": "sweep/12714-we-link-to-status-pennydreadfulmagic-com",
         "ci": {
-          "checked_at": "2026-08-23T22:28:07Z",
+          "checked_at": "2026-08-23T22:45:49Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "e8541a4a45e81a74a14c77aef79d755bfa3b0853",
+        "merged_at": "2026-08-23T22:45:45Z",
         "number": 14960,
         "opened_at": "2026-08-23T22:22:46Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14960"
@@ -13388,7 +13407,7 @@
         "adopted": false,
         "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
         "ci": {
-          "checked_at": "2026-08-23T22:33:04Z",
+          "checked_at": "2026-08-23T22:45:46Z",
           "failed": [],
           "state": "green"
         },
@@ -13569,8 +13588,8 @@
       "closure": null,
       "confidence": "high",
       "escalation": {
-        "kind": "pr-conflict",
-        "question": "PR #14951 conflicts with master \u2014 dispatch one fixer to merge master and resolve (queue-fixup), or abandon it (abandon-pr)?"
+        "kind": "fix-validation",
+        "question": "Adopted PR #14951 on sweep/12778-clickable-table-row-improvements is NOT a draft, so Mergify can merge it. Draft it or confirm it is intended."
       },
       "evidence_file": "evidence/12778.json",
       "fixup": {
@@ -13640,35 +13659,35 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-08-23T22:34:12Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-08-23T22:39:00Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:39:01Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T22:39:01Z"
         }
       ],
       "issue": 12778,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "u-12778-1",
-        "expires_at": "2026-08-24T00:04:12Z",
-        "granted_at": "2026-08-23T22:34:12Z",
-        "kind": "fix",
-        "session_id": "eac1f53e-3fe7-4fc4-9f23-0bf92bcad6ff",
-        "workspace_id": "47495e7e-bccc-43d5-b724-b993727e6fbf"
-      },
+      "lease": null,
       "notes": null,
       "pr": {
-        "adopted": false,
+        "adopted": true,
         "branch": "sweep/12778-clickable-table-row-improvements",
-        "ci": {
-          "checked_at": "2026-08-23T22:33:02Z",
-          "failed": [
-            "merge-conflict"
-          ],
-          "state": "conflict"
-        },
-        "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315",
+        "head_sha": "5137ff25c3b727ec64086fb597511686cde9ac95",
         "number": 14951,
-        "opened_at": "2026-08-23T21:55:53Z",
+        "opened_at": "2026-08-23T22:39:01Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14951"
       },
       "stage_attempts": {
@@ -13676,7 +13695,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "escalated",
       "title": "Clickable table row improvements",
       "verdict": null
     },
@@ -22141,9 +22160,10 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T22:30:58Z",
-  "last_seq": 1226,
-  "last_snapshot_at": "2026-08-23T22:36:44Z",
+  "last_master_sha": "d995e1c870708dd164994af6827ce5ecfea9077e",
+  "last_mirror_at": "2026-08-23T22:36:45Z",
+  "last_seq": 1280,
+  "last_snapshot_at": "2026-08-23T22:46:23Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,
@@ -22359,7 +22379,7 @@
       "kind": "fix",
       "last_transcript_at": null,
       "session_id": "eac1f53e-3fe7-4fc4-9f23-0bf92bcad6ff",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "47495e7e-bccc-43d5-b724-b993727e6fbf"
     },
     "49df3e76-d502-4550-8a7b-9035eca9f425": {
@@ -22439,7 +22459,7 @@
       "kind": "fix",
       "last_transcript_at": null,
       "session_id": "9c70ba52-e3e5-4138-9f74-12265ce78384",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "7feda093-4223-4e45-b127-c84b6fe13281"
     },
     "9797799e-c084-47fc-8997-5f19710ca267": {

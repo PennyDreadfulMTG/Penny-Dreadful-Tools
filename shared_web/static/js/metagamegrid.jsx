@@ -48,7 +48,7 @@ const renderItem = (grid, archetype) => (
                 <span className={"additional"} title="Win-Loss Record">
                     {n(archetype.wins)}–{n(archetype.losses)}
                 </span>
-                {archetype.qualityScore != null && (
+                {typeof archetype.qualityScore === "number" && (
                     <span className={"additional"} title="Quality Score">
                         Q:{Number(archetype.qualityScore * 100).toFixed(1)}%
                     </span>

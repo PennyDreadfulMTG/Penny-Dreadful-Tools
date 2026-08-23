@@ -491,6 +491,7 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
 
 .versus {
     text-align: center;
+    font-variant-numeric: normal;
 }
 
 .matchup-calculator button {
@@ -2573,6 +2574,9 @@ Notification Badges
 }
 
 .badge {
+    background-color: var(--red);
+    border-radius: 50%;
+    color: white;
     font-size: var(--table-font-size);
     height: 1.333em;
     line-height: var(--reading-line-height);

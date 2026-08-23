@@ -1,6 +1,8 @@
 from unittest.mock import Mock, patch
 
-from decksite import view
+from flask import g
+
+from decksite import build_menu, view
 from decksite.main import APP
 from decksite.views.person_achievements import PersonAchievements
 from magic import seasons
@@ -52,3 +54,12 @@ def test_intro_deck_links() -> None:
         v = view.View()
         rendered = template.render_name('faqsbody', v)
         assert 'href="/metagame/"' in rendered
+
+def test_build_menu_uses_endpoint_override_for_active_league() -> None:
+    with APP.test_request_context('/competitions/123/'):
+        g.menu_endpoint_override = 'current_league'
+        menu = build_menu()
+    league_item = next(item for item in menu if item.name == 'League')
+    competitions_item = next(item for item in menu if item.name == 'Competitions')
+    assert league_item.current, 'League should be current when viewing the active league'
+    assert not competitions_item.current, 'Competitions should not be current when viewing the active league'

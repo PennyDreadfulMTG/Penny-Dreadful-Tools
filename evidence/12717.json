@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12717,
+  "triage": [
+    {
+      "batch_id": "t-12722-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Subject is rendered as `<td class=\"person\">{{subject}}</td>` \u2014 plain text, no anchor tag",
+          "ref": "decksite/templates/playernotes.mustache:14",
+          "type": "code"
+        },
+        {
+          "detail": "Creator is rendered as `<td class=\"person\">{{creator}}</td>` \u2014 plain text, no anchor tag",
+          "ref": "decksite/templates/playernotes.mustache:15",
+          "type": "code"
+        },
+        {
+          "detail": "load_notes() already returns subject_id and creator_id alongside the display name strings, so the IDs needed to build URLs are available",
+          "ref": "decksite/data/person.py:load_notes",
+          "type": "code"
+        },
+        {
+          "detail": "Route /people/id/<int:person_id>/ exists for linking to a person by ID (endpoint name 'person')",
+          "ref": "decksite/controllers/people.py:23",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/player_notes.py, add URL generation in __init__ by iterating notes and setting n.subject_url = url_for('person', person_id=n.subject_id) and n.creator_url = url_for('person', person_id=n.creator_id). Then update decksite/templates/playernotes.mustache to wrap subject/creator with <a href=\"{{subject_url}}\"> and <a href=\"{{creator_url}}\"> respectively. ~10 lines total.",
+      "issue": 12717,
+      "notes": "The subject_id and creator_id columns are already returned by the query, so no SQL change is needed. Use url_for('person', person_id=...) matching the existing pattern in people.py.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

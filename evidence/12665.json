@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12665,
+  "triage": [
+    {
+      "batch_id": "t-12670-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PD.initMenu registers only hamburger-click and scrim-click handlers; no keydown/keyup listener for Escape exists anywhere in the file",
+          "ref": "shared_web/static/js/pd.js:43-61",
+          "type": "code"
+        },
+        {
+          "detail": "The nav menu template has no close/X button element",
+          "ref": "decksite/templates/menu.mustache:1-31",
+          "type": "code"
+        },
+        {
+          "detail": "No results \u2014 Escape key dismissal is entirely absent",
+          "ref": "grep -n 'Escape|keydown|ESC' shared_web/static/js/pd.js",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/pd.js: add a document keydown listener that calls the same close logic as the scrim click handler when e.key === 'Escape' (~5 lines, inside PD.initMenu). Optionally add a close/X button to decksite/templates/menu.mustache (1 line) and style it in pd.css (~10 lines). Total ~20-30 lines across 2-3 files.",
+      "issue": 12665,
+      "notes": "The issue also shows a screenshot requesting an explicit dismiss button with an X icon; implementing Esc alone is a minimum fix. Adding the button is a small additive change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

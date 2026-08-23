@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12730,
+  "triage": [
+    {
+      "batch_id": "t-12760-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "have_cheap_promos list contains Barbarian Ring, Buried Alive, Crystal Vein, Lake of the Dead \u2014 Price of Progress is absent",
+          "ref": "discordbot/commands/explain.py:314-319",
+          "type": "code"
+        },
+        {
+          "detail": "No commits adding Price of Progress to this list",
+          "ref": "git log -S 'Price of Progress' -- discordbot/commands/explain.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add 'Price of Progress' to the have_cheap_promos list in discordbot/commands/explain.py:314-319. The existing code already filters for PD legality (line 320), so it will only appear in the explanation when the card is legal.",
+      "issue": 12730,
+      "notes": "Single-line addition; no tests to update since explain.py tests are integration-style and call into oracle. The legality filter means the card silently disappears from the explanation if it rotates out.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

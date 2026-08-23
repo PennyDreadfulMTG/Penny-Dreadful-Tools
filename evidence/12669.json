@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12669,
+  "triage": [
+    {
+      "batch_id": "t-12670-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "<label class=\"dropdown seasonchooser\"> wraps an <ol>, which is invalid HTML \u2014 label may only contain phrasing content per the HTML spec",
+          "ref": "decksite/templates/seasonchooser.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "Two bare <span> elements are direct children of <ol>; only <li>, <script>, <template> are valid <ol> children",
+          "ref": "decksite/templates/seasonchooser.mustache:6-7",
+          "type": "code"
+        },
+        {
+          "detail": ".dd-input + .dd-menu and .dd-input:checked + .dd-menu sibling selectors depend on the input and menu being inside the same label \u2014 restructuring requires either keeping the invalid pattern or switching to JS toggle",
+          "ref": "shared_web/static/css/pd.css:1878-1884",
+          "type": "code"
+        },
+        {
+          "detail": "PR 12657 (merged 2024-05-24) improved spacing/semantics but did not fix the label/ol invalid nesting",
+          "ref": "gh pr list --search 'season chooser' --state merged",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12669,
+      "notes": "Two separable sub-problems: (1) <span> inside <ol> is a small standalone fix (change to <li> at seasonchooser.mustache:6-7); (2) <label> wrapping <ol> is structural and requires deciding between CSS-only checkbox trick (accepts invalid HTML) vs. adding JS toggle. The site already requires JS, so a JS approach is viable.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

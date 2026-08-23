@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12719,
+  "triage": [
+    {
+      "batch_id": "t-12722-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The BugData dict literal always sets 'bug_blog': False \u2014 there is no code path that ever sets it to True before appending to ALL_BUGS",
+          "ref": "modo_bugs/update.py:149",
+          "type": "code"
+        },
+        {
+          "detail": "'From Bug Blog' in labels is already checked at line 118 (to set category to Unclassified), so the labels variable is in scope and the check is available at line 149",
+          "ref": "modo_bugs/update.py:118",
+          "type": "code"
+        },
+        {
+          "detail": "{{#from_bug_blog}} is used in the template to show a bug blog link icon \u2014 this feature never renders because from_bug_blog is always false in the data",
+          "ref": "decksite/templates/bugs.mustache:13",
+          "type": "code"
+        },
+        {
+          "detail": "is_issue_from_bug_blog() checks for 'From Bug Blog' label but is only called for card-name extraction (line 269), not for setting bug_blog in BugData",
+          "ref": "modo_bugs/repo.py:59",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In modo_bugs/update.py line 149, change `'bug_blog': False` to `'bug_blog': 'From Bug Blog' in labels`. This single-line fix makes the stored value accurate. The labels list is already computed from issue.labels earlier in the same function. No schema migration needed \u2014 the card_bug.from_bug_blog column already exists.",
+      "issue": 12719,
+      "notes": "If the 'From Bug Blog' label is no longer actively applied on GitHub, the field would remain always-false after the fix, but the fix is still correct and the field could then be retired in a follow-up.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

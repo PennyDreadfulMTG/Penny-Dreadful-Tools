@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12760,
+  "triage": [
+    {
+      "batch_id": "t-12760-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current_league() redirects to competition/<id>, so request.endpoint becomes 'competition', not 'current_league'",
+          "ref": "decksite/controllers/league.py:24-26",
+          "type": "code"
+        },
+        {
+          "detail": "Menu is built with current_endpoint=request.endpoint; 'competition' never matches the 'current_league' menu item",
+          "ref": "decksite/__init__.py:89",
+          "type": "code"
+        },
+        {
+          "detail": "is_current checks normalize_endpoint(item) == self.current_endpoint; no fallback for redirect-alias cases",
+          "ref": "shared_web/menu.py:24",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/competitions.py:competition(), detect if competition_id == lg.active_league().id and store an endpoint override (e.g. g.menu_endpoint_override = 'current_league'). In decksite/__init__.py build_menu(), use g.get('menu_endpoint_override', request.endpoint) as current_endpoint. No schema changes needed.",
+      "issue": 12760,
+      "notes": "The redirect from /league/current/ to /competition/<id>/ is the root cause; the menu has no way to know these are equivalent pages without an explicit override.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

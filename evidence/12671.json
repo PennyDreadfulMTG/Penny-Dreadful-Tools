@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12671,
+  "triage": [
+    {
+      "batch_id": "t-12710-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": ".menu, .submenu still have border-right: 1px solid var(--border) \u2014 the requested border removal has not been made",
+          "ref": "shared_web/static/css/pd.css:820-823",
+          "type": "code"
+        },
+        {
+          "detail": "CSS uses color-scheme: light dark but the color palette has no dedicated menu background color variable",
+          "ref": "shared_web/static/css/pd.css:541-542",
+          "type": "code"
+        },
+        {
+          "detail": "no merged PR found that addresses menu background color or border removal for this issue",
+          "ref": "gh pr list --search 'menu color background' --state merged",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12671,
+      "notes": "The issue body itself states 'This will require figuring out the color scheme of the entire site as there is currently no useful color in our scheme to do this with' \u2014 the blocker is a design decision about what color to use, not a coding task. Once the owner decides on a color (or a Material Design 3 token approach), the CSS change is straightforward.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

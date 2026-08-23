@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12666,
+  "triage": [
+    {
+      "batch_id": "t-12670-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": ".menu has flex:1 and position:relative but no overflow-y, so the menu column cannot scroll independently of the nav",
+          "ref": "shared_web/static/css/pd.css:804-807",
+          "type": "code"
+        },
+        {
+          "detail": ".submenu already has overflow-y: auto, but cannot scroll independently for the same structural reason",
+          "ref": "shared_web/static/css/pd.css:809-812",
+          "type": "code"
+        },
+        {
+          "detail": ".submenu is position:absolute; top:0, positioned relative to .menu \u2014 if .menu scrolls, the submenu's top:0 is off-screen when the menu is scrolled down",
+          "ref": "shared_web/static/css/pd.css:830-836",
+          "type": "code"
+        },
+        {
+          "detail": "nav { overflow-y: auto } causes the whole nav column to scroll as a single unit instead of menu/submenu scrolling independently",
+          "ref": "shared_web/static/css/pd.css:344-346",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css: (1) Add overflow-y: auto to .menu (around line 804). (2) Change .submenu from position:absolute;top:0 to position:fixed;top:0;left:var(--main-menu-width) so it anchors to the viewport rather than .menu's scroll origin, or move position:relative from .menu to nav so the submenu is positioned relative to the full nav height. All changes are in pd.css only, ~5-15 lines.",
+      "issue": 12666,
+      "notes": "Choosing position:fixed for .submenu would need to be excluded from the medium-width media query where the submenu is already a popover; careful testing of all three responsive breakpoints (narrow/medium/wide) is needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

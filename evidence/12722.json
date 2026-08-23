@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12722,
+  "triage": [
+    {
+      "batch_id": "t-12722-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "2025-06-29: 'Never overwrite a main-text symbol with an emoji symbol' \u2014 generalized the apostrophe exclusion to cover all ASCII alphanumeric characters and apostrophe in the symbols font subsetting",
+          "ref": "046a59b7",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: `remaining_graphemes = {grapheme for grapheme in all_graphemes if not any(c in grapheme for c in \"0123456789'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\")}` \u2014 apostrophe is in the exclusion set, so it is never subsetted into the symbols font",
+          "ref": "maintenance/fonts.py:83",
+          "type": "code"
+        },
+        {
+          "detail": "2024-06-05: Earlier partial fix 'Pretty sad hack to make sure we get our apostrophe from the desired font', followed by 0333c9b8 adding '5', then 046a59b7 generalizing to all ASCII",
+          "ref": "484b7e64",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12722,
+      "notes": "The broader comment in the issue about symbol vertical alignment on Windows/Brave is not fully resolved, but the specific apostrophe subsetting problem (the issue title) is fixed. The issue can be closed unless the team wants to track the broader alignment problem separately.",
+      "proposed_comment": "The specific fix requested (not subsetting the apostrophe) was implemented in commit 046a59b7, which excludes all ASCII alphanumeric characters and the apostrophe from the symbols font subsetting. The current code at maintenance/fonts.py:83 confirms this. The broader symbol-alignment issue on non-Mac browsers remains a harder problem.",
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12709,
+  "triage": [
+    {
+      "batch_id": "t-12710-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "template iterates over all admin_menu items and renders a link for each without any permission filtering",
+          "ref": "decksite/templates/admin.mustache:1-10",
+          "type": "code"
+        },
+        {
+          "detail": "admin_menu() sets permission_required='demimod' on Edit Archetypes and Edit Rules, and 'admin' on everything else, but admin_home() passes the full unfiltered menu to the view",
+          "ref": "decksite/controllers/admin.py:28-35",
+          "type": "code"
+        },
+        {
+          "detail": "MenuItem has demimod_only and admin_only properties already defined, usable for filtering",
+          "ref": "shared_web/menu.py:44-50",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/admin.py, filter the menu items returned by admin_menu() based on session flags before passing to Admin view: if session.get('admin') is True show all, if only session.get('demimod') is True show only items where permission_required == 'demimod'. Alternatively, add a {{#demimod_only}} conditional wrapper in decksite/templates/admin.mustache using the existing demimod_only property, combined with passing the current user's role into the view context. The controller approach is cleaner and avoids leaking admin URLs to demimod browsers.",
+      "issue": 12709,
+      "notes": "The main site nav uses a CSS-class+JS approach to hide admin items, but the admin list page has no such mechanism. The fix is isolated to admin_home() and admin.mustache with no schema changes needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12685,
+  "triage": [
+    {
+      "batch_id": "t-12710-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR 'Dark mode toggle' merged 2024-06-10, commit b4222baa",
+          "ref": "#12756",
+          "type": "pr"
+        },
+        {
+          "detail": "prefersDarkMode() checks localStorage.getItem('prefersDarkMode') first, falling back to OS preference \u2014 persists user choice",
+          "ref": "decksite/templates/darkmode.mustache:3-5",
+          "type": "code"
+        },
+        {
+          "detail": "dark-mode-toggle-container li with toggle link is present in the main menu",
+          "ref": "decksite/templates/menu.mustache:24-28",
+          "type": "code"
+        },
+        {
+          "detail": "initDarkModeToggle() sets localStorage.setItem('prefersDarkMode', ...) on click, fulfilling the toggle request",
+          "ref": "shared_web/static/js/pd.js:191-200",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12685,
+      "notes": "The issue is still open despite being resolved by #12756. Can be closed.",
+      "proposed_comment": "This was implemented in PR #12756 (merged June 2024). A dark mode toggle now appears at the bottom of the main menu and persists your preference in localStorage, overriding the OS default.",
+      "recorded_at": "2026-08-23T21:36:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12711,
+  "triage": [
+    {
+      "batch_id": "t-12715-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template still contains TappedOut Username and MTGGoldfish Username form fields",
+          "ref": "decksite/templates/linkaccounts.mustache:25",
+          "type": "code"
+        },
+        {
+          "detail": "View still calls self.link_tappedout() and self.link_mtggoldfish() on every POST",
+          "ref": "decksite/views/link_accounts.py:39",
+          "type": "code"
+        },
+        {
+          "detail": "link_mtggoldfish() and link_tappedout() methods still implemented and active",
+          "ref": "decksite/views/link_accounts.py:54",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Remove the TappedOut and MTGGoldfish form field blocks from `decksite/templates/linkaccounts.mustache`, remove the link_tappedout() and link_mtggoldfish() calls and method bodies from `decksite/views/link_accounts.py`, and remove the tappedout/mtggoldfish pre-population logic (lines 23-27). The DB columns and data can stay unless a migration is also desired. ~30 lines removed total.",
+      "issue": 12711,
+      "notes": "Removing from the UI only; existing tappedout_username and mtggoldfish_username data in the DB is unaffected. If the goal is full removal including data, that would require a schema migration and is a separate scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -777,3 +777,66 @@
 {"changes": {"lease_minutes": {"fix": 90, "triage": 60, "verify": 60}}, "event": "CONFIG_CHANGED", "seq": 777, "ts": "2026-08-23T21:31:28Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 777, "seq": 778, "ts": "2026-08-23T21:31:28Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 778, "seq": 779, "ts": "2026-08-23T21:31:28Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 780, "ts": "2026-08-23T21:31:29Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12715, "kind": "triage", "seq": 781, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12715, "kind": "triage", "seq": 782, "status": "fix_pending", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12714, "kind": "triage", "seq": 783, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12714, "kind": "triage", "seq": 784, "status": "fix_pending", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "needs-work", "confidence": "medium", "event": "RESULT_RECORDED", "issue": 12713, "kind": "triage", "seq": 785, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "needs-work", "confidence": "medium", "event": "RESULT_RECORDED", "issue": 12713, "kind": "triage", "seq": 786, "status": "reported", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12712, "kind": "triage", "seq": 787, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12712, "kind": "triage", "seq": 788, "status": "fix_pending", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12711, "kind": "triage", "seq": 789, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12715-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12711, "kind": "triage", "seq": 790, "status": "fix_pending", "ts": "2026-08-23T21:34:35Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 791, "ts": "2026-08-23T21:34:35Z", "workspace_id": "a3d55906-f63a-445a-b3ed-e4e04fd758a4"}
+{"batch_id": "t-12760-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12760, "kind": "triage", "seq": 792, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12760, "kind": "triage", "seq": 793, "status": "fix_pending", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "question", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12759, "kind": "triage", "seq": 794, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "question", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12759, "kind": "triage", "seq": 795, "status": "reported", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12758, "kind": "triage", "seq": 796, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"event": "ESCALATED", "issue": 12758, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 797, "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12730, "kind": "triage", "seq": 798, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12730, "kind": "triage", "seq": 799, "status": "fix_pending", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12729, "kind": "triage", "seq": 800, "status": "triaged", "ts": "2026-08-23T21:34:35Z"}
+{"batch_id": "t-12760-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12729, "kind": "triage", "seq": 801, "status": "verify_pending", "ts": "2026-08-23T21:34:35Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 802, "ts": "2026-08-23T21:34:35Z", "workspace_id": "ad0a3c62-9d6d-4946-8de9-eb2c8da93d1d"}
+{"batch_id": "v-12729-1", "event": "WORKSPACE_CREATED", "issues": [12729], "kind": "verify", "seq": 803, "session_id": "b05a3a1e-dd1a-4120-8bae-31c588b85ed8", "ts": "2026-08-23T21:34:36Z", "workspace_id": "c23c176e-c37a-4cb8-a2c2-df22f11893b3"}
+{"attempt": 1, "batch_id": "v-12729-1", "event": "LEASE_GRANTED", "expires_at": "2026-08-23T22:34:36Z", "issue": 12729, "kind": "verify", "seq": 804, "session_id": "b05a3a1e-dd1a-4120-8bae-31c588b85ed8", "ts": "2026-08-23T21:34:36Z", "workspace_id": "c23c176e-c37a-4cb8-a2c2-df22f11893b3"}
+{"batch_id": "f-12760-1", "event": "WORKSPACE_CREATED", "issues": [12760], "kind": "fix", "seq": 805, "session_id": "65fc292a-b1d7-4cc5-9179-c39995d11483", "ts": "2026-08-23T21:34:38Z", "workspace_id": "ed52327a-e70c-4b54-8c08-6620d97b5965"}
+{"attempt": 1, "batch_id": "f-12760-1", "event": "LEASE_GRANTED", "expires_at": "2026-08-23T23:04:38Z", "issue": 12760, "kind": "fix", "seq": 806, "session_id": "65fc292a-b1d7-4cc5-9179-c39995d11483", "ts": "2026-08-23T21:34:38Z", "workspace_id": "ed52327a-e70c-4b54-8c08-6620d97b5965"}
+{"batch_id": "t-12670-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12670, "kind": "triage", "seq": 807, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"event": "ESCALATED", "issue": 12670, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 808, "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12669, "kind": "triage", "seq": 809, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"event": "ESCALATED", "issue": 12669, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 810, "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12666, "kind": "triage", "seq": 811, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12666, "kind": "triage", "seq": 812, "status": "fix_pending", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12665, "kind": "triage", "seq": 813, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12665, "kind": "triage", "seq": 814, "status": "fix_pending", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12664, "kind": "triage", "seq": 815, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12670-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12664, "kind": "triage", "seq": 816, "status": "fix_pending", "ts": "2026-08-23T21:36:27Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 817, "ts": "2026-08-23T21:36:27Z", "workspace_id": "22c500d5-a421-4736-9857-7dc3f753c411"}
+{"batch_id": "t-12722-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12722, "kind": "triage", "seq": 818, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12722, "kind": "triage", "seq": 819, "status": "verify_pending", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12719, "kind": "triage", "seq": 820, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12719, "kind": "triage", "seq": 821, "status": "fix_pending", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "needs-work", "confidence": "medium", "event": "RESULT_RECORDED", "issue": 12718, "kind": "triage", "seq": 822, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "needs-work", "confidence": "medium", "event": "RESULT_RECORDED", "issue": 12718, "kind": "triage", "seq": 823, "status": "reported", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12717, "kind": "triage", "seq": 824, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12717, "kind": "triage", "seq": 825, "status": "fix_pending", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12716, "kind": "triage", "seq": 826, "status": "triaged", "ts": "2026-08-23T21:36:27Z"}
+{"batch_id": "t-12722-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12716, "kind": "triage", "seq": 827, "status": "fix_pending", "ts": "2026-08-23T21:36:27Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 828, "ts": "2026-08-23T21:36:27Z", "workspace_id": "99754b28-c26a-4aeb-a07a-c55d6373223c"}
+{"batch_id": "t-12710-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12710, "kind": "triage", "seq": 829, "status": "triaged", "ts": "2026-08-23T21:36:28Z"}
+{"event": "ESCALATED", "issue": 12710, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 830, "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12709, "kind": "triage", "seq": 831, "status": "triaged", "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12709, "kind": "triage", "seq": 832, "status": "fix_pending", "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12708, "kind": "triage", "seq": 833, "status": "triaged", "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12708, "kind": "triage", "seq": 834, "status": "fix_pending", "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12685, "kind": "triage", "seq": 835, "status": "triaged", "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12685, "kind": "triage", "seq": 836, "status": "verify_pending", "ts": "2026-08-23T21:36:28Z"}
+{"batch_id": "t-12710-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12671, "kind": "triage", "seq": 837, "status": "triaged", "ts": "2026-08-23T21:36:28Z"}
+{"event": "ESCALATED", "issue": 12671, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 838, "ts": "2026-08-23T21:36:28Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 839, "ts": "2026-08-23T21:36:28Z", "workspace_id": "a8182f8b-0e00-489e-b884-8ef096f149ab"}
+{"batch_id": "v-12729-1", "event": "RESULT_RECORDED", "issue": 12729, "kind": "verify", "seq": 840, "status": "verified", "ts": "2026-08-23T21:36:28Z", "verdict": "CONFIRMED"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 841, "ts": "2026-08-23T21:36:28Z", "workspace_id": "c23c176e-c37a-4cb8-a2c2-df22f11893b3"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 841, "seq": 842, "ts": "2026-08-23T21:36:32Z"}

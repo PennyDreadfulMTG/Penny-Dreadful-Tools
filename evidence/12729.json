@@ -1,0 +1,73 @@
+{
+  "fix": [],
+  "issue": 12729,
+  "triage": [
+    {
+      "batch_id": "t-12760-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "2025-04-05 'Use the underlying original exception not the skinny werkzeug wrapper' \u2014 explicitly adds original_exception extraction to get real stack traces in GitHub issues",
+          "ref": "9aeaa3be",
+          "type": "commit"
+        },
+        {
+          "detail": "exc = e.original_exception if hasattr(e, 'original_exception') and e.original_exception is not None else e \u2014 extracts the real underlying exception",
+          "ref": "shared_web/flask_app.py:88",
+          "type": "code"
+        },
+        {
+          "detail": "repo.create_issue(..., exception=exc) passes the unwrapped exception",
+          "ref": "shared_web/flask_app.py:92",
+          "type": "code"
+        },
+        {
+          "detail": "create_issue calls format_exception(exception) and embeds full Python traceback in the GitHub issue body",
+          "ref": "shared/repo.py:46-48",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12729,
+      "notes": "A follow-up commit 81cd7a07 also guarded against None getting into format_exception. Both commits are in current master.",
+      "proposed_comment": "This was fixed in commit 9aeaa3be (2025-04-05), which extracts the original underlying exception from the werkzeug InternalServerError wrapper and passes it to the GitHub issue creator, giving real stack traces instead of a bare InternalServerError message.",
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12729-1",
+      "final_comment": "Fixed in commit 9aeaa3be (2025-04-05): the internal_server_error handler now extracts e.original_exception from the werkzeug InternalServerError wrapper and passes the real underlying exception to both the logger and the GitHub issue creator. The GitHub issue body and its notification email now contain a full Python traceback via traceback.format_exception instead of a bare InternalServerError message.",
+      "issue": 12729,
+      "own_evidence": [
+        {
+          "detail": "independently checked: current master extracts e.original_exception with a None guard before passing exc to both log_exception and repo.create_issue, fully unwrapping the werkzeug wrapper",
+          "ref": "shared_web/flask_app.py:88",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: format_exception calls traceback.format_exception(type(e), e, e.__traceback__) \u2014 produces a full Python traceback, not just the exception class name",
+          "ref": "shared/repo.py:46,160",
+          "type": "code"
+        },
+        {
+          "detail": "independently verified commit exists and its diff matches the claimed change: adds original_exception extraction in internal_server_error handler and removes the header-value redaction that was masking the trace",
+          "ref": "9aeaa3be",
+          "type": "commit"
+        },
+        {
+          "detail": "issue is OPEN with 0 comments; no separate email-sending path for 500s exists in codebase \u2014 the 'email' in the report refers to GitHub notification emails, which are fixed by fixing the issue body",
+          "ref": "gh issue 12729",
+          "type": "issue"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-08-23T21:36:28Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

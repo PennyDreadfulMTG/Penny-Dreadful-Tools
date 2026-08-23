@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-08-23T21:36:28Z",
+  "evidence_refs": [
+    "evidence/12671.json#triage[0]"
+  ],
+  "issue": 12671,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The issue body itself states 'This will require figuring out the color scheme of the entire site as there is currently no useful color in our scheme to do this with' \u2014 the blocker is a design decision about what color to use, not a coding task. Once the owner decides on a color (or a Material Design 3 token approach), the CSS change is straightforward."
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-08-23T21:36:27Z",
+  "evidence_refs": [
+    "evidence/12670.json#triage[0]"
+  ],
+  "issue": 12670,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Decision needed: restructure the menu's CSS stacking context to avoid the nonstandard z-index: 5 on the desktop hover submenu and z-index: 4 on the expanding nav, OR explicitly document these active-hover levels in the z-index comment block (pd.css:1480). The author flagged this is 'not problematic' but breaks the elevation system's cleanliness."
+}

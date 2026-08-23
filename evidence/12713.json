@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12713,
+  "triage": [
+    {
+      "batch_id": "t-12715-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template is minimal \u2014 just includes matchtable and pagination partials with no visual enhancements",
+          "ref": "logsite/templates/matches.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "Home just includes matchtable and a 'More matches' link \u2014 very bare",
+          "ref": "logsite/templates/home.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "All logsite templates (home, matches, match, people, charts) are minimal wrappers with no decorative UI",
+          "ref": "logsite/templates/",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12713,
+      "notes": "Issue has no description and 'UI love' is underspecified \u2014 needs product decisions about what improvements are wanted (color, layout, card-style entries, statistics, etc.) before any implementation can be scoped.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -66,7 +66,7 @@ workspaces have been cleaned up.
 | A6 | `workspace create` gives a booted cloud workspace with the repo | **PASS with a caveat** | Repo cloned at master `472a9fdb`, branch `conductor/sweep-canary`. **But `uv` is not installed and the Python env does not build out of the box** — see §3 |
 | A7 | Workers' scoped key cannot create workspaces | **FAIL** | The canary ran `conductor workspace create` and it **succeeded**, creating workspace `2b68871b` (`canary-should-fail`). Reads are scoped (`workspace list` returned empty) but creation is not blocked. Prompt instructions are the only barrier; the accidental workspace was archived |
 | A8 | Rate-limit behaviour | **Characterized** | Sessions emit structured `rate_limit_event` messages (`status`, `rateLimitType`, `resetsAt`). The circuit breaker now trips on `status != allowed` directly, not only on text matching |
-| A9 | A background daemon keeps the sandbox alive | **In progress** | Daemon running since 21:02Z with spawning disabled; needs >70 min of session idleness to conclude |
+| A9 | A background daemon keeps the sandbox alive | **Assume NO** | `CONDUCTOR_INTERNAL_IDLE_TIMEOUT_MS` is consumed by no local binary (checked every binary in `/conductor-infra/*/binaries/`); idleness is judged server-side, most likely from session activity rather than local CPU. Treated conservatively: manager wakeups stay under 60 min and correctness never depends on sandbox survival (mirror + `recover`). Will be measured empirically from the pilot's idle gaps |
 
 ## 3. Material finding: cloud workspaces cannot validate fixes out of the box
 
@@ -95,9 +95,35 @@ is existing behaviour, but the sweep multiplies the blast radius; worth a decisi
 before Phase 2. Every worker prompt already forbids printing env values, and the
 fixer bootstrap reads `mysql_passwd` without echoing it.
 
-## 5. Gates still closed
+## 5. Gates — OPENED 2026-08-23 21:29Z
 
-- `mutations_enabled: false` — no GitHub write can happen.
-- `spawning_enabled: false` — no worker workspace can be created.
-- `mirror.kind: none` — must be set before the pilot (A5).
-Both flags flip only after bakert answers A1/A4/A5 (A3 is already settled).
+bakert resolved A1 (confirmed), A4 (approved, including the comment-based guard),
+A5 (orphan `sweep-state` branch), A7 (accepted as-is, with alerting on **any**
+unregistered workspace in the project — implemented) and config.json (option b,
+accepted; rotation of `oauth2_client_secret` / `github_password` /
+`bugs_webhook_token` to be recommended in the final campaign report).
+
+Pilot config: `phase=pilot pilot_limit=40 concurrency_cap=8 daily_close_cap=15
+daily_pr_cap=10 mutations_enabled=true spawning_enabled=true`, mirror =
+orphan branch `sweep-state` every 15 min (first push verified: commit `6f42b1821b`,
+0 parents, no PR).
+
+### Four further bugs found while opening the gates
+
+6. **The mirror silently no-opped.** The fresh mirror repo had no git identity, so
+   `commit` failed, `push` failed with `src refspec HEAD does not match any` — and
+   the dispatcher journaled `MIRROR_PUSHED` and reported success anyway, because
+   every step used `check=False`. A mirror that lies is worse than no mirror:
+   recovery would have restored stale state. Now every step is checked, the push is
+   verified against `git ls-remote`, and failure raises and sets `metrics.alert`.
+7. **`run(check=False)` dropped stderr**, which is how the mirror's failures stayed
+   invisible. It now returns stdout+stderr.
+8. **The stale-transcript detector from spec §5 was never implemented.** A worker
+   that hung at minute 5 would have sat until lease expiry. Implemented, measured
+   from the later of workspace creation and last transcript movement so slow boots
+   are not killed; 5 new tests. Triage/verify leases widened 45 → 60 min to match
+   the worker prompt's own ~10 min/issue budget.
+9. **No daemon pidfile**, so "is it running?" was answered with `pgrep -f`, which
+   matches its own shell wrapper — this actually caused one silent failure to
+   restart the daemon during setup. `dispatcher.py status` now reports daemon health
+   from a pidfile, and a second daemon refuses to start.

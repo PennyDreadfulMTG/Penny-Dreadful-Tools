@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12716,
+  "triage": [
+    {
+      "batch_id": "t-12722-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "permission_required is determined by `'demimod' if name in ['Edit Archetypes', 'Edit Rules'] else 'admin'` \u2014 a hardcoded name-string check that must be kept in sync manually with the decorators",
+          "ref": "decksite/controllers/admin.py:33",
+          "type": "code"
+        },
+        {
+          "detail": "`setattr(decorated_function, 'permission_required', 'demimod')` \u2014 the demimod_required decorator already stamps the attribute on every view function",
+          "ref": "decksite/auth.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "`setattr(decorated_function, 'permission_required', 'admin')` \u2014 the admin_required decorator stamps the attribute similarly",
+          "ref": "decksite/auth.py:39",
+          "type": "code"
+        },
+        {
+          "detail": "Existing test already reads permission_required via `getattr(APP.view_functions[rule.endpoint], 'permission_required', None)` \u2014 confirming the pattern works",
+          "ref": "decksite/controllers/admin_test.py:54",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/admin.py admin_menu(), replace line 33 (`permission_required = 'demimod' if name in ['Edit Archetypes', 'Edit Rules'] else 'admin'`) with `permission_required = getattr(APP.view_functions.get(endpoint), 'permission_required', 'admin')`. Also remove the now-redundant `m.append(MenuItem(gettext('Rotation Speculation'), ...)` hardcoded entry at line 35 if rotation_speculation starts with /admin and picks up naturally. ~3 lines changed in admin.py.",
+      "issue": 12716,
+      "notes": "The test at admin_test.py:54 already verifies that all /admin routes have permission_required set via decorator, so this refactor just makes admin_menu() consistent with that verified invariant instead of maintaining a parallel hardcoded list.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

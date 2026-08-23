@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12664,
+  "triage": [
+    {
+      "batch_id": "t-12670-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "nav li:hover > .item + .submenu { display: block } \u2014 submenu appears instantly with no transition",
+          "ref": "shared_web/static/css/pd.css:842-846",
+          "type": "code"
+        },
+        {
+          "detail": "nav, .menu, .submenu { display: none } \u2014 toggling display:none/block cannot be transitioned directly with CSS transition",
+          "ref": "shared_web/static/css/pd.css:814-818",
+          "type": "code"
+        },
+        {
+          "detail": "No transition rules exist on .submenu or the menu-level selectors; transitions only appear on language-menu (line 2950) and a-links (176)",
+          "ref": "grep -n 'transition|ease' shared_web/static/css/pd.css",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css: replace the display:none/block toggle for .submenu with an opacity+visibility approach \u2014 set .submenu { visibility:hidden; opacity:0; transition: opacity 0.2s ease, visibility 0.2s } and on the hover rule set visibility:visible; opacity:1. This sidesteps the 'border disappearing during ease' issue the author noted (which was likely caused by transitioning width or display). Changes confined to pd.css, ~10-15 lines.",
+      "issue": 12664,
+      "notes": "The issue author noted the transition was removed due to a border disappearing during ease, so the fix should use opacity/visibility rather than any width or display transition. Testing with the border-right on .submenu (pd.css:821) is important.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

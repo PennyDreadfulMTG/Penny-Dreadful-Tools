@@ -6,18 +6,23 @@
     "prs_today": 0
   },
   "counts": {
+    "escalated": 1,
+    "fix_leased": 1,
+    "fix_pending": 5,
     "pending": 659,
-    "triage_leased": 40
+    "reported": 2,
+    "triage_leased": 30,
+    "verify_leased": 1
   },
-  "heartbeat": "2026-08-23T21:31:17Z",
-  "open_escalations": 0,
+  "heartbeat": "2026-08-23T21:35:39Z",
+  "open_escalations": 1,
   "pause_until": null,
   "paused": false,
   "phase": "pilot",
   "totals": {
     "infra_failures": 0,
     "nudges": 0,
-    "workspaces_created": 8
+    "workspaces_created": 10
   },
   "unregistered_workspaces": []
 }

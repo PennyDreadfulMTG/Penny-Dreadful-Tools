@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12758,
+  "triage": [
+    {
+      "batch_id": "t-12760-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "General link style applies font-family: var(--heading-font-family) and text-transform: lowercase, producing small-caps for Latin glyphs",
+          "ref": "shared_web/static/css/pd.css:721-727",
+          "type": "code"
+        },
+        {
+          "detail": ".language-switcher and .language-menu use standard link styling, so Cyrillic/CJK fall back to symbol fonts which lack the small-caps treatment",
+          "ref": "shared_web/static/css/pd.css:2545-2558",
+          "type": "code"
+        },
+        {
+          "detail": "Author explicitly states 'I tried switching to our base font but honestly it wasn't much better so not sure what's ideal here'",
+          "ref": "issue #12758 body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12758,
+      "notes": "The author has already investigated the straightforward font fix and found it unsatisfying. Deciding the ideal treatment (override font for language menu, use a dedicated multilingual font, change the switcher to icons, etc.) requires a product/design call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

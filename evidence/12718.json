@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12718,
+  "triage": [
+    {
+      "batch_id": "t-12722-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "get_recent_matches() and related functions return SQLAlchemy ORM queries with lazy-loaded relationships: players (via match_players secondary), modules, games, format, tournament \u2014 each will cause N+1 queries when rendered",
+          "ref": "logsite/data/match.py:98",
+          "type": "code"
+        },
+        {
+          "detail": "paginate() call issues both a COUNT(*) query and the main query; combined with lazy-loading of 5 relationships per match row, this multiplies DB round-trips",
+          "ref": "logsite/views/matches.py:42",
+          "type": "code"
+        },
+        {
+          "detail": "Only one index migration exists in logsite history (on tournament.name), suggesting match/player join tables lack covering indexes",
+          "ref": "logsite_migrations/versions/4680022c11c2_.py",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12718,
+      "notes": "Cannot benchmark without a running server, but the ORM patterns (no selectinload/joinedload on players/games relationships, per-match lazy loading) are well-known sources of N+1 slowness. A proper fix requires profiling to identify the hottest queries, adding SQLAlchemy eager-loading options, and possibly adding DB indexes on match_players(match_id).",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

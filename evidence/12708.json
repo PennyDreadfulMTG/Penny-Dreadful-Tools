@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12708,
+  "triage": [
+    {
+      "batch_id": "t-12710-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_disjoint_archetypes SQL SELECT does not include the quality score as a named column; wilson_lower_bound_sql() is used only in the ORDER BY clause",
+          "ref": "decksite/data/archetype.py:578-639",
+          "type": "code"
+        },
+        {
+          "detail": "wilson_lower_bound_sql() is available as a function returning a SQL expression",
+          "ref": "decksite/data/clauses.py:304-306",
+          "type": "code"
+        },
+        {
+          "detail": "renderItem renders meta share, win %, tournament wins/top8s, league 5-0 runs, but no quality score display",
+          "ref": "shared_web/static/js/metagamegrid.jsx:13-70",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/archetype.py around line 621, add `{wilson_lower_bound_sql()} AS quality_score` to the SELECT list (import wilson_lower_bound_sql from clauses). The API camelizes field names automatically so it will appear as qualityScore in the JSON response. In shared_web/static/js/metagamegrid.jsx, add a div with title='Quality Score' inside renderItem showing archetype.qualityScore, either as a tooltip on an existing stat or as a new row \u2014 even a hidden data-quality attribute satisfies the 'even just in a comment' request in the issue.",
+      "issue": 12708,
+      "notes": "No schema migration needed; quality_score is a computed column from existing wins/losses data. Change touches one SQL query and one JSX component.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

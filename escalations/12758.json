@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-08-23T21:34:35Z",
+  "evidence_refs": [
+    "evidence/12758.json#triage[0]"
+  ],
+  "issue": 12758,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The author has already investigated the straightforward font fix and found it unsatisfying. Deciding the ideal treatment (override font for language menu, use a dedicated multilingual font, change the switcher to icons, etc.) requires a product/design call."
+}

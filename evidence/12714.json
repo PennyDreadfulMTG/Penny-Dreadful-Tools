@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12714,
+  "triage": [
+    {
+      "batch_id": "t-12715-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Link <a class=\"external\" href=\"https://status.pennydreadfulmagic.com/\">Status</a> is still present in current master",
+          "ref": "decksite/templates/aboutpdm.mustache:4",
+          "type": "code"
+        },
+        {
+          "detail": "Only one commit (2d55f98e 'More design work') ever touched this line \u2014 the link has never been removed or updated",
+          "ref": "git log -S'status.pennydreadfulmagic' -- decksite/templates/aboutpdm.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Remove or replace the single link on line 4 of `decksite/templates/aboutpdm.mustache`. If the status site has been abandoned, delete the line. If it's been moved to a new URL or the SSL has since been fixed, update the href. No Python changes required.",
+      "issue": 12714,
+      "notes": "Cannot verify the SSL error from this environment (no live HTTP access), but the link is confirmed still present in code. Owner should verify whether to remove, replace, or fix the SSL cert on the status service before applying the one-line template change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

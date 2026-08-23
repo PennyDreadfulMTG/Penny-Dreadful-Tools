@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-08-23T21:36:27Z",
+  "evidence_refs": [
+    "evidence/12669.json#triage[0]"
+  ],
+  "issue": 12669,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Two separable sub-problems: (1) <span> inside <ol> is a small standalone fix (change to <li> at seasonchooser.mustache:6-7); (2) <label> wrapping <ol> is structural and requires deciding between CSS-only checkbox trick (accepts invalid HTML) vs. adding JS toggle. The site already requires JS, so a JS approach is viable."
+}

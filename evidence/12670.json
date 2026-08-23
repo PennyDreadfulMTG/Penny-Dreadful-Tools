@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12670,
+  "triage": [
+    {
+      "batch_id": "t-12670-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "nav li:hover > .item + .submenu has z-index: 5, which per the documented system (line 1507) is reserved for card/text hover tooltips",
+          "ref": "shared_web/static/css/pd.css:845",
+          "type": "code"
+        },
+        {
+          "detail": "nav:has(li:hover > .item + .submenu) gets z-index: 4, documented (line 1504) as for nav.showing over scrim only",
+          "ref": "shared_web/static/css/pd.css:867",
+          "type": "code"
+        },
+        {
+          "detail": "Documented z-index system explicitly notes levels 4 and 5 are reserved for active/elevated states (mobile nav, tooltips) \u2014 hover submenu is not listed",
+          "ref": "shared_web/static/css/pd.css:1480-1510",
+          "type": "code"
+        },
+        {
+          "detail": "No subsequent commit removes or rationalises these z-index values",
+          "ref": "git log --oneline --since=2024-05-26 -- shared_web/static/css/pd.css",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12670,
+      "notes": "Decision needed: restructure the menu's CSS stacking context to avoid the nonstandard z-index: 5 on the desktop hover submenu and z-index: 4 on the expanding nav, OR explicitly document these active-hover levels in the z-index comment block (pd.css:1480). The author flagged this is 'not problematic' but breaks the elevation system's cleanliness.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

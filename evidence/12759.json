@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12759,
+  "triage": [
+    {
+      "batch_id": "t-12760-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "tr.clickable:hover td:not(.marginalia) applies background highlight but no border-radius",
+          "ref": "shared_web/static/css/pd.css:1238-1242",
+          "type": "code"
+        },
+        {
+          "detail": "Other hover/highlight elements (e.g. main a:hover) do use var(--text-rounded-corners)",
+          "ref": "shared_web/static/css/pd.css:731",
+          "type": "code"
+        },
+        {
+          "detail": "Author frames this as a design question ('Should ... ?'), not a bug report",
+          "ref": "issue #12759 body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12759,
+      "notes": "This is a CSS design consistency question \u2014 whether table row highlights should gain rounded corners or whether other rounded elements should lose them. Needs an owner's aesthetic judgment before any code change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

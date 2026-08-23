@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12710,
+  "triage": [
+    {
+      "batch_id": "t-12710-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "regex listed as main (prod) dependency",
+          "ref": "pyproject.toml:68",
+          "type": "code"
+        },
+        {
+          "detail": "brotli listed as main (prod) dependency (also listed again in dev at line 88)",
+          "ref": "pyproject.toml:66",
+          "type": "code"
+        },
+        {
+          "detail": "only consumer of regex in entire codebase is the fonts maintenance script",
+          "ref": "maintenance/fonts.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "brotli is not imported anywhere in Python code; used implicitly by fontTools.ttLib.woff2 compression in maintenance/fonts.py",
+          "ref": "grep -rn 'import brotli' --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12710,
+      "notes": "The issue presents two mutually exclusive approaches: (A) move regex and brotli to dev dependencies since fonts task has hardcoded laptop TTF paths and cannot run in production, or (B) fully automate the fonts task on the server \u2014 which also requires making it edit pd.css rather than just emitting CSS. Owner needs to pick an approach; if (A), removing regex from main deps in pyproject.toml is a one-line change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:36:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

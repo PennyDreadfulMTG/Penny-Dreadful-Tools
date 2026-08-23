@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12715,
+  "triage": [
+    {
+      "batch_id": "t-12715-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The .badge class has correct sizing (height: 1.333em, min-width: 1.333em) but no border-radius, no background-color, and no color \u2014 so it renders as plain text with no circular pill shape",
+          "ref": "shared_web/static/css/pd.css:2575",
+          "type": "code"
+        },
+        {
+          "detail": "Badge renders as <span class=\"admin demimod badge edit_archetypes\"> \u2014 a bare span with no visual circle behind it",
+          "ref": "decksite/templates/menu.mustache:5",
+          "type": "code"
+        },
+        {
+          "detail": "Most recent badge CSS work only added hover treatment, didn't add circular background",
+          "ref": "64f8ce39",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": "Add `border-radius: 50%`, a `background-color` (e.g. var(--accent-color) or a red/orange notification color), and `color: white` to `.badge` in `shared_web/static/css/pd.css:2575`. Also verify the sizing constants (height and min-width equal) produce a true circle. No template or Python changes needed.",
+      "issue": 12715,
+      "notes": "The badge already has the correct equal height/min-width sizing \u2014 purely a CSS addition to make it look like a notification dot rather than plain text.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

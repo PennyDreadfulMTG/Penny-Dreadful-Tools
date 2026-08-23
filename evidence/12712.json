@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12712,
+  "triage": [
+    {
+      "batch_id": "t-12715-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Queue table has a 'Current' column showing archetype_name (the machine guess) and an 'Assign To' column with the archetypedropdown partial \u2014 currently no JS auto-populates the dropdown from the current guess",
+          "ref": "decksite/templates/editarchetypes.mustache:21",
+          "type": "code"
+        },
+        {
+          "detail": "Dropdown is a <select name='archetype_id'> \u2014 straightforward to target with JS",
+          "ref": "decksite/templates/archetypedropdown.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "When rule_archetype_id is set, the view pre-selects it in the dropdown; but when only a similarity-based guess exists (archetype_name without a rule), the dropdown defaults to [Select]",
+          "ref": "decksite/views/edit_archetypes.py:25",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a data attribute (e.g. data-archetype-id) to each queue row's <tr> in `decksite/templates/editarchetypes.mustache` holding the current archetype_id. Add a small JS snippet (or extend an existing JS file) that on page load sets each row's <select> to that value unless it was already pre-selected by rule. Optionally add a per-row 'Use guess' button. ~30-50 lines of JS + minor template change.",
+      "issue": 12712,
+      "notes": "The archetype_id for the machine guess would need to be exposed in the template \u2014 check whether edit_archetypes.py already passes it or if load_queue_similarity needs to return it; archetype_id is available on the deck object already.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:34:35Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

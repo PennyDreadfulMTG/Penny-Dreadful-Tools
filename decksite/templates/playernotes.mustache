@@ -11,8 +11,8 @@
         <tbody>
             {{#notes}}
                 <tr class="wide">
-                    <td class="person">{{subject}}</td>
-                    <td class="person">{{creator}}</td>
+                    <td class="person"><a href="{{subject_url}}">{{subject}}</a></td>
+                    <td class="person"><a href="{{creator_url}}">{{creator}}</a></td>
                     <td data-text="{{date_sort}}">
                         {{display_date}}
                     </td>

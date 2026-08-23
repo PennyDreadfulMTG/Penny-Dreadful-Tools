@@ -21,8 +21,8 @@
   "frontier_min": 790,
   "lease_minutes": {
     "fix": 90,
-    "triage": 45,
-    "verify": 45
+    "triage": 60,
+    "verify": 60
   },
   "max_fix_lines": 150,
   "max_stage_attempts": 2,
@@ -33,11 +33,11 @@
     "kind": "branch",
     "ref": "sweep-state"
   },
-  "mutations_enabled": false,
+  "mutations_enabled": true,
   "opus_session_id": "d851d405-a108-4c6b-a5d1-cd6cc52bd8bf",
   "pause_initial_minutes": 30,
   "pause_max_minutes": 240,
-  "phase": "phase0",
+  "phase": "pilot",
   "pilot_limit": 40,
   "project_id": "6da35401-db77-48a7-b9bf-ab9aa3be1a64",
   "recent_activity_guard_days": 90,
@@ -49,7 +49,7 @@
     125
   ],
   "schema": 1,
-  "spawning_enabled": false,
+  "spawning_enabled": true,
   "stale_transcript_minutes": 20,
   "subprocess_timeout": 120,
   "triage_batch_size": 5,

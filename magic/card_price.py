@@ -14,7 +14,7 @@ def card_price_string(card: Card, short: bool = False) -> str:
         except FetchException:
             return 'Price unavailable'
         if p is None:
-            return 'Not available online'
+            return 'Price not available from Cardhoarder'
         # Currently disabled
         s = '{price}'.format(price=format_price(p['price']))
         try:

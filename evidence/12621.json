@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12621-1",
+      "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
+      "files_changed": 2,
+      "head_sha": "16752a75",
+      "issue": 12621,
+      "lines_changed": 54,
+      "lint": "passed",
+      "notes": "The `c in b.maindeck` equality check in `similarity_score` compares full CardRef dicts including the count (`n`), so a card appearing 4x in deck A and 3x in deck B is not counted as shared \u2014 the comment 'Count irrelevant' appears aspirational rather than descriptive. This is a pre-existing issue unrelated to #12621 and was left untouched.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`similarity_score` gave every shared card a weight of 1, so a ubiquitous staple (e.g. Lightning Bolt, playability \u2248 0.5) counted the same as a narrow, rarely-played card. This meant two decks sharing only a very common card would score just as similar as two decks sharing a unique signature card.\n\n## What changed\n\n**`decksite/data/deck.py`**\n- Added `from decksite.data import playability` import.\n- `calculate_similar_decks` now fetches the playability dictionary once (via `playability.playability()`) and passes it to each `similarity_score` call.\n- `similarity_score` accepts an optional `plays: dict[str, float] | None = None` parameter. When provided, each card's contribution is weighted as `1 / max(playability, 0.001)`, so rarer cards (lower playability) contribute more to both the numerator (shared card weight) and the denominator (total weighted card count). The floor of 0.001 prevents division by zero for cards with zero playability. When `plays` is `None` (e.g. direct callers like `guess_league_archetypes`), all weights are 1 and behaviour is unchanged.\n\n**`decksite/data/deck_test.py`**\n- Added three unit tests for `similarity_score`: unweighted baseline, weighted-rare-card-domination check, and zero-playability floor guard.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen pytest -x -m 'not functional and not perf' --ignore=.venv -q` \u2014 690 passed, 1 skipped (no DB functional tests run in cloud env; those require a live decksite database)\n\nFixes #12621",
+      "pr_title": "Weight deck similarity by inverse card playability to favor rarer cards (#12621)",
+      "recorded_at": "2026-08-23T21:58:00Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest -x -m 'not functional and not perf' --ignore=.venv -q",
+        "detail": "690 passed, 1 skipped, 89 deselected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12621,
   "triage": [
     {

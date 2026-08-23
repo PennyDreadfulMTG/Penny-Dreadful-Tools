@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12617-1",
+      "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
+      "files_changed": 2,
+      "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc",
+      "issue": 12617,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The description lookup is done from the already-loaded `archetypes` list passed into the constructor, so no additional DB queries are needed. If a deck's `archetype_id` is not found in the archetypes list (e.g. an archetype was deleted), the description falls back to an empty string, which means no tooltip is shown \u2014 a safe degradation.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `/admin/archetypes`, the \"Current\" and \"Matches Rule\" columns showed archetype names as links but had no tooltip text, so hovering gave no additional information about what each archetype means.\n\n## What changed\n\n- **`decksite/views/edit_archetypes.py`**: After `rule.apply_rules_to_decks`, build a lookup dict `archetype_descriptions` mapping archetype ID \u2192 description from the already-loaded `archetypes` list. Set `d.archetype_description` for the current archetype and `d.rule_archetype_description` for the rule-matched archetype on each queue deck.\n- **`decksite/templates/editarchetypes.mustache`**: Added `title='{{archetype_description}}'` to the \"Current\" link (line 21) and `title='{{rule_archetype_description}}'` to the \"Matches Rule\" link (line 28), so hovering shows the description as a browser tooltip.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python -m pytest -x -m 'not functional and not perf' --ignore=decksite/scrapers` \u2014 683 passed, 1 skipped\n\nFixes #12617",
+      "pr_title": "Show archetype description tooltips on hover in /admin/archetypes queue (#12617)",
+      "recorded_at": "2026-08-23T21:54:49Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest -x -m 'not functional and not perf' --ignore=decksite/scrapers",
+        "detail": "683 passed, 1 skipped in 15.77s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12617,
   "triage": [
     {

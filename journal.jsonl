@@ -1034,3 +1034,27 @@
 {"batch_id": "f-12618-1", "event": "RESULT_MALFORMED", "seq": 1034, "ts": "2026-08-23T21:53:44Z", "workspace_id": "e9e7c0ec-6c09-43c7-8214-8f10223d8b29"}
 {"batch_id": "f-12618-1", "event": "NUDGE_SENT", "seq": 1035, "ts": "2026-08-23T21:53:44Z", "workspace_id": "e9e7c0ec-6c09-43c7-8214-8f10223d8b29"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1035, "seq": 1036, "ts": "2026-08-23T21:54:35Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1037, "ts": "2026-08-23T21:54:37Z"}
+{"batch_id": "f-12617-1", "event": "RESULT_RECORDED", "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc", "issue": 12617, "kind": "fix", "pr_branch": "sweep/12617-mouseover-current-and-matches-rule-arche", "seq": 1038, "status": "fix_pushed", "ts": "2026-08-23T21:54:49Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1039, "ts": "2026-08-23T21:54:49Z", "workspace_id": "27d0a4fe-2634-4400-8a55-ecf0a552d6ec"}
+{"batch_id": "f-12618-1", "event": "RESULT_MALFORMED", "seq": 1040, "ts": "2026-08-23T21:54:49Z", "workspace_id": "e9e7c0ec-6c09-43c7-8214-8f10223d8b29"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1041, "ts": "2026-08-23T21:54:49Z", "workspace_id": "e9e7c0ec-6c09-43c7-8214-8f10223d8b29"}
+{"batch_id": "f-12618-1", "event": "LEASE_EXPIRED", "issue": 12618, "kind": "fix", "reason": "malformed output after nudge", "seq": 1042, "ts": "2026-08-23T21:54:49Z"}
+{"attempt": 1, "event": "RETRY_SCHEDULED", "issue": 12618, "kind": "fix", "seq": 1043, "status": "fix_pending", "ts": "2026-08-23T21:54:49Z"}
+{"event": "ESCALATED", "issue": 12618, "kind": "fix-validation", "question": "Pre-dispatch guard: a sweep/12618-* branch already exists on origin", "seq": 1044, "ts": "2026-08-23T21:54:50Z"}
+{"changes": {"pr_draft_policy": "draft-until-reviewed"}, "event": "CONFIG_CHANGED", "reason": "POLICY REVERSAL (bakert, 2026-08-23): sweep PRs are now opened with --draft. The original 'ready-for-review, never draft' rule is void for this campaign because Mergify auto-merges non-draft PRs authored by @PennyDreadfulMTG/automerge members. bakert's review action is clicking 'Ready for review'. DISPATCHER_SPEC \u00a78, FIXER_PROMPT and PLAN \u00a71 updated; dispatcher verifies isDraft=true before journaling PR_OPENED and closes + halts if it is ever false.", "seq": 1045, "ts": "2026-08-23T21:55:09Z"}
+{"action": "Removed the 'do not merge' label from PRs 14943-14949: Mergify never referenced it, so it was misleading rather than protective. #14943 had already lost the label on its own before removal, which confirms labels were not a dependable brake.", "event": "ROLLBACK_RECORDED", "issue": 0, "seq": 1046, "ts": "2026-08-23T21:55:09Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1046, "seq": 1047, "ts": "2026-08-23T21:55:09Z"}
+{"changes": {"daily_pr_cap": 10, "prs_enabled": true}, "event": "CONFIG_CHANGED", "seq": 1048, "ts": "2026-08-23T21:55:17Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1048, "seq": 1049, "ts": "2026-08-23T21:55:17Z"}
+{"branch": "sweep/12778-clickable-table-row-improvements", "event": "MUTATION_PLANNED", "issue": 12778, "kind": "pr", "seq": 1050, "ts": "2026-08-23T21:55:51Z"}
+{"branch": "sweep/12778-clickable-table-row-improvements", "draft": true, "event": "PR_OPENED", "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315", "issue": 12778, "number": 14951, "seq": 1051, "ts": "2026-08-23T21:55:53Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14951"}
+{"branch": "sweep/12761-remove-date-column-from-latest-tournamen", "event": "MUTATION_PLANNED", "issue": 12761, "kind": "pr", "seq": 1052, "ts": "2026-08-23T21:55:54Z"}
+{"branch": "sweep/12761-remove-date-column-from-latest-tournamen", "draft": true, "event": "PR_OPENED", "head_sha": "3d0dae279c8bcd2a8a4705bf829ee92b9a287dac", "issue": 12761, "number": 14952, "seq": 1053, "ts": "2026-08-23T21:55:56Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14952"}
+{"branch": "sweep/12715-make-the-archetypes-to-assign-badge-into", "event": "MUTATION_PLANNED", "issue": 12715, "kind": "pr", "seq": 1054, "ts": "2026-08-23T21:55:58Z"}
+{"branch": "sweep/12715-make-the-archetypes-to-assign-badge-into", "draft": true, "event": "PR_OPENED", "head_sha": "8ad7e65879ecd87be1419f8fe5ae8eb12c8ed95a", "issue": 12715, "number": 14953, "seq": 1055, "ts": "2026-08-23T21:55:59Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14953"}
+{"batch_id": "f-12621-1", "event": "RESULT_RECORDED", "head_sha": "16752a75", "issue": 12621, "kind": "fix", "pr_branch": "sweep/12621-when-calculating-similarity-use-the-inve", "seq": 1056, "status": "fix_pushed", "ts": "2026-08-23T21:58:00Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1057, "ts": "2026-08-23T21:58:00Z", "workspace_id": "44d2fcfb-fa86-4089-b31b-515c94e77b6d"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1057, "seq": 1058, "ts": "2026-08-23T22:01:01Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1058, "seq": 1059, "ts": "2026-08-23T22:01:34Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1059, "seq": 1060, "ts": "2026-08-23T22:01:46Z"}

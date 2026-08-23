@@ -7,7 +7,7 @@
   "daily": {
     "closures": 0,
     "day": "2026-08-23",
-    "prs": 7
+    "prs": 10
   },
   "invariants": [
     {
@@ -11122,29 +11122,29 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-08-23T21:48:40Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-08-23T21:54:49Z"
         }
       ],
       "issue": 12617,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12617-1",
-        "expires_at": "2026-08-23T23:18:40Z",
-        "granted_at": "2026-08-23T21:48:40Z",
-        "kind": "fix",
-        "session_id": "1e30c89a-3520-4b03-8cc9-a7bfa9f6eaaf",
-        "workspace_id": "27d0a4fe-2634-4400-8a55-ecf0a552d6ec"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
+        "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "Mouseover \"current\" and \"matches rule\" archetypes should show their description in a tooltip (title attr) in /admin/archetypes",
       "verdict": null
     },
@@ -11152,7 +11152,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "fix-validation",
+        "question": "Pre-dispatch guard: a sweep/12618-* branch already exists on origin"
+      },
       "evidence_file": "evidence/12618.json",
       "history": [
         {
@@ -11178,29 +11181,35 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-08-23T21:48:38Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-08-23T21:54:49Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-08-23T21:54:49Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T21:54:50Z"
         }
       ],
       "issue": 12618,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12618-1",
-        "expires_at": "2026-08-23T23:18:38Z",
-        "granted_at": "2026-08-23T21:48:38Z",
-        "kind": "fix",
-        "session_id": "af6d8ba9-f10b-4efe-8cbe-b692b633d85b",
-        "workspace_id": "e9e7c0ec-6c09-43c7-8214-8f10223d8b29"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "escalated",
       "title": "Sort by colors doesn't work on /admin/archetypes",
       "verdict": null
     },
@@ -11234,29 +11243,29 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-08-23T21:48:36Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-08-23T21:58:00Z"
         }
       ],
       "issue": 12621,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12621-1",
-        "expires_at": "2026-08-23T23:18:36Z",
-        "granted_at": "2026-08-23T21:48:36Z",
-        "kind": "fix",
-        "session_id": "4b208173-5d62-4108-a475-7f98a49394c4",
-        "workspace_id": "44d2fcfb-fa86-4089-b31b-515c94e77b6d"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
+        "head_sha": "16752a75"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "When calculating similarity use the inverse of playability of a card to weight rarer cards more heavily",
       "verdict": null
     },
@@ -12311,6 +12320,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:45:17Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T21:55:59Z"
         }
       ],
       "issue": 12715,
@@ -12320,15 +12334,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12715-make-the-archetypes-to-assign-badge-into",
-        "head_sha": "8ad7e65879ecd87be1419f8fe5ae8eb12c8ed95a"
+        "head_sha": "8ad7e65879ecd87be1419f8fe5ae8eb12c8ed95a",
+        "number": 14953,
+        "opened_at": "2026-08-23T21:55:59Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14953"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Make the archetypes-to-assign badge into a \"real\" badge with a circle behind it",
       "verdict": null
     },
@@ -12956,6 +12974,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:48:31Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T21:55:56Z"
         }
       ],
       "issue": 12761,
@@ -12965,15 +12988,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
-        "head_sha": "3d0dae279c8bcd2a8a4705bf829ee92b9a287dac"
+        "head_sha": "3d0dae279c8bcd2a8a4705bf829ee92b9a287dac",
+        "number": 14952,
+        "opened_at": "2026-08-23T21:55:56Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14952"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Remove date column from \"Latest Tournament Top 8\"",
       "verdict": null
     },
@@ -13142,6 +13169,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:45:18Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T21:55:53Z"
         }
       ],
       "issue": 12778,
@@ -13151,15 +13183,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12778-clickable-table-row-improvements",
-        "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315"
+        "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315",
+        "number": 14951,
+        "opened_at": "2026-08-23T21:55:53Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14951"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Clickable table row improvements",
       "verdict": null
     },
@@ -21617,9 +21653,9 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T21:40:36Z",
-  "last_seq": 1036,
-  "last_snapshot_at": "2026-08-23T21:54:35Z",
+  "last_mirror_at": "2026-08-23T21:54:37Z",
+  "last_seq": 1060,
+  "last_snapshot_at": "2026-08-23T22:01:46Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,
@@ -21754,7 +21790,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-08-23T21:51:00.022Z",
       "session_id": "1e30c89a-3520-4b03-8cc9-a7bfa9f6eaaf",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "27d0a4fe-2634-4400-8a55-ecf0a552d6ec"
     },
     "38790fdc-1477-4540-b219-2bcbb7ef27cf": {
@@ -21818,7 +21854,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-08-23T21:52:14.277Z",
       "session_id": "4b208173-5d62-4108-a475-7f98a49394c4",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "44d2fcfb-fa86-4089-b31b-515c94e77b6d"
     },
     "49df3e76-d502-4550-8a7b-9035eca9f425": {
@@ -22169,7 +22205,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-08-23T21:52:38.516Z",
       "session_id": "af6d8ba9-f10b-4efe-8cbe-b692b633d85b",
-      "state": "nudged",
+      "state": "archived",
       "workspace_id": "e9e7c0ec-6c09-43c7-8214-8f10223d8b29"
     },
     "ed52327a-e70c-4b54-8c08-6620d97b5965": {

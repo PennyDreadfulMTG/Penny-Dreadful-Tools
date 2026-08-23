@@ -1,6 +1,7 @@
 {{#deck_tables}}
     <section>
         <h2>{{title}}</h2>
+        {{#subtitle}}<p class="subtitle">{{subtitle}}</p>{{/subtitle}}
         {{> decktable}}
         <p><a href="{{url}}">{{link_text}}</a></p>
     </section>

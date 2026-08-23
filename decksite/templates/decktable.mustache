@@ -20,7 +20,9 @@
             {{^hide_top8}}
                 <th class="c">Top 8</th>
             {{/hide_top8}}
-            <th data-sortInitialOrder="desc">Date</th>
+            {{^hide_date}}
+                <th data-sortInitialOrder="desc">Date</th>
+            {{/hide_date}}
             {{#show_season_icon}}
                 <th>Season</th>
             {{/show_season_icon}}

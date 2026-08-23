@@ -40,6 +40,15 @@ PD.initDismiss = function() {
     });
 };
 
+PD.closeMenu = function() {
+    document.querySelectorAll(".scrim").forEach((scrim) => {
+        scrim.classList.remove("showing");
+    });
+    document.querySelectorAll("nav").forEach((nav) => {
+        nav.classList.remove("showing");
+    });
+};
+
 PD.initMenu = function() {
     document.querySelectorAll(".hamburger").forEach((e) => {
         e.onclick = () => {
@@ -52,12 +61,15 @@ PD.initMenu = function() {
         };
     });
     document.querySelectorAll(".scrim").forEach((e) => {
-        e.onclick = () => {
-            e.classList.toggle("showing");
-            document.querySelectorAll("nav").forEach((nav) => {
-                nav.classList.toggle("showing");
-            });
-        };
+        e.onclick = PD.closeMenu;
+    });
+    document.querySelectorAll(".close-menu").forEach((e) => {
+        e.onclick = PD.closeMenu;
+    });
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            PD.closeMenu();
+        }
     });
     $(".contains-dropdown").hoverIntent({
         over: PD.onDropdownHover,

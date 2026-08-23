@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12618-2",
+      "branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc",
+      "files_changed": 1,
+      "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d",
+      "issue": 12618,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The fix is a one-line change to the tablesorter parser auto-detection. The `|| $td.find('span.mana').length > 0` fallback is kept for any other table that uses this parser without the `contains-mana-bar` class. No Python or template changes needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `colors` tablesorter parser in `shared_web/static/js/pd.js` used `$td.find('span.mana').length > 0` to auto-detect whether a column should be sorted by color. However, `colors_html()` in `decksite/prepare.py` only emits a bare `span.mana` element for colorless decks (when `total == 0`). Colored decks get `span.mana-W`, `span.mana-U`, etc. \u2014 never a plain `span.mana`. This meant the parser's `is()` function returned `false` for any row with a colored deck, so tablesorter would not select the colors parser for the column, breaking color-based sorting on `/admin/archetypes`.\n\n## What changed\n\n`shared_web/static/js/pd.js` line 134: the `is` function now also checks `$td.hasClass('contains-mana-bar')`. The template (`decksite/templates/editarchetypes.mustache:18`) always sets this class on the colors `<td>`, making detection reliable regardless of the mana composition of individual rows.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped (18.97s)\n\nFixes #12618",
+      "pr_title": "Fix colors column sort detection on /admin/archetypes (#12618)",
+      "recorded_at": "2026-08-23T22:11:03Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped in 18.97s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12618,
   "triage": [
     {

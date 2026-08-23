@@ -1081,3 +1081,15 @@
 {"action": "deleted orphan branch sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc (pushed by a fixer whose report was never harvested; no PR existed)", "event": "ROLLBACK_RECORDED", "issue": 12618, "seq": 1081, "status": null, "ts": "2026-08-23T22:06:00Z"}
 {"batch_id": "f-12618-2", "event": "WORKSPACE_CREATED", "issues": [12618], "kind": "fix", "seq": 1082, "session_id": "bf0a8caf-f005-48f7-87c5-5903f45f47fb", "ts": "2026-08-23T22:06:01Z", "workspace_id": "a2de91fa-8355-4bc6-a779-0c9d88d47bf3"}
 {"attempt": 2, "batch_id": "f-12618-2", "event": "LEASE_GRANTED", "expires_at": "2026-08-23T23:36:01Z", "issue": 12618, "kind": "fix", "seq": 1083, "session_id": "bf0a8caf-f005-48f7-87c5-5903f45f47fb", "ts": "2026-08-23T22:06:01Z", "workspace_id": "a2de91fa-8355-4bc6-a779-0c9d88d47bf3"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1084, "ts": "2026-08-23T22:06:29Z"}
+{"batch_id": "f-12716-2", "event": "RESULT_MALFORMED", "seq": 1085, "ts": "2026-08-23T22:10:02Z", "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"}
+{"batch_id": "f-12716-2", "event": "NUDGE_SENT", "seq": 1086, "ts": "2026-08-23T22:10:03Z", "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"}
+{"batch_id": "f-12716-2", "event": "RESULT_MALFORMED", "seq": 1087, "ts": "2026-08-23T22:11:03Z", "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1088, "ts": "2026-08-23T22:11:03Z", "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"}
+{"batch_id": "f-12716-2", "event": "LEASE_EXPIRED", "issue": 12716, "kind": "fix", "reason": "malformed output after nudge", "seq": 1089, "ts": "2026-08-23T22:11:03Z"}
+{"event": "ESCALATED", "issue": 12716, "kind": "attempts-exhausted", "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?", "seq": 1090, "ts": "2026-08-23T22:11:03Z"}
+{"batch_id": "f-12618-2", "event": "RESULT_RECORDED", "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d", "issue": 12618, "kind": "fix", "pr_branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc", "seq": 1091, "status": "fix_pushed", "ts": "2026-08-23T22:11:03Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 1092, "ts": "2026-08-23T22:11:03Z", "workspace_id": "a2de91fa-8355-4bc6-a779-0c9d88d47bf3"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1092, "seq": 1093, "ts": "2026-08-23T22:11:03Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1093, "seq": 1094, "ts": "2026-08-23T22:16:04Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1094, "seq": 1095, "ts": "2026-08-23T22:17:41Z"}

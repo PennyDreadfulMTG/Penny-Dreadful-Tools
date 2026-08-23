@@ -1,8 +1,8 @@
 {
   "counters": {
     "infra_failures": 0,
-    "nudges": 3,
-    "workspaces_created": 35
+    "nudges": 4,
+    "workspaces_created": 36
   },
   "daily": {
     "closures": 0,
@@ -11197,6 +11197,16 @@
           "event": "ADJUDICATED",
           "status": "fix_pending",
           "ts": "2026-08-23T22:05:17Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-08-23T22:06:01Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-08-23T22:11:03Z"
         }
       ],
       "issue": 12618,
@@ -11205,13 +11215,16 @@
       ],
       "lease": null,
       "notes": "Fixer pushed but never reported; retry deadlocked on its own orphan branch. Re-dispatching with automatic orphan reclaim.",
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc",
+        "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d"
+      },
       "stage_attempts": {
         "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "fix_pushed",
       "title": "Sort by colors doesn't work on /admin/archetypes",
       "verdict": null
     },
@@ -12365,7 +12378,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/12716.json",
       "history": [
         {
@@ -12415,29 +12431,30 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-08-23T22:04:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-08-23T22:11:03Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T22:11:03Z"
         }
       ],
       "issue": 12716,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 2,
-        "batch_id": "f-12716-2",
-        "expires_at": "2026-08-23T23:34:56Z",
-        "granted_at": "2026-08-23T22:04:56Z",
-        "kind": "fix",
-        "session_id": "3d1459aa-e04d-4373-b021-01f526cbb9e2",
-        "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"
-      },
+      "lease": null,
       "notes": "Fixer pushed a branch but its report was never harvested; the retry deadlocked on its own orphan. Re-dispatching; the dispatcher now reclaims orphan sweep branches automatically.",
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "escalated",
       "title": "It would be cool to figure out permission_required in admin_menu via reflection looking at the decorator rather than sort-of hardcoded",
       "verdict": null
     },
@@ -21759,9 +21776,9 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T22:04:53Z",
-  "last_seq": 1080,
-  "last_snapshot_at": "2026-08-23T22:05:17Z",
+  "last_mirror_at": "2026-08-23T22:06:29Z",
+  "last_seq": 1095,
+  "last_snapshot_at": "2026-08-23T22:17:41Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,
@@ -21999,16 +22016,16 @@
       "batch_id": "f-12716-2",
       "created_at": "2026-08-23T22:04:56Z",
       "harvest": {
-        "malformed_attempts": 0,
+        "malformed_attempts": 1,
         "parsed": false
       },
       "issues": [
         12716
       ],
       "kind": "fix",
-      "last_transcript_at": null,
+      "last_transcript_at": "2026-08-23T22:10:10.784Z",
       "session_id": "3d1459aa-e04d-4373-b021-01f526cbb9e2",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"
     },
     "6dc2f0f5-92bf-45cc-8812-40ac66417ad7": {
@@ -22078,6 +22095,22 @@
       "session_id": "8ced96d1-3f35-4700-9da7-face56d894b7",
       "state": "archived",
       "workspace_id": "9ac78a8f-a03f-49b0-9d06-aa94e8bfd6fe"
+    },
+    "a2de91fa-8355-4bc6-a779-0c9d88d47bf3": {
+      "batch_id": "f-12618-2",
+      "created_at": "2026-08-23T22:06:01Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": true
+      },
+      "issues": [
+        12618
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-08-23T22:10:32.262Z",
+      "session_id": "bf0a8caf-f005-48f7-87c5-5903f45f47fb",
+      "state": "archived",
+      "workspace_id": "a2de91fa-8355-4bc6-a779-0c9d88d47bf3"
     },
     "a3d55906-f63a-445a-b3ed-e4e04fd758a4": {
       "batch_id": "t-12715-1",

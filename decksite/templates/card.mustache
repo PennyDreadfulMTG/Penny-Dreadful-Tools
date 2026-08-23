@@ -1,5 +1,19 @@
+{{#alternate_name}}
+    <section>
+        <p><b>{{alternate_name}}</b> is an alternate printing of <a class="card" href="{{canonical_url}}">{{canonical_name}}</a>.</p>
+    </section>
+{{/alternate_name}}
+{{^alternate_name}}
+    {{#card.has_alternate_printed_names}}
+        <section>
+            {{#card.alternate_printed_names}}
+                <p>Also printed as <a class="card" href="{{url}}">{{name}}</a>.</p>
+            {{/card.alternate_printed_names}}
+        </section>
+    {{/card.has_alternate_printed_names}}
+{{/alternate_name}}
 <section>
-    <img src="{{img_url}}" alt="{{name}}" class="card-img {{card_img_class}}">
+    <img src="{{img_url}}" alt="{{display_name}}" class="card-img {{card_img_class}}">
     {{#bugs}}
         <p class="bug-desc {{card_img_class}}"><b>{{classification}} bug</b> {{description}}</p>
     {{/bugs}}

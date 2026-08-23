@@ -3,7 +3,7 @@ from collections.abc import Iterable
 import pytest
 
 from magic import oracle, seasons
-from magic.models import Card
+from magic.models import Card, Printing
 from shared.pd_exception import InvalidDataException
 
 
@@ -37,6 +37,58 @@ def test_valid_name_returns_canonical_name_for_alias_front(monkeypatch: pytest.M
     card = Card({'name': 'Peter Parker', 'flavor_names': 'Surris, Spidersilk Innovator'})
     monkeypatch.setitem(oracle.CARDS_BY_NAME, 'Surris, Spidersilk Innovator', card)
     assert oracle.valid_name('Surris, Spidersilk Innovator // Surris, Silk-Tech Vanguard') == 'Peter Parker'
+
+def test_official_alternate_names_prefers_combined_double_faced_name() -> None:
+    card = Card({
+        'name': 'Peter Parker',
+        'flavor_names': 'Surris, Silk-Tech Vanguard|Surris, Spidersilk Innovator // Surris, Silk-Tech Vanguard|Surris, Spidersilk Innovator',
+    })
+
+    assert oracle.official_alternate_names(card) == [
+        'Surris, Spidersilk Innovator // Surris, Silk-Tech Vanguard',
+    ]
+
+def test_matching_official_alternate_name_supports_exact_and_unique_prefix() -> None:
+    card = Card({'name': 'Agent Venom', 'flavor_names': 'Rhilex the Accursed'})
+
+    assert oracle.matching_official_alternate_name(card, 'Rhilex the Accursed') == 'Rhilex the Accursed'
+    assert oracle.matching_official_alternate_name(card, 'rhil', allow_prefix=True) == 'Rhilex the Accursed'
+    assert oracle.matching_official_alternate_name(card, 'Agent Venom') is None
+
+def test_preferred_printing_uses_matching_flavor_name(monkeypatch: pytest.MonkeyPatch) -> None:
+    card = Card({'id': 1, 'name': 'Zilortha, Strength Incarnate'})
+    printings = [
+        Printing({
+            'set_code': 'iko',
+            'system_id': '1c48ddf5-c2da-4fbc-95f2-8a3f2f5737ba',
+            'flavor_name': None,
+        }),
+        Printing({
+            'set_code': 'iko',
+            'system_id': '9a0639a0-c898-4a07-975c-a02bdd53175b',
+            'flavor_name': 'Godzilla, King of the Monsters',
+        }),
+    ]
+    monkeypatch.setattr(oracle, 'get_printings', lambda _card: printings)
+
+    printing = oracle.preferred_printing_for_alternate_name(card, 'Godzilla, King of the Monsters')
+
+    assert printing is not None
+    assert printing.system_id == '9a0639a0-c898-4a07-975c-a02bdd53175b'
+
+def test_preferred_printing_uses_omenpaths_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
+    card = Card({'id': 1, 'name': 'Agent Venom'})
+    printings = [
+        Printing({'set_code': 'spm', 'system_id': 'spm-id', 'flavor_name': None}),
+        Printing({'set_code': 'om1', 'system_id': 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760', 'flavor_name': None}),
+    ]
+    monkeypatch.setattr(oracle, 'get_printings', lambda _card: printings)
+
+    printing = oracle.preferred_printing_for_alternate_name(card, 'Rhilex the Accursed')
+
+    assert printing is not None
+    assert printing.set_code == 'om1'
+    assert printing.system_id == 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'
 
 def test_init_rebuilds_names_and_ignores_alias_collisions(monkeypatch: pytest.MonkeyPatch) -> None:
     canonical = Card({'name': 'Shared Name'})

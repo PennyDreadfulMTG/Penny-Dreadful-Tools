@@ -8,7 +8,7 @@ from decksite.data import archetype
 from decksite.data.archetype import Archetype
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import fetcher, seasons
+from magic import fetcher, oracle, seasons
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -39,19 +39,35 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | 
         c.display_rank = '-'
     else:
         c.display_rank = str(c.rank)
+    c.alternate_printed_names = [
+        {'name': name, 'url': url_for_card_name(name, tournament_only, season_id)}
+        for name in oracle.official_alternate_names(c)
+    ]
+    c.has_alternate_printed_names = bool(c.alternate_printed_names)
 
 def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     c.url = url_for_card(c, tournament_only, season_id)
-    c.img_url = url_for_image(c.name)
+    c.img_url = url_for_image(c.name, c.get('preferred_printing'), c.get('preferred_printing_system_id'))
 
-def url_for_image(name: str) -> str:
+def url_for_image(name: str, preferred_printing: str | None = None, preferred_printing_system_id: str | None = None) -> str:
     if g.get('url_cache') is None:
         g.url_cache = {}
     if g.url_cache.get('card_image') is None:
         g.url_cache['card_image'] = url_for('image', c='--cardname--')
-    return g.url_cache['card_image'].replace('--cardname--', name)
+    url = g.url_cache['card_image'].replace('--cardname--', name)
+    query = {}
+    if preferred_printing:
+        query['printing'] = preferred_printing
+    if preferred_printing_system_id:
+        query['printing_id'] = preferred_printing_system_id
+    if query:
+        return f'{url}?{urllib.parse.urlencode(query)}'
+    return url
 
 def url_for_card(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> str:
+    return url_for_card_name(c.name, tournament_only, season_id)
+
+def url_for_card_name(name: str, tournament_only: bool = False, season_id: int | str | None = None) -> str:
     if g.get('url_cache') is None:
         g.url_cache = {}
     if g.url_cache.get('card_page') is None:
@@ -59,7 +75,7 @@ def url_for_card(c: Card, tournament_only: bool = False, season_id: int | str | 
             g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
         else:
             g.url_cache['card_page'] = url_for('seasons.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
-    return g.url_cache['card_page'].replace('--cardname--', urllib.parse.quote(c.name))
+    return g.url_cache['card_page'].replace('--cardname--', urllib.parse.quote(name))
 
 def prepare_decks(ds: list[Deck]) -> None:
     for d in ds:

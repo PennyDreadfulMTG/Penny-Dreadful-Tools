@@ -103,16 +103,45 @@ alongside CI: `BEHIND` is resolved automatically with `gh pr update-branch`, and
 `CONFLICTING` escalates for a merge-master-in fixer (never a rebase, so a published
 branch is never force-pushed).
 
-## 7. Recommendation: HOLD Phase 2 on one condition
+## 7. Closures: proven end to end
 
-1. **`issues: write` on the token**, then execute and audit a handful of real
-   closures. The closure half of the pipeline — roughly 100 of the 699 issues, and the
-   part that costs bakert no review at all — is still unproven end to end. A PAT
-   mechanism is built and waiting (`DISPATCHER_SPEC` §8c).
+bakert supplied a classic PAT (`repo`) and all six verified closures executed. One
+trap on the way: the `gh` on PATH in a Conductor sandbox is a **shim** that runs
+`GH_TOKEN="$broker_token" exec real_gh …`, so it silently discarded the operator
+token and kept using the App credential. The dispatcher now invokes
+`$CONDUCTOR_REAL_GH_PATH` directly whenever an operator token is loaded, and falls
+back to the shim (with a warning) otherwise.
 
-The PR-volume condition is **withdrawn**: bakert has decided the cap question
-explicitly and demonstrated the throughput to back it. Keep `daily_pr_cap=25` into
-Phase 2.
+All six were independently audited by me before the gate opened — #12616
+(commit 471b7632 + SQL migration), #12639 (tuple-unpack bug, fixed with tests),
+#12662 (commit titled for this exact Windows symptom, present at fonts.py:243),
+#12685 (dark-mode toggle in menu + `PD.initDarkModeToggle`), #12722 (apostrophe in
+the subsetting exclusion set), #12729 (original exception reaching
+`repo.format_exception`) — and re-checked on GitHub afterwards: all `CLOSED/COMPLETED`
+with accurate, evidence-citing comments. The recent-activity guard was verified too:
+the only pre-existing comments (#12685, #12722) date from 2024, well outside the
+90-day window, so allowing those closures was correct rather than lucky.
+
+**Zero bad closures.**
+
+## 8. Recommendation: GO for Phase 2
+
+Both original conditions are cleared. Carry forward: `daily_pr_cap=25`,
+`max_open_prs=30`, `concurrency_cap=16`, `pilot_limit=0`, closure cap raised to 40.
+
+Residual risks to watch at scale, none blocking:
+
+- **58% easy-fix rate.** Backpressure bounds the pile at 30, so the sweep now
+  self-throttles to bakert's review rate instead of flooding him.
+- **Verifier refutation rate is 0/6.** A perfect record on six is not evidence of
+  calibration. If it stays at zero across the next few dozen, that is a signal the
+  verifier is agreeing rather than checking, and worth an injected-bad-claim test.
+- **Fixup budget is one attempt.** Three fixups ran in the pilot (1, 1 and 4 lines
+  changed, all tests passing) — two CI failures and one merge conflict, all resolved
+  first try. Watch whether one attempt stays sufficient.
+- **Alerting must not cry wolf.** The adopt-path draft check escalated when bakert
+  readied #14951 himself; at Phase 2 volume that would fire on every PR he reviews.
+  It now distinguishes a `ready_for_review` event from a genuine brake failure.
 
 Everything else is green: zero infrastructure failures, malformed rate inside target,
 fast workspaces, working crash recovery, and a human-review gate that has already

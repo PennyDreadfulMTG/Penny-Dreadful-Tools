@@ -1308,3 +1308,4 @@
 {"event": "ADJUDICATED", "issue": 12778, "note": "False alarm: bakert readied PR #14951 himself at 22:37 (ready_for_review in the timeline). The conflict fixup pushed successfully and the PR is MERGEABLE again. Adopt-path check now distinguishes human review from a failed draft brake.", "seq": 1308, "status": "reported", "ts": "2026-08-23T22:49:50Z", "verb": "report-only"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1308, "seq": 1309, "ts": "2026-08-23T22:49:50Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1309, "seq": 1310, "ts": "2026-08-23T22:49:50Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1311, "ts": "2026-08-23T22:49:52Z"}

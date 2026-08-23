@@ -40,10 +40,20 @@ def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | 
     else:
         c.display_rank = str(c.rank)
     c.alternate_printed_names = [
-        {'name': name, 'url': url_for_card_name(name, tournament_only, season_id)}
-        for name in oracle.official_alternate_names(c)
+        {
+            'name': name,
+            'url': url_for_card_name(name, tournament_only, season_id),
+            'separator': '' if i == 0 else ', ',
+        }
+        for i, name in enumerate(oracle.official_alternate_names(c))
     ]
     c.has_alternate_printed_names = bool(c.alternate_printed_names)
+    c.decklist_alternate_printed_names = [
+        alternate
+        for alternate in c.alternate_printed_names
+        if (printing := oracle.preferred_printing_for_alternate_name(c, alternate['name'])) is not None
+        and str(printing.set_code).lower() == oracle.OMENPATHS_SET_CODE
+    ]
 
 def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
     c.url = url_for_card(c, tournament_only, season_id)

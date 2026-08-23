@@ -38,7 +38,10 @@ def admin_menu() -> Menu:
 @APP.route('/admin/')
 @auth.demimod_required
 def admin_home() -> wrappers.Response:
-    view = Admin(admin_menu())
+    menu = admin_menu()
+    if not session.get('admin'):
+        menu = Menu([item for item in menu if item.permission_required == 'demimod'])
+    view = Admin(menu)
     return view.response()
 
 @APP.route('/admin/aliases/')

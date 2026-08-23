@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12778,
+  "triage": [
+    {
+      "batch_id": "t-12781-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No data-href or class=clickable on rows; columns are 'Subject' and 'Creator', not 'Person', so prepare doesn't auto-generate person_url",
+          "ref": "decksite/templates/playernotes.mustache:1-30",
+          "type": "code"
+        },
+        {
+          "detail": "initLinks attaches click \u2192 navigate without checking whether the click target is a form element (select/input/button); form elements and row navigation both fire",
+          "ref": "shared_web/static/js/pd.js:357-365",
+          "type": "code"
+        },
+        {
+          "detail": "Existing-aliases table rows have no data-href or class=clickable; no person URL is exposed",
+          "ref": "decksite/templates/editaliases.mustache:16-24",
+          "type": "code"
+        },
+        {
+          "detail": "No commits to these files since the issue was filed \u2014 all three sub-items remain open",
+          "ref": "git log --since=2024-06-14 -- decksite/templates/playernotes.mustache decksite/templates/editaliases.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Three sub-tasks: (1) In decksite/data/person.py load_notes(), alias subject_id\u2192person_id and subject\u2192person so prepare generates person_url; add data-href={{person_url}} class=clickable to tr in playernotes.mustache. (2) In shared_web/static/js/pd.js:initLinks add an early return when e.target.closest('a,button,input,select,textarea') to let form elements win. (3) In decksite/views/edit_aliases.py expose person URL on each alias entry; add data-href and clickable to the alias list rows in editaliases.mustache.",
+      "issue": 12778,
+      "notes": "Three logically independent sub-tasks; each is small (~10\u201315 lines). The JS fix (sub-task 2) benefits all clickable-row pages, not just admin ones.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:37:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

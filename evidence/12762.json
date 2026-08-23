@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12762,
+  "triage": [
+    {
+      "batch_id": "t-12781-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "CSS rule 'p, .subtitle, .news .item, .person { font-variant-numeric: oldstyle-nums; }' applies to all <p> elements",
+          "ref": "shared_web/static/css/pd.css:302-304",
+          "type": "code"
+        },
+        {
+          "detail": "<p class=\"versus\"> renders hero_summary and enemy_summary, which include archetype names (e.g. '8Whack') \u2014 these inherit oldstyle-nums from the <p> rule",
+          "ref": "decksite/templates/matchups.mustache:3-7",
+          "type": "code"
+        },
+        {
+          "detail": ".versus rule currently only sets text-align: center; no font-variant-numeric override present",
+          "ref": "shared_web/static/css/pd.css:492-494",
+          "type": "code"
+        },
+        {
+          "detail": "No commits addressing oldstyle nums on the matchups page since the issue was filed",
+          "ref": "git log --grep='matchup\\|versus\\|oldstyle\\|font-variant' --since=2024-06-14",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add 'font-variant-numeric: normal;' to the existing .versus rule at shared_web/static/css/pd.css:492. Single-line CSS change.",
+      "issue": 12762,
+      "notes": "Confidence is medium because the linked issue image is not readable in this environment; the diagnosis is based on the only <p>-context where archetype names appear on the matchups page. If the bug appears elsewhere (e.g. in a dropdown label), the fix location may differ slightly.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:37:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

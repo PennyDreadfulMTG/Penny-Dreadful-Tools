@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-23T21:37:58Z",
+    "note": "Blocked on design: the issue itself says the site has no suitable colour yet. Needs a palette decision before any code.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": null,
   "created_at": "2026-08-23T21:36:28Z",
   "evidence_refs": [

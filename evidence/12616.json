@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12616,
+  "triage": [
+    {
+      "batch_id": "t-12621-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Look for companions in sideboard and not main deck in archetype rules \u2014 adds COMPANIONS set and sideboard=TRUE flag for companion cards in rules",
+          "ref": "471b7632",
+          "type": "commit"
+        },
+        {
+          "detail": "Merged PR that implements this fix, description matches the issue exactly",
+          "ref": "#12940",
+          "type": "pr"
+        },
+        {
+          "detail": "COMPANIONS = search.search('is:companion') is set at module level",
+          "ref": "decksite/data/rule.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "sideboard = 'TRUE' if c in COMPANIONS else 'FALSE' marks companion rule cards as sideboard=TRUE so apply_rules_query matches them in deck sideboards",
+          "ref": "decksite/data/rule.py:256",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12616,
+      "notes": "The fix was merged 2024-07-30. Issue can be closed.",
+      "proposed_comment": "This was fixed in commit 471b7632 (PR #12940). Companion cards added to archetype rules are now automatically flagged as sideboard cards, so the rules engine correctly looks for them in deck sideboards rather than the maindeck.",
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

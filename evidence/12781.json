@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12781,
+  "triage": [
+    {
+      "batch_id": "t-12781-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "cleanup() deletes rows from low_price older than start of season or 1 month, whichever is sooner \u2014 exactly the 'dropping old data' the issue describes",
+          "ref": "price_grabber/price_grabber.py:63-71",
+          "type": "code"
+        },
+        {
+          "detail": "cleanup(count) is called unconditionally every time prices are fetched \u2014 still present in current master",
+          "ref": "price_grabber/price_grabber.py:34",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Remove the `cleanup(count)` call at price_grabber/price_grabber.py:34 from `fetch()`. The `cleanup()` function itself can stay dormant or be deleted. Note: issue comment warns about eventual archiving need for performance; deleting the call is the minimum change to stop data loss.",
+      "issue": 12781,
+      "notes": "Risk is disk growth \u2014 low_price will accumulate all historic prices indefinitely. The issue author's own comment acknowledges this; an archiving strategy may be needed separately.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:37:49Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

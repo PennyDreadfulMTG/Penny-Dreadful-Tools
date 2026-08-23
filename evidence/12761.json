@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12761,
+  "triage": [
+    {
+      "batch_id": "t-12781-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Date <th> is always rendered \u2014 no conditional to suppress it",
+          "ref": "decksite/templates/decktable.mustache:14",
+          "type": "code"
+        },
+        {
+          "detail": "Date <td> is always rendered \u2014 no hide_date conditional",
+          "ref": "decksite/templates/deckrow.mustache:28-30",
+          "type": "code"
+        },
+        {
+          "detail": "tournament_decks dict passed to deck_tables has no hide_date key; all decks in the table share the same competition date",
+          "ref": "decksite/views/home.py:52-62",
+          "type": "code"
+        },
+        {
+          "detail": "Only the clickable-row PR (8d98879d) touched deckrow since the issue; no date-column change",
+          "ref": "git log --since=2024-06-14 -- decksite/templates/decktable.mustache decksite/templates/deckrow.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Option A (remove column): wrap the Date <th> in decktable.mustache and the date <td> in deckrow.mustache with {{^hide_date}}...{{/hide_date}}, then add 'hide_date': True to the tournament_decks dict in decksite/views/home.py:setup_decks(). Option B (move date to title): in home.py, fetch the tournament date from the first tournament_deck and append it to the 'Latest Tournament Top 8' title string. Either is ~5\u201310 lines.",
+      "issue": 12761,
+      "notes": "Issue author suggests option B ('put it underneath') may be preferable UX; both options are small and safe.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:37:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

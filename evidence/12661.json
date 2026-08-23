@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12661,
+  "triage": [
+    {
+      "batch_id": "t-12662-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No fixing commits found for this feature request",
+          "ref": "git log --grep='12661|per.season|season.*metagame' -- decksite/",
+          "type": "search"
+        },
+        {
+          "detail": "Current /seasons/all/metagame rolls up all seasons per archetype; no per-season-split view exists",
+          "ref": "decksite/controllers/seasons.py",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12661,
+      "notes": "This is a feature request for a new metagame view that disaggregates archetypes by season instead of rolling them up. Significant query, view, and UI work needed; the author (bakert) describes the motivation clearly (the 'one season effect') but no work has started.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

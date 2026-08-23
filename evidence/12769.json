@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12769,
+  "triage": [
+    {
+      "batch_id": "t-12781-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "When fetcher.card_price() returns None (card not priced by Cardhoarder), the function returns the string 'Not available online' \u2014 still present in current master",
+          "ref": "magic/card_price.py:16-17",
+          "type": "code"
+        },
+        {
+          "detail": "No changes to card_price.py since the issue was filed; message is unchanged",
+          "ref": "git log --since=2024-06-14 -- magic/card_price.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Change the string literal at magic/card_price.py:17 from 'Not available online' to something like 'Price not available from Cardhoarder' or 'Not priced by Cardhoarder'. Single-line change.",
+      "issue": 12769,
+      "notes": "The confusion is that 'Not available online' implies the card isn't on MTGO, but the real meaning is that Cardhoarder doesn't have a price listing for it (common right after a new set releases).",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:37:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

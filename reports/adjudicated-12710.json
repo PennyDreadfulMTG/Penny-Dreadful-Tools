@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-23T21:37:58Z",
+    "note": "Product call: move regex/brotli to dev deps, or automate the fonts task server-side? Mutually exclusive approaches.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": null,
   "created_at": "2026-08-23T21:36:28Z",
   "evidence_refs": [

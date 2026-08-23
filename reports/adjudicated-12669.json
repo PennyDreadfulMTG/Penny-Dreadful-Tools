@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-23T21:37:58Z",
+    "note": "Product call: sub-problem (1) <span> in <ol> is a real small fix, but (2) needs a decision between an invalid-HTML CSS trick and adding JS. Worth splitting.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": null,
   "created_at": "2026-08-23T21:36:27Z",
   "evidence_refs": [

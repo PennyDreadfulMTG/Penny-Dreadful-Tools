@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-23T21:37:59Z",
+    "note": "Design call: author already tried the simple font fix and disliked it. Needs a direction (override font / dedicated multilingual font / icons).",
+    "verb": "defer-to-human"
+  },
   "bundled_at": null,
   "created_at": "2026-08-23T21:34:35Z",
   "evidence_refs": [

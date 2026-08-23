@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12722-1",
+      "final_comment": "The specific fix requested (not subsetting the apostrophe) was implemented in commit 484b7e64 and later strengthened in 046a59b7, which now excludes all ASCII alphanumeric characters and the apostrophe from symbols font subsetting. The current code at maintenance/fonts.py:83 confirms this. The broader symbol-alignment issue on non-Mac browsers remains a harder problem and would need a separate issue if it resurfaces.",
+      "issue": 12722,
+      "own_evidence": [
+        {
+          "detail": "Independently verified: remaining_graphemes excludes any grapheme containing apostrophe or ASCII alphanumeric via 'not any(c in grapheme for c in \"0123456789\\'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\")', so apostrophe is never subsetted into the symbols font",
+          "ref": "maintenance/fonts.py:83",
+          "type": "code"
+        },
+        {
+          "detail": "Independently confirmed: this commit introduced the initial apostrophe exclusion from remaining_graphemes",
+          "ref": "484b7e64",
+          "type": "commit"
+        },
+        {
+          "detail": "Independently confirmed: this commit extended the exclusion to all ASCII alphanumeric chars, making the fix more robust",
+          "ref": "046a59b7",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-08-23T21:39:56Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

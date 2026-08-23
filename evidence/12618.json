@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12618,
+  "triage": [
+    {
+      "batch_id": "t-12621-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "colors tablesorter parser `is` function checks `$td.find('span.mana').length > 0` to detect color cells",
+          "ref": "shared_web/static/js/pd.js:134",
+          "type": "code"
+        },
+        {
+          "detail": "colors_html() generates `<span class='stacked-bar mana-{color}'>` \u2014 spans have class `mana-W` etc. but NOT the bare `mana` class, so `span.mana` selector returns 0 for all colored decks",
+          "ref": "decksite/prepare.py:253",
+          "type": "code"
+        },
+        {
+          "detail": "Only the colorless fallback span has class `mana` (`<span class='stacked-bar mana'>`), so detection works only for colorless decks",
+          "ref": "decksite/prepare.py:248",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/pd.js line 134, change the `is` function to `return $td.hasClass('contains-mana-bar') || $td.find('span.mana').length > 0;` \u2014 the td already has class `contains-mana-bar` (editarchetypes.mustache:18), making detection reliable without touching Python.",
+      "issue": 12618,
+      "notes": "Alternative fix is to add class `mana` to colored spans in prepare.py:253 but that risks CSS side-effects; the JS-only fix is safer.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

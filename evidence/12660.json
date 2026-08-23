@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12660,
+  "triage": [
+    {
+      "batch_id": "t-12662-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "To prevent ligatures like the pride flag getting mangled, do not merge fonts \u2014 attempted fix by keeping fonts separate",
+          "ref": "0e6d81d2",
+          "type": "commit"
+        },
+        {
+          "detail": "Revert 'To prevent ligatures...' \u2014 reverted immediately because Safari/iOS requires a merged font; revert message says 'Will have to figure out how to get the substitutions (from Noto Emoji at least) into the combined font'",
+          "ref": "a7ee7573",
+          "type": "commit"
+        },
+        {
+          "detail": "No subsequent fix for ZWJ ligatures in merged fonts; later commits are unrelated (sparkles, uv migration, hack for 5s)",
+          "ref": "git log --oneline --since=2025-04-05 -- maintenance/fonts.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12660,
+      "notes": "The fix (not merging fonts) was reverted because merged fonts are required for Safari/iOS. The underlying problem is preserving ZWJ substitution tables (GSUB) for sequences like U+129465+U+8205+U+9794+U+65039 when merging font subsets. Requires font-tooling expertise to copy the relevant lookup tables into the merged font.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

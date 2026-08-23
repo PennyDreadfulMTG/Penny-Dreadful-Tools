@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12621,
+  "triage": [
+    {
+      "batch_id": "t-12621-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "similarity_score gives 1 point per shared card name with no playability weighting; comment reads 'Dead simple for now, may get more sophisticated'",
+          "ref": "decksite/data/deck.py:497",
+          "type": "code"
+        },
+        {
+          "detail": "playability() returns dict[str, float] of card name \u2192 playability score, already available to use as weight",
+          "ref": "decksite/data/playability.py:89",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/deck.py: import playability module in calculate_similar_decks, pass plays dict to similarity_score, then replace `score += 1` with `score += 1 / max(plays.get(c.name, 0.001), 0.001)` and normalize denominator similarly. Handle zero-playability cards with a small floor value (e.g. 0.001) to avoid division by zero.",
+      "issue": 12621,
+      "notes": "Playability values come from a pre-aggregated table (_playability) so no schema changes needed. The normalization denominator may also need updating for a fair score scale.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

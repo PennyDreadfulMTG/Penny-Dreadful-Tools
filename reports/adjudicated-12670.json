@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-23T21:37:58Z",
+    "note": "Product call: restructure the menu z-index stacking context, or just document the active-hover levels? Author flagged it; no obviously-correct answer.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": null,
   "created_at": "2026-08-23T21:36:27Z",
   "evidence_refs": [

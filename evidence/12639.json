@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12639,
+  "triage": [
+    {
+      "batch_id": "t-12662-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Fix random deck API \u2014 merged 2026-08-22",
+          "ref": "#14919",
+          "type": "pr"
+        },
+        {
+          "detail": "Corrected random_legal_deck() in decksite/league.py: old code `ds, _ = deck.load_decks(...)[0]` incorrectly indexed into the returned tuple before unpacking, causing a TypeError/ValueError; new code `ds, _ = deck.load_decks(...)` then `return ds[0]` is correct",
+          "ref": "1b72b85a",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: ds, _ = deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1') \u2014 correct unpacking",
+          "ref": "decksite/league.py:352",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12639,
+      "notes": "The fix also added a parametrized test (test_random_legal_deck) covering both the empty-decks and single-deck cases.",
+      "proposed_comment": "Fixed in PR #14919 (commit 1b72b85a, merged 2026-08-22). The bug was a mis-indexed tuple unpack in random_legal_deck(); the corrected code is now in master.",
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

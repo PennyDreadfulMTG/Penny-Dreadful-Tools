@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12647,
+  "triage": [
+    {
+      "batch_id": "t-12662-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "insert_many() builds a plain 'INSERT INTO' query with no ON DUPLICATE KEY or INSERT IGNORE; a duplicate oracle_id raises DatabaseException",
+          "ref": "magic/multiverse.py:386",
+          "type": "code"
+        },
+        {
+          "detail": "scryfall_import_async() catches InvalidDataException from valid_name() to decide whether to insert, but does not catch DatabaseException from add_cards_and_update_async(), so a stale in-memory cache + race condition causes an unhandled crash",
+          "ref": "magic/oracle.py:175",
+          "type": "code"
+        },
+        {
+          "detail": "No fix found; no duplicate-key handling added since the issue was filed",
+          "ref": "git log -S'INSERT IGNORE|1062|duplicate' -- magic/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In magic/oracle.py:scryfall_import_async (around line 184), wrap the `await add_cards_and_update_async([sfcard])` call in a try/except for DatabaseException; if the underlying cause is MySQL error 1062 (duplicate entry), log a warning and return False (treat as 'already exists'). Import DatabaseException from shared.pd_exception. This handles the race condition where the bulk-data importer adds a card to the DB between the valid_name() check and the INSERT.",
+      "issue": 12647,
+      "notes": "Root cause is a stale in-memory CARDS_BY_NAME cache: oracle DB is updated by the bulk importer but the bot process doesn't refresh its cache, so valid_name() misses the card and tries to insert a duplicate. The fix is ~5 lines in magic/oracle.py.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

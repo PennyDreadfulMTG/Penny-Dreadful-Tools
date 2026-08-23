@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12662,
+  "triage": [
+    {
+      "batch_id": "t-12662-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Alter font so icons don't sit at top of bounding box in Windows \u2014 directly addresses the about-icon-too-high symptom on Windows",
+          "ref": "4142c9b1",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: os2.sTypoAscender = metrics['Win Ascent'] with comment 'instead of making things sit too high in the bounding box' \u2014 fix is in place",
+          "ref": "maintenance/fonts.py:243",
+          "type": "code"
+        },
+        {
+          "detail": "Font is embedded as base64 woff2; pd.css was regenerated as part of commit 4142c9b1, so the corrected font metrics are deployed",
+          "ref": "shared_web/static/css/pd.css:188",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12662,
+      "notes": "The fix is in fonts.py (the generation script) AND the resulting pd.css was regenerated in the same commit. Both are in current master.",
+      "proposed_comment": "This was fixed in commit 4142c9b1 ('Alter font so icons don't sit at top of bounding box in Windows'), which adjusts the font's OS/2 sTypoAscender metric to match Win Ascent. The regenerated font is embedded in pd.css.",
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

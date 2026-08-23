@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12617,
+  "triage": [
+    {
+      "batch_id": "t-12621-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current archetype link `<a href='{{archetype_url}}'>{{archetype_name}}</a>` has no title attribute",
+          "ref": "decksite/templates/editarchetypes.mustache:21",
+          "type": "code"
+        },
+        {
+          "detail": "Matches Rule link `<a href='{{rule_archetype_url}}'>{{rule_archetype_name}}</a>` has no title attribute",
+          "ref": "decksite/templates/editarchetypes.mustache:28",
+          "type": "code"
+        },
+        {
+          "detail": "load_archetypes SQL already selects `a.description`, so the field exists in the Archetype model",
+          "ref": "decksite/data/archetype.py:547",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/edit_archetypes.py: after calling rule.apply_rules_to_decks, look up description from self.archetypes by ID for each queue deck's archetype_id and rule_archetype_id, and set d.archetype_description / d.rule_archetype_description. In editarchetypes.mustache lines 21 and 28, add `title='{{archetype_description}}'` and `title='{{rule_archetype_description}}'` respectively.",
+      "issue": 12617,
+      "notes": "Archetype descriptions are already loaded for other parts of the page (line 119 uses `{{description}}`), so no additional DB queries are needed beyond the lookup already done.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

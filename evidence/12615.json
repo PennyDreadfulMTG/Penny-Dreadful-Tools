@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12615,
+  "triage": [
+    {
+      "batch_id": "t-12621-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "apply_rules_to_decks sets rule_archetype_name = 'Bad rules' whenever len(archetypes) > 1, with no ancestor-descendant check",
+          "ref": "decksite/data/rule.py:49",
+          "type": "code"
+        },
+        {
+          "detail": "doubled_decks() uses `HAVING COUNT(DISTINCT archetype_id) > 1` with no ancestor-descendant filter, so a deck matching both Aggro and Mono-Red Aggro is flagged as doubled",
+          "ref": "decksite/data/rule.py:121",
+          "type": "code"
+        },
+        {
+          "detail": "No commits add archetype_closure logic to rule.py; the ancestor-descendant check is not implemented",
+          "ref": "git log --oneline -S'archetype_closure' -- decksite/data/rule.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12615,
+      "notes": "Fix requires: (1) in apply_rules_to_decks, after fetching multiple matched archetypes, query archetype_closure to remove any archetype that is an ancestor of another matched archetype, then re-evaluate whether the remaining set is size 1 or still ambiguous; (2) similarly filter doubled_decks SQL or its post-processing. Both functions in rule.py need changes and the logic must correctly handle chains of depth > 1.",
+      "proposed_comment": null,
+      "recorded_at": "2026-08-23T21:38:52Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

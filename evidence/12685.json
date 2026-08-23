@@ -37,5 +37,37 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12722-1",
+      "final_comment": "Dark mode was implemented in PR #12756 (merged June 2024). A toggle now appears at the bottom of the main menu and persists the user's preference in localStorage, overriding the OS default. Both OS-preference detection and the PDM-specific manual toggle mentioned as 'to follow' in the June 2024 comment are now fully implemented.",
+      "issue": 12685,
+      "own_evidence": [
+        {
+          "detail": "Independently verified: checks localStorage('prefersDarkMode') first, falling back to OS prefers-color-scheme media query",
+          "ref": "decksite/templates/darkmode.mustache:3-5",
+          "type": "code"
+        },
+        {
+          "detail": "Independently verified: dark-mode-toggle-container with Light Mode/Dark Mode toggle link present at bottom of menu",
+          "ref": "decksite/templates/menu.mustache:24-28",
+          "type": "code"
+        },
+        {
+          "detail": "Independently verified: PD.initDarkModeToggle saves prefersDarkMode to localStorage on click, completing the toggle flow",
+          "ref": "shared_web/static/js/pd.js:191-200",
+          "type": "code"
+        },
+        {
+          "detail": "Independently confirmed: PR titled 'Dark mode toggle' merged 2024-06-10, 59 additions, 14 deletions",
+          "ref": "12756",
+          "type": "pr"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-08-23T21:39:56Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

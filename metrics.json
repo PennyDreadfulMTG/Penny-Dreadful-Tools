@@ -2,18 +2,18 @@
   "active_workspaces": 0,
   "alert": "unregistered workspace(s) in project: Refining machine guess behavior (3a5f43b9), Investigating Dependabot PR queues (8f077848), Reviewing UI date changes (8cd4064e)",
   "caps": {
-    "closures_today": 0,
+    "closures_today": 6,
     "prs_today": 22
   },
   "counts": {
+    "closed": 6,
     "deferred_human": 6,
     "escalated": 1,
     "pending": 659,
     "pr_open": 20,
-    "reported": 7,
-    "verified": 6
+    "reported": 7
   },
-  "heartbeat": "2026-08-23T22:46:00Z",
+  "heartbeat": "2026-08-23T22:48:56Z",
   "max_open_prs": 30,
   "open_escalations": 1,
   "open_sweep_prs": null,

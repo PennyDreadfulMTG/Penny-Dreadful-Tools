@@ -1,16 +1,14 @@
 {
   "adjudication": {
-    "at": "2026-08-23T22:33:56Z",
-    "note": "Conflicts with master after seven sweep PRs merged under it. Merge master in and resolve; do not rebase.",
-    "verb": "queue-fixup"
+    "at": "2026-08-23T22:49:50Z",
+    "note": "False alarm: bakert readied PR #14951 himself at 22:37 (ready_for_review in the timeline). The conflict fixup pushed successfully and the PR is MERGEABLE again. Adopt-path check now distinguishes human review from a failed draft brake.",
+    "verb": "report-only"
   },
   "bundled_at": null,
-  "created_at": "2026-08-23T22:33:02Z",
-  "evidence_refs": [
-    "evidence/12778.json#fix[-1]"
-  ],
+  "created_at": "2026-08-23T22:39:01Z",
+  "evidence_refs": [],
   "issue": 12778,
-  "kind": "pr-conflict",
-  "question": "PR #14951 conflicts with master \u2014 dispatch one fixer to merge master and resolve (queue-fixup), or abandon it (abandon-pr)?",
-  "summary": "mergeable=CONFLICTING mergeStateStatus=DIRTY on branch sweep/12778-clickable-table-row-improvements"
+  "kind": "fix-validation",
+  "question": "Adopted PR #14951 on sweep/12778-clickable-table-row-improvements is NOT a draft, so Mergify can merge it. Draft it or confirm it is intended.",
+  "summary": "adopted non-draft PR"
 }

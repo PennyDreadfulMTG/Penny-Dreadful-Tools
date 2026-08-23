@@ -1278,3 +1278,33 @@
 {"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1278, "ts": "2026-08-23T22:45:58Z"}
 {"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1279, "ts": "2026-08-23T22:46:00Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1279, "seq": 1280, "ts": "2026-08-23T22:46:23Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1281, "ts": "2026-08-23T22:46:24Z"}
+{"event": "MASTER_ADVANCED", "seq": 1282, "sha": "6eb8e350d533377e7bdc6b4407b47b49a95982f3", "ts": "2026-08-23T22:46:25Z"}
+{"event": "CI_CHECKED", "issue": 12761, "pr": 14952, "seq": 1283, "ts": "2026-08-23T22:46:27Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1284, "ts": "2026-08-23T22:46:30Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1285, "ts": "2026-08-23T22:46:31Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1286, "ts": "2026-08-23T22:46:32Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1287, "ts": "2026-08-23T22:46:32Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1288, "ts": "2026-08-23T22:46:33Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1289, "ts": "2026-08-23T22:46:34Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1290, "ts": "2026-08-23T22:46:35Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1291, "ts": "2026-08-23T22:46:36Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1292, "ts": "2026-08-23T22:46:37Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1293, "ts": "2026-08-23T22:46:38Z"}
+{"changes": {"closures_enabled": true}, "event": "CONFIG_CHANGED", "seq": 1294, "ts": "2026-08-23T22:46:40Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1294, "seq": 1295, "ts": "2026-08-23T22:46:40Z"}
+{"event": "MUTATION_PLANNED", "issue": 12729, "kind": "close", "reason": "completed", "seq": 1296, "ts": "2026-08-23T22:47:39Z"}
+{"comment_posted": true, "duplicate_of": null, "event": "CLOSE_EXECUTED", "issue": 12729, "reason": "completed", "seq": 1297, "ts": "2026-08-23T22:47:41Z", "verified_by_batch": "v-12729-1"}
+{"event": "MUTATION_PLANNED", "issue": 12722, "kind": "close", "reason": "completed", "seq": 1298, "ts": "2026-08-23T22:47:41Z"}
+{"comment_posted": true, "duplicate_of": null, "event": "CLOSE_EXECUTED", "issue": 12722, "reason": "completed", "seq": 1299, "ts": "2026-08-23T22:47:43Z", "verified_by_batch": "v-12722-1"}
+{"event": "MUTATION_PLANNED", "issue": 12685, "kind": "close", "reason": "completed", "seq": 1300, "ts": "2026-08-23T22:47:43Z"}
+{"comment_posted": true, "duplicate_of": null, "event": "CLOSE_EXECUTED", "issue": 12685, "reason": "completed", "seq": 1301, "ts": "2026-08-23T22:47:45Z", "verified_by_batch": "v-12722-1"}
+{"event": "MUTATION_PLANNED", "issue": 12662, "kind": "close", "reason": "completed", "seq": 1302, "ts": "2026-08-23T22:47:45Z"}
+{"comment_posted": true, "duplicate_of": null, "event": "CLOSE_EXECUTED", "issue": 12662, "reason": "completed", "seq": 1303, "ts": "2026-08-23T22:47:47Z", "verified_by_batch": "v-12662-1"}
+{"event": "MUTATION_PLANNED", "issue": 12639, "kind": "close", "reason": "completed", "seq": 1304, "ts": "2026-08-23T22:47:47Z"}
+{"comment_posted": true, "duplicate_of": null, "event": "CLOSE_EXECUTED", "issue": 12639, "reason": "completed", "seq": 1305, "ts": "2026-08-23T22:47:49Z", "verified_by_batch": "v-12662-1"}
+{"event": "MUTATION_PLANNED", "issue": 12616, "kind": "close", "reason": "completed", "seq": 1306, "ts": "2026-08-23T22:47:50Z"}
+{"comment_posted": true, "duplicate_of": null, "event": "CLOSE_EXECUTED", "issue": 12616, "reason": "completed", "seq": 1307, "ts": "2026-08-23T22:47:51Z", "verified_by_batch": "v-12662-1"}
+{"event": "ADJUDICATED", "issue": 12778, "note": "False alarm: bakert readied PR #14951 himself at 22:37 (ready_for_review in the timeline). The conflict fixup pushed successfully and the PR is MERGEABLE again. Adopt-path check now distinguishes human review from a failed draft brake.", "seq": 1308, "status": "reported", "ts": "2026-08-23T22:49:50Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1308, "seq": 1309, "ts": "2026-08-23T22:49:50Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1309, "seq": 1310, "ts": "2026-08-23T22:49:50Z"}

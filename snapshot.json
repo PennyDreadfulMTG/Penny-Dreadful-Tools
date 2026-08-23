@@ -5,7 +5,7 @@
     "workspaces_created": 39
   },
   "daily": {
-    "closures": 0,
+    "closures": 6,
     "day": "2026-08-23",
     "prs": 22
   },
@@ -11041,7 +11041,14 @@
     },
     "12616": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T22:47:51Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12662-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12616.json",
@@ -11074,6 +11081,16 @@
           "event": "RESULT_RECORDED",
           "status": "verified",
           "ts": "2026-08-23T21:41:42Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-08-23T22:47:50Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T22:47:51Z"
         }
       ],
       "issue": 12616,
@@ -11088,7 +11105,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verified",
+      "status": "closed",
       "title": "Companions in sideboard should count in rules",
       "verdict": "CONFIRMED"
     },
@@ -11148,7 +11165,7 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T22:46:00Z",
+          "checked_at": "2026-08-23T22:46:38Z",
           "failed": [],
           "state": "green"
         },
@@ -11367,7 +11384,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-23T22:43:42Z",
+          "checked_at": "2026-08-23T22:46:37Z",
           "failed": [],
           "state": "green"
         },
@@ -11387,7 +11404,14 @@
     },
     "12639": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T22:47:49Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12662-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12639.json",
@@ -11420,6 +11444,16 @@
           "event": "RESULT_RECORDED",
           "status": "verified",
           "ts": "2026-08-23T21:41:42Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-08-23T22:47:47Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T22:47:49Z"
         }
       ],
       "issue": 12639,
@@ -11434,7 +11468,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verified",
+      "status": "closed",
       "title": "random deck is broken",
       "verdict": "CONFIRMED"
     },
@@ -11494,7 +11528,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-23T22:45:58Z",
+          "checked_at": "2026-08-23T22:46:36Z",
           "failed": [],
           "state": "green"
         },
@@ -11600,7 +11634,14 @@
     },
     "12662": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T22:47:47Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12662-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12662.json",
@@ -11633,6 +11674,16 @@
           "event": "RESULT_RECORDED",
           "status": "verified",
           "ts": "2026-08-23T21:41:42Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-08-23T22:47:45Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T22:47:47Z"
         }
       ],
       "issue": 12662,
@@ -11649,7 +11700,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verified",
+      "status": "closed",
       "title": "About icon sits too high in the highlight on Brave/Windows",
       "verdict": "CONFIRMED"
     },
@@ -11709,7 +11760,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-23T22:45:57Z",
+          "checked_at": "2026-08-23T22:46:35Z",
           "failed": [],
           "state": "green"
         },
@@ -11783,7 +11834,7 @@
         "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
         "ci": {
-          "checked_at": "2026-08-23T22:45:56Z",
+          "checked_at": "2026-08-23T22:46:34Z",
           "failed": [],
           "state": "green"
         },
@@ -11857,7 +11908,7 @@
         "adopted": false,
         "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
         "ci": {
-          "checked_at": "2026-08-23T22:45:55Z",
+          "checked_at": "2026-08-23T22:46:33Z",
           "failed": [],
           "state": "green"
         },
@@ -12021,7 +12072,14 @@
     },
     "12685": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T22:47:45Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12722-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12685.json",
@@ -12054,6 +12112,16 @@
           "event": "RESULT_RECORDED",
           "status": "verified",
           "ts": "2026-08-23T21:39:56Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-08-23T22:47:43Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T22:47:45Z"
         }
       ],
       "issue": 12685,
@@ -12068,7 +12136,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verified",
+      "status": "closed",
       "title": "dark mode",
       "verdict": "CONFIRMED"
     },
@@ -12200,7 +12268,7 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T22:45:54Z",
+          "checked_at": "2026-08-23T22:46:32Z",
           "failed": [],
           "state": "green"
         },
@@ -12274,7 +12342,7 @@
         "adopted": false,
         "branch": "sweep/12709-the-admin-menu-list-page-could-should-hi",
         "ci": {
-          "checked_at": "2026-08-23T22:45:52Z",
+          "checked_at": "2026-08-23T22:46:32Z",
           "failed": [],
           "state": "green"
         },
@@ -12396,7 +12464,7 @@
         "adopted": false,
         "branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li",
         "ci": {
-          "checked_at": "2026-08-23T22:45:51Z",
+          "checked_at": "2026-08-23T22:46:31Z",
           "failed": [],
           "state": "green"
         },
@@ -12470,7 +12538,7 @@
         "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
         "ci": {
-          "checked_at": "2026-08-23T22:45:50Z",
+          "checked_at": "2026-08-23T22:46:30Z",
           "failed": [],
           "state": "green"
         },
@@ -12974,7 +13042,14 @@
     },
     "12722": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T22:47:43Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12722-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12722.json",
@@ -13007,6 +13082,16 @@
           "event": "RESULT_RECORDED",
           "status": "verified",
           "ts": "2026-08-23T21:39:56Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-08-23T22:47:41Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T22:47:43Z"
         }
       ],
       "issue": 12722,
@@ -13021,13 +13106,20 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verified",
+      "status": "closed",
       "title": "Apostrophe (in Avacyn's Pilgrim for example) is being subsetted in our symbols font despite being present in our main font \u2013 this has strange effects in some browsers/oses",
       "verdict": "CONFIRMED"
     },
     "12729": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T22:47:41Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12729-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12729.json",
@@ -13084,6 +13176,16 @@
           "event": "ROLLBACK_RECORDED",
           "status": "verified",
           "ts": "2026-08-23T21:40:12Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-08-23T22:47:39Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T22:47:41Z"
         }
       ],
       "issue": 12729,
@@ -13098,7 +13200,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verified",
+      "status": "closed",
       "title": "When the site reports a 500 it doesnt' give a proper stack trace either in the email or in the github ticket \u2013 can we get the trace from underlying error?",
       "verdict": "CONFIRMED"
     },
@@ -13407,7 +13509,7 @@
         "adopted": false,
         "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
         "ci": {
-          "checked_at": "2026-08-23T22:45:46Z",
+          "checked_at": "2026-08-23T22:46:27Z",
           "failed": [],
           "state": "green"
         },
@@ -13587,10 +13689,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "fix-validation",
-        "question": "Adopted PR #14951 on sweep/12778-clickable-table-row-improvements is NOT a draft, so Mergify can merge it. Draft it or confirm it is intended."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12778.json",
       "fixup": {
         "attempt": 1,
@@ -13674,6 +13773,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-08-23T22:39:01Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-08-23T22:49:50Z"
         }
       ],
       "issue": 12778,
@@ -13681,7 +13785,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "False alarm: bakert readied PR #14951 himself at 22:37 (ready_for_review in the timeline). The conflict fixup pushed successfully and the PR is MERGEABLE again. Adopt-path check now distinguishes human review from a failed draft brake.",
       "pr": {
         "adopted": true,
         "branch": "sweep/12778-clickable-table-row-improvements",
@@ -13695,7 +13799,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "Clickable table row improvements",
       "verdict": null
     },
@@ -22160,10 +22264,10 @@
     }
   },
   "last_bundle_at": null,
-  "last_master_sha": "d995e1c870708dd164994af6827ce5ecfea9077e",
-  "last_mirror_at": "2026-08-23T22:36:45Z",
-  "last_seq": 1280,
-  "last_snapshot_at": "2026-08-23T22:46:23Z",
+  "last_master_sha": "6eb8e350d533377e7bdc6b4407b47b49a95982f3",
+  "last_mirror_at": "2026-08-23T22:46:24Z",
+  "last_seq": 1310,
+  "last_snapshot_at": "2026-08-23T22:49:50Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

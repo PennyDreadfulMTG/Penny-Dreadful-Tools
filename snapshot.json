@@ -7,7 +7,7 @@
   "daily": {
     "closures": 0,
     "day": "2026-08-23",
-    "prs": 10
+    "prs": 22
   },
   "invariants": [
     {
@@ -11127,6 +11127,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:54:49Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:17Z"
         }
       ],
       "issue": 12617,
@@ -11136,15 +11141,23 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
-        "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc"
+        "ci": {
+          "checked_at": "2026-08-23T22:30:28Z",
+          "state": "pending"
+        },
+        "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc",
+        "number": 14971,
+        "opened_at": "2026-08-23T22:23:17Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14971"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Mouseover \"current\" and \"matches rule\" archetypes should show their description in a tooltip (title attr) in /admin/archetypes",
       "verdict": null
     },
@@ -11207,6 +11220,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T22:11:03Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:15Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:28:14Z"
         }
       ],
       "issue": 12618,
@@ -11216,15 +11238,24 @@
       "lease": null,
       "notes": "Fixer pushed but never reported; retry deadlocked on its own orphan branch. Re-dispatching with automatic orphan reclaim.",
       "pr": {
+        "adopted": false,
         "branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc",
-        "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d"
+        "ci": {
+          "checked_at": "2026-08-23T22:28:14Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d",
+        "number": 14970,
+        "opened_at": "2026-08-23T22:23:15Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14970"
       },
       "stage_attempts": {
         "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Sort by colors doesn't work on /admin/archetypes",
       "verdict": null
     },
@@ -11232,7 +11263,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "pr-ci-failed",
+        "question": "PR #14969 is red on test \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
+      },
       "evidence_file": "evidence/12621.json",
       "history": [
         {
@@ -11263,6 +11297,21 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:58:00Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:12Z"
+        },
+        {
+          "event": "PR_CI_FAILED",
+          "status": "pr_ci_failed",
+          "ts": "2026-08-23T22:23:28Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T22:23:28Z"
         }
       ],
       "issue": 12621,
@@ -11272,15 +11321,26 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
-        "head_sha": "16752a75"
+        "ci": {
+          "checked_at": "2026-08-23T22:23:28Z",
+          "failed": [
+            "test"
+          ],
+          "state": "failed"
+        },
+        "head_sha": "16752a75",
+        "number": 14969,
+        "opened_at": "2026-08-23T22:23:12Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14969"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "escalated",
       "title": "When calculating similarity use the inverse of playability of a card to weight rarer cards more heavily",
       "verdict": null
     },
@@ -11372,6 +11432,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:53:44Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:09Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:29:21Z"
         }
       ],
       "issue": 12647,
@@ -11381,15 +11450,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
-        "head_sha": "71a091094ef501df2db37eeea92373487989881e"
+        "ci": {
+          "checked_at": "2026-08-23T22:29:21Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "71a091094ef501df2db37eeea92373487989881e",
+        "number": 14968,
+        "opened_at": "2026-08-23T22:23:09Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14968"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "/spoiler Waterlogged teaching worked fine BUT spat out a giant stack trace into chat - don't do that!",
       "verdict": null
     },
@@ -11569,6 +11647,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:50:41Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:06Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:30:27Z"
         }
       ],
       "issue": 12664,
@@ -11578,15 +11665,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
-        "head_sha": "86dabd687c2e226d7e38a2ecbf48cff8294a50d5"
+        "ci": {
+          "checked_at": "2026-08-23T22:30:27Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "86dabd687c2e226d7e38a2ecbf48cff8294a50d5",
+        "number": 14967,
+        "opened_at": "2026-08-23T22:23:06Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14967"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Submenu should appear/disappear with an ease transition",
       "verdict": null
     },
@@ -11625,6 +11721,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:52:43Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:04Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:30:26Z"
         }
       ],
       "issue": 12665,
@@ -11634,15 +11739,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
-        "head_sha": "7ab51f786c3530cdf4c590acd1a8b8fee837d345"
+        "ci": {
+          "checked_at": "2026-08-23T22:30:26Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "7ab51f786c3530cdf4c590acd1a8b8fee837d345",
+        "number": 14966,
+        "opened_at": "2026-08-23T22:23:04Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14966"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Provide a way to dismiss the popover menu other than clicking on the scrim/choosing an option",
       "verdict": null
     },
@@ -11681,6 +11795,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:48:31Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:23:01Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:30:25Z"
         }
       ],
       "issue": 12666,
@@ -11690,15 +11813,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
-        "head_sha": "fa15f067"
+        "ci": {
+          "checked_at": "2026-08-23T22:30:25Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "fa15f067",
+        "number": 14965,
+        "opened_at": "2026-08-23T22:23:01Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14965"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Menu and submenu should scroll independently",
       "verdict": null
     },
@@ -11933,7 +12065,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "pr-ci-failed",
+        "question": "PR #14964 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
+      },
       "evidence_file": "evidence/12708.json",
       "history": [
         {
@@ -11964,6 +12099,21 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:51:42Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:22:58Z"
+        },
+        {
+          "event": "PR_CI_FAILED",
+          "status": "pr_ci_failed",
+          "ts": "2026-08-23T22:23:23Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T22:23:23Z"
         }
       ],
       "issue": 12708,
@@ -11973,15 +12123,26 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
-        "head_sha": "0dac4c9844abd8b71421ba472e508146b9e95684"
+        "ci": {
+          "checked_at": "2026-08-23T22:23:23Z",
+          "failed": [
+            "jslint"
+          ],
+          "state": "failed"
+        },
+        "head_sha": "0dac4c9844abd8b71421ba472e508146b9e95684",
+        "number": 14964,
+        "opened_at": "2026-08-23T22:22:58Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14964"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "escalated",
       "title": "Put the quality score in the metagame page even if just in a comment or a tooltip",
       "verdict": null
     },
@@ -12020,6 +12181,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:48:32Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:22:55Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:28:09Z"
         }
       ],
       "issue": 12709,
@@ -12029,15 +12199,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12709-the-admin-menu-list-page-could-should-hi",
-        "head_sha": "aee703c05466a486b0671780210b841c88f47851"
+        "ci": {
+          "checked_at": "2026-08-23T22:28:09Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "aee703c05466a486b0671780210b841c88f47851",
+        "number": 14963,
+        "opened_at": "2026-08-23T22:22:55Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14963"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "The admin menu list page could/should hide forbidden options from demimods",
       "verdict": null
     },
@@ -12124,6 +12303,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:48:32Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:22:52Z"
         }
       ],
       "issue": 12711,
@@ -12133,15 +12317,23 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li",
-        "head_sha": "aad7c659728b531a40fc1d11a5657a80175e9134"
+        "ci": {
+          "checked_at": "2026-08-23T22:30:24Z",
+          "state": "pending"
+        },
+        "head_sha": "aad7c659728b531a40fc1d11a5657a80175e9134",
+        "number": 14962,
+        "opened_at": "2026-08-23T22:22:52Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14962"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Remove tappedout and mtggoldfish from /link",
       "verdict": null
     },
@@ -12180,6 +12372,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:46:24Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:22:50Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:26:56Z"
         }
       ],
       "issue": 12712,
@@ -12189,15 +12390,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
-        "head_sha": "7726467b55f0001d2b39746cdad6bf90ee2436b7"
+        "ci": {
+          "checked_at": "2026-08-23T22:26:56Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "7726467b55f0001d2b39746cdad6bf90ee2436b7",
+        "number": 14961,
+        "opened_at": "2026-08-23T22:22:50Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14961"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Some js on /admin/archetypes that assigns the current machine guess to the deck",
       "verdict": null
     },
@@ -12279,6 +12489,15 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-08-23T21:46:24Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:22:46Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:28:07Z"
         }
       ],
       "issue": 12714,
@@ -12288,15 +12507,24 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12714-we-link-to-status-pennydreadfulmagic-com",
-        "head_sha": "e8541a4a45e81a74a14c77aef79d755bfa3b0853"
+        "ci": {
+          "checked_at": "2026-08-23T22:28:07Z",
+          "failed": [],
+          "state": "green"
+        },
+        "head_sha": "e8541a4a45e81a74a14c77aef79d755bfa3b0853",
+        "number": 14960,
+        "opened_at": "2026-08-23T22:22:46Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14960"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "We link to status.pennydreadfulmagic.com from /about/ but it has an SSL error",
       "verdict": null
     },
@@ -21778,9 +22006,9 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T22:17:43Z",
-  "last_seq": 1100,
-  "last_snapshot_at": "2026-08-23T22:22:12Z",
+  "last_mirror_at": "2026-08-23T22:25:56Z",
+  "last_seq": 1193,
+  "last_snapshot_at": "2026-08-23T22:30:57Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

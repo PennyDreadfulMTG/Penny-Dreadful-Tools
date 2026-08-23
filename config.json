@@ -30,6 +30,7 @@
   },
   "max_fix_lines": 150,
   "max_fixup_attempts": 1,
+  "max_open_prs": 30,
   "max_stage_attempts": 2,
   "max_total_workspaces": 500,
   "min_session_age_seconds": 120,

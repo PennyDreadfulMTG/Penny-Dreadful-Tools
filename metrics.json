@@ -1,6 +1,6 @@
 {
   "active_workspaces": 0,
-  "alert": "unregistered workspace(s) in project: Troubleshoot missing admin route (433197db)",
+  "alert": "unregistered workspace(s) in project: Investigating Dependabot PR queues (8f077848), Reviewing UI date changes (8cd4064e), Troubleshoot missing admin route (433197db)",
   "caps": {
     "closures_today": 0,
     "prs_today": 22
@@ -13,7 +13,7 @@
     "reported": 7,
     "verified": 6
   },
-  "heartbeat": "2026-08-23T22:25:53Z",
+  "heartbeat": "2026-08-23T22:30:28Z",
   "open_escalations": 2,
   "pause_until": null,
   "paused": false,
@@ -24,6 +24,8 @@
     "workspaces_created": 36
   },
   "unregistered_workspaces": [
+    "Investigating Dependabot PR queues (8f077848)",
+    "Reviewing UI date changes (8cd4064e)",
     "Troubleshoot missing admin route (433197db)"
   ]
 }

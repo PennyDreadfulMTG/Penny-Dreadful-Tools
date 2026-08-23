@@ -11165,7 +11165,7 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T22:46:38Z",
+          "checked_at": "2026-08-23T23:04:17Z",
           "failed": [],
           "state": "green"
         },
@@ -11384,7 +11384,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-23T22:46:37Z",
+          "checked_at": "2026-08-23T23:04:16Z",
           "failed": [],
           "state": "green"
         },
@@ -11528,7 +11528,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-23T22:46:36Z",
+          "checked_at": "2026-08-23T23:04:15Z",
           "failed": [],
           "state": "green"
         },
@@ -11760,7 +11760,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-23T22:46:35Z",
+          "checked_at": "2026-08-23T23:04:14Z",
           "failed": [],
           "state": "green"
         },
@@ -11834,7 +11834,7 @@
         "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
         "ci": {
-          "checked_at": "2026-08-23T22:46:34Z",
+          "checked_at": "2026-08-23T23:04:13Z",
           "failed": [],
           "state": "green"
         },
@@ -11908,7 +11908,7 @@
         "adopted": false,
         "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
         "ci": {
-          "checked_at": "2026-08-23T22:46:33Z",
+          "checked_at": "2026-08-23T23:04:12Z",
           "failed": [],
           "state": "green"
         },
@@ -12268,7 +12268,7 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T22:46:32Z",
+          "checked_at": "2026-08-23T23:04:11Z",
           "failed": [],
           "state": "green"
         },
@@ -12330,6 +12330,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:28:09Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:57:34Z"
         }
       ],
       "issue": 12709,
@@ -12342,11 +12346,12 @@
         "adopted": false,
         "branch": "sweep/12709-the-admin-menu-list-page-could-should-hi",
         "ci": {
-          "checked_at": "2026-08-23T22:46:32Z",
+          "checked_at": "2026-08-23T22:57:34Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "aee703c05466a486b0671780210b841c88f47851",
+        "merged_at": "2026-08-23T22:57:03Z",
         "number": 14963,
         "opened_at": "2026-08-23T22:22:55Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14963"
@@ -12452,6 +12457,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:31:00Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:54:16Z"
         }
       ],
       "issue": 12711,
@@ -12464,11 +12473,12 @@
         "adopted": false,
         "branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li",
         "ci": {
-          "checked_at": "2026-08-23T22:46:31Z",
+          "checked_at": "2026-08-23T22:54:16Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "aad7c659728b531a40fc1d11a5657a80175e9134",
+        "merged_at": "2026-08-23T22:54:06Z",
         "number": 14962,
         "opened_at": "2026-08-23T22:22:52Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14962"
@@ -12538,7 +12548,7 @@
         "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
         "ci": {
-          "checked_at": "2026-08-23T22:46:30Z",
+          "checked_at": "2026-08-23T23:04:10Z",
           "failed": [],
           "state": "green"
         },
@@ -13497,6 +13507,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:53Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:58:42Z"
         }
       ],
       "issue": 12761,
@@ -13509,11 +13523,12 @@
         "adopted": false,
         "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
         "ci": {
-          "checked_at": "2026-08-23T22:46:27Z",
+          "checked_at": "2026-08-23T22:58:42Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "3d0dae279c8bcd2a8a4705bf829ee92b9a287dac",
+        "merged_at": "2026-08-23T22:57:59Z",
         "number": 14952,
         "opened_at": "2026-08-23T21:55:56Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14952"
@@ -22264,10 +22279,10 @@
     }
   },
   "last_bundle_at": null,
-  "last_master_sha": "6eb8e350d533377e7bdc6b4407b47b49a95982f3",
-  "last_mirror_at": "2026-08-23T22:46:24Z",
-  "last_seq": 1310,
-  "last_snapshot_at": "2026-08-23T22:49:50Z",
+  "last_master_sha": "b8b15f980b5eb6159204b3e30242b00ae0cce5aa",
+  "last_mirror_at": "2026-08-23T22:50:35Z",
+  "last_seq": 1368,
+  "last_snapshot_at": "2026-08-23T23:06:25Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

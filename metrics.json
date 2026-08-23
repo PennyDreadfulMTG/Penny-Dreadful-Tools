@@ -1,0 +1,21 @@
+{
+  "active_workspaces": 0,
+  "alert": null,
+  "caps": {
+    "closures_today": 0,
+    "prs_today": 0
+  },
+  "counts": {
+    "pending": 699
+  },
+  "heartbeat": "2026-08-23T21:26:09Z",
+  "open_escalations": 0,
+  "pause_until": null,
+  "paused": false,
+  "phase": "phase0",
+  "totals": {
+    "infra_failures": 0,
+    "nudges": 0,
+    "workspaces_created": 0
+  }
+}

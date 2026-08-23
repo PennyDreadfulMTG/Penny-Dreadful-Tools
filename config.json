@@ -1,0 +1,59 @@
+{
+  "bot_logins": [
+    "github-actions",
+    "dependabot",
+    "codecov",
+    "renovate"
+  ],
+  "bundle_max_age_hours": 6,
+  "bundle_min_gap_hours": 2,
+  "bundle_min_items": 10,
+  "concurrency_cap": 8,
+  "daily_close_cap": 15,
+  "daily_pr_cap": 10,
+  "forbidden_paths": [
+    "logsite_migrations/",
+    ".github/workflows/",
+    "Dockerfile",
+    "setup.py"
+  ],
+  "frontier_max": 12786,
+  "frontier_min": 790,
+  "lease_minutes": {
+    "fix": 90,
+    "triage": 45,
+    "verify": 45
+  },
+  "max_fix_lines": 150,
+  "max_stage_attempts": 2,
+  "max_total_workspaces": 500,
+  "min_session_age_seconds": 120,
+  "mirror": {
+    "interval_minutes": 15,
+    "kind": "branch",
+    "ref": "sweep-state"
+  },
+  "mutations_enabled": false,
+  "opus_session_id": "d851d405-a108-4c6b-a5d1-cd6cc52bd8bf",
+  "pause_initial_minutes": 30,
+  "pause_max_minutes": 240,
+  "phase": "phase0",
+  "pilot_limit": 40,
+  "project_id": "6da35401-db77-48a7-b9bf-ab9aa3be1a64",
+  "recent_activity_guard_days": 90,
+  "recent_activity_guard_mode": "comments",
+  "repo": "PennyDreadfulMTG/Penny-Dreadful-Tools",
+  "retry_sleeps": [
+    5,
+    25,
+    125
+  ],
+  "schema": 1,
+  "spawning_enabled": false,
+  "stale_transcript_minutes": 20,
+  "subprocess_timeout": 120,
+  "triage_batch_size": 5,
+  "verify_batch_size": 5,
+  "worker_effort": "high",
+  "worker_model": "sonnet-4-6"
+}

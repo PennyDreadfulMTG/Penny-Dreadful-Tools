@@ -126,7 +126,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 ## Running Decksite (pennydreadfulmagic.com)
 
 - uv run --frozen python run.py decksite
-- Visit <http://localhost:5000/>
+- Visit <http://localhost/> (or the port set by `decksite_port` in `config.json`; the default is port 80).
 
 ## Running Logsite (logs.pennydreadfulmagic.com)
 

@@ -131,7 +131,7 @@ PD.initTables = function() {
     $.tablesorter.addParser({
         "id": "colors",
         "is": function(_s, _table, _td, $td) {
-            return $td.find("span.mana").length > 0;
+            return $td.hasClass("contains-mana-bar") || $td.find("span.mana").length > 0;
         },
         "format": function(_s, _table, td) {
             var i,

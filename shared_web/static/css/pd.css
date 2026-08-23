@@ -961,6 +961,23 @@ nav.showing:has(.current ~ .submenu) {
     text-align: center;
 }
 
+.close-menu {
+    background: none;
+    border: none;
+    color: var(--color);
+    cursor: pointer;
+    display: none;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+nav.showing .close-menu {
+    display: block;
+}
+
 .submenu .item {
     font-family: var(--main-text-font-family);
     font-size: 16px;

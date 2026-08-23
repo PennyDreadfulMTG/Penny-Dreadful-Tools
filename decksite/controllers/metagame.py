@@ -79,11 +79,12 @@ def card(name: str, deck_type: str | None = None) -> str | wrappers.Response:
     try:
         submitted_name = decode_card_name(name)
         canonical_name = parse_card_name(name)
-        if submitted_name != canonical_name:
+        c = cs.load_card(canonical_name, tournament_only=tournament_only, season_id=get_season_id())
+        alternate_name = oracle.matching_official_alternate_name(c, submitted_name)
+        if submitted_name != canonical_name and alternate_name is None:
             assert request.endpoint is not None
             return redirect(url_for(request.endpoint, name=canonical_name, deck_type=deck_type))
-        c = cs.load_card(canonical_name, tournament_only=tournament_only, season_id=get_season_id())
-        view = Card(c, tournament_only)
+        view = Card(c, tournament_only, alternate_name)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e

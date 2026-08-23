@@ -6,6 +6,7 @@ import pytest
 
 from discordbot import command
 from discordbot.commands import CardConverter, resources
+from magic.models import Card, Printing
 
 
 def test_roughly_matches() -> None:
@@ -52,6 +53,63 @@ def test_results_from_queries() -> None:
     assert result.has_match()
     assert not result.is_ambiguous()
     assert result.get_best_match() == 'Wasteland'
+
+def test_copy_with_mode_preserves_official_alternate_name_and_printing(monkeypatch: pytest.MonkeyPatch) -> None:
+    card = Card({'name': 'Agent Venom', 'flavor_names': 'Rhilex the Accursed'})
+    printing = Printing({'set_code': 'om1', 'system_id': 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'})
+    monkeypatch.setattr(command.oracle, 'preferred_printing_for_alternate_name', lambda _card, _name: printing)
+
+    result = command.copy_with_mode(card, '', requested_name='Rhilex the Accursed')
+
+    assert result.display_name == 'Rhilex the Accursed'
+    assert result.preferred_printing == 'om1'
+    assert result.preferred_printing_system_id == 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'
+    assert command.card_name_for_display(result) == 'Rhilex the Accursed (Agent Venom)'
+
+def test_copy_with_mode_keeps_canonical_requests_on_the_default_printing() -> None:
+    card = Card({'name': 'Zilortha, Strength Incarnate', 'flavor_names': 'Godzilla, King of the Monsters'})
+
+    result = command.copy_with_mode(card, '', requested_name='Zilortha, Strength Incarnate')
+
+    assert result.get('display_name') is None
+    assert result.preferred_printing is None
+    assert result.get('preferred_printing_system_id') is None
+
+def test_copy_with_mode_keeps_explicit_set_syntax(monkeypatch: pytest.MonkeyPatch) -> None:
+    card = Card({'name': 'Zilortha, Strength Incarnate', 'flavor_names': 'Godzilla, King of the Monsters'})
+    monkeypatch.setattr(
+        command.oracle,
+        'preferred_printing_for_alternate_name',
+        lambda *_args: pytest.fail('An explicit set must take precedence'),
+    )
+
+    result = command.copy_with_mode(card, '', preferred_printing='iko', requested_name='Godzilla, King of the Monsters|iko')
+
+    assert result.display_name == 'Godzilla, King of the Monsters'
+    assert result.preferred_printing == 'iko'
+    assert result.get('preferred_printing_system_id') is None
+
+def test_copy_with_mode_does_not_display_search_only_alias() -> None:
+    card = Card({'name': 'Dark Confidant'})
+
+    result = command.copy_with_mode(card, '', requested_name='bob')
+
+    assert result.get('display_name') is None
+    assert command.card_name_for_display(result) == 'Dark Confidant'
+
+@pytest.mark.asyncio
+async def test_autocomplete_displays_official_alternate_name(monkeypatch: pytest.MonkeyPatch) -> None:
+    result = Mock()
+    result.get_all_matches.return_value = ['Agent Venom']
+    monkeypatch.setattr(command, 'searcher', lambda: Mock(search=Mock(return_value=result)))
+    monkeypatch.setattr(command.oracle, 'load_card', lambda _name: Card({'name': 'Agent Venom', 'flavor_names': 'Rhilex the Accursed'}))
+    ctx = Mock()
+    ctx.kwargs = {'card': 'rhil'}
+    ctx.send = AsyncMock()
+
+    await command.autocomplete_card(ctx)
+
+    ctx.send.assert_awaited_once_with(choices=[{'name': 'Rhilex the Accursed — Agent Venom', 'value': 'Rhilex the Accursed'}])
 
 
 def test_do_not_choke_on_unicode() -> None:
@@ -144,7 +202,7 @@ async def test_card_converter_uses_buttons_for_ambiguous_names(monkeypatch: pyte
     assert len(sent_components) == 1
     assert [button.label for button in sent_components[0]] == shown_matches
     assert all(button.emoji is None for button in sent_components[0])
-    cards_from_names.assert_called_once_with(['Brainstorm'], '', None)
+    cards_from_names.assert_called_once_with(['Brainstorm'], '', None, 'brain')
     pressed_ctx.edit_origin.assert_awaited_once_with(content='<@123>: Selected **Brainstorm**.', components=[])
     event = ctx.client.wait_for_component.await_args
     assert event.kwargs['components'][1].custom_id is not None

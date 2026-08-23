@@ -21,6 +21,7 @@ def basename(cards: list[Card]) -> str:
     return '_'.join(
         re.sub('[^a-z-]', '-', card.canonicalize(c.name))
         + (f'-{preferred_printing}' if (preferred_printing := c.get('preferred_printing')) else '')
+        + (f'-{preferred_printing_system_id}' if (preferred_printing_system_id := c.get('preferred_printing_system_id')) else '')
         for c in cards
     )
 
@@ -35,11 +36,15 @@ def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
         name = c.name.replace(' // ', '/')
     else:
         name = c.name
-    p = oracle.get_printing(c, c.get('preferred_printing'))
-    if p is not None:
-        u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&set={escape(p.set_code)}&format=image'
+    preferred_printing_system_id = c.get('preferred_printing_system_id')
+    if preferred_printing_system_id:
+        u = f'https://api.scryfall.com/cards/{escape(preferred_printing_system_id)}?format=image'
     else:
-        u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
+        p = oracle.get_printing(c, c.get('preferred_printing'))
+        if p is not None:
+            u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&set={escape(p.set_code)}&format=image'
+        else:
+            u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
     if version:
         u += f'&version={escape(version)}'
     if face and face != 'meld':

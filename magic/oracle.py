@@ -13,6 +13,7 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException, 
 
 LEGAL_CARDS: list[str] = []
 CARDS_BY_NAME: dict[str, Card] = {}
+OMENPATHS_SET_CODE = 'om1'
 
 def init(force: bool = False) -> None:
     if len(CARDS_BY_NAME) == 0 or force:
@@ -74,6 +75,39 @@ def load_cards(names: Iterable[str] | None = None, where: str | None = None) -> 
 
 def cards_by_name() -> dict[str, Card]:
     return CARDS_BY_NAME
+
+def official_alternate_names(c: Card) -> list[str]:
+    """Return official printed/flavor names suitable for display, rather than search-only aliases."""
+    aliases = [name for name in (c.get('flavor_names') or '').split('|') if name]
+    combined_aliases = [name for name in aliases if ' // ' in name]
+    combined_faces = {face for name in combined_aliases for face in name.split(' // ')}
+    return sorted(set(combined_aliases + [name for name in aliases if name not in combined_faces]))
+
+def matching_official_alternate_name(c: Card, query: str, allow_prefix: bool = False) -> str | None:
+    normalized_query = card.canonicalize(query)
+    aliases = [name for name in (c.get('flavor_names') or '').split('|') if name]
+    for alias in aliases:
+        if card.canonicalize(alias) == normalized_query:
+            return alias
+    if allow_prefix:
+        matches = [name for name in official_alternate_names(c) if card.canonicalize(name).startswith(normalized_query)]
+        if len(matches) == 1:
+            return matches[0]
+    return None
+
+def preferred_printing_for_alternate_name(c: Card, alternate_name: str) -> Printing | None:
+    printings = get_printings(c)
+    for printing in printings:
+        if printing.flavor_name == alternate_name:
+            return printing
+    # Through the Omenpaths is a one-time MTGO treatment. Scryfall exposes its
+    # card names as printed_name rather than flavor_name, so that name is not
+    # retained on our printing row. An official alias plus an OM1 printing is
+    # therefore enough to identify the requested printing without new storage.
+    for printing in printings:
+        if str(printing.set_code).lower() == OMENPATHS_SET_CODE:
+            return printing
+    return None
 
 def load_cards_with_flavor_names() -> list[Card]:
     sql = multiverse.cached_base_query('c.flavor_names IS NOT NULL')

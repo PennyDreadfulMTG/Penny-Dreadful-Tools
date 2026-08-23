@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+from copy import copy
 
 import sentry_sdk
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
@@ -49,6 +50,15 @@ def image(c: str = '') -> wrappers.Response:
     names = c.split('|')
     try:
         requested_cards = oracle.load_cards(names)
+        preferred_printing = request.args.get('printing')
+        preferred_printing_system_id = request.args.get('printing_id')
+        if preferred_printing or preferred_printing_system_id:
+            requested_cards = [copy(card) for card in requested_cards]
+            for card in requested_cards:
+                if preferred_printing:
+                    card['preferred_printing'] = preferred_printing
+                if preferred_printing_system_id:
+                    card['preferred_printing_system_id'] = preferred_printing_system_id
         path = image_fetcher.download_image(requested_cards)
         if path is None:
             raise InternalServerError(f'Failed to get image for {c}')

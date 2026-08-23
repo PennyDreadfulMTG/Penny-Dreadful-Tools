@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 
 from flask import request
 from flask_babel import gettext
@@ -19,13 +19,6 @@ class LinkAccounts(View):
         for k in request.form.keys():  # type: ignore
             self.form[k] = request.form[k].strip()
         self.form.errors = Container()
-        if self.person and self.person.mtgo_username:
-            if self.form.get('to_username', None) is None and self.person.tappedout_username is not None:
-                self.form['to_username'] = self.person.tappedout_username
-                self.disable_to = True
-            if self.form.get('gf_username', None) is None and self.person.mtggoldfish_username is not None:
-                self.form['gf_username'] = self.person.mtggoldfish_username
-                self.disable_gf = True
         self.process()
 
     def __getattr__(self, attr: str) -> Any:
@@ -35,10 +28,7 @@ class LinkAccounts(View):
         return gettext('Link Accounts')
 
     def process(self) -> None:
-        if self.person and self.person.mtgo_username:
-            self.link_tappedout()
-            self.link_mtggoldfish()
-        elif self.form.get('mtgo_username', None):  # Not linked
+        if not (self.person and self.person.mtgo_username) and self.form.get('mtgo_username', None):  # Not linked
             self.link_discord()
 
     def link_discord(self) -> None:
@@ -50,31 +40,3 @@ class LinkAccounts(View):
             self.person = person.link_discord(self.form['mtgo_username'], did)
         except AlreadyExistsException:
             self.form.errors.mtgo_username = '{mtgo_username} is already connected to another discord account.'.format(mtgo_username=self.form['mtgo_username'])
-
-    def link_mtggoldfish(self) -> None:
-        if self.person is None:
-            return
-        mtggoldfish_name = self.form.get('gf_username', None)
-        if mtggoldfish_name and self.person.mtggoldfish_username != mtggoldfish_name:
-            mtggoldfish_user = person.maybe_load_person_by_mtggoldfish_name(mtggoldfish_name)
-            if mtggoldfish_user is None:
-                self.form.errors.gf_username = f'Could not find an MTGGoldfish user called "{mtggoldfish_name}" in our database'
-            elif mtggoldfish_user.mtgo_username is not None:
-                self.form.errors.gf_username = f'"{mtggoldfish_name}" is already associated to another user.  If you believe this is in error, contact us.'
-            else:
-                person.squash(self.person.id, mtggoldfish_user.id, 'mtgo_username', 'mtggoldfish_username')
-                self.disable_gf = True
-
-    def link_tappedout(self) -> None:
-        if self.person is None:
-            return
-        tapped_name = self.form.get('to_username', None)
-        if tapped_name and self.person.tappedout_username != tapped_name:
-            tapped_user = person.maybe_load_person_by_tappedout_name(tapped_name)
-            if tapped_user is None:
-                self.form.errors.to_username = f'Could not find a TappedOut user called "{tapped_name}" in our database'
-            elif tapped_user.id is not None:
-                self.form.errors.to_username = f'"{tapped_name}" is already associated to another user.  If you believe this is in error, contact us.'
-            else:
-                person.squash(self.person.id, cast(int, tapped_user.id), 'mtgo_username', 'tappedout_username')
-                self.disable_to = True

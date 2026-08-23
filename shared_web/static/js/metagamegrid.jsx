@@ -48,6 +48,11 @@ const renderItem = (grid, archetype) => (
                 <span className={"additional"} title="Win-Loss Record">
                     {n(archetype.wins)}–{n(archetype.losses)}
                 </span>
+                {archetype.qualityScore != null && (
+                    <span className={"additional"} title="Quality Score">
+                        Q:{Number(archetype.qualityScore * 100).toFixed(1)}%
+                    </span>
+                )}
             </div>
         </div>
         <div className="row flex-row">

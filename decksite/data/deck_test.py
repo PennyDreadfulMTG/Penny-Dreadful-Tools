@@ -6,7 +6,7 @@ from decksite.data import clauses, deck
 from decksite.database import db
 from decksite.testutil import with_test_db
 from magic import decklist, oracle
-from magic.models import Card, Deck
+from magic.models import Card, CardRef, Deck
 from shared.container import Container
 
 
@@ -104,3 +104,40 @@ def test_equivalent_names_are_stored_and_found_as_one_identity(monkeypatch: pyte
     ]
     matching_ids = db().values(f'SELECT id FROM deck AS d WHERE {clauses.card_where("Kroble, Envoy of the Bog")}')
     assert set(matching_ids) == {omenpaths.id, spiderman.id}
+
+def make_deck(cards: list[tuple[str, int]]) -> Deck:
+    d = Deck({})
+    d.maindeck = [CardRef(name, n) for name, n in cards]
+    d.sideboard = []
+    return d
+
+def test_similarity_score_no_plays() -> None:
+    a = make_deck([('Lightning Bolt', 4), ('Counterspell', 4)])
+    b = make_deck([('Lightning Bolt', 4), ('Dark Ritual', 4)])
+    score = deck.similarity_score(a, b)
+    assert score == pytest.approx(0.5)
+
+def test_similarity_score_with_plays_weights_rare_cards() -> None:
+    # Plays covers all cards so unknown-card floor weight doesn't distort results.
+    # Lightning Bolt is common (high playability), Counterspell is rare (low playability).
+    plays = {'Lightning Bolt': 0.5, 'Counterspell': 0.01, 'Dark Ritual': 0.3}
+    a = make_deck([('Lightning Bolt', 4), ('Counterspell', 4)])
+    b = make_deck([('Lightning Bolt', 4), ('Counterspell', 4)])
+    score_identical = deck.similarity_score(a, b, plays)
+    assert score_identical == pytest.approx(1.0)
+
+    # Share only the rare card (Counterspell), not the common one (Lightning Bolt).
+    b_partial = make_deck([('Counterspell', 4), ('Dark Ritual', 4)])
+    score_rare_shared = deck.similarity_score(a, b_partial, plays)
+    score_unweighted = deck.similarity_score(a, b_partial)  # plays=None → all weights 1
+
+    # Weighted score is higher than unweighted because the shared card (Counterspell)
+    # is rare and therefore contributes more weight relative to the other cards.
+    assert score_rare_shared > score_unweighted
+
+def test_similarity_score_with_plays_zero_playability() -> None:
+    plays: dict[str, float] = {}  # no playability data — uses floor of 0.001
+    a = make_deck([('Lightning Bolt', 4)])
+    b = make_deck([('Lightning Bolt', 4)])
+    score = deck.similarity_score(a, b, plays)
+    assert score == pytest.approx(1.0)

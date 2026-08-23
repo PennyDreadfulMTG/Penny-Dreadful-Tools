@@ -4,7 +4,7 @@ import time
 from typing import TypedDict
 
 from decksite import deck_name
-from decksite.data import query, season
+from decksite.data import playability, query, season
 from decksite.data.top import Top
 from decksite.database import db
 from magic import decklist, legality, mana, oracle, seasons
@@ -476,10 +476,11 @@ def calculate_similar_decks(ds: list[Deck]) -> None:
         for d in ds:
             d.similar_decks = []
         return
+    plays = playability.playability()
     potentially_similar, _ = load_decks(f'd.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))')
     for d in ds:
         for psd in potentially_similar:
-            psd.similarity_score = round(similarity_score(d, psd) * 100)
+            psd.similarity_score = round(similarity_score(d, psd, plays) * 100)
         d.similar_decks = [psd for psd in potentially_similar if psd.similarity_score >= threshold and psd.id != d.id]
         d.similar_decks.sort(key=lambda d: -(d.similarity_score))
         redis.store(f'decksite:deck:{d.id}:similar', d.similar_decks, ex=172800)
@@ -493,13 +494,19 @@ def all_card_names(ds: list[Deck]) -> set[str]:
                 names.add(c['name'])
     return names
 
-# Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
-def similarity_score(a: Deck, b: Deck) -> float:
-    score = 0
-    for c in a.maindeck:
-        if c in b.maindeck:
-            score += 1
-    return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
+# Score each shared card by inverse playability so rarer cards contribute more to similarity.
+# When plays is None (e.g. called outside calculate_similar_decks) all weights are 1.
+def similarity_score(a: Deck, b: Deck, plays: dict[str, float] | None = None) -> float:
+    floor = 0.001
+    def weight(name: str) -> float:
+        if plays is None:
+            return 1.0
+        return 1.0 / max(plays.get(name, floor), floor)
+    score = sum(weight(c.name) for c in a.maindeck if c in b.maindeck)
+    a_total = sum(weight(c.name) for c in a.maindeck)
+    b_total = sum(weight(c.name) for c in b.maindeck)
+    denominator = max(a_total, b_total)
+    return score / denominator if denominator > 0 else 0.0
 
 def load_decks_by_cards(names: list[str], not_names: list[str]) -> list[Deck]:
     sql = ''

@@ -14,7 +14,7 @@ PD.init = function() {
     PD.initTooltips();
     PD.initTypeahead();
     PD.initSearchShortcut();
-    PD.initArchetypeGuess();
+    PD.initUseGuess();
     PD.initReassign();
     PD.initRuleForms();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
@@ -257,13 +257,10 @@ PD.initSearchShortcut = function() {
     });
 };
 
-PD.initArchetypeGuess = function() {
-    $("tr[data-archetype-id]").each(function() {
-        var archetypeId = $(this).data("archetype-id");
-        var select = $(this).find("select[name$='archetype_id']");
-        if (archetypeId && select.val() === "") {
-            select.val(archetypeId);
-        }
+PD.initUseGuess = function() {
+    $(".use-guess").click(function() {
+        $(this).closest("tr").find("select[name$='archetype_id']").val($(this).data("archetype_id"));
+        return false;
     });
 };
 

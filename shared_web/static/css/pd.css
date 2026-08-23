@@ -2397,6 +2397,11 @@ td.archetype-description {
     cursor: pointer;
 }
 
+/* Link to fill in the machine-guessed archetype on the "Edit Archetypes" page */
+.use-guess {
+    cursor: pointer;
+}
+
 /*
 
 News

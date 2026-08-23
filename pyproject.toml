@@ -8,7 +8,7 @@ dependencies = [
     "beautifulsoup4==4.15.0",
     "better-profanity",
     "cachelib==0.14.0",
-    "click==8.4.1",
+    "click==8.4.2",
     "coverage==7.14.1",
     "feedparser==6.0.12",
     "flask-restx",

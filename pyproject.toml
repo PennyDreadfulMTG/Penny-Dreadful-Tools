@@ -29,7 +29,7 @@ dependencies = [
     "pytest-asyncio==1.4.0",
     "pytest-cov==7.1.0",
     "python-dateutil==2.9.0.post0",
-    "python-dotenv==1.2.2",
+    "python-dotenv==1.2.3",
     "pytz==2026.2",
     "redis==8.1.0",
     "requests",

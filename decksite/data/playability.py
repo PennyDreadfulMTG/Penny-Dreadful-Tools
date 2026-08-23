@@ -94,7 +94,7 @@ def playability() -> dict[str, float]:
         FROM
             _playability
     """
-    return {r['name']: r['playability'] for r in db().select(sql)}
+    return {r['name']: float(r['playability']) for r in db().select(sql)}
 
 @retry_after_calling(preaggregate)
 def season_playability(season_id: int) -> list[Container]:

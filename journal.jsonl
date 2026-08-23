@@ -722,3 +722,4 @@
 {"changes": {"mirror": {"interval_minutes": 15, "kind": "branch", "ref": "sweep-state"}}, "event": "CONFIG_CHANGED", "seq": 722, "ts": "2026-08-23T21:28:30Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 722, "seq": 723, "ts": "2026-08-23T21:28:30Z"}
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 724, "ts": "2026-08-23T21:28:30Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 725, "ts": "2026-08-23T21:29:34Z"}

@@ -2574,6 +2574,9 @@ Notification Badges
 }
 
 .badge {
+    background-color: var(--red);
+    border-radius: 50%;
+    color: white;
     font-size: var(--table-font-size);
     height: 1.333em;
     line-height: var(--reading-line-height);

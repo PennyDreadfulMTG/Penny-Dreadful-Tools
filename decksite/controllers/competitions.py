@@ -1,3 +1,5 @@
+from flask import g
+
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
 from decksite.data import achievements as achs
@@ -6,6 +8,7 @@ from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import person as ps
 from decksite.views import PD500, Achievements, Competition, Competitions, KickOff, SuperSaturday, TournamentHosting, TournamentLeaderboards, Tournaments
+from shared import dtutil
 
 
 @APP.route('/competitions/')
@@ -19,7 +22,10 @@ def competitions() -> str:
 @cached()
 def competition(competition_id: int) -> str:
     ars = archetype.load_competition_archetypes(competition_id)
-    view = Competition(comp.load_competition(competition_id, should_load_decks=False), ars)
+    c = comp.load_competition(competition_id, should_load_decks=False)
+    if c.type == 'League' and c.start_date <= dtutil.now() <= c.end_date:
+        g.menu_endpoint_override = 'current_league'
+    view = Competition(c, ars)
     return view.page()
 
 @APP.route('/tournaments/')

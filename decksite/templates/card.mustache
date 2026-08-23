@@ -1,19 +1,13 @@
-{{#alternate_name}}
-    <section>
-        <p><b>{{alternate_name}}</b> is an alternate printing of <a class="card" href="{{canonical_url}}">{{canonical_name}}</a>.</p>
-    </section>
-{{/alternate_name}}
-{{^alternate_name}}
-    {{#card.has_alternate_printed_names}}
-        <section>
-            {{#card.alternate_printed_names}}
-                <p>Also printed as <a class="card" href="{{url}}">{{name}}</a>.</p>
-            {{/card.alternate_printed_names}}
-        </section>
-    {{/card.has_alternate_printed_names}}
-{{/alternate_name}}
-<section>
+<section class="card-image-block">
     <img src="{{img_url}}" alt="{{display_name}}" class="card-img {{card_img_class}}">
+    {{#alternate_name}}
+        <p class="alternate-printing-note {{card_img_class}}">Alternate printing of <a class="card" href="{{canonical_url}}">{{canonical_name}}</a>.</p>
+    {{/alternate_name}}
+    {{^alternate_name}}
+        {{#card.has_alternate_printed_names}}
+            <p class="alternate-printing-note {{card_img_class}}">Also printed as {{#card.alternate_printed_names}}{{separator}}<a href="{{url}}">{{name}}</a>{{/card.alternate_printed_names}}.</p>
+        {{/card.has_alternate_printed_names}}
+    {{/alternate_name}}
     {{#bugs}}
         <p class="bug-desc {{card_img_class}}"><b>{{classification}} bug</b> {{description}}</p>
     {{/bugs}}

@@ -3,7 +3,7 @@ import pytest
 from decksite import prepare
 from decksite.main import APP
 from magic import seasons
-from magic.models import Card
+from magic.models import Card, Printing
 from shared_web import template
 
 
@@ -24,8 +24,11 @@ def test_season_icon_link_uses_site_colors(monkeypatch: pytest.MonkeyPatch) -> N
     assert 'ss-rare' not in current
     assert 'ss-grad' not in current
 
+
 def test_prepare_card_adds_official_alternate_name_links(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(seasons, 'current_season_name', lambda: 'Penny Dreadful TST')
+    printing = Printing({'set_code': 'om1', 'system_id': 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'})
+    monkeypatch.setattr(prepare.oracle, 'preferred_printing_for_alternate_name', lambda _card, _name: printing)
     card = Card({
         'name': 'Agent Venom',
         'flavor_names': 'Rhilex the Accursed',
@@ -38,10 +41,42 @@ def test_prepare_card_adds_official_alternate_name_links(monkeypatch: pytest.Mon
         rendered = template.render_name('entry', {'name': card.name, 'n': 4, 'card': card})
 
     assert card.alternate_printed_names == [
-        {'name': 'Rhilex the Accursed', 'url': '/cards/Rhilex%20the%20Accursed/'},
+        {
+            'name': 'Rhilex the Accursed',
+            'url': '/cards/Rhilex%20the%20Accursed/',
+            'separator': '',
+        },
     ]
+    assert card.decklist_alternate_printed_names == card.alternate_printed_names
     assert '4 Agent Venom' in rendered
-    assert 'class="alternate-card-name" title="Alternate printed name">· Rhilex the Accursed</a>' in rendered
+    assert 'class="alternate-card-name">· Rhilex the Accursed</a>' in rendered
+    assert 'class="card alternate-card-name"' not in rendered
+
+
+def test_prepare_card_omits_non_omenpaths_names_from_decklists(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(seasons, 'current_season_name', lambda: 'Penny Dreadful TST')
+    printing = Printing({'set_code': 'sld', 'system_id': 'a49bdd0b-fc8d-4706-b614-14d1731fddc0'})
+    monkeypatch.setattr(prepare.oracle, 'preferred_printing_for_alternate_name', lambda _card, _name: printing)
+    card = Card({
+        'name': 'Phantasmal Image',
+        'flavor_names': 'Absolutely Accurate Actor',
+        'layout': 'normal',
+        'legalities': None,
+    })
+
+    with APP.test_request_context('/'):
+        prepare.prepare_card(card)
+        rendered = template.render_name('entry', {'name': card.name, 'n': 4, 'card': card})
+
+    assert card.alternate_printed_names == [
+        {
+            'name': 'Absolutely Accurate Actor',
+            'url': '/cards/Absolutely%20Accurate%20Actor/',
+            'separator': '',
+        },
+    ]
+    assert card.decklist_alternate_printed_names == []
+    assert 'Absolutely Accurate Actor' not in rendered
 
 def test_prepare_card_uses_preferred_printing_for_image(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(seasons, 'current_season_name', lambda: 'Penny Dreadful TST')

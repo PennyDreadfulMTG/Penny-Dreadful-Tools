@@ -19,6 +19,26 @@
         "detail": "687 passed, 1 skipped, 89 deselected in 16.42s",
         "result": "passed"
       }
+    },
+    {
+      "batch_id": "u-12708-1",
+      "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
+      "files_changed": 1,
+      "head_sha": "3436d9f4742f9d36536f818a4dea86508bcc2863",
+      "issue": 12708,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "ESLint failed on `metagamegrid.jsx` line 51: `!= null` violated the `eqeqeq` rule, and replacing with `!== undefined` would violate `no-undefined`. Fixed by using `typeof archetype.qualityScore === \"number\"` which satisfies both rules and correctly guards the quality-score span. One line changed; behaviour is identical for the numeric values the API returns.",
+      "outcome": "pushed",
+      "pr_body": null,
+      "pr_title": null,
+      "recorded_at": "2026-08-23T22:35:12Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed!",
+        "result": "passed"
+      }
     }
   ],
   "issue": 12708,

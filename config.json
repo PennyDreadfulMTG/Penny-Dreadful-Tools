@@ -9,7 +9,7 @@
   "bundle_max_age_hours": 6,
   "bundle_min_gap_hours": 2,
   "bundle_min_items": 10,
-  "ci_recheck_minutes": 30,
+  "ci_recheck_minutes": 5,
   "closures_enabled": false,
   "concurrency_cap": 8,
   "daily_close_cap": 15,

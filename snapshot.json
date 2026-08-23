@@ -2,7 +2,7 @@
   "counters": {
     "infra_failures": 0,
     "nudges": 4,
-    "workspaces_created": 36
+    "workspaces_created": 39
   },
   "daily": {
     "closures": 0,
@@ -11132,6 +11132,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T22:23:17Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:33:07Z"
         }
       ],
       "issue": 12617,
@@ -11144,8 +11148,9 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T22:30:28Z",
-          "state": "pending"
+          "checked_at": "2026-08-23T22:33:07Z",
+          "failed": [],
+          "state": "green"
         },
         "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc",
         "number": 14971,
@@ -11268,6 +11273,15 @@
         "question": "PR #14969 is red on test \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
       },
       "evidence_file": "evidence/12621.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
+        "failed": [
+          "test"
+        ],
+        "log_tail": "### test\no _legal_cards\ntest\tRun pytest\t2026-08-23T22:29:41.2729320Z INFO     root:logger.py:43 Adding season 19 to _legal_cards\ntest\tRun pytest\t2026-08-23T22:29:41.2729700Z INFO     root:logger.py:43 Adding season 20 to _legal_cards\ntest\tRun pytest\t2026-08-23T22:29:42.8540167Z INFO     root:logger.py:43 Adding season 21 to _legal_cards\ntest\tRun pytest\t2026-08-23T22:29:42.8540746Z =============================== warnings summary ===============================\ntest\tRun pytest\t2026-08-23T22:29:42.8541149Z <frozen importlib._bootstrap>:488\ntest\tRun pytest\t2026-08-23T22:29:42.8541463Z <frozen importlib._bootstrap>:488\ntest\tRun pytest\t2026-08-23T22:29:42.8543526Z   <frozen importlib._bootstrap>:488: DeprecationWarning: Bitwise inversion '~' on bool is deprecated and will be removed in Python 3.16. This returns the bitwise inversion of the underlying int object and is usually not what you expect from negating a bool. Use the 'not' operator for boolean negation or ~int(x) if you really want the bitwise inversion of the underlying int.\ntest\tRun pytest\t2026-08-23T22:29:42.8544798Z \ntest\tRun pytest\t2026-08-23T22:29:42.8544970Z decksite/smoke_test.py::test\ntest\tRun pytest\t2026-08-23T22:29:42.8545281Z decksite/smoke_test.py::test_some_pages\ntest\tRun pytest\t2026-08-23T22:29:42.8545600Z decksite/smoke_test.py::test_some_pages\ntest\tRun pytest\t2026-08-23T22:29:42.8546285Z decksite/smoke_test.py::test_some_pages\ntest\tRun pytest\t2026-08-23T22:29:42.8546592Z decksite/smoke_test.py::test_some_pages\ntest\tRun pytest\t2026-08-23T22:29:42.8546889Z decksite/smoke_test.py::test_some_pages\ntest\tRun pytest\t2026-08-23T22:29:42.8547183Z decksite/smoke_test.py::test_some_pages\ntest\tRun pytest\t2026-08-23T22:29:42.8549144Z   /home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/decksite/cache.py:65: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\ntest\tRun pytest\t2026-08-23T22:29:42.8550747Z     now = datetime.datetime.utcnow()\ntest\tRun pytest\t2026-08-23T22:29:42.8551005Z \ntest\tRun pytest\t2026-08-23T22:29:42.8551272Z discordbot/command_test.py::test_results_from_queries\ntest\tRun pytest\t2026-08-23T22:29:42.8553090Z   /home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/.venv/lib/python3.13/site-packages/whoosh/codec/whoosh3.py:1116: SyntaxWarning: \"is\" with 'int' literal. Did you mean \"==\"?\ntest\tRun pytest\t2026-08-23T22:29:42.8553969Z     elif fixedsize is 0:\ntest\tRun pytest\t2026-08-23T22:29:42.8554145Z \ntest\tRun pytest\t2026-08-23T22:29:42.8554418Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\ntest\tRun pytest\t2026-08-23T22:29:42.8555094Z - generated xml file: /home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/TestResults.xml -\ntest\tRun pytest\t2026-08-23T22:29:42.8555685Z ============================= slowest 2 durations ==============================\ntest\tRun pytest\t2026-08-23T22:29:42.8556162Z 29.92s call     discordbot/command_test.py::test_results_from_queries\ntest\tRun pytest\t2026-08-23T22:29:42.8556638Z 6.94s call     decksite/scrapers/gatherling_test.py::test_process\ntest\tRun pytest\t2026-08-23T22:29:42.8557336Z =========================== short test summary info ============================\ntest\tRun pytest\t2026-08-23T22:29:42.8557843Z SKIPPED [1] discordbot/functional_test.py:13: These need to be rewritten\ntest\tRun pytest\t2026-08-23T22:29:42.8558632Z SKIPPED [1] magic/rotation_test.py:100: Because CloudFlare sometimes blocks API access from Github workflow this test is flakey\ntest\tRun pytest\t2026-08-23T22:29:42.8559578Z FAILED decksite/scrapers/gatherling_test.py::test_process - TypeError: unsupported operand type(s) for /: 'float' and 'decimal.Decimal'\ntest\tRun pytest\t2026-08-23T22:29:42.8560338Z ======= 1 failed, 778 passed, 2 skipped, 10 warnings in 80.20s (0:01:20) =======\ntest\tRun pytest\t2026-08-23T22:29:47.0186907Z ##[error]Process completed with exit",
+        "pr": 14969
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -11312,13 +11326,31 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-08-23T22:23:28Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-08-23T22:32:01Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-08-23T22:33:10Z"
         }
       ],
       "issue": 12621,
       "labels": [
         "triage"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "u-12621-1",
+        "expires_at": "2026-08-24T00:03:10Z",
+        "granted_at": "2026-08-23T22:33:10Z",
+        "kind": "fix",
+        "session_id": "9c70ba52-e3e5-4138-9f74-12265ce78384",
+        "workspace_id": "7feda093-4223-4e45-b127-c84b6fe13281"
+      },
       "notes": null,
       "pr": {
         "adopted": false,
@@ -11340,7 +11372,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_leased",
       "title": "When calculating similarity use the inverse of playability of a card to weight rarer cards more heavily",
       "verdict": null
     },
@@ -12070,6 +12102,15 @@
         "question": "PR #14964 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
       },
       "evidence_file": "evidence/12708.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
+        "failed": [
+          "jslint"
+        ],
+        "log_tail": "### jslint\ntext(-), resilient_parsing=False, show_default=None, terminal_width=None, token_normalize_func=None)\njslint\tRun jslint\t2026-08-23T22:26:06.6255735Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 281, in jslint\njslint\tRun jslint\t2026-08-23T22:26:06.6256338Z     do_jslint(fix)\njslint\tRun jslint\t2026-08-23T22:26:06.6256568Z       fix = False\njslint\tRun jslint\t2026-08-23T22:26:06.6257116Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 276, in do_jslint\njslint\tRun jslint\t2026-08-23T22:26:06.6257747Z     subprocess.check_call(cmd + files, shell=ON_WINDOWS)\njslint\tRun jslint\t2026-08-23T22:26:06.6258101Z       fix = False\njslint\tRun jslint\t2026-08-23T22:26:06.6260949Z       files = ['decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-08-23T22:26:06.6263727Z       cmd = ['./node_modules/.bin/eslint']\njslint\tRun jslint\t2026-08-23T22:26:06.6264369Z   File \"/opt/hostedtoolcache/Python/3.13.15/x64/lib/python3.13/subprocess.py\", line 419, in check_call\njslint\tRun jslint\t2026-08-23T22:26:06.6264997Z     raise CalledProcessError(retcode, cmd)\njslint\tRun jslint\t2026-08-23T22:26:06.6267874Z       popenargs = (['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx'])\njslint\tRun jslint\t2026-08-23T22:26:06.6270514Z       kwargs = {'shell': False}\njslint\tRun jslint\t2026-08-23T22:26:06.6270796Z       retcode = 1\njslint\tRun jslint\t2026-08-23T22:26:06.6273631Z       cmd = ['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-08-23T22:26:06.6279266Z subprocess.CalledProcessError: Command '['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']' returned non-zero exit status 1.\njslint\tRun jslint\t2026-08-23T22:26:06.7159596Z ##[error]Process completed with ex",
+        "pr": 14964
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -12114,6 +12155,26 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-08-23T22:23:23Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-08-23T22:32:02Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-08-23T22:33:09Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-08-23T22:35:12Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-08-23T22:35:13Z"
         }
       ],
       "issue": 12708,
@@ -12123,18 +12184,15 @@
       "lease": null,
       "notes": null,
       "pr": {
-        "adopted": false,
+        "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T22:23:23Z",
-          "failed": [
-            "jslint"
-          ],
-          "state": "failed"
+          "checked_at": "2026-08-23T22:36:17Z",
+          "state": "pending"
         },
-        "head_sha": "0dac4c9844abd8b71421ba472e508146b9e95684",
+        "head_sha": "3436d9f4742f9d36536f818a4dea86508bcc2863",
         "number": 14964,
-        "opened_at": "2026-08-23T22:22:58Z",
+        "opened_at": "2026-08-23T22:35:13Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14964"
       },
       "stage_attempts": {
@@ -12142,7 +12200,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "pr_open",
       "title": "Put the quality score in the metagame page even if just in a comment or a tooltip",
       "verdict": null
     },
@@ -12308,6 +12366,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T22:22:52Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:31:00Z"
         }
       ],
       "issue": 12711,
@@ -12320,8 +12382,9 @@
         "adopted": false,
         "branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li",
         "ci": {
-          "checked_at": "2026-08-23T22:30:24Z",
-          "state": "pending"
+          "checked_at": "2026-08-23T22:31:00Z",
+          "failed": [],
+          "state": "green"
         },
         "head_sha": "aad7c659728b531a40fc1d11a5657a80175e9134",
         "number": 14962,
@@ -12572,6 +12635,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:57Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:33:05Z"
         }
       ],
       "issue": 12715,
@@ -12584,11 +12651,12 @@
         "adopted": false,
         "branch": "sweep/12715-make-the-archetypes-to-assign-badge-into",
         "ci": {
-          "checked_at": "2026-08-23T22:02:57Z",
+          "checked_at": "2026-08-23T22:33:05Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "8ad7e65879ecd87be1419f8fe5ae8eb12c8ed95a",
+        "merged_at": "2026-08-23T22:17:59Z",
         "number": 14953,
         "opened_at": "2026-08-23T21:55:59Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14953"
@@ -12850,6 +12918,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:56Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:33:05Z"
         }
       ],
       "issue": 12719,
@@ -12862,11 +12934,12 @@
         "adopted": false,
         "branch": "sweep/12719-why-is-from-bug-blog-always-false-can-we",
         "ci": {
-          "checked_at": "2026-08-23T22:02:56Z",
+          "checked_at": "2026-08-23T22:33:05Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "f442f3b1643116e305f524a44b0bdb10b52c9aa7",
+        "merged_at": "2026-08-23T22:03:23Z",
         "number": 14943,
         "opened_at": "2026-08-23T21:40:40Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14943"
@@ -13054,6 +13127,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:55Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:33:04Z"
         }
       ],
       "issue": 12730,
@@ -13066,11 +13143,12 @@
         "adopted": false,
         "branch": "sweep/12730-add-price-of-progress-to-explain-promo-t",
         "ci": {
-          "checked_at": "2026-08-23T22:02:55Z",
+          "checked_at": "2026-08-23T22:33:04Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "06198158643ff4f7701ebbaf4ebd71e5b113504c",
+        "merged_at": "2026-08-23T22:02:58Z",
         "number": 14944,
         "opened_at": "2026-08-23T21:41:45Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14944"
@@ -13219,6 +13297,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:54Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:33:04Z"
         }
       ],
       "issue": 12760,
@@ -13231,11 +13313,12 @@
         "adopted": false,
         "branch": "sweep/12760-league-records-menu-entry-has-slightly-s",
         "ci": {
-          "checked_at": "2026-08-23T22:02:54Z",
+          "checked_at": "2026-08-23T22:33:04Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "eaeba3118a33af97640aa3480a884cc7a68be403",
+        "merged_at": "2026-08-23T22:07:05Z",
         "number": 14948,
         "opened_at": "2026-08-23T21:43:03Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14948"
@@ -13305,7 +13388,7 @@
         "adopted": false,
         "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
         "ci": {
-          "checked_at": "2026-08-23T22:02:53Z",
+          "checked_at": "2026-08-23T22:33:04Z",
           "failed": [],
           "state": "green"
         },
@@ -13367,6 +13450,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:52Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:33:02Z"
         }
       ],
       "issue": 12762,
@@ -13379,11 +13466,12 @@
         "adopted": false,
         "branch": "sweep/12762-oldstyle-nums-for-archetype-name-look-si",
         "ci": {
-          "checked_at": "2026-08-23T22:02:52Z",
+          "checked_at": "2026-08-23T22:33:02Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "b8bb68d1b2da4f3781daaf15e0f9f5a74b4bba44",
+        "merged_at": "2026-08-23T22:06:57Z",
         "number": 14947,
         "opened_at": "2026-08-23T21:43:01Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14947"
@@ -13441,6 +13529,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:51Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:33:02Z"
         }
       ],
       "issue": 12769,
@@ -13453,11 +13545,12 @@
         "adopted": false,
         "branch": "sweep/12769-not-available-online-for-cardhoarder-doe",
         "ci": {
-          "checked_at": "2026-08-23T22:02:51Z",
+          "checked_at": "2026-08-23T22:33:02Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "7e88fb0719731fdaf9b3083d9fa80ba7bb58c724",
+        "merged_at": "2026-08-23T22:06:47Z",
         "number": 14946,
         "opened_at": "2026-08-23T21:42:59Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14946"
@@ -13475,8 +13568,20 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "pr-conflict",
+        "question": "PR #14951 conflicts with master \u2014 dispatch one fixer to merge master and resolve (queue-fixup), or abandon it (abandon-pr)?"
+      },
       "evidence_file": "evidence/12778.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12778-clickable-table-row-improvements",
+        "failed": [
+          "merge-conflict"
+        ],
+        "log_tail": "mergeable=CONFLICTING mergeStateStatus=DIRTY on branch sweep/12778-clickable-table-row-improvements",
+        "pr": 14951
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -13515,21 +13620,51 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:02:50Z"
+        },
+        {
+          "event": "PR_CONFLICT",
+          "status": "pr_ci_failed",
+          "ts": "2026-08-23T22:33:02Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T22:33:02Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-08-23T22:33:56Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-08-23T22:34:12Z"
         }
       ],
       "issue": 12778,
       "labels": [
         "triage"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "u-12778-1",
+        "expires_at": "2026-08-24T00:04:12Z",
+        "granted_at": "2026-08-23T22:34:12Z",
+        "kind": "fix",
+        "session_id": "eac1f53e-3fe7-4fc4-9f23-0bf92bcad6ff",
+        "workspace_id": "47495e7e-bccc-43d5-b724-b993727e6fbf"
+      },
       "notes": null,
       "pr": {
         "adopted": false,
         "branch": "sweep/12778-clickable-table-row-improvements",
         "ci": {
-          "checked_at": "2026-08-23T22:02:50Z",
-          "failed": [],
-          "state": "green"
+          "checked_at": "2026-08-23T22:33:02Z",
+          "failed": [
+            "merge-conflict"
+          ],
+          "state": "conflict"
         },
         "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315",
         "number": 14951,
@@ -13541,7 +13676,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "fix_leased",
       "title": "Clickable table row improvements",
       "verdict": null
     },
@@ -22006,13 +22141,14 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T22:25:56Z",
-  "last_seq": 1193,
-  "last_snapshot_at": "2026-08-23T22:30:57Z",
+  "last_mirror_at": "2026-08-23T22:30:58Z",
+  "last_seq": 1226,
+  "last_snapshot_at": "2026-08-23T22:36:44Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,
   "paused": false,
+  "pr_backpressure": false,
   "workspaces": {
     "00a2a961-9f28-4ed3-8faf-cca149daebbf": {
       "batch_id": "f-12761-1",
@@ -22210,6 +22346,22 @@
       "state": "archived",
       "workspace_id": "44d2fcfb-fa86-4089-b31b-515c94e77b6d"
     },
+    "47495e7e-bccc-43d5-b724-b993727e6fbf": {
+      "batch_id": "u-12778-1",
+      "created_at": "2026-08-23T22:34:12Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12778
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "eac1f53e-3fe7-4fc4-9f23-0bf92bcad6ff",
+      "state": "running",
+      "workspace_id": "47495e7e-bccc-43d5-b724-b993727e6fbf"
+    },
     "49df3e76-d502-4550-8a7b-9035eca9f425": {
       "batch_id": "f-12717-1",
       "created_at": "2026-08-23T21:36:48Z",
@@ -22273,6 +22425,22 @@
       "session_id": "3d20b127-a5db-41e9-a355-bccbe6c98679",
       "state": "archived",
       "workspace_id": "6dc2f0f5-92bf-45cc-8812-40ac66417ad7"
+    },
+    "7feda093-4223-4e45-b127-c84b6fe13281": {
+      "batch_id": "u-12621-1",
+      "created_at": "2026-08-23T22:33:10Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12621
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "9c70ba52-e3e5-4138-9f74-12265ce78384",
+      "state": "running",
+      "workspace_id": "7feda093-4223-4e45-b127-c84b6fe13281"
     },
     "9797799e-c084-47fc-8997-5f19710ca267": {
       "batch_id": "f-12719-1",
@@ -22524,6 +22692,22 @@
       "session_id": "b05a3a1e-dd1a-4120-8bae-31c588b85ed8",
       "state": "archived",
       "workspace_id": "c23c176e-c37a-4cb8-a2c2-df22f11893b3"
+    },
+    "c253d43a-2ed9-4d79-9ef1-f399033c6a7a": {
+      "batch_id": "u-12708-1",
+      "created_at": "2026-08-23T22:33:09Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12708
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "e702c93b-f3b4-49ba-a848-57c0267c6ebe",
+      "state": "archived",
+      "workspace_id": "c253d43a-2ed9-4d79-9ef1-f399033c6a7a"
     },
     "ddd9b345-ca3d-4986-9226-b63299208844": {
       "batch_id": "f-12711-1",

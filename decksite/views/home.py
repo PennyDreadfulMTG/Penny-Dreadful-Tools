@@ -67,7 +67,9 @@ class Home(View):
             self.deck_tables.append(
                 {
                     'hide_source': True,
+                    'hide_date': True,
                     'title': gettext('Latest Tournament Top 8'),
+                    'subtitle': dtutil.display_date(tournament_decks[0].active_date),
                     'url': url_for('competition', competition_id=tournament_id),
                     'link_text': gettext('View Tournament…'),
                     'decks': tournament_decks,

@@ -30,9 +30,11 @@
             {{#top8_safe}}</a>{{/top8_safe}}
         </td>
     {{/hide_top8}}
-    <td data-text="{{date_sort}}">
-        {{display_date}}
-    </td>
+    {{^hide_date}}
+        <td data-text="{{date_sort}}">
+            {{display_date}}
+        </td>
+    {{/hide_date}}
     {{#show_season_icon}}
         <td>
             {{{season_icon}}}

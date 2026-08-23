@@ -146,7 +146,7 @@ def process_issue(issue: Issue) -> None:
             'last_updated': str(issue.updated_at),
             'issue_number': issue.number,
             'pd_legal': card in pd_legal_cards(),
-            'bug_blog': False,
+            'bug_blog': 'From Bug Blog' in labels,
             'breaking': cat in BADCATS,
             'bannable': bannable,
             'url': issue.html_url,

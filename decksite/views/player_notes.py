@@ -12,6 +12,7 @@ class PlayerNotes(View):
         for n in notes:
             n.date_sort = dtutil.dt2ts(n.created_date)
             n.display_date = dtutil.display_date(n.created_date)
+            n.subject_url = f'/people/id/{n.subject_id}/'
         self.notes = notes
         self.people = people
 

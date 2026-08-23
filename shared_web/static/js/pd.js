@@ -356,6 +356,9 @@ PD.localizeTimes = function() {
 PD.initLinks = function() {
     document.querySelectorAll("[data-href]").forEach((elem) => {
         elem.addEventListener("click", (e) => {
+            if (e.target.closest("a, button, input, select, textarea")) {
+                return;
+            }
             if (e.ctrlKey || e.metaKey) {
                 window.open(elem.getAttribute("data-href"), "_blank");
             } else {

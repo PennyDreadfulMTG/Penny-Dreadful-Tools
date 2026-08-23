@@ -31,7 +31,7 @@ dependencies = [
     "python-dateutil==2.9.0.post0",
     "python-dotenv==1.2.2",
     "pytz==2026.2",
-    "redis==8.0.0",
+    "redis==8.1.0",
     "requests",
     "requests-oauthlib==2.0.0",
     "requirements-parser==0.13.1",

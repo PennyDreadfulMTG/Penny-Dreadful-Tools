@@ -799,11 +799,12 @@ nav {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    position: relative;
 }
 
 .menu {
     flex: 1;
-    position: relative;
+    overflow-y: auto;
 }
 
 .submenu {

@@ -47,6 +47,16 @@ def test_validate_card_names_canonicalizes_and_ignores_blank_lines(monkeypatch: 
     assert errors == ['Card not found: Not a Card']
 
 
+def test_admin_menu_hides_admin_only_items_from_demimod() -> None:
+    with APP.test_request_context('/admin/'):
+        with APP.test_request_context('/admin/', environ_base={'HTTP_HOST': 'localhost'}):
+            full_menu = admin.admin_menu()
+            demimod_items = [item for item in full_menu if item.permission_required == 'demimod']
+            admin_items = [item for item in full_menu if item.permission_required != 'demimod']
+            assert len(demimod_items) > 0, 'Expected at least one demimod item'
+            assert len(admin_items) > 0, 'Expected at least one admin-only item'
+
+
 def test_all_admin_routes_require_permission() -> None:
     unprotected_routes = sorted({
         rule.rule

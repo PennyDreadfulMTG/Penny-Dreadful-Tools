@@ -12325,6 +12325,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:55:59Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:57Z"
         }
       ],
       "issue": 12715,
@@ -12336,6 +12340,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12715-make-the-archetypes-to-assign-badge-into",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:57Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "8ad7e65879ecd87be1419f8fe5ae8eb12c8ed95a",
         "number": 14953,
         "opened_at": "2026-08-23T21:55:59Z",
@@ -12455,6 +12464,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:41:49Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T22:02:56Z"
         }
       ],
       "issue": 12717,
@@ -12466,7 +12479,13 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12717-player-names-should-be-links-on-admin-pe",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:56Z",
+          "failed": [],
+          "state": "merged"
+        },
         "head_sha": "ff9a4c50f99c7d31d6d944c8b803bc5833b9fcd3",
+        "merged_at": "2026-08-23T21:55:28Z",
         "number": 14945,
         "opened_at": "2026-08-23T21:41:49Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14945"
@@ -12563,6 +12582,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:40:40Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:56Z"
         }
       ],
       "issue": 12719,
@@ -12574,6 +12597,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12719-why-is-from-bug-blog-always-false-can-we",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:56Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "f442f3b1643116e305f524a44b0bdb10b52c9aa7",
         "number": 14943,
         "opened_at": "2026-08-23T21:40:40Z",
@@ -12758,6 +12786,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:41:45Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:55Z"
         }
       ],
       "issue": 12730,
@@ -12769,6 +12801,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12730-add-price-of-progress-to-explain-promo-t",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:55Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "06198158643ff4f7701ebbaf4ebd71e5b113504c",
         "number": 14944,
         "opened_at": "2026-08-23T21:41:45Z",
@@ -12914,6 +12951,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:43:03Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:54Z"
         }
       ],
       "issue": 12760,
@@ -12925,6 +12966,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12760-league-records-menu-entry-has-slightly-s",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:54Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "eaeba3118a33af97640aa3480a884cc7a68be403",
         "number": 14948,
         "opened_at": "2026-08-23T21:43:03Z",
@@ -12979,6 +13025,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:55:56Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:53Z"
         }
       ],
       "issue": 12761,
@@ -12990,6 +13040,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:53Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "3d0dae279c8bcd2a8a4705bf829ee92b9a287dac",
         "number": 14952,
         "opened_at": "2026-08-23T21:55:56Z",
@@ -13044,6 +13099,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:43:01Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:52Z"
         }
       ],
       "issue": 12762,
@@ -13055,6 +13114,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12762-oldstyle-nums-for-archetype-name-look-si",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:52Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "b8bb68d1b2da4f3781daaf15e0f9f5a74b4bba44",
         "number": 14947,
         "opened_at": "2026-08-23T21:43:01Z",
@@ -13109,6 +13173,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:42:59Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:51Z"
         }
       ],
       "issue": 12769,
@@ -13120,6 +13188,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12769-not-available-online-for-cardhoarder-doe",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:51Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "7e88fb0719731fdaf9b3083d9fa80ba7bb58c724",
         "number": 14946,
         "opened_at": "2026-08-23T21:42:59Z",
@@ -13174,6 +13247,10 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:55:53Z"
+        },
+        {
+          "event": "PR_CI_GREEN",
+          "ts": "2026-08-23T22:02:50Z"
         }
       ],
       "issue": 12778,
@@ -13185,6 +13262,11 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12778-clickable-table-row-improvements",
+        "ci": {
+          "checked_at": "2026-08-23T22:02:50Z",
+          "failed": [],
+          "state": "green"
+        },
         "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315",
         "number": 14951,
         "opened_at": "2026-08-23T21:55:53Z",
@@ -13239,6 +13321,11 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-08-23T21:44:14Z"
+        },
+        {
+          "event": "PR_WITHDRAWN",
+          "status": "deferred_human",
+          "ts": "2026-08-23T22:02:49Z"
         }
       ],
       "issue": 12781,
@@ -13246,21 +13333,23 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "PR #14949 closed without merging by a human; settled outside the sweep.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12781-stop-dropping-old-data-for-prices-now-th",
+        "branch_deleted": true,
         "head_sha": "4b2e74ea77f852e94bc249e29cef6f344209e8ed",
         "number": 14949,
         "opened_at": "2026-08-23T21:44:14Z",
-        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14949"
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14949",
+        "withdrawn_at": "2026-08-23T22:02:49Z"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "deferred_human",
       "title": "Stop dropping old data for prices now that we have enough disk space to store it",
       "verdict": null
     },
@@ -21653,9 +21742,9 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T21:54:37Z",
-  "last_seq": 1060,
-  "last_snapshot_at": "2026-08-23T22:01:46Z",
+  "last_mirror_at": "2026-08-23T22:01:47Z",
+  "last_seq": 1072,
+  "last_snapshot_at": "2026-08-23T22:04:51Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

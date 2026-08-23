@@ -6,15 +6,15 @@
     "prs_today": 10
   },
   "counts": {
-    "deferred_human": 5,
+    "deferred_human": 6,
     "escalated": 2,
     "fix_pushed": 11,
     "pending": 659,
-    "pr_open": 10,
+    "pr_open": 9,
     "reported": 6,
     "verified": 6
   },
-  "heartbeat": "2026-08-23T22:01:01Z",
+  "heartbeat": "2026-08-23T22:03:57Z",
   "open_escalations": 2,
   "pause_until": null,
   "paused": false,

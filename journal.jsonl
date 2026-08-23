@@ -1058,3 +1058,15 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1057, "seq": 1058, "ts": "2026-08-23T22:01:01Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1058, "seq": 1059, "ts": "2026-08-23T22:01:34Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1059, "seq": 1060, "ts": "2026-08-23T22:01:46Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1061, "ts": "2026-08-23T22:01:47Z"}
+{"branch": "sweep/12781-stop-dropping-old-data-for-prices-now-th", "branch_deleted": true, "event": "PR_WITHDRAWN", "issue": 12781, "pr": 14949, "seq": 1062, "ts": "2026-08-23T22:02:49Z"}
+{"event": "PR_CI_GREEN", "issue": 12778, "pr": 14951, "seq": 1063, "ts": "2026-08-23T22:02:50Z"}
+{"event": "PR_CI_GREEN", "issue": 12769, "pr": 14946, "seq": 1064, "ts": "2026-08-23T22:02:51Z"}
+{"event": "PR_CI_GREEN", "issue": 12762, "pr": 14947, "seq": 1065, "ts": "2026-08-23T22:02:52Z"}
+{"event": "PR_CI_GREEN", "issue": 12761, "pr": 14952, "seq": 1066, "ts": "2026-08-23T22:02:53Z"}
+{"event": "PR_CI_GREEN", "issue": 12760, "pr": 14948, "seq": 1067, "ts": "2026-08-23T22:02:54Z"}
+{"event": "PR_CI_GREEN", "issue": 12730, "pr": 14944, "seq": 1068, "ts": "2026-08-23T22:02:55Z"}
+{"event": "PR_CI_GREEN", "issue": 12719, "pr": 14943, "seq": 1069, "ts": "2026-08-23T22:02:56Z"}
+{"event": "PR_MERGED", "issue": 12717, "merged_at": "2026-08-23T21:55:28Z", "pr": 14945, "seq": 1070, "ts": "2026-08-23T22:02:56Z"}
+{"event": "PR_CI_GREEN", "issue": 12715, "pr": 14953, "seq": 1071, "ts": "2026-08-23T22:02:57Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1071, "seq": 1072, "ts": "2026-08-23T22:04:51Z"}

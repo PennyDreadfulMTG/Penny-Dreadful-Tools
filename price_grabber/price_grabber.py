@@ -30,10 +30,9 @@ def fetch() -> None:
         all_prices[url] = parser.parse_cardhoarder_prices(s)
     if not timestamps:
         raise TooFewItemsException(f'Did not get any prices when fetching {list(itertools.chain(configuration.cardhoarder_urls.get()))} ({all_prices})')
-    count = store(min(timestamps), all_prices)
-    cleanup(count)
+    store(min(timestamps), all_prices)
 
-def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> int:
+def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> None:
     DATABASE.begin('store')
     lows: dict[str, int] = {}
     for code in all_prices:
@@ -58,7 +57,6 @@ def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> int:
             values.extend([timestamp, name, cents])
         execute(sql, values)
     DATABASE.commit('store')
-    return count * 20
 
 def cleanup(count: int = 0) -> None:
     beginning_of_season = seasons.last_rotation()

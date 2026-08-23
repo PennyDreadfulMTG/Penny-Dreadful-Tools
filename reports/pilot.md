@@ -76,16 +76,44 @@ production log. Test suite: **72 tests, all passing.**
 Crash recovery was exercised as required: `kill -9` mid-pilot, then `recover`
 harvested 4 finished batches and re-adopted 4 running ones with no loss or duplication.
 
-## 6. Recommendation: HOLD Phase 2 on two conditions
+## 6. Post-pilot addendum (same evening)
+
+**Draft-until-reviewed is now the permanent PR policy** and 22 draft PRs have been
+opened under it, every one asserted `isDraft=true` before `PR_OPENED` was journaled —
+zero non-draft incidents.
+
+**Human throughput is not the bottleneck I assumed.** bakert reviewed and merged
+**7 of the first 10 sweep PRs in about 35 minutes**, rejected 1 (#12781), and left 2.
+He then raised `daily_pr_cap` to 25 on the reasoning that drafts cannot merge, so the
+cap only guards his review bandwidth. On that evidence the "~400 PRs is unreviewable"
+concern is materially weaker than it looked at the 40-issue mark; the queue drains
+faster than it fills.
+
+**The CI watch earned its keep within minutes of shipping.** Of the 12 PRs opened
+after the cap rise, two were red on required checks (#14969 on `test`, #14964 on
+`jslint`) and both escalated automatically. Under the old design they would have sat
+green-looking until bakert opened them. One refinement fell out of it: at detection
+time the workflow run is usually still in progress, so `gh run view --log-failed` has
+nothing to return; the log fetch is now retried at adjudication time, when the run has
+finished.
+
+**Merge conflicts are real and immediate.** #14951 conflicted with master within an
+hour, because the seven merges moved master underneath it. Mergeability is now watched
+alongside CI: `BEHIND` is resolved automatically with `gh pr update-branch`, and
+`CONFLICTING` escalates for a merge-master-in fixer (never a rebase, so a published
+branch is never force-pushed).
+
+## 7. Recommendation: HOLD Phase 2 on one condition
 
 1. **`issues: write` on the token**, then execute and audit a handful of real
-   closures. The closure half of the pipeline is still unproven end to end.
-2. **A decision on PR volume.** 23 of 40 (57%) came back `easy-fix`. Extrapolated,
-   that is roughly **400 draft PRs** across 699 issues. At 20/day that is a month of
-   review. Options: raise the easy-fix bar, cap concurrently-open sweep PRs (e.g. 25)
-   and refill as bakert clears them, or route most easy-fixes to report-only and fix
-   on request.
+   closures. The closure half of the pipeline — roughly 100 of the 699 issues, and the
+   part that costs bakert no review at all — is still unproven end to end. A PAT
+   mechanism is built and waiting (`DISPATCHER_SPEC` §8c).
+
+The PR-volume condition is **withdrawn**: bakert has decided the cap question
+explicitly and demonstrated the throughput to back it. Keep `daily_pr_cap=25` into
+Phase 2.
 
 Everything else is green: zero infrastructure failures, malformed rate inside target,
-fast workspaces, working recovery, and a human-review gate that has already caught the
-one bad call the sweep made.
+fast workspaces, working crash recovery, and a human-review gate that has already
+caught the one bad call the sweep made.

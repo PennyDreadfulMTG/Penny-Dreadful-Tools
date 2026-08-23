@@ -1,4 +1,5 @@
 {
+  "auto_update_behind_branches": true,
   "bot_logins": [
     "github-actions",
     "dependabot",
@@ -8,10 +9,11 @@
   "bundle_max_age_hours": 6,
   "bundle_min_gap_hours": 2,
   "bundle_min_items": 10,
+  "ci_recheck_minutes": 30,
   "closures_enabled": false,
   "concurrency_cap": 8,
   "daily_close_cap": 15,
-  "daily_pr_cap": 10,
+  "daily_pr_cap": 25,
   "forbidden_paths": [
     "logsite_migrations/",
     ".github/workflows/",
@@ -20,12 +22,14 @@
   ],
   "frontier_max": 12786,
   "frontier_min": 790,
+  "github_token_file": "state/.gh_token",
   "lease_minutes": {
     "fix": 90,
     "triage": 60,
     "verify": 60
   },
   "max_fix_lines": 150,
+  "max_fixup_attempts": 1,
   "max_stage_attempts": 2,
   "max_total_workspaces": 500,
   "min_session_age_seconds": 120,
@@ -44,7 +48,14 @@
   "prs_enabled": true,
   "recent_activity_guard_days": 90,
   "recent_activity_guard_mode": "comments",
+  "reclaim_orphan_branches": true,
   "repo": "PennyDreadfulMTG/Penny-Dreadful-Tools",
+  "required_checks": [
+    "mypy",
+    "lint",
+    "test",
+    "jslint"
+  ],
   "retry_sleeps": [
     5,
     25,

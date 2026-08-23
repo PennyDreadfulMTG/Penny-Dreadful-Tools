@@ -12378,10 +12378,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12716.json",
       "history": [
         {
@@ -12440,6 +12437,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-08-23T22:11:03Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-08-23T22:19:49Z"
         }
       ],
       "issue": 12716,
@@ -12447,14 +12449,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Fixer pushed a branch but its report was never harvested; the retry deadlocked on its own orphan. Re-dispatching; the dispatcher now reclaims orphan sweep branches automatically.",
+      "notes": "Two fixer attempts both returned malformed output after the corrective nudge; not worth a third workspace. Real issue, recorded for the campaign report.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "It would be cool to figure out permission_required in admin_menu via reflection looking at the decorator rather than sort-of hardcoded",
       "verdict": null
     },
@@ -21776,9 +21778,9 @@
     }
   },
   "last_bundle_at": null,
-  "last_mirror_at": "2026-08-23T22:06:29Z",
-  "last_seq": 1095,
-  "last_snapshot_at": "2026-08-23T22:17:41Z",
+  "last_mirror_at": "2026-08-23T22:17:43Z",
+  "last_seq": 1100,
+  "last_snapshot_at": "2026-08-23T22:22:12Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

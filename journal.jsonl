@@ -1093,3 +1093,66 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1092, "seq": 1093, "ts": "2026-08-23T22:11:03Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1093, "seq": 1094, "ts": "2026-08-23T22:16:04Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1094, "seq": 1095, "ts": "2026-08-23T22:17:41Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1096, "ts": "2026-08-23T22:17:43Z"}
+{"event": "ADJUDICATED", "issue": 12716, "note": "Two fixer attempts both returned malformed output after the corrective nudge; not worth a third workspace. Real issue, recorded for the campaign report.", "seq": 1097, "status": "reported", "ts": "2026-08-23T22:19:49Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1097, "seq": 1098, "ts": "2026-08-23T22:19:49Z"}
+{"changes": {"daily_pr_cap": 25}, "event": "CONFIG_CHANGED", "seq": 1099, "ts": "2026-08-23T22:22:12Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1099, "seq": 1100, "ts": "2026-08-23T22:22:12Z"}
+{"branch": "sweep/12714-we-link-to-status-pennydreadfulmagic-com", "event": "MUTATION_PLANNED", "issue": 12714, "kind": "pr", "seq": 1101, "ts": "2026-08-23T22:22:44Z"}
+{"branch": "sweep/12714-we-link-to-status-pennydreadfulmagic-com", "draft": true, "event": "PR_OPENED", "head_sha": "e8541a4a45e81a74a14c77aef79d755bfa3b0853", "issue": 12714, "number": 14960, "seq": 1102, "ts": "2026-08-23T22:22:46Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14960"}
+{"branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns", "event": "MUTATION_PLANNED", "issue": 12712, "kind": "pr", "seq": 1103, "ts": "2026-08-23T22:22:47Z"}
+{"branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns", "draft": true, "event": "PR_OPENED", "head_sha": "7726467b55f0001d2b39746cdad6bf90ee2436b7", "issue": 12712, "number": 14961, "seq": 1104, "ts": "2026-08-23T22:22:50Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14961"}
+{"branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li", "event": "MUTATION_PLANNED", "issue": 12711, "kind": "pr", "seq": 1105, "ts": "2026-08-23T22:22:50Z"}
+{"branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li", "draft": true, "event": "PR_OPENED", "head_sha": "aad7c659728b531a40fc1d11a5657a80175e9134", "issue": 12711, "number": 14962, "seq": 1106, "ts": "2026-08-23T22:22:52Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14962"}
+{"branch": "sweep/12709-the-admin-menu-list-page-could-should-hi", "event": "MUTATION_PLANNED", "issue": 12709, "kind": "pr", "seq": 1107, "ts": "2026-08-23T22:22:53Z"}
+{"branch": "sweep/12709-the-admin-menu-list-page-could-should-hi", "draft": true, "event": "PR_OPENED", "head_sha": "aee703c05466a486b0671780210b841c88f47851", "issue": 12709, "number": 14963, "seq": 1108, "ts": "2026-08-23T22:22:55Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14963"}
+{"branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa", "event": "MUTATION_PLANNED", "issue": 12708, "kind": "pr", "seq": 1109, "ts": "2026-08-23T22:22:56Z"}
+{"branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa", "draft": true, "event": "PR_OPENED", "head_sha": "0dac4c9844abd8b71421ba472e508146b9e95684", "issue": 12708, "number": 14964, "seq": 1110, "ts": "2026-08-23T22:22:58Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14964"}
+{"branch": "sweep/12666-menu-and-submenu-should-scroll-independe", "event": "MUTATION_PLANNED", "issue": 12666, "kind": "pr", "seq": 1111, "ts": "2026-08-23T22:22:59Z"}
+{"branch": "sweep/12666-menu-and-submenu-should-scroll-independe", "draft": true, "event": "PR_OPENED", "head_sha": "fa15f067", "issue": 12666, "number": 14965, "seq": 1112, "ts": "2026-08-23T22:23:01Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14965"}
+{"branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men", "event": "MUTATION_PLANNED", "issue": 12665, "kind": "pr", "seq": 1113, "ts": "2026-08-23T22:23:02Z"}
+{"branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men", "draft": true, "event": "PR_OPENED", "head_sha": "7ab51f786c3530cdf4c590acd1a8b8fee837d345", "issue": 12665, "number": 14966, "seq": 1114, "ts": "2026-08-23T22:23:04Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14966"}
+{"branch": "sweep/12664-submenu-should-appear-disappear-with-an", "event": "MUTATION_PLANNED", "issue": 12664, "kind": "pr", "seq": 1115, "ts": "2026-08-23T22:23:05Z"}
+{"branch": "sweep/12664-submenu-should-appear-disappear-with-an", "draft": true, "event": "PR_OPENED", "head_sha": "86dabd687c2e226d7e38a2ecbf48cff8294a50d5", "issue": 12664, "number": 14967, "seq": 1116, "ts": "2026-08-23T22:23:06Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14967"}
+{"branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine", "event": "MUTATION_PLANNED", "issue": 12647, "kind": "pr", "seq": 1117, "ts": "2026-08-23T22:23:07Z"}
+{"branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine", "draft": true, "event": "PR_OPENED", "head_sha": "71a091094ef501df2db37eeea92373487989881e", "issue": 12647, "number": 14968, "seq": 1118, "ts": "2026-08-23T22:23:09Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14968"}
+{"branch": "sweep/12621-when-calculating-similarity-use-the-inve", "event": "MUTATION_PLANNED", "issue": 12621, "kind": "pr", "seq": 1119, "ts": "2026-08-23T22:23:10Z"}
+{"branch": "sweep/12621-when-calculating-similarity-use-the-inve", "draft": true, "event": "PR_OPENED", "head_sha": "16752a75", "issue": 12621, "number": 14969, "seq": 1120, "ts": "2026-08-23T22:23:12Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14969"}
+{"branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc", "event": "MUTATION_PLANNED", "issue": 12618, "kind": "pr", "seq": 1121, "ts": "2026-08-23T22:23:13Z"}
+{"branch": "sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc", "draft": true, "event": "PR_OPENED", "head_sha": "cbd9a129c7d79e8e4eb21f944bfa6a72fb9b148d", "issue": 12618, "number": 14970, "seq": 1122, "ts": "2026-08-23T22:23:15Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14970"}
+{"branch": "sweep/12617-mouseover-current-and-matches-rule-arche", "event": "MUTATION_PLANNED", "issue": 12617, "kind": "pr", "seq": 1123, "ts": "2026-08-23T22:23:16Z"}
+{"branch": "sweep/12617-mouseover-current-and-matches-rule-arche", "draft": true, "event": "PR_OPENED", "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc", "issue": 12617, "number": 14971, "seq": 1124, "ts": "2026-08-23T22:23:17Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14971"}
+{"event": "CI_CHECKED", "issue": 12714, "pr": 14960, "seq": 1125, "ts": "2026-08-23T22:23:18Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1126, "ts": "2026-08-23T22:23:19Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1127, "ts": "2026-08-23T22:23:20Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1128, "ts": "2026-08-23T22:23:21Z"}
+{"event": "PR_CI_FAILED", "failed": ["jslint"], "issue": 12708, "pr": 14964, "seq": 1129, "ts": "2026-08-23T22:23:23Z"}
+{"event": "ESCALATED", "issue": 12708, "kind": "pr-ci-failed", "question": "PR #14964 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?", "seq": 1130, "ts": "2026-08-23T22:23:23Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1131, "ts": "2026-08-23T22:23:24Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1132, "ts": "2026-08-23T22:23:25Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1133, "ts": "2026-08-23T22:23:26Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1134, "ts": "2026-08-23T22:23:27Z"}
+{"event": "PR_CI_FAILED", "failed": ["test"], "issue": 12621, "pr": 14969, "seq": 1135, "ts": "2026-08-23T22:23:28Z"}
+{"event": "ESCALATED", "issue": 12621, "kind": "pr-ci-failed", "question": "PR #14969 is red on test \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?", "seq": 1136, "ts": "2026-08-23T22:23:28Z"}
+{"event": "CI_CHECKED", "issue": 12618, "pr": 14970, "seq": 1137, "ts": "2026-08-23T22:23:29Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1138, "ts": "2026-08-23T22:23:30Z"}
+{"event": "CI_CHECKED", "issue": 12714, "pr": 14960, "seq": 1139, "ts": "2026-08-23T22:24:31Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1140, "ts": "2026-08-23T22:24:32Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1141, "ts": "2026-08-23T22:24:33Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1142, "ts": "2026-08-23T22:24:34Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1143, "ts": "2026-08-23T22:24:36Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1144, "ts": "2026-08-23T22:24:37Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1145, "ts": "2026-08-23T22:24:38Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1146, "ts": "2026-08-23T22:24:39Z"}
+{"event": "CI_CHECKED", "issue": 12618, "pr": 14970, "seq": 1147, "ts": "2026-08-23T22:24:40Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1148, "ts": "2026-08-23T22:24:41Z"}
+{"event": "CI_CHECKED", "issue": 12714, "pr": 14960, "seq": 1149, "ts": "2026-08-23T22:25:42Z"}
+{"event": "CI_CHECKED", "issue": 12712, "pr": 14961, "seq": 1150, "ts": "2026-08-23T22:25:44Z"}
+{"event": "CI_CHECKED", "issue": 12711, "pr": 14962, "seq": 1151, "ts": "2026-08-23T22:25:45Z"}
+{"event": "CI_CHECKED", "issue": 12709, "pr": 14963, "seq": 1152, "ts": "2026-08-23T22:25:46Z"}
+{"event": "CI_CHECKED", "issue": 12666, "pr": 14965, "seq": 1153, "ts": "2026-08-23T22:25:47Z"}
+{"event": "CI_CHECKED", "issue": 12665, "pr": 14966, "seq": 1154, "ts": "2026-08-23T22:25:48Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1155, "ts": "2026-08-23T22:25:49Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1156, "ts": "2026-08-23T22:25:51Z"}
+{"event": "CI_CHECKED", "issue": 12618, "pr": 14970, "seq": 1157, "ts": "2026-08-23T22:25:52Z"}
+{"event": "CI_CHECKED", "issue": 12617, "pr": 14971, "seq": 1158, "ts": "2026-08-23T22:25:53Z"}

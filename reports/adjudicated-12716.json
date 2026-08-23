@@ -1,14 +1,14 @@
 {
   "adjudication": {
-    "at": "2026-08-23T22:04:53Z",
-    "note": "Fixer pushed a branch but its report was never harvested; the retry deadlocked on its own orphan. Re-dispatching; the dispatcher now reclaims orphan sweep branches automatically.",
-    "verb": "queue-fix"
+    "at": "2026-08-23T22:19:49Z",
+    "note": "Two fixer attempts both returned malformed output after the corrective nudge; not worth a third workspace. Real issue, recorded for the campaign report.",
+    "verb": "report-only"
   },
   "bundled_at": null,
-  "created_at": "2026-08-23T21:48:33Z",
+  "created_at": "2026-08-23T22:11:03Z",
   "evidence_refs": [],
   "issue": 12716,
-  "kind": "fix-validation",
-  "question": "Pre-dispatch guard: a sweep/12716-* branch already exists on origin",
-  "summary": "a sweep/12716-* branch already exists on origin"
+  "kind": "attempts-exhausted",
+  "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
+  "summary": "malformed output after nudge"
 }

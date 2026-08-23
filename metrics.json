@@ -1,5 +1,5 @@
 {
-  "active_workspaces": 0,
+  "active_workspaces": 2,
   "alert": null,
   "caps": {
     "closures_today": 0,
@@ -7,22 +7,22 @@
   },
   "counts": {
     "deferred_human": 6,
-    "escalated": 2,
+    "fix_leased": 2,
     "fix_pushed": 11,
     "pending": 659,
     "pr_open": 9,
     "reported": 6,
     "verified": 6
   },
-  "heartbeat": "2026-08-23T22:03:57Z",
-  "open_escalations": 2,
+  "heartbeat": "2026-08-23T22:06:01Z",
+  "open_escalations": 0,
   "pause_until": null,
   "paused": false,
   "phase": "pilot",
   "totals": {
     "infra_failures": 0,
     "nudges": 3,
-    "workspaces_created": 34
+    "workspaces_created": 36
   },
   "unregistered_workspaces": []
 }

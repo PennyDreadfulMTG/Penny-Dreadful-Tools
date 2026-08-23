@@ -1070,3 +1070,14 @@
 {"event": "PR_MERGED", "issue": 12717, "merged_at": "2026-08-23T21:55:28Z", "pr": 14945, "seq": 1070, "ts": "2026-08-23T22:02:56Z"}
 {"event": "PR_CI_GREEN", "issue": 12715, "pr": 14953, "seq": 1071, "ts": "2026-08-23T22:02:57Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1071, "seq": 1072, "ts": "2026-08-23T22:04:51Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1073, "ts": "2026-08-23T22:04:53Z"}
+{"event": "ADJUDICATED", "issue": 12716, "note": "Fixer pushed a branch but its report was never harvested; the retry deadlocked on its own orphan. Re-dispatching; the dispatcher now reclaims orphan sweep branches automatically.", "seq": 1074, "status": "fix_pending", "ts": "2026-08-23T22:04:53Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1074, "seq": 1075, "ts": "2026-08-23T22:04:53Z"}
+{"action": "deleted orphan branch sweep/12716-it-would-be-cool-to-figure-out-permissio (pushed by a fixer whose report was never harvested; no PR existed)", "event": "ROLLBACK_RECORDED", "issue": 12716, "seq": 1076, "status": null, "ts": "2026-08-23T22:04:55Z"}
+{"batch_id": "f-12716-2", "event": "WORKSPACE_CREATED", "issues": [12716], "kind": "fix", "seq": 1077, "session_id": "3d1459aa-e04d-4373-b021-01f526cbb9e2", "ts": "2026-08-23T22:04:56Z", "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"}
+{"attempt": 2, "batch_id": "f-12716-2", "event": "LEASE_GRANTED", "expires_at": "2026-08-23T23:34:56Z", "issue": 12716, "kind": "fix", "seq": 1078, "session_id": "3d1459aa-e04d-4373-b021-01f526cbb9e2", "ts": "2026-08-23T22:04:56Z", "workspace_id": "67f1415a-3e0c-4d15-8246-6d4f6ce66084"}
+{"event": "ADJUDICATED", "issue": 12618, "note": "Fixer pushed but never reported; retry deadlocked on its own orphan branch. Re-dispatching with automatic orphan reclaim.", "seq": 1079, "status": "fix_pending", "ts": "2026-08-23T22:05:17Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1079, "seq": 1080, "ts": "2026-08-23T22:05:17Z"}
+{"action": "deleted orphan branch sweep/12618-sort-by-colors-doesn-t-work-on-admin-arc (pushed by a fixer whose report was never harvested; no PR existed)", "event": "ROLLBACK_RECORDED", "issue": 12618, "seq": 1081, "status": null, "ts": "2026-08-23T22:06:00Z"}
+{"batch_id": "f-12618-2", "event": "WORKSPACE_CREATED", "issues": [12618], "kind": "fix", "seq": 1082, "session_id": "bf0a8caf-f005-48f7-87c5-5903f45f47fb", "ts": "2026-08-23T22:06:01Z", "workspace_id": "a2de91fa-8355-4bc6-a779-0c9d88d47bf3"}
+{"attempt": 2, "batch_id": "f-12618-2", "event": "LEASE_GRANTED", "expires_at": "2026-08-23T23:36:01Z", "issue": 12618, "kind": "fix", "seq": 1083, "session_id": "bf0a8caf-f005-48f7-87c5-5903f45f47fb", "ts": "2026-08-23T22:06:01Z", "workspace_id": "a2de91fa-8355-4bc6-a779-0c9d88d47bf3"}

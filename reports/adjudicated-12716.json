@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-23T22:04:53Z",
+    "note": "Fixer pushed a branch but its report was never harvested; the retry deadlocked on its own orphan. Re-dispatching; the dispatcher now reclaims orphan sweep branches automatically.",
+    "verb": "queue-fix"
+  },
   "bundled_at": null,
   "created_at": "2026-08-23T21:48:33Z",
   "evidence_refs": [],

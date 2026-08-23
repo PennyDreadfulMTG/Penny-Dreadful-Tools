@@ -5,7 +5,7 @@
     "workspaces_created": 39
   },
   "daily": {
-    "closures": 6,
+    "closures": 7,
     "day": "2026-08-23",
     "prs": 22
   },
@@ -12377,7 +12377,14 @@
     },
     "12710": {
       "class": "needs-product-decision",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-08-23T23:29:52Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "opus-adjudication"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12710.json",
@@ -12405,6 +12412,16 @@
           "event": "ADJUDICATED",
           "status": "deferred_human",
           "ts": "2026-08-23T21:37:58Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-08-23T23:29:50Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-08-23T23:29:52Z"
         }
       ],
       "issue": 12710,
@@ -12412,14 +12429,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": "ADJUDICATION PENDING: bakert is checking whether a post-deploy fonts run exists in server-side deploy infra outside this repo. Do not action or report as settled until he answers.",
+      "notes": "bakert adjudication. Independently re-verified against freshly fetched origin/master: b4ced854 and 4c0fa58d are ancestors of master, PRs 14872/14897/14909 merged 2026-08-22, shared_web/api.py:27 calls fonts.regenerate_symbols_font() in the deploy path, no hardcoded laptop paths remain in maintenance/fonts.py, regex and brotli remain prod deps.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "deferred_human",
+      "status": "closed",
       "title": "Regex is instsalled as a prod package like brotli but should it be?",
       "verdict": null
     },
@@ -22290,9 +22307,9 @@
   },
   "last_bundle_at": null,
   "last_master_sha": "152d36e62bf70b5b9f82ae1cfe0622f08d6d5d76",
-  "last_mirror_at": "2026-08-23T23:21:51Z",
-  "last_seq": 1426,
-  "last_snapshot_at": "2026-08-23T23:28:29Z",
+  "last_mirror_at": "2026-08-23T23:28:44Z",
+  "last_seq": 1431,
+  "last_snapshot_at": "2026-08-23T23:29:52Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

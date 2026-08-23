@@ -1424,3 +1424,8 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1423, "seq": 1424, "ts": "2026-08-23T23:28:29Z"}
 {"event": "ADJUDICATED", "issue": 12710, "note": "ADJUDICATION PENDING: bakert is checking whether a post-deploy fonts run exists in server-side deploy infra outside this repo. Do not action or report as settled until he answers.", "seq": 1425, "ts": "2026-08-23T23:28:29Z", "verb": "annotate"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1425, "seq": 1426, "ts": "2026-08-23T23:28:29Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1427, "ts": "2026-08-23T23:28:44Z"}
+{"event": "ADJUDICATED", "issue": 12710, "note": "bakert adjudication. Independently re-verified against freshly fetched origin/master: b4ced854 and 4c0fa58d are ancestors of master, PRs 14872/14897/14909 merged 2026-08-22, shared_web/api.py:27 calls fonts.regenerate_symbols_font() in the deploy path, no hardcoded laptop paths remain in maintenance/fonts.py, regex and brotli remain prod deps.", "seq": 1428, "status": "closing", "ts": "2026-08-23T23:29:50Z", "verb": "close-completed"}
+{"event": "MUTATION_PLANNED", "issue": 12710, "kind": "close", "reason": "completed", "seq": 1429, "ts": "2026-08-23T23:29:50Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 12710, "reason": "completed", "seq": 1430, "ts": "2026-08-23T23:29:52Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1430, "seq": 1431, "ts": "2026-08-23T23:29:52Z"}

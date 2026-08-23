@@ -37,5 +37,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Resolved by events: since the fix-12870 series (#14872, #14897, #14909), the symbols font is rebuilt on the production server at deploy time, so regex and brotli are genuinely required in production and stay prod dependencies. The original blockers no longer apply \u2014 fonts.py has no hardcoded local font paths anymore, and the rebuild is wired into the deploy path in shared_web/api.py.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-08-23T23:29:50Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

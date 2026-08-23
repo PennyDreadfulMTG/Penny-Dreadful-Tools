@@ -40,4 +40,3 @@ class LinkAccounts(View):
             self.person = person.link_discord(self.form['mtgo_username'], did)
         except AlreadyExistsException:
             self.form.errors.mtgo_username = '{mtgo_username} is already connected to another discord account.'.format(mtgo_username=self.form['mtgo_username'])
-

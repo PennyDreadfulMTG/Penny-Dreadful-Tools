@@ -14,7 +14,7 @@
             </thead>
             <tbody>
                 {{#queue}}
-                    <tr>
+                    <tr data-archetype-id="{{archetype_id}}">
                         <td class="contains-mana-bar">{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
                         <td><a href="{{source_url}}">{{source_name}}</a></td>

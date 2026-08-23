@@ -11165,7 +11165,7 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T23:04:17Z",
+          "checked_at": "2026-08-23T23:15:14Z",
           "failed": [],
           "state": "green"
         },
@@ -11384,7 +11384,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-23T23:04:16Z",
+          "checked_at": "2026-08-23T23:15:13Z",
           "failed": [],
           "state": "green"
         },
@@ -11528,7 +11528,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-23T23:04:15Z",
+          "checked_at": "2026-08-23T23:15:12Z",
           "failed": [],
           "state": "green"
         },
@@ -11760,7 +11760,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-23T23:04:14Z",
+          "checked_at": "2026-08-23T23:15:11Z",
           "failed": [],
           "state": "green"
         },
@@ -11834,7 +11834,7 @@
         "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
         "ci": {
-          "checked_at": "2026-08-23T23:04:13Z",
+          "checked_at": "2026-08-23T23:15:10Z",
           "failed": [],
           "state": "green"
         },
@@ -11908,7 +11908,7 @@
         "adopted": false,
         "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
         "ci": {
-          "checked_at": "2026-08-23T23:04:12Z",
+          "checked_at": "2026-08-23T23:15:10Z",
           "failed": [],
           "state": "green"
         },
@@ -12268,7 +12268,7 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T23:04:11Z",
+          "checked_at": "2026-08-23T23:15:09Z",
           "failed": [],
           "state": "green"
         },
@@ -12548,7 +12548,7 @@
         "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
         "ci": {
-          "checked_at": "2026-08-23T23:04:10Z",
+          "checked_at": "2026-08-23T23:15:07Z",
           "failed": [],
           "state": "green"
         },
@@ -22280,9 +22280,9 @@
   },
   "last_bundle_at": null,
   "last_master_sha": "b8b15f980b5eb6159204b3e30242b00ae0cce5aa",
-  "last_mirror_at": "2026-08-23T22:50:35Z",
-  "last_seq": 1368,
-  "last_snapshot_at": "2026-08-23T23:06:25Z",
+  "last_mirror_at": "2026-08-23T23:06:26Z",
+  "last_seq": 1389,
+  "last_snapshot_at": "2026-08-23T23:19:31Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

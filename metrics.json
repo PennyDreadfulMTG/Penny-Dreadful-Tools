@@ -1,6 +1,6 @@
 {
   "active_workspaces": 0,
-  "alert": "unregistered workspace(s) in project: Adjust badge color styling (f9f40591), Learn testing methods (6635a6c5), View project locally (6ca372bf), Reviewing for approval (d40e31ba), Refining machine guess behavior (3a5f43b9)",
+  "alert": "unregistered workspace(s) in project: Manage GitHub email notifications (7c86f1fb), Adjust badge color styling (f9f40591), Learn testing methods (6635a6c5), Reviewing for approval (d40e31ba), Refining machine guess behavior (3a5f43b9)",
   "caps": {
     "closures_today": 6,
     "prs_today": 22
@@ -12,7 +12,7 @@
     "pr_open": 20,
     "reported": 8
   },
-  "heartbeat": "2026-08-23T23:05:21Z",
+  "heartbeat": "2026-08-23T23:20:45Z",
   "max_open_prs": 30,
   "open_escalations": 0,
   "open_sweep_prs": null,
@@ -26,9 +26,9 @@
     "workspaces_created": 39
   },
   "unregistered_workspaces": [
+    "Manage GitHub email notifications (7c86f1fb)",
     "Adjust badge color styling (f9f40591)",
     "Learn testing methods (6635a6c5)",
-    "View project locally (6ca372bf)",
     "Reviewing for approval (d40e31ba)",
     "Refining machine guess behavior (3a5f43b9)"
   ]

@@ -63,7 +63,7 @@
     125
   ],
   "schema": 1,
-  "spawning_enabled": true,
+  "spawning_enabled": false,
   "stale_transcript_minutes": 20,
   "subprocess_timeout": 120,
   "triage_batch_size": 5,

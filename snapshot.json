@@ -11113,7 +11113,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "pr-conflict",
+        "question": "PR #14971 conflicts with master \u2014 dispatch one fixer to merge master and resolve (queue-fixup), or abandon it (abandon-pr)?"
+      },
       "evidence_file": "evidence/12617.json",
       "history": [
         {
@@ -11153,6 +11156,16 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:33:07Z"
+        },
+        {
+          "event": "PR_CONFLICT",
+          "status": "pr_ci_failed",
+          "ts": "2026-08-23T23:40:35Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-08-23T23:40:35Z"
         }
       ],
       "issue": 12617,
@@ -11165,9 +11178,11 @@
         "adopted": false,
         "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
         "ci": {
-          "checked_at": "2026-08-23T23:25:16Z",
-          "failed": [],
-          "state": "green"
+          "checked_at": "2026-08-23T23:40:35Z",
+          "failed": [
+            "merge-conflict"
+          ],
+          "state": "conflict"
         },
         "head_sha": "cb7470ab6e9e727fa77017ff5978f0c6e49307bc",
         "number": 14971,
@@ -11179,7 +11194,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "escalated",
       "title": "Mouseover \"current\" and \"matches rule\" archetypes should show their description in a tooltip (title attr) in /admin/archetypes",
       "verdict": null
     },
@@ -11384,7 +11399,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-23T23:25:15Z",
+          "checked_at": "2026-08-23T23:41:44Z",
           "failed": [],
           "state": "green"
         },
@@ -11528,7 +11543,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-23T23:25:14Z",
+          "checked_at": "2026-08-23T23:41:43Z",
           "failed": [],
           "state": "green"
         },
@@ -11760,7 +11775,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-23T23:25:13Z",
+          "checked_at": "2026-08-23T23:41:42Z",
           "failed": [],
           "state": "green"
         },
@@ -11822,6 +11837,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:30:26Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T23:40:32Z"
         }
       ],
       "issue": 12665,
@@ -11834,11 +11853,12 @@
         "adopted": false,
         "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
         "ci": {
-          "checked_at": "2026-08-23T23:25:12Z",
+          "checked_at": "2026-08-23T23:40:32Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "7ab51f786c3530cdf4c590acd1a8b8fee837d345",
+        "merged_at": "2026-08-23T23:39:51Z",
         "number": 14966,
         "opened_at": "2026-08-23T22:23:04Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14966"
@@ -12278,7 +12298,7 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-23T23:25:11Z",
+          "checked_at": "2026-08-23T23:41:41Z",
           "failed": [],
           "state": "green"
         },
@@ -12563,6 +12583,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-08-23T22:26:56Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-08-23T23:40:30Z"
         }
       ],
       "issue": 12712,
@@ -12575,11 +12599,12 @@
         "adopted": false,
         "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
         "ci": {
-          "checked_at": "2026-08-23T23:25:09Z",
+          "checked_at": "2026-08-23T23:40:30Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "7726467b55f0001d2b39746cdad6bf90ee2436b7",
+        "merged_at": "2026-08-23T23:39:41Z",
         "number": 14961,
         "opened_at": "2026-08-23T22:22:50Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/14961"
@@ -22306,10 +22331,10 @@
     }
   },
   "last_bundle_at": null,
-  "last_master_sha": "152d36e62bf70b5b9f82ae1cfe0622f08d6d5d76",
-  "last_mirror_at": "2026-08-23T23:28:44Z",
-  "last_seq": 1431,
-  "last_snapshot_at": "2026-08-23T23:29:52Z",
+  "last_master_sha": "1013feb1594aa1db40d1f5a4b97b66bb85784802",
+  "last_mirror_at": "2026-08-23T23:30:14Z",
+  "last_seq": 1471,
+  "last_snapshot_at": "2026-08-23T23:46:02Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

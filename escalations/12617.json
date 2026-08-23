@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-08-23T23:40:35Z",
+  "evidence_refs": [
+    "evidence/12617.json#fix[-1]"
+  ],
+  "issue": 12617,
+  "kind": "pr-conflict",
+  "question": "PR #14971 conflicts with master \u2014 dispatch one fixer to merge master and resolve (queue-fixup), or abandon it (abandon-pr)?",
+  "summary": "mergeable=CONFLICTING mergeStateStatus=DIRTY on branch sweep/12617-mouseover-current-and-matches-rule-arche"
+}

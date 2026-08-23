@@ -86,7 +86,7 @@ def build_menu() -> Menu:
             MenuItem(gettext('Contact Us'), endpoint='contact_us'),
         ])),
         MenuItem(gettext('Admin'), endpoint='admin_home', submenu=admin.admin_menu(), permission_required='demimod'),
-    ], current_endpoint=request.endpoint)
+    ], current_endpoint=g.get('menu_endpoint_override', request.endpoint))
     return menu
 
 

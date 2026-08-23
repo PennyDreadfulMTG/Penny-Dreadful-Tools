@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12717-1",
+      "branch": "sweep/12717-player-names-should-be-links-on-admin-pe",
+      "files_changed": 2,
+      "head_sha": "ff9a4c50f99c7d31d6d944c8b803bc5833b9fcd3",
+      "issue": 12717,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "Straightforward two-file change: URL generation in the view __init__ and anchor tags in the template. The `person` route accepts `person_id` as an int parameter, which matches the `subject_id`/`creator_id` fields from the `person_note` table.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nOn `/admin/people/notes`, the Subject and Creator columns showed player names as plain text with no hyperlinks, making it hard to navigate to a player's profile from the notes admin page.\n\n## What changed\n\n- `decksite/views/player_notes.py`: Added `from flask import url_for` and, in the `__init__` loop, set `n.subject_url = url_for('person', person_id=n.subject_id)` and `n.creator_url = url_for('person', person_id=n.creator_id)` on each note.\n- `decksite/templates/playernotes.mustache`: Wrapped the `{{subject}}` and `{{creator}}` cells in `<a href=\"{{subject_url}}\">` and `<a href=\"{{creator_url}}\">` respectively.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (All checks passed)\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped, 89 deselected\n\nFixes #12717",
+      "pr_title": "Make player names links on /admin/people/notes (#12717)",
+      "recorded_at": "2026-08-23T21:41:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped, 89 deselected in 18.60s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12717,
   "triage": [
     {

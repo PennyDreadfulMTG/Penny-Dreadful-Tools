@@ -32,5 +32,27 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12662-1",
+      "final_comment": "This was fixed in commit 4142c9b1 ('Alter font so icons don't sit at top of bounding box in Windows'), which adjusts the font's OS/2 sTypoAscender metric to match Win Ascent. The regenerated font is embedded in pd.css.",
+      "issue": 12662,
+      "own_evidence": [
+        {
+          "detail": "independently checked: os2.sTypoAscender = metrics['Win Ascent'] \u2014 the fix is present in master, matching exactly what commit 4142c9b1 introduced",
+          "ref": "maintenance/fonts.py:243",
+          "type": "code"
+        },
+        {
+          "detail": "pd.css contains the updated @font-face with regenerated base64-encoded font data; git show confirms the base64 value changed in commit 4142c9b1",
+          "ref": "shared_web/static/css/pd.css:188",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-08-23T21:41:42Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

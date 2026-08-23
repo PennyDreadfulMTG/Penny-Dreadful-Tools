@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12665-1",
+      "branch": "sweep/12665-provide-a-way-to-dismiss-the-popover-men",
+      "files_changed": 3,
+      "head_sha": "7ab51f786c3530cdf4c590acd1a8b8fee837d345",
+      "issue": 12665,
+      "lines_changed": 42,
+      "lint": "passed",
+      "notes": "The scrim click handler previously used classList.toggle rather than classList.remove; the new PD.closeMenu() always removes the class, which is more correct (clicking the scrim should always close, never re-open). The Escape listener is attached to document every time PD.initMenu is called \u2014 safe since the page is single-loaded, but worth noting if initMenu is ever called more than once.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe mobile popover nav menu could only be dismissed by clicking the scrim overlay or selecting a menu item \u2014 there was no keyboard shortcut and no explicit close button, making it awkward especially for keyboard users.\n\n## What changed\n\n- **`shared_web/static/js/pd.js`**: Extracted a `PD.closeMenu()` helper (removes `.showing` from all `.scrim` and `nav` elements). Wired it to the scrim click handler (replacing the toggle with a deterministic remove), to any `.close-menu` button click, and to a `document` `keydown` listener that fires on `Escape`.\n- **`decksite/templates/menu.mustache`**: Added a `<button class=\"close-menu\" aria-label=\"Close menu\">\u2715</button>` at the top of the nav template.\n- **`shared_web/static/css/pd.css`**: Styled `.close-menu` as a hidden absolute-positioned button that becomes visible (`display: block`) only when `nav.showing` is active, placing the \u2715 in the top-right corner of the open drawer.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (ruff: All checks passed)\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped (unrelated functional test)\n- JS/CSS changes are not covered by the Python unit suite; manual inspection of the diff confirms correctness.\n\nFixes #12665",
+      "pr_title": "Add Escape key and close button to dismiss the popover menu (#12665)",
+      "recorded_at": "2026-08-23T21:52:43Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped in 18.43s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12665,
   "triage": [
     {

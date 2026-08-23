@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12666-1",
+      "branch": "sweep/12666-menu-and-submenu-should-scroll-independe",
+      "files_changed": 1,
+      "head_sha": "fa15f067",
+      "issue": 12666,
+      "lines_changed": 3,
+      "lint": "passed",
+      "notes": "The fix is 2 CSS property changes in one file. The medium-width media query (901\u20131600px) already set `position: relative` on `nav` for its popover submenu behavior; this change aligns the base (narrow/wide) styles with that existing pattern. No logic or template changes.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen the main menu (`.menu`) had many items and the user scrolled down, hovering over an item with a submenu would cause the submenu to appear at `top: 0` relative to `.menu` (its positioned ancestor via `position: relative`). Since the user had scrolled `.menu` downward, the submenu appeared off-screen above the visible area.\n\nAdditionally, `.menu` had no `overflow-y: auto`, so it couldn't scroll at all \u2014 the content would overflow the nav silently.\n\n## What changed (`shared_web/static/css/pd.css`)\n\n- **`nav`**: Added `position: relative`. This makes `nav` the containing block for the absolutely-positioned `.submenu`, anchoring the submenu to the full nav height (which does not scroll) rather than to `.menu`.\n- **`.menu`**: Replaced `position: relative` with `overflow-y: auto`. The menu items can now scroll within `.menu`'s bounds without dragging the submenu with them.\n\nThe medium-width media query already sets `position: relative` on `nav`, so this change makes base styles consistent with that existing pattern.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- No unit tests cover CSS layout; the change is pure CSS with no Python logic path.\n\nFixes #12666",
+      "pr_title": "Fix menu and submenu to scroll independently (#12666)",
+      "recorded_at": "2026-08-23T21:48:31Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "CSS is not covered by Python linters; lint passed (exit 0). Unit tests not run as they require a database and the fix is pure CSS with no testable logic.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12666,
   "triage": [
     {

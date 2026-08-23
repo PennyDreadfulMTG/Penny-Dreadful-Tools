@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12647-1",
+      "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
+      "files_changed": 2,
+      "head_sha": "71a091094ef501df2db37eeea92373487989881e",
+      "issue": 12647,
+      "lines_changed": 27,
+      "lint": "passed",
+      "notes": "The fix only suppresses `DatabaseException` wrapping MySQL 1062 specifically; all other database errors still propagate. The race condition is inherent to the check-then-insert pattern \u2014 a future improvement could use INSERT IGNORE or ON DUPLICATE KEY UPDATE to eliminate it entirely, but that would require changes in multiverse.py and is out of scope here.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a user ran `/spoiler` for a newly spoiled card (e.g. \"Waterlogged Teachings // Inundated Archive\"), there was a race condition: `valid_name()` found the card absent from the DB, so `scryfall_import_async` attempted to insert it via `add_cards_and_update_async`. If the bulk-data importer had inserted that card between those two calls, MySQL raised error 1062 (duplicate entry on `oracle_id`). This `DatabaseException` propagated all the way up to the Discord interaction handler and produced a large, user-visible stack trace in chat.\n\n## What changed\n\nIn `magic/oracle.py:scryfall_import_async`, the call to `add_cards_and_update_async` is now wrapped in a `try/except DatabaseException`. If the exception message contains `'1062'` (MySQL duplicate entry), the function logs a `logging.warning` and returns `False` (treating it as \"card already exists\") instead of re-raising. Any other `DatabaseException` is still re-raised as before. A new `logging` import and `DatabaseException` import were added.\n\nA unit test (`test_scryfall_import_async_handles_duplicate_entry`) was added to `magic/oracle_test.py` to cover this path using mocks \u2014 no live database required.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 688 passed, 1 skipped (full suite including the new test)\n\nFixes #12647",
+      "pr_title": "Silence duplicate-entry stack trace in /spoiler command (#12647)",
+      "recorded_at": "2026-08-23T21:53:44Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/oracle_test.py",
+        "detail": "688 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12647,
   "triage": [
     {

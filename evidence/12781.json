@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12781-1",
+      "branch": "sweep/12781-stop-dropping-old-data-for-prices-now-th",
+      "files_changed": 1,
+      "head_sha": "4b2e74ea77f852e94bc249e29cef6f344209e8ed",
+      "issue": 12781,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The cleanup() function remains in the file as dormant code per the issue comment suggesting a future archival approach may be needed for query performance. The store() function previously returned count*20 (a rough row count); that return value was only consumed by the now-removed cleanup call, so the signature is safely tightened to None.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`fetch()` in `price_grabber/price_grabber.py` called `cleanup(count)` after every price fetch, which deleted all `low_price` rows older than one month (or last rotation, whichever was more recent). Now that there is enough disk space, this data loss is unnecessary.\n\n## What changed\n\n- Removed the `cleanup(count)` call from `fetch()`. The `cleanup()` function itself is left in place (dormant) so it can be repurposed for a future archival strategy if query performance requires it.\n- Cleaned up the now-dead return value from `store()` (changed return type from `int` to `None`, removed `return count * 20`).\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed).\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped, 89 deselected.\n\nFixes #12781",
+      "pr_title": "Stop dropping old price data by removing cleanup() call (#12781)",
+      "recorded_at": "2026-08-23T21:44:11Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped, 89 deselected in 18.65s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12781,
   "triage": [
     {

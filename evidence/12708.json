@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12708-1",
+      "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
+      "files_changed": 2,
+      "head_sha": "0dac4c9844abd8b71421ba472e508146b9e95684",
+      "issue": 12708,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "The quality score is a Wilson lower-bound fraction (0\u20131) multiplied by 100 and formatted to one decimal place (e.g. 'Q:73.4%') for readability alongside the existing win-%. The null guard in JSX means the field can be removed later without breaking the UI.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe metagame grid already sorted archetypes by a Wilson lower-bound quality score, but that value was never returned to the frontend \u2014 it was only used in the `ORDER BY` clause. Users had no way to see the quality score that drives the default sort.\n\n## What changed\n\n**`decksite/data/archetype.py`** \u2014 imported `clauses` and added `{clauses.wilson_lower_bound_sql()} AS quality_score` to the `SELECT` list in `load_disjoint_archetypes()`. The field is camelized automatically by `return_camelized_json`, so it surfaces as `qualityScore` in the API response.\n\n**`shared_web/static/js/metagamegrid.jsx`** \u2014 added a `Q:{value}%` span with `title=\"Quality Score\"` adjacent to the existing win-% display, guarded by a null check so it degrades gracefully if the field is absent.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 all checks passed\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped, 89 deselected (full suite, no database-dependent tests affected)\n\nFixes #12708",
+      "pr_title": "Show quality score in metagame grid (#12708)",
+      "recorded_at": "2026-08-23T21:51:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped, 89 deselected in 16.42s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12708,
   "triage": [
     {

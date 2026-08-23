@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12762-1",
+      "branch": "sweep/12762-oldstyle-nums-for-archetype-name-look-si",
+      "files_changed": 1,
+      "head_sha": "b8bb68d1b2da4f3781daaf15e0f9f5a74b4bba44",
+      "issue": 12762,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single-line CSS addition to a scoped rule; no HTML or Python changes. The `.versus` selector is only used on the /matchups/ page, so there is no risk of unintended side effects elsewhere.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/matchups/` page displayed archetype names with oldstyle (text) numeric figures \u2014 numbers that hang below the baseline \u2014 which looked out of place in the context of deck/archetype names. This happens because the site's font activates oldstyle numerals by default, and the `.versus` block that wraps these names inherited that setting.\n\n## What changed\n\nAdded `font-variant-numeric: normal;` to the `.versus` CSS rule in `shared_web/static/css/pd.css`. This resets numeric figure style to lining (standard) figures for the matchup header block, matching the visual treatment everywhere else on the site.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- No unit tests cover CSS; the change is a single CSS property addition with no Python logic impact.\n\nFixes #12762",
+      "pr_title": "Fix oldstyle numeric figures on /matchups/ archetype names (#12762)",
+      "recorded_at": "2026-08-23T21:42:56Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (exit 0). Unit tests not run \u2014 no database available in this environment and the touched file is CSS-only with no Python unit test coverage.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12762,
   "triage": [
     {

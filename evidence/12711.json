@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12711-1",
+      "branch": "sweep/12711-remove-tappedout-and-mtggoldfish-from-li",
+      "files_changed": 2,
+      "head_sha": "aad7c659728b531a40fc1d11a5657a80175e9134",
+      "issue": 12711,
+      "lines_changed": 47,
+      "lint": "passed",
+      "notes": "DB columns tappedout_username and mtggoldfish_username remain in the schema and data; dropping them would require a migration and is a separate decision. The person.maybe_load_person_by_tappedout_name and maybe_load_person_by_mtggoldfish_name helpers in decksite/data/person.py are now unreferenced from link_accounts.py but may be used elsewhere \u2014 left untouched per the no-drive-by rule.",
+      "outcome": "pushed",
+      "pr_body": "## What changed\n\nTappedOut and MTGGoldfish are no longer supported integrations, so the `/link` page no longer needs to display or process their username fields.\n\n**`decksite/templates/linkaccounts.mustache`**: Removed the TappedOut (`to_username`) and MTGGoldfish (`gf_username`) label/input/error-div blocks from the form shown to users who have already connected their MTGO account.\n\n**`decksite/views/link_accounts.py`**: Removed `link_tappedout()` and `link_mtggoldfish()` methods and their calls from `process()`. Removed the pre-population logic that copied `tappedout_username`/`mtggoldfish_username` from the DB into the form. Simplified `process()` accordingly. Dropped the now-unused `cast` import.\n\nDB columns (`tappedout_username`, `mtggoldfish_username`) are left in place as existing data and schema migrations are out of scope.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped, 89 deselected\n\nFixes #12711",
+      "pr_title": "Remove TappedOut and MTGGoldfish from /link (#12711)",
+      "recorded_at": "2026-08-23T21:48:32Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped, 89 deselected in 16.90s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12711,
   "triage": [
     {

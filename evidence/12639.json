@@ -32,5 +32,27 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12662-1",
+      "final_comment": "Fixed in PR #14919 (commit 1b72b85a, merged 2026-08-22). The bug was a mis-indexed tuple unpack in random_legal_deck() after load_decks() was updated to return (decks, total); the corrected code is now in master.",
+      "issue": 12639,
+      "own_evidence": [
+        {
+          "detail": "independently checked: ds, _ = deck.load_decks(...) is now on its own line, and return ds[0] is inside the try block \u2014 the fix is in master",
+          "ref": "decksite/league.py:353-355",
+          "type": "code"
+        },
+        {
+          "detail": "independently confirmed: state is MERGED, merged 2026-08-22, title 'Fix random deck API'",
+          "ref": "PR #14919",
+          "type": "pr"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-08-23T21:41:42Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

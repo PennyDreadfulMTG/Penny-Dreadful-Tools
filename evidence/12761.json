@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12761-1",
+      "branch": "sweep/12761-remove-date-column-from-latest-tournamen",
+      "files_changed": 4,
+      "head_sha": "3d0dae279c8bcd2a8a4705bf829ee92b9a287dac",
+      "issue": 12761,
+      "lines_changed": 15,
+      "lint": "passed",
+      "notes": "The `hide_date` flag follows the same Mustache context-stack pattern used by `hide_source`, `hide_person`, and `hide_top8` \u2014 the flag set on the deck_table dict is visible inside `{{#decks}}{{> deckrow}}` because pystache traverses parent contexts. The subtitle p-tag is unstyled; if the site already has a `.subtitle` CSS rule the date will inherit it automatically.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe \"Latest Tournament Top 8\" section on the home page showed a Date column, but every deck in the table has the same date (they all come from the same tournament). The column is noise.\n\n## What changed\n\n- `decksite/templates/decktable.mustache`: wrapped the `<th>Date</th>` in `{{^hide_date}}...{{/hide_date}}`\n- `decksite/templates/deckrow.mustache`: wrapped the date `<td>` in `{{^hide_date}}...{{/hide_date}}`\n- `decksite/templates/home.mustache`: added `{{#subtitle}}<p class=\"subtitle\">{{subtitle}}</p>{{/subtitle}}` below the section `<h2>` so the date can be surfaced as a subtitle instead\n- `decksite/views/home.py`: added `'hide_date': True` and `'subtitle': dtutil.display_date(tournament_decks[0].active_date)` to the tournament deck table dict, hiding the column and showing the shared date below the heading\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped, 89 deselected\n\nFixes #12761",
+      "pr_title": "Remove date column from Latest Tournament Top 8 (#12761)",
+      "recorded_at": "2026-08-23T21:48:31Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped, 89 deselected in 16.46s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12761,
   "triage": [
     {

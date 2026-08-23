@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12712-1",
+      "branch": "sweep/12712-some-js-on-admin-archetypes-that-assigns",
+      "files_changed": 2,
+      "head_sha": "7726467b55f0001d2b39746cdad6bf90ee2436b7",
+      "issue": 12712,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The JS only fires when the select value is empty, so it never overrides an archetype pre-selected by the rule engine. If a deck has no archetype assigned (archetype_id is 0 or null), jQuery's data() returns a falsy value and the guard `if (archetypeId && ...)` prevents any no-op selection.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nOn `/admin/archetypes`, each queue row's \"Assign To\" dropdown defaulted to `[Select]` when no rule matched the deck, even though the deck already had a machine-guessed archetype assigned (e.g. via similarity matching). Admins had to manually locate the current archetype in the dropdown before they could confirm or change it.\n\n## What changed\n\n- **`decksite/templates/editarchetypes.mustache`**: Added `data-archetype-id=\"{{archetype_id}}\"` to each `<tr>` in the queue, exposing the deck's current (machine-guessed) archetype ID as a data attribute.\n- **`shared_web/static/js/pd.js`**: Added `PD.initArchetypeGuess()`, called from `PD.init()`, which on page load walks every queue row and sets its `<select>` to the deck's current archetype ID \u2014 but only when the select is still at its empty default (i.e. no rule already pre-selected a value).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` passes (exit 0).\n- No Python unit tests exist for this JS-only behaviour and no DB was available in the environment to run the full unit suite.\n\nFixes #12712",
+      "pr_title": "Pre-select machine guess archetype in edit archetypes queue (#12712)",
+      "recorded_at": "2026-08-23T21:46:24Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed (exit 0). Unit tests were not run \u2014 no database available in this environment and the unit suite requires DB access for most deck/archetype tests. The changed code is a mustache template attribute addition and a pure DOM-manipulation JS function; neither has Python unit tests.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12712,
   "triage": [
     {

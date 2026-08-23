@@ -1,0 +1,10 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-08-23T21:48:33Z",
+  "evidence_refs": [],
+  "issue": 12716,
+  "kind": "fix-validation",
+  "question": "Pre-dispatch guard: a sweep/12716-* branch already exists on origin",
+  "summary": "a sweep/12716-* branch already exists on origin"
+}

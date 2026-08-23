@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12719-1",
+      "branch": "sweep/12719-why-is-from-bug-blog-always-false-can-we",
+      "files_changed": 1,
+      "head_sha": "f442f3b1643116e305f524a44b0bdb10b52c9aa7",
+      "issue": 12719,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single-line fix; the `labels` list is already in scope. The `is_issue_from_bug_blog` helper in `repo.py` uses Redis caching to check the bug blog text, which is a separate mechanism \u2014 the label-based check here is the correct approach for the bugs.json export. No schema migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `modo_bugs/update.py` line 149, the `bug_blog` field in every `BugData` entry was hardcoded to `False`, regardless of whether the GitHub issue had the `'From Bug Blog'` label. This meant `card_bug.from_bug_blog` was always stored as `False` in the database, making the field meaningless.\n\n## What changed\n\nChanged `'bug_blog': False` to `'bug_blog': 'From Bug Blog' in labels` (one line in `process_issue`). The `labels` list is already computed earlier in the same function from `issue.labels`, so no additional API calls are needed.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 All checks passed\n- `uv run --frozen python dev.py unit modo_bugs` \u2014 687 passed, 1 skipped (the skipped test is a pre-existing functional test skip unrelated to this change)\n\nFixes #12719",
+      "pr_title": "Fix bug_blog always being False by reading 'From Bug Blog' label (#12719)",
+      "recorded_at": "2026-08-23T21:40:37Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit modo_bugs",
+        "detail": "687 passed, 1 skipped in 18.59s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12719,
   "triage": [
     {

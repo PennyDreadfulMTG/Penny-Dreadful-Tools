@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12664-1",
+      "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
+      "files_changed": 1,
+      "head_sha": "86dabd687c2e226d7e38a2ecbf48cff8294a50d5",
+      "issue": 12664,
+      "lines_changed": 11,
+      "lint": "passed",
+      "notes": "Change is CSS-only, scoped to the medium-width (901\u20131600px) media query block. Narrow-screen modal drawer and wide-screen always-visible submenu paths are unaffected. The removed `top: 0; position: absolute` in the old hover rule were dead overrides already covered by the base `.submenu` rule.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe submenu popover (visible on 901\u20131600px wide screens when hovering a menu item) appeared and disappeared instantly via a `display: none` \u2194 `display: block` toggle. CSS cannot transition `display`, so there was no ease animation.\n\nThe existing medium-width media query also redundantly set `top: 0; position: absolute` on the hover rule, which are already present on the base `.submenu` selector.\n\n## What changed\n\nInside the `@media only screen and (min-width: 901px) and (max-width: 1600px)` block in `shared_web/static/css/pd.css`:\n\n- Added a default-state rule `nav li > .item + .submenu` that overrides `display: none` with `display: block`, sets `opacity: 0; pointer-events: none` (visually hidden and non-interactive), and declares `transition: opacity 0.2s ease`.\n- Changed the hover rule `nav li:hover > .item + .submenu` to set `opacity: 1; pointer-events: auto` (fades in, becomes interactive).\n- Removed the now-redundant `top: 0; position: absolute` from the hover rule (already on the base `.submenu` rule).\n\nThis gives a smooth 200ms ease fade when the submenu appears and disappears. Using opacity+pointer-events instead of display avoids both the instant snap and any border-flicker that would occur with a width transition.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (\"All checks passed!\").\n- Unit tests were not run; the change is CSS-only with no Python logic touched, making a unit-test run not applicable.\n\nFixes #12664",
+      "pr_title": "Add opacity ease transition to medium-width submenu popover (#12664)",
+      "recorded_at": "2026-08-23T21:50:41Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed!",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12664,
   "triage": [
     {

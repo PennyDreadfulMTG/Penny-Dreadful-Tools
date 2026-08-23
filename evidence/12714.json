@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12714-1",
+      "branch": "sweep/12714-we-link-to-status-pennydreadfulmagic-com",
+      "files_changed": 1,
+      "head_sha": "e8541a4a45e81a74a14c77aef79d755bfa3b0853",
+      "issue": 12714,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "The same broken link also appears in `logsite/templates/about.mustache` (using `http://` rather than `https://`), which was not touched per the fix-one-issue rule. A follow-up should remove that link too. The README also references the status domain in an Uptime Robot badge; that badge may render a broken-status icon but was left untouched as it is outside the issue scope.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/about/` page linked to `https://status.pennydreadfulmagic.com/` which has an SSL certificate error. The HTTP endpoint redirects to HTTPS but the HTTPS endpoint fails to connect, confirming the site is abandoned/broken.\n\n## What changed\n\nRemoved the single `<p>` line containing the broken status link from `decksite/templates/aboutpdm.mustache` (line 4). No other changes.\n\n## How it was validated\n\n- Verified the site is unreachable via `curl -isk https://status.pennydreadfulmagic.com/` (no response) and HTTP redirects to the broken HTTPS endpoint\n- `uv run --frozen python dev.py lint` passed on the touched file\n- Unit tests were not run (no database available in this environment; lint is the minimum bar for a mustache-only change)\n\nFixes #12714",
+      "pr_title": "Remove broken status.pennydreadfulmagic.com link from /about/ (#12714)",
+      "recorded_at": "2026-08-23T21:46:24Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed!",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12714,
   "triage": [
     {

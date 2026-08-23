@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12730-1",
+      "branch": "sweep/12730-add-price-of-progress-to-explain-promo-t",
+      "files_changed": 1,
+      "head_sha": "06198158643ff4f7701ebbaf4ebd71e5b113504c",
+      "issue": 12730,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single-line addition to a static list. The legality filter (line 320) ensures the card only surfaces in explanations when it is PD-legal, so this is safe regardless of the card's current format status.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `promo_explanation()` function in `discordbot/commands/explain.py` lists cards that have cheap promotional versions so users know where to look for affordable copies. 'Price of Progress' (the Fire and Lightning promo version) is significantly cheaper than other printings, but it was missing from this list.\n\n## What changed\n\nAdded `'Price of Progress'` to the `have_cheap_promos` list in `promo_explanation()` (line 319). The existing filter on line 320 already checks PD legality, so it will only appear in the explanation when the card is legal in Penny Dreadful.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit discordbot` \u2014 687 passed, 1 skipped, 89 deselected\n\nFixes #12730",
+      "pr_title": "Add Price of Progress to promo explanation list (#12730)",
+      "recorded_at": "2026-08-23T21:41:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "687 passed, 1 skipped, 89 deselected in 19.29s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12730,
   "triage": [
     {

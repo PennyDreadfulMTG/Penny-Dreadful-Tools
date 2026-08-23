@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12760-1",
+      "branch": "sweep/12760-league-records-menu-entry-has-slightly-s",
+      "files_changed": 3,
+      "head_sha": "eaeba3118a33af97640aa3480a884cc7a68be403",
+      "issue": 12760,
+      "lines_changed": 20,
+      "lint": "passed",
+      "notes": "The fix is purely additive at the request-context level (sets g on a cache miss, has no effect on cache hits since the HTML is already rendered). The competition_id type comparison is safe because Flask coerces the route param to int. No schema changes required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe \"Records\" item under the League menu submenu points to the `current_league` endpoint (`/league/current/`), which immediately redirects to `/competitions/<active_id>/`. That URL is served by the `competition` endpoint, so `build_menu()` saw `request.endpoint == 'competition'` and highlighted \"Competition Results\" under Competitions \u2014 not \"Records\" under League.\n\n## What changed\n\n- **`decksite/controllers/competitions.py`**: In `competition()`, after loading the competition, check whether it is an active league (`c.type == 'League'` and current date falls within `c.start_date`/`c.end_date`). If so, set `g.menu_endpoint_override = 'current_league'`. This reuses data already fetched by `comp.load_competition()` \u2014 no extra DB query.\n- **`decksite/__init__.py`**: In `build_menu()`, pass `g.get('menu_endpoint_override', request.endpoint)` as `current_endpoint` instead of `request.endpoint` directly, so the override takes effect when set.\n- **`decksite/view_test.py`**: Added a unit test verifying that setting `g.menu_endpoint_override = 'current_league'` causes `build_menu()` to mark the League item (not Competitions) as current.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)  \n- `uv run --frozen python dev.py unit` \u2014 688 passed, 1 skipped (1 new test added)\n\nFixes #12760",
+      "pr_title": "Fix League > Records menu not highlighting when viewing active league (#12760)",
+      "recorded_at": "2026-08-23T21:42:56Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "688 passed, 1 skipped (687 original + 1 new test)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12760,
   "triage": [
     {

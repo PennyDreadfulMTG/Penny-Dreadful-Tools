@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12778-1",
+      "branch": "sweep/12778-clickable-table-row-improvements",
+      "files_changed": 5,
+      "head_sha": "c7fefa867cc5a9559a1ff746766ebc063e3cd315",
+      "issue": 12778,
+      "lines_changed": 12,
+      "lint": "passed",
+      "notes": "The `subject_url` for player notes uses the `/people/id/{id}/` form because the `subject` field from `person_query` is a lowercased display name (possibly from name/mtgo/tappedout), not guaranteed to be a valid URL slug; the id-based URL is always correct. The early-return guard in initLinks is a correctness fix that benefits all existing clickable rows site-wide, not just the new ones.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThree related gaps in the clickable-row feature:\n\n1. **Player notes table** (`/admin/playernotes`): rows had no `data-href` or `clickable` class, so clicking a note did nothing.\n2. **Edit aliases table** (`/admin/editaliases`): same problem \u2014 rows had no link.\n3. **`initLinks` in `pd.js`**: clicking a `<button>`, `<input>`, `<a>`, or other interactive element inside a clickable row would navigate away instead of letting the element handle the event.\n\n## What changed\n\n- **`decksite/views/player_notes.py`**: compute `subject_url = /people/id/{subject_id}/` for each note so the template can reference it.\n- **`decksite/templates/playernotes.mustache`**: add `class=\"wide clickable\" data-href=\"{{subject_url}}\"` to the `<tr>`.\n- **`decksite/views/edit_aliases.py`**: compute `person_url` for each alias entry (prefers `/people/{mtgo_username}/`, falls back to `/people/id/{person_id}/`).\n- **`decksite/templates/editaliases.mustache`**: add `class=\"clickable\" data-href=\"{{person_url}}\"` to the `<tr>`.\n- **`shared_web/static/js/pd.js` `initLinks`**: add an early return when `e.target.closest('a, button, input, select, textarea')` so interactive elements within clickable rows are not intercepted.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all ruff/mypy checks clean)\n- `uv run --frozen python dev.py unit` \u2014 687 passed, 1 skipped in 18.96s\n\nFixes #12778",
+      "pr_title": "Make player notes and alias table rows clickable (#12778)",
+      "recorded_at": "2026-08-23T21:45:18Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "687 passed, 1 skipped, 89 deselected in 18.96s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12778,
   "triage": [
     {

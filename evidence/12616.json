@@ -37,5 +37,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12662-1",
+      "final_comment": "This was fixed in commit 471b7632 (PR #12940). Companion cards added to archetype rules are now automatically flagged as sideboard cards, so the rules engine correctly looks for them in deck sideboards rather than the maindeck.",
+      "issue": 12616,
+      "own_evidence": [
+        {
+          "detail": "independently checked: COMPANIONS = search.search('is:companion') is present in master, used to auto-flag companion cards as sideboard=TRUE in rule_card rows",
+          "ref": "decksite/data/rule.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: SQL WHERE clause uses inclusions.sideboard = deck_card.sideboard (not NOT deck_card.sideboard), so the query correctly matches companions in the sideboard",
+          "ref": "decksite/data/rule.py:323",
+          "type": "code"
+        },
+        {
+          "detail": "independently confirmed: state is MERGED, title 'Look for companions in sideboard and not main deck in archetype rules'",
+          "ref": "PR #12940",
+          "type": "pr"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-08-23T21:41:42Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

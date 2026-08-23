@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12769-1",
+      "branch": "sweep/12769-not-available-online-for-cardhoarder-doe",
+      "files_changed": 1,
+      "head_sha": "7e88fb0719731fdaf9b3083d9fa80ba7bb58c724",
+      "issue": 12769,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single string-literal change, no logic altered. No existing unit tests cover this path. The lint suite passes cleanly.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen Cardhoarder returns no price data for a card (e.g. immediately after a set release before prices are listed), `magic/card_price.py` returned the string `'Not available online'`. This message implies the card cannot be purchased online at all, which is misleading \u2014 the card may very well be available online, Cardhoarder simply hasn't priced it yet.\n\n## What changed\n\nChanged the string at `magic/card_price.py:17` from `'Not available online'` to `'Price not available from Cardhoarder'`. This makes it clear that the source of the missing data is Cardhoarder specifically, and that the issue is about pricing rather than card availability.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` passes (exit 0).\n- No unit tests exist for this specific code path; the cloud environment has no live DB so the full unit suite could not be run, but the change is a one-line string literal replacement with no logic changes.\n\nFixes #12769",
+      "pr_title": "Fix misleading 'Not available online' message for missing Cardhoarder price (#12769)",
+      "recorded_at": "2026-08-23T21:42:55Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed (exit 0). Unit tests not run \u2014 no DB available in cloud environment and the touched code path (card_price.py:17) has no existing unit tests to run in isolation.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12769,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12709-1",
+      "branch": "sweep/12709-the-admin-menu-list-page-could-should-hi",
+      "files_changed": 2,
+      "head_sha": "aee703c05466a486b0671780210b841c88f47851",
+      "issue": 12709,
+      "lines_changed": 14,
+      "lint": "passed",
+      "notes": "The fix is a single filter in the controller; auth enforcement on the individual routes is unchanged, so no security boundary is altered. The test I added validates the menu partition (demimod vs admin items exist) but does not simulate a full HTTP request with a demimod session \u2014 a future integration test could do that. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/admin/` landing page listed all admin menu items (including admin-only pages like Aliases, Matches, Prizes, Rotation, etc.) regardless of whether the logged-in user was a full admin or only a demimod. Demimods who clicked those links would be redirected to the unauthorized page, but they could still see and navigate to the URLs.\n\n## What changed\n\nIn `admin_home()` (`decksite/controllers/admin.py`), the full menu is now filtered before being passed to the `Admin` view: if the session does not have `admin` truthy, only menu items with `permission_required == 'demimod'` are included. Full admins continue to see the complete list.\n\nA test was added to `admin_test.py` to assert that `admin_menu()` contains both demimod and admin-only items, confirming the partitioning the filter relies on is correct.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit decksite/controllers/admin_test.py` \u2014 688 passed, 1 skipped, all tests in the full unit suite green\n\nFixes #12709",
+      "pr_title": "Hide forbidden admin menu items from demimod users (#12709)",
+      "recorded_at": "2026-08-23T21:48:32Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/controllers/admin_test.py",
+        "detail": "688 passed, 1 skipped in 18.24s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12709,
   "triage": [
     {

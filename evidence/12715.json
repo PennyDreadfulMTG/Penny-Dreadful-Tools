@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12715-1",
+      "branch": "sweep/12715-make-the-archetypes-to-assign-badge-into",
+      "files_changed": 1,
+      "head_sha": "8ad7e65879ecd87be1419f8fe5ae8eb12c8ed95a",
+      "issue": 12715,
+      "lines_changed": 3,
+      "lint": "passed",
+      "notes": "The `border-radius: 50%` produces a perfect circle only when the element is square. For counts \u2265 10 the `min-width` will expand beyond `height`, resulting in a pill shape rather than a circle \u2014 this is standard notification badge behavior and visually correct. `var(--white)` was deliberately avoided for `color` because it maps to near-black in dark mode.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `.badge` span used to display the archetypes-to-assign count in the site nav had no background, so the number floated over menu items with no visual container \u2014 it didn't read as a notification badge.\n\n## What changed\n\nThree CSS properties were added to `.badge` in `shared_web/static/css/pd.css`:\n\n- `background-color: var(--red)` \u2014 uses the site's existing red variable (which adapts for dark mode).\n- `border-radius: 50%` \u2014 turns the already-square element (`height: 1.333em`, `min-width: 1.333em`) into a true circle.\n- `color: white` \u2014 hardcoded white so text is always legible over the red background in both light and dark mode (using `var(--white)` would invert to near-black in dark mode).\n\nNo template or Python changes were needed.\n\n## Validation\n\n`uv run --frozen python dev.py lint` exits 0. No unit tests cover pure CSS; the badge rendering can be verified visually by loading the decksite with an admin account that has archetypes to assign.\n\nFixes #12715",
+      "pr_title": "Make archetypes-to-assign badge a real circle badge (#12715)",
+      "recorded_at": "2026-08-23T21:45:17Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "Exit code 0 \u2014 no CSS linting step in this repo's lint suite; ruff/mypy pass cleanly on Python files. Unit tests not run (database unavailable in cloud env; CSS change has no Python-side tests).",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12715,
   "triage": [
     {

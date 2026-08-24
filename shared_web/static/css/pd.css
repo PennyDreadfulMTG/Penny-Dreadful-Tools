@@ -2528,11 +2528,14 @@ Season Symbols
     white-space: nowrap;
 }
 
-.ss-grid .season-icon-link {
+.ss-grid .season-icon-link, .season-grid .season-icon-link {
     border-radius: var(--text-rounded-corners);
+    line-height: var(--table-line-height);
+}
+
+.ss-grid .season-icon-link {
     display: inline-block;
     justify-self: start;
-    line-height: var(--table-line-height);
     margin-right: 0.317rem;
     padding: 0.178em 0.317rem;
 }
@@ -2541,7 +2544,7 @@ Season Symbols
     margin-right: 0;
 }
 
-main .ss-grid a.season-icon-link:hover {
+main .ss-grid a.season-icon-link:hover, main .season-grid a.season-icon-link:hover {
     background-color: var(--highlight);
 }
 
@@ -2549,9 +2552,31 @@ main .ss-grid a.season-icon-link:hover {
     color: var(--current-season-icon);
 }
 
+/* The legality list on card and deck pages, where each icon is followed by its season number. */
 .ss-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+}
+
+/* The seasons played list on player pages. One square cell per season, however wide the symbol is. */
+.season-grid {
+    display: grid;
+    gap: 0.178rem;
+    grid-template-columns: repeat(var(--season-grid-columns, 7), minmax(1.777rem, max-content));
+    justify-content: start;
+}
+
+.season-grid .season-icon-link {
+    align-items: center;
+    box-sizing: border-box; /* So the padding doesn't push the cells past their minimum size. */
+    display: flex;
+    justify-content: center;
+    min-height: 1.777rem;
+    padding: 0 0.238rem;
+}
+
+.season-grid .season-icon, .season-grid .season-icon::before {
+    margin-right: 0; /* These are centered in a cell of their own, not followed by text. */
 }
 
 .ss-num {

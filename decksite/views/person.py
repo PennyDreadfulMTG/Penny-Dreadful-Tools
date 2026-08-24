@@ -90,7 +90,7 @@ class Person(View):
     def setup_active_seasons(self, seasons_active: Sequence[int]) -> None:
         all_seasons = self.all_seasons()[1:]  # remove "all time" which is not shown here
         total_seasons = len(all_seasons)
-        cube_side_length = math.ceil(math.sqrt(total_seasons))
+        self.seasons_grid_columns = math.ceil(math.sqrt(total_seasons))  # Lay the seasons out in a square.
         for i, setcode in enumerate([s.get('code') for s in all_seasons]):
             season_id = total_seasons - i
             if season_id > seasons.current_season_num():
@@ -104,6 +104,5 @@ class Person(View):
                 'season_id': season_id,
                 'className': class_name,
                 'url': url_for('seasons.person', person_id=self.person.id, season_id=season_id) if active else '',
-                'edge': (i + 1) % cube_side_length == 0,
             }
             self.seasons_active.append(season)

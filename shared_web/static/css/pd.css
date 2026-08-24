@@ -588,6 +588,10 @@ Color attributes are mostly found with their related structural elements in this
     --tertiary-background: var(--light-gray);
     --tertiary-text: var(--black);
 
+    /* Notification badges. The page colors inverted: the same ink the menu is drawn in, so it stands out against the menu without introducing a color, and the count reads at full text contrast. */
+    --badge-background: var(--text);
+    --badge-text: var(--background);
+
     /* Colors of Magic (avoid using these to represent anything else). */
     --w-mana: #fffcda;
     --u-mana: #ace2fa;
@@ -2573,26 +2577,30 @@ Notification Badges
     position: relative;
 }
 
+/*
+    Don't center this with flexbox. jQuery show() puts an inline display on the badge when it reveals it to a mod,
+    which beats anything we say here, so line-height (which survives being blockified by position: absolute) does the centering.
+*/
 .badge {
-    background-color: var(--red);
-    border-radius: 50%;
-    color: white;
-    font-size: var(--table-font-size);
-    height: 1.333em;
-    line-height: var(--reading-line-height);
-    min-width: 1.333em;
-    padding: 0;
+    background-color: var(--badge-background);
+    border-radius: 0.85em; /* Half the height, so one or two digits is a circle and a rare three-digit count is a tidy pill rather than spilling out of one. */
+    box-sizing: border-box; /* So the min-width is the whole circle, padding included. */
+    color: var(--badge-text);
+    font-size: 0.6rem; /* Smaller than the smallest text token. A badge hangs off an icon so it has to read as smaller than one. */
+    height: 1.7em;
+    line-height: 1.7em; /* Equal to the height so the number sits in the middle of the circle. */
+    min-width: 1.7em; /* Equal to the height so one or two digits is a circle. */
+    padding: 0 0.15em; /* Narrow enough that two digits still fit within the min-width, wide enough that three don't touch the sides. */
     position: absolute;
-    right: 1.333rem;
+    right: 1.5rem; /* With the top, hangs the badge off the top-right corner of the menu icon rather than floating away from it. */
     text-align: center;
-    top: 8px;
+    top: 13px;
 }
 
-@media only screen and (max-width: 640px) {
-    .badge {
-        right: 0.75em;
-        top: 0.75em;
-    }
+/* Menu links have padding, and links are oldstyle-nums where digits sit at differing heights. Both push the count off-center in its circle. */
+.badge a {
+    font-variant-numeric: normal;
+    padding: 0;
 }
 
 /*

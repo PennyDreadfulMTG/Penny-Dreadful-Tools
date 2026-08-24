@@ -941,6 +941,7 @@ nav.showing {
 
 nav.showing .menu {
     display: flex;
+    padding-top: 48px; /* Leave room for the close button so it doesn't sit on top of the first menu item. */
     width: var(--main-menu-width);
 }
 
@@ -964,14 +965,20 @@ nav.showing:has(.current ~ .submenu) {
 .close-menu {
     background: none;
     border: none;
-    color: var(--color);
+    color: var(--text);
     cursor: pointer;
     display: none;
-    font-size: 1.5rem;
-    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    left: 0; /* Pin to the main menu column, not the right of the nav, which is wider when a submenu is showing. */
+    line-height: 1;
+    margin: 0; /* Undo the form control margin and max-width that all buttons get at narrow widths. */
+    max-width: none;
+    padding: 12px;
     position: absolute;
-    right: 0;
+    text-align: left;
     top: 0;
+    width: var(--main-menu-width);
+    z-index: 1; /* .menu is position: relative and comes after this in the html so otherwise it paints over the button. */
 }
 
 nav.showing .close-menu {

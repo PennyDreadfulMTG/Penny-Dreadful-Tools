@@ -18,7 +18,7 @@ dependencies = [
     "inflect==7.5.0",
     "jsbeautifier==2.0.3",
     "lxml",
-    "matplotlib==3.11.0",
+    "matplotlib==3.11.1",
     "munch==4.0.0",
     "mysqlclient==2.2.8",
     "plumbum==2.0.1",

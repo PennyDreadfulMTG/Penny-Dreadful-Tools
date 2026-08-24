@@ -201,7 +201,7 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
 
 
 def find_base_graphemes() -> set[str]:
-    return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅☰🏠☼🌙✨')
+    return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅☰🏠☼🌙✨✕')
 
 def encode(font: TTFont) -> str:
     _, tmp_in = tempfile.mkstemp()

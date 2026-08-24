@@ -1485,3 +1485,19 @@
 {"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1485, "ts": "2026-08-23T23:57:08Z"}
 {"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1486, "ts": "2026-08-23T23:57:09Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1486, "seq": 1487, "ts": "2026-08-23T23:57:09Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1488, "ts": "2026-08-24T00:01:30Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1489, "ts": "2026-08-24T00:02:34Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1490, "ts": "2026-08-24T00:02:36Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1491, "ts": "2026-08-24T00:02:36Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1492, "ts": "2026-08-24T00:02:37Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1492, "seq": 1493, "ts": "2026-08-24T00:02:38Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1494, "ts": "2026-08-24T00:08:04Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1495, "ts": "2026-08-24T00:08:06Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1496, "ts": "2026-08-24T00:08:07Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1497, "ts": "2026-08-24T00:08:08Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1497, "seq": 1498, "ts": "2026-08-24T00:08:08Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1499, "ts": "2026-08-24T00:13:31Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1500, "ts": "2026-08-24T00:13:33Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1501, "ts": "2026-08-24T00:13:34Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1502, "ts": "2026-08-24T00:13:34Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1502, "seq": 1503, "ts": "2026-08-24T00:13:35Z"}

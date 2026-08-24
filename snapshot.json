@@ -11413,7 +11413,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-24T13:27:07Z",
+          "checked_at": "2026-08-24T13:43:49Z",
           "failed": [],
           "state": "green"
         },
@@ -11557,7 +11557,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-24T13:27:06Z",
+          "checked_at": "2026-08-24T13:43:48Z",
           "failed": [],
           "state": "green"
         },
@@ -11789,7 +11789,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-24T13:27:05Z",
+          "checked_at": "2026-08-24T13:43:46Z",
           "failed": [],
           "state": "green"
         },
@@ -22351,9 +22351,9 @@
   },
   "last_bundle_at": null,
   "last_master_sha": "cb4ec4893bb4c783f3c7b69e038c7896a429ffb4",
-  "last_mirror_at": "2026-08-24T13:14:52Z",
-  "last_seq": 1634,
-  "last_snapshot_at": "2026-08-24T13:28:14Z",
+  "last_mirror_at": "2026-08-24T13:30:27Z",
+  "last_seq": 1647,
+  "last_snapshot_at": "2026-08-24T13:44:54Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

@@ -2804,10 +2804,20 @@ Metagame
     text-align: right;
 }
 
-.metagame-grid .additional {
+/* Without this a smaller cell sits at the top of the row rather than on the same baseline as its taller neighbor. */
+.metagame-grid .baseline {
+    align-items: baseline;
+}
+
+.metagame-grid .additional, .metagame-grid .quality {
     color: var(--deemphasized-text);
     font-size: calc(12rem / 20);
     line-height: calc(15 / 12);
+}
+
+.metagame-grid .quality-star {
+    font-size: 1.7em; /* The star is about half height compared to the numbers at its natural size. */
+    line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
 .metagame-grid .additional span {

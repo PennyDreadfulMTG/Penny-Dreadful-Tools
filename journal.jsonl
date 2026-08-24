@@ -1501,3 +1501,24 @@
 {"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1501, "ts": "2026-08-24T00:13:34Z"}
 {"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1502, "ts": "2026-08-24T00:13:34Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1502, "seq": 1503, "ts": "2026-08-24T00:13:35Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1504, "ts": "2026-08-24T00:16:51Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1505, "ts": "2026-08-24T00:18:59Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1506, "ts": "2026-08-24T00:19:01Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1507, "ts": "2026-08-24T00:19:02Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1508, "ts": "2026-08-24T00:19:03Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1508, "seq": 1509, "ts": "2026-08-24T00:19:03Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1510, "ts": "2026-08-24T00:24:29Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1511, "ts": "2026-08-24T00:24:30Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1512, "ts": "2026-08-24T00:24:31Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1513, "ts": "2026-08-24T00:24:32Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1513, "seq": 1514, "ts": "2026-08-24T00:24:32Z"}
+{"event": "MASTER_ADVANCED", "seq": 1515, "sha": "f47861cbf7663f5a8ef0809dec57372ceb769f96", "ts": "2026-08-24T00:26:37Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1516, "ts": "2026-08-24T00:26:42Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1517, "ts": "2026-08-24T00:26:43Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1518, "ts": "2026-08-24T00:26:44Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1519, "ts": "2026-08-24T00:26:45Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1519, "seq": 1520, "ts": "2026-08-24T00:30:00Z"}
+{"event": "CI_CHECKED", "issue": 12708, "pr": 14964, "seq": 1521, "ts": "2026-08-24T00:32:09Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1522, "ts": "2026-08-24T00:32:10Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1523, "ts": "2026-08-24T00:32:11Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1524, "ts": "2026-08-24T00:32:12Z"}

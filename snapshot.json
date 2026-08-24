@@ -11399,7 +11399,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-24T00:13:34Z",
+          "checked_at": "2026-08-24T00:26:45Z",
           "failed": [],
           "state": "green"
         },
@@ -11543,7 +11543,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-24T00:13:34Z",
+          "checked_at": "2026-08-24T00:26:44Z",
           "failed": [],
           "state": "green"
         },
@@ -11775,7 +11775,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-24T00:13:33Z",
+          "checked_at": "2026-08-24T00:26:43Z",
           "failed": [],
           "state": "green"
         },
@@ -12298,7 +12298,7 @@
         "adopted": true,
         "branch": "sweep/12708-put-the-quality-score-in-the-metagame-pa",
         "ci": {
-          "checked_at": "2026-08-24T00:13:31Z",
+          "checked_at": "2026-08-24T00:26:42Z",
           "failed": [],
           "state": "green"
         },
@@ -22331,10 +22331,10 @@
     }
   },
   "last_bundle_at": null,
-  "last_master_sha": "9529efd29c38e7c234ef46528bcfd8d6b5d57f4e",
-  "last_mirror_at": "2026-08-24T00:01:30Z",
-  "last_seq": 1503,
-  "last_snapshot_at": "2026-08-24T00:13:35Z",
+  "last_master_sha": "f47861cbf7663f5a8ef0809dec57372ceb769f96",
+  "last_mirror_at": "2026-08-24T00:16:51Z",
+  "last_seq": 1520,
+  "last_snapshot_at": "2026-08-24T00:30:00Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

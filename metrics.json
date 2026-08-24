@@ -1,6 +1,6 @@
 {
   "active_workspaces": 0,
-  "alert": "unregistered workspace(s) in project: Adjust badge color styling (f9f40591), Mobile menu improvements (6635a6c5), Reviewing for approval (d40e31ba)",
+  "alert": "unregistered workspace(s) in project: Adjust badge color styling (f9f40591)",
   "caps": {
     "closures_today": 7,
     "prs_today": 22
@@ -14,7 +14,7 @@
     "pr_open": 19,
     "reported": 8
   },
-  "heartbeat": "2026-08-24T00:15:44Z",
+  "heartbeat": "2026-08-24T00:31:05Z",
   "max_open_prs": 30,
   "open_escalations": 1,
   "open_sweep_prs": null,
@@ -28,8 +28,6 @@
     "workspaces_created": 39
   },
   "unregistered_workspaces": [
-    "Adjust badge color styling (f9f40591)",
-    "Mobile menu improvements (6635a6c5)",
-    "Reviewing for approval (d40e31ba)"
+    "Adjust badge color styling (f9f40591)"
   ]
 }

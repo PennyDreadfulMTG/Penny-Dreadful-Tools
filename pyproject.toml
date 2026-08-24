@@ -49,7 +49,7 @@ dependencies = [
     "Markdown==3.10.2",
     "Pillow",
     "PyGithub==2.9.1",
-    "SQLAlchemy>=2.0.51",
+    "SQLAlchemy>=2.0.52",
     "SQLAlchemy-Utils>=0.42.1",
     "Whoosh==2.7.4",
     "sentry-sdk[flask]",

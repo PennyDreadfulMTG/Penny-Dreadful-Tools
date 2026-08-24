@@ -39,16 +39,24 @@ const renderItem = (grid, archetype) => (
         <div className="row">
             <div className="colors" title="Deck Colors" dangerouslySetInnerHTML={{__html: archetype.colorsSafe}}></div>
         </div>
-        <div className="row">
+        <div className="row flex-row baseline">
             <div className="percentage-with-additional">
                 <span className={"percentage"} title="Win %">
                     {n(archetype.winPercent)}%
                 </span>
-                {" "}
-                <span className={"additional"} title="Win-Loss Record">
-                    {n(archetype.wins)}–{n(archetype.losses)}
+                <span className="additional">
+                    <span title="Win-Loss Record">
+                        {n(archetype.wins)}–{n(archetype.losses)}
+                    </span>
                 </span>
             </div>
+            {typeof archetype.qualityScore === "number" && (
+                <div className="cell r quality">
+                    <span title="Quality">
+                        <span className="quality-star">★</span>{Number(archetype.qualityScore * 100).toFixed(0)}
+                    </span>
+                </div>
+            )}
         </div>
         <div className="row flex-row">
             <div className="cell">

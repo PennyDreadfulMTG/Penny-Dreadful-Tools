@@ -4,7 +4,7 @@ import titlecase
 from anytree import NodeMixin
 from anytree.iterators import PreOrderIter
 
-from decksite.data import deck, preaggregation, query
+from decksite.data import clauses, deck, preaggregation, query
 from decksite.database import db
 from magic.models import Competition
 from shared.container import Container
@@ -617,7 +617,8 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
             SUM(tournament_top8s) AS tournament_top8s,
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
             COUNT(*) OVER () AS total,
-            SUM(wins + losses + draws) / tc.total_matches AS meta_share
+            SUM(wins + losses + draws) / tc.total_matches AS meta_share,
+            {clauses.wilson_lower_bound_sql()} AS quality_score
         FROM
             archetype AS a
         LEFT JOIN

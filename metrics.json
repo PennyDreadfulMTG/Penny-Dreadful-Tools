@@ -8,15 +8,14 @@
   "counts": {
     "closed": 7,
     "deferred_human": 4,
-    "escalated": 1,
-    "fix_pending": 1,
+    "fix_pending": 2,
     "pending": 659,
     "pr_open": 19,
     "reported": 8
   },
-  "heartbeat": "2026-08-24T12:59:21Z",
+  "heartbeat": "2026-08-24T13:13:45Z",
   "max_open_prs": 30,
-  "open_escalations": 1,
+  "open_escalations": 0,
   "open_sweep_prs": null,
   "pause_until": null,
   "paused": false,

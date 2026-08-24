@@ -11118,6 +11118,15 @@
         "question": "PR #14971 conflicts with master \u2014 dispatch one fixer to merge master and resolve (queue-fixup), or abandon it (abandon-pr)?"
       },
       "evidence_file": "evidence/12617.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12617-mouseover-current-and-matches-rule-arche",
+        "failed": [
+          "merge-conflict"
+        ],
+        "log_tail": "mergeable=CONFLICTING mergeStateStatus=DIRTY on branch sweep/12617-mouseover-current-and-matches-rule-arche",
+        "pr": 14971
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -11166,6 +11175,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-08-23T23:40:35Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-08-24T13:00:31Z"
         }
       ],
       "issue": 12617,
@@ -11194,7 +11208,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_pending",
       "title": "Mouseover \"current\" and \"matches rule\" archetypes should show their description in a tooltip (title attr) in /admin/archetypes",
       "verdict": null
     },
@@ -11399,7 +11413,7 @@
         "adopted": true,
         "branch": "sweep/12621-when-calculating-similarity-use-the-inve",
         "ci": {
-          "checked_at": "2026-08-24T02:02:07Z",
+          "checked_at": "2026-08-24T13:10:27Z",
           "failed": [],
           "state": "green"
         },
@@ -11543,7 +11557,7 @@
         "adopted": false,
         "branch": "sweep/12647-spoiler-waterlogged-teaching-worked-fine",
         "ci": {
-          "checked_at": "2026-08-24T02:02:06Z",
+          "checked_at": "2026-08-24T13:10:25Z",
           "failed": [],
           "state": "green"
         },
@@ -11775,7 +11789,7 @@
         "adopted": false,
         "branch": "sweep/12664-submenu-should-appear-disappear-with-an",
         "ci": {
-          "checked_at": "2026-08-24T02:02:05Z",
+          "checked_at": "2026-08-24T13:10:24Z",
           "failed": [],
           "state": "green"
         },
@@ -22337,9 +22351,9 @@
   },
   "last_bundle_at": null,
   "last_master_sha": "cb4ec4893bb4c783f3c7b69e038c7896a429ffb4",
-  "last_mirror_at": "2026-08-24T01:48:59Z",
-  "last_seq": 1606,
-  "last_snapshot_at": "2026-08-24T12:58:50Z",
+  "last_mirror_at": "2026-08-24T12:59:39Z",
+  "last_seq": 1621,
+  "last_snapshot_at": "2026-08-24T13:11:32Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,

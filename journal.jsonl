@@ -1608,3 +1608,14 @@
 {"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1608, "ts": "2026-08-24T12:59:18Z"}
 {"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1609, "ts": "2026-08-24T12:59:19Z"}
 {"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1610, "ts": "2026-08-24T12:59:20Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1611, "ts": "2026-08-24T12:59:39Z"}
+{"attempt": 1, "branch": "sweep/12617-mouseover-current-and-matches-rule-arche", "event": "FIXUP_DISPATCHED", "failed": ["merge-conflict"], "issue": 12617, "log_tail": "mergeable=CONFLICTING mergeStateStatus=DIRTY on branch sweep/12617-mouseover-current-and-matches-rule-arche", "note": "Conflicts with master because PR #14961 (sweep/12712) touched decksite/templates/editarchetypes.mustache and merged first. Merge master in and resolve; do not rebase. QUEUED ONLY - spawning is off for the Phase 2 hold, so this will not run until bakert lifts it or authorises this single fixer.", "pr": 14971, "seq": 1612, "ts": "2026-08-24T13:00:31Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1612, "seq": 1613, "ts": "2026-08-24T13:00:31Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1614, "ts": "2026-08-24T13:04:49Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1615, "ts": "2026-08-24T13:04:50Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1616, "ts": "2026-08-24T13:04:51Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1616, "seq": 1617, "ts": "2026-08-24T13:05:58Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1618, "ts": "2026-08-24T13:10:24Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1619, "ts": "2026-08-24T13:10:25Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1620, "ts": "2026-08-24T13:10:27Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1620, "seq": 1621, "ts": "2026-08-24T13:11:32Z"}

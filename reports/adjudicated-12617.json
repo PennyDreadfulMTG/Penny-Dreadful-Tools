@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-08-24T13:00:31Z",
+    "note": "Conflicts with master because PR #14961 (sweep/12712) touched decksite/templates/editarchetypes.mustache and merged first. Merge master in and resolve; do not rebase. QUEUED ONLY - spawning is off for the Phase 2 hold, so this will not run until bakert lifts it or authorises this single fixer.",
+    "verb": "queue-fixup"
+  },
   "bundled_at": "2026-08-24T12:59:20Z",
   "created_at": "2026-08-23T23:40:35Z",
   "evidence_refs": [

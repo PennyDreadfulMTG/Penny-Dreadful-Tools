@@ -1604,3 +1604,7 @@
 {"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1604, "ts": "2026-08-24T02:02:07Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1604, "seq": 1605, "ts": "2026-08-24T02:03:15Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1605, "seq": 1606, "ts": "2026-08-24T12:58:50Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1607, "ts": "2026-08-24T12:58:52Z"}
+{"event": "CI_CHECKED", "issue": 12664, "pr": 14967, "seq": 1608, "ts": "2026-08-24T12:59:18Z"}
+{"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1609, "ts": "2026-08-24T12:59:19Z"}
+{"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1610, "ts": "2026-08-24T12:59:20Z"}

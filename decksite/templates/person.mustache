@@ -46,10 +46,12 @@
 {{/has_decks}}
 <section>
     <h2>Seasons</h2>
-    {{#seasons_active}}
-        {{#url}}<a href="{{url}}">{{/url}}<i title="Season {{season_id}}" class="ss {{className}}"></i>{{#url}}</a>{{/url}}
-        {{#edge}}<br>{{/edge}}
-    {{/seasons_active}}
+    <p class="season-grid" style="--season-grid-columns: {{seasons_grid_columns}}">
+        {{#seasons_active}}
+            {{#url}}<a class="season-icon-link" href="{{url}}" title="Season {{season_id}}"><i class="ss {{className}}"></i></a>{{/url}}
+            {{^url}}<span class="season-icon-link" title="Season {{season_id}}"><i class="ss {{className}}"></i></span>{{/url}}
+        {{/seasons_active}}
+    </p>
 </section>
 {{#has_unique_cards}}
     <section class="card-lists">

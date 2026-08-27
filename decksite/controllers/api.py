@@ -652,8 +652,8 @@ def cards_api() -> Response:
 
 @APP.route('/api/card/<card>')
 @APP.route('/api/card/<card>/')
-def card_api(c: str) -> Response:
-    return return_json(oracle.load_card(c))
+def card_api(card: str) -> Response:
+    return return_json(oracle.load_card(card))
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @APP.route('/api/archetype/reassign/', methods=['POST'])

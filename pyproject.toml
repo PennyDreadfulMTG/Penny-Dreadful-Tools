@@ -7,7 +7,7 @@ dependencies = [
     "attrs==26.1.0",
     "beautifulsoup4==4.15.0",
     "better-profanity",
-    "cachelib==0.16.1",
+    "cachelib==0.17.0",
     "click==8.4.2",
     "coverage==7.15.4",
     "feedparser==6.0.14",

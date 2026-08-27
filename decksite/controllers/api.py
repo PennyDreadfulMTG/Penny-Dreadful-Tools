@@ -18,6 +18,7 @@ from decksite.data.achievements import Achievement
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
+from magic import database as magic_database
 from magic import image_fetcher, layout, oracle, seasons, tournaments
 from magic.colors import find_colors
 from magic.models import Card, Deck
@@ -692,6 +693,7 @@ def hide_intro() -> Response:
 @auth.load_person
 def person_status() -> Response:
     username = auth.mtgo_username()
+    stale_card_information_age = magic_database.stale_card_information_age()
     r = {
         'mtgo_username': username,
         'discord_id': auth.discord_id(),
@@ -699,6 +701,7 @@ def person_status() -> Response:
         'demimod': session.get('demimod', False),
         'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or username or auth.discord_id(),
         'in_guild': session.get('in_guild', False),
+        'card_information_warning': f'Card data last updated {dtutil.display_time(stale_card_information_age.total_seconds(), 1)} ago' if stale_card_information_age is not None else '',
     }
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))

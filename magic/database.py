@@ -10,6 +10,7 @@ from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
 SCHEMA_VERSION = 110
+MAX_CARD_INFORMATION_AGE = datetime.timedelta(days=2)
 DATABASE = Container()
 
 def db() -> Database:
@@ -33,6 +34,10 @@ def init() -> None:
 
 def last_updated() -> datetime.datetime:
     return dtutil.ts2dt(db().value('SELECT last_updated FROM scryfall_version', [], 0))
+
+def stale_card_information_age() -> datetime.timedelta | None:
+    age = dtutil.now() - last_updated()
+    return age if age > MAX_CARD_INFORMATION_AGE else None
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version', [], 0)

@@ -144,16 +144,12 @@ def test_escape_underscores() -> None:
     assert r == 'Adamaro, First to Desire :white_check_mark:'
 
 def test_no_warning_for_recent_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
-    now = datetime.datetime(2026, 8, 21, tzinfo=datetime.UTC)
-    monkeypatch.setattr(command.dtutil, 'now', lambda: now)
-    monkeypatch.setattr(command.database, 'last_updated', lambda: now - command.MAX_CARD_INFORMATION_AGE)
+    monkeypatch.setattr(command.database, 'stale_card_information_age', lambda: None)
 
     assert command.stale_card_information_warning() == ''
 
 def test_warning_for_stale_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
-    now = datetime.datetime(2026, 8, 21, tzinfo=datetime.UTC)
-    monkeypatch.setattr(command.dtutil, 'now', lambda: now)
-    monkeypatch.setattr(command.database, 'last_updated', lambda: now - datetime.timedelta(days=29))
+    monkeypatch.setattr(command.database, 'stale_card_information_age', lambda: datetime.timedelta(days=29))
 
     assert command.stale_card_information_warning() == '\nWARNING: card information is 4 weeks old'
 

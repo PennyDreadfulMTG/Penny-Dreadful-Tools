@@ -1,3 +1,4 @@
+import re
 import urllib.parse
 
 from flask import redirect, request, url_for
@@ -81,13 +82,24 @@ def card(name: str, deck_type: str | None = None) -> str | wrappers.Response:
         canonical_name = parse_card_name(name)
         c = cs.load_card(canonical_name, tournament_only=tournament_only, season_id=get_season_id())
         alternate_name = oracle.matching_official_alternate_name(c, submitted_name)
-        if submitted_name != canonical_name and alternate_name is None:
+        if not is_canonical_url_name(submitted_name, canonical_name) and alternate_name is None:
             assert request.endpoint is not None
             return redirect(url_for(request.endpoint, name=canonical_name, deck_type=deck_type))
         view = Card(c, tournament_only, alternate_name)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e
+
+def is_canonical_url_name(submitted_name: str, canonical_name: str) -> bool:
+    """Whether the submitted name already gets you as close to the canonical URL as a URL can get.
+
+    The proxies in front of us merge repeated slashes, so `/cards/Bedeck // Bedazzle/` arrives here as
+    `Bedeck / Bedazzle`. Redirecting to the double-slashed URL would only get it merged again, forever.
+    """
+    return merge_slashes(submitted_name) == merge_slashes(canonical_name)
+
+def merge_slashes(name: str) -> str:
+    return re.sub(r'\s*/+\s*', '/', name)
 
 def parse_card_name(name: str) -> str:
     return oracle.valid_name(decode_card_name(name))

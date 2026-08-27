@@ -90,3 +90,40 @@ def test_alias_card_page_redirect_preserves_the_season(monkeypatch: pytest.Monke
 
     assert response.status_code == 302
     assert response.location == '/seasons/5/cards/Origin%20of%20Spider-Man/tournament/'
+
+
+def test_split_cards_do_not_redirect_when_the_proxy_has_merged_the_slashes(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The proxies in front of us merge `//` into `/`, so redirecting to the canonical spelling loops forever.
+    monkeypatch.setattr(
+        metagame.oracle,
+        'valid_name',
+        lambda name: 'Bedeck // Bedazzle' if name in ('Bedeck / Bedazzle', 'Bedeck // Bedazzle') else name,
+    )
+    monkeypatch.setattr(metagame.cs, 'load_card', lambda *_args, **_kwargs: Card({'name': 'Bedeck // Bedazzle'}))
+
+    class FakeCardView:
+        def __init__(self, _card: object, _tournament_only: bool, alternate_name: str | None) -> None:
+            assert alternate_name is None
+
+        def page(self) -> str:
+            return 'split card page'
+
+    monkeypatch.setattr(metagame, 'Card', FakeCardView)
+    with APP.test_request_context('/cards/Bedeck%20/%20Bedazzle/'):
+        response = cast(Any, metagame.card).__wrapped__(name='Bedeck / Bedazzle')
+
+    assert response == 'split card page'
+
+
+@pytest.mark.parametrize(
+    ('submitted', 'canonical', 'expected'),
+    [
+        ('Bedeck / Bedazzle', 'Bedeck // Bedazzle', True),
+        ('Bedeck // Bedazzle', 'Bedeck // Bedazzle', True),
+        ('Bedeck//Bedazzle', 'Bedeck // Bedazzle', True),
+        ('Origin of Spiderman', 'Origin of Spider-Man', False),
+        ('Fire / Ice', 'Bedeck // Bedazzle', False),
+    ],
+)
+def test_is_canonical_url_name(submitted: str, canonical: str, expected: bool) -> None:
+    assert metagame.is_canonical_url_name(submitted, canonical) == expected

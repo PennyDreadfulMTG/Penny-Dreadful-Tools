@@ -370,6 +370,22 @@ header {
     display: flex;
 }
 
+.card-information-warning {
+    background: var(--tertiary-background);
+    border-bottom: 0.05rem solid var(--border);
+    color: var(--tertiary-text);
+    font-size: var(--table-font-size);
+    padding: 0.25rem var(--spacing-page-with-marginalia);
+    text-align: center;
+}
+
+@media only screen and (max-width: 900px) {
+    .card-information-warning {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
 header h1, header .search {
     padding: 3rem 0 1rem 0;
 }

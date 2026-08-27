@@ -27,7 +27,6 @@ if TYPE_CHECKING:
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
-MAX_CARD_INFORMATION_AGE = datetime.timedelta(days=2)
 HELP_GROUPS: set[str] = set()
 
 @lazy_property
@@ -157,8 +156,8 @@ async def post_nothing(channel: PrefixedContext | InteractionContext | TYPE_MESS
     await message.add_reaction('❎')
 
 def stale_card_information_warning() -> str:
-    age = dtutil.now() - database.last_updated()
-    if age > MAX_CARD_INFORMATION_AGE:
+    age = database.stale_card_information_age()
+    if age is not None:
         return f'\nWARNING: card information is {dtutil.display_time(age.total_seconds(), 1)} old'
     return ''
 

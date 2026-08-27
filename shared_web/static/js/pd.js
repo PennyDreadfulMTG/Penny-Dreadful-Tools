@@ -445,6 +445,9 @@ PD.initSignupDeckChooser = function() {
 PD.initPersonalization = function() {
     $.get("/api/status", function(data) {
         var text = "";
+        if (data.card_information_warning) {
+            $(".card-information-warning").text("⚠ " + data.card_information_warning).prop("hidden", false);
+        }
         if (data.discord_id) {
             text += "You are logged in";
             if (data.mtgo_username !== null) {

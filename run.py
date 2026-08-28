@@ -106,9 +106,11 @@ def modo_bugs(argv: tuple[str]) -> None:
 @cli.command()
 @click.option('--force', is_flag=True, help='Force a rebuild of the database')
 def init_cards(force: bool = False) -> None:
-    from magic import multiverse
+    from magic import multiverse, whoosh_write
     success = multiverse.init(force=force)
     multiverse.rebuild_cache()
+    if success:
+        whoosh_write.reindex()
     sys.exit(0 if success else 1)
 
 

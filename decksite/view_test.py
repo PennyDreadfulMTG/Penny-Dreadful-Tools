@@ -67,7 +67,7 @@ def test_menu_badge_is_entirely_linked() -> None:
             },
         }]})
 
-    assert '<a class="admin demimod badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
+    assert '<a class="badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
 
 def test_build_menu_uses_endpoint_override_for_active_league() -> None:
     with APP.test_request_context('/competitions/123/'):

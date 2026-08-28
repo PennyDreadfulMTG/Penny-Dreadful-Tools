@@ -2668,6 +2668,11 @@ Notification Badges
     top: 13px;
 }
 
+/* Personalization reveals this badge only when there are decks waiting for archetype sorting. */
+.edit_archetypes {
+    display: none;
+}
+
 /* Menu links have padding, and links are oldstyle-nums where digits sit at differing heights. Both push the count off-center in its circle. */
 a.badge, .badge a {
     font-variant-numeric: normal;

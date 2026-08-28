@@ -651,6 +651,11 @@ def cards_api() -> Response:
     cs, _ = card.load_cards()
     return return_json({'cards': cs})
 
+@APP.route('/api/card/<card>')
+@APP.route('/api/card/<card>/')
+def card_api(c: str) -> Response:
+    return return_json(oracle.load_card(c))
+
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @APP.route('/api/archetype/reassign/', methods=['POST'])
 @auth.demimod_required

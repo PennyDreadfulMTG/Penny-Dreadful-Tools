@@ -55,6 +55,20 @@ def test_intro_deck_links() -> None:
         rendered = template.render_name('faqsbody', v)
         assert 'href="/metagame/"' in rendered
 
+def test_menu_badge_is_entirely_linked() -> None:
+    with APP.test_request_context('/'):
+        rendered = template.render_name('menu', {'menu': [{
+            'name': 'Metagame',
+            'url': '/metagame/',
+            'badge': {
+                'url': '/admin/archetypes/',
+                'text': '12',
+                'class_name': 'edit_archetypes',
+            },
+        }]})
+
+    assert '<a class="admin demimod badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
+
 def test_build_menu_uses_endpoint_override_for_active_league() -> None:
     with APP.test_request_context('/competitions/123/'):
         g.menu_endpoint_override = 'current_league'

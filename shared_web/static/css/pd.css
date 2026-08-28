@@ -2669,7 +2669,7 @@ Notification Badges
 }
 
 /* Menu links have padding, and links are oldstyle-nums where digits sit at differing heights. Both push the count off-center in its circle. */
-.badge a {
+a.badge, .badge a {
     font-variant-numeric: normal;
     padding: 0;
 }

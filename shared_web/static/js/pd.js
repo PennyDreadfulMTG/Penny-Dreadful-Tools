@@ -476,7 +476,9 @@ PD.initPersonalization = function() {
             $(".demimod").show();
         }
         if ((data.admin || data.demimod) && (data.archetypes_to_tag > 0)) {
-            $(".edit_archetypes").text(data.archetypes_to_tag);
+            $(".edit_archetypes").text(data.archetypes_to_tag).show();
+        } else {
+            $(".edit_archetypes").hide();
         }
         if (!data.hide_intro && !PD.getUrlParam("hide_intro")) {
             $(".intro-container").show();

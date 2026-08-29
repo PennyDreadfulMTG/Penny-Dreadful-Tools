@@ -4,9 +4,19 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from discordbot import command
+from discordbot import command, commands
 from discordbot.commands import CardConverter, resources
 from magic.models import Card, Printing
+
+
+def test_command_setup_does_not_load_test_modules(monkeypatch: pytest.MonkeyPatch) -> None:
+    bot = Mock()
+    monkeypatch.setattr(commands.glob, 'glob', Mock(return_value=['/commands/spoiler.py', '/commands/spoiler_test.py', '/commands/__init__.py']))
+    monkeypatch.setattr(commands.path, 'isfile', Mock(return_value=True))
+
+    commands.setup(bot)
+
+    bot.load_extension.assert_called_once_with('.spoiler', 'discordbot.commands')
 
 
 def test_roughly_matches() -> None:

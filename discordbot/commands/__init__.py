@@ -15,7 +15,7 @@ from magic.models import Card
 def setup(bot: Client) -> None:
     Card.convert = CardConverter.convert
     modules = glob.glob(path.join(path.dirname(__file__), '*.py'))
-    files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith('__init__.py')]
+    files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith(('__init__.py', '_test.py'))]
 
     for mod in files:
         try:

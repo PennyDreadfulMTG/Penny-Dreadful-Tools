@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 import os
+import sys
 import urllib.parse
 
 from interactions import MISSING, Absent, Client, Extension, listen
@@ -10,13 +11,17 @@ from interactions.client.utils import timestamp_converter
 from interactions.models.discord import Embed, GuildText, MessageableMixin, ScheduledEventType
 from interactions.models.internal.tasks import IntervalTrigger, Task
 
-from discordbot import error_handling, reboot_utils
-from magic import fetcher, image_fetcher, multiverse, rotation, seasons, tournaments
+from discordbot import command, error_handling, reboot_utils
+from magic import database, fetcher, image_fetcher, multiverse, oracle, rotation, seasons, tournaments
 from shared import configuration, dtutil, fetch_tools, redis_wrapper
+
+# Run in a subprocess because the rebuild is minutes of blocking work that would stall the gateway if we did it in here.
+UPDATE_CARDS_COMMAND = (sys.executable, 'run.py', 'init-cards')
 
 
 class BackgroundTasks(Extension):
     rotation_hype_channel: GuildText
+    updating_cards = False
 
     @listen()
     async def on_startup(self) -> None:
@@ -28,6 +33,7 @@ class BackgroundTasks(Extension):
         redis_wrapper.clear(reboot_utils.REBOOT_CHANNEL_KEY)
         await self.announce_reboot_complete()
         self.background_task_reboot.start()
+        self.background_task_update_cards.start()
 
         await self.prepare_tournaments()
         await self.prepare_hype()
@@ -101,6 +107,36 @@ class BackgroundTasks(Extension):
             except TimeoutError:
                 logging.warning('Graceful reboot shutdown timed out; forcing process exit')
             os._exit(0)
+
+    @Task.create(IntervalTrigger(hours=1))
+    async def background_task_update_cards(self) -> None:
+        if self.updating_cards:
+            return  # Tasks fire on a timer without waiting for the previous run, so don't pile up if an update outlives its interval.
+        if configuration.prevent_cards_db_updates.get():
+            return
+        if os.path.exists('.rotation.lock'):
+            return  # The rotation script has the cards db in pieces, leave it alone.
+        self.updating_cards = True
+        try:
+            ours = database.last_updated()
+            try:
+                theirs = await fetcher.scryfall_last_updated_async()
+            except fetcher.FetchException as e:
+                logging.warning('Could not ask Scryfall how fresh its card data is: %s', e)
+                return
+            if theirs <= ours:
+                return
+            logging.info('Card data is stale (ours %s, Scryfall %s), updating', ours, theirs)
+            returncode, output = await reboot_utils.run_command(*UPDATE_CARDS_COMMAND)
+            # init-cards exits non-zero both when it fails and when something else got there first, so believe the timestamp rather than the exit code.
+            if database.last_updated() <= ours:
+                logging.error('Card data update failed (status %s): %s', returncode, error_handling.redact(output))
+                return
+            oracle.init(force=True)
+            command.searcher().refresh()  # The index itself is on disk, rebuilt by the subprocess, but our view of it isn't.
+            logging.info('Card data updated to %s', database.last_updated())
+        finally:
+            self.updating_cards = False
 
     async def send_reboot_message(self, channel_id: int, message: str) -> None:
         try:

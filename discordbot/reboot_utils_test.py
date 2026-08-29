@@ -8,7 +8,7 @@ from discordbot import error_handling, reboot_utils
 @pytest.mark.asyncio
 async def test_update_runs_pull_then_sync(monkeypatch: pytest.MonkeyPatch) -> None:
     run_command = AsyncMock(side_effect=[(0, 'pulled'), (0, 'synced')])
-    monkeypatch.setattr(reboot_utils, '_run_command', run_command)
+    monkeypatch.setattr(reboot_utils, 'run_command', run_command)
 
     assert await reboot_utils.update() is None
     assert run_command.await_count == 2
@@ -19,7 +19,7 @@ async def test_update_runs_pull_then_sync(monkeypatch: pytest.MonkeyPatch) -> No
 @pytest.mark.asyncio
 async def test_update_reports_pull_failure_and_does_not_sync(monkeypatch: pytest.MonkeyPatch) -> None:
     run_command = AsyncMock(return_value=(1, 'fatal: pull failed'))
-    monkeypatch.setattr(reboot_utils, '_run_command', run_command)
+    monkeypatch.setattr(reboot_utils, 'run_command', run_command)
 
     failure = await reboot_utils.update()
 
@@ -37,7 +37,7 @@ async def test_update_reports_pull_failure_and_does_not_sync(monkeypatch: pytest
 @pytest.mark.asyncio
 async def test_update_reports_sync_failure(monkeypatch: pytest.MonkeyPatch) -> None:
     run_command = AsyncMock(side_effect=[(0, 'pulled'), (2, 'sync failed')])
-    monkeypatch.setattr(reboot_utils, '_run_command', run_command)
+    monkeypatch.setattr(reboot_utils, 'run_command', run_command)
 
     failure = await reboot_utils.update()
 

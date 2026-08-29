@@ -84,6 +84,11 @@ class WhooshSearcher:
     DIST = 2
 
     def __init__(self) -> None:
+        self.refresh()
+
+    # Whoever rebuilds the index has to call this, we can't notice on our own: whoosh's FileIndex doesn't override Index.up_to_date,
+    # which unconditionally returns True, and whoosh_write.reindex recreates the index from scratch so the generation doesn't move either.
+    def refresh(self) -> None:
         self.ix = open_dir(WhooshConstants.index_dir)
         self.initialize_trie()
 
@@ -105,9 +110,6 @@ class WhooshSearcher:
             self.trie[name] = canonical_matches.get(name, []) + alias_matches.get(name, [])
 
     def search(self, w: str) -> SearchResult:
-        if not self.ix.up_to_date():
-            self.initialize_trie()  # if the index is not up to date, someone has added cards, so we reinitialize the trie
-
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
 
         # If we get matches by prefix, we return that

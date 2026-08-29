@@ -7,6 +7,7 @@ from whoosh.index import create_in
 
 from magic import whoosh_write
 from magic.models import Card
+from magic.whoosh_constants import WhooshConstants
 from magic.whoosh_search import WhooshSearcher
 
 
@@ -117,7 +118,8 @@ class WhooshSearchTest(unittest.TestCase):
 def is_included(name: str, cards: list[str]) -> bool:
     return len([x for x in cards if x == name]) >= 1
 
-def test_canonical_name_wins_alias_collision(tmp_path: Path) -> None:
+def test_canonical_name_wins_alias_collision(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(WhooshConstants, 'index_dir', str(tmp_path))
     ix = create_in(tmp_path, whoosh_write.WhooshWriter().schema)
     writer = ix.writer()
     for card_id, canonical_name, name in [
@@ -137,9 +139,7 @@ def test_canonical_name_wins_alias_collision(tmp_path: Path) -> None:
         )
     writer.commit()
 
-    searcher = WhooshSearcher.__new__(WhooshSearcher)
-    searcher.ix = ix
-    searcher.initialize_trie()
+    searcher = WhooshSearcher()
 
     result = searcher.search('Brainstorm')
     assert result.get_best_match() == 'Brainstorm'
@@ -149,7 +149,8 @@ def test_canonical_name_wins_alias_collision(tmp_path: Path) -> None:
     assert result.get_best_match() == 'Midnight Scavengers'
     assert result.get_all_matches() == ['Midnight Scavengers', 'Graf Rats']
 
-def test_flavor_name_is_searchable(tmp_path: Path) -> None:
+def test_flavor_name_is_searchable(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(WhooshConstants, 'index_dir', str(tmp_path))
     ix = create_in(tmp_path, whoosh_write.WhooshWriter().schema)
     card = Card({
         'id': 1,
@@ -160,9 +161,27 @@ def test_flavor_name_is_searchable(tmp_path: Path) -> None:
     })
     whoosh_write.update_index(ix, [card])
 
-    searcher = WhooshSearcher.__new__(WhooshSearcher)
-    searcher.ix = ix
-    searcher.initialize_trie()
+    searcher = WhooshSearcher()
 
     result = searcher.search('Rick, Steadfast Leader')
     assert result.get_best_match() == "Greymond, Avacyn's Stalwart"
+
+
+def test_refresh_picks_up_an_index_rebuilt_by_another_process(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(WhooshConstants, 'index_dir', str(tmp_path))
+    whoosh_write.WhooshWriter().rewrite_index([indexable_card(1, 'Ancestral Recall')])
+    searcher = WhooshSearcher()
+    # Search by prefix rather than by full name, because fuzzy matching reads the index directly and only prefix matching goes through the trie.
+    assert searcher.search('Ancestral Re').get_best_match() == 'Ancestral Recall'
+    assert searcher.search('Black Lo').get_best_match() is None
+
+    whoosh_write.WhooshWriter().rewrite_index([indexable_card(1, 'Ancestral Recall'), indexable_card(2, 'Black Lotus')])
+    assert searcher.search('Black Lo').get_best_match() is None, 'A rebuilt index is not visible until we refresh'
+
+    searcher.refresh()
+
+    assert searcher.search('Black Lo').get_best_match() == 'Black Lotus'
+    assert searcher.search('Ancestral Re').get_best_match() == 'Ancestral Recall'
+
+def indexable_card(card_id: int, name: str) -> Card:
+    return Card({'id': card_id, 'name': name, 'names': name, 'flavor_names': None, 'layout': 'normal'})

@@ -19,12 +19,18 @@ def test_init_cards_force_rebuilds_search_index(monkeypatch: pytest.MonkeyPatch)
     result = CliRunner().invoke(run.cli, ['init-cards', '--force'])
 
     assert result.exit_code == 0
-    assert calls == [('init', True), ('rebuild_cache', None), ('reindex', None)]
+    assert calls == [('init', True), ('reindex', None)]  # init_async's `finally` already rebuilt the cache.
 
 
 def test_init_cards_does_not_rebuild_search_index_after_failed_update(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(multiverse, 'init', lambda force=False: False)
-    monkeypatch.setattr(multiverse, 'rebuild_cache', lambda: None)
+    rebuild_calls = 0
+
+    def rebuild_cache() -> None:
+        nonlocal rebuild_calls
+        rebuild_calls += 1
+
+    monkeypatch.setattr(multiverse, 'rebuild_cache', rebuild_cache)
     reindex_calls = 0
 
     def reindex() -> None:
@@ -37,3 +43,4 @@ def test_init_cards_does_not_rebuild_search_index_after_failed_update(monkeypatc
 
     assert result.exit_code == 1
     assert reindex_calls == 0
+    assert rebuild_calls == 1  # We can't know whether init rebuilt it, and this command doubles as "regenerate my _cache_card".

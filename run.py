@@ -105,12 +105,15 @@ def modo_bugs(argv: tuple[str]) -> None:
 
 @cli.command()
 @click.option('--force', is_flag=True, help='Force a rebuild of the database')
+@decorators.interprocess_locked('.task.lock')
 def init_cards(force: bool = False) -> None:
+    """Bring the cards database, and everything derived from it, up to date with Scryfall. Exits non-zero if there was nothing to do."""
     from magic import multiverse, whoosh_write
-    success = multiverse.init(force=force)
-    multiverse.rebuild_cache()
+    success = multiverse.init(force=force)  # Refetches the bugs too, see insert_cards_async.
     if success:
-        whoosh_write.reindex()
+        whoosh_write.reindex()  # init_async's `finally` already rebuilt the cache on this path.
+    else:
+        multiverse.rebuild_cache()  # It may not have, and this command doubles as "regenerate my _cache_card". See 79627efc.
     sys.exit(0 if success else 1)
 
 

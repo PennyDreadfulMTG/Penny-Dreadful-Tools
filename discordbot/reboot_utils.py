@@ -26,7 +26,7 @@ async def update() -> RebootUpdateError | None:
     ]
     for display, command in commands:
         try:
-            returncode, output = await _run_command(*command)
+            returncode, output = await run_command(*command)
         except Exception as e:
             return RebootUpdateError(display, None, str(e))
         if returncode != 0:
@@ -34,7 +34,7 @@ async def update() -> RebootUpdateError | None:
     return None
 
 
-async def _run_command(*command: str) -> tuple[int, str]:
+async def run_command(*command: str) -> tuple[int, str]:
     process = await asyncio.create_subprocess_exec(
         *command,
         stdout=asyncio.subprocess.PIPE,

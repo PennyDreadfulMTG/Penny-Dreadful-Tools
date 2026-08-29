@@ -55,7 +55,12 @@ class Bot(Client):
                 else:
                     await self._cache_interactions(warn_missing=False)
 
-                missing_commands = {cmd.resolved_name for cmd in self.application_commands} - self._interaction_lookup.keys()
+                command_names = {cmd.resolved_name for cmd in self.application_commands}
+                group_names: set[str] = set()
+                for command_name in command_names:
+                    parts = command_name.split()
+                    group_names.update(' '.join(parts[:depth]) for depth in range(1, len(parts)))
+                missing_commands = command_names - group_names - self._interaction_lookup.keys()
                 if missing_commands:
                     raise RuntimeError(f'Discord command cache is missing {len(missing_commands)} application commands')
                 if attempt > 1:

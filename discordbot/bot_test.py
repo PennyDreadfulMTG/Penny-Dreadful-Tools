@@ -79,6 +79,33 @@ async def test_command_sync_retries_when_local_cache_is_incomplete(monkeypatch: 
 
 
 @pytest.mark.asyncio
+async def test_command_sync_does_not_require_group_roots_in_local_cache(monkeypatch: pytest.MonkeyPatch) -> None:
+    synchronise_interactions = AsyncMock()
+    sleep = AsyncMock()
+    exit_process = Mock()
+    bot = cast(
+        Bot,
+        SimpleNamespace(
+            sync_interactions=True,
+            synchronise_interactions=synchronise_interactions,
+            application_commands=[
+                SimpleNamespace(resolved_name='dreadrise'),
+                SimpleNamespace(resolved_name='dreadrise search'),
+            ],
+            _interaction_lookup={'dreadrise search': Mock()},
+        ),
+    )
+    monkeypatch.setattr('discordbot.bot.asyncio.sleep', sleep)
+    monkeypatch.setattr('discordbot.bot.os._exit', exit_process)
+
+    await Bot._init_interactions(bot)
+
+    synchronise_interactions.assert_awaited_once_with()
+    sleep.assert_not_awaited()
+    exit_process.assert_not_called()
+
+
+@pytest.mark.asyncio
 async def test_stop_closes_gateway_before_http_and_only_once() -> None:
     calls = Mock()
     ready = Mock()

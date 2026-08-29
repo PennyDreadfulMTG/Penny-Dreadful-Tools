@@ -5,7 +5,7 @@ import os
 import subprocess
 from typing import Any, cast
 
-from interactions import Client, listen
+from interactions import MISSING, Client, listen
 from interactions.api.events import CommandError, MemberAdd, MessageCreate, MessageReactionAdd, PresenceUpdate
 from interactions.client.errors import CommandCheckFailure, CommandOnCooldown, MaxConcurrencyReached
 from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
@@ -55,7 +55,8 @@ class Bot(Client):
                 else:
                     await self._cache_interactions(warn_missing=False)
 
-                command_names = {cmd.resolved_name for cmd in self.application_commands}
+                synced_scopes = set(self._get_sync_scopes(cast(Any, MISSING)))
+                command_names = {cmd.resolved_name for cmd in self.application_commands if synced_scopes.intersection(cmd.scopes)}
                 group_names: set[str] = set()
                 for command_name in command_names:
                     parts = command_name.split()

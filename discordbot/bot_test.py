@@ -4,6 +4,7 @@ from typing import cast
 from unittest.mock import AsyncMock, Mock, call
 
 import pytest
+from interactions import GLOBAL_SCOPE
 
 from discordbot.bot import COMMAND_SYNC_ATTEMPTS, Bot
 
@@ -18,7 +19,8 @@ async def test_command_sync_retries_before_startup(monkeypatch: pytest.MonkeyPat
         SimpleNamespace(
             sync_interactions=True,
             synchronise_interactions=synchronise_interactions,
-            application_commands=[SimpleNamespace(resolved_name='history')],
+            _get_sync_scopes=Mock(return_value=[GLOBAL_SCOPE]),
+            application_commands=[SimpleNamespace(resolved_name='history', scopes=[GLOBAL_SCOPE])],
             _interaction_lookup={'history': Mock()},
         ),
     )
@@ -42,7 +44,8 @@ async def test_command_sync_exits_after_retries_are_exhausted(monkeypatch: pytes
         SimpleNamespace(
             sync_interactions=True,
             synchronise_interactions=synchronise_interactions,
-            application_commands=[SimpleNamespace(resolved_name='history')],
+            _get_sync_scopes=Mock(return_value=[GLOBAL_SCOPE]),
+            application_commands=[SimpleNamespace(resolved_name='history', scopes=[GLOBAL_SCOPE])],
             _interaction_lookup={},
         ),
     )
@@ -64,7 +67,8 @@ async def test_command_sync_retries_when_local_cache_is_incomplete(monkeypatch: 
         SimpleNamespace(
             sync_interactions=True,
             synchronise_interactions=synchronise_interactions,
-            application_commands=[SimpleNamespace(resolved_name='history')],
+            _get_sync_scopes=Mock(return_value=[GLOBAL_SCOPE]),
+            application_commands=[SimpleNamespace(resolved_name='history', scopes=[GLOBAL_SCOPE])],
             _interaction_lookup={},
         ),
     )
@@ -88,11 +92,42 @@ async def test_command_sync_does_not_require_group_roots_in_local_cache(monkeypa
         SimpleNamespace(
             sync_interactions=True,
             synchronise_interactions=synchronise_interactions,
+            _get_sync_scopes=Mock(return_value=[GLOBAL_SCOPE]),
             application_commands=[
-                SimpleNamespace(resolved_name='dreadrise'),
-                SimpleNamespace(resolved_name='dreadrise search'),
+                SimpleNamespace(resolved_name='dreadrise', scopes=[GLOBAL_SCOPE]),
+                SimpleNamespace(resolved_name='dreadrise search', scopes=[GLOBAL_SCOPE]),
             ],
             _interaction_lookup={'dreadrise search': Mock()},
+        ),
+    )
+    monkeypatch.setattr('discordbot.bot.asyncio.sleep', sleep)
+    monkeypatch.setattr('discordbot.bot.os._exit', exit_process)
+
+    await Bot._init_interactions(bot)
+
+    synchronise_interactions.assert_awaited_once_with()
+    sleep.assert_not_awaited()
+    exit_process.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_command_sync_does_not_require_commands_outside_synced_scopes(monkeypatch: pytest.MonkeyPatch) -> None:
+    synchronise_interactions = AsyncMock()
+    sleep = AsyncMock()
+    exit_process = Mock()
+    bot = cast(
+        Bot,
+        SimpleNamespace(
+            sync_interactions=True,
+            synchronise_interactions=synchronise_interactions,
+            _get_sync_scopes=Mock(return_value=[GLOBAL_SCOPE]),
+            application_commands=[
+                SimpleNamespace(resolved_name='history', scopes=[GLOBAL_SCOPE]),
+                SimpleNamespace(resolved_name='queue join', scopes=[123]),
+                SimpleNamespace(resolved_name='queue leave', scopes=[123]),
+                SimpleNamespace(resolved_name='sync', scopes=[456]),
+            ],
+            _interaction_lookup={'history': Mock()},
         ),
     )
     monkeypatch.setattr('discordbot.bot.asyncio.sleep', sleep)

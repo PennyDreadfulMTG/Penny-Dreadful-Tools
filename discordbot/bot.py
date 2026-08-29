@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import logging
+import os
 import subprocess
 from typing import Any, cast
 
@@ -16,6 +17,9 @@ from magic import fetcher, multiverse, oracle, whoosh_write
 from shared import configuration, perf, repo
 from shared import redis_wrapper as redis
 from shared.settings import with_config_file
+
+COMMAND_SYNC_ATTEMPTS = 3
+COMMAND_SYNC_RETRY_SECONDS = 5
 
 
 class Bot(Client):
@@ -42,6 +46,29 @@ class Bot(Client):
         self.load_extension('discordbot.background')
 
         self.add_global_autocomplete(command.autocomplete_card)
+
+    async def _init_interactions(self) -> None:
+        for attempt in range(1, COMMAND_SYNC_ATTEMPTS + 1):
+            try:
+                if self.sync_interactions:
+                    await self.synchronise_interactions()
+                else:
+                    await self._cache_interactions(warn_missing=False)
+
+                missing_commands = {cmd.resolved_name for cmd in self.application_commands} - self._interaction_lookup.keys()
+                if missing_commands:
+                    raise RuntimeError(f'Discord command cache is missing {len(missing_commands)} application commands')
+                if attempt > 1:
+                    logging.info('Discord command sync succeeded on attempt %d', attempt)
+                return
+            except Exception:
+                if attempt == COMMAND_SYNC_ATTEMPTS:
+                    logging.critical('Discord command sync failed after %d attempts; exiting for restart', attempt, exc_info=True)
+                    os._exit(1)
+                    return
+                delay = COMMAND_SYNC_RETRY_SECONDS * 2 ** (attempt - 1)
+                logging.warning('Discord command sync failed on attempt %d/%d; retrying in %d seconds', attempt, COMMAND_SYNC_ATTEMPTS, delay, exc_info=True)
+                await asyncio.sleep(delay)
 
     async def stop(self) -> None:
         async with self._shutdown_lock:

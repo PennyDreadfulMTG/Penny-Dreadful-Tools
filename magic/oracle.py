@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Iterable, Sequence
 
 from magic import card, layout, mana, multiverse, seasons, whoosh_write
@@ -7,7 +8,7 @@ from magic.models import Card, Printing
 from shared import configuration, fetch_tools, guarantee
 from shared.container import Container
 from shared.database import sqlescape, sqllikeescape
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, TooFewItemsException
+from shared.pd_exception import DatabaseException, InvalidArgumentException, InvalidDataException, TooFewItemsException
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
@@ -182,7 +183,13 @@ async def scryfall_import_async(name: str) -> bool:
         return False
     except InvalidDataException:
         print(f"Adding {sfcard['name']} to the database as we don't have it.")
-        await add_cards_and_update_async([sfcard])
+        try:
+            await add_cards_and_update_async([sfcard])
+        except DatabaseException as e:
+            if '1062' in str(e):
+                logging.warning(f"Card {sfcard['name']} was added by another process while we were importing it, ignoring duplicate.")
+                return False
+            raise
         return True
 
 def pd_rotation_changes(season_id: int) -> tuple[Sequence[Card], Sequence[Card]]:

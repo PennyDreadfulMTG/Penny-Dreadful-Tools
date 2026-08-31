@@ -19,7 +19,7 @@
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
                         <td><a href="{{source_url}}">{{source_name}}</a></td>
                         <td>
-                            <a href="{{archetype_url}}">{{archetype_name}}</a>
+                            <a href="{{archetype_url}}" title="{{archetype_description}}">{{archetype_name}}</a>
                             {{#archetype_id}}<a class="use-guess" title="Assign this deck to {{archetype_name}}" data-archetype_id="{{archetype_id}}">[✓]</a>{{/archetype_id}}
                         </td>
                         <td class="n">
@@ -28,7 +28,7 @@
                                 <span class="add-rule-prompt"><a title="This deck has been played more than once, create a rule?" href="{{edit_rules_url}}">[+]</a></span>
                             {{/show_add_rule_prompt}}
                         </td>
-                        <td><a href="{{rule_archetype_url}}">{{rule_archetype_name}}</a></td>
+                        <td><a href="{{rule_archetype_url}}" title="{{rule_archetype_description}}">{{rule_archetype_name}}</a></td>
                         <td>
                             <input type="hidden" name="deck_id" value="{{id}}">
                             {{> archetypedropdown}}

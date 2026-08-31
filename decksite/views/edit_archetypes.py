@@ -15,11 +15,14 @@ class EditArchetypes(View):
         self.queue = ds
         deck.load_queue_similarity(self.queue)
         rule.apply_rules_to_decks(self.queue)
+        archetype_descriptions = {a.id: a.description for a in archetypes}
         for d in self.queue:
             prepare.prepare_deck(d)
             d.archetype_url = url_for('.archetype', archetype_id=d.archetype_name)
+            d.archetype_description = archetype_descriptions.get(d.get('archetype_id'), '')
             if d.get('rule_archetype_id'):
                 d.rule_archetype_url = url_for('.archetype', archetype_id=d.rule_archetype_name)
+                d.rule_archetype_description = archetype_descriptions.get(d.rule_archetype_id, '')
                 d.archetypes = []
                 for a in self.archetypes:
                     if a.id == d.rule_archetype_id:

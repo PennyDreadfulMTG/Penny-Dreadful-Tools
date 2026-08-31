@@ -141,3 +141,33 @@ def test_similarity_score_with_plays_zero_playability() -> None:
     b = make_deck([('Lightning Bolt', 4)])
     score = deck.similarity_score(a, b, plays)
     assert score == pytest.approx(1.0)
+
+def test_calculate_similar_decks_ranks_rare_shared_cards_above_common_ones() -> None:
+    source = make_deck([('Common Card', 4), ('Rare Card', 4)])
+    source.id = 1
+    common_match = make_deck([('Common Card', 4)])
+    common_match.id = 2
+    rare_match = make_deck([('Rare Card', 4), ('Rare Filler', 4)])
+    rare_match.id = 3
+    no_match = make_deck([('Other Card', 4)])
+    no_match.id = 4
+    plays = {
+        'Common Card': 0.039,
+        'Rare Card': 0.01,
+        'Rare Filler': 0.01,
+        'Other Card': 0.5,
+    }
+
+    with (
+        mock.patch.object(deck.playability, 'playability', return_value=plays) as get_playability,
+        mock.patch.object(deck, 'load_decks', return_value=([common_match, rare_match, no_match], 3)),
+        mock.patch.object(deck.redis, 'store') as store,
+    ):
+        deck.calculate_similar_decks([source])
+
+    get_playability.assert_called_once_with()
+    assert [(d.id, d.similarity_score) for d in source.similar_decks] == [
+        (rare_match.id, 50),
+        (common_match.id, 20),
+    ]
+    store.assert_called_once_with('decksite:deck:1:similar', source.similar_decks, ex=172800)

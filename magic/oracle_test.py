@@ -1,10 +1,11 @@
 from collections.abc import Iterable
+from unittest.mock import AsyncMock
 
 import pytest
 
 from magic import oracle, seasons
 from magic.models import Card, Printing
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import DatabaseException, InvalidDataException
 
 
 def test_legality() -> None:
@@ -119,6 +120,22 @@ def test_deck_sort_x_last() -> None:
     cards_by_name = {c.name: c for c in cards}
     assert oracle.deck_sort(cards_by_name['Ghitu Fire']) < oracle.deck_sort(cards_by_name['Flash of Insight'])
     assert oracle.deck_sort(cards_by_name['Ghitu Fire']) > oracle.deck_sort(cards_by_name['Frantic Search'])
+
+@pytest.mark.asyncio
+async def test_scryfall_import_async_handles_duplicate_entry(monkeypatch: pytest.MonkeyPatch) -> None:
+    sfcard = {'object': 'card', 'name': 'Waterlogged Teachings // Inundated Archive'}
+    monkeypatch.setattr('magic.oracle.fetch_tools.fetch_json_async', AsyncMock(return_value=sfcard))
+
+    def raise_invalid(name: str) -> str:
+        raise InvalidDataException('not found')
+    monkeypatch.setattr('magic.oracle.valid_name', raise_invalid)
+
+    duplicate_exc = DatabaseException("Failed to execute ... because of (1062, \"Duplicate entry 'x' for key 'oracle_id'\")")
+    monkeypatch.setattr('magic.oracle.add_cards_and_update_async', AsyncMock(side_effect=duplicate_exc))
+
+    result = await oracle.scryfall_import_async('Waterlogged Teachings')
+
+    assert result is False
 
 # Check that the list of legal cards is being fetched correctly.
 @pytest.mark.functional

@@ -12,8 +12,24 @@ For properties see concrete uses in metagamegrid.
 
 */
 
+const STORAGE_KEY = "metagame-sort";
+
 export class Grid extends DataManager {
+    constructor(props) {
+        super(props);
+        try {
+            const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+            if (stored) {
+                if (stored.sortBy) this.state.sortBy = stored.sortBy;
+                if (stored.sortOrder) this.state.sortOrder = stored.sortOrder;
+            }
+        } catch (e) { /* ignore corrupt storage */ }
+    }
+
     sort(sortBy, sortOrder = "AUTO") {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ sortBy, sortOrder }));
+        } catch (e) { /* ignore storage errors */ }
         this.setState({ sortBy, sortOrder, "page": 0 });
     }
 

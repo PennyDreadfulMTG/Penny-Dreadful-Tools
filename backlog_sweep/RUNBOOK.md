@@ -13,9 +13,10 @@ start from zero.
    (below) exists.
 2. **Claude Max subscription auth** for Conductor's cloud `claude` agents
    (workers bill to subscription, not metered API — verify before scaling).
-3. **A fine-grained GitHub PAT** with a single permission — Issues: Read/Write on
-   this repo only. Conductor's own GitHub token can push branches and manage PRs
-   but cannot comment on or close issues. Put it in
+3. **A classic GitHub PAT with `repo` scope.** This is the credential exercised
+   end-to-end by the pilot. Conductor's own GitHub token can push branches and
+   manage PRs but cannot comment on or close issues; once the PAT is present, the
+   dispatcher uses it for all `gh` operations, including PR operations. Put it in
    `backlog_sweep/state/.gh_token` (gitignored; never mirrored). It dies with
    the sandbox; re-paste on recovery.
 4. **A manager agent** (Opus-class recommended) in the manager workspace, given

@@ -337,7 +337,9 @@ The Conductor-issued `GH_TOKEN` in the manager sandbox is a GitHub App
 user-to-server token with `issues: read` / `pull_requests: write`, so it can open,
 label and close PRs but cannot close or comment on issues. To enable the
 `already-fixed` / `obsolete` / `duplicate` closures, the operator drops a PAT at
-`config.github_token_file` (default `state/.gh_token`).
+`config.github_token_file` (default `state/.gh_token`). Once present, this PAT is
+used for every `gh` subprocess, including PR creation and CI inspection. The
+credential exercised end-to-end in the pilot was a classic PAT with `repo` scope.
 
 Deliberately a file, not an environment variable:
 
@@ -352,9 +354,9 @@ Deliberately a file, not an environment variable:
 - loading it registers the value with the log scrubber, so it is redacted even if a
   subprocess echoes it.
 
-Required PAT permissions (fine-grained, this repository only): Metadata read,
-Contents read, Issues read+write, Pull requests read+write. The dispatcher warns if
-the file is group- or world-readable.
+The dispatcher warns if the file is group- or world-readable. A narrower
+fine-grained replacement has not been exercised end-to-end and must be validated
+against every issue, PR, and check-run operation before use.
 
 ## 11. Logging & secrecy
 

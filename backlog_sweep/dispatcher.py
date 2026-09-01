@@ -77,8 +77,9 @@ DEFAULT_CONFIG = {
     "auto_update_behind_branches": True,
     "max_fixup_attempts": 1,
     "reclaim_orphan_branches": True,
-    # Path to a file holding a PAT with Issues:RW + Pull requests:RW on this repo.
-    # Read into memory only, never logged, never mirrored, never passed in argv.
+    # Path to the operator PAT used by every `gh` subprocess. The pilot-verified
+    # credential was a classic PAT with repo scope. Read into memory only, never
+    # logged, never mirrored, never passed in argv.
     "github_token_file": "state/.gh_token",
     "worker_model": "sonnet-4-6",
     "worker_effort": "high",

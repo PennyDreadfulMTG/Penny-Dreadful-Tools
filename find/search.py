@@ -154,7 +154,10 @@ def parse(expression: Expression) -> str:
         elif next_cls != BooleanOperator or next_token.value() == 'NOT':  # type: ignore
             s += ' AND '
         i += 1
-    return s[:-len(' AND ')].replace('    ', ' ').strip()
+    result = s[:-len(' AND ')].replace('    ', ' ').strip()
+    if not result:
+        raise InvalidSearchException('Empty search expression')
+    return result
 
 # Parse key, operator and term tokens into a SQL boolean or raise if the tokens are invalid in combination.
 def parse_criterion(key: Token, operator: Token, term: Token) -> str:

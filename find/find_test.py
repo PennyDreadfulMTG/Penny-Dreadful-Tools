@@ -345,6 +345,10 @@ def test_oracle_and_fulloracle() -> None:
     do_functional_test('o:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
     do_functional_test('fo:"That enchantment gains"', ['Balduvian Shaman'], ['Echoing Calm', 'Plains'])
 
+def test_empty_parentheses() -> None:
+    with pytest.raises(search.InvalidSearchException):
+        do_test('()', '')
+
 @pytest.mark.functional
 def test_parentheses_functional() -> None:
     with pytest.raises(search.InvalidSearchException):

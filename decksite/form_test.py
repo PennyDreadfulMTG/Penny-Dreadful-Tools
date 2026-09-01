@@ -67,6 +67,32 @@ def test_card_messages_list_multiple_submitted_aliases_deterministically() -> No
         },
     }
 
+def test_card_messages_preserve_bug_description_suffix() -> None:
+    messages = {
+        'Legality_Bugs': {'Bugged Card — It crashes the game'},
+    }
+    aliases = {
+        'Bugged Card': {'An Alias'},
+    }
+
+    assert form.card_messages_with_submitted_aliases(messages, aliases) == {
+        'Legality_Bugs': {
+            'Bugged Card (entered as An Alias) — It crashes the game',
+        },
+    }
+
+def test_card_messages_with_bug_description_no_alias() -> None:
+    messages = {
+        'Warnings_Bugs': {'Some Card — Causes life total corruption'},
+    }
+    aliases: dict[str, set[str]] = {}
+
+    assert form.card_messages_with_submitted_aliases(messages, aliases) == {
+        'Warnings_Bugs': {
+            'Some Card — Causes life total corruption',
+        },
+    }
+
 def test_legality_validation_uses_the_submitted_alias_in_its_message(monkeypatch: pytest.MonkeyPatch) -> None:
     decklist_form = form.DecklistForm.__new__(form.DecklistForm)
     decklist_form.cards = {

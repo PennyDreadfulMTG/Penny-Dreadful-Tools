@@ -86,8 +86,16 @@ class DecklistForm(Form):
         if season_name not in legality.legal_formats(self.deck, None, errors):
             self.errors['decklist'] = ' '.join(errors.get(season_name, {}).pop('Legality_General', ['Not a legal deck']))
             self.card_errors = errors.get(season_name, {})
-        banned_for_bugs = {c.name for c in self.deck.all_cards() if any(b.get('bannable', False) for b in c.bugs or [])}
-        playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any(not b.get('bannable', False) for b in c.bugs or [])}
+        banned_for_bugs = {
+            f'{c.name} — {"; ".join(b["description"] for b in (c.bugs or []) if b.get("bannable", False))}'
+            for c in self.deck.all_cards()
+            if any(b.get('bannable', False) for b in c.bugs or [])
+        }
+        playable_bugs = {
+            f'{c.name} — {"; ".join(b["description"] for b in (c.bugs or []) if not b.get("bannable", False))}'
+            for c in self.deck.all_cards()
+            if c.pd_legal and any(not b.get('bannable', False) for b in c.bugs or [])
+        }
         if len(banned_for_bugs) > 0:
             self.errors['decklist'] = 'Deck contains cards with game-breaking bugs'
             self.card_errors['Legality_Bugs'] = banned_for_bugs
@@ -119,10 +127,15 @@ def submitted_aliases(cards: DecklistType) -> dict[str, set[str]]:
 
 def card_messages_with_submitted_aliases(messages: dict[str, set[str]], aliases: dict[str, set[str]]) -> dict[str, set[str]]:
     return {
-        message_type: {
-            f"{canonical_name} (entered as {'; '.join(sorted(aliases[canonical_name]))})"
-            if aliases.get(canonical_name) else canonical_name
-            for canonical_name in names
-        }
+        message_type: {_name_with_alias(name, aliases) for name in names}
         for message_type, names in messages.items()
     }
+
+def _name_with_alias(name: str, aliases: dict[str, set[str]]) -> str:
+    # name may be "Card Name — bug description"; split to do alias lookup on card name only
+    parts = name.split(' — ', 1)
+    canonical_name = parts[0]
+    suffix = f' — {parts[1]}' if len(parts) > 1 else ''
+    if aliases.get(canonical_name):
+        return f"{canonical_name} (entered as {'; '.join(sorted(aliases[canonical_name]))}){suffix}"
+    return name

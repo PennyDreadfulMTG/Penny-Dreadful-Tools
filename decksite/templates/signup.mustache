@@ -5,9 +5,9 @@
 {{/is_closed}}
 {{^is_closed}}
     <section>
-        {{#signed_up_msg_safe}}
-            <p class="error">{{{signed_up_msg_safe}}}</p>
-        {{/signed_up_msg_safe}}
+        {{#already_signed_up}}
+            <p class="error">You are already signed up to the league with <a href="{{deck_url}}">{{deck_name}}</a>. Do you want to <a href="{{retire_url}}">Retire?</a></p>
+        {{/already_signed_up}}
         <form method="post">
             <div>
                 <label for="mtgo_username">{{TT_MTGO_USERNAME}}</label>

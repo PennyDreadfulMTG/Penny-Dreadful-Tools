@@ -11,9 +11,10 @@ class SignUp(DecklistForm):
         super().__init__(form, person_id)
         self.is_closed = is_closed
         if d and d.is_in_current_run():
-            deck_url = url_for('deck', deck_id=d.id)
-            retire_url = url_for('retire')
-            self.signed_up_msg_safe = f'You are already signed up to the league with <a href="{deck_url}">{d.name}</a>. Do you want to <a href="{retire_url}">Retire?</a>'
+            self.already_signed_up = True
+            self.deck_url = url_for('deck', deck_id=d.id)
+            self.deck_name = d.name
+            self.retire_url = url_for('retire')
 
     def page_title(self) -> str:
         return '{league} Sign Up'.format(league=self.league['name'])

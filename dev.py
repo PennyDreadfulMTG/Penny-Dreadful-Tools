@@ -270,7 +270,7 @@ def pull_request(argv: list[str]) -> None:
 def do_jslint(fix: bool) -> None:
     print('>>>> Linting javascript')
     files = find_files(file_extension='js', exclude=['shared_web/static/js/tipped.min.js']) + find_files(file_extension='jsx')
-    cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
+    cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint'), '--format', 'compact']
     if fix:
         cmd.append('--fix')
     subprocess.check_call(cmd + files, shell=ON_WINDOWS)

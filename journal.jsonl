@@ -3447,3 +3447,5 @@
 {"batch_id": "f-12226-1", "event": "WORKSPACE_CREATED", "issues": [12226], "kind": "fix", "seq": 3447, "session_id": "0387aac9-7ff5-440e-98c8-530025d939dd", "ts": "2026-09-01T19:14:26Z", "workspace_id": "7a3d8615-719c-488f-87d9-aa638e39765e"}
 {"attempt": 1, "batch_id": "f-12226-1", "event": "LEASE_GRANTED", "expires_at": "2026-09-01T20:44:26Z", "issue": 12226, "kind": "fix", "seq": 3448, "session_id": "0387aac9-7ff5-440e-98c8-530025d939dd", "ts": "2026-09-01T19:14:26Z", "workspace_id": "7a3d8615-719c-488f-87d9-aa638e39765e"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 3448, "seq": 3449, "ts": "2026-09-01T19:14:27Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 3450, "ts": "2026-09-01T19:14:29Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3450, "seq": 3451, "ts": "2026-09-01T19:15:16Z"}

@@ -85,7 +85,7 @@ class Archetype(View):
             m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
         for m in self.matchups['archetypes']:
             prepare.prepare_archetype(m, self.matchups['archetypes'], None, tournament_only, self.season_id())
-        self.tournament_only = self.hide_source = tournament_only
+        self.tournament_only = self.hide_source = self.hide_perfect_runs = tournament_only
         self.show_seasons = True
         self.legal_seasons = seasons_active
         self.show_tournament_toggle = True

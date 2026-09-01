@@ -41,7 +41,7 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
     if 'gatherer.wizards.com' in ctx.message.content.lower():
         return
-    compat = False and ctx.channel.type == ChannelType.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
+    compat = ctx.channel.type == ChannelType.GUILD_TEXT and ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074
     queries = parse_queries(ctx.message.content, compat)
     if len(queries) > 0:
         try:

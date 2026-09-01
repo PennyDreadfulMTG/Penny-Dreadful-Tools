@@ -851,8 +851,9 @@ nav, .menu, .submenu {
 
 .submenu {
     background: var(--background);
+    box-shadow: inset 1px 0 var(--border);
     font-size: 20px;
-    left: var(--main-menu-width);
+    left: calc(var(--main-menu-width) - 1px);
     position: absolute;
     top: 0;
 }
@@ -884,7 +885,7 @@ When you are in a middle width the main menu is always shown but the submenu is 
 */
 @media only screen and (max-width: 900px), only screen and (min-width: 1601px) {
     /* Expand nav width when hovering over a menu item with a submenu */
-    nav:has(li:hover > .item + .submenu) {
+    nav:has(li:hover > .item + .submenu), nav:has(li.submenu-open > .item + .submenu) {
         width: var(--full-menu-width);
         z-index: 4;
     }
@@ -915,10 +916,23 @@ When you are in a middle width the main menu is always shown but the submenu is 
     nav:has(li:hover > .item + .submenu) {
         width: var(--main-menu-width);
     }
-    nav li:hover > .item + .submenu {
-        top: 0;
-        position: absolute;
-    }
+}
+
+/* Fade hover submenus at every width. Touch navigation does not sustain this hover state. */
+nav li > .item + .submenu {
+    display: block;
+    opacity: 0;
+    transition:
+        opacity 0.2s ease,
+        visibility 0s linear 0.2s;
+    visibility: hidden;
+    width: var(--submenu-width);
+}
+nav li.submenu-open > .item + .submenu {
+    opacity: 1;
+    transition-delay: 0s;
+    visibility: visible;
+    z-index: 5;
 }
 
 /* Once you get properly wide we just show the main menu and the submenu if there is one in the flow of the page. */
@@ -926,8 +940,10 @@ When you are in a middle width the main menu is always shown but the submenu is 
     nav:has(.current ~ .submenu) {
         width: var(--full-menu-width);
     }
-    .current + .submenu {
+    nav li > .current + .submenu {
         display: block;
+        opacity: 1;
+        visibility: visible;
         width: var(--submenu-width);
     }
 }
@@ -967,6 +983,8 @@ nav.showing .menu {
 
 nav.showing .current + .submenu {
     display: block;
+    opacity: 1;
+    visibility: visible;
     width: var(--submenu-width);
     z-index: 3;
 }

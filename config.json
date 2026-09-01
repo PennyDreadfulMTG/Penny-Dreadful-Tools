@@ -40,7 +40,7 @@
     "ref": "sweep-state"
   },
   "mutations_enabled": true,
-  "opus_session_id": "d851d405-a108-4c6b-a5d1-cd6cc52bd8bf",
+  "opus_session_id": "1b570fb0-e69b-4b79-8a4b-5af4f37f2ab5",
   "pause_initial_minutes": 30,
   "pause_max_minutes": 240,
   "phase": "pilot",

@@ -1645,3 +1645,7 @@
 {"event": "CI_CHECKED", "issue": 12647, "pr": 14968, "seq": 1645, "ts": "2026-08-24T13:43:48Z"}
 {"event": "CI_CHECKED", "issue": 12621, "pr": 14969, "seq": 1646, "ts": "2026-08-24T13:43:49Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1646, "seq": 1647, "ts": "2026-08-24T13:44:54Z"}
+{"event": "ISSUE_SKIPPED", "issue": 12617, "reason": "closed outside the sweep", "seq": 1648, "ts": "2026-09-01T17:45:43Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1648, "seq": 1649, "ts": "2026-09-01T17:45:43Z"}
+{"changes": {"opus_session_id": "<this session>"}, "event": "CONFIG_CHANGED", "seq": 1650, "ts": "2026-09-01T17:46:08Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 1650, "seq": 1651, "ts": "2026-09-01T17:46:16Z"}

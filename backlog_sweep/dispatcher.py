@@ -238,7 +238,7 @@ class Scrubber:
             text = str(text)
         for v in self.values:
             text = text.replace(v, "[REDACTED]")
-        return SECRET_RE.sub(lambda m: "%s%s[REDACTED]" % (m.group(1), m.group(2)), text)
+        return SECRET_RE.sub(lambda m: "{}{}[REDACTED]".format(m.group(1), m.group(2)), text)
 
 
 SCRUB = Scrubber()
@@ -306,7 +306,7 @@ def rotate_log():
 def log(msg, echo=False):
     STATE.mkdir(parents=True, exist_ok=True)
     rotate_log()
-    line = "%s %s\n" % (iso(utcnow()), SCRUB(msg))
+    line = "{} {}\n".format(iso(utcnow()), SCRUB(msg))
     with open(LOGFILE, "a", encoding="utf-8") as fh:
         fh.write(line)
     if echo:
@@ -397,7 +397,7 @@ def render_template(md_path, mapping):
         body = body.replace("{{%s}}" % k, "" if v is None else str(v))
     left = re.findall(r"\{\{([A-Z_]+)\}\}", body)
     if left:
-        raise RuntimeError("unsubstituted placeholders %s in %s" % (sorted(set(left)), md_path))
+        raise RuntimeError("unsubstituted placeholders {} in {}".format(sorted(set(left)), md_path))
     return body + "\n"
 
 
@@ -413,9 +413,9 @@ def render_claims(claims):
         else:
             proposed = "obsolete (close NOT_PLANNED)"
         refs = "; ".join(
-            "%s %s" % (e.get("type"), e.get("ref")) for e in (c.get("evidence") or [])
+            "{} {}".format(e.get("type"), e.get("ref")) for e in (c.get("evidence") or [])
         ) or "none cited"
-        lines.append('- issue: #%s — "%s"' % (c["issue"], (c.get("title") or "").replace('"', "'")))
+        lines.append('- issue: #{} — "{}"'.format(c["issue"], (c.get("title") or "").replace('"', "'")))
         lines.append("  proposed: %s" % proposed)
         lines.append("  cited evidence: %s" % refs)
         lines.append("  proposed closing comment: %s" % (c.get("proposed_comment") or "(none supplied)"))
@@ -487,10 +487,10 @@ class Runner:
             except OSError as exc:
                 rc, out, err = -1, "", "OSError: %s" % exc
             dur = time.time() - t0
-            log("exec rc=%s %.1fs %s :: %s" % (rc, dur, " ".join(argv[:6]), SCRUB((out + err)[:400])))
+            log("exec rc={} {:.1f}s {} :: {}".format(rc, dur, " ".join(argv[:6]), SCRUB((out + err)[:400])))
             if rc == 0:
                 return out if check else (out + err)
-            last = InfraError("%s exited %s" % (argv[0], rc), out + err)
+            last = InfraError("{} exited {}".format(argv[0], rc), out + err)
             if not check:
                 return out + err
             if i < attempts - 1:
@@ -551,12 +551,12 @@ class Conductor:
                 return json.loads(raw) if raw.strip() else {}
             except urllib.error.HTTPError as exc:
                 raw = exc.read().decode("utf-8", "replace")[:400]
-                log("api %s %s -> HTTP %s %s" % (method, path, exc.code, SCRUB(raw)))
+                log("api {} {} -> HTTP {} {}".format(method, path, exc.code, SCRUB(raw)))
                 if 400 <= exc.code < 500 and exc.code not in (403, 408, 425, 429):
-                    raise InfraError("HTTP %s on %s" % (exc.code, path), raw)
-                last = InfraError("HTTP %s on %s" % (exc.code, path), raw)
+                    raise InfraError("HTTP {} on {}".format(exc.code, path), raw)
+                last = InfraError("HTTP {} on {}".format(exc.code, path), raw)
             except Exception as exc:  # noqa: BLE001 - network layer
-                log("api %s %s -> %s" % (method, path, SCRUB(str(exc))))
+                log("api {} {} -> {}".format(method, path, SCRUB(str(exc))))
                 last = InfraError(str(exc))
             if i < len(sleeps) - 1:
                 self.sleep(sleeps[i])
@@ -745,7 +745,7 @@ class GitHub:
     def check_run_summary(self, sha, name, limit=1200):
         """Best-effort log tail for a failing check (no Actions log scope needed)."""
         try:
-            runs = self._json(["gh", "api", "repos/%s/commits/%s/check-runs" % (self.repo, sha),
+            runs = self._json(["gh", "api", "repos/{}/commits/{}/check-runs".format(self.repo, sha),
                                "--paginate"]).get("check_runs") or []
         except InfraError:
             return ""
@@ -775,7 +775,7 @@ class GitHub:
             out = self.run(["gh", "run", "view", m.group(1), "--repo", self.repo, "--log-failed"],
                            check=False)
             if out and "still in progress" not in out and "could not find" not in out.lower():
-                chunks.append("### %s\n%s" % (name, out[-limit:]))
+                chunks.append("### {}\n{}".format(name, out[-limit:]))
         return "\n\n".join(chunks)
 
     def delete_remote_branch(self, branch):
@@ -790,7 +790,7 @@ class GitHub:
         """
         try:
             rows = self._json([
-                "gh", "api", "repos/%s/issues/%s/timeline" % (self.repo, number),
+                "gh", "api", "repos/{}/issues/{}/timeline".format(self.repo, number),
                 "--paginate", "-q", "[.[] | select(.event==\"ready_for_review\")]",
             ])
         except InfraError:
@@ -815,7 +815,7 @@ class GitHub:
 
     def compare(self, branch):
         return self._json([
-            "gh", "api", "repos/%s/compare/master...%s" % (self.repo, branch),
+            "gh", "api", "repos/{}/compare/master...{}".format(self.repo, branch),
         ])
 
     def remote_branch_sha(self, branch):
@@ -896,7 +896,7 @@ class State:
         if blocked or status not in LEGAL.get(cur, set()):
             self.invariants.append({"ts": ts, "issue": rec["issue"], "from": cur, "to": status, "event": event})
             rec["status"] = "escalated"
-            rec["escalation"] = {"kind": "invariant", "detail": "illegal %s -> %s" % (cur, status)}
+            rec["escalation"] = {"kind": "invariant", "detail": "illegal {} -> {}".format(cur, status)}
             rec.setdefault("history", []).append({"ts": ts, "event": "INVARIANT_VIOLATION"})
             return False
         rec["status"] = status
@@ -1310,7 +1310,7 @@ class Engine:
 
     def escalate(self, issue, kind, question, summary="", refs=None):
         if self.dry:
-            self.say("WOULD escalate #%s (%s): %s" % (issue, kind, question))
+            self.say("WOULD escalate #{} ({}): {}".format(issue, kind, question))
             return
         rec = {
             "issue": int(issue), "created_at": iso(utcnow()), "kind": kind,
@@ -1334,7 +1334,7 @@ class Engine:
         minutes = min(self.cfg["pause_initial_minutes"] * (2 ** (level - 1)), self.cfg["pause_max_minutes"])
         until = iso(utcnow() + dt.timedelta(minutes=minutes))
         self.store.journal("PAUSE_ON", reason=reason, until=until, level=level, since=iso(utcnow()))
-        log("PAUSED (%s) until %s" % (reason, until))
+        log("PAUSED ({}) until {}".format(reason, until))
 
     def maybe_unpause(self):
         if not self.st.paused:
@@ -1388,7 +1388,7 @@ class Engine:
             try:
                 status = self.cond.session_status(sid)
             except InfraError as exc:
-                self.note_infra_failure("session_status %s: %s" % (sid, exc))
+                self.note_infra_failure("session_status {}: {}".format(sid, exc))
                 continue
             ws["last_transcript_at"] = tmap.get(sid) or ws.get("last_transcript_at")
             s = status.get("status")
@@ -1440,16 +1440,16 @@ class Engine:
         try:
             self.cond.archive_workspace(wid)
         except InfraError as exc:
-            log("archive call failed for %s: %s" % (wid, exc))
+            log("archive call failed for {}: {}".format(wid, exc))
         try:
             state = (self.cond.workspace_status(wid) or {}).get("status")
         except InfraError as exc:
-            log("archive verification failed for %s: %s" % (wid, exc))
+            log("archive verification failed for {}: {}".format(wid, exc))
             state = None
         if state in ("archived", "deleted"):
             self.store.journal("WORKSPACE_ARCHIVED", workspace_id=wid, verified_state=state)
             return True
-        log("archive did NOT take for %s (state=%s); will retry" % (wid, state))
+        log("archive did NOT take for {} (state={}); will retry".format(wid, state))
         if ws.get("state") != "harvested":
             self.store.journal("WORKSPACE_HARVESTED", workspace_id=wid, state=state)
         return False
@@ -1459,7 +1459,7 @@ class Engine:
         stuck = [w for w in self.st.workspaces.values() if w["state"] == "harvested"]
         for ws in stuck[:20]:
             if self.dry:
-                self.say("WOULD retry archive of %s (%s)" % (ws["workspace_id"], ws["batch_id"]))
+                self.say("WOULD retry archive of {} ({})".format(ws["workspace_id"], ws["batch_id"]))
                 continue
             self.archive(ws)
 
@@ -1488,7 +1488,7 @@ class Engine:
         try:
             msgs = self.cond.all_messages(sid)
         except InfraError as exc:
-            self.note_infra_failure("messages %s: %s" % (sid, exc))
+            self.note_infra_failure("messages {}: {}".format(sid, exc))
             return
         rl = self.cond.rate_limit_state(msgs)
         if rl and rl.get("status") not in (None, "allowed", "warning"):
@@ -1552,7 +1552,7 @@ class Engine:
             try:
                 getattr(self, "_record_" + ws["kind"])(ws, n, r)
             except Exception as exc:  # noqa: BLE001 defensive: one bad result must not kill the tick
-                log("record error #%s: %r" % (n, exc))
+                log("record error #{}: {!r}".format(n, exc))
                 self.add_evidence(n, ws["kind"], r)
                 self.escalate(n, "malformed", "Result could not be processed (%s)." % exc)
         missing = [n for n in ws["issues"] if n not in seen]
@@ -1689,7 +1689,7 @@ class Engine:
             gh_reason = "completed" if reason_key == "completed" else "not planned"
             comment = render_closure_comment(ver.get("final_comment"))
             if self.dry or not self.cfg["mutations_enabled"]:
-                self.say("WOULD close #%s (%s): %s" % (n, gh_reason, (ver.get("final_comment") or "")[:120]))
+                self.say("WOULD close #{} ({}): {}".format(n, gh_reason, (ver.get("final_comment") or "")[:120]))
                 continue
             ok, why = self.closure_guards(n, ver)
             if ok == "already-closed":
@@ -1778,7 +1778,7 @@ class Engine:
             fx = self.last_evidence(n, "fix") or {}
             branch = fx.get("branch")
             if self.dry or not self.cfg["mutations_enabled"]:
-                self.say("WOULD open PR for #%s from %s: %s" % (n, branch, fx.get("pr_title")))
+                self.say("WOULD open PR for #{} from {}: {}".format(n, branch, fx.get("pr_title")))
                 continue
             existing = []
             try:
@@ -1804,7 +1804,7 @@ class Engine:
                                           summary="adopted non-draft PR, no ready_for_review event")
                             self.st.counters["alert"] = "adopted non-draft PR #%s" % p["number"]
                 except InfraError as exc:
-                    log("draft check failed for #%s: %s" % (p["number"], exc))
+                    log("draft check failed for #{}: {}".format(p["number"], exc))
                 continue
             ok, why = self.pr_guards(n, fx)
             if not ok:
@@ -1813,7 +1813,7 @@ class Engine:
             body = fx.get("pr_body") or ""
             tests = (fx.get("tests") or {})
             if tests.get("result") != "passed" and "test" not in body.lower():
-                body += "\n\nTest status: %s — %s" % (tests.get("result"), tests.get("detail"))
+                body += "\n\nTest status: {} — {}".format(tests.get("result"), tests.get("detail"))
             body_file = OUTBOX / ("pr-%s.md" % n)
             write_atomic(body_file, body)
             self.store.journal("MUTATION_PLANNED", issue=n, kind="pr", branch=branch)
@@ -1836,7 +1836,7 @@ class Engine:
                 is_draft = self.gh.pr_is_draft(number)
             except InfraError as exc:
                 is_draft = False
-                log("draft verification failed for #%s: %s" % (number, exc))
+                log("draft verification failed for #{}: {}".format(number, exc))
             if not is_draft:
                 log("PR #%s IS NOT A DRAFT - closing immediately" % number)
                 try:
@@ -1844,7 +1844,7 @@ class Engine:
                                              "as a draft, and non-draft PRs here are auto-merged. "
                                              "The branch is untouched; it will be reopened as a draft.")
                 except InfraError as exc:
-                    log("emergency close of #%s FAILED: %s" % (number, exc))
+                    log("emergency close of #{} FAILED: {}".format(number, exc))
                 self.cfg["prs_enabled"] = False
                 self.store.config["prs_enabled"] = False
                 self.store.save_config()
@@ -1897,7 +1897,7 @@ class Engine:
         if not remote:
             return False, "branch %s not on origin" % branch
         if sha and not (remote.startswith(sha) or sha.startswith(remote[:7])):
-            return False, "branch head %s != reported %s" % (remote[:10], sha[:10])
+            return False, "branch head {} != reported {}".format(remote[:10], sha[:10])
         try:
             cmp_ = self.gh.compare(branch)
         except InfraError as exc:
@@ -1945,7 +1945,7 @@ class Engine:
         try:
             info = self.gh.pr_state(number)
         except InfraError as exc:
-            log("PR state check failed for #%s: %s" % (number, exc))
+            log("PR state check failed for #{}: {}".format(number, exc))
             return False
         state = (info.get("state") or "").upper()
         if state == "MERGED":
@@ -2033,14 +2033,14 @@ class Engine:
             if settled and checked and (utcnow() - checked) < recheck and not master_moved:
                 continue
             if self.dry:
-                self.say("WOULD poll CI for PR #%s (issue #%s)" % (number, rec["issue"]))
+                self.say("WOULD poll CI for PR #{} (issue #{})".format(number, rec["issue"]))
                 continue
             if self.pr_settled_by_human(rec, pr, number):
                 continue
             try:
                 rows = self.gh.pr_checks(number)
             except InfraError as exc:
-                log("CI poll failed for #%s: %s" % (number, exc))
+                log("CI poll failed for #{}: {}".format(number, exc))
                 continue
             verdict = self.summarize_checks(rows, required)
             failed = sorted(n for n, v in verdict.items() if v == "fail")
@@ -2049,13 +2049,13 @@ class Engine:
                 for name in failed[:2]:
                     tail = self.gh.check_run_summary(pr.get("head_sha") or "", name)
                     if tail:
-                        tails.append("### %s\n%s" % (name, tail))
+                        tails.append("### {}\n{}".format(name, tail))
                 self.store.journal("PR_CI_FAILED", issue=rec["issue"], pr=number, failed=failed)
                 self.escalate(
                     rec["issue"], "pr-ci-failed",
                     "PR #%s is red on %s — dispatch one follow-up fixer to the same branch "
                     "(queue-fixup), or abandon the PR (abandon-pr)?" % (number, ", ".join(failed)),
-                    summary=("failing checks: %s\n%s" % (", ".join(failed), "\n".join(tails)))[:4000],
+                    summary=("failing checks: {}\n{}".format(", ".join(failed), "\n".join(tails)))[:4000],
                     refs=["evidence/%s.json#fix[-1]" % rec["issue"]])
                 continue
             if all(v == "pass" for v in verdict.values()):
@@ -2087,7 +2087,7 @@ class Engine:
         lines = ["# Escalation bundle %s" % ts, "", self.vitals_line(), ""]
         for r in unbundled[:40]:
             lines += [
-                "## #%s — %s" % (r["issue"], r["kind"]),
+                "## #{} — {}".format(r["issue"], r["kind"]),
                 "- question: %s" % r["question"],
                 "- summary: %s" % (r.get("summary") or "")[:400].replace("\n", " "),
                 "- evidence: %s" % ", ".join(r.get("evidence_refs") or []),
@@ -2102,7 +2102,7 @@ class Engine:
             self.st.counters["alert"] = "bundle queued, opus_session_id unset"
             return
         if self.dry:
-            self.say("WOULD send bundle %s to session %s" % (path.name, sid))
+            self.say("WOULD send bundle {} to session {}".format(path.name, sid))
             return
         try:
             self.cond.send_message(sid, "Escalation bundle ready: read `%s` and adjudicate." % path,
@@ -2215,14 +2215,14 @@ class Engine:
                     if self.gh.prs_for_branch(branch):
                         return False, "branch %s already has a PR" % branch
                 except InfraError as exc:
-                    return False, "could not check PRs for %s: %s" % (branch, exc)
+                    return False, "could not check PRs for {}: {}".format(branch, exc)
                 self.gh.delete_remote_branch(branch)
                 if self.gh.remote_branch_sha(branch):
                     return False, "could not delete orphan branch %s" % branch
                 self.store.journal("ROLLBACK_RECORDED", issue=n, status=None,
                                    action="deleted orphan branch %s (pushed by a fixer whose "
                                           "report was never harvested; no PR existed)" % branch)
-                log("reclaimed orphan branch %s for #%s" % (branch, n))
+                log("reclaimed orphan branch {} for #{}".format(branch, n))
         return True, ""
 
     def batch_id(self, kind, issues):
@@ -2267,7 +2267,7 @@ class Engine:
         return render_template(BASE / "FIXER_PROMPT.md", {
             "ISSUE": n, "TITLE": rec["title"], "BATCH_ID": batch_id,
             "FIX_SKETCH": tri.get("fix_sketch") or "(none supplied — derive it yourself)",
-            "BRANCH": "sweep/%s-%s" % (n, slugify(rec["title"])),
+            "BRANCH": "sweep/{}-{}".format(n, slugify(rec["title"])),
         })
 
     def spawn(self, job):
@@ -2329,7 +2329,7 @@ class Engine:
                 continue
             if w["id"] in mine or w["id"] == manager:
                 continue
-            found.append("%s (%s)" % (w.get("name") or "?", w["id"][:8]))
+            found.append("{} ({})".format(w.get("name") or "?", w["id"][:8]))
         if found != self.unregistered and found:
             log("UNREGISTERED workspaces in project: %s" % ", ".join(found))
         self.unregistered = found
@@ -2383,7 +2383,7 @@ class Engine:
         if not force and last and (utcnow() - last) < dt.timedelta(minutes=conf.get("interval_minutes", 15)):
             return
         if self.dry:
-            self.say("WOULD mirror state to %s:%s" % (conf.get("kind"), conf.get("ref")))
+            self.say("WOULD mirror state to {}:{}".format(conf.get("kind"), conf.get("ref")))
             return
         try:
             if conf["kind"] == "branch":
@@ -2451,7 +2451,7 @@ class Engine:
         if not remote or remote[0] != local:
             raise InfraError("mirror push did not land: origin/%s is %s, local is %s"
                              % (ref, (remote[0][:10] if remote else "absent"), local[:10]), push)
-        log("mirror: pushed %s to origin/%s" % (local[:10], ref))
+        log("mirror: pushed {} to origin/{}".format(local[:10], ref))
         return True
 
     def mirror_gist(self, gist_id):
@@ -2489,7 +2489,7 @@ class Engine:
                   "", "## Open escalations", ""]
         for f in sorted(ESCALATIONS.glob("*.json")):
             r = read_json(f) or {}
-            lines.append("- #%s (%s): %s" % (r.get("issue"), r.get("kind"), r.get("question")))
+            lines.append("- #{} ({}): {}".format(r.get("issue"), r.get("kind"), r.get("question")))
         lines += ["", "## Totals", "",
                   "- workspaces created: %d" % self.st.counters.get("workspaces_created", 0),
                   "- nudges: %d" % self.st.counters.get("nudges", 0),
@@ -2561,7 +2561,7 @@ class Engine:
                 if live not in ("archived", "deleted"):
                     stale.append((ws, live))
         for ws, live in stale:
-            out.append("registry said archived but %s is %s (%s)" % (ws["workspace_id"], live, ws["batch_id"]))
+            out.append("registry said archived but {} is {} ({})".format(ws["workspace_id"], live, ws["batch_id"]))
             if not self.dry:
                 self.store.journal("WORKSPACE_HARVESTED", workspace_id=ws["workspace_id"], state=live)
                 if self.archive(ws):
@@ -2579,14 +2579,14 @@ class Engine:
                 continue
             m = re.match(r"^sweep-([tvf])-(\d+)-(\d+)$", w.get("name") or "")
             if not m:
-                out.append("ignoring non-sweep workspace %s (%s)" % (w["id"], w.get("name")))
+                out.append("ignoring non-sweep workspace {} ({})".format(w["id"], w.get("name")))
                 continue
             kind = {"t": "triage", "v": "verify", "f": "fix"}[m.group(1)]
             bid = w["name"][len("sweep-"):]
             issues = [int(n) for n, r in self.st.issues.items()
                       if (r.get("lease") or {}).get("batch_id") == bid]
             if not issues:
-                out.append("orphan workspace %s (%s) has no live lease — archiving" % (w["id"], bid))
+                out.append("orphan workspace {} ({}) has no live lease — archiving".format(w["id"], bid))
                 if not self.dry:
                     try:
                         self.cond.archive_workspace(w["id"])
@@ -2598,7 +2598,7 @@ class Engine:
                 self.store.journal("WORKSPACE_CREATED", workspace_id=w["id"],
                                    session_id=sids[0] if sids else None, kind=kind,
                                    batch_id=bid, issues=issues, adopted=True)
-            out.append("adopted orphan workspace %s (%s) for %s" % (w["id"], bid, issues))
+            out.append("adopted orphan workspace {} ({}) for {}".format(w["id"], bid, issues))
         for ws in list(self.active_workspaces()):
             try:
                 st = self.cond.session_status(ws["session_id"]).get("status")
@@ -2666,13 +2666,13 @@ def cmd_status(store, args):
     eng = Engine(store)
     c = eng.counts()
     lines = [
-        "phase=%s pilot_limit=%s concurrency=%s mutations=%s paused=%s" % (
+        "phase={} pilot_limit={} concurrency={} mutations={} paused={}".format(
             cfg["phase"], cfg["pilot_limit"], cfg["concurrency_cap"], cfg["mutations_enabled"], st.paused),
         "issues=%d  %s" % (len(st.issues), "  ".join("%s=%d" % kv for kv in sorted(c.items()))),
         "workspaces active=%d created=%d nudges=%d infra_failures=%d" % (
             len(eng.active_workspaces()), st.counters.get("workspaces_created", 0),
             st.counters.get("nudges", 0), st.counters.get("infra_failures", 0)),
-        "open sweep PRs cap=%s  backpressure=%s" % (cfg.get("max_open_prs"), st.pr_backpressure),
+        "open sweep PRs cap={}  backpressure={}".format(cfg.get("max_open_prs"), st.pr_backpressure),
         "today closures=%d/%d prs=%d/%d" % (
             st.daily.get("closures", 0), cfg["daily_close_cap"],
             st.daily.get("prs", 0), cfg["daily_pr_cap"]),
@@ -2735,7 +2735,7 @@ def cmd_adjudicate(store, args):
         raise SystemExit("#%s is not in the queue" % n)
     verb = args.verb
     if verb not in ADJUDICATIONS:  # noqa: SIM102 - explicit for the error message
-        raise SystemExit("unknown verb %r (choose from %s)" % (verb, ", ".join(sorted(ADJUDICATIONS))))
+        raise SystemExit("unknown verb {!r} (choose from {})".format(verb, ", ".join(sorted(ADJUDICATIONS))))
     eng = Engine(store)
     status = ADJUDICATIONS[verb]
     if verb == "queue-fixup":
@@ -2755,12 +2755,12 @@ def cmd_adjudicate(store, args):
             try:
                 detail = eng.gh.failed_check_log(pr["number"], failed)
             except InfraError as exc:
-                log("log fetch for #%s failed: %s" % (pr["number"], exc))
+                log("log fetch for #{} failed: {}".format(pr["number"], exc))
         if not detail:
             detail = (esc.get("summary") or "")[:4000]
         store.journal("FIXUP_DISPATCHED", issue=n, branch=pr["branch"], pr=pr["number"],
                       failed=failed, attempt=prior + 1, log_tail=detail[:4000], note=args.note)
-        msg = "#%s queued for one CI-remediation fixer on %s (PR #%s)" % (n, pr["branch"], pr["number"])
+        msg = "#{} queued for one CI-remediation fixer on {} (PR #{})".format(n, pr["branch"], pr["number"])
         _finish_adjudication(store, n, verb, args)
         store.snapshot()
         return msg
@@ -2771,13 +2771,13 @@ def cmd_adjudicate(store, args):
                 eng.gh.close_pr(pr["number"], "Closing this automated sweep PR: CI could not be made "
                                               "green within the campaign's remediation budget.")
             except InfraError as exc:
-                log("abandon-pr: closing #%s failed: %s" % (pr["number"], exc))
+                log("abandon-pr: closing #{} failed: {}".format(pr["number"], exc))
         if pr.get("branch"):
             eng.gh.delete_remote_branch(pr["branch"])
         store.journal("ADJUDICATED", issue=n, verb=verb, note=args.note, status="deferred_human")
         _finish_adjudication(store, n, verb, args)
         store.snapshot()
-        return "#%s: PR #%s closed, branch %s deleted, issue deferred to bakert" % (
+        return "#{}: PR #{} closed, branch {} deleted, issue deferred to bakert".format(
             n, pr.get("number"), pr.get("branch"))
     if verb.startswith("close-"):
         if not args.comment_file:
@@ -2797,16 +2797,16 @@ def cmd_adjudicate(store, args):
         if eng.gh.issue(n, "state").get("state") == "CLOSED":
             store.journal("CLOSE_EXECUTED", issue=n, reason=reason.replace(" ", "_"),
                           comment_posted=True, verified_by_batch="opus-adjudication")
-            msg = "#%s closed (%s)" % (n, reason)
+            msg = "#{} closed ({})".format(n, reason)
         else:
             store.journal("MUTATION_FAILED", issue=n, kind="close", reason="state not CLOSED")
             msg = "#%s close did not land" % n
     elif status is None:
         store.journal("ADJUDICATED", issue=n, verb=verb, note=args.note)
-        msg = "#%s annotated (still %s)" % (n, rec["status"])
+        msg = "#{} annotated (still {})".format(n, rec["status"])
     else:
         store.journal("ADJUDICATED", issue=n, verb=verb, note=args.note, status=status)
-        msg = "#%s -> %s" % (n, status)
+        msg = "#{} -> {}".format(n, status)
     _finish_adjudication(store, n, verb, args)
     store.snapshot()
     return msg
@@ -2822,7 +2822,7 @@ def _finish_adjudication(store, n, verb, args):
     if verb in ("defer-to-human", "abandon-pr"):
         digest = REPORTS / "human_digest.md"
         prev = digest.read_text(encoding="utf-8") if digest.exists() else "# Human digest\n"
-        write_atomic(digest, prev + "\n- #%s — %s (%s)\n" % (n, args.note or "deferred", iso(utcnow())))
+        write_atomic(digest, prev + "\n- #{} — {} ({})\n".format(n, args.note or "deferred", iso(utcnow())))
 
 
 def cmd_rollback(store, args):
@@ -2874,7 +2874,7 @@ def cmd_daemon(_store, args):
     if existing.get("pid") and _alive(existing["pid"]):
         raise SystemExit("daemon already running as pid %s" % existing["pid"])
     write_json(PIDFILE, {"pid": os.getpid(), "started_at": iso(utcnow())})
-    log("daemon start interval=%ss pid=%s" % (args.interval, os.getpid()), echo=True)
+    log("daemon start interval={}s pid={}".format(args.interval, os.getpid()), echo=True)
     while not stopping["now"]:
         try:
             store = Store()

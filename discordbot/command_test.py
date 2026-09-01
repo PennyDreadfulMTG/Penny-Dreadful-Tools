@@ -141,6 +141,29 @@ def test_resources_matching_in_url() -> None:
     results = resources.resources_resources('magic online guide')
     assert results['https://www.mtgo.com/getting-started/getting-started-home'] == 'Magic Online guide'
 
+def test_uniqify_cards_deduplicates_same_name_no_printing() -> None:
+    cards = [Card({'name': 'Lightning Bolt'}), Card({'name': 'Lightning Bolt'})]
+    result = command.uniqify_cards(cards)
+    assert len(result) == 1
+
+def test_uniqify_cards_keeps_different_printings_of_same_card() -> None:
+    c1 = Card({'name': 'Vindicate'})
+    c1['preferred_printing'] = 'g07'
+    c2 = Card({'name': 'Vindicate'})
+    c2['preferred_printing'] = 'j13'
+    c3 = Card({'name': 'Vindicate'})
+    c3['preferred_printing'] = 'mp2'
+    result = command.uniqify_cards([c1, c2, c3])
+    assert len(result) == 3
+
+def test_uniqify_cards_deduplicates_same_name_same_printing() -> None:
+    c1 = Card({'name': 'Vindicate'})
+    c1['preferred_printing'] = 'g07'
+    c2 = Card({'name': 'Vindicate'})
+    c2['preferred_printing'] = 'g07'
+    result = command.uniqify_cards([c1, c2])
+    assert len(result) == 1
+
 def test_escape_underscores() -> None:
     r = command.escape_underscores('simple_test')
     assert r == 'simple\\_test'

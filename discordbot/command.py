@@ -210,10 +210,10 @@ def escape_underscores(s: str) -> str:
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: list[Card]) -> list[Card]:
-    # Remove multiple printings of the same card from the result set.
+    # Remove multiple printings of the same card from the result set, but keep distinct explicit set-code requests.
     results: dict[str, Card] = collections.OrderedDict()
     for c in cards:
-        results[card.canonicalize(c.name)] = c
+        results[card.canonicalize(c.name) + '|' + (c.get('preferred_printing') or '')] = c
     return list(results.values())
 
 def slash_card_option(param: str = 'card') -> Callable:

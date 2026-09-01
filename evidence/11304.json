@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11304-1",
+      "branch": "sweep/11304-now-that-we-display-matches-on-matchups",
+      "files_changed": 2,
+      "head_sha": "8fa48d3b7533d3a179ceaf376d40600e0c752de2",
+      "issue": 11304,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "Change is purely presentational \u2014 7 lines across 2 files. No database or data-model changes needed. The `{{^hide_opponent}}` inverted-section pattern is consistent with how mustache falsy blocks are handled elsewhere in the project. When neither hero nor enemy has a person_id set, both columns render exactly as before.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nOn `/matchups/`, when a user searched with a specific person as the hero or enemy, the match list still showed a redundant Person or Opponent column even though all rows were the same person.\n\n## What changed\n\n**`decksite/views/matchups.py`**: Changed `self.show_hero` from always-`True` to `not bool(hero.get('person_id'))`, so the Person column is hidden when the hero side is already constrained to a single person. Added `self.hide_opponent = bool(enemy.get('person_id'))` to expose a flag for hiding the Opponent column when the enemy side is already constrained.\n\n**`decksite/templates/personmatches.mustache`**: Wrapped the Opponent `<th>` and `<td>` elements in `{{^hide_opponent}}...{{/hide_opponent}}` inverted sections so they are hidden when `hide_opponent` is truthy.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped\n\nFixes #11304",
+      "pr_title": "Hide redundant Person/Opponent columns on /matchups/ when search criteria already specifies them (#11304)",
+      "recorded_at": "2026-09-01T20:06:19Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.17s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11304,
   "triage": [
     {

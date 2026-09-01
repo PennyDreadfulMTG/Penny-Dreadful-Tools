@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11284-1",
+      "branch": "sweep/11284-if-an-archetype-has-no-decks-in-a-season",
+      "files_changed": 2,
+      "head_sha": "ec16584b4d154879a4587f3a8c572623eb35db39",
+      "issue": 11284,
+      "lines_changed": 11,
+      "lint": "passed",
+      "notes": "The extra `load_archetypes()` call (no season filter) adds one extra DB query per archetype page load, which is a minor overhead acceptable given the existing query count on that page. The `all_archetypes_for_tree` parameter defaults to `None` so any other callers of `Archetype.__init__` continue to work unchanged (falls back to using the season-filtered list for the tree, preserving the old behavior).",
+      "outcome": "pushed",
+      "pr_body": "## Problem\n\nWhen viewing an archetype detail page for a season where that archetype has no decks, the page was very bare and did not show the archetype's place in the hierarchy tree. This happened because `load_archetypes(season_id=...)` filters to only archetypes with decks in that season \u2014 if the archetype had no decks, the view's loop couldn't find it to build the tree path (`ancestors + [self] + descendants`), leaving `self.archetypes = []` and `show_archetype_tree = False`.\n\n## Fix\n\n**`decksite/controllers/metagame.py`**: Load a second, unfiltered archetype list (`all_archetypes_for_tree = archs.load_archetypes()`) and pass it to the view.\n\n**`decksite/views/archetype.py`**: Use `all_archetypes_for_tree` (the full tree, no season filter) to compute `self.archetypes` (the tree path), while still using the season-filtered `archetypes` to update `self.archetype` with its season stats. Falls back to the season-filtered list if `all_archetypes_for_tree` is not supplied, preserving backward compatibility.\n\n## Validation\n\n- `uv run --frozen python dev.py lint`: passed (all checks passed)\n- `uv run --frozen python -m pytest decksite/views/archetype_test.py -v`: 1 passed\n- Full DB-backed unit tests could not run (MariaDB version conflict on the sandbox prevented DB setup; lint and the unit test for the touched view file passed cleanly)\n\nFixes #11284",
+      "pr_title": "Show archetype tree when archetype has no decks in season (#11284)",
+      "recorded_at": "2026-09-01T20:12:19Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest decksite/views/archetype_test.py -v",
+        "detail": "1 passed in 3.01s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11284,
   "triage": [
     {

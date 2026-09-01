@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11279,
+  "triage": [
+    {
+      "batch_id": "t-11279-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Removed 'guilds.join' from the OAuth scope (changing ['identify','guilds','guilds.join'] to ['identify','guilds'])",
+          "ref": "52dba59c",
+          "type": "commit"
+        },
+        {
+          "detail": "Current master: scope = ['identify', 'guilds'] \u2014 'guilds.join' (the 'Join servers for you' Discord permission) is absent",
+          "ref": "shared_web/oauth.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "add_to_guild() function still exists at oauth.py:49 as dead code but is never called from any other file",
+          "ref": "grep -rn add_to_guild shared_web/oauth.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11279,
+      "notes": "The incidental fix was bundled inside a commit whose message ('Option to run reprime_cache only once a week') gives no indication it addresses this issue \u2014 the issue was never linked and remained open. The add_to_guild() dead function is a minor cleanup opportunity but not the reported concern.",
+      "proposed_comment": "The 'guilds.join' scope (the Discord permission labelled 'Join servers for you') was removed from the OAuth flow in commit 52dba59c. Current master requests only ['identify', 'guilds']. The add_to_guild() helper at shared_web/oauth.py:49 remains as unreachable dead code but does not affect the authorization prompt.",
+      "recorded_at": "2026-09-01T20:13:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12568-1",
+      "branch": "sweep/12568-expose-something-about-metagame-on-home",
+      "files_changed": 3,
+      "head_sha": "b0629864c4712f32555be02b638142202543e9b9",
+      "issue": 12568,
+      "lines_changed": 39,
+      "lint": "passed",
+      "notes": "The archetypes list is loaded in full and sliced to 8 in Python (no SQL LIMIT), consistent with how existing data-loading functions work in this codebase. If archetype count ever grows very large a LIMIT clause could be added to `load_archetypes`. No schema or data migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe home page showed recent decks, top cards, tournament calendar, news, and community stats, but no metagame context \u2014 visitors had no quick sense of what archetypes are dominating the current season without navigating away.\n\n## What changed\n\n- `decksite/main.py`: imports the archetype data module and loads all archetypes ordered by `num_decks DESC` for the current season, then passes them to the `Home` view.\n- `decksite/views/home.py`: adds a `setup_archetypes` method that selects the top 8 archetypes with at least one deck and sets `self.archetypes` (triggering the existing `prepare_archetypes` pipeline that adds URLs and `show_record` flags), plus `has_top_archetypes` and `archetypes_url` for the template.\n- `decksite/templates/home.mustache`: adds a \"Top Archetypes\" table section (name, # decks, record, win %) immediately after the recent-deck tables, styled consistently with the existing Top Cards section, with a link to the full archetypes page.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (the single skip is a pre-existing functional test skip unrelated to this change)\n\nFixes #12568",
+      "pr_title": "Show top archetypes by deck count on home page (#12568)",
+      "recorded_at": "2026-09-01T20:09:59Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/views/home.py",
+        "detail": "845 passed, 1 skipped in 18.17s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12568,
   "triage": [
     {

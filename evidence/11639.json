@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11639-2",
+      "branch": "sweep/11639-unclassified-should-not-appear-in-metaga",
+      "files_changed": 2,
+      "head_sha": "d3ee0306e2bb8a2cf19d1487466ebe8acc68a537",
+      "issue": 11639,
+      "lines_changed": 35,
+      "lint": "passed",
+      "notes": "Commander is excluded alongside Unclassified since it is the other well-known non-Standard pseudo-archetype that would similarly pollute the metagame view; the triage sketch includes it explicitly. If Commander should remain visible, remove it from the exclusion list.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/api/archetypes2` endpoint (which powers the `/metagame` page) used `WHERE TRUE` as its default filter when no search query was provided. This meant the \"Unclassified\" and \"Commander\" pseudo-archetypes appeared in the metagame grid, cluttering it with non-real archetypes.\n\n## What changed\n\nIn `decksite/controllers/api.py:444`, changed the default `where` clause from `'TRUE'` to `\"a.name NOT IN ('Unclassified', 'Commander')\"`. When a search query `q` is provided, the existing `clauses.text_where('a.name', q)` filter is used unchanged \u2014 so searching still finds these entries if explicitly queried.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- Added two new unit tests in `decksite/controllers/api_test.py` that monkeypatch `load_disjoint_archetypes` and verify:\n  1. Without a query, the where clause contains `NOT IN ('Unclassified', 'Commander')`\n  2. With a query (e.g. `q=aggro`), the where clause uses text search (no `NOT IN`)\n- All 4 tests in `decksite/controllers/api_test.py` passed.\n\nFixes #11639",
+      "pr_title": "Exclude Unclassified and Commander from /metagame archetypes by default (#11639)",
+      "recorded_at": "2026-09-01T20:03:08Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest decksite/controllers/api_test.py -v",
+        "detail": "4 passed in 2.92s (2 new tests for the fix, 2 existing)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11639,
   "triage": [
     {

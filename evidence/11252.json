@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11252,
+  "triage": [
+    {
+      "batch_id": "t-11279-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "keyrune CSS loaded from cdn.jsdelivr.net/npm/keyrune \u2014 no attribution present anywhere in templates",
+          "ref": "decksite/templates/header.mustache:9",
+          "type": "code"
+        },
+        {
+          "detail": "Footer has attribution for deckbox.org (card popups) and Wizards (Fan Content Policy) but nothing for Keyrune / andrewgioia.com",
+          "ref": "decksite/templates/footer.mustache:19",
+          "type": "code"
+        },
+        {
+          "detail": "logsite also loads keyrune but its footer (logsite/templates/footer.mustache) likewise has no attribution",
+          "ref": "logsite/templates/header.mustache:7",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a <p> attribution line inside the appropriate <section> in decksite/templates/footer.mustache and logsite/templates/footer.mustache, e.g. 'Set icons courtesy of <a href=\"https://keyrune.andrewgioia.com/\">keyrune.andrewgioia.com</a>.' Two 1-line template edits.",
+      "issue": 11252,
+      "notes": "Pure template change; no Python or JS involved.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:13:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

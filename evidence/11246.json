@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11246,
+  "triage": [
+    {
+      "batch_id": "t-11249-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "guess_banner() calls playability.season_playability(season_num) which is raw fraction of decks in that season playing each card \u2014 no cross-season normalization",
+          "ref": "decksite/controllers/banners.py:79-96",
+          "type": "code"
+        },
+        {
+          "detail": "_season_playability table stores (num_decks_maindeck + sideboard_only*0.2) / COUNT(*) FROM deck_cache WHERE season_id \u2014 straight within-season ratio",
+          "ref": "decksite/data/playability.py:preaggregate_season_playability",
+          "type": "code"
+        },
+        {
+          "detail": "_playability table stores all-time cross-season ratio; a relative metric (season / all-time) is computable by joining these two tables but no such query exists anywhere in the codebase",
+          "ref": "decksite/data/playability.py:preaggregate_playability",
+          "type": "code"
+        },
+        {
+          "detail": "No existing code computes a cross-season relative playability metric; bakert's hunch that such code exists was not confirmed",
+          "ref": "grep -r 'season.*relative\\|relative.*season\\|all.time.*playability' . --include='*.py' --exclude-dir=.venv",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11246,
+      "notes": "The owner must decide the formula (e.g. season_playability / all_time_playability ratio, or difference) and what to do for cards with no historical data. Bakert's own comment says 'Or maybe that's what playability already is and Ponder just comes out on top anyways somehow \u2014 Check, anyway' confirming the metric is undefined.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:12:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11253,
+  "triage": [
+    {
+      "batch_id": "t-11279-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "'hide_intro' key returns whatever truthy value wins the or-chain: the cookie string 'True', an MTGO username, or a Discord ID \u2014 never a JSON boolean",
+          "ref": "decksite/controllers/api.py:707",
+          "type": "code"
+        },
+        {
+          "detail": "Cookie is written as str(True) = 'True' (capital T) via set_cookie; same pattern at line 730",
+          "ref": "decksite/controllers/api.py:693",
+          "type": "code"
+        },
+        {
+          "detail": "Second call-site that writes the cookie with str(True)",
+          "ref": "decksite/controllers/api.py:730",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/api.py: (1) at line 707 wrap the entire or-expression with bool() so the JSON field is always a boolean; (2) at lines 693 and 730 change str(True) to '1' (or 'true') for a cleaner cookie value. Total change: ~3 lines.",
+      "issue": 11253,
+      "notes": "The JS consumer is already treating any truthy value as hide-intro, so this is a type-correctness fix with no behavioural change. Existing api_test.py tests do not exercise the hide_intro field value; a test could be added.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:13:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

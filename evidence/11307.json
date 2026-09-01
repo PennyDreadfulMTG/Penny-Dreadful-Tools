@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11307-1",
+      "branch": "sweep/11307-the-matchups-heading-should-probably-lin",
+      "files_changed": 1,
+      "head_sha": "d9a99679badf25c6b55964969ae93ed82eae989b",
+      "issue": 11307,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The triage sketch pointed at matchups.mustache, but investigation shows the 'matchups' heading referenced in the issue is the <h2>Matchups</h2> in archetype.mustache (the matchup stats section on each archetype page). The fix is a one-line template change. No Python changes needed since /matchups/ is a stable static URL.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `<h2>Matchups</h2>` section heading on archetype pages (`/archetype/<id>`) showed matchup statistics for that archetype but provided no navigation path to the full Matchups Calculator at `/matchups/`. Users had no obvious way to reach the calculator from the archetype matchup section.\n\n## What changed\n\nIn `decksite/templates/archetype.mustache`, the plain `<h2>Matchups</h2>` heading is now `<h2><a href=\"/matchups/\">Matchups</a></h2>`, turning the heading into a link to the unfiltered Matchups Calculator.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` passed (no database required).\n- Unit tests were not run due to no database being available in this environment; the change is a one-line template edit with no logic, so the risk is minimal.\n\nFixes #11307",
+      "pr_title": "Link Matchups heading to /matchups/ calculator (#11307)",
+      "recorded_at": "2026-09-01T20:06:32Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11307,
   "triage": [
     {

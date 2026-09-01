@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11410-1",
+      "branch": "sweep/11410-c-rgwbx-gives-helpful-feedback-but-ci-rg",
+      "files_changed": 2,
+      "head_sha": "173e2179eb52b2c7808526137657b413a459612c",
+      "issue": 11410,
+      "lines_changed": 12,
+      "lint": "passed",
+      "notes": "The fix is entirely additive validation before existing logic; it only affects searches using unknown letters in color expressions. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nFor `c:rgwbx`, the operator stays `:` for `color`, so `required = colors` includes `'x'`, and the subsequent `subtable_where` \u2192 `value_lookup` call raises `InvalidValueException(\"Invalid value 'x' for color\")` \u2014 helpful feedback.\n\nFor `ci:rgwbx`, the operator `:` is rewritten to `<=` (line 270\u2013271 in `color_where`) for `color_identity` **before** any per-letter validation occurs. With `<=`, the code computes `excluded = all_colors - colors` \u2014 `all_colors` only contains `{w,u,b,r,g}`, so the subtraction silently discards the invalid `'x'`. The query is built as if the letter was never there, returning results with no error.\n\n## What changed\n\nIn `find/search.py` `color_where()`, after `colors = set(term)` is built, added a loop that raises `InvalidValueException` for any character not in `{'w','u','b','r','g','m','c'}`. This runs before the operator rewrite, so both `c:` and `ci:` get consistent validation.\n\nAdded two unit tests in `find/find_test.py`:\n- `test_invalid_color_letter_c` \u2014 verifies `c:rgwbx` raises `InvalidValueException`\n- `test_invalid_color_letter_ci` \u2014 verifies `ci:rgwbx` raises `InvalidValueException`\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit find` \u2014 62 passed (includes 2 new tests), 48 deselected (functional/perf) in 0.27s\n\nFixes #11410",
+      "pr_title": "Validate color letters in color_where before operator rewriting (#11410)",
+      "recorded_at": "2026-09-01T20:08:33Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find",
+        "detail": "62 passed, 48 deselected in 0.27s (includes 2 new tests for the fix)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11410,
   "triage": [
     {

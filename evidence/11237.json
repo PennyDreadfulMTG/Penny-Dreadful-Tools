@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11237,
+  "triage": [
+    {
+      "batch_id": "t-11243-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Only /api/status (a JSON API endpoint at decksite/controllers/api.py:696) exists \u2014 no human-readable site status page",
+          "ref": "grep -rn 'route.*status' decksite/controllers/*.py",
+          "type": "search"
+        },
+        {
+          "detail": "scryfall_version data is available; magic/fetcher.py:43 and shared/configuration.py:47 expose last_good_bulk_data \u2014 the data sources exist but no status view has been built",
+          "ref": "magic/database.py:36",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11237,
+      "notes": "Feature is unimplemented. Several of the requested data points (scryfall_version, last_good_bulk_data, code git hash) are already accessible in Python but wired up to no status page.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:14:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11254,
+  "triage": [
+    {
+      "batch_id": "t-11279-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "card_history() only populates data[season_id]=True for Legal seasons; all other seasons render as '.' with no distinction between 'card did not exist' and 'card existed but was not chosen'",
+          "ref": "discordbot/commands/history.py:21-28",
+          "type": "code"
+        },
+        {
+          "detail": "SetInfo has enter_date_dt (PD season start) but per-season date ranges are not trivially exposed to the bot layer",
+          "ref": "magic/seasons.py:71",
+          "type": "code"
+        },
+        {
+          "detail": "released_at exists on Set objects (magic/card.py:126) but the Card object passed to card_history() does not surface its earliest set release date directly",
+          "ref": "grep -rn released_at magic/ --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11254,
+      "notes": "Implementing this requires resolving a card's earliest printing date and comparing it to each PD season's calendar window. The season date ranges are in the database (seasons table) but not exposed via a simple API in the bot layer; a new query or helper is needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:13:55Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

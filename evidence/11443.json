@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11443-2",
+      "branch": "sweep/11443-minsc-and-boo-doesn-t-find-any-cards-in",
+      "files_changed": 2,
+      "head_sha": "ac277152c9378e8024c3d82fbc6785b1a4649cec",
+      "issue": 11443,
+      "lines_changed": 24,
+      "lint": "passed",
+      "notes": "The fix is narrowly scoped to this one card. A more general fix would chain a second SubstitutionFilter in whoosh_constants.py to map '&' \u2192 'and' before the strip pass, so all future ampersand card names are searchable via 'and' without needing an alias \u2014 noted as a potential follow-up. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe whoosh normalized analyzer uses `SubstitutionFilter(r\"[\\s/,_'-]\", '')` which strips spaces, commas, and similar punctuation \u2014 but not `&`. So indexing `Minsc & Boo, Timeless Heroes` produces the normalized key `minsc&bootimelessheroes`. When a user searches `Minsc and Boo`, the normalized query is `minscandboo`, which has no prefix match against `minsc&boo\u2026`.\n\n## What changed\n\n- **`card_aliases.tsv`** \u2014 added one line: `Minsc and Boo, Timeless Heroes\\tMinsc & Boo, Timeless Heroes`. The alias is indexed under its own normalized form `minscandbootimelessheroes`, so the prefix query `minscandboo` now hits.\n- **`magic/whoosh_search_test.py`** \u2014 added `test_ampersand_alias_finds_card`, a self-contained unit test (tmp whoosh index, no DB) that seeds a card with `&` in its name plus the `and` alias and asserts the prefix search returns the canonical name.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- Full unit suite (`uv run --frozen python dev.py unit`): **845 passed, 1 skipped** (no regressions)\n- Targeted run `pytest magic/whoosh_search_test.py -k 'not functional'`: **4/4 passed** including the new test\n\nFixes #11443",
+      "pr_title": "Add alias so 'Minsc and Boo' finds 'Minsc & Boo, Timeless Heroes' (#11443)",
+      "recorded_at": "2026-09-01T20:10:13Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit (full suite) + uv run --frozen python -m pytest magic/whoosh_search_test.py -k 'not functional'",
+        "detail": "845 passed, 1 skipped (full suite); 4/4 whoosh non-functional tests pass including new test_ampersand_alias_finds_card",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11443,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11298-1",
+      "branch": "sweep/11298-matchups-is-slow-ish",
+      "files_changed": 2,
+      "head_sha": "cf00fd06217a840b2f2b8840af02ea3f37ca7516",
+      "issue": 11298,
+      "lines_changed": 17,
+      "lint": "passed",
+      "notes": "The fix is purely additive \u2014 a new function alongside the existing one, with a one-line call-site change. The matchup page only needs name and id for the dropdown, so no data is lost. The issue comment also mentions the dropdown should become a typeahead; that's a separate UI task and was not touched here.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/matchups/` page called `load_people(where='p.mtgo_username IS NOT NULL')` to build the people dropdown. That function does a `LEFT JOIN` on `deck` and `deck_cache`, then aggregates wins/losses/draws/etc. \u2014 all of which is unnecessary just to render a list of `(id, name)` pairs for the UI.\n\n## What changed\n\n- **`decksite/data/person.py`**: Added `load_people_statless(where='TRUE') -> list[Person]` \u2014 a lean query that selects only `p.id`, `person_query() AS name`, and `p.mtgo_username` from `person AS p` with no deck joins and no aggregation.\n- **`decksite/controllers/metagame.py` line 158**: Replaced `ps.load_people(where='p.mtgo_username IS NOT NULL')` with `ps.load_people_statless(where='p.mtgo_username IS NOT NULL')`. Removed the unused tuple-unpack since the new function returns a plain list.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 all checks passed.\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected (19 s). Full suite ran against a live MariaDB instance in the cloud workspace.\n\nFixes #11298",
+      "pr_title": "Add load_people_statless to speed up /matchups/ people dropdown (#11298)",
+      "recorded_at": "2026-09-01T20:08:19Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 19.06s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11298,
   "triage": [
     {

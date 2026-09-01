@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11231,
+  "triage": [
+    {
+      "batch_id": "t-11243-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "validate_pofile() calls pofile.read_po(f) with no exception handling; if Babel raises TranslationError (e.g. for an unknown named placeholder) the entire maintenance script crashes",
+          "ref": "maintenance/validate_translations.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "ad_hoc() calls validate_pofile() without catching TranslationError, so the crash propagates and aborts the whole translation update run",
+          "ref": "maintenance/validate_translations.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "validate_translations.ad_hoc() is called before compile_catalog; a crash here would prevent .mo files from being compiled",
+          "ref": "maintenance/update_translations.py:33",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In maintenance/validate_translations.py, wrap the pofile.read_po(f) call in validate_pofile() with a try/except for babel.core.UnknownLocaleError and babel.messages.pofile.PoFileError (or the base Exception), printing the path and error and returning early. Additionally wrap the validate_pofile(path) call in ad_hoc() with a similar guard so one bad .po file does not abort processing of the remaining files. Changes are ~8-12 lines in maintenance/validate_translations.py.",
+      "issue": 11231,
+      "notes": "The .po files are not stored in the repo (generated at runtime from POEditor via maintenance/update_translations.py); the underlying bad Japanese translation in POEditor at line 533 may also need fixing but that is out-of-band.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:14:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11236,
+  "triage": [
+    {
+      "batch_id": "t-11243-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prepare() loops over self.people; for each user without a Redis cache entry it issues two separate SQL queries (a .count() call at line 39 and a text() query at lines 40-48), producing N\u00d72 DB hits per page for cold or expired cache",
+          "ref": "logsite/views/people.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "Pagination was added (paginate() call), which reduces N per request, but does not eliminate the per-user query pattern",
+          "ref": "logsite/views/people.py:21",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In logsite/views/people.py, replace the per-person loop in prepare() with two bulk queries: (1) a single COUNT(*) GROUP BY user_id query for recent match counts across all user IDs on the page, and (2) a single SELECT f.name, COUNT(*) \u2026 GROUP BY mp.user_id, f.id query for favourite formats. Then populate Redis per-user from those bulk results. Changes confined to prepare() in logsite/views/people.py, ~35-50 lines.",
+      "issue": 11236,
+      "notes": "The author noted the deeper fix would be to reactify logsite, but the bulk-query approach is isolated and safe. Existing smoke_test.py covers the /people/ route.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:14:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

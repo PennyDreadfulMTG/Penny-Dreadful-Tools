@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11245,
+  "triage": [
+    {
+      "batch_id": "t-11249-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "exclude = (src|logsite_migrations|logsite|backlog_sweep) \u2014 logsite is entirely excluded from mypy today",
+          "ref": "mypy.ini:3",
+          "type": "code"
+        },
+        {
+          "detail": "# type: ignore at top of file; same pattern in logsite/api.py:1, logsite/db.py:1, logsite/data/game.py:1, logsite/data/match.py:1, logsite/importing.py:1, logsite/stats.py:1, logsite/views/home.py:1, logsite/views/matches.py:1",
+          "ref": "logsite/__init__.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "Uses sqlalchemy, flask_sqlalchemy, sqlalchemy.orm.exc \u2014 all require the sqlalchemy-stubs / SQLAlchemy[mypy] plugin to type-check correctly",
+          "ref": "logsite/db.py:5-9",
+          "type": "code"
+        },
+        {
+          "detail": "No SQLAlchemy mypy plugin is installed or configured; adding it and fixing all resulting errors across logsite is the bulk of the work",
+          "ref": "grep -r 'sqlalchemy-stubs\\|sqlalchemy\\[mypy\\]' . --exclude-dir=.venv",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11245,
+      "notes": "Scope is: add sqlalchemy[mypy] plugin to mypy.ini plugins, remove logsite from exclude list, remove # type: ignore from ~8 file tops, then fix every resulting type error across the logsite package. Likely well over 150 lines of annotation changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:12:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

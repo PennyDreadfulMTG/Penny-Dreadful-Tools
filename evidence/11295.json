@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11295-1",
+      "branch": "sweep/11295-seasons-all-people-person-who-has-played",
+      "files_changed": 2,
+      "head_sha": "ba804bfa",
+      "issue": 11295,
+      "lines_changed": 23,
+      "lint": "passed",
+      "notes": "The fix mirrors the approach described in the issue comments (d9c11c3 cut card loading; this cut deck loading). `person.get('num_decks')` correctly returns None (falsy) for persons loaded via load_person_statless who have no decks in the requested season, so has_decks stays False. person_color_counts makes one lightweight SQL round-trip instead of the previous N+1 pattern through load_decks.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/people/{person}/` page was slow for users with many decks because `Person.decks` (a lazy property) triggered `load_decks()` \u2014 which fetches every Deck object with all associated card data \u2014 twice: once to set `self.has_decks` and again to build the \"Colors Played\" bar chart. The deck table itself is populated client-side via AJAX (`livedecktable`), so loading all those Deck objects server-side was pure waste.\n\n## What changed\n\n- **`decksite/data/deck.py`**: Added `person_color_counts(person_id, season_id) -> dict[str, int]` that queries only `deck_cache.colors` (pre-computed JSON) for the given person and season \u2014 no card loading, no joins beyond `deck` \u2192 `deck_cache`.\n- **`decksite/views/person.py`**: Removed `self.decks = person.decks` (which triggered the heavy lazy load) and replaced it with:\n  - `self.has_decks = bool(person.get('num_decks'))` \u2014 uses the aggregate already computed by `load_people()`.\n  - `colors = ds.person_color_counts(person.id, season_id)` \u2014 the lightweight new query.\n\nThe `View` base class already initialises `self.decks = []`; since the template uses AJAX for the deck table, the empty list is correct.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit` \u2014 847 passed, 1 skipped, 89 deselected in 18.39s against a live MariaDB 11.8 instance\n\nFixes #11295",
+      "pr_title": "Avoid loading full Deck objects on person page for colors chart (#11295)",
+      "recorded_at": "2026-09-01T20:12:05Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "847 passed, 1 skipped in 18.39s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11295,
   "triage": [
     {

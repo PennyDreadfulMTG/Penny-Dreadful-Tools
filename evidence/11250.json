@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11250,
+  "triage": [
+    {
+      "batch_id": "t-11279-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The Add Archetype form's <select name='parent'> has a default <option value=''>[Select]</option>, so submitting without choosing a parent sends parent='' (empty string)",
+          "ref": "decksite/templates/editarchetypes.mustache:132-134",
+          "type": "code"
+        },
+        {
+          "detail": "Condition is 'request.form.get(\"parent\") is not None' \u2014 an empty string is not None, so the branch is entered",
+          "ref": "decksite/controllers/admin.py:112",
+          "type": "code"
+        },
+        {
+          "detail": "cast_int() is int(cast(str, param)); int('') raises ValueError causing a 500",
+          "ref": "decksite/controllers/admin.py:287",
+          "type": "code"
+        },
+        {
+          "detail": "If name is provided but parent is empty, cast_int(request.form.get('parent')) is reached and raises ValueError",
+          "ref": "decksite/controllers/admin.py:113-114",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/admin.py post_archetypes(): inside the 'parent is not None' block (line 112), guard against an empty parent string before calling cast_int \u2014 e.g. check 'if not request.form.get(\"parent\"):' and return edit_archetypes() with an error. This mirrors the existing pattern in post_rules() (line 137-138). May require adding an 'add_errors' parameter to the EditArchetypes view (decksite/views/edit_archetypes.py) and a corresponding display in editarchetypes.mustache. Total: ~15-25 lines across 3 files.",
+      "issue": 11250,
+      "notes": "The silent no-op path (empty parent AND empty name) also silently does nothing rather than showing 'please select a parent' \u2014 fixing the 500 case naturally also fixes this UX gap.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:13:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

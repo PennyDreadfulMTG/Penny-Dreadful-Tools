@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11466-1",
+      "branch": "sweep/11466-add-throwbacks-to-the-list-of-channels-t",
+      "files_changed": 2,
+      "head_sha": "269b0659c38eae1d803af29c282494a52478b25f",
+      "issue": 11466,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The actual throwback Discord channel ID is not in the codebase and needs to be configured by the team (set `throwback_channel_id` in config). The implementation is safe by default: the zero default is falsy and is skipped by the filter, so existing behaviour is unchanged until the ID is configured.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`is_tournament_channel()` in `discordbot/commands/explain.py` only checked a single `tournament_channel_id`. When users in the #throwbacks Discord channel ran `/explain reporting`, they received the league reporting instructions instead of the Gatherling tournament instructions.\n\n## What changed\n\n- Added `throwback_channel_id` configuration key to `shared/configuration.py` (defaults to `'0'`, meaning unconfigured) so the team can set it to the real throwback channel's Discord ID without a code change.\n- Updated `is_tournament_channel()` to check whether the channel ID matches any configured tournament-style channel (both `tournament_channel_id` and `throwback_channel_id`), skipping any that are zero/unconfigured.\n\n## How to activate\n\nSet `throwback_channel_id` in `config.json` (or via the normal configuration mechanism) to the Discord ID of the #throwbacks channel. Until then the default of `0` is falsy and the function behaves exactly as before.\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed on both touched files. Unit tests could not run due to the database being unavailable in the sweep environment (all discordbot and shared tests require a live DB connection).\n\nFixes #11466",
+      "pr_title": "Add throwback channel to tournament reporting explain (#11466)",
+      "recorded_at": "2026-09-01T20:00:10Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "All discordbot tests (and even shared tests) require a database connection that is not available in this environment. Database bootstrap was not possible without mariadb packages.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 11466,
   "triage": [
     {

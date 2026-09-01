@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11320-1",
+      "branch": "sweep/11320-o-o-p-s-a-l-l-becomes-o-o-p-s-a-l-l-afte",
+      "files_changed": 2,
+      "head_sha": "a13cadea47be9f73e950f5cb79cfc82ab8e50928",
+      "issue": 11320,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The regex `\\b(?:[a-zA-Z]-)+[a-zA-Z]\\b` only matches tokens where every hyphen-separated segment is exactly one letter, so common hyphenated names like Blue-Red or 12-Rack are unaffected. No existing test cases were broken by the change.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nDeck names composed of single letters separated by hyphens (e.g. `o-o-p-s a-l-l`) produced inconsistent casing after sanitization. The `titlecase` library capitalizes the first letter of words starting with \"a\" only when it's the first word \u2014 so `o-o-p-s` became `O-O-P-S` (correct) but `a-l-l` became `a-L-L` (the leading `a` was left lowercase because `titlecase` treats it as a small word, yet the letters after each hyphen were still capitalized). The result `O-O-P-S a-L-L` looks bizarre.\n\n## What changed\n\nAdded `normalize_single_letter_hyphenated()` in `decksite/deck_name.py`, called immediately after the final `titlecase.titlecase()` in `normalize()`. It uses `re.sub` to find any token where every hyphen-delimited segment is exactly one letter (`\\b(?:[a-zA-Z]-)+[a-zA-Z]\\b`) and converts it to uppercase. This turns `a-L-L` \u2192 `A-L-L` and leaves already-correct tokens like `O-O-P-S` unchanged.\n\nAdded a corresponding test case to `TESTDATA` in `deck_name_test.py`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit decksite/deck_name_test.py` \u2014 846 passed, 1 skipped (the skip is a pre-existing unrelated functional test)\n- Manually verified the regex does not incorrectly match multi-letter hyphenated tokens (`Blue-Red`, `Elves-N-Taxes3`, `12-Rack`, `Mono-W`, etc.) by tracing word-boundary logic.\n\nFixes #11320",
+      "pr_title": "Fix inconsistent casing in single-letter-hyphenated deck names (#11320)",
+      "recorded_at": "2026-09-01T20:00:52Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/deck_name_test.py",
+        "detail": "846 passed, 1 skipped in 17.85s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11320,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11411-1",
+      "branch": "sweep/11411-loyalty-3-finds-non-planeswalkers",
+      "files_changed": 1,
+      "head_sha": "50377d0cd41edc4c786668ceffd4e86672cc7606",
+      "issue": 11411,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The _cache_card table must be rebuilt after deployment for the fix to take effect \u2014 the query change only affects how the cache is populated, not the cache contents already stored. The issue also affects `power` and `toughness` searches (e.g. `pow<3` matching Malakir Rebirth), which is fixed by the same one-line change since all three fields use the same base query.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `magic/card.py:99`, the `face_properties()` base GROUP_CONCAT query used `ELSE '' END`, which means that for multi-face cards (transform, split, modal DFC, etc.), the non-position-1 face rows contributed an empty string `''` to the GROUP_CONCAT result. Since GROUP_CONCAT ignores NULLs but includes empty strings, cards with multiple faces where position=1 has no loyalty (i.e. non-planeswalkers) ended up with `loyalty = ''` instead of `loyalty = NULL` in the cache table. This caused search queries like `loyalty<3` to match non-planeswalker multi-face cards (adventure, flip, meld, modal_dfc, split, transform layouts) because `'' < '3'` is true in string comparison. The same bug affected `power` and `toughness` (confirmed in the issue: `pow<3 malakir` also finds Malakir Rebirth).\n\n## What changed\n\nOne character change in `magic/card.py` line 99: `ELSE '' END` \u2192 `ELSE NULL END`. Since GROUP_CONCAT ignores NULL values, face columns that belong only to position=1 (loyalty, power, toughness) now correctly return NULL for cards where the first face has no such value. Fields with their own overriding queries (name, mana_cost, cmc, type_line, oracle_text, hand, life) are unaffected.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit magic` \u2014 845 passed, 1 skipped (the 1 skip is a pre-existing functional test skip, unrelated to this change)\n- The cache table must be rebuilt after this change is deployed for the fix to take effect in production.\n\nFixes #11411",
+      "pr_title": "Fix loyalty/power/toughness returning '' for multi-face non-planeswalker cards (#11411)",
+      "recorded_at": "2026-09-01T20:03:36Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic",
+        "detail": "845 passed, 1 skipped in 17.79s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11411,
   "triage": [
     {

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11244,
+  "triage": [
+    {
+      "batch_id": "t-11249-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Tournament-only toggle is a separate <a href> button rendered by server-side mustache, outside the JSX table; it navigates to a different URL rather than updating table state",
+          "ref": "decksite/templates/buttons.mustache:5-8",
+          "type": "code"
+        },
+        {
+          "detail": "data-tournament-only is baked in as a data-attribute by the server; the JSX table receives it as a prop, not as mutable state",
+          "ref": "decksite/templates/livedecktable.mustache:19",
+          "type": "code"
+        },
+        {
+          "detail": "tournamentOnly and leagueOnly are props (from server-rendered data-attributes), not internal state \u2014 the component cannot toggle them without a page reload",
+          "ref": "shared_web/static/js/datamanager.jsx:53-57",
+          "type": "code"
+        },
+        {
+          "detail": "Same server-side data-attribute pattern in cardtable; at least 3 JSX table types (decktable, cardtable, metagame) would need the switch added",
+          "ref": "decksite/templates/livecardtable.mustache:8-11",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11244,
+      "notes": "Requires moving tournamentOnly from server-rendered prop to DataManager internal state, adding a UI toggle in the JSX component, updating all call sites (livedecktable, livecardtable, metagame mustache templates), and removing the now-redundant server-side toggle from buttons.mustache. Well beyond 150 lines.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:12:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

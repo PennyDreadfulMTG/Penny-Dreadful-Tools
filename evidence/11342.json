@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11342-1",
+      "branch": "sweep/11342-https-pennydreadfulmagic-com-api-decks-u",
+      "files_changed": 1,
+      "head_sha": "3423dfd764a2344d675f91a67d7a1364e94f327b",
+      "issue": 11342,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single-line fix swapping an unhandled domain exception for the already-imported werkzeug BadRequest, making the endpoint return 400 instead of 500 for missing/invalid `since` query parameter. Unit tests required a database and could not run in the cloud sandbox, but the change is purely an exception-class substitution with no logic impact.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/api/decks/updated/` endpoint raised `InvalidArgumentException` when the `since` parameter was missing or invalid (timestamp < 1e9). `InvalidArgumentException` is a domain exception that propagates as an unhandled 500 Internal Server Error rather than a proper HTTP error response.\n\n## What changed\n\nIn `decksite/controllers/api.py` line 178, replaced `raise InvalidArgumentException('Invalid timestamp!')` with `raise BadRequest('Invalid timestamp!')`. `BadRequest` is werkzeug's `HTTP 400` exception and was already imported on line 8. This makes the endpoint return a proper `400 Bad Request` to clients instead of a `500 Internal Server Error`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed cleanly\n- Unit tests were env-blocked (no database available in cloud sandbox); the fix is a one-line exception-class swap with no logic change, so DB-level behaviour is unaffected\n- `git diff origin/master...` confirmed exactly one line changed, entirely within the scope of this issue\n\nFixes #11342",
+      "pr_title": "Return 400 instead of 500 for invalid since parameter on /api/decks/updated/ (#11342)",
+      "recorded_at": "2026-09-01T20:03:22Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite",
+        "detail": "Tests require a database connection (DatabaseConnectionRefusedException). No database available in this environment. Lint passed cleanly.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 11342,
   "triage": [
     {

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11243,
+  "triage": [
+    {
+      "batch_id": "t-11243-1",
+      "class": "obsolete",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Removed the xfail test entirely with commit message explicitly explaining why it is not worth re-implementing (requires decksite-specific seasons table, too much cost for too little benefit)",
+          "ref": "12fda960",
+          "type": "commit"
+        },
+        {
+          "detail": "Current file contains test_all_series_info (which calls get_all_next_tournament_dates) but no test_get_all_next_tournament_dates at all \u2014 the test the issue tracks is gone",
+          "ref": "magic/tournaments_test.py:104",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11243,
+      "notes": "A partial replacement (test_all_series_info) now verifies that all_series_info() and get_all_next_tournament_dates() return the same count, but it does not test specific dates as the original did.",
+      "proposed_comment": "The test was removed in commit 12fda960 (May 2024) with the explicit rationale that re-implementing it correctly would require either depending on the decksite seasons table or switching season-detection approaches \u2014 a scope the maintainer decided wasn't worth it. The issue's premise (the test is disabled/xfail) is no longer true; the test doesn't exist at all.",
+      "recorded_at": "2026-09-01T20:14:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

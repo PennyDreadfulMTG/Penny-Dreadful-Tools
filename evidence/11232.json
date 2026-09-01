@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11232,
+  "triage": [
+    {
+      "batch_id": "t-11243-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Removed TappedOut and MTGGoldfish linking code from /link/ entirely \u2014 the link_tappedout() and link_mtggoldfish() methods that were the source of the reported 500 no longer exist",
+          "ref": "aad7c659",
+          "type": "commit"
+        },
+        {
+          "detail": "Current link_discord() wraps person.link_discord() in try/except AlreadyExistsException, covering the 'already linked' scenario described in the issue title",
+          "ref": "decksite/views/link_accounts.py:39",
+          "type": "code"
+        },
+        {
+          "detail": "process() only attempts linking when self.person is None or lacks mtgo_username, so an already-linked user is skipped without error",
+          "ref": "decksite/views/link_accounts.py:31",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11232,
+      "notes": "Confidence is medium rather than high because the original Sentry event (sentry.redpoint.games issue 1959) is not accessible for confirmation, but the Discord comment explicitly mentions TappedOut which was the removed code path.",
+      "proposed_comment": "The TappedOut and MTGGoldfish linking code that caused the reported 500 was removed in commit aad7c659. The current /link/ page only handles Discord-to-MTGO linking; the 'already linked' and 'already exists' scenarios are guarded in process() and link_discord() respectively.",
+      "recorded_at": "2026-09-01T20:14:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

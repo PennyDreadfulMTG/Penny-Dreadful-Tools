@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11462-1",
+      "branch": "sweep/11462-tournaments-only-views-like-https-pennyd",
+      "files_changed": 1,
+      "head_sha": "1522a3d406cfe10cfbdd22b37b0f770df3b140a5",
+      "issue": 11462,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Pure one-line fix mirroring an identical pattern already present in the sibling view. No template or JS changes needed; `hide_perfect_runs` is already consumed by the shared deck table template.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe single-archetype tournament-only view (`/archetypes/{id}/tournament/`) was missing `self.hide_perfect_runs = tournament_only` in `decksite/views/archetype.py`. The sibling `Archetypes` list view (`archetypes.py:14`) already sets `self.tournament_only = self.hide_source = self.hide_perfect_runs = tournament_only`, which hides the 5-0s (\"perfect runs\") column from the deck table in tournament-only mode \u2014 but the single-archetype view omitted `hide_perfect_runs`, so the column was still shown.\n\n## What changed\n\nOne-character change in `decksite/views/archetype.py` line 88: added `self.hide_perfect_runs =` to the existing chained assignment, mirroring the pattern already used in `archetypes.py`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped in 17.61s (full suite, with live MariaDB)\n\nFixes #11462",
+      "pr_title": "Drop 5-0s column from tournament-only archetype view (#11462)",
+      "recorded_at": "2026-09-01T19:59:57Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 17.61s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11462,
   "triage": [
     {

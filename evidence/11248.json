@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11248,
+  "triage": [
+    {
+      "batch_id": "t-11249-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Error message 'visit the retire page' is plain text with no HTML link; url_for is already imported on line 8 of this file",
+          "ref": "decksite/league.py:41",
+          "type": "code"
+        },
+        {
+          "detail": "Rendered as `{{form.errors.mtgo_username}}` (Mustache-escaped, strips HTML); a `{{{...}}}` triple-brace would allow the link through",
+          "ref": "decksite/templates/signup.mustache:14",
+          "type": "code"
+        },
+        {
+          "detail": "Precedent: `signed_up_msg_safe` field uses url_for('retire') and is rendered with {{{...}}} \u2014 same pattern can be applied here",
+          "ref": "decksite/views/signup.py:15-16",
+          "type": "code"
+        },
+        {
+          "detail": "All four mtgo_username error strings are static or use only program constants (card.MAX_LEN_VARCHAR), no user input, so switching to unescaped rendering is safe",
+          "ref": "decksite/league.py:37-43",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/league.py:41 replace the plain 'retire page' text with an HTML anchor using url_for('retire') (already imported). In decksite/templates/signup.mustache:14 change `{{form.errors.mtgo_username}}` to `{{{form.errors.mtgo_username}}}` (triple-brace = unescaped). All existing mtgo_username errors are static strings with no user input so unescaped rendering is safe.",
+      "issue": 11248,
+      "notes": "The existing signed_up_msg_safe pattern in signup.py proves the project already renders HTML error links for this same form; this change extends the same pattern to the form-validation path.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:12:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

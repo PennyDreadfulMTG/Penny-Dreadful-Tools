@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11249,
+  "triage": [
+    {
+      "batch_id": "t-11249-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No project-owned file imports pkg_resources; all occurrences are inside .venv (werkzeug, sentry_sdk, pytest monkeypatch, babel, pytz)",
+          "ref": "grep -r pkg_resources . --include='*.py' --exclude-dir=.venv",
+          "type": "search"
+        },
+        {
+          "detail": "filterwarnings section already suppresses two similar DeprecationWarnings from flask_restx and flask_babel with per-package ignore lines; the same pattern can suppress this one",
+          "ref": "pytest.ini:10-14",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add one line to the filterwarnings section of pytest.ini: `ignore:.*pkg_resources is deprecated.*:DeprecationWarning`. The warning originates entirely in third-party .venv packages (pytest monkeypatch, babel, werkzeug) \u2014 no project code uses pkg_resources \u2014 so suppression is the correct response, exactly matching the existing pattern for flask_restx and flask_babel.",
+      "issue": 11249,
+      "notes": "Suppression only; does not fix the third-party packages. If a future dep update removes their pkg_resources usage the filterwarnings line becomes harmless dead config.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T20:12:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

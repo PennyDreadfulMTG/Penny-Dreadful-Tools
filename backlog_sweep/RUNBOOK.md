@@ -70,6 +70,30 @@ status, caps used, pause state, alerts (including unregistered `sweep-*`
 workspaces). `dispatcher.py status` prints a one-screen summary.
 `state/reports/` holds daily reports and the human digest.
 
+## Fresh recovery manager prompt
+
+Create an Opus-class manager session in a fresh Conductor cloud workspace on
+the branch containing this toolkit, then use this as its initial prompt:
+
+```text
+Act as the backlog-sweep recovery manager.
+
+Read backlog_sweep/README.md and backlog_sweep/RUNBOOK.md. Do not use
+backlog_sweep/docs/OPUS_HANDOFF.md as current operating instructions.
+
+This is recovery validation only. Keep spawning_enabled=false. Do not start the
+daemon, change gates, spawn workers, or mutate GitHub.
+
+Restore origin/sweep-state into backlog_sweep/state exactly as documented in the
+runbook, then run dispatcher status. Report the issue/status counts, last_seq,
+active workspace count, spawning_enabled value, and restored sweep-state commit.
+Stop before running recovery so I can install the PAT securely.
+```
+
+After the manager stops, enter the PAT through the workspace terminal as shown
+below, then tell it to continue with the dry-run and real recovery steps. Never
+paste the PAT into agent chat.
+
 ## Recovery (sandbox died, daemon crashed, anything)
 
 1. Create a fresh workspace on the branch containing this toolkit (`master` once

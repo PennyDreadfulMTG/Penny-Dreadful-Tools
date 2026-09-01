@@ -387,6 +387,20 @@ class TournamentWinner(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 victory', '%(num)d victories', n)
 
+class TournamentTop8(CountedAchievement):
+    key = 'tournament_top8s'
+    title = 'Tournament Top 8'
+    description_safe = 'Reach the elimination rounds of a tournament.'
+    sql = "COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND c.top_n > 0 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish <= c.top_n AND c.top_n > 0 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source']
+
+    def leaderboard_heading(self) -> str:
+        return gettext('Top 8s')
+
+    def localised_display(self, n: int) -> str:
+        return ngettext('1 Top 8', '%(num)d Top 8s', n)
+
 class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'

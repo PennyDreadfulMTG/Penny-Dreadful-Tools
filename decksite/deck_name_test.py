@@ -62,6 +62,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('RBUW Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control', 1),
     ('White Jund', 'White Jund', ['B', 'R', 'G', 'W'], 'White Jund', 1),
     ('White Jund', 'BRGW', ['B', 'R', 'G', 'W'], None, 1),
+    ('White Control', 'White Control', ['W'], 'White Control', 1),
     ('ゼウスサイクリング', 'ゼウスサイクリング', ['U', 'G', 'B'], 'New Perspectives', 1),
     ('$', '$', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo', 1),
     ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro', 1),

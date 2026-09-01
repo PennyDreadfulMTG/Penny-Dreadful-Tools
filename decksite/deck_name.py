@@ -103,7 +103,7 @@ def normalize(d: Deck) -> str:
             name = unabbreviated
         elif whitelisted(name):
             pass
-        elif name and d.get('archetype_name') and name == d.get('archetype_name', '').lower():
+        elif name and d.get('archetype_name') and name.lower() == d.get('archetype_name', '').lower():
             pass
         else:
             name = remove_profanity(name)

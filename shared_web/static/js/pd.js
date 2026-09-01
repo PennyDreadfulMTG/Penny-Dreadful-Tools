@@ -78,7 +78,12 @@ PD.initMenu = function() {
         interval: 50,
         timeout: 250
     });
+    $(".menu > li").has(".submenu").hoverIntent({over: PD.onSubmenuHover, out: PD.onSubmenuLeave, interval: 50, timeout: 350});
 };
+PD.onSubmenuHover = function() {
+    $(this).addClass("submenu-open").siblings(".submenu-open").removeClass("submenu-open");
+};
+PD.onSubmenuLeave = function() { $(this).removeClass("submenu-open"); };
 
 PD.onDropdownHover = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {

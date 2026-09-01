@@ -44,7 +44,11 @@ def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
         if p is not None:
             u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&set={escape(p.set_code)}&format=image'
         else:
-            u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
+            non_digital = oracle.get_non_digital_printing(c)
+            if non_digital is not None:
+                u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&set={escape(non_digital.set_code)}&format=image'
+            else:
+                u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
     if version:
         u += f'&version={escape(version)}'
     if face and face != 'meld':

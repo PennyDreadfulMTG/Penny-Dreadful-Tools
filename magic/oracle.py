@@ -131,12 +131,20 @@ def legal_cards(force: bool = False) -> list[str]:
     return LEGAL_CARDS
 
 def get_printings(generalized_card: Card) -> list[Printing]:
-    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code, s.name AS set_name ' \
+    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code, s.name AS set_name, s.digital, s.set_type ' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
         + ' WHERE card_id = %s '
     rs = db().select(sql, [generalized_card.id])
     return [Printing(r) for r in rs]
+
+def get_non_digital_printing(c: Card) -> Printing | None:
+    if not c.get('id'):
+        return None
+    for printing in get_printings(c):
+        if not printing.get('digital'):
+            return printing
+    return None
 
 def get_printing(generalized_card: Card, setcode: str) -> Printing | None:
     if setcode is None:

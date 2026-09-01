@@ -1,7 +1,7 @@
-from flask import url_for
+from flask import session, url_for
 
-from decksite import prepare
-from decksite.data import archetype, deck, rule
+from decksite import auth, prepare
+from decksite.data import archetype, clauses, deck, rule
 from decksite.data.archetype import Archetype
 from decksite.view import View
 
@@ -11,7 +11,10 @@ class EditArchetypes(View):
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)
-        ds, _ = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC', limit='LIMIT 20')
+        where = 'NOT d.reviewed'
+        if not session.get('admin'):
+            where += f' AND ({clauses.exclude_active_league_runs(auth.person_id())})'
+        ds, _ = deck.load_decks(where=where, order_by='updated_date DESC', limit='LIMIT 20')
         self.queue = ds
         deck.load_queue_similarity(self.queue)
         rule.apply_rules_to_decks(self.queue)

@@ -10,6 +10,40 @@ from decksite.views import EditArchetypes, EditMatches, EditRules
 from shared.pd_exception import InvalidDataException
 
 
+def test_edit_archetypes_excludes_active_league_runs_for_non_admin(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured_where: list[str] = []
+
+    def load_decks(where: str = 'TRUE', **kwargs: Any) -> tuple[list, int]:
+        captured_where.append(where)
+        return [], 0
+
+    monkeypatch.setattr(deck, 'load_decks', load_decks)
+    monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
+    with APP.test_request_context('/admin/archetypes/'):
+        EditArchetypes([], '', '')
+    assert captured_where, 'load_decks was not called'
+    assert 'League' in captured_where[0], \
+        f'Expected active league run exclusion in where clause for non-admin, got: {captured_where[0]}'
+
+
+def test_edit_archetypes_includes_active_league_runs_for_admin(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured_where: list[str] = []
+
+    def load_decks(where: str = 'TRUE', **kwargs: Any) -> tuple[list, int]:
+        captured_where.append(where)
+        return [], 0
+
+    import decksite.views.edit_archetypes as ea_module
+    monkeypatch.setattr(deck, 'load_decks', load_decks)
+    monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
+    monkeypatch.setattr(ea_module, 'session', {'admin': True})
+    with APP.test_request_context('/admin/archetypes/'):
+        EditArchetypes([], '', '')
+    assert captured_where, 'load_decks was not called'
+    assert captured_where[0] == 'NOT d.reviewed', \
+        f'Expected only reviewed filter for admin, got: {captured_where[0]}'
+
+
 def test_post_archetypes_reports_invalid_card_names(monkeypatch: pytest.MonkeyPatch) -> None:
     def valid_name(name: str) -> str:
         if name in ['Not a Card', 'Also Not a Card']:

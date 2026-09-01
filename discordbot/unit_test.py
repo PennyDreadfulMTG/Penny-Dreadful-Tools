@@ -18,7 +18,7 @@ def test_imagedownload() -> None:
     assert image_fetcher.download_image(c) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
-# Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it useful here.
+# Note: Scryfall is used for all images; Nalathni Dragon is a useful test case as it has limited printings.
 @pytest.mark.functional
 def test_fallbackimagedownload() -> None:
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='nalathni-dragon.jpg')

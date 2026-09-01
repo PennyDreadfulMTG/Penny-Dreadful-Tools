@@ -25,10 +25,6 @@ def basename(cards: list[Card]) -> str:
         for c in cards
     )
 
-def bluebones_image(cards: list[Card]) -> str:
-    c = '|'.join(c.name for c in cards)
-    return f'http://magic.bluebones.net/proxies/index2.php?c={escape(c)}'
-
 def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
     if face == 'meld':
         name = c.names[1]

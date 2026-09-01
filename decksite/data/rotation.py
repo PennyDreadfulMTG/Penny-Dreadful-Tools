@@ -102,9 +102,9 @@ def cache_rotation() -> None:
             p.rank,
             SUM(IF(number = @runs_completed, 1, 0)) AS hit_in_last_run,
             CASE
-                WHEN COUNT(*) >= @hits_required THEN 'Legal'
-                WHEN COUNT(*) + @total_runs - @runs_completed >= @hits_required THEN 'Undecided'
-                ELSE 'Not Legal'
+                WHEN COUNT(*) >= @hits_required THEN '{rotation.RotationStatus.LEGAL}'
+                WHEN COUNT(*) + @total_runs - @runs_completed >= @hits_required THEN '{rotation.RotationStatus.UNDECIDED}'
+                ELSE '{rotation.RotationStatus.NOT_LEGAL}'
             END AS status
         FROM
             rotation_runs AS rr

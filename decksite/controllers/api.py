@@ -22,6 +22,7 @@ from magic import database as magic_database
 from magic import image_fetcher, layout, oracle, seasons, tournaments
 from magic.colors import find_colors
 from magic.models import Card, Deck
+from magic.rotation import RotationStatus
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.container import Container
@@ -488,7 +489,7 @@ def rotation_cards_api() -> Response:
     page, page_size, limit = pagination(request.args)
     where, message = clauses.card_search_where(q) if q else ('TRUE', '')
     if not session.get('admin', False):
-        where += " AND status <> 'Undecided'"
+        where += f" AND status <> '{RotationStatus.UNDECIDED}'"
     order_by = clauses.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     cs, total = rot.load_rotation(where=where, order_by=order_by, limit=limit)
     prepare_cards(cs)

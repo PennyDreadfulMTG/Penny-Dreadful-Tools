@@ -152,20 +152,20 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if sort_by == 'hitInLastRun':
         return f"""
             CASE
-                WHEN status = 'Undecided' THEN 0
-                WHEN status = 'Legal' THEN 1
+                WHEN status = '{rotation.RotationStatus.UNDECIDED}' THEN 0
+                WHEN status = '{rotation.RotationStatus.LEGAL}' THEN 1
                 ELSE 2
             END {sort_order},
             CASE
-                WHEN status = 'Undecided' THEN -hits
-                WHEN status = 'Legal' THEN hits
+                WHEN status = '{rotation.RotationStatus.UNDECIDED}' THEN -hits
+                WHEN status = '{rotation.RotationStatus.LEGAL}' THEN hits
                 ELSE hits
             END {sort_order},
             hit_in_last_run DESC,
             {order_by_rank}
         """
     if sort_by == 'rank':
-        return f"rank IS NULL {sort_order}, rank {sort_order}, IF(status = 'Legal', hits, {rotation.TOTAL_RUNS}) ASC, hits DESC, name ASC"
+        return f"rank IS NULL {sort_order}, rank {sort_order}, IF(status = '{rotation.RotationStatus.LEGAL}', hits, {rotation.TOTAL_RUNS}) ASC, hits DESC, name ASC"
     sort_options = {
         'name': 'name',
         'hits': 'hits',

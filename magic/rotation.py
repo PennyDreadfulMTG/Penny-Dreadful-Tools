@@ -3,6 +3,7 @@ import glob
 import logging
 import os
 from collections import Counter
+from enum import StrEnum
 
 from magic import fetcher, layout, oracle, seasons
 from magic.models import Card
@@ -11,6 +12,11 @@ from shared import redis_wrapper as redis
 from shared.fetch_tools import FetchException
 
 TOTAL_RUNS = 168
+
+class RotationStatus(StrEnum):
+    LEGAL = 'Legal'
+    NOT_LEGAL = 'Not Legal'
+    UNDECIDED = 'Undecided'
 
 def interesting(playability: dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> str | None:
     if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
@@ -89,12 +95,12 @@ def rotation_redis_store() -> tuple[int, int, list[Card]]:
     redis.store('decksite:rotation:summary:runs', runs, ex=604800)
     redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
     redis.store('decksite:rotation:summary:cards', cards, ex=604800)
-    if 'Undecided' in card_names_by_status:
-        redis.sadd('decksite:rotation:summary:undecided', *card_names_by_status['Undecided'], ex=604800)
-    if 'Legal' in card_names_by_status:
-        redis.sadd('decksite:rotation:summary:legal', *card_names_by_status['Legal'], ex=604800)
-    if 'Not Legal' in card_names_by_status:
-        redis.sadd('decksite:rotation:summary:notlegal', *card_names_by_status['Not Legal'], ex=604800)
+    if RotationStatus.UNDECIDED in card_names_by_status:
+        redis.sadd('decksite:rotation:summary:undecided', *card_names_by_status[RotationStatus.UNDECIDED], ex=604800)
+    if RotationStatus.LEGAL in card_names_by_status:
+        redis.sadd('decksite:rotation:summary:legal', *card_names_by_status[RotationStatus.LEGAL], ex=604800)
+    if RotationStatus.NOT_LEGAL in card_names_by_status:
+        redis.sadd('decksite:rotation:summary:notlegal', *card_names_by_status[RotationStatus.NOT_LEGAL], ex=604800)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> list[str]:
@@ -127,11 +133,11 @@ def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_l
     else:
         percent_needed = str(to_percent(hits_needed / remaining_runs))
     if remaining_runs + hits < TOTAL_RUNS / 2:
-        status = 'Not Legal'
+        status = RotationStatus.NOT_LEGAL
     elif hits >= TOTAL_RUNS / 2:
-        status = 'Legal'
+        status = RotationStatus.LEGAL
     else:
-        status = 'Undecided'
+        status = RotationStatus.UNDECIDED
     hit_in_last_run = name in latest_list
     c.update({
         'hits': hits,
@@ -155,11 +161,11 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
     runs_remaining = TOTAL_RUNS - runs
     threshold = int(TOTAL_RUNS / 2)
     newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == threshold]
-    newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
+    newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == RotationStatus.NOT_LEGAL and c.hits_needed == runs_remaining + 1]
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
-    num_undecided = len([c for c in cs if c.status == 'Undecided'])
-    num_legal_cards = len([c for c in cs if c.status == 'Legal'])
-    max_hits_in_undecided = max([c.hits for c in cs if c.status == 'Undecided'], default=0)
+    num_undecided = len([c for c in cs if c.status == RotationStatus.UNDECIDED])
+    num_legal_cards = len([c for c in cs if c.status == RotationStatus.LEGAL])
+    max_hits_in_undecided = max([c.hits for c in cs if c.status == RotationStatus.UNDECIDED], default=0)
     soonest_new_card = threshold - max_hits_in_undecided
     s = f'Rotation run number {runs} completed.'
     if hype_command:

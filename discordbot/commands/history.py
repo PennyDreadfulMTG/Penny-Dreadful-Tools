@@ -3,7 +3,7 @@ from interactions.models import Extension, slash_command
 
 from discordbot import command
 from discordbot.command import MtgContext
-from magic import fetcher, seasons
+from magic import fetcher, rotation, seasons
 from magic.models import Card
 from shared import fetch_tools
 
@@ -18,7 +18,7 @@ class History(Extension):
 def card_history(c: Card) -> str:
     data: dict[int, bool] = {}
     for format_name, status in c.legalities.items():
-        if 'Penny Dreadful ' in format_name and status == 'Legal':
+        if 'Penny Dreadful ' in format_name and status == rotation.RotationStatus.LEGAL:
             season_id = seasons.SEASONS.index(format_name.replace('Penny Dreadful ', '')) + 1
             data[season_id] = True
     if len(data) == 0:

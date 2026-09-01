@@ -75,6 +75,11 @@ oauth2_client_id = StrSetting('oauth2_client_id', '')
 oauth2_client_secret = StrSetting('oauth2_client_secret', '')
 
 DEFAULTS: dict[str, Any] = {
+    # Anthropic API key for the archetype-guessing helper (maintenance/classify_archetypes.py).
+    # If unset the helper falls back to nearest-similar-deck guessing.
+    'anthropic_api_key': None,
+    # Claude model used to guess archetypes for the sort queue.
+    'archetype_classifier_model': 'claude-haiku-4-5',
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
     # mysql database name.  Used by decksite tests.

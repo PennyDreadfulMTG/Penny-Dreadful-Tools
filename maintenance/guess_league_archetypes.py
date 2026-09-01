@@ -1,14 +1,9 @@
-from decksite.data import archetype, deck
+"""Deprecated: superseded by maintenance/classify_archetypes.py, which guesses archetypes with
+an LLM and falls back to nearest-similar-deck when no anthropic_api_key is configured. The
+HOURLY flag has been removed so only the new job runs in the hourly sweep; run() is kept as a
+delegating alias for anything that invokes it directly."""
+from decksite.data import archetype_classifier
 
-HOURLY = True
 
 def run() -> None:
-    decks, _ = deck.load_decks('NOT reviewed AND d.archetype_id IS NULL', order_by='d.created_date DESC', limit='LIMIT 100')
-    deck.calculate_similar_decks(decks)
-    for d in decks:
-        for s in d.similar_decks:
-            if s.reviewed and s.archetype_id is not None:
-                sim = int(100 * deck.similarity_score(d, s))
-                if d.archetype_id != s.archetype_id:
-                    archetype.assign(d.id, s.archetype_id, None, False, sim)
-                break
+    archetype_classifier.run()

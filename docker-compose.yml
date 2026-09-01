@@ -4,7 +4,7 @@ services:
     command:
       - decksite
     ports:
-      - "80:80"
+      - "${DECKSITE_HOST_PORT:-80}:80"
     depends_on:
       - db
       - redis
@@ -28,7 +28,7 @@ services:
     command:
       - logsite
     ports:
-      - "5001:5001"
+      - "${LOGSITE_HOST_PORT:-5001}:5001"
     depends_on:
       - db
       - redis
@@ -85,18 +85,18 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "${DB_HOST_PORT:-3306}:3306"
 
   adminer:
     image: adminer
     ports:
-      - 8080:8080
+      - "${ADMINER_HOST_PORT:-8080}:8080"
     command: [ "php", "-d", "upload_max_filesize = 10G", "-d", "post_max_size = 10G", "-S", "[::]:8080", "-t", "/var/www/html" ]
 
   redis:
     image: redis
     ports:
-      - 6379:6379
+      - "${REDIS_HOST_PORT:-6379}:6379"
 
 volumes:
   db_data:

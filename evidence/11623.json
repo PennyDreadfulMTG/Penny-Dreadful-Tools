@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11623,
+  "triage": [
+    {
+      "batch_id": "t-11639-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "timestamp = int(request.args.get('since', 0)); if timestamp < 1e9: raise InvalidArgumentException('Invalid timestamp!') \u2014 when no querystring, since defaults to 0, 0 < 1e9 is True, so InvalidArgumentException is raised",
+          "ref": "decksite/controllers/api.py:176-178",
+          "type": "code"
+        },
+        {
+          "detail": "BadRequest (werkzeug) already imported at module level",
+          "ref": "decksite/controllers/api.py:8",
+          "type": "code"
+        },
+        {
+          "detail": "The pagination() wrapper converts InvalidArgumentException to BadRequest, but the timestamp check at line 178 raises InvalidArgumentException directly \u2014 bypassing that wrapper \u2014 so flask-restx returns 500",
+          "ref": "decksite/controllers/api.py:837-838",
+          "type": "code"
+        },
+        {
+          "detail": "bakert reported 'Can't get any non-500 response from it' suggesting the endpoint may have broader issues beyond just the missing-querystring case",
+          "ref": "#11623 comment by bakert",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In `decksite/controllers/api.py:178`, replace `raise InvalidArgumentException('Invalid timestamp!')` with `raise BadRequest('Invalid timestamp \u2014 supply a Unix timestamp >= 1e9 as ?since=<int>')`. BadRequest is already imported at line 8. This fixes the missing-querystring 500; the 'bitrotted entirely' comment suggests there may also be DB-level issues that require running the endpoint against a live DB to confirm.",
+      "issue": 11623,
+      "notes": "Confidence is medium because bakert's comment suggests the endpoint may be broken even when valid args are supplied; that broader failure cannot be confirmed by static analysis without a running database. The timestamp exception fix is clear and low-risk regardless.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:13Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

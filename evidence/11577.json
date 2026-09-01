@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11577,
+  "triage": [
+    {
+      "batch_id": "t-11583-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Script exists to run 'UPDATE deck_card SET card = %s WHERE deck_id = %s AND card = %s' for exactly this type of fix, but requires interactive DB access",
+          "ref": "maintenance/gatherling_substitutions.py:34",
+          "type": "code"
+        },
+        {
+          "detail": "No code references the specific deck_id=216544 or the specific substitution; this is a one-time data fix request, not a code bug",
+          "ref": "grep -n 'Life of Toshiro\\|216544' decksite/ maintenance/ --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11577,
+      "notes": "This is a DB data correction request (deck 216544 has 4 Islands in sb instead of 4 Life of Toshiro Umezawa). The maintenance/gatherling_substitutions.py script handles this type of fix. Cannot verify whether the correction has already been applied without DB access.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:57Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

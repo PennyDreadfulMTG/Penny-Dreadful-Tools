@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11639,
+  "triage": [
+    {
+      "batch_id": "t-11639-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "archetypes2_api (which feeds /metagame grid) calls load_disjoint_archetypes with where='TRUE' when no search query \u2014 no exclusion of Unclassified",
+          "ref": "decksite/controllers/api.py:449",
+          "type": "code"
+        },
+        {
+          "detail": "base_where in load_disjoint_archetypes is 'TRUE' by default; SQL at lines 592-637 has no filter on a.name",
+          "ref": "decksite/data/archetype.py:585",
+          "type": "code"
+        },
+        {
+          "detail": "IGNORE list ['Commander', 'Unclassified'] exists but is never applied to load_disjoint_archetypes or archetypes2_api",
+          "ref": "decksite/data/rule.py:12",
+          "type": "code"
+        },
+        {
+          "detail": "No commit found fixing Unclassified visibility on /metagame; only related commits exclude it from /admin/rules (a31fb239) and /admin/archetypes",
+          "ref": "git log --grep='Unclassified.*metagame'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In `decksite/controllers/api.py` around line 444, update the default where clause in `archetypes2_api` to `clauses.text_where('a.name', q) if q else \"a.name NOT IN ('Unclassified', 'Commander')\"`. Alternatively add the same exclusion to `base_where` in `decksite/data/archetype.py:585` inside `load_disjoint_archetypes`, but that function is only called from archetypes2_api so the api.py change is safer.",
+      "issue": 11639,
+      "notes": "The IGNORE constant in rule.py and archetype_classifier.py already treats these as special; the metagame display just never wired up the same exclusion. No schema change needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:13Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

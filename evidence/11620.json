@@ -1,0 +1,51 @@
+{
+  "fix": [],
+  "issue": 11620,
+  "triage": [
+    {
+      "batch_id": "t-11620-1",
+      "class": "question",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR #11700 merged: league signup now uses Universes Within names (Malik) when a Beyond name (Negan) is submitted",
+          "ref": "d2854ce0",
+          "type": "commit"
+        },
+        {
+          "detail": "Aug 2026: broad Universes Within alias support added to multiverse.py, flavor_names tracking via canonical_names dict",
+          "ref": "2a40b50e",
+          "type": "commit"
+        },
+        {
+          "detail": "test_vivify_universes_beyond confirms '4 Negan, the Cold-Blooded' resolves to Malik, Grim Manipulator",
+          "ref": "magic/decklist_test.py:808",
+          "type": "code"
+        },
+        {
+          "detail": "functional tests confirm full UB\u2192UW alias resolution (Kroble\u2192Spider-Man Noir, etc.)",
+          "ref": "magic/omenpaths_test.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "sub-issue (prices doesn't like Walking Dead names) is now CLOSED",
+          "ref": "#11641",
+          "type": "issue"
+        },
+        {
+          "detail": "issue is a tracking issue; all named sub-issues resolved but owner has not explicitly closed it",
+          "ref": "gh issue view 11620 --comments",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11620,
+      "notes": "The decision (use Universes Within canonical names) was made and implemented across PRs #11700/#11702 and commit 2a40b50e. All referenced sub-issues (#11641 closed, #11670/#11700 merged) are resolved. Issue remains open as a tracking issue; owner should confirm whether the flavor_name data-model concern from the original comment is fully satisfied by the current alias system.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

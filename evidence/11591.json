@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11591,
+  "triage": [
+    {
+      "batch_id": "t-11620-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "issue body: 'I talked to Sam Black about this on Twitter DMs once but didn't really follow up. He seemed open to it.' Labels: question, backlog \u2014 explicitly a discussion item",
+          "ref": "gh issue view 11591",
+          "type": "search"
+        },
+        {
+          "detail": "no code exists to implement or track a streamer engagement \u2014 purely a marketing/business decision",
+          "ref": "grep -rn 'streamer\\|Sam Black' --include=*.py",
+          "type": "search"
+        },
+        {
+          "detail": "zero comments \u2014 no discussion or decision has occurred",
+          "ref": "gh issue view 11591 --comments",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11591,
+      "notes": "Purely a business/marketing decision with no technical component. Requires the project owner to decide whether to pursue and fund the engagement.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

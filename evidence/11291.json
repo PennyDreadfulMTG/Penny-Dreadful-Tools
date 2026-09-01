@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11291,
+  "triage": [
+    {
+      "batch_id": "t-11295-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Always show decks on card detail page \u2014 removed the {{#has_decks}} guard from card.mustache",
+          "ref": "202b102",
+          "type": "commit"
+        },
+        {
+          "detail": "Current template unconditionally shows 'Decks containing X' section with livedecktable, which handles the empty case client-side",
+          "ref": "decksite/templates/card.mustache:20-21",
+          "type": "code"
+        },
+        {
+          "detail": "No has_decks guard present; the issue's reported broken behavior (decktable shown when has_decks=False) is now by design \u2014 livedecktable shows an empty state",
+          "ref": "decksite/templates/card.mustache",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11291,
+      "notes": "The fix deliberately changed the approach: rather than conditionally hiding the table, it always shows the live-loading table which renders an appropriate empty state.",
+      "proposed_comment": "Fixed in commit 202b102: the {{#has_decks}} guard was removed from card.mustache. The deck table is now always shown and uses a live client-side fetch (livedecktable) that handles the empty-deck case without relying on a server-side has_decks flag.",
+      "recorded_at": "2026-09-01T19:49:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

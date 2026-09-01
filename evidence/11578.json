@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11578,
+  "triage": [
+    {
+      "batch_id": "t-11583-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "determine_finishes() assigns finish=3 to all Medal.TOP_4 finalists; if Gatherling only reported one t4 finalist for competition 4330, only one player would get finish=3",
+          "ref": "decksite/scrapers/gatherling.py:191-200",
+          "type": "code"
+        },
+        {
+          "detail": "Test asserts finishes[3] == 2 (two losing semifinalists), confirming code is correct when Gatherling data is complete",
+          "ref": "decksite/scrapers/gatherling_test.py:40",
+          "type": "code"
+        },
+        {
+          "detail": "medal2finish(Medal.TOP_4) returns 3; no validation that exactly two t4 medals exist for a top-4 bracket",
+          "ref": "decksite/scrapers/gatherling.py:202-211",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11578,
+      "notes": "The scraper code is correct; the issue for competition 4330 appears to be Gatherling only reporting one t4 finalist instead of two. Cannot verify current DB state or whether the data was manually corrected. A defensive check in determine_finishes could warn when fewer t4 finalists than expected are present.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:57Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11656,
+  "triage": [
+    {
+      "batch_id": "t-11672-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "This repo only exposes a /api/doorprize POST endpoint that records the winner PDBot selected \u2014 no eligibility logic here",
+          "ref": "decksite/controllers/api.py:629-637",
+          "type": "code"
+        },
+        {
+          "detail": "PDBot is an external service at pdbot.pennydreadfulmagic.com; the eligibility/selection code lives there",
+          "ref": "logsite/importing.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "No eligibility calculation found in this repo; only a DB write and an explain text",
+          "ref": "grep -rn 'door_prize' . --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11656,
+      "notes": "The door prize selection logic (determining eligible players and picking one) lives in the external PDBot service, not this repository. Cannot assess or fix without access to that codebase.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

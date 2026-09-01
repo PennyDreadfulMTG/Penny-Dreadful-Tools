@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11310,
+  "triage": [
+    {
+      "batch_id": "t-11320-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SeasonInfoDescription is a TypedDict \u2014 still present in current master",
+          "ref": "decksite/view.py:22",
+          "type": "code"
+        },
+        {
+          "detail": "RawDeckDescription is a TypedDict \u2014 still present",
+          "ref": "decksite/data/deck.py:268",
+          "type": "code"
+        },
+        {
+          "detail": "CardDescription is a TypedDict used to type parsed JSON from external API \u2014 dataclass conversion here requires instantiation code for every JSON parse site",
+          "ref": "magic/abc/card_description.py:6",
+          "type": "code"
+        },
+        {
+          "detail": "WISDateType, WISSetInfoType, WISSchemaType are TypedDicts typing external JSON \u2014 converting to dataclasses adds overhead with no type-safety gain at those boundaries",
+          "ref": "magic/fetcher.py:368",
+          "type": "code"
+        },
+        {
+          "detail": "11 files with TypedDict usages found; mix of internal data structures (convertible) and API-response annotations (less appropriate to convert)",
+          "ref": "grep TypedDict decksite magic shared --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11310,
+      "notes": "The issue comments themselves debate whether this is worth doing (performance concerns, Container comparison). API-response TypedDicts in magic/fetcher.py and magic/abc/card_description.py are more appropriate as TypedDicts than dataclasses; owner judgment needed on scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:46:29Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

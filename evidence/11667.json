@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11667,
+  "triage": [
+    {
+      "batch_id": "t-11672-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "runtests() extends args with find_files(arg, 'py') results; if argv is non-empty but no files match, args stays [] and pytest runs all tests",
+          "ref": "dev.py:137-152",
+          "type": "code"
+        },
+        {
+          "detail": "find_files() filters by needle in basename; 'parser_test' matches no tracked .py file, so returns []",
+          "ref": "dev.py:126-135",
+          "type": "code"
+        },
+        {
+          "detail": "subprocess.call(['pytest'] + []) with only -x/-m flags runs the full matching test suite, not an empty set",
+          "ref": "dev.py:148",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In dev.py:runtests(), after the loop that populates args from find_files(), add: 'if list(argv) and not args: sys.exit(f\"No test files found matching: {list(argv)}\")'. This makes the command fail with a clear message instead of silently running all tests when the needle matches nothing. Only dev.py needs to change.",
+      "issue": 11667,
+      "notes": "The issue comment confirms the root cause: a bad search with no matches runs all tests. The fix is a 2-line guard.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

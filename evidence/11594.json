@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11594,
+  "triage": [
+    {
+      "batch_id": "t-11620-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "season_end_display = dtutil.display_date(seasons.next_rotation()) \u2014 no 'expected' qualifier regardless of whether next set is confirmed",
+          "ref": "decksite/views/home.py:98",
+          "type": "code"
+        },
+        {
+          "detail": "template renders 'Season X began Y and ends Z' unconditionally, even when rotation date is estimated",
+          "ref": "decksite/templates/home.mustache:47",
+          "type": "code"
+        },
+        {
+          "detail": "message() already handles '???' case ('roughly X away'), but home view does not use message() for the season-end line",
+          "ref": "magic/seasons.py:225",
+          "type": "code"
+        },
+        {
+          "detail": "when next set is unannounced, SetInfo code and codename are both '???' \u2014 this flag is available in views/home.py",
+          "ref": "magic/seasons.py:127",
+          "type": "code"
+        },
+        {
+          "detail": "pd500_date() returns epoch (1970-01-01) for '???' rotation; home.py:22 check 'if pd500_date > dtutil.now()' means PD500 date is correctly hidden \u2014 only season_end_display is missing the qualifier",
+          "ref": "magic/tournaments.py:109",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/home.py:setup_rotation(), add `self.season_end_is_estimated = seasons.next_rotation_ex().code == '???'`. In decksite/templates/home.mustache:47, change the sentence to render 'ends (expected) {{season_end_display}}' when season_end_is_estimated is truthy and 'ends {{season_end_display}}' otherwise, using Mustache conditional blocks. No schema or data changes; ~5 lines total.",
+      "issue": 11594,
+      "notes": "PD500 date display is already correctly suppressed when the rotation is unconfirmed. Only the 'ends Z' line on the home page needs the 'expected' qualifier.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

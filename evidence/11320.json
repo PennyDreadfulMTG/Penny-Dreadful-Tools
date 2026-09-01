@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11320,
+  "triage": [
+    {
+      "batch_id": "t-11320-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize() calls titlecase.titlecase() which capitalizes letters after hyphens non-uniformly (treating 'a' as an article, so 'a-l-l' \u2192 'a-L-L' while 'o-o-p-s' \u2192 'O-O-P-S')",
+          "ref": "decksite/deck_name.py:86",
+          "type": "code"
+        },
+        {
+          "detail": "WHITELIST already used for exactly this pattern \u2014 whitelisted names bypass titlecase normalization and are returned as-is",
+          "ref": "decksite/deck_name.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "whitelisted() check: if name starts with a WHITELIST entry, the original name is returned immediately before any titlecase transform",
+          "ref": "decksite/deck_name.py:87",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add 'o-o-p-s a-l-l' to WHITELIST in decksite/deck_name.py (one line). For a more general fix, add a step in normalize() that detects all-single-letter hyphenated patterns (regex like `^([a-z]-)+[a-z]( ([a-z]-)+[a-z])*$`) and skips titlecase for them; add a test in deck_name_test.py.",
+      "issue": 11320,
+      "notes": "Whitelist approach is a 1-line fix identical in style to the existing 'B U R N' and 'G L I M P S E' entries; a general regex fix is ~10 lines but avoids per-name whitelisting.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:46:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

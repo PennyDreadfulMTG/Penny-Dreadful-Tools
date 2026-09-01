@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 11672,
+  "triage": [
+    {
+      "batch_id": "t-11672-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit 'Index flavor names for bot card search' (Aug 21 2026) explicitly adds flavor names to the whoosh index",
+          "ref": "06f40f61",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: 'if card.flavor_names: names.extend(card.flavor_names.split(\"|\"))' \u2014 flavor names are now indexed for search",
+          "ref": "magic/whoosh_write.py:37-38",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11672,
+      "notes": "The fix is clearly in master. A bot restart/re-index would be needed to pick up the new behavior in a running instance.",
+      "proposed_comment": "This was fixed in commit 06f40f61 ('Index flavor names for bot card search', Aug 21 2026). Flavor names are now included in the whoosh search index at `magic/whoosh_write.py:37-38`, so the bot can look up cards by their flavor name.",
+      "recorded_at": "2026-09-01T19:43:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11672-1",
+      "final_comment": "Fixed in commit 06f40f61 ('Index flavor names for bot card search', Aug 21 2026). The whoosh search index at magic/whoosh_write.py:37-38 now extends each card's indexed names with its flavor names, and a dedicated test (test_flavor_name_is_searchable) confirms the bot returns the correct canonical card when searched by flavor name.",
+      "issue": 11672,
+      "own_evidence": [
+        {
+          "detail": "Independently verified: names = list(card.names); if card.flavor_names: names.extend(card.flavor_names.split('|')) \u2014 flavor names are added to the whoosh index for every card that has them",
+          "ref": "magic/whoosh_write.py:36-38",
+          "type": "code"
+        },
+        {
+          "detail": "GROUP_CONCAT(fn.flavor_name SEPARATOR '|') AS flavor_names confirms flavor_names is populated from the database, so the indexed data is real",
+          "ref": "magic/multiverse.py:93",
+          "type": "code"
+        },
+        {
+          "detail": "Test verifies searching 'Rick, Steadfast Leader' (flavor name) returns canonical name 'Greymond, Avacyn's Stalwart' \u2014 end-to-end coverage of the fix",
+          "ref": "magic/whoosh_search_test.py:test_flavor_name_is_searchable",
+          "type": "test"
+        },
+        {
+          "detail": "Issue is OPEN with 0 comments and last updated 2023-10-08 \u2014 no recent human activity, no dispute of the fix",
+          "ref": "gh issue 11672",
+          "type": "issue"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:48:43Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

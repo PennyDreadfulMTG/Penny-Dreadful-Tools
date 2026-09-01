@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11300,
+  "triage": [
+    {
+      "batch_id": "t-11305-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prepare_card() calls set_legal_icons(c) which sets c.legal_icons to a multi-link HTML string",
+          "ref": "decksite/prepare.py:33",
+          "type": "code"
+        },
+        {
+          "detail": "cards2_api() calls prepare_cards(cs, ...) then return_camelized_json, which humps.camelize()s legal_icons \u2192 legalIcons and includes it in every card object in the JSON response",
+          "ref": "decksite/controllers/api.py:224",
+          "type": "code"
+        },
+        {
+          "detail": "React cardtable consuming /api/cards2 renders only name, numDecks, record, winPercent, tournamentWins, tournamentTop8s, perfectRuns \u2014 legalIcons is never read",
+          "ref": "shared_web/static/js/cardtable.jsx:1",
+          "type": "code"
+        },
+        {
+          "detail": "extra_serializer calls obj.to_dict() on Container/Munch objects, so all dynamically-set attributes including legal_icons are serialized",
+          "ref": "shared/serialization.py:27",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/api.py inside cards2_api(), after the prepare_cards() call, add: `for c in cs: c.pop('legal_icons', None)`. Alternatively, add an `api_only=True` flag to prepare_card() and skip set_legal_icons when True. The pop approach is 2 lines and has zero risk to server-side rendering paths.",
+      "issue": 11300,
+      "notes": "legal_icons contains full HTML with anchor tags and icon links; removing it from the API response reduces payload size per card. No frontend code needs updating.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

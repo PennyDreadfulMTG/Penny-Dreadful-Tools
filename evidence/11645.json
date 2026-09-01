@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11645,
+  "triage": [
+    {
+      "batch_id": "t-11672-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "times_from_timezone_code() filters pytz.common_timezones by datetime.now(tz).strftime('%Z') == q.upper(); in summer New York is 'EDT' not 'EST', so only permanently-EST zones (like America/Jamaica) match",
+          "ref": "magic/fetcher.py:330-341",
+          "type": "code"
+        },
+        {
+          "detail": "time(q) routes to times_from_timezone_code when len(q)<=4, so 'EST' always takes the abbreviation path",
+          "ref": "magic/fetcher.py:330",
+          "type": "behavior"
+        },
+        {
+          "detail": "No commit in history addresses the EST/Jamaica disambiguation",
+          "ref": "git log --oneline -- magic/fetcher.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In magic/fetcher.py, add a dict CANONICAL_TZ_ALIASES mapping common US abbreviations to their year-round canonical timezone (e.g. {'EST': 'America/New_York', 'EDT': 'America/New_York', 'CST': 'America/Chicago', ...}). In times_from_timezone_code(), check if q.upper() is in CANONICAL_TZ_ALIASES and always include that zone in results (alongside any other current matches). Only magic/fetcher.py needs to change; no schema or data impact.",
+      "issue": 11645,
+      "notes": "The static alias map approach preserves existing behavior for legitimate multi-zone abbreviations while always surfacing the expected canonical US zone for common abbreviations.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

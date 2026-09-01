@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11304,
+  "triage": [
+    {
+      "batch_id": "t-11305-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "self.show_hero = True is hard-coded; no logic to suppress person/opponent columns based on search criteria",
+          "ref": "decksite/views/matchups.py:31",
+          "type": "code"
+        },
+        {
+          "detail": "{{#show_hero}}<th>Person</th>{{/show_hero}} and corresponding row cell already gate on show_hero \u2014 infrastructure exists",
+          "ref": "decksite/templates/personmatches.mustache:6",
+          "type": "code"
+        },
+        {
+          "detail": "{{^hide_person}} already gates the person column in the deck table \u2014 infrastructure exists",
+          "ref": "decksite/templates/decktable.mustache:7",
+          "type": "code"
+        },
+        {
+          "detail": "hero dict is available in __init__; hero.get('person_id') is the trigger condition",
+          "ref": "decksite/views/matchups.py:15",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/matchups.py: replace `self.show_hero = True` with `self.show_hero = not bool(hero.get('person_id'))` and add `self.hide_person = bool(hero.get('person_id'))`. To also suppress the Opponent column when enemy person_id is set, add a `{{#hide_opponent}}` guard in personmatches.mustache around that header/cell and set `self.hide_opponent = bool(enemy.get('person_id'))` in the view. Total change is ~10 lines across two files.",
+      "issue": 11304,
+      "notes": "Template infrastructure for show_hero and hide_person already exists and is tested by other views; change is entirely in the view layer with no data or query involvement.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

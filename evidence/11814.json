@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11814-1",
+      "branch": "sweep/11814-slash-explain-modmail",
+      "files_changed": 1,
+      "head_sha": "4fb9bf47a3755e2b42b9af7d008262e257afa4e8",
+      "issue": 11814,
+      "lines_changed": 9,
+      "lint": "passed",
+      "notes": "Single-entry addition to the explanations dict; no logic changes. The linked ModMail wiki URL (kyb3r/modmail) is the canonical upstream guide \u2014 if the server uses a self-hosted or different ModMail variant, the URL could be updated to a server-specific guide.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\n`/explain modmail` was not a recognized key in the explanations dict, so users had no way to get a quick explanation of how to use the ModMail bot via the slash command.\n\n## What changed\n\nAdded a `'modmail'` entry to the `explanations` dict in `discordbot/commands/explain.py` (between `'league'` and `'netdecking'` in alphabetical order). The explanation tells users to DM the ModMail bot to reach mods privately, includes advice to state their MTGO username and a clear subject, and links to the ModMail usage guide.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit discordbot` \u2014 845 passed, 1 skipped (functional test intentionally skipped), 0 failures\n\nFixes #11814",
+      "pr_title": "Add /explain modmail command (#11814)",
+      "recorded_at": "2026-09-01T19:43:52Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "845 passed, 1 skipped in 18.10s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11814,
   "triage": [
     {

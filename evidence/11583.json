@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11583,
+  "triage": [
+    {
+      "batch_id": "t-11583-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No ML or clustering code exists in decksite/; the feature is entirely unimplemented",
+          "ref": "grep -r 'fuzzy\\|cluster\\|machine.learning\\|sklearn' decksite/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Current archetype classification is rule-based, not ML-based; the file exists but uses no clustering algorithms",
+          "ref": "decksite/data/archetype_classifier.py",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11583,
+      "notes": "Substantial ML feature: needs data pipeline, model selection (Fuzzy C-means or similar), training/inference infrastructure, and integration with the archetype classifier. No existing ML dependencies in the project.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:57Z",
+      "risk": "high"
+    }
+  ],
+  "verify": []
+}

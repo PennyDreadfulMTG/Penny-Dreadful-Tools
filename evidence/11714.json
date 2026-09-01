@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 11714,
+  "triage": [
+    {
+      "batch_id": "t-11715-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "[paste_card] don't use download_scryfall_png for banner composition \u2014 uses scryfall_image() directly so only the front face is fetched for double-faced cards",
+          "ref": "7418d7d5",
+          "type": "commit"
+        },
+        {
+          "detail": "paste_card now calls scryfall_image(c, version='png') directly; the old download_scryfall_png merged both faces of DFCs into one image, causing the wonky display",
+          "ref": "magic/image_fetcher.py:252",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11714,
+      "notes": "Season 20 still has no explicit entry in banner_cards so it still uses guess_banner(20), but MDFCs chosen by that function will now render correctly.",
+      "proposed_comment": "Fixed in commit 7418d7d5: `paste_card` now uses `scryfall_image(c, version='png')` directly instead of `download_scryfall_png`, which was merging both faces of double-faced cards into a single image. Banners now correctly show only the front face of any MDFC.",
+      "recorded_at": "2026-09-01T19:41:47Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11715-1",
+      "final_comment": "Fixed in commit 7418d7d5: `paste_card` now uses `scryfall_image(c, version='png')` directly instead of `download_scryfall_png`, which was merging both faces of double-faced cards into a single image. Banners now correctly show only the front face of any MDFC.",
+      "issue": 11714,
+      "own_evidence": [
+        {
+          "detail": "independently confirmed in git log: '[paste_card] don't use download_scryfall_png for banner composition', modifying magic/image_fetcher.py",
+          "ref": "7418d7d5",
+          "type": "commit"
+        },
+        {
+          "detail": "independently read: paste_card now sets url = scryfall_image(c, version='png') directly, bypassing download_scryfall_png which would merge both MDFC faces",
+          "ref": "magic/image_fetcher.py:252",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:45:59Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

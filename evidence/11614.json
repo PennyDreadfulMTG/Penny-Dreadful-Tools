@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11614,
+  "triage": [
+    {
+      "batch_id": "t-11620-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current rule only says 'Do not play cards with game-breaking bugs' \u2014 no stated consequence if the rule is broken",
+          "ref": "decksite/templates/bugpolicy.mustache:8",
+          "type": "code"
+        },
+        {
+          "detail": "game-loss rule currently covers only 'gaining advantage from a bug unintentionally', not 'triggered for any reason'",
+          "ref": "decksite/templates/bugpolicy.mustache:9",
+          "type": "code"
+        },
+        {
+          "detail": "last edit to bugpolicy.mustache (Oct 2021) predates this issue (Aug 2023); the gap the issue describes is still present",
+          "ref": "436ed94a",
+          "type": "commit"
+        },
+        {
+          "detail": "comment adds 'Maybe also make it clear that Avoidable Game-Breaking are ok if you can actually avoid the situ' \u2014 introduces unresolved sub-question",
+          "ref": "gh issue view 11614 --comments",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11614,
+      "notes": "The desired text addition is small (1\u20132 sentences in bugpolicy.mustache), but the exact wording of 'for any reason' must reconcile with the existing 'only the card's controller can receive a penalty' rule, and the commenter's 'avoidable' exception needs explicit owner decision before text can be finalized.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

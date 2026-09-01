@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11302,
+  "triage": [
+    {
+      "batch_id": "t-11305-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "from decksite.data.archetype import Archetype \u2014 one of 20+ active violations of the proposed boundary",
+          "ref": "decksite/views/matchups.py:3",
+          "type": "code"
+        },
+        {
+          "detail": "returns 20+ lines across ban.py, archetype_search.py, edit_archetypes.py, archetypes.py, archetype.py, edit_rules.py, link_accounts.py, matchups.py, deck.py, player_notes.py, person_matches.py, person.py, sorters.py, archetype_test.py",
+          "ref": "grep -rn 'from decksite.data' decksite/views/ --include=*.py",
+          "type": "search"
+        },
+        {
+          "detail": "ruff config has no TID251/TID252 (banned-import) rule; project has migrated from flake8 so the .flake8 deny-imports mechanism mentioned in the issue no longer applies",
+          "ref": "pyproject.toml:109",
+          "type": "code"
+        },
+        {
+          "detail": "issue itself acknowledges 'there are a lot of violations' so the work is known to be non-trivial",
+          "ref": "issue body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11302,
+      "notes": "Many of the imports are type-only (Archetype, Person, etc.) used only for annotations; an owner should decide whether type-only data imports are acceptable before fixing violations and enabling the rule.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11298,
+  "triage": [
+    {
+      "batch_id": "t-11305-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "matchups() calls ps.load_people(where='p.mtgo_username IS NOT NULL') \u2014 the full aggregating query \u2014 just to build a people dropdown",
+          "ref": "decksite/controllers/metagame.py:158",
+          "type": "code"
+        },
+        {
+          "detail": "load_people() runs a query with COUNT/SUM aggregations over deck and deck_cache including wins, losses, tournament_wins etc. \u2014 identical in structure to the slow 1.1s query reported in the issue",
+          "ref": "decksite/data/person.py:94",
+          "type": "code"
+        },
+        {
+          "detail": "load_person_statless() exists and uses a simpler query (no joins to deck/deck_cache), but only returns one Person \u2014 a list variant does not exist",
+          "ref": "decksite/data/person.py:71",
+          "type": "code"
+        },
+        {
+          "detail": "the view only reads p.mtgo_username and p.id from each Person for the people dropdown \u2014 no stats fields are used",
+          "ref": "decksite/views/matchups.py:22",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/person.py, add a load_people_statless(where='TRUE') function that selects only p.id, person_query() AS name, and p.mtgo_username from person WHERE {where} (no deck/deck_cache joins, no aggregation). In decksite/controllers/metagame.py:158, replace load_people(where='p.mtgo_username IS NOT NULL') with load_people_statless(where='p.mtgo_username IS NOT NULL'). Total change ~20 lines.",
+      "issue": 11298,
+      "notes": "This issue and #11305 are related \u2014 #11305's typeahead proposal would also eliminate the bulk person load, but #11298 can be fixed independently without UI changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

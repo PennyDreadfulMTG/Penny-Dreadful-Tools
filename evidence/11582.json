@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11582,
+  "triage": [
+    {
+      "batch_id": "t-11583-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No integration with MTGO-Tracker or MagicOnlineReplayTool exists in the codebase",
+          "ref": "grep -r 'MTGO.Tracker\\|MagicOnlineReplay\\|replay.*tool\\|log.*analyz' decksite/ analysis/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Existing analysis code processes logs internally but has a known BUG comment; it does not use any external replay tool",
+          "ref": "analysis/analysis.py:97",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11582,
+      "notes": "Feature requires evaluating and integrating an external tool (cderickson/MTGO-Tracker or PennyDreadfulMTG/MagicOnlineReplayTool); scope depends on which tool is chosen and what data the team wants to extract.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:57Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

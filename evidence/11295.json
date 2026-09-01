@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11295,
+  "triage": [
+    {
+      "batch_id": "t-11295-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Removed cards loading from person detail page (partial fix); decks loading still present",
+          "ref": "d9c11c3",
+          "type": "commit"
+        },
+        {
+          "detail": "self.decks = person.decks triggers full deck load; colors are then computed by iterating all deck objects",
+          "ref": "decksite/views/person.py:25-36",
+          "type": "code"
+        },
+        {
+          "detail": "person.decks lazy property calls deck.load_decks with no LIMIT, loading ALL decks for that person across all seasons",
+          "ref": "decksite/data/models/person.py:9-12",
+          "type": "code"
+        },
+        {
+          "detail": "Deck table uses livedecktable (client-side), so server-side deck objects are only needed for the colors chart and has_decks flag",
+          "ref": "decksite/templates/person.mustache:4",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/deck.py add a person_color_counts(person_id, season_id) function that queries SELECT dc.colors FROM deck d JOIN deck_cache dc ON d.id=dc.deck_id WHERE d.person_id=X (with season filter) \u2014 deck_cache already stores pre-computed colors as JSON, so this avoids loading full Deck objects. In decksite/views/person.py:25-36 replace person.decks with this lightweight query for the chart and a COUNT query for has_decks. The livedecktable on the template fetches decks client-side so self.decks is no longer needed.",
+      "issue": 11295,
+      "notes": "The cards-loading half of the original perf issue was fixed by d9c11c3; the decks-loading half (needed for the Colors Played chart) is still present and still hits for the all-seasons view.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:49:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

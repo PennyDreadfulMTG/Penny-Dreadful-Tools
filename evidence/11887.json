@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11887-1",
+      "branch": "sweep/11887-it-would-be-nice-to-provide-a-total-coun",
+      "files_changed": 2,
+      "head_sha": "c1c7e605e553d49bc5d99a0013fbf0d377f88fd9",
+      "issue": 11887,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Purely additive change \u2014 one new attribute on the view object and one new template line inside an already-guarded block. No logic changes, no DB queries, no auth impact.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/admin/archetypes` search page showed matching decks in a table but gave no indication of how many were found, making it hard to gauge search scope at a glance.\n\n## What changed\n\n- `decksite/views/archetype_search.py`: Added `self.search_result_count = len(search_results)` alongside the existing `has_search_results` flag.\n- `decksite/templates/archetypesearch.mustache`: Added `<p>{{search_result_count}} decks found</p>` inside the `{{#has_search_results}}` block, displayed above the results table.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- Unit tests require a live database not available in this environment; there are no existing DB-free tests for `ArchetypeSearch` and the change is too trivial (one attribute assignment, one template interpolation) to warrant a new one.\n\nFixes #11887",
+      "pr_title": "Show total deck count on /admin/archetypes search results (#11887)",
+      "recorded_at": "2026-09-01T19:43:26Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest decksite/tests/ -x -m 'not functional and not perf'",
+        "detail": "No existing tests for ArchetypeSearch; all decksite tests require a live database connection which is not configured in this environment. There is no DB-free unit test that could cover this view change.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 11887,
   "triage": [
     {

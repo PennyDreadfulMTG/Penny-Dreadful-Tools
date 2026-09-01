@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:41:47Z",
+  "evidence_refs": [
+    "evidence/11712.json#triage[0]"
+  ],
+  "issue": 11712,
+  "kind": "class-escalate",
+  "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "The implementation auto-regenerates the font rather than explicitly scanning all deck names and logging a warning \u2014 a different mechanism than requested, but the practical concern (non-latin chars causing font gaps) is addressed."
+}

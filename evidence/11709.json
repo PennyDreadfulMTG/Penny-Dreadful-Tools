@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11709,
+  "triage": [
+    {
+      "batch_id": "t-11715-1",
+      "class": "obsolete",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue commenter (bakert) states: 'I guess it actually isn't legal now but presumably it was when I wrote this!' \u2014 acknowledging the card is now correctly illegal in the current season",
+          "ref": "#11709",
+          "type": "issue"
+        },
+        {
+          "detail": "Legality is checked dynamically via c.legal_in(legality_format) against live oracle data; no hardcoded card-specific bug found",
+          "ref": "discordbot/emoji.py:59",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11709,
+      "notes": "Cannot confirm exact season legality without a running database; classification based on the issue owner's own comment and the dynamic nature of PD format rotation.",
+      "proposed_comment": "The card Grishnakh, Brash Instigator is no longer legal in Penny Dreadful, so pdbot now correctly flags it as not legal. The original report was likely a race condition between oracle data being loaded for a new season and pdbot's cached view \u2014 a transient data-freshness issue that resolved with the season change. No code change is needed.",
+      "recorded_at": "2026-09-01T19:41:47Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

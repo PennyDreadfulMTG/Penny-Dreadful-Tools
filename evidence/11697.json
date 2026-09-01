@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 11697,
+  "triage": [
+    {
+      "batch_id": "t-11715-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Don't strip leading emojis and similar from deck names \u2014 removed strip_leading_punctuation (which matched ^[^\\w\"'(]*) from normalize() and deleted the function entirely",
+          "ref": "1b945878",
+          "type": "commit"
+        },
+        {
+          "detail": "strip_leading_punctuation is absent from current master; grep confirms no such function exists",
+          "ref": "decksite/deck_name.py",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11697,
+      "notes": "Test at decksite/deck_name_test.py was updated in the same commit, confirming a '\ud83c\udff4\u200d\u2620\ufe0f' name now round-trips correctly.",
+      "proposed_comment": "Fixed in commit 1b945878: the `strip_leading_punctuation` function (regex `^[^\\w\"'(]*`) was removed from `deck_name.normalize()` entirely, so leading emojis such as \ud83d\udecc are now preserved. Tests updated to confirm `$` and emoji-only names survive normalization unchanged.",
+      "recorded_at": "2026-09-01T19:41:47Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11715-1",
+      "final_comment": "Fixed in commit 1b945878: the `strip_leading_punctuation` function (regex `^[^\\w\"'(]*`) was removed from `deck_name.normalize()` entirely, so leading emojis such as \ud83d\udecc are now preserved. Tests updated to confirm `$` and emoji-only names survive normalization unchanged.",
+      "issue": 11697,
+      "own_evidence": [
+        {
+          "detail": "independently confirmed in git log: 'Don't strip leading emojis and similar from deck names', removing 4 lines from decksite/deck_name.py",
+          "ref": "1b945878",
+          "type": "commit"
+        },
+        {
+          "detail": "independently grepped: strip_leading_punctuation does not appear anywhere in the file; normalize() no longer calls it",
+          "ref": "decksite/deck_name.py",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:45:59Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

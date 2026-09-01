@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11649,
+  "triage": [
+    {
+      "batch_id": "t-11672-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "pd500_date() computes the 500 date as seasons.next_rotation() - 5d13h30m; if the rotation date changes, this shifts the PD500 week unexpectedly",
+          "ref": "magic/tournaments.py:109-114",
+          "type": "code"
+        },
+        {
+          "detail": "is_pd500_week() returns True if pd500_date() falls in the 7-day window starting from 'now'; a rotation-date change can silently flip this",
+          "ref": "magic/tournaments.py:122-124",
+          "type": "code"
+        },
+        {
+          "detail": "Emergency patch 'temporary fix for 500 date for PD38' shifted the date by -7 days because the rotation changed \u2014 shows this class of bug has already occurred",
+          "ref": "f91aff5a",
+          "type": "commit"
+        },
+        {
+          "detail": "Reverted the PD38 patch after that season, leaving no permanent fix",
+          "ref": "9cd66256",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11649,
+      "notes": "The bug reproduces whenever the rotation date is revised after the bot starts computing the 500 week. A robust fix would decouple the PD500 date from the computed rotation (e.g., store it explicitly per season or read it from the gatherling schedule). Scope exceeds easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

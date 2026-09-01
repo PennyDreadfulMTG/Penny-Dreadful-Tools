@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11619,
+  "triage": [
+    {
+      "batch_id": "t-11620-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "insert_cards() does a full DELETE+reinsert of the cards DB with no check against decksite.deck_card",
+          "ref": "magic/multiverse.py:170",
+          "type": "code"
+        },
+        {
+          "detail": "decksite_database = 'decksite'; magic_database = 'cards' \u2014 two separate MySQL databases",
+          "ref": "shared/configuration.py:84",
+          "type": "code"
+        },
+        {
+          "detail": "no results \u2014 no cross-DB validation exists in the rebuild path",
+          "ref": "grep deck_card magic/multiverse.py",
+          "type": "search"
+        },
+        {
+          "detail": "update_database_async deletes all cards then reinserts; if a card name disappears, deck_card references silently dangle",
+          "ref": "magic/multiverse.py:139",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11619,
+      "notes": "Requires a cross-database query (decksite.deck_card JOIN magic.card) or name-passing logic between DB connections, plus a decision on the failure mode (abort rebuild? emit warning? open GitHub issue?). More than ~150 lines of new logic plus tests.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

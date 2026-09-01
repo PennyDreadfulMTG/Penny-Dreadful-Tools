@@ -27,5 +27,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Closing because the existing Discord mana emoji setup is working satisfactorily, so adopting Manamoji is not currently needed.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-01T19:41:31Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

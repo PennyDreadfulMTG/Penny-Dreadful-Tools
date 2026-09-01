@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 11715,
+  "triage": [
+    {
+      "batch_id": "t-11715-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Align news item icons more neatly \u2014 commit d52af9dd reworked news icon CSS specifically to handle Noto Emoji glyph sizing",
+          "ref": "#12679",
+          "type": "pr"
+        },
+        {
+          "detail": "Make the margin big enough for even fat news icons \u2014 commit ffd08748 sized the margin to accommodate wider Noto Emoji newspaper glyph",
+          "ref": "#12680",
+          "type": "pr"
+        },
+        {
+          "detail": "--news-icon-width: calc(18rem / 20) with comment 'Size of the newspaper glyph in Noto Emoji at --table-font-size', showing the fix is Noto-specific",
+          "ref": "shared_web/static/css/pd.css:2477",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11715,
+      "notes": "Commit cd3513ae immediately after PR #12680 made a final round of tweaks; all three commits address the same Noto Emoji spacing concern raised in this issue.",
+      "proposed_comment": "Fixed by PRs #12679 and #12680 (merged 2024-05-27): the news icon CSS was reworked to measure the actual width of the Noto Emoji newspaper glyph and use a matching margin (`--news-icon-width: calc(18rem / 20)`, `--news-icon-margin: calc(4rem / 20)` in pd.css:2477\u20132478), giving the icons proper breathing room.",
+      "recorded_at": "2026-09-01T19:41:47Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11715-1",
+      "final_comment": "Fixed by PRs #12679 and #12680 (merged 2024-05-27): the news icon CSS was reworked to measure the actual width of the Noto Emoji newspaper glyph and use a matching margin (`--news-icon-width: calc(18rem / 20)`, `--news-icon-margin: calc(4rem / 20)` in pd.css:2477-2478), giving the icons proper breathing room.",
+      "issue": 11715,
+      "own_evidence": [
+        {
+          "detail": "independently confirmed merged 2024-05-27T15:30:33Z with title 'Align news item icons more neatly'",
+          "ref": "PR #12679",
+          "type": "pr"
+        },
+        {
+          "detail": "independently confirmed merged 2024-05-27T15:45:52Z with title 'Make the margin big enough for even fat news icons'",
+          "ref": "PR #12680",
+          "type": "pr"
+        },
+        {
+          "detail": "independently read: --news-icon-width: calc(18rem / 20) and --news-icon-margin: calc(4rem / 20) present in current master",
+          "ref": "shared_web/static/css/pd.css:2477-2478",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:45:59Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

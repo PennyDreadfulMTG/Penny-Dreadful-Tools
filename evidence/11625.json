@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11625,
+  "triage": [
+    {
+      "batch_id": "t-11639-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "authenticate_callback checks request.values.get('error') for Discord-reported errors but has no try/except around oauth.setup_session(request.url); MismatchingStateError propagates as a 500",
+          "ref": "shared_web/flask_app.py:130-134",
+          "type": "code"
+        },
+        {
+          "detail": "internal_server_error handler creates a GitHub issue for every 500 \u2014 maintainers confirmed in comment that no notification was received, suggesting the error handling path wasn't triggering at the time",
+          "ref": "shared_web/flask_app.py:87-96",
+          "type": "code"
+        },
+        {
+          "detail": "'/unauthorized/' route and Unauthorized view already exist and are used for OAuth error display \u2014 can be reused for MismatchingStateError",
+          "ref": "shared_web/flask_app.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "setup_session calls discord.fetch_token which raises oauthlib.oauth2.rfc6749.errors.MismatchingStateError when session state is lost (e.g. Brave browser strict cookie settings clear session between auth start and callback)",
+          "ref": "shared_web/oauth.py:20-27",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `shared_web/flask_app.py` in `authenticate_callback`, wrap `oauth.setup_session(request.url)` in a try/except for `oauthlib.oauth2.rfc6749.errors.MismatchingStateError` (or the base `OAuth2Error`) and `redirect(url_for('unauthorized', error='CSRF state mismatch \u2014 please try logging in again'))` on error. Import the exception at the top of flask_app.py.",
+      "issue": 11625,
+      "notes": "The MismatchingStateError is expected behaviour when a user's session is lost between initiating OAuth and the callback (common with Brave's aggressive cookie isolation). Treating it as a 500 is a UX bug; the fix just routes it to the existing unauthorized page.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:13Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

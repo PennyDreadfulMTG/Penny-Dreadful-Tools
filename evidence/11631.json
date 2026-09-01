@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11631,
+  "triage": [
+    {
+      "batch_id": "t-11639-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "sorted(cards, key=lambda card: card['name']) \u2014 Python lexicographic comparison puts '\u00c9' (U+00C9=201) after 'z' (U+007A=122), so \u00c9omer sorts last",
+          "ref": "magic/oracle.py:246",
+          "type": "code"
+        },
+        {
+          "detail": "Same plain-name sort in load_cards return statement has the same issue",
+          "ref": "magic/oracle.py:224",
+          "type": "code"
+        },
+        {
+          "detail": "Confirmed this is a Unicode code-point ordering issue; bakert agrees it should sort under 'E'",
+          "ref": "#11631 comment by silasary",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In `magic/oracle.py` at lines 224 and 246, change the sort key to `key=lambda card: unicodedata.normalize('NFKD', card['name']).casefold()` and add `import unicodedata` at the top of the file. NFKD normalization decomposes '\u00c9' to 'E' + combining accent, placing it correctly under 'E' in lexicographic order.",
+      "issue": 11631,
+      "notes": "Both sorted() calls in oracle.py have the same issue; both should be fixed together. No data or schema changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:13Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

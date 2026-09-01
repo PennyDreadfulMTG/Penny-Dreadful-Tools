@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11307,
+  "triage": [
+    {
+      "batch_id": "t-11320-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "h1 renders {{page_title}} as plain text \u2014 no anchor tag, no href",
+          "ref": "decksite/templates/banner.mustache:7",
+          "type": "code"
+        },
+        {
+          "detail": "page_title() returns 'Matchups Calculator' with no link URL provided to template",
+          "ref": "decksite/views/matchups.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "No link back to /matchups/ anywhere in the template \u2014 once a search is active, there is no 'reset' navigation anchor",
+          "ref": "decksite/templates/matchups.mustache:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/matchups.mustache, add a reset link (e.g. `<p><a href=\"/matchups/\">\u2190 All Matchups</a></p>`) at the top of the template, or expose `matchups_url = url_for('metagame.matchups')` in decksite/views/matchups.py and render it in the template as a breadcrumb link near the Query section heading.",
+      "issue": 11307,
+      "notes": "Purely additive UI change \u2014 add a link element; no logic changes needed. The exact placement (banner, top of page, above Query section) is a minor product judgment call but either approach is low-risk.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:46:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

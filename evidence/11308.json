@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11308,
+  "triage": [
+    {
+      "batch_id": "t-11320-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_matches called with where='m.id IN (...)' only \u2014 no constraint on which deck becomes d (person/hero); GROUP BY m.id makes MySQL pick arbitrarily",
+          "ref": "decksite/data/matchup.py:80",
+          "type": "code"
+        },
+        {
+          "detail": "GROUP BY m.id comment: 'We don't want a row for each deck in a match (when the WHERE doesn't include a person)' \u2014 confirms non-determinism when no person filter",
+          "ref": "decksite/data/match.py:111",
+          "type": "code"
+        },
+        {
+          "detail": "hero_deck_ids are known at this point and used to load hero_decks \u2014 they can be reused in the match WHERE clause to pin d to the hero side",
+          "ref": "decksite/data/matchup.py:72",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/matchup.py line 80, change the match WHERE clause to: `where='m.id IN (' + ', '.join(match_ids) + ') AND d.id IN (' + ', '.join(hero_deck_ids) + ')'`. This ensures the hero deck is always d (left/person side) in the match display. No other files need changing.",
+      "issue": 11308,
+      "notes": "The hero_deck_ids list is already available at the match-loading call site; this is a 1-line change to the WHERE string. The GROUP BY m.id in load_matches already deduplicates so no extra rows appear.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:46:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

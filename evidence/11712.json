@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11712,
+  "triage": [
+    {
+      "batch_id": "t-11715-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Regenerate symbol font if we see a non-latin-1 char in a deck name \u2014 adds maybe_regenerate_symbols_font() called from add_deck()",
+          "ref": "0388ca74",
+          "type": "commit"
+        },
+        {
+          "detail": "maybe_regenerate_symbols_font detects non-latin-1 chars and fires a background font-regeneration job via maintenance/fonts, handling the problem automatically",
+          "ref": "decksite/data/deck.py:415",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11712,
+      "notes": "The implementation auto-regenerates the font rather than explicitly scanning all deck names and logging a warning \u2014 a different mechanism than requested, but the practical concern (non-latin chars causing font gaps) is addressed.",
+      "proposed_comment": "Commit 0388ca74 added `maybe_regenerate_symbols_font()` (decksite/data/deck.py:415), which detects non-latin-1 characters whenever a deck is added and automatically triggers a background font regeneration job. The author noted 'it's a bit crude but it'll do', taking an auto-fix approach rather than the log-a-bug approach originally proposed, but the underlying problem is handled.",
+      "recorded_at": "2026-09-01T19:41:47Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

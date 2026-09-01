@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11284,
+  "triage": [
+    {
+      "batch_id": "t-11295-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "all_archetypes loaded with season_id filter \u2014 archetypes with no decks in that season are absent from the list",
+          "ref": "decksite/controllers/metagame.py:134",
+          "type": "code"
+        },
+        {
+          "detail": "load_archetypes WHERE clause includes season_query, so LEFT JOIN on _arch_stats with season filter excludes zero-deck archetypes",
+          "ref": "decksite/data/archetype.py:566",
+          "type": "code"
+        },
+        {
+          "detail": "self.archetypes only populated if archetype is found in (season-filtered) archetypes list; if not found, self.archetypes stays empty",
+          "ref": "decksite/views/archetype.py:72-76",
+          "type": "code"
+        },
+        {
+          "detail": "self.show_archetype_tree = len(self.archetypes) > 0 \u2014 empty archetypes means tree is hidden",
+          "ref": "decksite/views/archetype.py:93",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/metagame.py:134 add a second load call all_archetypes_for_tree = archs.load_archetypes() (no season_id) to capture the full tree structure regardless of deck counts. Update decksite/views/archetype.py __init__ to accept a separate tree_archetypes parameter and use it for the self.archetypes tree-path computation (lines 72-76) while keeping season-filtered archetypes for the stats table.",
+      "issue": 11284,
+      "notes": "The archetype page itself (load_archetype) fetches the archetype without season filter, so the archetype object exists; only the tree lookup fails due to season filtering of all_archetypes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:49:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

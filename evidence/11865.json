@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11865-1",
+      "branch": "sweep/11865-don-t-show-the-arena-printing-of-raging",
+      "files_changed": 2,
+      "head_sha": "5a5c891b5806a95711ed2c99b525fdd01047ed9a",
+      "issue": 11865,
+      "lines_changed": 16,
+      "lint": "passed",
+      "notes": "The fix picks the *first* non-digital printing returned by the DB query (no explicit ordering beyond the existing DB row order). If a specific non-digital set is ever needed, `preferred_printing` can still override it. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen no `preferred_printing` or `preferred_printing_system_id` is set on a card, `scryfall_image()` built a URL with only the card name and no set code. Scryfall then returns the most recent printing, which for cards like Raging Goblin is an Arena-only digital set \u2014 producing Arena art in the bot.\n\n## What changed\n\n- `oracle.get_printings()`: extended the SELECT to also fetch `s.digital` and `s.set_type` from the joined `set` table, so each `Printing` object now carries those fields.\n- `oracle.get_non_digital_printing(c)`: new helper that returns the first printing where `digital` is falsy, or `None` if the card has no DB id or only digital printings exist.\n- `image_fetcher.scryfall_image()`: in the else-branch (no preferred printing set), call `oracle.get_non_digital_printing(c)` and, when a non-digital printing is found, include its `set_code` in the Scryfall URL \u2014 pinning Scryfall to a physical printing rather than accepting whatever the latest digital-only entry is.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (no issues).\n- `uv run --frozen mypy magic/oracle.py magic/image_fetcher.py` \u2014 passed (no issues).\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected (full non-functional suite).\n- All 4 existing `magic/image_fetcher_test.py` tests pass, including `test_canonical_card_uses_default_printing` which exercises the else-branch with a mock card that has no DB id (returns `None` via the early guard).\n\nFixes #11865",
+      "pr_title": "Avoid Arena-only printing when fetching card images (#11865)",
+      "recorded_at": "2026-09-01T19:46:14Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/image_fetcher_test.py",
+        "detail": "845 passed, 1 skipped (full suite via dev.py unit); additionally 4 image_fetcher_test.py tests passed directly with pytest",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11865,
   "triage": [
     {

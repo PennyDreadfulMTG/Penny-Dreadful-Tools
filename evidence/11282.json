@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11282,
+  "triage": [
+    {
+      "batch_id": "t-11295-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue body explicitly asks 'Is that what we want?' \u2014 labeled + question by the reporter",
+          "ref": "#11282",
+          "type": "issue"
+        },
+        {
+          "detail": "self.has_cards = True is set unconditionally; the cards table uses livecardtable which presumably loads cards for the specific archetype (not its children) matching the reported behavior",
+          "ref": "decksite/views/archetype.py:94",
+          "type": "code"
+        },
+        {
+          "detail": "archetype.mustache:13 renders livecardtable \u2014 behavior depends on API query, not clearly changed since issue was filed",
+          "ref": "grep -n livecardtable decksite/templates/archetype.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11282,
+      "notes": "This is a design question about whether archetype-detail card tables should aggregate children like the decks table and matchups do, or show only the leaf archetype's cards. Needs an owner to decide intended behavior before any code change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:49:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

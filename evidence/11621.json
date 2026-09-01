@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11621,
+  "triage": [
+    {
+      "batch_id": "t-11639-1",
+      "class": "question",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current task() function calls multiverse.init() then imports and runs maintenance modules \u2014 no dependency installation step (no pip/uv call) in the code path",
+          "ref": "run.py:120-160",
+          "type": "code"
+        },
+        {
+          "detail": "No dependency installation found in any maintenance script in current master; build.py uses 'uv sync --frozen --dev' but is not called by run.py",
+          "ref": "grep -rn 'pip|uv sync|install' maintenance/*.py",
+          "type": "search"
+        },
+        {
+          "detail": "buildpy() runs 'uv sync --frozen --dev' \u2014 this is separate from the maintenance task runner and not invoked during 'python run.py maintenance daily'",
+          "ref": "build.py:13",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11621,
+      "notes": "Issue is already labeled 'question' by maintainers, has no body beyond 'Reported on Discord by bakert#0', and has 0 comments. The build system has moved from pip to uv since 2023; no code path in current master installs dependencies during maintenance. Cannot confirm the reported errors without running maintenance on the production server.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:43:13Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

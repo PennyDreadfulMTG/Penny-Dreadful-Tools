@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11305,
+  "triage": [
+    {
+      "batch_id": "t-11305-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "matchups() controller loads all archetypes, all people, and all cards unconditionally on every request; results and matches have no limit or pagination",
+          "ref": "decksite/controllers/metagame.py:155",
+          "type": "code"
+        },
+        {
+          "detail": "self.decks and self.matches are assigned from MatchupResults without any paging",
+          "ref": "decksite/views/matchups.py:24",
+          "type": "code"
+        },
+        {
+          "detail": "template iterates {{#show_decks}}\u2026{{> decktable}} and {{#show_matches}}\u2026{{> personmatches}} with no pagination controls",
+          "ref": "decksite/templates/matchups.mustache:43",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment describes desired reacty typeahead UI replacing all three dropdowns, plus multi-criteria hero/enemy input; page already 1.6MB",
+          "ref": "comment on issue #11305",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11305,
+      "notes": "The backlog comment on this issue expands scope significantly beyond simple pagination to a fully reactive multi-criteria UI; that makes it substantially bigger than the issue title alone suggests.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:14Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

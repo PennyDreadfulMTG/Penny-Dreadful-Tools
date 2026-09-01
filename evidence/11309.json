@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11309,
+  "triage": [
+    {
+      "batch_id": "t-11320-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "IFNULL(ROUND(...), '') AS win_percent \u2014 returns '' string when no games, typed as str in Container",
+          "ref": "decksite/data/archetype.py:56",
+          "type": "code"
+        },
+        {
+          "detail": "Same IFNULL pattern for win_percent \u2014 in at least two card SQL queries",
+          "ref": "decksite/data/card.py:23",
+          "type": "code"
+        },
+        {
+          "detail": "Same pattern in person win stats and head_to_head (person.py:228)",
+          "ref": "decksite/data/person.py:120",
+          "type": "code"
+        },
+        {
+          "detail": "MatchupResults.win_percent property explicitly typed -> str, returns '' for no games",
+          "ref": "decksite/data/matchup.py:26",
+          "type": "code"
+        },
+        {
+          "detail": "Explicit c.win_percent = '' assignment \u2014 shows win_percent is used as str sentinel throughout",
+          "ref": "decksite/data/card.py:332",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11309,
+      "notes": "Fixing this properly requires changing multiple SQL queries from IFNULL(..., '') to NULL, updating Python types (float | None), and adjusting template rendering for empty-vs-zero distinction \u2014 spans at least 5 files plus templates.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:46:29Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

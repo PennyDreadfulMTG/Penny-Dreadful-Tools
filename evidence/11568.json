@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11568,
+  "triage": [
+    {
+      "batch_id": "t-11583-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "is_true_match() returns True for 'Bug' because re.search('^[WUBRG]+$', 'Bug', IGNORECASE) matches and len(set('Bug'))==3==len('Bug')",
+          "ref": "decksite/deck_name.py:207-210",
+          "type": "code"
+        },
+        {
+          "detail": "normalize_colors() passes 'Bug' to is_true_match(), then canonicalize_colors(['Bug']) maps B+U+G \u2192 Sultai via name_from_colors()",
+          "ref": "decksite/deck_name.py:180-204",
+          "type": "code"
+        },
+        {
+          "detail": "Fixes #7283 by adding is_true_match to block repeated-letter false positives like 'BRRR'; mixed-case false positives like 'Bug' were not addressed",
+          "ref": "b9c46db8d",
+          "type": "commit"
+        },
+        {
+          "detail": "No test case exists for this specific input; bug is still present in current master",
+          "ref": "grep 'Feat a Bug\\|Unplayable' decksite/deck_name_test.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py, modify is_true_match() to add a guard before the len(set) check: `if color_word != color_word.upper() and color_word != color_word.lower(): return False`. This rejects title-case words like 'Bug' (neither all-caps nor all-lowercase) while keeping all-caps abbreviations like 'BUG' and all-lowercase/single-char 'b' working. Add ('Unplayable Garbage Feat a Bug', 'Unplayable Garbage Feat a Bug', ['U','B','G'], None, 1) to TESTDATA in decksite/deck_name_test.py.",
+      "issue": 11568,
+      "notes": "The fix is ~3 lines in is_true_match plus one test-data tuple. No schema changes. Existing tests for all-caps color codes (BUG, UBG) and lowercase single-char (b, g) would continue passing.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:48:57Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

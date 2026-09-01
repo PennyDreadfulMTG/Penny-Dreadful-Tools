@@ -80,6 +80,23 @@ class DecklistForm(Form):
         except InvalidDataException as e:
             self.errors['decklist'] = str(e)
 
+    def check_only_card_legality(self) -> None:
+        errors: dict[str, dict[str, set[str]]] = {}
+        season_name = seasons.current_season_name()
+        if season_name not in legality.legal_formats(self.deck, None, errors, skip_size_checks=True):
+            self.card_errors = errors.get(season_name, {})
+            if self.card_errors:
+                self.errors['decklist'] = 'Deck contains cards not legal in Penny Dreadful'
+        banned_for_bugs = {c.name for c in self.deck.all_cards() if any(b.get('bannable', False) for b in c.bugs or [])}
+        playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any(not b.get('bannable', False) for b in c.bugs or [])}
+        if len(banned_for_bugs) > 0:
+            self.errors['decklist'] = 'Deck contains cards with game-breaking bugs'
+            self.card_errors['Legality_Bugs'] = banned_for_bugs
+        if len(playable_bugs) > 0:
+            self.warnings['decklist'] = 'Deck contains playable bugs'
+            self.card_warnings['Warnings_Bugs'] = playable_bugs
+        self.use_submitted_aliases_in_card_messages()
+
     def check_deck_legality(self) -> None:
         errors: dict[str, dict[str, set[str]]] = {}
         season_name = seasons.current_season_name()

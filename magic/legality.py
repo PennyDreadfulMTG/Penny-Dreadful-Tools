@@ -8,7 +8,7 @@ FORMATS: set[str] = set()
 def legal_in_format(d: Container, f: str) -> bool:
     return f in legal_formats(d, {f})
 
-def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors: dict[str, dict[str, set[str]]] | None = None) -> set[str]:
+def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors: dict[str, dict[str, set[str]]] | None = None, skip_size_checks: bool = False) -> set[str]:
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS
@@ -26,14 +26,15 @@ def legal_formats(d: Container, formats_to_check: set[str] | None = None, errors
         # I returned here because I want to skip all other checks.
         return formats_to_check - formats_to_discard
 
-    if sum(e['n'] for e in d.maindeck) < 60:
-        for f in formats_to_check:
-            add_error(errors, f, 'Legality_General', 'You have less than 60 cards.')
-            formats_to_discard.add(f)
-    if sum(e['n'] for e in d.sideboard) > 15:
-        for f in formats_to_check:
-            add_error(errors, f, 'Legality_General', 'You have more than 15 cards in your sideboard.')
-            formats_to_discard.add(f)
+    if not skip_size_checks:
+        if sum(e['n'] for e in d.maindeck) < 60:
+            for f in formats_to_check:
+                add_error(errors, f, 'Legality_General', 'You have less than 60 cards.')
+                formats_to_discard.add(f)
+        if sum(e['n'] for e in d.sideboard) > 15:
+            for f in formats_to_check:
+                add_error(errors, f, 'Legality_General', 'You have more than 15 cards in your sideboard.')
+                formats_to_discard.add(f)
     if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) != 100:
         for fmt in {'Commander', 'Duel'}:
             add_error(errors, fmt, 'General', 'Incorrect deck size.')

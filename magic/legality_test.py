@@ -55,3 +55,22 @@ def test_legal_formats() -> None:
     assert season_name in formats
     assert 'Penny Dreadful EMN' in formats
     assert 'Duel' not in formats
+
+
+def test_legal_formats_skip_size_checks() -> None:
+    season_name = seasons.current_season_name()
+
+    d = Deck({'id': 0})
+    d.maindeck = [CardRef('Swamp', 4)]
+    d.sideboard = []
+
+    # Without skip, too few cards → illegal in all formats
+    assert len(legality.legal_formats(d)) == 0
+
+    # With skip_size_checks, card-legal formats are returned despite small deck size
+    formats = legality.legal_formats(d, skip_size_checks=True)
+    assert season_name in formats
+    assert 'Legacy' in formats
+
+    d.sideboard = [CardRef('Swamp', 16)]
+    assert len(legality.legal_formats(d, skip_size_checks=True)) > 0

@@ -28,7 +28,7 @@ const renderItem = (grid, archetype) => (
                 </span>
                 <span className="additional">
                     <span title="Number of Decks">
-                        #{n(archetype.numDecks)}
+                        🃏{n(archetype.numDecks)}
                     </span>
                     <span title="Number of Matches">
                         ⚔{n(archetype.numMatches)}

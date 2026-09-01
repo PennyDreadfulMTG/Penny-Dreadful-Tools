@@ -1091,7 +1091,7 @@ html.dark-mode .icon.dark-mode-toggle::before {
 }
 
 .menu .item:hover .icon, .submenu .item:hover {
-    background-color: var(--tertiary-background);
+    background-color: var(--highlight);
 }
 
 .menu .current .icon, .submenu .current {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12613-1",
+      "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
+      "files_changed": 1,
+      "head_sha": "863d8501f167b7298be9ba927500a67bc34c9c19",
+      "issue": 12613,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Purely cosmetic CSS change \u2014 one property value in the metagame grid. Tiles on wider screens are unaffected (they expand via 1fr). No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## Problem\n\nThe `/metagame` page displays only one tile per row on modern iPhones (viewport ~390px wide). The `.metagame-grid` CSS rule used `minmax(11rem, 1fr)` (176px minimum), so two tiles plus the 0.422rem gap (\u22486.75px) required at least 358.75px \u2014 just barely over the 358px available on some devices, and too wide for others.\n\n## Fix\n\nChanged `minmax(11rem, 1fr)` to `minmax(9rem, 1fr)` in `shared_web/static/css/pd.css` (line 2855). At 9rem (144px), two tiles + gap = 294.75px, which comfortably fits within iPhone viewports (358px+). The grid still expands tiles to fill available space on wider screens via `1fr`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` passed.\n- Change is a single CSS property value; no Python, template, or database changes needed.\n\nFixes #12613",
+      "pr_title": "Reduce metagame grid tile min-width so two fit on iPhone (#12613)",
+      "recorded_at": "2026-09-01T18:11:22Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12613,
   "triage": [
     {

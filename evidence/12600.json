@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12600-1",
+      "branch": "sweep/12600-win-percent-should-never-be-a-string",
+      "files_changed": 6,
+      "head_sha": "04ab95700ab32bb2adb0017f8e11626f38d6c459",
+      "issue": 12600,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The `renderWinPercent` function in `table.jsx` already returns the raw value (or `undefined`), so React renders `null` as nothing in table cells \u2014 no change needed there. The metagame grid was the only JSX site that passed `winPercent` through `n()` without a null check. No schema/migration changes required since this only affects the application-layer IFNULL coercion.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`win_percent` was typed as `str` but returned a numeric string like `'55.3'` when there were matches and `''` (empty string) when there were none. This mixed-type behaviour prevented callers from doing arithmetic on the value and was inconsistent.\n\n## What changed\n\n- **9 SQL sites** (`decksite/data/card.py` \u00d72, `decksite/data/archetype.py` \u00d74, `decksite/data/person.py` \u00d72, `analysis/analysis.py` \u00d71): removed the outer `IFNULL(..., '')` wrapper, leaving `ROUND((SUM(wins) / NULLIF(SUM(wins+losses), 0)) * 100, 1)` which naturally returns `NULL` on divide-by-zero.\n- **`decksite/data/card.py:332`**: changed the placeholder `c.win_percent = ''` to `c.win_percent = None` for the fake card returned when no DB row exists.\n- **`decksite/data/matchup.py`**: changed `MatchupResults.win_percent` return type from `str` to `float | None` and returned `None` instead of `''` for the zero-match case.\n- **`shared_web/static/js/metagamegrid.jsx`**: added a null-guard so that `null` renders as `\u2014` instead of calling `n(null)` which would coerce to `0` and display `0%`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped\n\nFixes #12600",
+      "pr_title": "Return None instead of '' for win_percent when there are no matches (#12600)",
+      "recorded_at": "2026-09-01T18:09:11Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 15.64s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12600,
   "triage": [
     {

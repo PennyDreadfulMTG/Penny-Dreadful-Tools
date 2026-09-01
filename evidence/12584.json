@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12584-1",
+      "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
+      "files_changed": 1,
+      "head_sha": "fb857a747c06a16cd573a90ecedfe6779a0604a3",
+      "issue": 12584,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single-line change adding `--format compact` to the eslint invocation. The compact format is a built-in eslint formatter so no new dependencies are introduced. The `--fix` flag path is unaffected as the format flag is placed before it in the command list.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen `do_jslint()` in `dev.py` ran eslint and encountered issues, eslint's default `stylish` formatter emitted multi-line blocks per problem \u2014 typically 4-6 lines each \u2014 producing ~1000 lines of output for a file with many violations.\n\n## What changed\n\nAdded `--format`, `compact` to the eslint command in `do_jslint()` (`dev.py` line 273). The `compact` formatter emits one line per problem in the form `file:line:col: message [rule]`, preserving all issue information while keeping output proportional to the number of problems found.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python -m pytest dev_test.py::test_find_files -p no:timeout` \u2014 1 passed (only test relevant to `dev.py`; full suite conftest.py hits the database during initialization which timed out in this environment even after MariaDB was started)\n\nFixes #12584",
+      "pr_title": "Use compact format for eslint output to reduce verbosity (#12584)",
+      "recorded_at": "2026-09-01T18:09:34Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest dev_test.py::test_find_files -p no:timeout",
+        "detail": "1 passed in 0.15s; full suite env-blocked by database init in conftest.py timing out at 120s even after MariaDB was started \u2014 the specific dev_test was the only relevant test and it passed",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12584,
   "triage": [
     {

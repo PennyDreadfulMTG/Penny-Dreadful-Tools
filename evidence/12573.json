@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12573-1",
+      "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
+      "files_changed": 1,
+      "head_sha": "280428814c8ed08a07184782d33da010b018ae30",
+      "issue": 12573,
+      "lines_changed": 11,
+      "lint": "passed",
+      "notes": "The mypy hook uses `uv run --frozen` so `uv` must be in PATH for pre-commit to invoke it; this matches the project's documented setup convention. The two `ruff` hooks share the same `id` from the same repo entry \u2014 pre-commit supports this and distinguishes them via the `name:` field. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `.pre-commit-config.yaml` only had a `ruff` hook configured with `--select I --fix`, which runs ruff exclusively as an import-sorter (isort replacement). Full ruff linting and mypy type-checking were never invoked during `git commit`, so pre-commit could pass while `dev.py lint` and `dev.py mypy` both reported failures.\n\n## What changed\n\nTwo hooks added to `.pre-commit-config.yaml`:\n\n1. **Second `ruff` hook** (`name: ruff-lint`) in the existing `astral-sh/ruff-pre-commit` repo entry, with no `--select I` restriction. This runs the full configured ruff rule-set on every commit.\n2. **Local `mypy` hook** using `language: system` with entry `uv run --frozen python dev.py mypy`. This invokes the project's own mypy wrapper (which applies `--warn-unused-ignores` and other project-specific options) on every commit. `pass_filenames: false` lets mypy check the whole project rather than just staged files, which is required for accurate cross-module type inference.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` passes on the changed file.\n- `pre-commit validate-config .pre-commit-config.yaml` passes with no errors.\n- Unit test suite was not run (no database available in this environment); the change is config-only and touches no Python logic.\n\nFixes #12573",
+      "pr_title": "Add ruff full-lint and mypy hooks to pre-commit (#12573)",
+      "recorded_at": "2026-09-01T18:11:56Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed (ruff on .pre-commit-config.yaml)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12573,
   "triage": [
     {

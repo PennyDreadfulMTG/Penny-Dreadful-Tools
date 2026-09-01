@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12606-1",
+      "final_comment": "This was fixed in November 2024 by PR #13378 (commit c9feea8f), which excludes all cards with `promo_types` containing 'playtest' from the oracle database. The playtest 'Pick Your Poison' card no longer exists in our card data, so only the real card's mana cost and image are shown.",
+      "issue": 12606,
+      "own_evidence": [
+        {
+          "detail": "Current master has `if 'playtest' in p.get('promo_types', []):` which skips all playtest cards; the old BAD_PLAYTEST_CARDS hardcoded list is fully removed.",
+          "ref": "magic/multiverse.py:253",
+          "type": "code"
+        },
+        {
+          "detail": "State is MERGED with 1 addition, 5 deletions matching the commit diff \u2014 confirmed via gh pr view 13378.",
+          "ref": "PR #13378",
+          "type": "pr"
+        },
+        {
+          "detail": "No human activity in the last 90 days from 2026-09-01.",
+          "ref": "issue updated 2024-05-16",
+          "type": "activity"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:11:33Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

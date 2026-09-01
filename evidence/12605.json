@@ -32,5 +32,37 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12606-1",
+      "final_comment": "This was fixed by commit 0f1ac991 (2024-05-24), which changed deck color determination to use the intersection of colors across all mana costs rather than the union. For adventure cards like Kellan with {W}{U} (creature) and {1}{G} (adventure), the intersection is empty, so no green stripe appears.",
+      "issue": 12605,
+      "own_evidence": [
+        {
+          "detail": "Current master computes `colors_in_every_cost = set.intersection(*card_colors)` \u2014 intersection across all faces, not union. For Kellan ({W}{U} creature, {1}{G} adventure) the intersection is empty, so no green stripe.",
+          "ref": "magic/colors.py:59",
+          "type": "code"
+        },
+        {
+          "detail": "`'adventure': Layout(has_two_mana_costs=True)` confirmed \u2014 both mana costs are fetched and iterated in find_colors, making the intersection logic apply to adventure cards.",
+          "ref": "magic/layout.py:36",
+          "type": "code"
+        },
+        {
+          "detail": "Commit adds explicit assertion `([], []) == colors.find_colors([kellan_daring_traveler])` confirming green stripe no longer appears.",
+          "ref": "magic/colors_test.py (added in commit 0f1ac991)",
+          "type": "test"
+        },
+        {
+          "detail": "No human activity in the last 90 days from 2026-09-01.",
+          "ref": "issue updated 2024-05-16",
+          "type": "activity"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:11:33Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

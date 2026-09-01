@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12585-2",
+      "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
+      "files_changed": 1,
+      "head_sha": "069160e03eb8fa6ae525a7653a792347552669d2",
+      "issue": 12585,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Pure frontend JSX fix \u2014 two arithmetic lines changed. No Python, no data, no auth touched. The only reviewer pointer: the stacked bar highlight (line 24) already used `metaShare * 100` correctly; only the label-side width was wrong.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`archetype.metaShare` is a decimal fraction (e.g. `0.15` for 15%). On line 25, the remaining-width for the label div was calculated as `100 - archetype.metaShare`, which evaluated to `99.85%` instead of `85%`. This made the label div almost always overflow its container regardless of the actual meta-share value.\n\n## What changed\n\nIn `shared_web/static/js/metagamegrid.jsx`:\n\n- Changed the label div width from `` `${100 - archetype.metaShare}%` `` to `` `${(1 - archetype.metaShare) * 100}%` `` so it correctly occupies the remaining portion of the row.\n- Moved the 8 px spacing from an inline `marginLeft` on the label div to a `gap: \"8px\"` on the parent `flex-row` div, so the two children' widths can honestly sum to 100% without overflowing.\n\n## Validation\n\n`uv run --frozen python dev.py lint` \u2014 **passed**. The unit test suite requires a live MariaDB instance which was not provisioned; `metagamegrid.jsx` is a React component with no Python unit tests, so no relevant tests were skipped.\n\nFixes #12585",
+      "pr_title": "Fix meta share bar width calculation (#12585)",
+      "recorded_at": "2026-09-01T18:12:41Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit shared_web",
+        "detail": "Unit test suite requires a running MariaDB instance; no DB was provisioned. The changed file (metagamegrid.jsx) is a React component with no Python unit tests \u2014 the suite failure is environmental, not caused by this change.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 12585,
   "triage": [
     {

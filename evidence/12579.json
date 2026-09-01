@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12579-1",
+      "branch": "sweep/12579-sort-should-be-sticky-on-metagame",
+      "files_changed": 2,
+      "head_sha": "f307d68172e142018150751df86b27add91b5345",
+      "issue": 12579,
+      "lines_changed": 20,
+      "lint": "passed",
+      "notes": "Change is purely additive frontend state persistence using localStorage; failures (corrupt/missing storage) are caught and silently ignored, so the grid falls back to prop defaults gracefully. No backend changes needed. The selects being made into controlled components also fixes a subtle pre-existing UX bug where the displayed selection could drift from actual state.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/metagame` sort selection (sort field and direction) was not persisted between page loads or when switching seasons/toggling tournament-only mode. Every visit reset to the default `quality / AUTO` sort.\n\n## What changed\n\n**`shared_web/static/js/grid.jsx`**\n- Added a `constructor` that reads `{ sortBy, sortOrder }` from `localStorage` under the key `metagame-sort` and uses those values as the initial state, overriding the prop-supplied defaults.\n- Overrode `sort()` to write `{ sortBy, sortOrder }` to `localStorage` before calling `setState`, so the selection is saved on every user change.\n\n**`shared_web/static/js/metagamegrid.jsx`**\n- Made both sort `<select>` elements controlled by adding `value={grid.state.sortBy}` and `value={grid.state.sortOrder}` so they visually reflect whichever sort was loaded from localStorage (not just the prop-supplied default).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (pre-existing skip, unrelated to this change)\n- The changed files are JSX (frontend only); there are no Python unit tests for this component, but the full unit suite covers the rest of the codebase.\n\nFixes #12579",
+      "pr_title": "Persist metagame sort selection in localStorage (#12579)",
+      "recorded_at": "2026-09-01T18:12:08Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.13s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12579,
   "triage": [
     {

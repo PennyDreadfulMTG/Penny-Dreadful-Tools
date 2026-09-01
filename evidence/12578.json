@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12578-1",
+      "branch": "sweep/12578-more-sort-options-for-metagame",
+      "files_changed": 2,
+      "head_sha": "a3a8858ff4bd9a351490c21f04d1bba38e1ac90e",
+      "issue": 12578,
+      "lines_changed": 10,
+      "lint": "passed",
+      "notes": "All new sort keys map to pure SQL expressions with no schema changes. The `archetype_order_by` guard (`assert sort_order in ['ASC', 'DESC']`) still protects against injection. The JSX options use exact strings that match the Python dict keys, so a typo would silently fall back to the default sort \u2014 no exception.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/metagame` grid only offered a single \"Quality\" sort option based on the Wilson score lower confidence interval at 99% confidence. Users had no way to explore archetypes sorted by a more lenient quality metric (favouring newer/smaller archetypes) or a stricter one (only well-established archetypes), nor by theoretical upside potential.\n\n## What changed\n\n**`decksite/data/clauses.py`**\n- Added `wilson_upper_bound_sql()` \u2014 mirrors `wilson_lower_bound_sql()` but uses `+` instead of `-` in front of the square-root term, giving the upper Wilson confidence bound.\n- Added three entries to `sort_options` in `archetype_order_by()`:\n  - `qualityOptimistic` \u2014 Wilson lower bound at 50% confidence (benefits archetypes with fewer matches).\n  - `qualityStrict` \u2014 Wilson lower bound at 99.999% confidence (only very well-established archetypes rank highly).\n  - `potential` \u2014 Wilson upper bound at default 99% confidence (ranks by upside / potential ceiling).\n\n**`shared_web/static/js/metagamegrid.jsx`**\n- Added three `<option>` elements matching the new backend sort keys: `Quality (Optimistic)`, `Quality (Strict)`, and `Potential`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed).\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (unrelated), 89 deselected in 18.5s.\n\nFixes #12578",
+      "pr_title": "Add quality optimistic, quality strict, and potential sort options to /metagame (#12578)",
+      "recorded_at": "2026-09-01T18:12:30Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12578,
   "triage": [
     {

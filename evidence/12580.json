@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12580-1",
+      "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
+      "files_changed": 4,
+      "head_sha": "f0b8921b6c1bd09896f95e50a1f90463112f93d8",
+      "issue": 12580,
+      "lines_changed": 26,
+      "lint": "passed",
+      "notes": "Stripping category 'S' also removes math symbols (Sm) like \u00b1 and currency symbols (Sc) like \u00a3. These are extremely rare in Magic deck names so the impact is negligible, but a reviewer should be aware. The fix is applied at rendering time only \u2014 stored deck names are not modified.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nDeck names (and potentially archetype/person names) containing emoji or Unicode symbol characters (e.g. `\u270b` in \"Stop That\u270b\") were passed through verbatim into the HTML `<title>` tag and OpenGraph `og:title`/`og:description` meta tags. This caused big yellow emoji to appear in Chrome browser tabs and Google search result snippets, which looks unprofessional.\n\n## What changed\n\n- Added `strip_unsafe_chars(s: str) -> str` in `decksite/view.py` \u2014 strips any character whose Unicode category starts with `'S'` (Symbol: Sm, Sc, Sk, So). This removes emoji and pictographs while preserving CJK, Greek, Cyrillic, and all letter/number characters.\n- Applied it in `View.title()` so the browser `<title>` is always clean.\n- Applied it in `Deck.og_title()`, `Deck.og_description()`, `Archetype.og_title()`, and `Archetype.og_description()` to cover OpenGraph metadata.\n- Added unit tests covering the exact example from the issue (`Stop That\u270b`), plain ASCII, and preservation of CJK/Greek/Cyrillic.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit decksite/view_test.py` \u2014 846 passed, 1 skipped\n- New test `test_strip_unsafe_chars_removes_emoji` passes explicitly.\n\nFixes #12580",
+      "pr_title": "Strip unsafe Unicode Symbol chars from <title> and og: metadata (#12580)",
+      "recorded_at": "2026-09-01T18:11:44Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/view_test.py",
+        "detail": "846 passed, 1 skipped in 17.87s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12580,
   "triage": [
     {

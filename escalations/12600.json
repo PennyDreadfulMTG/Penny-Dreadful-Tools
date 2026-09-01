@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T18:10:09Z",
+  "created_at": "2026-09-01T18:10:01Z",
+  "evidence_refs": [
+    "evidence/12600.json#fix[-1]"
+  ],
+  "issue": 12600,
+  "kind": "pr-ci-failed",
+  "question": "PR #15059 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?",
+  "summary": "failing checks: jslint\n"
+}

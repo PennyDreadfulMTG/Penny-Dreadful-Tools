@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12572-1",
+      "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
+      "files_changed": 1,
+      "head_sha": "f738dad7e0e9c4e9dbb6362d13337dcc087f799a",
+      "issue": 12572,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "One-line cosmetic change in a JSX template; bundle.js is not committed to git (generated at deploy time), so only the source file is in the diff. The lint pass covers JS style; no Python logic was touched.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nOn the `/metagame` grid, the number of decks was prefixed with `#` (e.g. `#42`). The `#` symbol is ambiguous \u2014 it reads as \"rank\" (as in #1) rather than \"count of decks\", which was confusing.\n\n## What changed\n\nIn `shared_web/static/js/metagamegrid.jsx` line 31, replaced `#` with `\ud83c\udccf` (playing card joker emoji). This matches the style of all other stats in the grid which use Unicode/emoji icons: \u2694 for matches, \u2460 for tournament wins, \u2467 for top 8s, and \ud83c\udfc6 for 5-0 league runs. The bundle was rebuilt locally to confirm webpack compiles cleanly.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `npm run build` \u2014 compiled successfully with 0 errors (3 pre-existing asset-size warnings, unchanged)\n- Bundle confirmed to contain the `\ud83c\udccf` character\n\nFixes #12572",
+      "pr_title": "Replace # with \ud83c\udccf as deck count icon on /metagame (#12572)",
+      "recorded_at": "2026-09-01T18:12:19Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (lint only; unit tests not run as they require a database and the fix is a one-character UI change with no Python logic)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12572,
   "triage": [
     {

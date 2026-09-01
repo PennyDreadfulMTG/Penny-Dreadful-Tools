@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12144,
+  "triage": [
+    {
+      "batch_id": "t-12144-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize_version runs first turning 'version 2' into 'v2', then add_colors_if_no_deck_name is called but name is non-empty so returns unchanged",
+          "ref": "decksite/deck_name.py:110-111",
+          "type": "code"
+        },
+        {
+          "detail": "add_colors_if_no_deck_name only adds colors when name is empty string; 'v2' is non-empty so no colors/archetype are added",
+          "ref": "decksite/deck_name.py:240-243",
+          "type": "code"
+        },
+        {
+          "detail": "test documents current behavior: ('version 2', 'v2', ['U'], 'Mono Blue Aggro', 17) \u2014 expected is 'v2' not 'Mono Blue Aggro v2'",
+          "ref": "decksite/deck_name_test.py:246",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py, after normalize_version at line 110, detect if the resulting name is a bare version marker (matches ^v\\d[.\\d]*$). If so, temporarily blank the name before calling add_colors_if_no_deck_name/normalize_colors/add_archetype_if_just_colors, then append the version suffix to the result. Update the test at decksite/deck_name_test.py:246 to expect 'Mono Blue Aggro v2' instead of 'v2'.",
+      "issue": 12144,
+      "notes": "The test at line 246 was added to document current (broken) behavior, not desired behavior. The fix is isolated to normalize() and requires only a helper function and a few lines of restructuring.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:18:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

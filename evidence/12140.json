@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12140,
+  "triage": [
+    {
+      "batch_id": "t-12144-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "remove_extraneous_hyphens only strips leading/trailing hyphens; mid-name hyphens are untouched by design",
+          "ref": "decksite/deck_name.py:384-386",
+          "type": "code"
+        },
+        {
+          "detail": "Tests show hyphens are intentionally kept in some names (Elves-N-Taxes3, hyper-cascade-v5-for-nuutz) while the issue wants them removed in others (this-is-a-deck-name, S22 Cadaverslide-V26)",
+          "ref": "decksite/deck_name_test.py:141-142",
+          "type": "code"
+        },
+        {
+          "detail": "Issue body itself asks 'can we come up with a rule?' \u2014 no rule exists yet and the comment notes partial mitigation from not-lowercasing",
+          "ref": "#12140",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12140,
+      "notes": "Decision needed: when should a hyphen be treated as a word separator (and removed/replaced by a space) vs. a legitimate part of a compound name? The answer determines whether to touch remove_extraneous_hyphens or add a new step.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:18:07Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

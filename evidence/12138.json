@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12138,
+  "triage": [
+    {
+      "batch_id": "t-12144-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Partial fix: stopped lowercasing deck names before sanitizing, so AggroSlide is preserved IF the player already typed it correctly. Fixes #12152 but not #12138.",
+          "ref": "8d680991",
+          "type": "commit"
+        },
+        {
+          "detail": "titlecase.titlecase() is still applied after normalize, so 'aggroslide' becomes 'Aggroslide' not 'AggroSlide' \u2014 the archetype-aware correction the issue requests is absent",
+          "ref": "decksite/deck_name.py:115",
+          "type": "code"
+        },
+        {
+          "detail": "normalize() has access to d.get('archetype_name') but only uses it to decide whether to skip color-adding steps; it does not use it to correct casing of tokens within the name",
+          "ref": "decksite/deck_name.py:84-122",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12138,
+      "notes": "Full fix would require: (1) a lookup of known archetype names (either from DB at sanitization time or a prebuilt list), (2) a token-matching step that replaces incorrectly-cased tokens with the canonical archetype casing. Lowercased MTGO usernames add further complexity.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:18:07Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

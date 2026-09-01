@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12141,
+  "triage": [
+    {
+      "batch_id": "t-12144-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Pattern 1 of remove_pd requires the trailing number to match season_id OR one of the letter suffixes; for '[PD2] Big Blue' with season_id=3, '2' matches neither, so the match fails",
+          "ref": "decksite/deck_name.py:154",
+          "type": "code"
+        },
+        {
+          "detail": "Pattern 2 then matches and strips '[PD' (opening bracket + PD) but leaves '2] Big Blue' \u2014 confirmed by running both patterns in Python: season_id=2 \u2192 'Big Blue', season_id=3 \u2192 '2] Big Blue'",
+          "ref": "decksite/deck_name.py:155",
+          "type": "code"
+        },
+        {
+          "detail": "Only test case for remove_pd('[PD2] Big Blue') uses season_id=2 (the passing case); no test covers season_id != 2",
+          "ref": "decksite/deck_name_test.py:340",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py remove_pd(), add a new re.sub before the existing patterns that handles '[PDN]' bracket form for any digit N, e.g. re.sub(r'(^| )\\[pd\\d*\\]( |$)', '\\1\\2', name, flags=re.IGNORECASE). Add a test to decksite/deck_name_test.py for remove_pd('[PD2] Big Blue', 3) == 'Big Blue'.",
+      "issue": 12141,
+      "notes": "The existing test at line 340 only covers the same-season case; the bug only manifests when the deck's season_id differs from the number embedded in the [PDN] tag.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:18:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

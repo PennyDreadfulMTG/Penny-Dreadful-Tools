@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12296-2",
+      "branch": "sweep/12296-shared-decorators-lock-is-unused-and-doe",
+      "files_changed": 1,
+      "head_sha": "b1f52b81f4b4069d5966c509151ae9908aa24663",
+      "issue": 12296,
+      "lines_changed": 3,
+      "lint": "passed",
+      "notes": "Pure deletion of a no-op function with zero callers. The remaining `FuncType` and `T` TypeVar definitions are still used by `retry_after_calling` so were left in place. No other issues found.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`shared/decorators.py` contained a `lock` decorator that was neither used anywhere in the codebase (confirmed by grep) nor did anything useful \u2014 it simply called the wrapped function directly (`return func()`), providing no locking semantics whatsoever.\n\n## What changed\n\nDeleted the two-line `lock` function (lines 34-35) from `shared/decorators.py`. No other files required updating since there were zero callers.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed on the touched file.\n- Unit tests could not run: the test suite's `conftest.py` requires a live MariaDB connection which was unavailable in this cloud environment. The change is a pure deletion of dead code with no callers, so test impact is nil.\n\nFixes #12296",
+      "pr_title": "Remove unused shared.decorators.lock no-op decorator (#12296)",
+      "recorded_at": "2026-09-01T19:17:52Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest shared/ -m 'not functional and not perf'",
+        "detail": "conftest.py requires a live database connection (DatabaseConnectionRefusedException on startup); no DB was available in this cloud workspace. Lint passed cleanly on the touched file.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 12296,
   "triage": [
     {

@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12236-1",
+      "final_comment": "This achievement was added in commit 53ec4676 (June 2025). Both KickoffTop8 and KickoffWinner achievements now exist in decksite/data/achievements.py, with KickoffWinner tracking first-place finishes in Kick Off tournaments.",
+      "issue": 12236,
+      "own_evidence": [
+        {
+          "detail": "independently verified: commit exists, titled 'added kickoff top8s and victories achievements', modifies only decksite/data/achievements.py (+28 lines)",
+          "ref": "53ec4676",
+          "type": "commit"
+        },
+        {
+          "detail": "KickoffWinner class present in current master with sql filtering d.finish=1 and cf.name LIKE '%%Kick off%%', directly matching the requested feature",
+          "ref": "decksite/data/achievements.py:864",
+          "type": "code"
+        },
+        {
+          "detail": "KickoffTop8 class also present, tracking top-8 finishes in Kick Off tournaments",
+          "ref": "decksite/data/achievements.py:850",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:16:11Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

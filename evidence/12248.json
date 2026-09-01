@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12248-1",
+      "branch": "sweep/12248-hype-message-could-say-how-soon-a-card-c",
+      "files_changed": 2,
+      "head_sha": "a3f3587169b3ad00919187e45fba1290b12c3bf3",
+      "issue": 12248,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The `soonest_elimination` formula derives from the elimination condition `remaining_runs + hits < threshold`: solving for the minimum additional runs k gives `k >= TOTAL_RUNS - runs - threshold + hits + 1`. Using `min_hits_in_undecided` with `default=threshold` ensures the value is non-negative when no undecided cards exist (though the block is guarded by `num_undecided > 0`). No other issues found.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe rotation hype message showed \"Next new cards confirmed in N runs time\" but:\n1. Used \"runs time\" instead of the clearer \"hours\" (since `TOTAL_RUNS = 168` maps directly to hours in a week).\n2. Gave no indication of how soon the *first card could be eliminated* from rotation contention.\n\n## What changed (`magic/rotation.py`)\n\n- Renamed \"runs time\" \u2192 \"hours\" in the \"Next new cards confirmed\" line.\n- Added `min_hits_in_undecided`: the fewest hits any still-undecided card has accumulated.\n- Computed `soonest_elimination = TOTAL_RUNS - runs + min_hits_in_undecided - threshold + 1`: the minimum additional runs before any undecided card can be mathematically eliminated.\n- Appended `\\nNext elimination in {soonest_elimination} hours.` to the hype message when there are undecided cards.\n- Updated the existing test assertion to match the new wording and include the new line.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks).\n- `uv run --frozen python dev.py unit magic.rotation` \u2014 845 passed, 1 skipped (no failures).\n\nFixes #12248",
+      "pr_title": "Add next-elimination countdown and fix 'hours' wording in hype message (#12248)",
+      "recorded_at": "2026-09-01T19:15:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic.rotation",
+        "detail": "845 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12248,
   "triage": [
     {

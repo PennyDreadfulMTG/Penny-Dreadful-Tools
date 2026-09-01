@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12142,
+  "triage": [
+    {
+      "batch_id": "t-12144-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "all remove_pd patterns require either a space/boundary or a hyphen around 'penny'; 'Penny31LakeTrickery' has 'penny' immediately followed by a digit with no separator, so no pattern matches",
+          "ref": "decksite/deck_name.py:153-160",
+          "type": "code"
+        },
+        {
+          "detail": "remove_season uses \\b word boundaries; in 'Penny31LakeTrickery' after removing 'penny', '31' is surrounded by word chars ('y31L'), so \\b does not fire",
+          "ref": "decksite/deck_name.py:271-273",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comment cites a specific unhandled test case ('Penny31BlueSteel','Penny31bluesteel') and the issue body itself suggests the regex approach is fundamentally limited here",
+          "ref": "#12142",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12142,
+      "notes": "Fix requires either: (a) a new remove_pd sub-pattern that strips 'penny' when immediately followed by digits (e.g. r'^penny(\\d+)'), plus a matching remove_season change to strip leading digit+letter sequences, or (b) a more parser-like approach as suggested in the issue body. Both carry non-trivial false-positive risk and need many new test cases.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:18:07Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -2,27 +2,25 @@
   "active_workspaces": 16,
   "alert": null,
   "caps": {
-    "closures_today": 17,
+    "closures_today": 18,
     "prs_today": 25
   },
   "counts": {
-    "closed": 24,
-    "deferred_human": 31,
-    "escalated": 8,
-    "fix_leased": 9,
-    "fix_pending": 1,
-    "fix_pushed": 47,
-    "pending": 409,
+    "closed": 25,
+    "deferred_human": 30,
+    "escalated": 10,
+    "fix_leased": 10,
+    "fix_pushed": 49,
+    "pending": 404,
     "pr_open": 43,
-    "reported": 88,
+    "reported": 90,
     "skipped": 1,
     "triage_leased": 30,
-    "triaged": 7,
-    "verify_leased": 1
+    "triaged": 7
   },
-  "heartbeat": "2026-09-01T19:14:29Z",
+  "heartbeat": "2026-09-01T19:18:39Z",
   "max_open_prs": 30,
-  "open_escalations": 8,
+  "open_escalations": 10,
   "open_sweep_prs": 25,
   "pause_until": null,
   "paused": false,
@@ -30,8 +28,8 @@
   "pr_backpressure": false,
   "totals": {
     "infra_failures": 0,
-    "nudges": 26,
-    "workspaces_created": 199
+    "nudges": 27,
+    "workspaces_created": 205
   },
   "unregistered_workspaces": []
 }

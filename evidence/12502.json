@@ -1,0 +1,73 @@
+{
+  "fix": [],
+  "issue": 12502,
+  "triage": [
+    {
+      "batch_id": "t-12512-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Even out the seasons grid on player pages \u2014 replaced bare <i> elements (which gave asymmetric hover highlight) with a CSS grid using .season-icon-link cells",
+          "ref": "2f6cdc35",
+          "type": "commit"
+        },
+        {
+          "detail": "PR merged 2026-08-24; description explicitly says old inline icons had the glyph off-centre in an oddly-shaped hover box due to Keyrune margin-right",
+          "ref": "#14984",
+          "type": "pr"
+        },
+        {
+          "detail": "Seasons played now rendered in <p class='season-grid'> with <a class='season-icon-link'>",
+          "ref": "decksite/templates/person.mustache:49-53",
+          "type": "code"
+        },
+        {
+          "detail": ".season-grid .season-icon-link has padding: 0 0.238rem \u2014 equal left and right padding",
+          "ref": "shared_web/static/css/pd.css:2614-2623",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12502,
+      "notes": "PR #14984 body explicitly identifies the same root cause described in this issue. Issue can be closed.",
+      "proposed_comment": "This was fixed by PR #14984 (merged 2026-08-24, commit 2f6cdc35): the seasons-played section now uses a CSS grid layout (`season-grid` / `season-icon-link`) with symmetric `padding: 0 0.238rem`, replacing the old bare `<i>` elements whose Keyrune `margin-right` caused the off-centre, asymmetric hover highlight.",
+      "recorded_at": "2026-09-01T18:33:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12504-1",
+      "final_comment": "Fixed by PR #14984 (merged 2026-08-24, commit 2f6cdc35): the seasons-played section now uses a CSS grid layout (season-grid / season-icon-link) with symmetric padding: 0 0.238rem, replacing the old bare <i> elements whose Keyrune margin-right caused the off-centre, asymmetric hover highlight.",
+      "issue": 12502,
+      "own_evidence": [
+        {
+          "detail": "seasons-played section now uses <p class='season-grid'> with <a class='season-icon-link'> elements, confirmed in file",
+          "ref": "decksite/templates/person.mustache:49-53",
+          "type": "code"
+        },
+        {
+          "detail": ".season-grid .season-icon-link has padding: 0 0.238rem \u2014 symmetric left and right padding, confirmed in file",
+          "ref": "shared_web/static/css/pd.css:2614-2621",
+          "type": "code"
+        },
+        {
+          "detail": "commit exists, dated 2026-08-23: 'Even out the seasons grid on player pages'",
+          "ref": "2f6cdc35",
+          "type": "commit"
+        },
+        {
+          "detail": "PR merged, state MERGED, title 'Even out the seasons grid on player pages'",
+          "ref": "pr #14984",
+          "type": "pr"
+        }
+      ],
+      "recent_human_activity": true,
+      "recorded_at": "2026-09-01T18:42:49Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

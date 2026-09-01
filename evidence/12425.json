@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12425,
+  "triage": [
+    {
+      "batch_id": "t-12444-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "POST /api/doorprize only records the winner sent by pdbot; selection logic is not in this repo",
+          "ref": "decksite/controllers/api.py:629",
+          "type": "code"
+        },
+        {
+          "detail": "set_doorprize() simply inserts the provided winner into the doorprize table \u2014 no eligibility logic here",
+          "ref": "decksite/data/competition.py:204",
+          "type": "code"
+        },
+        {
+          "detail": "No door-prize selection/eligibility code found anywhere in this repository; the bug is in the PDBot codebase",
+          "ref": "grep -rn doorprize penny-dreadful-tools",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12425,
+      "notes": "The door prize candidate selection (filtering out players who made top 8 vs. those who dropped before top 8) lives in the PDBot project, not in penny-dreadful-tools. The fix needs to happen there.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

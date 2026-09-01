@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12455-1",
+      "branch": "sweep/12455-make-decksite-db-ports-configurable-in-d",
+      "files_changed": 2,
+      "head_sha": "b6789438c1d14fdfdbb5389eae17515e6f245f28",
+      "issue": 12455,
+      "lines_changed": 17,
+      "lint": "passed",
+      "notes": "All defaults match the previous hard-coded values so existing setups need no `.env` changes. The adminer service was also converted for consistency (not explicitly mentioned in the issue but it is the same class of problem). No Python source was touched.",
+      "outcome": "pushed",
+      "pr_body": "## Problem\n\nThe docker-compose dev setup hard-coded host port bindings (`80`, `5001`, `3306`, `8080`, `6379`). Developers with conflicts on those ports had no way to remap them without editing `docker-compose.yml` directly.\n\n## Changes\n\n- **`docker-compose.yml`**: All five port bindings now use Docker Compose environment variable substitution with sensible defaults:\n  - `decksite`: `${DECKSITE_HOST_PORT:-80}:80`\n  - `logsite`: `${LOGSITE_HOST_PORT:-5001}:5001`\n  - `db`: `${DB_HOST_PORT:-3306}:3306`\n  - `adminer`: `${ADMINER_HOST_PORT:-8080}:8080`\n  - `redis`: `${REDIS_HOST_PORT:-6379}:6379`\n- **`.env.example`**: Added the five new variables with their default values so developers know they can override them by setting these in their `.env` file.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- No Python source files were changed, so unit tests are not applicable to this change. Docker Compose interpolation syntax (`${VAR:-default}`) is well-established and the defaults preserve existing behaviour exactly.\n\nFixes #12455",
+      "pr_title": "Make decksite, db, and redis host ports configurable in docker dev setup (#12455)",
+      "recorded_at": "2026-09-01T18:43:34Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (lint only \u2014 unit tests not applicable to docker-compose/env changes)",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12455,
+  "triage": [
+    {
+      "batch_id": "t-12458-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "decksite still uses hardcoded port '80:80'; logsite '5001:5001'; db '3306:3306'; redis '6379:6379' \u2014 no env var substitution",
+          "ref": "docker-compose.yml:8",
+          "type": "code"
+        },
+        {
+          "detail": "docker compose: add logsite, rename 'web' to decksite \u2014 changed port from 5000 to 80 but kept hardcoded",
+          "ref": "3950dc58",
+          "type": "commit"
+        },
+        {
+          "detail": "Original docker-compose used port 5000:5000, confirming this was the Mac-conflict port mentioned in the issue",
+          "ref": "8145673b",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": "In docker-compose.yml change each port binding to use env-var substitution: e.g. `\"${DECKSITE_HOST_PORT:-80}:80\"`, `\"${DB_HOST_PORT:-3306}:3306\"`, `\"${REDIS_HOST_PORT:-6379}:6379\"`. Add corresponding entries with defaults to .env.example. No other files need changing.",
+      "issue": 12455,
+      "notes": "The macOS port-5000 conflict was partially addressed by switching to port 80 in 3950dc58, but ports are still hardcoded. The configurable-port request is still valid and limited to docker-compose.yml.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

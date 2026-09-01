@@ -1,0 +1,51 @@
+{
+  "fix": [],
+  "issue": 12465,
+  "triage": [
+    {
+      "batch_id": "t-12470-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The /decks/<deck_id>/oembed endpoint; code comment inside says 'Discord doesn't actually show this yet'",
+          "ref": "decksite/controllers/api.py:754-769",
+          "type": "code"
+        },
+        {
+          "detail": "oembed_url() method on Deck view returns url_for('deck_embed', ...)",
+          "ref": "decksite/views/deck.py:82-83",
+          "type": "code"
+        },
+        {
+          "detail": "DeckEmbed class is a pass-through subclass of Deck used only by the oembed endpoint",
+          "ref": "decksite/views/deck.py:146-147",
+          "type": "code"
+        },
+        {
+          "detail": "<link rel='alternate' type='application/json+oembed'> tag conditional on oembed_url",
+          "ref": "decksite/templates/header.mustache:21-25",
+          "type": "code"
+        },
+        {
+          "detail": "24-line embed template used only by the oembed endpoint",
+          "ref": "decksite/templates/deckembed.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "Smoke test explicitly skips /oembed routes; removing oembed removes this special-case exclusion",
+          "ref": "shared_web/smoke.py:40",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Delete decksite/templates/deckembed.mustache. In decksite/controllers/api.py remove the deck_embed() function and its route decorator (~16 lines). In decksite/views/deck.py remove oembed_url() method and DeckEmbed class (~6 lines). In decksite/templates/header.mustache remove the {{#oembed_url}}...{{/oembed_url}} block (5 lines). In shared_web/smoke.py:40 remove the 'or rule_path.endswith(\"/oembed\")' guard. Total: ~30 lines removed across 5 files.",
+      "issue": 12465,
+      "notes": "The in-code comment explicitly states Discord never used this endpoint. No external consumers are known. Removing the smoke.py exclusion is a net improvement as that route will now be tested (but the route will be gone).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

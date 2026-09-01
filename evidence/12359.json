@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12359,
+  "triage": [
+    {
+      "batch_id": "t-12364-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_season_count() does COUNT(*) WHERE archetype_id IS NOT NULL with no match-count filter \u2014 zero-match decks are included in the playability denominator",
+          "ref": "decksite/data/playability.py:149",
+          "type": "code"
+        },
+        {
+          "detail": "deck_cache table has wins, draws, losses columns \u2014 a filter of wins+losses+draws>0 is technically available",
+          "ref": "decksite/data/deck.py:406",
+          "type": "code"
+        },
+        {
+          "detail": "Author's own comment says 'may lead to some far-reaching changes like every table having num matches not num decks' \u2014 explicitly anticipates broad scope beyond a one-line filter",
+          "ref": "issue:12359 comment (bakert)",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12359,
+      "notes": "The minimum fix (add wins+losses+draws>0 JOIN to deck_cache in 6+ preaggregate_* functions) touches >150 lines across playability.py and requires a decision on the broader question of whether to switch from deck-count to match-count denominators throughout. Classify as needs-work pending that architectural choice.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

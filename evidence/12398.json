@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12398,
+  "triage": [
+    {
+      "batch_id": "t-12411-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "unique cards shown as a plain <section> list; trailblazer cards shown as a <ul> with season icons \u2014 neither uses cardtable or livecardtable",
+          "ref": "decksite/templates/person.mustache:56-81",
+          "type": "code"
+        },
+        {
+          "detail": "unique_cards and trailblazer_cards loaded as card objects, not as API-driven table data",
+          "ref": "decksite/views/person.py:65-79",
+          "type": "code"
+        },
+        {
+          "detail": "livecardtable accepts base_query \u2014 rotation/changes uses this pattern but person page does not",
+          "ref": "decksite/templates/livecardtable.mustache:6",
+          "type": "code"
+        },
+        {
+          "detail": "rotation_changes passes base_query to livecardtable as reference for the 'type we are developing' mentioned in the issue",
+          "ref": "decksite/views/rotation_changes.py:23-24",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12398,
+      "notes": "Comment on issue from bakert confirms livecardtable with base_query is the direction for rotation/changes and asks if same applies here. Implementation needs new API queries per-person for unique/trailblazer cards, template changes, and decisions about which columns to show for trailblazer (including first-played season).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

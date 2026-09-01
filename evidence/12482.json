@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12482,
+  "triage": [
+    {
+      "batch_id": "t-12484-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Admin archetypes page is still a mustache template with server-rendered HTML form",
+          "ref": "decksite/templates/editarchetypes.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "Route /admin/archetypes/ renders EditArchetypes view via mustache, no React component exists for this page",
+          "ref": "decksite/controllers/admin.py:63",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12482,
+      "notes": "The page has complex POST-based interaction (queue assignment, archetype moves, rule editing) that would require building new React components and REST API endpoints before removing the mustache template. Scope is larger than 150 lines.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:34:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

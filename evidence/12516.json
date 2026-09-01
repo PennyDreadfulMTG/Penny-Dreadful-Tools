@@ -27,5 +27,27 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12516-1",
+      "final_comment": "This was fixed in commit bf3ff9cc (2026-08-21): the netdecking explain command now links to /metagame/ instead of /archetypes/, and the 'All Decklists' link was also removed.",
+      "issue": 12516,
+      "own_evidence": [
+        {
+          "detail": "independently read: netdecking entry links to fetcher.decksite_url('/metagame/') under key 'Metagame'; no /archetypes/ link present",
+          "ref": "discordbot/commands/explain.py:78-86",
+          "type": "code"
+        },
+        {
+          "detail": "git show confirms: removed 'Archetypes' and 'All Decklists' links, added 'Metagame': fetcher.decksite_url('/metagame/'), dated Aug 21 2026",
+          "ref": "bf3ff9cc",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:33:37Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

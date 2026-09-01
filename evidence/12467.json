@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12467-1",
+      "branch": "sweep/12467-don-t-use-inline-styles-in-manabase",
+      "files_changed": 2,
+      "head_sha": "f510a772",
+      "issue": 12467,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "Purely cosmetic change moving presentation out of the template into the stylesheet. No behavior change; rendered output is identical.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `<pre>` element in `decksite/templates/manabase.mustache` used an inline `style` attribute (`font-family: monospace; overflow: scroll`) instead of a CSS class, violating the project's convention of keeping styles in stylesheets.\n\n## What changed\n\n- `decksite/templates/manabase.mustache`: replaced `style=\"font-family: monospace; overflow: scroll\"` with `class=\"manabase-output\"` on the `<pre>` element\n- `shared_web/static/css/pd.css`: added `.manabase-output { font-family: monospace; overflow: scroll; }` near the end of the file\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped in 18.08s\n\nFixes #12467",
+      "pr_title": "Replace inline style with CSS class in /manabase output (#12467)",
+      "recorded_at": "2026-09-01T18:43:01Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.08s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12467,
+  "triage": [
+    {
+      "batch_id": "t-12470-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current code: <pre style=\"font-family: monospace; overflow: scroll\">{{output}}</pre> \u2014 inline styles that the issue explicitly flags as a hack",
+          "ref": "decksite/templates/manabase.mustache:11",
+          "type": "code"
+        },
+        {
+          "detail": "The project's single CSS file; a new rule for .manabase-output pre (or equivalent class) can be added here",
+          "ref": "shared_web/static/css/pd.css",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/manabase.mustache:11, replace the inline style attribute with a class, e.g. class=\"manabase-output\". Add a corresponding CSS rule in shared_web/static/css/pd.css: .manabase-output { font-family: monospace; overflow: scroll; }. Two files, ~3 lines changed.",
+      "issue": 12467,
+      "notes": "Purely cosmetic/structural refactor with no behavior change. The manabase feature itself was added in commit 93ecd0e6 and is currently in master (via 8c6255e2).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

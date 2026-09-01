@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12494-1",
+      "branch": "sweep/12494-leave-chance-midrange-doesn-t-work-in-ar",
+      "files_changed": 2,
+      "head_sha": "63826d7928106575d79b42c1b7c6ebccbd773726",
+      "issue": 12494,
+      "lines_changed": 12,
+      "lint": "passed",
+      "notes": "The path: converter makes Flask greedy, which is identical to how /cards/<path:name>/ already works in the same file \u2014 that pattern is well-established here. The SQL change uses a nested REPLACE, which is safe and index-agnostic (the archetype table is small). No schema or data migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nArchetype names containing `//` (like \"Leave // Chance Midrange\") failed to load via `/archetypes/<name>/` URLs for two reasons:\n\n1. The route pattern `<archetype_id>` does not match path segments containing `/`, so Flask returned 404 for any archetype whose URL slug included a slash.\n2. Reverse proxies in front of the app collapse repeated slashes, so `/archetypes/Leave // Chance Midrange/` arrives as `/archetypes/Leave / Chance Midrange/` (single slash). The `load_archetype()` SQL then compared that against DB rows where the name still has `//`, so no row was found.\n\n## What changed\n\n**`decksite/controllers/metagame.py`** (4 route decorators + 1 handler call):\n- Changed all four `<archetype_id>` route parameters to `<path:archetype_id>`, mirroring the existing card handler, so Flask accepts slashes in the archetype segment.\n- Applied the already-present `merge_slashes()` helper to the captured `archetype_id` before passing it to `load_archetype()`, normalising any proxy-collapsed single-slash to the canonical form used in the DB lookup.\n\n**`decksite/data/archetype.py`** (`load_archetype()` SQL):\n- Changed `REPLACE(name, '-', ' ')` to `REPLACE(REPLACE(name, ' // ', ' / '), '-', ' ')` so the DB-side name is also normalised to single-slash before comparison. This lets `Leave / Chance Midrange` (from the proxy-collapsed URL) match `Leave // Chance Midrange` (stored in DB).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 **passed** (all checks)\n- `uv run --frozen python dev.py unit` \u2014 **845 passed**, 1 skipped, 89 deselected\n\nFixes #12494",
+      "pr_title": "Fix archetype URLs with // in name not matching routes (#12494)",
+      "recorded_at": "2026-09-01T18:43:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.12s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12494,
+  "triage": [
+    {
+      "batch_id": "t-12498-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Archetype routes use <archetype_id> (Flask default converter) which does not accept forward slashes, so URLs like /archetypes/leave // chance midrange/ are never matched",
+          "ref": "decksite/controllers/metagame.py:125-128",
+          "type": "code"
+        },
+        {
+          "detail": "Card routes already use <path:name> which accepts slashes, and handle proxy-merged slashes via merge_slashes() and is_canonical_url_name()",
+          "ref": "decksite/controllers/metagame.py:73-76",
+          "type": "code"
+        },
+        {
+          "detail": "load_archetype() name lookup uses REPLACE(name, '-', ' ') but does not normalize // vs / in the name string",
+          "ref": "decksite/data/archetype.py:27-35",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/metagame.py: change the 4 archetype route patterns at lines 125-128 from <archetype_id> to <path:archetype_id>. Add a merge_slashes step in the archetype() handler analogous to the card handler (lines 93-107). In decksite/data/archetype.py load_archetype(), normalize the double-slash in the DB lookup: replace ' // ' with ' / ' before the REPLACE(name, '-', ' ') comparison, mirroring how the proxy collapses //-slashes. ~15-20 lines total, no schema changes.",
+      "issue": 12494,
+      "notes": "The card route already demonstrates the <path:converter> pattern works alongside <any(tournament,league):deck_type> in Flask. The proxy slash-merging behavior is documented in metagame.py:96-98 and applies equally to archetypes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

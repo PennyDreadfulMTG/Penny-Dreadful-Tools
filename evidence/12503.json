@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12503,
+  "triage": [
+    {
+      "batch_id": "t-12512-1",
+      "class": "question",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "set_legal_icons() still generates raw HTML strings of <a class='season-icon-link'> into a .ss-grid container \u2014 not using season-grid",
+          "ref": "decksite/prepare.py:260-265",
+          "type": "code"
+        },
+        {
+          "detail": "Card/deck legality still uses <p class='ss-grid'> with inline {{{legal_icons}}}",
+          "ref": "decksite/templates/legal.mustache:6",
+          "type": "code"
+        },
+        {
+          "detail": "PR body notes it tried sharing one container class with legality grid but numbers became ragged, so left card/deck legality unchanged",
+          "ref": "#14984",
+          "type": "pr"
+        },
+        {
+          "detail": "Player seasons played now does use season-grid \u2014 that part of the question is answered",
+          "ref": "decksite/templates/person.mustache:49-53",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12503,
+      "notes": "The player-seasons-played part was addressed by PR #14984. Card/deck legality icons still use ss-grid with inline HTML from set_legal_icons(). The issue is a design discussion asking the owner to decide whether to unify further; no actionable defect.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

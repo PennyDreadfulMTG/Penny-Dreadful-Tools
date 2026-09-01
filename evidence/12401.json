@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12401,
+  "triage": [
+    {
+      "batch_id": "t-12411-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "AncientGrudge detail_sql concatenates both_ids (winner + loser deck IDs) into a flat GROUP_CONCAT string",
+          "ref": "decksite/data/achievements.py:541",
+          "type": "code"
+        },
+        {
+          "detail": "detail() loads deck IDs from GROUP_CONCAT and calls deck.load_decks with all IDs flattened \u2014 no pairing between your deck and opponent's deck",
+          "ref": "decksite/data/achievements.py:212-216",
+          "type": "code"
+        },
+        {
+          "detail": "renders a livedecktable for all detail decks \u2014 both decks shown as flat list with no visual connection between them",
+          "ref": "decksite/templates/personachievements.mustache:9-11",
+          "type": "code"
+        },
+        {
+          "detail": "BurningVengeance also uses both_ids pattern for the copier achievement",
+          "ref": "decksite/data/achievements.py:611",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12401,
+      "notes": "Issue text itself asks 'A simple deck table may not be the right display for these?' \u2014 the display problem is confirmed but the correct UX is unresolved. Requires a product decision on how to visually pair the two decks before any implementation can proceed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12411,
+  "triage": [
+    {
+      "batch_id": "t-12411-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "imports DatabaseException (the broad base class)",
+          "ref": "shared/decorators.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "catches any DatabaseException, not just table-missing errors",
+          "ref": "shared/decorators.py:23",
+          "type": "code"
+        },
+        {
+          "detail": "DatabaseNoSuchTableException subclass already exists",
+          "ref": "shared/pd_exception.py:18",
+          "type": "code"
+        },
+        {
+          "detail": "MySQL error 1146 (no such table) already raises DatabaseNoSuchTableException specifically",
+          "ref": "shared/database.py:61-62",
+          "type": "code"
+        },
+        {
+          "detail": "issue text cites (1052, 'Column name in where clause is ambiguous') triggering spurious preaggregation \u2014 that's a DatabaseException but NOT a NoSuchTable error, so retry is wrong",
+          "ref": "shared/decorators.py:23",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In `shared/decorators.py`: (1) change the import on line 10 to `from shared.pd_exception import DatabaseException, DatabaseNoSuchTableException`; (2) change `except DatabaseException as e:` on line 23 to `except DatabaseNoSuchTableException as e:`. The inner catch on line 28 can remain `DatabaseException` to let non-table-missing errors propagate after the (failed) retry. ~3 lines changed, no schema or data changes.",
+      "issue": 12411,
+      "notes": "The DatabaseNoSuchTableException infrastructure is already fully in place; this is purely narrowing the catch. Issue text explicitly names ambiguous-column DatabaseException as the false-trigger case.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

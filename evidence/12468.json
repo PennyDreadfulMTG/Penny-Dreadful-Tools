@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12468,
+  "triage": [
+    {
+      "batch_id": "t-12470-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current form only has a decklist textarea and a submit button; no per-card controls for turn or cast exclusion",
+          "ref": "decksite/templates/manabase.mustache:1-12",
+          "type": "code"
+        },
+        {
+          "detail": "find_manabase() iterates maindeck cards and calls card(mb_mana_cost) with no turn or exclusion parameters; manabase-solver API would need to be consulted for the correct call signatures",
+          "ref": "decksite/manabase.py:17-36",
+          "type": "code"
+        },
+        {
+          "detail": "UI additions (dynamic per-card rows, hidden fields, POST parsing, solver API wiring) exceed the easy-fix threshold",
+          "ref": "decksite/manabase.py",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12468,
+      "notes": "Requires reading the manabase-solver library API to learn the turn/exclusion parameters, then adding a dynamic form that populates per-card rows after decklist parse, wiring those values through ManabaseForm and find_manabase(). Significant UI and backend work.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

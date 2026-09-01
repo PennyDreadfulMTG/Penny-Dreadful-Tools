@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12448,
+  "triage": [
+    {
+      "batch_id": "t-12452-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "--soft-tangerine (oklch) and --highlight CSS variables are actively defined and used throughout the stylesheet",
+          "ref": "shared_web/static/css/pd.css:568-582",
+          "type": "code"
+        },
+        {
+          "detail": "var(--highlight) appears ~20+ times for table rows, charts, stacked bars, tooltips, and form focus outlines",
+          "ref": "shared_web/static/css/pd.css:751-2786",
+          "type": "behavior"
+        },
+        {
+          "detail": "Issue body is explicitly a list of open questions ('Do we want it at all?', 'Does it make sense everywhere?', etc.) with no defect described",
+          "ref": "#12448",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12448,
+      "notes": "This is a design discussion thread, not a bug. The color is currently active in production CSS. No action is possible without an owner reviewing the questions posed and making decisions.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12377,
+  "triage": [
+    {
+      "batch_id": "t-12397-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize_version() patterns list: pattern 2 is r'(\\s)[\\[({]?(\\d[\\.\\.\\d]*)[])}]?$' \u2014 requires a space before the number; 'RealRhinos1.0' has no space so it is never normalized",
+          "ref": "decksite/deck_name.py:298",
+          "type": "code"
+        },
+        {
+          "detail": "Test case: ('FDSe 1.0', 'FDSe v1') works because of the space; no test case for attached dotted versions like 'RealRhinos1.0'",
+          "ref": "decksite/deck_name_test.py:168",
+          "type": "code"
+        },
+        {
+          "detail": "Existing guard: names with digits separated by letters are left unchanged, protecting '2 combos are better than 1'; this guard does NOT apply to 'RealRhinos1.0' since only '.' (not a letter) separates the two digits",
+          "ref": "decksite/deck_name.py:290",
+          "type": "code"
+        },
+        {
+          "detail": "is_semver() correctly rejects date-like numbers (12.30) and price-like numbers (0.02), so a new pattern for dotted versions can safely reuse the same guard",
+          "ref": "decksite/deck_name.py:332",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py add a fourth pattern to the patterns list at line 302: r'()(\\ d\\.\\ d[\\.\\d]*)$' (captures an empty group as spacer and a dotted number at end-of-name, without requiring a preceding space). The existing spacer logic (line 314: spacer=' ' when group(1)!='-') correctly inserts a space, giving 'RealRhinos v1'. Add test cases in decksite/deck_name_test.py: ('RealRhinos1.0', 'RealRhinos v1') and verify ('RDW23', 'Rdw23') still passes (RDW23 has no dot so the new pattern does not match). ~10 lines changed.",
+      "issue": 12377,
+      "notes": "The 'can we get there without breaking other things?' framing is addressable: plain integers attached to words (e.g. RDW23) are safe because the pattern requires at least one dot (\\d\\.\\d); date-like and price-like dotted numbers are filtered by the existing is_semver() check. Existing tests provide good regression coverage.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:18Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,68 @@
+{
+  "fix": [],
+  "issue": 12447,
+  "triage": [
+    {
+      "batch_id": "t-12452-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Rename custom types module to avoid name collision \u2014 renamed shared/types.py to shared/custom_types.py and updated all imports in modobug.py, fetcher.py, update.py",
+          "ref": "18842526",
+          "type": "commit"
+        },
+        {
+          "detail": "File exists in current master; shared/types.py is absent (no collision with stdlib types module)",
+          "ref": "shared/custom_types.py",
+          "type": "code"
+        },
+        {
+          "detail": "File not found \u2014 confirms the rename is in place on current master",
+          "ref": "ls /home/vercel-sandbox/penny-dreadful-tools/shared/types.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12447,
+      "notes": "The git history shows a back-and-forth (72c48698 \u2192 reverts \u2192 4139aad3) before the final resolution via 18842526 which chose a different approach (rename to custom_types.py rather than just type.py).",
+      "proposed_comment": "Fixed in commit 18842526 which renamed shared/types.py to shared/custom_types.py to avoid the stdlib name collision under Python 3.12, and updated all three import sites. shared/types.py no longer exists in master.",
+      "recorded_at": "2026-09-01T18:33:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12450-1",
+      "final_comment": "Fixed in commit 18842526 which renamed shared/types.py to shared/custom_types.py to avoid the stdlib name collision under Python 3.12, and updated all three import sites. shared/types.py no longer exists in master.",
+      "issue": 12447,
+      "own_evidence": [
+        {
+          "detail": "independently verified: shared/custom_types.py exists in master; shared/types.py does not exist",
+          "ref": "shared/custom_types.py",
+          "type": "code"
+        },
+        {
+          "detail": "import updated to from shared.custom_types import BugData, ForumData",
+          "ref": "discordbot/commands/modobug.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "import updated to from shared.custom_types import BugData, ForumData",
+          "ref": "magic/fetcher.py:26",
+          "type": "code"
+        },
+        {
+          "detail": "import updated to from shared.custom_types import BugData",
+          "ref": "modo_bugs/update.py:13",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:40:52Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

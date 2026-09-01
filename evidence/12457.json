@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 12457,
+  "triage": [
+    {
+      "batch_id": "t-12458-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Updated fonts maintenance task; replaced all hardcoded /Users/bakert/ absolute paths with relative paths under shared_web/static/fonts/sources/",
+          "ref": "07b63480",
+          "type": "commit"
+        },
+        {
+          "detail": "get_font_paths() now builds paths via os.path.join('shared_web', 'static', 'fonts', 'sources', ...) \u2014 no absolute or user-specific paths remain",
+          "ref": "maintenance/fonts.py:148",
+          "type": "code"
+        },
+        {
+          "detail": "Font source files (main-text.ttf, NotoSansLiving-Regular.ttf, etc.) are committed to the repo, so any checkout can run the script",
+          "ref": "shared_web/static/fonts/sources/",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12457,
+      "notes": "Issue is still open but the core problem (hardcoded absolute paths) was resolved March 2025. The brotli comment from bakert is superseded by the implementation that runs fonts in both dev and prod.",
+      "proposed_comment": "The hardcoded `/Users/bakert/` paths were replaced with relative paths in commit 07b63480 and font source files committed to `shared_web/static/fonts/sources/`, so the script now works from any checkout. The brotli-in-both-envs note from the comment turned out to be moot: font generation runs in both dev and prod contexts (build.py and shared_web/api.py), so brotli belongs in both.",
+      "recorded_at": "2026-09-01T18:32:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12504-1",
+      "final_comment": "The hardcoded /Users/bakert/ paths were replaced with relative paths in commit 07b63480 (2025-03-18) and font source files committed to shared_web/static/fonts/sources/, so the script now works from any checkout. The brotli-in-both-envs note from the original issue comment is addressed as font generation runs in both dev and prod contexts.",
+      "issue": 12457,
+      "own_evidence": [
+        {
+          "detail": "get_font_paths() uses os.path.join('shared_web', 'static', 'fonts', 'sources', ...) \u2014 all relative paths, no /Users/bakert/ or any hardcoded absolute paths found in the file",
+          "ref": "maintenance/fonts.py:148-159",
+          "type": "code"
+        },
+        {
+          "detail": "commit exists in master (2025-03-18): 'Update fonts maintenance task to generate an actual woff2 file', notes font source files committed to shared_web/static/fonts/sources/",
+          "ref": "07b63480",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:42:49Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

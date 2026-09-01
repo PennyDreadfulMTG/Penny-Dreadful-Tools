@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12514-1",
+      "branch": "sweep/12514-seasons-all-archetypes-lists-insidious-r",
+      "files_changed": 1,
+      "head_sha": "ede187216755a8df61584ea9d2da617361c0e913",
+      "issue": 12514,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "The fix addresses the NULL display bug. The bakert comment in the issue mentions optionally adding a HAVING clause to exclude zero-deck archetypes from display entirely \u2014 that is a product decision and was intentionally left out per the issue guidance. The same NULL-to-None risk exists for `SUM(wins)`, `SUM(losses)`, etc., but those columns are already used in arithmetic expressions that would yield NULL naturally and display as empty strings via existing IFNULL on win_percent; num_decks was uniquely exposed as a bare value.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nArchetypes that have been reassigned/emptied (like the original \"Insidious Roots\" before \"Insidious Roots Dredge\" was created) still appear in the archetype table via the `archetype` table itself, but have no rows in the pre-aggregated stats tables (`_arch_stats`, `_arch_disjoint_stats`). The `LEFT JOIN` to those stats tables produces `NULL` for all aggregate columns, including `SUM(num_decks)` \u2014 which SQL correctly returns as `NULL` rather than `0` when no rows match. This `NULL` propagated to the page as the literal string `None`.\n\n## What changed\n\nIn `decksite/data/archetype.py`, wrapped `SUM(num_decks)` with `IFNULL(..., 0)` in both `load_archetypes` (line 549) and `load_disjoint_archetypes` (line 610), so empty archetypes display `0` decks instead of `None`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped in ~18s\n\nFixes #12514",
+      "pr_title": "Fix num_decks showing None for empty archetypes in /seasons/all/archetypes (#12514)",
+      "recorded_at": "2026-09-01T18:35:07Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 17.96s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12514,
   "triage": [
     {

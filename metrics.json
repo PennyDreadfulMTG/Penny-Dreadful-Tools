@@ -1,28 +1,27 @@
 {
   "active_workspaces": 16,
-  "alert": "unregistered workspace(s) in project: MTG Archetype Sorting AI (2638355e), OpaqueResponseBlocking image error (9d8bc0e1)",
+  "alert": null,
   "caps": {
-    "closures_today": 0,
+    "closures_today": 10,
     "prs_today": 25
   },
   "counts": {
-    "closed": 7,
+    "closed": 17,
     "deferred_human": 13,
-    "escalated": 3,
-    "fix_leased": 5,
-    "fix_pending": 4,
-    "fix_pushed": 8,
+    "escalated": 5,
+    "fix_leased": 15,
+    "fix_pending": 5,
+    "fix_pushed": 15,
     "pending": 519,
     "pr_open": 43,
-    "reported": 38,
+    "reported": 54,
     "skipped": 1,
-    "triage_leased": 50,
-    "verified": 5,
-    "verify_leased": 3
+    "triaged": 7,
+    "verify_leased": 5
   },
-  "heartbeat": "2026-09-01T18:29:32Z",
+  "heartbeat": "2026-09-01T18:41:27Z",
   "max_open_prs": 30,
-  "open_escalations": 3,
+  "open_escalations": 5,
   "open_sweep_prs": 25,
   "pause_until": null,
   "paused": false,
@@ -30,11 +29,8 @@
   "pr_backpressure": false,
   "totals": {
     "infra_failures": 0,
-    "nudges": 13,
-    "workspaces_created": 120
+    "nudges": 15,
+    "workspaces_created": 140
   },
-  "unregistered_workspaces": [
-    "MTG Archetype Sorting AI (2638355e)",
-    "OpaqueResponseBlocking image error (9d8bc0e1)"
-  ]
+  "unregistered_workspaces": []
 }

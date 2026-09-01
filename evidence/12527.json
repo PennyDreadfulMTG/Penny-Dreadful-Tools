@@ -1,5 +1,46 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12527-1",
+      "branch": "sweep/12527-the-bot-thinks-that-name-sticker-goblin",
+      "files_changed": 2,
+      "head_sha": "4bdd3eedf60785003b4ac1cf3a5ddd461a78ceed",
+      "issue": 12527,
+      "lines_changed": 25,
+      "lint": "passed",
+      "notes": "The fix also handles curly/typographic quotes (U+201C, U+201D) used by card names like Kongming, \\\"Sleeping Dragon\\\"; these were not explicitly called out in the issue but follow naturally from the same root cause. The stem_analyzer uses gaps=True so the added quote characters act as token separators; the normalized_analyzer strips them entirely \u2014 both behaviours are consistent with how the existing characters (space, comma, hyphen) were already handled.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe whoosh `SubstitutionFilter` and `StemmingAnalyzer` patterns in `magic/whoosh_constants.py` used `r\"[\\s/,_'-]\"` to strip/split on separators during indexing and search. This pattern did not include ASCII double-quotes (`\"`, U+0022), left curly quotes (`\\u201c`), or right curly quotes (`\\u201d`). As a result, card names like `\"Name Sticker\" Goblin` \u2014 which contain double-quotes as part of the printed name \u2014 could not be normalized to a matchable form, so the bot failed to find them even though the card exists in the database.\n\n## What changed\n\nIn `magic/whoosh_constants.py`, the separator pattern was updated to `'[\\\\s/,_\\'\"\\u201c\\u201d-]'`, adding ASCII double-quote and both curly quote variants. This allows the normalized and stemmed analyzers to treat quotes as separators/stripped characters, so `\"Name Sticker\" Goblin` indexes as `namestickergoblin` and can be matched by queries with or without the quotes.\n\nA regression test `test_quoted_card_name_is_searchable` was added to `magic/whoosh_search_test.py` to verify that searching for `\"Name Sticker\" Goblin` both with and without the quote characters finds the card.\n\n## Validation\n\nLint (`uv run --frozen python dev.py lint`): passed. Unit tests (`uv run --frozen python dev.py unit`): 846 passed, 1 skipped. The new test is among the passing tests.\n\nFixes #12527",
+      "pr_title": "Fix quoted card names not matching in whoosh search (#12527)",
+      "recorded_at": "2026-09-01T18:34:12Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/whoosh_search_test.py magic/whoosh_write_test.py",
+        "detail": "846 passed, 1 skipped in 18.88s; new test test_quoted_card_name_is_searchable included and green",
+        "result": "passed"
+      }
+    },
+    {
+      "batch_id": "f-12527-1",
+      "branch": "sweep/12527-the-bot-thinks-that-name-sticker-goblin",
+      "files_changed": 2,
+      "head_sha": "4bdd3eedf60785003b4ac1cf3a5ddd461a78ceed",
+      "issue": 12527,
+      "lines_changed": 25,
+      "lint": "passed",
+      "notes": "The fix also handles curly/typographic quotes (U+201C, U+201D) used by card names like Kongming, \\\"Sleeping Dragon\\\"; these were not explicitly called out in the issue but follow naturally from the same root cause. The stem_analyzer uses gaps=True so the added quote characters act as token separators; the normalized_analyzer strips them entirely \u2014 both behaviours are consistent with how the existing characters (space, comma, hyphen) were already handled.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe whoosh `SubstitutionFilter` and `StemmingAnalyzer` patterns in `magic/whoosh_constants.py` used `r\"[\\s/,_'-]\"` to strip/split on separators during indexing and search. This pattern did not include ASCII double-quotes (`\"`, U+0022), left curly quotes (`\\u201c`), or right curly quotes (`\\u201d`). As a result, card names like `\"Name Sticker\" Goblin` \u2014 which contain double-quotes as part of the printed name \u2014 could not be normalized to a matchable form, so the bot failed to find them even though the card exists in the database.\n\n## What changed\n\nIn `magic/whoosh_constants.py`, the separator pattern was updated to `'[\\\\s/,_\\'\"\\u201c\\u201d-]'`, adding ASCII double-quote and both curly quote variants. This allows the normalized and stemmed analyzers to treat quotes as separators/stripped characters, so `\"Name Sticker\" Goblin` indexes as `namestickergoblin` and can be matched by queries with or without the quotes.\n\nA regression test `test_quoted_card_name_is_searchable` was added to `magic/whoosh_search_test.py` to verify that searching for `\"Name Sticker\" Goblin` both with and without the quote characters finds the card.\n\n## Validation\n\nLint (`uv run --frozen python dev.py lint`): passed. Unit tests (`uv run --frozen python dev.py unit`): 846 passed, 1 skipped. The new test is among the passing tests.\n\nFixes #12527",
+      "pr_title": "Fix quoted card names not matching in whoosh search (#12527)",
+      "recorded_at": "2026-09-01T18:35:30Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/whoosh_search_test.py magic/whoosh_write_test.py",
+        "detail": "846 passed, 1 skipped in 18.88s; new test test_quoted_card_name_is_searchable included and green",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12527,
   "triage": [
     {

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12484,
+  "triage": [
+    {
+      "batch_id": "t-12484-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "titlecase.titlecase(name) is called before any \u00bf handling",
+          "ref": "decksite/deck_name.py:89",
+          "type": "code"
+        },
+        {
+          "detail": "titlecase does not capitalize after \u00bf, leaving the first word lowercase; also '\u00bfred deck wins?' \u2192 '\u00bfred Deck Wins?' with first word still not capitalized",
+          "ref": "python: titlecase.titlecase('\u00bfwins?') == '\u00bfwins?'",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py, add a step before the first titlecase call (around line 89) to strip leading \u00bf characters, e.g. name = name.lstrip('\u00bf'). Add a corresponding test case in decksite/deck_name_test.py.",
+      "issue": 12484,
+      "notes": "The inverted question mark \u00bf is only used in Spanish and is unusual in Magic deck names; stripping it is safe. The title body references deck #206133 as a concrete example of a deck that would be fixed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:34:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

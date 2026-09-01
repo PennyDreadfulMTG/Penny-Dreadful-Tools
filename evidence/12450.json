@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 12450,
+  "triage": [
+    {
+      "batch_id": "t-12452-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "readme: list local ports for docker compose environment \u2014 commit message references issue #12450 directly",
+          "ref": "62bafb3b",
+          "type": "commit"
+        },
+        {
+          "detail": "README now lists decksite at http://127.0.0.1:80, admin panel at http://127.0.0.1:8080, and logsite at http://127.0.0.1:5001",
+          "ref": "README.md:59-61",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12450,
+      "notes": null,
+      "proposed_comment": "Fixed in commit 62bafb3b which updated the README to list all local URLs (decksite port 80, admin panel port 8080, logsite port 5001) available after running docker compose up.",
+      "recorded_at": "2026-09-01T18:33:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12450-1",
+      "final_comment": "Fixed in commit 62bafb3b which updated the README to list all local URLs available after running docker compose up: decksite at port 80, the Adminer database admin panel at port 8080, and logsite at port 5001.",
+      "issue": 12450,
+      "own_evidence": [
+        {
+          "detail": "independently checked: current master lists decksite at 127.0.0.1:80, admin panel (Adminer db UI) at 127.0.0.1:8080, logsite at 127.0.0.1:5001 \u2014 all three components the issue requested",
+          "ref": "README.md:59-61",
+          "type": "code"
+        },
+        {
+          "detail": "confirmed adminer service (database admin UI) is bound to port 8080, so README 'admin panel at 8080' covers the 'db' access the issue requested",
+          "ref": "docker-compose.yml:90-93",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:40:52Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

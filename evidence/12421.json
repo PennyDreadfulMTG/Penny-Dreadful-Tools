@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12421,
+  "triage": [
+    {
+      "batch_id": "t-12444-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bluebones_image() is defined but never called anywhere in the codebase",
+          "ref": "magic/image_fetcher.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "2018 commit 'Switch to scryfall from bluebones for images everywhere except bugs' \u2014 migrated callers away but left the function",
+          "ref": "d7271393",
+          "type": "commit"
+        },
+        {
+          "detail": "download_image_async() only tries scryfall; bluebones is not in the fallback chain",
+          "ref": "magic/image_fetcher.py:147",
+          "type": "code"
+        },
+        {
+          "detail": "Only the definition at image_fetcher.py:28 appears; no call sites found",
+          "ref": "grep -rn bluebones_image penny-dreadful-tools --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Delete the bluebones_image() function (lines 28-30) from magic/image_fetcher.py. Also check discordbot/unit_test.py:21 where a comment references bluebones for Nalathni Dragon \u2014 that comment can be updated to reflect scryfall is now used.",
+      "issue": 12421,
+      "notes": "The bakert comment on the issue ('maybe if scryfall is down') is now moot \u2014 the function isn't in any fallback path, so removing it has no runtime effect.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

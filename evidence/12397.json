@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12397,
+  "triage": [
+    {
+      "batch_id": "t-12397-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Open feature request: add per-card historical trend display (e.g. 'played since S5, got good in S10') on /seasons/all/cards/{name}",
+          "ref": "gh issue view 12397",
+          "type": "behavior"
+        },
+        {
+          "detail": "No existing per-card cross-season historical trend query or view found in current master",
+          "ref": "grep -rn 'season.*history\\|history.*season' decksite/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "wilson_lower_bound_sql() exists and is used for archetype sorting but not for card-level cross-season trend display",
+          "ref": "decksite/data/clauses.py:304",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12397,
+      "notes": "A comment on the issue (2024-05-02) clarifies the feature is really about win-rate trajectory (Wilson lower bound) across seasons, not just num_decks. Requires new season-bucketed SQL query on card performance, a new view or template section on the card page, and UX decisions about how to surface the trend.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:18Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

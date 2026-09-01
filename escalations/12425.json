@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:35:42Z",
+  "evidence_refs": [
+    "evidence/12425.json#triage[0]"
+  ],
+  "issue": 12425,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The door prize candidate selection (filtering out players who made top 8 vs. those who dropped before top 8) lives in the PDBot project, not in penny-dreadful-tools. The fix needs to happen there."
+}

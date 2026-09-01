@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 12451,
+  "triage": [
+    {
+      "batch_id": "t-12452-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "docker compose: add logsite, rename 'web' to decksite \u2014 commit message references issue #12451 directly",
+          "ref": "3950dc58",
+          "type": "commit"
+        },
+        {
+          "detail": "logsite service is present in docker-compose.yml with its own build, port 5001, and volume mounts",
+          "ref": "docker-compose.yml:26-41",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12451,
+      "notes": null,
+      "proposed_comment": "Fixed in commit 3950dc58 which added the logsite service to docker-compose.yml, including port 5001 binding and the required volume mounts.",
+      "recorded_at": "2026-09-01T18:33:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12504-1",
+      "final_comment": "Fixed in commit 3950dc58 (2025-01-08) which added the logsite service to docker-compose.yml with port 5001 binding and all required volume mounts (logsite, logsite_migrations, shared, shared_web, compiled_js).",
+      "issue": 12451,
+      "own_evidence": [
+        {
+          "detail": "logsite service defined with build, command, port 5001:5001, depends_on db and redis, env_file, and all required volume mounts (logsite, logsite_migrations, shared, shared_web, node_modules, compiled_js)",
+          "ref": "docker-compose.yml:26-45",
+          "type": "code"
+        },
+        {
+          "detail": "commit exists in master (2025-01-08): 'docker compose: add logsite, rename web to decksite', references issue #12451 in message",
+          "ref": "3950dc58",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:42:49Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

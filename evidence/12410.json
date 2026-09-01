@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12410,
+  "triage": [
+    {
+      "batch_id": "t-12411-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "baseQuery is read from props and forwarded to server in DataManager (base class for all tables)",
+          "ref": "shared_web/static/js/datamanager.jsx:63",
+          "type": "code"
+        },
+        {
+          "detail": "baseQuery PropTypes.string declared in DataManager, not in cardtable",
+          "ref": "shared_web/static/js/datamanager.jsx:139",
+          "type": "code"
+        },
+        {
+          "detail": "data-base-query attribute only rendered in livecardtable.mustache confirming it's cardtable-specific",
+          "ref": "decksite/templates/livecardtable.mustache:6",
+          "type": "code"
+        },
+        {
+          "detail": "api.py cards2 endpoint is the only one that reads baseQuery request arg",
+          "ref": "decksite/controllers/api.py:219-221",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12410,
+      "notes": "The refactoring is real: baseQuery is cardtable-specific but declared in DataManager. Moving it requires understanding whether DataManager should remain ignorant of it (passing unknown props through) or whether cardtable should override the request-building step. Not a one-liner; needs architectural design for the JS component hierarchy.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

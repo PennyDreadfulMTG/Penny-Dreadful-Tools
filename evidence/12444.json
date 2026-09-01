@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12444,
+  "triage": [
+    {
+      "batch_id": "t-12444-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "parse_and_validate_decklist(check_legality=False) skips ALL legality checks, including card-level legality",
+          "ref": "decksite/manabase.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "check_legality gate surrounds check_deck_legality(), which checks both deck size and card legality together",
+          "ref": "decksite/form.py:62",
+          "type": "code"
+        },
+        {
+          "detail": "legal_formats() checks deck size (<60 cards) before checking card legality, so passing check_legality=True would immediately fail on an incomplete manabase submission",
+          "ref": "magic/legality.py:30",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In magic/legality.py add an optional skip_size_checks=False param to legal_formats(); when True, skip the <60-card and >15-sideboard checks. In decksite/form.py add a check_only_card_legality() method that calls legal_formats with skip_size_checks=True. In decksite/manabase.py:ManabaseForm.do_validation, call check_only_card_legality() instead of leaving check_legality=False.",
+      "issue": 12444,
+      "notes": "The fix must not change how league and tournament submission behave; those call parse_and_validate_decklist() with the default check_legality=True and must remain unaffected.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

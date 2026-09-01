@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:42:49Z",
+  "evidence_refs": [
+    "evidence/12502.json#verify[0]"
+  ],
+  "issue": 12502,
+  "kind": "verifier-uncertain",
+  "question": "Verifier returned CONFIRMED \u2014 drop the closure, re-triage, or override?",
+  "summary": ""
+}

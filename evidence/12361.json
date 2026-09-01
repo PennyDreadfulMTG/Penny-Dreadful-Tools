@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12361,
+  "triage": [
+    {
+      "batch_id": "t-12364-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Gatherling ingestion filters for format/matches but contains no legality check for individual card legality during ingest",
+          "ref": "decksite/scrapers/gatherling.py:166",
+          "type": "code"
+        },
+        {
+          "detail": "check_deck_legality() exists for user-submitted decks but is not called from the Gatherling scraper path",
+          "ref": "decksite/form.py:83",
+          "type": "code"
+        },
+        {
+          "detail": "Author themselves writes 'Maybe rare enough that this is not important' and 'An admin page that shows them for review?' \u2014 the scope and necessity are openly uncertain",
+          "ref": "issue body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12361,
+      "notes": "Decision needed: (1) Is the frequency of illegal Gatherling decks high enough to warrant building this? (2) If flagged, what action is taken \u2014 silent admin log, admin review page, auto-rejection? The existing legality infrastructure (form.py:check_deck_legality) could be reused but connecting it to the scraper path is non-trivial.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

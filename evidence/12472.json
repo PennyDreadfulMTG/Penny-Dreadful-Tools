@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12472,
+  "triage": [
+    {
+      "batch_id": "t-12484-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prepare_people always sets p.url = f'/people/{username}/' regardless of season context",
+          "ref": "decksite/prepare.py:143",
+          "type": "code"
+        },
+        {
+          "detail": "season_id is available in people_api() but not passed to prepare_people, so all-time people page (/seasons/all/people/) links resolve to current-season person pages",
+          "ref": "decksite/controllers/api.py:271",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/prepare.py, add a season_id parameter to prepare_people. When season_id == 0 (all), set p.url = f'/seasons/all/people/{username}/' instead of the bare /people/ path. In decksite/controllers/api.py:276, pass season_id to prepare_people(people, season_id). ~10 lines changed.",
+      "issue": 12472,
+      "notes": "The fix must also handle the case where season_id is a specific past season number (could generate /seasons/{n}/people/{username}/); only the 'all' case is reported in this issue but the same logic applies.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:34:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

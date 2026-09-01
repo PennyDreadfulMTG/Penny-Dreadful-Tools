@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 12498,
+  "triage": [
+    {
+      "batch_id": "t-12498-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "2024-05-12 'Fix a lot of what is broken about the Discord bot' \u2014 migrated all commands including price to slash command Extension classes with setup() functions",
+          "ref": "63417c08",
+          "type": "commit"
+        },
+        {
+          "detail": "Current master has Price(Extension) class with @slash_command(), @slash_card_option(), and setup(bot) \u2014 the correct functional structure",
+          "ref": "discordbot/commands/price.py:1-16",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12498,
+      "notes": "Issue was reported 2024-05-07; fix landed 2024-05-12. The old prefixed-command aliases (!pr, !p) were intentionally removed.",
+      "proposed_comment": "This was fixed in commit 63417c08 (2024-05-12), which migrated all Discord bot commands including /price to the slash command Extension pattern. The current price.py correctly defines a Price(Extension) class with a setup() function and is loaded by the bot's command discovery in discordbot/commands/__init__.py.",
+      "recorded_at": "2026-09-01T18:33:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12504-1",
+      "final_comment": "Fixed in commit 63417c08 (2024-05-12), which migrated all Discord bot commands including /price to the slash command Extension pattern. The current price.py defines a Price(Extension) class with a setup() function and is auto-loaded by the glob-based command discovery in discordbot/commands/__init__.py.",
+      "issue": 12498,
+      "own_evidence": [
+        {
+          "detail": "Price(Extension) class with @slash_command() decorator and setup(bot) function present, confirmed in file",
+          "ref": "discordbot/commands/price.py:1-18",
+          "type": "code"
+        },
+        {
+          "detail": "setup() uses glob to auto-discover all .py files in the commands directory and loads them via bot.load_extension(), so price.py is loaded automatically",
+          "ref": "discordbot/commands/__init__.py:17-25",
+          "type": "code"
+        },
+        {
+          "detail": "commit exists in master: 'Fix a lot of what is broken about the Discord bot', migrating all commands including price to Extension/slash_command pattern",
+          "ref": "63417c08",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:42:49Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

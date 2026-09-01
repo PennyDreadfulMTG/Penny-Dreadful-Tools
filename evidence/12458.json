@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12458,
+  "triage": [
+    {
+      "batch_id": "t-12458-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "section p and td/th are governed by different rules; section p follows article sizing while td uses --table-font-size",
+          "ref": "shared_web/static/css/pd.css:538",
+          "type": "code"
+        },
+        {
+          "detail": "--table-font-size: 0.75rem vs --reading-font-size: 1rem; current sections use the larger reading size",
+          "ref": "shared_web/static/css/pd.css:83",
+          "type": "code"
+        },
+        {
+          "detail": "GitHub labels include '+ question'; issue asks 'should we' not 'this is broken'",
+          "ref": "#12458",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12458,
+      "notes": "This is a design/product decision about visual hierarchy in sections vs tables. The issue itself is labeled 'question' on GitHub and asks for a deliberate policy choice, not a bug fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

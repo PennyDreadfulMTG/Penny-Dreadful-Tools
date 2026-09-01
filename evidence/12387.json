@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12387,
+  "triage": [
+    {
+      "batch_id": "t-12397-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Open feature request: surface 'this is your best deck' to players using Wilson interval lower bound",
+          "ref": "gh issue view 12387",
+          "type": "behavior"
+        },
+        {
+          "detail": "wilson_lower_bound_sql() exists and is used for archetype/deck ordering, but there is no per-player best-deck computation or display anywhere",
+          "ref": "decksite/data/clauses.py:304",
+          "type": "code"
+        },
+        {
+          "detail": "No 'best deck' feature found in current master",
+          "ref": "grep -rn 'best.*deck\\|your.*best' decksite/ --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12387,
+      "notes": "Requires: per-player Wilson lower bound computed across all their decks, a decision on where to display it (player profile? notification?), and new template/view code. Related to #12397 in that both leverage Wilson lower bound but serve different audiences.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:18Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

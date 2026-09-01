@@ -27,5 +27,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12516-1",
+      "final_comment": "Fixed in commit ff624237 (2024-06-11): the season dropdown on /matchups/ now correctly uses the standard all_seasons() order (All Time first, then newest to oldest), after removing a rotation that was no longer needed once all_seasons() started reversing its own output.",
+      "issue": 12515,
+      "own_evidence": [
+        {
+          "detail": "independently read: self.seasons now built directly from self.all_seasons() with no reordering",
+          "ref": "decksite/views/matchups.py:23",
+          "type": "code"
+        },
+        {
+          "detail": "independently read: all_seasons() calls seasonlist.reverse() before returning, so All Time (appended last) ends up first, followed by newest-to-oldest numbered seasons",
+          "ref": "decksite/view.py:123",
+          "type": "code"
+        },
+        {
+          "detail": "git show confirms: removed [self.all_seasons()[-1]] + self.all_seasons()[:-1] manipulation that was producing wrong order after all_seasons() gained its own reverse(); commit message confirms intent",
+          "ref": "ff624237",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:33:37Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

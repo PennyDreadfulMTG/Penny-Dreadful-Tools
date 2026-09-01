@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12454,
+  "triage": [
+    {
+      "batch_id": "t-12458-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "'max': round(max(costs.values(), default=0) * 1.3) \u2014 the 1.3x multiplier adds headroom for datalabels",
+          "ref": "decksite/views/deck.py:61",
+          "type": "code"
+        },
+        {
+          "detail": "'max': round(max(colors.values(), default=0) * 1.3) \u2014 same pattern on the color chart",
+          "ref": "decksite/views/person.py:51",
+          "type": "code"
+        },
+        {
+          "detail": "Only two occurrences; no other chart max settings found",
+          "ref": "grep -rn '1\\.3' decksite/views/deck.py decksite/views/person.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/views/deck.py:61 and decksite/views/person.py:51 reduce the multiplier from 1.3 to something like 1.1 or 1.15. The exact value can be tuned visually \u2014 smaller values make labels hug bars tighter but risk clipping at the very top if Chart.js doesn't leave enough room.",
+      "issue": 12454,
+      "notes": "Straightforward two-line change across two files. No schema changes. The right multiplier value may need a small visual check to avoid clipping the label on the tallest bar.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

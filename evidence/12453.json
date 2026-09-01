@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12453,
+  "triage": [
+    {
+      "batch_id": "t-12458-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bakert's comment on #12453 says 'This is a small manifestation of the #12574 problem' \u2014 the modular typography scale (base 20px * 1.333) produces fractional-pixel values that cause layout gaps",
+          "ref": "#12574",
+          "type": "issue"
+        },
+        {
+          "detail": "Current code has left: calc(var(--main-menu-width) - 1px) added by commit 4b90923c (PR #14967) to close hit-test gap \u2014 may partially address visual gap too",
+          "ref": "shared_web/static/css/pd.css:856",
+          "type": "code"
+        },
+        {
+          "detail": "box-shadow: inset 1px 0 var(--border) draws the divider inside the submenu element, paired with the -1px left offset",
+          "ref": "shared_web/static/css/pd.css:844",
+          "type": "code"
+        },
+        {
+          "detail": "Issue #12574 (Remove modular typography scale) is still OPEN; bakert assigned to self and labeled refactoring",
+          "ref": "#12574",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12453,
+      "notes": "PR #14967 (merged 2026-09-01) added a -1px left overlap and inset box-shadow that may incidentally close the visual gap, but bakert explicitly tied #12453 to #12574's fractional-pixel root cause. Proper fix awaits #12574; this can be re-evaluated after #12574 lands.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

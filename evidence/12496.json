@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12496,
+  "triage": [
+    {
+      "batch_id": "t-12498-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "edit_archetypes() calls load_archetypes(order_by='a.name') with no season_id, causing all-season aggregation",
+          "ref": "decksite/controllers/admin.py:65-66",
+          "type": "code"
+        },
+        {
+          "detail": "load_archetypes() with season_id=None uses season_query returning 'TRUE', aggregating stats across all seasons",
+          "ref": "decksite/data/archetype.py:532-572",
+          "type": "code"
+        },
+        {
+          "detail": "EditArchetypes also calls deck.load_queue_similarity and rule.apply_rules_to_decks on every page load",
+          "ref": "decksite/views/edit_archetypes.py:14-16",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12496,
+      "notes": "Most likely culprit is load_archetypes with no season filter aggregating across all historical seasons. A fix might restrict to current season or cache the archetype list, but needs DB profiling to confirm. Could also be apply_rules_to_decks. Scope unclear without measurements.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

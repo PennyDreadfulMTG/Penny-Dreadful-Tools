@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:35:18Z",
+  "evidence_refs": [
+    "evidence/12380.json#triage[0]"
+  ],
+  "issue": 12380,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The issue text does not say what is unclear or what the clarification should say; the template changes themselves would be trivial (a few sentences in bugpolicy.mustache or tournaments.mustache) but the rule author (bakert) must decide the actual wording before implementation can proceed."
+}

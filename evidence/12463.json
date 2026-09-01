@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12463-1",
+      "branch": "sweep/12463-invalid-attr-data-used-in-load-a-recent",
+      "files_changed": 2,
+      "head_sha": "ff421b7e7ff01a8478837487ca9caa29a9e8b6e0",
+      "issue": 12463,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Pure attribute-name rename; no logic change. The JS could alternatively use jQuery's `.data('list')` which reads the same HTML5 data attribute, but `.attr('data-list')` is consistent with the surrounding code style and avoids jQuery's internal data-cache behaviour.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `<option>` elements in `decksite/templates/recentdecks.mustache` used a bare `data=\"{{list}}\"` attribute. This is not a valid HTML5 data attribute \u2014 only `data-*` prefixed attributes are recognised by browsers and jQuery's `.attr()` / `.data()` APIs. As a result, the JavaScript handler in `pd.js` was reading `.attr(\"data\")` which always returned `undefined`, causing `JSON.parse` to throw and the deck-list population to silently fail.\n\n## What changed\n\n- `decksite/templates/recentdecks.mustache` line 7: `data=\"{{list}}\"` \u2192 `data-list=\"{{list}}\"`\n- `shared_web/static/js/pd.js` line 439: `.attr(\"data\")` \u2192 `.attr(\"data-list\")`\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed. The touched files are a Mustache template and JavaScript; there are no Python unit tests for this path and a live database is not available in the CI sandbox.\n\nFixes #12463",
+      "pr_title": "Fix invalid `data` attribute in 'Load a recent deck' (#12463)",
+      "recorded_at": "2026-09-01T18:40:29Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed \u2014 unit tests not run because no database is available in the cloud sandbox and the touched files (a mustache template and a JS file) have no associated Python unit tests",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12463,
   "triage": [
     {

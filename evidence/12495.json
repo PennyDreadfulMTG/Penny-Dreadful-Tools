@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12495-1",
+      "branch": "sweep/12495-screw-it-we-ball-got-censored",
+      "files_changed": 1,
+      "head_sha": "52f15d6774df47fdd0fba3d6c3fcbfcf18663499",
+      "issue": 12495,
+      "lines_changed": 3,
+      "lint": "passed",
+      "notes": "Adding 'screw' variants follows the same pattern as existing whitelisted words like 'kill', 'hell', and 'weed'. No DB migration needed. The three variants (screw/screwed/screwing) cover likely deck name forms.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nDeck names containing the word \"screw\" (e.g. \"screw it we ball\") were being censored by the `better_profanity` library's filter, replacing the word with spaces. The word is not profane in context \u2014 it's common Magic slang and a legitimate deck name component.\n\n## What changed\n\nAdded `'screw'`, `'screwed'`, and `'screwing'` to `PROFANITY_WHITELIST` in `decksite/deck_name.py` (line 57\u201359). This whitelist is passed to `better_profanity`'s `load_censor_words()` so these words are excluded from censorship.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit decksite/deck_name_test.py` \u2014 845 passed, 1 skipped in 15.19s\n\nFixes #12495",
+      "pr_title": "Add 'screw' variants to profanity whitelist (#12495)",
+      "recorded_at": "2026-09-01T18:43:12Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/deck_name_test.py",
+        "detail": "845 passed, 1 skipped, 89 deselected in 15.19s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12495,
+  "triage": [
+    {
+      "batch_id": "t-12498-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PROFANITY_WHITELIST does not contain 'screw'",
+          "ref": "decksite/deck_name.py:44-57",
+          "type": "code"
+        },
+        {
+          "detail": "better_profanity's default wordlist includes 'screw', 'screwed', 'screwing' \u2014 confirmed by reading the installed wordlist at .venv/lib/python3.13/site-packages/better_profanity/profanity_wordlist.txt",
+          "ref": "better_profanity/profanity_wordlist.txt",
+          "type": "behavior"
+        },
+        {
+          "detail": "remove_profanity() calls profanity.censor() with no custom exception for 'screw', so it gets censored",
+          "ref": "decksite/deck_name.py:259-263",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py, add 'screw' to the PROFANITY_WHITELIST list (around line 44). Optionally also add 'screwed' and 'screwing' for consistency. One line change.",
+      "issue": 12495,
+      "notes": "The issue author already reached the conclusion that 'screw' is acceptable ('probably PG-13 enough to let through'). No product judgment needed beyond what the author stated.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

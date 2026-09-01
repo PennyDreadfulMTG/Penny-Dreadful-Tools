@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12415,
+  "triage": [
+    {
+      "batch_id": "t-12444-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Still computes interestingness for each card via rotation.interesting()",
+          "ref": "decksite/views/rotation_speculation.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "self.show_interesting = True still set, driving the interestingness UI in the template",
+          "ref": "decksite/views/rotation_speculation.py:20",
+          "type": "code"
+        },
+        {
+          "detail": "entry.mustache still has show_interesting / interestingness CSS class logic that would need to be removed",
+          "ref": "decksite/templates/entry.mustache:2",
+          "type": "code"
+        },
+        {
+          "detail": "rotationspeculation.mustache still renders an interestingness legend",
+          "ref": "decksite/templates/rotationspeculation.mustache:7",
+          "type": "code"
+        },
+        {
+          "detail": "Issue body itself states 'there's no API endpoint that understands prices or most anything it needs to do' \u2014 the prerequisite API work is not done",
+          "ref": "#12415",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12415,
+      "notes": "Turning this into a live sortable/filterable table requires a new API endpoint for price/playability data and a JS table component; the issue lists at least 6 cleanup tasks that are only possible after the live table exists.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:42Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

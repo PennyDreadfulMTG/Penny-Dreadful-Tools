@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12436,
+  "triage": [
+    {
+      "batch_id": "t-12444-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Text currently reads 'Matches should use 25 minute timers.' \u2014 needs 'must'",
+          "ref": "decksite/templates/leagueinfo.mustache:41",
+          "type": "code"
+        },
+        {
+          "detail": "Same 'should' wording in the tournaments rules page",
+          "ref": "decksite/templates/tournaments.mustache:49",
+          "type": "code"
+        },
+        {
+          "detail": "Original commit that added the 25-minute rule in 2018 \u2014 already used 'should' from the start",
+          "ref": "1e66c963",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/leagueinfo.mustache:41 and decksite/templates/tournaments.mustache:49, change 'should' to 'must' in the timer sentence. Two files, two one-word changes.",
+      "issue": 12436,
+      "notes": "Both files use the Mustache i18n wrapper {{_ ...}} so translation strings may also need updating if any translations exist.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

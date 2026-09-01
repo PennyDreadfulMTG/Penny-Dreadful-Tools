@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12380,
+  "triage": [
+    {
+      "batch_id": "t-12397-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current game-loss rule: 'Gaining advantage from a bug unintentionally will result in a game loss. The player with the bugged card should concede the game and begin the next one (if any).'",
+          "ref": "decksite/templates/bugpolicy.mustache:9",
+          "type": "code"
+        },
+        {
+          "detail": "Current sideboarding rule: '...player starts a sideboarded game with less than 60 cards... either player notices before end of turn 2...'",
+          "ref": "decksite/templates/tournaments.mustache:48",
+          "type": "code"
+        },
+        {
+          "detail": "Open issue with no comments or attached PR; no specific wording proposed",
+          "ref": "gh issue view 12380",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12380,
+      "notes": "The issue text does not say what is unclear or what the clarification should say; the template changes themselves would be trivial (a few sentences in bugpolicy.mustache or tournaments.mustache) but the rule author (bakert) must decide the actual wording before implementation can proceed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:18Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,51 @@
+{
+  "fix": [],
+  "issue": 12385,
+  "triage": [
+    {
+      "batch_id": "t-12397-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "cf.name LIKE '%%Penny Dreadful 500%%' \u2014 still uses LIKE on competition_flag name instead of competition_flag_id",
+          "ref": "decksite/data/achievements.py:826",
+          "type": "code"
+        },
+        {
+          "detail": "cf.name LIKE '%%Kick off%%' \u2014 still uses LIKE on competition_flag name instead of competition_flag_id",
+          "ref": "decksite/data/achievements.py:854",
+          "type": "code"
+        },
+        {
+          "detail": "c.name LIKE '%%Penny Dreadful 500%%' \u2014 still uses LIKE on competition name instead of competition_flag_id",
+          "ref": "decksite/view.py:154",
+          "type": "code"
+        },
+        {
+          "detail": "Partial fix: switched from c.name LIKE to cf.name LIKE and added cf JOIN in competition_join(); still did not use competition_flag_id",
+          "ref": "a27da37d",
+          "type": "commit"
+        },
+        {
+          "detail": "CompetitionFlag enum: KICK_OFF=2, PENNY_DREADFUL_500=3 \u2014 exact ids available for use",
+          "ref": "decksite/tournament.py:4",
+          "type": "code"
+        },
+        {
+          "detail": "competition_flag AS cf JOIN already present in competition_join(); c.competition_flag_id column is queryable",
+          "ref": "decksite/data/query.py:47",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/achievements.py replace all 8 occurrences of 'cf.name LIKE ...' with 'c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value}' or '...KICK_OFF.value}' as appropriate (add 'from decksite.tournament import CompetitionFlag' if not already imported). In decksite/view.py:154 replace 'c.name LIKE \\'%%Penny Dreadful 500%%\\'' with 'c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value}'. ~15 lines changed.",
+      "issue": 12385,
+      "notes": "The migration sql/71.sql already backfilled competition_flag_id for all historical competitions; the gatherling scraper sets it on insert. Commit a27da37d partially addressed the issue but still uses LIKE, just on a smaller table (competition_flag). The view.py usage still queries c.name directly.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:18Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

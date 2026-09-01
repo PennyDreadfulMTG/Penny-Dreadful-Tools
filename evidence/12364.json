@@ -1,0 +1,56 @@
+{
+  "fix": [],
+  "issue": 12364,
+  "triage": [
+    {
+      "batch_id": "t-12364-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "print(title + '\\n' + body, file=sys.stderr) \u2014 one of 6 raw print() calls in this file",
+          "ref": "shared/repo.py:79",
+          "type": "code"
+        },
+        {
+          "detail": "print('Not creating github issue - configured to not do so')",
+          "ref": "shared/repo.py:81",
+          "type": "code"
+        },
+        {
+          "detail": "print('Not creating github issue - missing username or password')",
+          "ref": "shared/repo.py:85",
+          "type": "code"
+        },
+        {
+          "detail": "print(f'Problem creating issue: {e}', file=sys.stderr)",
+          "ref": "shared/repo.py:115",
+          "type": "code"
+        },
+        {
+          "detail": "print('Github pulls error (request)', e)",
+          "ref": "shared/repo.py:153",
+          "type": "code"
+        },
+        {
+          "detail": "print('Gihub pulls error (github)', e)",
+          "ref": "shared/repo.py:155",
+          "type": "code"
+        },
+        {
+          "detail": "shared.logger module exists with error/warning/info/debug methods used everywhere else in the codebase; repo.py does not import it",
+          "ref": "shared/logger.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared/repo.py, add 'from shared import logger' alongside existing imports, then replace all 6 print() calls: the two stderr prints with logger.warning(), the two 'Not creating' prints with logger.info(), and the two exception-handler prints with logger.error(). Remove the 'import sys' if it becomes unused.",
+      "issue": 12364,
+      "notes": "The issue is labeled 'question' but the code clearly shows print() used throughout while shared/logger.py exists as the established pattern. No schema change; no data change; self-contained to one file.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

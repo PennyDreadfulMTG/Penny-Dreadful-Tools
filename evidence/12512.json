@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12512,
+  "triage": [
+    {
+      "batch_id": "t-12512-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No match \u2014 no explain entry for sideboarding or 59-card decks exists in the explanations dict (keys span lines 13-220)",
+          "ref": "grep -n 'sideboard\\|59' discordbot/commands/explain.py",
+          "type": "search"
+        },
+        {
+          "detail": "explanations dict has 24 keys; sideboard/59-card rule is absent",
+          "ref": "discordbot/commands/explain.py:13-220",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a new 'sideboard' key (and alias 'sideboards') to the `explanations` dict in `discordbot/commands/explain.py` around line 220, with the PD tournament rule text about sideboarding to 59 cards sourced from the tournament rules page. The 'search tournament rules' alternative mentioned in the issue is a separate, larger feature. Total code change: ~10 lines.",
+      "issue": 12512,
+      "notes": "Content of the sideboard rule needs to come from the owner or the tournament rules page \u2014 the code location and pattern are unambiguous. Confidence is medium because the exact rule wording is not in the issue or codebase.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

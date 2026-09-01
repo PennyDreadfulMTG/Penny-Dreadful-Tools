@@ -1,0 +1,83 @@
+{
+  "fix": [],
+  "issue": 12504,
+  "triage": [
+    {
+      "batch_id": "t-12512-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Disable illegal seasons (card) or unplayed seasons (person) in season picker \u2014 added season_chooser() method and disabled field",
+          "ref": "1c9186fa",
+          "type": "commit"
+        },
+        {
+          "detail": "Only allow seasons where the card was legal in card detail page season picker \u2014 wired legal_seasons from card.legalities",
+          "ref": "d14aaaf2",
+          "type": "commit"
+        },
+        {
+          "detail": "Merged 2024-05-24; contains both commits",
+          "ref": "#12657",
+          "type": "pr"
+        },
+        {
+          "detail": "season_chooser() sets disabled=True for seasons not in self.legal_seasons",
+          "ref": "decksite/view.py:126-131",
+          "type": "code"
+        },
+        {
+          "detail": "Disabled seasons render as <div class='disabled'> (not a link); CSS at pd.css:1976-1977 greys them with var(--disabled)",
+          "ref": "decksite/templates/seasonchooser.mustache:8-16",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12504,
+      "notes": "Both options from the issue ('gray out and not-link') are implemented. Issue can be closed.",
+      "proposed_comment": "Fixed by PR #12657 (merged 2024-05-24) via commits `1c9186fa` and `d14aaaf2`: the season chooser now calls `season_chooser()` which marks irrelevant seasons as `disabled`, and the template renders those as unlinked, greyed-out `<div class='disabled'>` entries rather than clickable links.",
+      "recorded_at": "2026-09-01T18:33:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12504-1",
+      "final_comment": "Fixed by commits 1c9186fa (2024-05-08) and d14aaaf2 (2024-05-09): the season chooser now calls season_chooser() in view.py which marks seasons as disabled when they are not in legal_seasons, and the template renders those as unlinked <div class='disabled'> entries rather than clickable links. The card view (card.py) sets legal_seasons to only seasons where the card was legal. Note: these commits were not part of PR #12657; that PR (commit e33bb00) only improved chooser spacing.",
+      "issue": 12504,
+      "own_evidence": [
+        {
+          "detail": "legal_seasons initializes to None; season_chooser() marks season disabled when num not in legal_seasons",
+          "ref": "decksite/view.py:49,126-131",
+          "type": "code"
+        },
+        {
+          "detail": "disabled seasons render as <div class='disabled'> with no <a> link, confirmed in file",
+          "ref": "decksite/templates/seasonchooser.mustache:8-16",
+          "type": "code"
+        },
+        {
+          "detail": "card view sets legal_seasons to seasons where card was legal and not Banned",
+          "ref": "decksite/views/card.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "commit exists in master: 'Disable illegal seasons (card) or unplayed seasons (person) in season picker'",
+          "ref": "1c9186fa",
+          "type": "commit"
+        },
+        {
+          "detail": "commit exists in master: 'Only allow seasons where the card was legal in card detail page season picker'",
+          "ref": "d14aaaf2",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:42:49Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

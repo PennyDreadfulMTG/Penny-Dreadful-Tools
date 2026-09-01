@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12497,
+  "triage": [
+    {
+      "batch_id": "t-12498-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "apply_rules_query() builds per-deck card inclusion/exclusion rules; no color-word detection exists",
+          "ref": "decksite/data/rule.py:272",
+          "type": "code"
+        },
+        {
+          "detail": "add_archetype_if_just_colors() checks for color words in archetype names for display purposes, but no enforcement logic exists anywhere",
+          "ref": "decksite/deck_name.py:245-252",
+          "type": "code"
+        },
+        {
+          "detail": "Issue author themselves is unsure of approach: 'An implicit rule against basics of the other colors? Something more sophisticated than that?'",
+          "ref": "#12497",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12497,
+      "notes": "This is a genuine feature request with open design questions: should enforcement block basics only, or any off-color card? Should it apply automatically to all archetypes or opt-in? An owner must decide the semantics before any implementation is meaningful.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:14Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

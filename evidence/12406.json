@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12406,
+  "triage": [
+    {
+      "batch_id": "t-12411-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "no results \u2014 no /unlink command exists in the bot",
+          "ref": "find discordbot/commands -name '*.py' | xargs grep -l unlink",
+          "type": "search"
+        },
+        {
+          "detail": "unlink currently exists only as admin web page POST /admin/unlink/",
+          "ref": "decksite/controllers/admin.py:227-233",
+          "type": "code"
+        },
+        {
+          "detail": "/link/ page exists for users to re-link accounts",
+          "ref": "decksite/controllers/resources.py:100-109",
+          "type": "code"
+        },
+        {
+          "detail": "admin commands use is_owner() check, not server-mod permissions \u2014 mod-only Discord perms require a different permission model",
+          "ref": "discordbot/commands/configure.py:21",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12406,
+      "notes": "Needs: (1) a new discordbot command file, (2) correct Discord server-mod permission check (guild Permissions, not is_owner), (3) either a new decksite API endpoint for unlinking by discord_id or direct DB access from bot, (4) product decision on what 'mod' means. Multi-component feature, not easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

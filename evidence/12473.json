@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12473,
+  "triage": [
+    {
+      "batch_id": "t-12484-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "oracle_id was added to the cards DB and emitted in /api/cardfeed (partial progress), but cards table still keyed by name",
+          "ref": "d338d3ee",
+          "type": "commit"
+        },
+        {
+          "detail": "oracle_id is stored in card_values but the cards dict in multiverse is still keyed by name (e.g. set_legal_cards_async matches by row['name'])",
+          "ref": "magic/multiverse.py:284",
+          "type": "code"
+        },
+        {
+          "detail": "Meld result specialcase code still exists; issue requests oracle_id as key would simplify this",
+          "ref": "magic/multiverse.py:319",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12473,
+      "notes": "Changing the primary key of the cards table from name to oracle_id would touch multiverse, oracle, legality, and likely require a DB migration; scope is well beyond 150 lines and needs design decisions about how melds and faces are handled.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:34:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

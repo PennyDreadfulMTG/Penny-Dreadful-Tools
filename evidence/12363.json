@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12363,
+  "triage": [
+    {
+      "batch_id": "t-12364-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "github_user and github_password config keys still exist and are active in the codebase",
+          "ref": "shared/configuration.py:89",
+          "type": "code"
+        },
+        {
+          "detail": "No commit found that explicitly addresses this credential update task for the listed server instances",
+          "ref": "git log --oneline --grep='config.*github|github.*cred'",
+          "type": "search"
+        },
+        {
+          "detail": "Issue body shows a snapshot of /find . -name config.json from server 'discord@katelyngigante' and notes which instances were already updated; remaining instances listed cannot be verified from this repo",
+          "ref": "issue body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12363,
+      "notes": "This is a one-time operational task (credential rotation on specific server instances). We have no access to the production server to verify current state. The infrastructure referenced (server 'katelyngigante') may have changed entirely since the issue was filed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

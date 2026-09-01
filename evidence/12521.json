@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12521-1",
+      "branch": "sweep/12521-we-are-pinned-to-flask-babel-2-0-0-but-l",
+      "files_changed": 1,
+      "head_sha": "d6affbd8b76806fc215774c3189e8e45dfeabaed",
+      "issue": 12521,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Change is a pure cleanup: two config lines deleted. No logic, no tests needed. The flask-babel 4.0.0 upgrade itself was already merged; this removes the now-stale warning suppression that referenced the old pin.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`pytest.ini` contained a `filterwarnings` entry suppressing a `DeprecationWarning` about `locked_cached_property` emitted by `flask_babel`. This suppression was needed when the project was pinned to flask-babel 2.0.0.\n\n## What changed\n\nRemoved the two-line block (the `# https://github.com/...issues/12521` comment and the accompanying `ignore:` filter) from `pytest.ini`. flask-babel was already upgraded to 4.0.0 as part of the Pipenv\u2192uv migration, so the warning no longer occurs and the suppression is dead code.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- Full unit suite was not run due to environment constraints (no database bootstrapped), but the change is a two-line deletion in a config file with no logic impact.\n\nFixes #12521",
+      "pr_title": "Remove flask-babel DeprecationWarning suppression (#12521)",
+      "recorded_at": "2026-09-01T18:35:53Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12521,
   "triage": [
     {

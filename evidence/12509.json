@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12509-1",
+      "branch": "sweep/12509-numbers-at-seasons-all-cards-are-getting",
+      "files_changed": 3,
+      "head_sha": "17ec038787c8cd00e79e364afb9be99566d8e3aa",
+      "issue": 12509,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "Changes are purely presentational \u2014 `.toLocaleString()` uses the browser's locale, so separators will match the user's locale setting (commas for en-US, periods for de-DE, etc.). No other large-number display sites were found to be affected beyond cardtable/renderRecord.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nOn `/seasons/all/cards` (and other card tables with aggregate data), large integers like deck counts and win/loss records were displayed as raw numbers (e.g. `12345`, `10234\u20135678`) with no thousand separators, making them hard to read at a glance.\n\n## What changed\n\n- **`shared_web/static/js/cardtable.jsx`**: `card.numDecks` now rendered with `.toLocaleString()` so the browser formats it using the user's locale (e.g. `12,345` for en-US).\n- **`shared_web/static/js/table.jsx`**: `renderRecord()` now calls `.toLocaleString()` on `wins`, `losses`, and `draws` so aggregate card records are similarly formatted.\n- **`shared_web/static/css/pd.css`**: Widened `.live .num-decks` min/max-width from `4em` to `5em` to accommodate comma-formatted 5-digit numbers without overflow on narrow views (as suggested in the issue).\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed. Unit tests were not run because mariadb105-server conflicted with the pre-installed mariadb118 in the cloud sandbox, blocking DB setup. The changes are purely presentational JS/CSS with no Python logic to test.\n\nFixes #12509",
+      "pr_title": "Format large numbers with locale-aware thousand separators (#12509)",
+      "recorded_at": "2026-09-01T18:40:40Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed. Unit tests not run: these are JS/CSS changes with no Python test coverage; mariadb105-server install failed due to conflict with pre-installed mariadb118, blocking DB-dependent test suite setup.",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12509,
+  "triage": [
+    {
+      "batch_id": "t-12512-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "{card.numDecks} rendered as raw integer with no locale formatting",
+          "ref": "shared_web/static/js/cardtable.jsx:33",
+          "type": "code"
+        },
+        {
+          "detail": "renderRecord() concatenates raw object.wins + '\u2013' + object.losses with no toLocaleString()",
+          "ref": "shared_web/static/js/table.jsx:101",
+          "type": "code"
+        },
+        {
+          "detail": "Other tables already use toLocaleString() \u2014 pattern exists in the codebase",
+          "ref": "shared_web/static/js/metagamegrid.jsx:7-9",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) In `shared_web/static/js/cardtable.jsx:33` change `{card.numDecks}` to `{card.numDecks.toLocaleString()}`. 2) In `shared_web/static/js/table.jsx:101` change the renderRecord return to use `.toLocaleString()` on wins/losses/draws. Optionally widen the `#decks` column min-width in pd.css if numbers still overflow on narrow views. Total: ~5 line changes across 2-3 files.",
+      "issue": 12509,
+      "notes": "metagamegrid.jsx already uses toLocaleString() so the pattern is established. No backend changes needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

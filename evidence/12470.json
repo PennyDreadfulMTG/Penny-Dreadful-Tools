@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12470,
+  "triage": [
+    {
+      "batch_id": "t-12470-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Font subsetting system dynamically queries DB for graphemes from card and deck names; no Cherokee font is listed in the PREFER dict or available font set",
+          "ref": "maintenance/fonts.py:1-35",
+          "type": "code"
+        },
+        {
+          "detail": "regenerate_symbols_font() spawns a detached rebuild process, providing some automation, but does not handle the case where a required font file is absent",
+          "ref": "shared_web/fonts.py:1-12",
+          "type": "code"
+        },
+        {
+          "detail": "The subsetting pipeline would include Cherokee graphemes automatically if a Cherokee font file were present, but that font acquisition and the scheduling cadence for rebuilds require a non-trivial design decision",
+          "ref": "maintenance/fonts.py",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12470,
+      "notes": "Two distinct sub-tasks: (1) source and add a Cherokee font (e.g. NotoSansCherokee) to the font set in maintenance/fonts.py, and (2) decide on an automated trigger cadence beyond the per-deck-submission hook in shared_web/fonts.py. The per-submission hook already exists; the remaining gap is a missing font file and possibly a periodic scheduled rebuild.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:35:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

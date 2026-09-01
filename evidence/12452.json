@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12452,
+  "triage": [
+    {
+      "batch_id": "t-12452-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "function is named ad_hoc() but send_pr_if_updated() auto-commits, pushes, and calls hub pull-request",
+          "ref": "maintenance/client_dependencies.py:9",
+          "type": "code"
+        },
+        {
+          "detail": "send_pr_if_updated() still uses deprecated 'hub pull-request' CLI tool",
+          "ref": "maintenance/client_dependencies.py:29-32",
+          "type": "code"
+        },
+        {
+          "detail": "Removed hub references from README in favor of gh, but client_dependencies.py was not touched",
+          "ref": "9a3e0789",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12452,
+      "notes": "Two distinct paths described in the issue: (A) keep as ad_hoc and remove the auto-commit/push/PR code from send_pr_if_updated(), or (B) rename to run() and replace 'hub pull-request' with the 'gh pr create' equivalent. An owner needs to decide which path to take before a fix can be implemented.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:33:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

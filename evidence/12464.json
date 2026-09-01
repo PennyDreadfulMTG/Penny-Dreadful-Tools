@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12464-1",
+      "branch": "sweep/12464-signed-up-msg-safe-could-be-refactored-t",
+      "files_changed": 2,
+      "head_sha": "58137b8ffe355b113953d199fc4382b488b8be93",
+      "issue": 12464,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The message text is moved verbatim into the template; deck names containing characters like `<`, `>`, or `&` will now be correctly HTML-escaped by Mustache instead of potentially injected raw. No other uses of the `_safe` pattern were touched.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `SignUp` view built an HTML string containing `<a>` tags and stored it in `self.signed_up_msg_safe`. The template then rendered it with triple-mustache `{{{signed_up_msg_safe}}}` to bypass Mustache's HTML escaping. This is the `_safe` anti-pattern: it forces raw HTML into Python, prevents the template engine from escaping values, and makes XSS auditing harder.\n\n## What changed\n\n**`decksite/views/signup.py`**: Replace the f-string HTML assignment with four separate plain-data attributes: `self.already_signed_up = True`, `self.deck_url`, `self.deck_name`, and `self.retire_url`.\n\n**`decksite/templates/signup.mustache`**: Replace the `{{#signed_up_msg_safe}}/{{{signed_up_msg_safe}}}` block with a `{{#already_signed_up}}` section that constructs the two links using normal double-mustache (`{{deck_url}}`, `{{deck_name}}`, `{{retire_url}}`), letting Mustache auto-escape values as intended.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (pre-existing skip, unrelated)\n\nFixes #12464",
+      "pr_title": "Move signed_up_msg_safe HTML into template with auto-escaping (#12464)",
+      "recorded_at": "2026-09-01T18:42:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 19.09s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12464,
   "triage": [
     {

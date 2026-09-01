@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12360,
+  "triage": [
+    {
+      "batch_id": "t-12364-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Archetype-playability preaggregation tables (_season_archetype_playability, _archetype_playability) exist and contain the per-card playability-per-archetype data needed for this investigation",
+          "ref": "decksite/data/playability.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "Author says 'Maybe it's interesting to say \u2026 Or maybe that just surfaces a bunch of RDW without a singleton Zurgo Bellstriker and it's annoying. Investigate?' \u2014 explicitly framed as an open exploratory question",
+          "ref": "issue body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12360,
+      "notes": "Decision needed: Is surfacing decks that lack an archetype's highest-playability card useful to admins (finding mis-categorized decks) or just noise (single-card variants)? The data query is straightforward using _season_archetype_playability but the UI/UX and threshold are the owner's call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:32:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

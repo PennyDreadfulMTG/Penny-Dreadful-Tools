@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12471,
+  "triage": [
+    {
+      "batch_id": "t-12484-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "set_legal_cards_async matches cards by exact name from legal_cards.txt; no special handling of accented characters \u2014 both the DB name and txt file would use Scryfall canonical form so this should not cause a mismatch",
+          "ref": "magic/multiverse.py:533",
+          "type": "code"
+        },
+        {
+          "detail": "legal_cards_async fetches from pennydreadfulmtg.github.io/{season}_legal_cards.txt \u2014 the external list is not checkable without a live environment",
+          "ref": "magic/fetcher.py:166",
+          "type": "code"
+        },
+        {
+          "detail": "No commits reference this card name; no systematic code fix identified",
+          "ref": "git log --oneline --grep='Bartolom|Preisidio'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12471,
+      "notes": "This appears to be a transient state issue (e.g. card data not yet synced at season start) rather than a code bug; the label '- important' signals low priority. Cannot confirm or deny without live DB and legal_cards.txt content from the time it was reported.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:34:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

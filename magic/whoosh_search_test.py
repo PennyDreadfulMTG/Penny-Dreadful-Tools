@@ -185,3 +185,17 @@ def test_refresh_picks_up_an_index_rebuilt_by_another_process(monkeypatch: pytes
 
 def indexable_card(card_id: int, name: str) -> Card:
     return Card({'id': card_id, 'name': name, 'names': name, 'flavor_names': None, 'layout': 'normal'})
+
+def test_non_playable_card_found_via_fallback(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(WhooshConstants, 'index_dir', str(tmp_path))
+    vanguard = Card({'id': 1, 'name': 'Momir Vig, Simic Visionary', 'names': 'Momir Vig, Simic Visionary', 'flavor_names': None, 'layout': 'vanguard'})
+    normal = Card({'id': 2, 'name': 'Lightning Bolt', 'names': 'Lightning Bolt', 'flavor_names': None, 'layout': 'normal'})
+    whoosh_write.WhooshWriter().rewrite_index([vanguard, normal])
+
+    searcher = WhooshSearcher()
+
+    # Vanguard card is found via the all-cards fallback trie
+    assert searcher.search('Momir Vig, Simic Visionary').get_best_match() == 'Momir Vig, Simic Visionary'
+    assert searcher.search('Momir Vig').get_best_match() == 'Momir Vig, Simic Visionary'
+    # Playable card is still found via the primary trie
+    assert searcher.search('Lightning Bolt').get_best_match() == 'Lightning Bolt'

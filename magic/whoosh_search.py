@@ -93,27 +93,48 @@ class WhooshSearcher:
         self.initialize_trie()
 
     def initialize_trie(self) -> None:
-        self.trie = pygtrie.CharTrie()
-        canonical_matches: dict[str, list[str]] = {}
-        alias_matches: dict[str, list[str]] = {}
+        playable_canonical: dict[str, list[str]] = {}
+        playable_alias: dict[str, list[str]] = {}
+        all_canonical: dict[str, list[str]] = {}
+        all_alias: dict[str, list[str]] = {}
         with self.ix.reader() as reader:
             for doc in reader.iter_docs():
                 name = list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text
                 canonical_name = doc[1]['canonical_name']
-                canonical = list(WhooshConstants.normalized_analyzer(canonical_name))[0].text == name
-                matches_by_name = canonical_matches if canonical else alias_matches
-                matches = matches_by_name.setdefault(name, [])
+                playable = doc[1].get('playable', True)
+                is_canonical = list(WhooshConstants.normalized_analyzer(canonical_name))[0].text == name
+
+                # Always add to all-cards data structures
+                bucket = all_canonical if is_canonical else all_alias
+                matches = bucket.setdefault(name, [])
                 if canonical_name not in matches:
                     # The old one-value trie kept the last indexed match. Retain that ordering within each group while ensuring canonical names precede aliases.
                     matches.insert(0, canonical_name)
-        for name in canonical_matches.keys() | alias_matches.keys():
-            self.trie[name] = canonical_matches.get(name, []) + alias_matches.get(name, [])
+
+                # Add to playable-only data structures
+                if playable:
+                    bucket = playable_canonical if is_canonical else playable_alias
+                    matches = bucket.setdefault(name, [])
+                    if canonical_name not in matches:
+                        matches.insert(0, canonical_name)
+
+        self.trie = pygtrie.CharTrie()
+        for name in playable_canonical.keys() | playable_alias.keys():
+            self.trie[name] = playable_canonical.get(name, []) + playable_alias.get(name, [])
+
+        self.trie_all = pygtrie.CharTrie()
+        for name in all_canonical.keys() | all_alias.keys():
+            self.trie_all[name] = all_canonical.get(name, []) + all_alias.get(name, [])
 
     def search(self, w: str) -> SearchResult:
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
 
-        # If we get matches by prefix, we return that
-        exact, prefix_whole_word, other_prefixed = self.find_matches_by_prefix(normalized)
+        # Try playable cards first; fall back to all cards (including vanguard, etc.) if no match
+        exact, prefix_whole_word, other_prefixed = self.find_matches_by_prefix(normalized, self.trie)
+        if exact or len(prefix_whole_word) > 0 or len(other_prefixed) > 0:
+            return SearchResult(exact, prefix_whole_word, other_prefixed, [])
+
+        exact, prefix_whole_word, other_prefixed = self.find_matches_by_prefix(normalized, self.trie_all)
         if exact or len(prefix_whole_word) > 0 or len(other_prefixed) > 0:
             return SearchResult(exact, prefix_whole_word, other_prefixed, [])
 
@@ -130,14 +151,14 @@ class WhooshSearcher:
             fuzzy = [(r['canonical_name'], r.score) for r in searcher.search(query, limit=40)]
         return SearchResult(exact, prefix_whole_word, other_prefixed, fuzzy)
 
-    def find_matches_by_prefix(self, query: str) -> tuple[list[str], list[str], list[str]]:
+    def find_matches_by_prefix(self, query: str, trie: pygtrie.CharTrie) -> tuple[list[str], list[str], list[str]]:
         exact = []
         prefix_as_whole_word = []
         other_prefixed = []
-        if self.trie.has_key(query):
-            exact = self.trie.get(query)
-        if self.trie.has_subtrie(query):
-            matches = list(itertools.chain.from_iterable(self.trie.values(query)[(1 if exact else 0):]))
+        if trie.has_key(query):
+            exact = trie.get(query)
+        if trie.has_subtrie(query):
+            matches = list(itertools.chain.from_iterable(trie.values(query)[(1 if exact else 0):]))
             whole_word, subword = classify(matches, query)
             prefix_as_whole_word.extend(whole_word)
             other_prefixed.extend(subword)

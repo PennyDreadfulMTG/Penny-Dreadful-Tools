@@ -11,7 +11,7 @@ from magic.whoosh_constants import WhooshConstants
 
 class WhooshWriter:
     def __init__(self) -> None:
-        self.schema = Schema(id=NUMERIC(unique=True, stored=True), canonical_name=STORED(), name=STORED(), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer, field_boost=100.0))
+        self.schema = Schema(id=NUMERIC(unique=True, stored=True), canonical_name=STORED(), name=STORED(), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer, field_boost=100.0), playable=STORED())
 
     def rewrite_index(self, cards: list[Card]) -> None:
         print(f'Rewriting index in {WhooshConstants.index_dir}')
@@ -29,10 +29,13 @@ def ensure_dir_exists(directory: str) -> None:
 
 def update_index(index: FileIndex, cards: list[Card]) -> None:
     writer = index.writer()
-    # We exclude tokens here because they can have the exact same name as cards.
-    # We exclude emblems here to stop them showing up as
-    cards = [c for c in cards if layout.is_playable_layout(c.layout)]
+    # Exclude cards that don't use the canonical card namespace (tokens, art series, etc.)
+    # to avoid name conflicts with real cards. Non-playable cards that do use canonical names
+    # (vanguard, schemes, etc.) are included and tagged with playable=False so search can
+    # fall back to them only when no playable card matches.
+    cards = [c for c in cards if layout.LAYOUTS.get(c.layout, layout.Layout()).uses_canonical_namespace]
     for card in cards:
+        playable = layout.is_playable_layout(card.layout)
         names = list(card.names)
         if card.flavor_names:
             names.extend(card.flavor_names.split('|'))
@@ -51,6 +54,7 @@ def update_index(index: FileIndex, cards: list[Card]) -> None:
             document['name_tokenized'] = name
             document['name_stemmed'] = name
             document['name_normalized'] = name
+            document['playable'] = playable
             writer.update_document(**document)
     writer.commit()
 

@@ -316,7 +316,8 @@ class RawDeckDescription(TypedDict, total=False):
 def add_deck(params: RawDeckDescription) -> Deck:
     if not params.get('mtgo_username') and not params.get('tappedout_username') and not params.get('mtggoldfish_username'):
         raise InvalidDataException(f'Did not find a username in {params}')
-    person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
+    from decksite.data import person as person_data  # local import to avoid circular import
+    person_id = person_data.get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
     cards = decklist.normalize(params['cards'])
     if deck_id:
@@ -449,14 +450,6 @@ def insert_deck_card(deck_id: int, name: str, n: int, in_sideboard: bool) -> Non
     name = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])
-
-def get_or_insert_person_id(mtgo_username: str | None, tappedout_username: str | None, mtggoldfish_username: str | None) -> int:
-    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
-    person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
-    if person_id:
-        return person_id
-    sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
-    return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
 def get_source_id(source: str) -> int:
     sql = 'SELECT id FROM source WHERE name = %s'

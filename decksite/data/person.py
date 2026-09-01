@@ -333,7 +333,7 @@ def add_note(creator_id: int, subject_id: int, note: str) -> None:
     db().execute(sql, [creator_id, subject_id, note])
 
 def link_discord(mtgo_username: str, discord_id: int) -> Person:
-    person_id = deck.get_or_insert_person_id(mtgo_username, None, None)
+    person_id = get_or_insert_person_id(mtgo_username, None, None)
     p = load_person_by_id(person_id)
     if p.discord_id is not None:
         raise AlreadyExistsException(f'Player with mtgo username {mtgo_username} already has discord id {p.discord_id}, cannot add {discord_id}')

@@ -38,7 +38,11 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
         return [], 0
     cards = oracle.cards_by_name()
     for c in cs:
-        c.update(cards[c.name])
+        card_data = cards.get(c.name)
+        if card_data:
+            c.update(card_data)
+        else:
+            logger.warning(f'Rotation card {c.name!r} not found in oracle')
     return cs, 0 if not rs else rs[0]['total']
 
 def load_rotation_summary() -> tuple[int, int]:

@@ -47,6 +47,8 @@ def add_signup() -> Response:
     form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     if form.validate():
         d = lg.signup(form)
+        if session.get('id'):
+            ps.associate(d, session['id'])
         response = make_response(redirect(url_for('deck', deck_id=d.id)))
         response.set_cookie('deck_id', str(d.id))
         return response

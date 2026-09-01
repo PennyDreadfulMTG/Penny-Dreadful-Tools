@@ -117,10 +117,11 @@ def decks_api() -> Response:
         {
             'achievementKey': <str?>,
             'archetypeId': <int?>,
-            'cardName': <str?>,
+            'cardName': <str?>,  # Repeat for multiple cards; deck must contain all named cards
             'competitionId': <int?>,
             'competitionFlagId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
+            'minWinRate': <float?>,  # Minimum win percentage (0-100), e.g. 50 for >50%
             'page': <int>,
             'pageSize': <int>,
             'personId': <int?>,

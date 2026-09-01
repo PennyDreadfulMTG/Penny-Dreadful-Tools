@@ -227,12 +227,16 @@ def search_scryfall(query: str, exhaustive: bool = False) -> tuple[int, list[str
         url = 'https://api.scryfall.com/cards/search?q=' + fetch_tools.escape(query)
         result_data = []
         while True:
+            result_json = None
             for _ in range(3):
                 try:
                     result_json = fetch_tools.fetch_json(url)
                     break
                 except FetchException as c:
                     print(c)
+            if result_json is None:
+                print('Scryfall appears to be unreachable')
+                return False, [], []
             if 'code' in result_json.keys():  # The API returned an error
                 if result_json['status'] == 404:  # No cards found
                     return False, [], []

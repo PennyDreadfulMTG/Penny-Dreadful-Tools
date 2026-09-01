@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from magic import fetcher
+from shared.fetch_tools import FetchException
 
 
 @pytest.mark.asyncio
@@ -54,3 +55,12 @@ async def test_bulk_data_uri_supports_legacy_json_download(monkeypatch: pytest.M
     monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json_async', fetch_json_async)
 
     assert await fetcher.bulk_data_uri() == 'https://data.scryfall.io/default-cards.json'
+
+
+def test_search_scryfall_returns_empty_when_scryfall_unreachable(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(fetcher.redis, 'get_list', lambda _key: None)
+    monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json', lambda _url: (_ for _ in ()).throw(FetchException('timeout')))
+
+    result = fetcher.search_scryfall('lightning bolt')
+
+    assert result == (False, [], [])

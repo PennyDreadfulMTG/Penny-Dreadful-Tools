@@ -348,7 +348,7 @@ def retire_deck(d: Deck) -> None:
     redis.clear(f'decksite:deck:{d.id}')
 
 def random_legal_deck() -> Deck | None:
-    where = f'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {seasons.current_season_num()})'
+    where = f'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE id = {seasons.current_season_num()})'
     having = f'(d.competition_id NOT IN ({active_competition_id_query()}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'
     ds, _ = deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')
     try:

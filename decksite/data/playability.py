@@ -119,7 +119,7 @@ def rank() -> dict[str, int]:
     return {r['name']: r['rank'] for r in db().select(sql)}
 
 def preaggregate_legal_cards() -> None:
-    sql = 'SELECT number FROM season'
+    sql = 'SELECT id FROM season'
     all_season_ids = set(db().values(sql))
     sql = 'SELECT DISTINCT season_id FROM _legal_cards'
     try:

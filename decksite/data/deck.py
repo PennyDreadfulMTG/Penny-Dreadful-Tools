@@ -20,6 +20,29 @@ from shared_web import fonts
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
     ds, _ = load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
+    tournament_ds = _latest_tournament_top8(season_id)
+    existing_ids = {d.id for d in ds}
+    return [d for d in tournament_ds if d.id not in existing_ids] + ds
+
+def _latest_tournament_top8(season_id: str | int | None = None) -> list[Deck]:
+    # Always include the most recent completed tournament's top 8 so it appears
+    # on the homepage even when 500+ more recent league decks push it out of the
+    # latest_decks window. See #7924.
+    where = """
+        d.competition_id = (
+            SELECT c2.id
+            FROM competition AS c2
+            JOIN competition_series AS cs2 ON c2.competition_series_id = cs2.id
+            JOIN competition_type AS ct2 ON ct2.id = cs2.competition_type_id
+            WHERE ct2.name = 'Gatherling'
+            AND c2.end_date < UNIX_TIMESTAMP(NOW())
+            ORDER BY c2.end_date DESC
+            LIMIT 1
+        )
+        AND d.finish IS NOT NULL
+        AND d.finish <= 8
+    """
+    ds, _ = load_decks(where=where, season_id=season_id)
     return ds
 
 def recent_decks_for_person(person_id: int) -> list[Deck]:

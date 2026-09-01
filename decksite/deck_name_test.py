@@ -338,6 +338,7 @@ def test_remove_season() -> None:
 
 def test_remove_pd() -> None:
     assert deck_name.remove_pd('[PD2] Big Blue', 2) == 'Big Blue'
+    assert deck_name.remove_pd('[PD2] Big Blue', 3) == 'Big Blue'
     assert deck_name.remove_pd('Red Deck Wins (PD500)', 1) == 'Red Deck Wins'
     assert deck_name.remove_pd('Penny Dreadful Knights', 1) == 'Knights'
     assert deck_name.remove_pd('biovisionary pd', 1) == 'biovisionary'

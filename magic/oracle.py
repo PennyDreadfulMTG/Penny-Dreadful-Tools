@@ -156,6 +156,12 @@ def get_set(set_id: int) -> Container:
     rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])
     return guarantee.exactly_one([Container(r) for r in rs])
 
+def get_set_by_name_or_code(s: str) -> Container | None:
+    rs = db().select(f'SELECT id FROM `set` WHERE code = %s OR name LIKE {sqllikeescape(s)}', [s])
+    if not rs:
+        return None
+    return Container(rs[0])
+
 def deck_sort(c: Card) -> str:
     s = ''
     if c.is_creature():

@@ -20,7 +20,13 @@ def flavor_text(c: Card) -> str:
         if printing.flavor is not None:
             return '\n' + printing.flavor + '\n-**' + oracle.get_set(printing.set_id).name + '**'
     if c.preferred_printing is not None:
-        return f'No flavor text for {c.preferred_printing}'
+        printing = oracle.get_printing(c, c.preferred_printing)
+        if printing is not None:
+            return f'No flavor text for {c.name} in {oracle.get_set(printing.set_id).name}'
+        known_set = oracle.get_set_by_name_or_code(c.preferred_printing)
+        if known_set is not None:
+            return f'{c.name} was not printed in {c.preferred_printing}'
+        return f'Unknown set: {c.preferred_printing}'
     return 'No flavor text available'
 
 def setup(bot: Client) -> None:

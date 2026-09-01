@@ -664,7 +664,7 @@ def nwdl_join() -> str:
                     SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
                 FROM
                     deck_match AS dm
-                INNER JOIN
+                LEFT JOIN
                     deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
                 INNER JOIN
                     deck AS d ON d.id = dm.deck_id

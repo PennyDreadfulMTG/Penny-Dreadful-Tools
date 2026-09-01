@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:03:20Z",
+  "evidence_refs": [
+    "evidence/7911.json#triage[0]"
+  ],
+  "issue": 7911,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The implementation is straightforward (a new CountedAchievement subclass ~20 lines), but the achievement name, display description, exact threshold (>50 vs >=50), and whether it should stack with PerfectRun or replace it for those runs all require an owner decision."
+}

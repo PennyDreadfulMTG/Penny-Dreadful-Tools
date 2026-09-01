@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8435-1",
+      "branch": "sweep/8435-m-competition-url-url-for-competition-co",
+      "files_changed": 4,
+      "head_sha": "63dc2d45105c99331e973b7a5ec7a7f75c8b8911",
+      "issue": 8435,
+      "lines_changed": 20,
+      "lint": "passed",
+      "notes": "The `achievements.py` case mentioned in the issue (line 399) was intentionally left as a follow-up per the triage sketch. The `code_merges` and `subreddit` news items already used external URLs (not url_for), so they needed no changes; `prepare_news` correctly handles mixed news lists by only setting `.url` when `deck_id` is present.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`decksite/data/match.py` (`setup_matches`) and `decksite/data/news.py` (`tournament_winners`, `perfect_league_runs`) called Flask's `url_for()` inside database-touching code. This violated separation of concerns and required a fragile `if g:` guard in `match.py` to avoid errors when called outside a Flask application context.\n\n## What changed\n\n- **`decksite/data/match.py`**: Removed the `if g: m.competition_url = url_for(...)` block from `setup_matches()` and removed the now-unneeded `from flask import g, url_for` import.\n- **`decksite/prepare.py`**: Added `if m.get('competition_id'): m.competition_url = url_for('competition', competition_id=m.competition_id)` inside `prepare_matches()`. Added a new `prepare_news()` function that sets `.url` on news items that carry a `deck_id`.\n- **`decksite/data/news.py`**: Removed `from flask import url_for`. Changed `tournament_winners` and `perfect_league_runs` to store `deck_id` in the Container instead of computing `url` via `url_for` at data-fetch time.\n- **`decksite/view.py`**: Added `self.prepare_news()` to the `View.prepare()` lifecycle and added the corresponding `prepare_news()` method that delegates to `prepare.prepare_news()`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected in 18 s\n\nFixes #8435",
+      "pr_title": "Move url_for calls from data layer to prepare layer (#8435)",
+      "recorded_at": "2026-09-01T23:13:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8435,
   "triage": [
     {

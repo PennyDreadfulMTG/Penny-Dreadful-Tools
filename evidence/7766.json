@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7766-1",
+      "branch": "sweep/7766-pr-avatar-momir-vig-simic-visionary-does",
+      "files_changed": 3,
+      "head_sha": "7e900e24b1c9e50c4b88e9ad4018e4072cf3114d",
+      "issue": 7766,
+      "lines_changed": 77,
+      "lint": "passed",
+      "notes": "The old filter comment said 'we exclude emblems here to stop them showing up as [...]' (truncated). Emblems with `uses_canonical_namespace=True` are now indexed and reachable via the fallback trie; if that turns out to be undesirable, emblem can be individually excluded. Tokens and art-series cards are still excluded (they share names with playable cards). The existing Whoosh index on production will need a `reindex` run to pick up the new `playable` field and include previously-missing cards.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`!pr Momir Vig, Simic Visionary` (and other vanguard/non-playable cards) returned no results because `update_index` filtered the card list to `playable_layouts` only, so vanguard, scheme, planar, emblem, etc. cards were never written to the Whoosh index at all.\n\n## What changed\n\nFollowing [Scryfall's approach suggested in the issue](https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/7766): search playable cards first, fall back to non-playable cards only when nothing matches.\n\n**`magic/whoosh_write.py`**\n- Added `playable=STORED()` field to the Whoosh schema.\n- Changed the index filter from `is_playable_layout` to `uses_canonical_namespace` \u2014 this still excludes tokens, art series, and double-faced tokens (which share names with real cards and would cause conflicts), but now includes vanguard, scheme, planar, emblem, augment, and host cards.\n- Each indexed document is now tagged with `playable=True/False`.\n\n**`magic/whoosh_search.py`**\n- `initialize_trie()` now builds two tries: `self.trie` (playable cards only, same behaviour as before) and `self.trie_all` (all indexed cards).\n- `find_matches_by_prefix()` now accepts the trie to search as a parameter.\n- `search()` tries the playable trie first; only if that yields no prefix match does it try the all-cards trie. Fuzzy/stemmed queries (the final fallback) now also search the full index, which covers typo-based lookups for non-playable cards.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- `uv run --frozen python dev.py unit magic` \u2014 849 passed, 1 skipped (pre-existing), 89 deselected (functional/perf). Includes a new unit test `test_non_playable_card_found_via_fallback` that creates a vanguard card and a normal card in an in-memory index and asserts the vanguard is found by exact name and by prefix while the normal card is still found via the primary trie.\n\nFixes #7766",
+      "pr_title": "Fall back to non-playable cards in Whoosh search when no playable card matches (#7766)",
+      "recorded_at": "2026-09-01T23:09:15Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic",
+        "detail": "849 passed, 1 skipped, 89 deselected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7766,
   "triage": [
     {

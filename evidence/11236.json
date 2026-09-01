@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11236-3",
+      "branch": "sweep/11236-logsite-s-people-is-slow",
+      "files_changed": 1,
+      "head_sha": "b773c53b8b5db512ed68f74c5ff65b95214fceaa",
+      "issue": 11236,
+      "lines_changed": 53,
+      "lint": "passed",
+      "notes": "The only behavioural difference is that match counts now come from `match_players` directly (same join path as the old ORM query) and favour-format ordering is done in SQL rather than relying on insertion order; both produce equivalent results. The unused `match` import and `column` SQLAlchemy import are removed as a side effect of the rewrite.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `prepare()` method in `logsite/views/people.py` had an N+1 query problem: for each user on the paginated `/people/` page that wasn't in Redis, it issued two separate SQL queries \u2014 one `COUNT(*)` via `match.get_recent_matches_by_player(p.name).count()` and one per-user format query. With a full page of 20 users all uncached, that's 40+ round-trips to the database, making the page slow.\n\n## What changed\n\nReplaced the per-person query loop with two bulk queries issued once for all uncached users on the page:\n\n1. A single `SELECT mp.user_id, COUNT(*) \u2026 GROUP BY mp.user_id WHERE mp.user_id IN (\u2026)` for match counts.\n2. A single `SELECT mp.user_id, f.name, COUNT(*) \u2026 GROUP BY mp.user_id, f.id ORDER BY \u2026 COUNT(*) DESC` for favourite formats (the first row per user_id is the most-played format).\n\nResults are then written to Redis per-user as before. The Redis read-first path is unchanged \u2014 users already cached still skip the DB entirely.\n\nSQLAlchemy's `bindparam('user_ids', expanding=True)` is used to safely parameterise the `IN` clause, consistent with SQLAlchemy 2.0 practices used in the rest of the project.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks clean).\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (no failures).\n- Manual diff review: only `logsite/views/people.py` changed, 1 file, 53 lines touched, all changes serve #11236.\n\nFixes #11236",
+      "pr_title": "Replace N+1 per-person DB queries with two bulk queries in /people/ (#11236)",
+      "recorded_at": "2026-09-01T23:09:48Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit logsite",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11236,
   "triage": [
     {

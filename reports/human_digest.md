@@ -126,3 +126,13 @@ Nothing is awaiting a decision from bakert.
 - #12273 — Audit production for negative values and choose the table/column scope before introducing broad UNSIGNED schema migrations. (2026-09-01T21:04:28Z)
 
 - #12279 — Choose which rotation sort/filter controls should be first-class UI and whether administrators need different defaults from public users. (2026-09-01T21:04:28Z)
+
+- #7932 — Decide whether live-table pagination needs first/last buttons, arbitrary page-number entry, both, or neither, and whether controls should depend on result count. (2026-09-01T23:04:17Z)
+
+- #8252 — Decide whether pdm should accept manually submitted non-competitive decks before designing an /add/ flow. (2026-09-01T23:04:17Z)
+
+- #8295 — Decide whether Elo remains a global rolling rating or is recalculated/reset per season. (2026-09-01T23:04:17Z)
+
+- #8608 — Decide whether order:/sort: search syntax adds value beyond sortable result-table columns. (2026-09-01T23:04:18Z)
+
+- #8667 — Choose whether and how to identify a best player per archetype: new per-archetype Elo or an existing win-rate heuristic, including sample threshold and time window. (2026-09-01T23:04:18Z)

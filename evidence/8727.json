@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-8727-1",
+      "final_comment": "Fixed by commit 6206b81f (May 2022), which expanded the cardfeed to emit both face names for flip-layout cards (e.g., 'Erayo, Prodigy Ascendant // Erayo's Essence'). The current code at magic/layout.py:43 sets has_two_names=True for flip, so send_scryfall_two_names('flip') returns True and the cardfeed correctly identifies both faces.",
+      "issue": 8727,
+      "own_evidence": [
+        {
+          "detail": "flip: Layout(has_two_names=True) \u2014 independently verified; has_meld_back defaults False so send_scryfall_two_names('flip') returns True",
+          "ref": "magic/layout.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "cardfeed_api calls send_scryfall_two_names(c.layout) and joins c.names with ' // ' when True, confirming Erayo emits both face names",
+          "ref": "decksite/controllers/api.py:238-244",
+          "type": "code"
+        },
+        {
+          "detail": "diff confirmed: changed hardcoded modal_dfc check to include flip, adventure, and transform layouts",
+          "ref": "6206b81f",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:09:26Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

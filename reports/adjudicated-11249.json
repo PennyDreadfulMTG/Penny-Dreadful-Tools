@@ -1,0 +1,14 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T23:02:04Z",
+    "note": "Retry: both prior fixers were blocked by the Claude subscription session limit, which reset at 22:50 UTC. This was infrastructure quota exhaustion, not a malformed fix result. Any resulting PR must remain draft.",
+    "verb": "queue-fix"
+  },
+  "bundled_at": "2026-09-01T22:58:20Z",
+  "created_at": "2026-09-01T21:13:21Z",
+  "evidence_refs": [],
+  "issue": 11249,
+  "kind": "attempts-exhausted",
+  "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
+  "summary": "malformed output after nudge"
+}

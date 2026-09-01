@@ -37,5 +37,37 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-8285-1",
+      "final_comment": "Resolved in commit 360e9e44 ('Show seasons for cards played first'), which caps the Cards Played First section to 12 entries by default and adds a JavaScript-powered 'Show all N\u2026' / 'Show fewer' toggle for longer lists, implemented across person.py, person.mustache, pd.js, and pd.css.",
+      "issue": 8285,
+      "own_evidence": [
+        {
+          "detail": "TRAILBLAZER_CARD_PREVIEW_SIZE = 12 confirmed; person.py:72-75 marks cards beyond index 12 as additional_trailblazer_card and sets has_additional_trailblazer_cards",
+          "ref": "decksite/views/person.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "toggle anchor rendered only when has_additional_trailblazer_cards is true, with data-count and aria-expanded attributes",
+          "ref": "decksite/templates/person.mustache:77-79",
+          "type": "code"
+        },
+        {
+          "detail": "PD.initTrailblazerCardLists wires up click handler that toggles is-collapsed class and flips Show all N\u2026 / Show fewer text",
+          "ref": "shared_web/static/js/pd.js:110-126",
+          "type": "code"
+        },
+        {
+          "detail": ".trailblazer-card-list.is-collapsed .additional-trailblazer-card rule confirmed; items beyond 12 are hidden by default",
+          "ref": "shared_web/static/css/pd.css:3208",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:06:39Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

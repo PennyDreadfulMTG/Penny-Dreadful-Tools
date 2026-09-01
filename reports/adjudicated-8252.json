@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T23:04:17Z",
+    "note": "Decide whether pdm should accept manually submitted non-competitive decks before designing an /add/ flow.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T23:01:55Z",
+  "created_at": "2026-09-01T22:59:26Z",
+  "evidence_refs": [
+    "evidence/8252.json#triage[0]"
+  ],
+  "issue": 8252,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The feature is unbuilt and gated on a product call about whether pdm should accept non-competitive decks at all. That upstream decision must be made first."
+}

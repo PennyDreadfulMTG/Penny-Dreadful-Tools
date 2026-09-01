@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T23:04:17Z",
+    "note": "Run independent verification of the specific historical cardfeed commits and current two-face-name behavior before closure; medium confidence alone is insufficient.",
+    "verb": "retry-verify"
+  },
+  "bundled_at": "2026-09-01T23:01:55Z",
+  "created_at": "2026-09-01T23:00:22Z",
+  "evidence_refs": [
+    "evidence/8727.json#triage[0]"
+  ],
+  "issue": 8727,
+  "kind": "class-escalate",
+  "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "Cannot directly verify PDBot runtime behavior without a running instance; confidence is medium because the cardfeed fix is the most likely cause and the code evidence is solid, but PDBot is a separate application."
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7921,
+  "triage": [
+    {
+      "batch_id": "t-7924-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "compat = False and ctx.channel.type == ChannelType.GUILD_TEXT and await ctx.bot.get_user(268547439714238465) in ctx.channel.members  # see #7074 \u2014 the 'False and' short-circuits the entire expression so scryfall_compatability_mode is always False",
+          "ref": "discordbot/command.py:44",
+          "type": "code"
+        },
+        {
+          "detail": "Original fix for #7074 (2020-02-26) set compat correctly; the 'False and' was added later during the interactions.py library migration when 'await ctx.bot.get_user()' would error at runtime (get_user is synchronous)",
+          "ref": "3c14dfcf",
+          "type": "commit"
+        },
+        {
+          "detail": "test_compat() confirms the regex logic works correctly when scryfall_compatability_mode=True, i.e. parse_queries is correct; only the flag assignment is broken",
+          "ref": "discordbot/unit_test.py:51",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/command.py:44, remove 'False and' and remove 'await' from the get_user() call (get_user in the interactions library is a synchronous cache lookup, not a coroutine). Resulting line: compat = ctx.channel.type == ChannelType.GUILD_TEXT and ctx.bot.get_user(268547439714238465) in ctx.channel.members. Verify that ctx.channel.members is accessible for GUILD_TEXT channels in the interactions library; if not, use ctx.bot.cache.get_member or a guild.members lookup.",
+      "issue": 7921,
+      "notes": "The user ID 268547439714238465 is the Scryfall bot's Discord ID. If the Scryfall bot is no longer active or has a new ID, the feature will silently no-op (compat=False), which is harmless.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:03:20Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

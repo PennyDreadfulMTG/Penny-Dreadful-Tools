@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T23:04:16Z",
+    "note": "Verifier correctly refuted the closure: decksite has dark mode, but the issue explicitly includes logsite and a shared preference. Re-triage the remaining logsite work rather than closing the issue.",
+    "verb": "retry-triage"
+  },
+  "bundled_at": "2026-09-01T23:01:55Z",
+  "created_at": "2026-09-01T22:59:37Z",
+  "evidence_refs": [
+    "evidence/7738.json#verify[0]"
+  ],
+  "issue": 7738,
+  "kind": "verifier-refuted",
+  "question": "Verifier returned REFUTED \u2014 drop the closure, re-triage, or override?",
+  "summary": "PR #12694 implemented dark mode for decksite only. The issue is labeled '* logsite' and a comment by the author explicitly requests sharing the preference between decksite and logsite. logsite/templates/header.mustache contains no dark mode initialization and logsite/templates/menu.mustache contains no toggle, so logsite users cannot enable dark mode. The fix is partial."
+}

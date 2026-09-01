@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8714-1",
+      "branch": "sweep/8714-make-it-easier-to-create-rules-for-arche",
+      "files_changed": 3,
+      "head_sha": "9a830663146b0cfcf4cad580515d2d30b9709da8",
+      "issue": 8714,
+      "lines_changed": 15,
+      "lint": "passed",
+      "notes": "The archetypedropdown partial already supported the `selected` attribute on archetype objects (used by the edit_archetypes queue rows), so no template changes were needed. The per-deck `edit_rules_url` assignment covers all decks in the queue loop, setting a fallback URL for non-100%-similarity decks.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a deck in the Edit Archetypes queue had 100% similarity to an existing archetype, a `[+]` link appeared to invite the user to create a rule. However, that link pointed to the generic `/admin/rules/` page with no context, leaving the user to manually find and select the correct archetype from the dropdown in the \"New Rule\" form.\n\n## What changed\n\n- **`decksite/views/edit_archetypes.py`**: The `edit_rules_url` is now set per-deck instead of once at the view level. For decks where `show_add_rule_prompt` is True and an `archetype_id` is known, the URL becomes `/admin/rules/?archetype_id=<id>`, passing the archetype as a GET parameter.\n- **`decksite/controllers/admin.py`**: `edit_rules()` now reads the optional `archetype_id` GET parameter and passes it to the view as `preselect_archetype_id`.\n- **`decksite/views/edit_rules.py`**: `EditRules.__init__()` accepts a new optional `preselect_archetype_id` parameter. When provided, it marks the matching archetype as `selected=True` in `self.archetypes`, which causes the existing `archetypedropdown` partial (which already handles `{{#selected}}selected=\"selected\"{{/selected}}`) to pre-select it in the \"New Rule\" form.\n\n## Validation\n\n- `uv run --frozen python dev.py lint`: passed\n- `uv run --frozen python dev.py unit`: 848 passed, 1 skipped in 17.81s\n\nFixes #8714",
+      "pr_title": "Pre-select archetype in New Rule form when following 100% similarity link (#8714)",
+      "recorded_at": "2026-09-01T23:11:50Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 17.81s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8714,
   "triage": [
     {

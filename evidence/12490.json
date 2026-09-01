@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12490-2",
+      "branch": "sweep/12490-should-load-people-load-decks-etc-return",
+      "files_changed": 20,
+      "head_sha": "0b6b0b203349edd1549c00a8d39c65868efb00b7",
+      "issue": 12490,
+      "lines_changed": 140,
+      "lint": "passed",
+      "notes": "The `load_head_to_head` function in `person.py` also returns a tuple (it's called only from the API and always needs the total), but since all its callers already use the total it was left unchanged \u2014 consistent with only fixing the split-callsite pattern the issue describes. The `load_competition_cards` internal helper in `card.py` also returns a tuple but is only called from `load_cards_with_total` internally, so it was left as-is.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `load_decks`, `load_people`, `load_cards`, `load_matches`, and `load_rotation` functions all returned `tuple[list[T], int]` (results + total count) because the API needs the total for pagination. However, the vast majority of callers don't need the total, leading to widespread `ds, _ = load_decks(...)` unpacking boilerplate throughout the codebase \u2014 and one place that had to cast `list(matchup_people)` because `load_people` returned `Sequence[Person]` instead of `list[Person]`.\n\n## What changed\n\n- Each function (`load_decks`, `load_people`, `load_cards`, `load_matches`, `load_rotation`) now returns `list[T]` directly.\n- New `load_decks_with_total`, `load_people_with_total`, `load_cards_with_total`, `load_matches_with_total`, and `load_rotation_with_total` variants are introduced; each wraps the implementation and returns `tuple[list[T], int]`.\n- API endpoints and `main.py` (which need the total for pagination) are updated to call the `_with_total` variants.\n- All non-paginated callers are simplified to drop the `_, _` unpacking.\n- `load_people` return type changed from `Sequence[Person]` to `list[Person]`, eliminating the `list()` cast in `metagame.py`.\n- Test mocks for `load_decks` updated to return a plain list instead of a tuple.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected\n\nFixes #12490",
+      "pr_title": "Separate load_decks/load_people/etc from their paginated _with_total variants (#12490)",
+      "recorded_at": "2026-09-01T23:08:53Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12490,
   "triage": [
     {

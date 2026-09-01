@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8508-1",
+      "branch": "sweep/8508-make-each-select-in-admin-archetypes-uni",
+      "files_changed": 2,
+      "head_sha": "95efda8290e8900a048a246e7ce62e26a5169e81",
+      "issue": 8508,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The template `archetypedropdown.mustache` already had `{{prefix}}` support built in (renders as empty string when unset), so no template change was needed. The old controller logic had a special case for 'one archetype_id for many decks' (bulk-assign); that path is removed since each deck now has its own named field \u2014 bulk assignment from the queue UI wasn't a supported UI gesture anyway.",
+      "outcome": "pushed",
+      "pr_body": "## Problem\n\nAll archetype dropdowns in `/admin/archetypes` shared the same form field name `archetype_id`. When a browser restores a closed tab using \"reopen closed tab\", it replays the saved form state by field name. If new unassigned decks appeared between close and restore, the browser would apply old selections to the wrong rows \u2014 silently misassigning archetypes.\n\n## Fix\n\n**`decksite/views/edit_archetypes.py`**: Set `d['prefix'] = f'{d.id}_'` for each deck in the queue loop. The existing `archetypedropdown.mustache` template already renders `name=\"{{prefix}}archetype_id\"`, so this makes each dropdown uniquely named (e.g. `name=\"12345_archetype_id\"`).\n\n**`decksite/controllers/admin.py`**: Replace the `getlist('archetype_id')` + pop-index approach with a direct per-deck lookup: `request.form.get(f'{deck_id}_archetype_id')` for each `deck_id` in the submitted list. This is simpler and correct \u2014 no need for the previous \"one archetype for multiple decks\" adjustment since each field is now uniquely named.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (environmental skip, unrelated to this change)\n- `git diff origin/master...` \u2014 2 files, 7 lines changed; every hunk directly serves #8508\n\nFixes #8508",
+      "pr_title": "Give each archetype dropdown a unique name to prevent tab-restore misassignment (#8508)",
+      "recorded_at": "2026-09-01T23:09:37Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 18.81s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8508,
   "triage": [
     {

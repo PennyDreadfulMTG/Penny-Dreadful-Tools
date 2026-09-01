@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:02:58Z",
+  "evidence_refs": [
+    "evidence/8075.json#triage[0]"
+  ],
+  "issue": 8075,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Issue contains only 'Reported on Discord by bakert#2193' with no error message, stack trace, or task name. Cannot determine whether this refers to generate_translations.py, update_translations.py, or validate_translations.py, or whether it is still reproducible. Need the original Discord thread content or a reproduction to proceed."
+}

@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-7998-1",
+      "branch": "sweep/7998-consider-adding-elo-to-head-to-head",
+      "files_changed": 3,
+      "head_sha": "37c4b16e14174caee864dcfa82db8084820c4fbe",
+      "issue": 7998,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "The change is purely additive \u2014 a new SELECT column, a new sort key, and two JSX nodes. Elo is already populated on the `person` table and used in persontable, so no schema or data migration is needed. The `opp.elo` alias is safe because the `person AS opp` join already exists in the query.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe head-to-head page showed opponent match stats (# matches, record, win %) but not the opponent's Elo rating, making it harder to contextualise results against stronger or weaker opponents.\n\n## What changed\n\n- **`decksite/data/person.py`** \u2014 added `opp.elo` to the `SELECT` in `load_head_to_head` so the field is returned by the API.\n- **`decksite/data/clauses.py`** \u2014 added `'elo': 'opp.elo'` to the `head_to_head_order_by` sort_options dict so the column is sortable.\n- **`shared_web/static/js/headtoheadtable.jsx`** \u2014 added an Elo `<th>` (with sort binding) to `renderHeaderRow` and an `entry.elo` `<td>` to `renderRow`, following the same pattern as `persontable.jsx`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks).\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (no DB-dependent head-to-head tests exist; the change is purely additive SQL + JSX).\n\nFixes #7998",
+      "pr_title": "Add Elo to head-to-head table (#7998)",
+      "recorded_at": "2026-09-01T23:16:07Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 19.20s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 7998,
+  "triage": [
+    {
+      "batch_id": "t-8075-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_head_to_head SQL selects from _head_to_head_stats joined to person (opp) but does not SELECT opp.elo",
+          "ref": "decksite/data/person.py:222-235",
+          "type": "code"
+        },
+        {
+          "detail": "head_to_head_order_by sort_options dict has no 'elo' key",
+          "ref": "decksite/data/clauses.py:100-108",
+          "type": "code"
+        },
+        {
+          "detail": "renderHeaderRow has Opponent/#Matches/Record/Win% columns but no Elo column; renderRow matches",
+          "ref": "shared_web/static/js/headtoheadtable.jsx:5-11",
+          "type": "code"
+        },
+        {
+          "detail": "persontable.jsx already has Elo column pattern for reference: <th className='n elo'>Elo</th> and entry.elo rendering",
+          "ref": "shared_web/static/js/persontable.jsx:20",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Three files: (1) decksite/data/person.py \u2014 add 'opp.elo' to the SELECT in load_head_to_head (1 line). (2) decksite/data/clauses.py \u2014 add 'elo': 'opp.elo' to head_to_head_order_by sort_options dict (1 line). (3) shared_web/static/js/headtoheadtable.jsx \u2014 add Elo th in renderHeaderRow with sort binding and opp.elo td in renderRow, following the same pattern as persontable.jsx:20 and :50. Total ~8-10 lines changed.",
+      "issue": 7998,
+      "notes": "Elo is already fetched and displayed in the person table (persontable.jsx). The head-to-head query already joins the opponent's person record (opp), so adding opp.elo to SELECT is safe and requires no schema changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:02:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

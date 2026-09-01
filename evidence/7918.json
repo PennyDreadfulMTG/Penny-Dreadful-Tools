@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7918,
+  "triage": [
+    {
+      "batch_id": "t-7924-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "make_final_list() calls canonical_legal_name() which calls oracle.canonical_name_or_self(); for flip cards this resolves to the front face name only (e.g. 'Erayo, Soratami Ascendant'), so legal_cards.txt never includes 'Erayo's Essence'",
+          "ref": "rotation_script/rotation_script.py:141",
+          "type": "code"
+        },
+        {
+          "detail": "canonical_name() for flip layout returns faces[0]['name'] (front face), confirming only the front is stored as the card's canonical name",
+          "ref": "magic/multiverse.py:373-377",
+          "type": "code"
+        },
+        {
+          "detail": "PDBot (the modo bot) is closed-source and not in this repo; the exact legality check it performs against legal_cards.txt cannot be confirmed from this codebase alone",
+          "ref": "grep -rn pdbot decksite/ logsite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7918,
+      "notes": "The plausible fix in this repo would be to expand make_final_list() in rotation_script/rotation_script.py to also write the back-face name of any flip-layout legal card to legal_cards.txt. But confirming this is where PDBot performs its check requires access to the PDBot codebase.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:03:20Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

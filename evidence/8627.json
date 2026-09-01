@@ -37,5 +37,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-8727-1",
+      "final_comment": "Fixed by commit 15ce8a20 (April 2022), which gave both face names for modal DFCs in the cardfeed (e.g., 'Torrent Sculptor // Flamethrower Sonata'). The current code at magic/layout.py:48 sets has_two_names=True for modal_dfc, so send_scryfall_two_names('modal_dfc') returns True and all MDFC back faces are correctly identified as legal.",
+      "issue": 8627,
+      "own_evidence": [
+        {
+          "detail": "modal_dfc: Layout(has_two_names=True, has_single_back=True, has_two_mana_costs=True) \u2014 independently verified; not in has_meld_back() so send_scryfall_two_names('modal_dfc') returns True",
+          "ref": "magic/layout.py:48",
+          "type": "code"
+        },
+        {
+          "detail": "send_scryfall_two_names returns lo in layout.has_two_names() and lo not in layout.has_meld_back(); both conditions satisfied for modal_dfc",
+          "ref": "decksite/controllers/api.py:838-839",
+          "type": "code"
+        },
+        {
+          "detail": "diff confirmed: added modal_dfc name-joining logic to cardfeed, emitting 'Torrent Sculptor // Flamethrower Sonata'",
+          "ref": "15ce8a20",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:09:26Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

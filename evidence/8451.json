@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8451-1",
+      "branch": "sweep/8451-art-into-the-roil-thb-should-probably-sa",
+      "files_changed": 2,
+      "head_sha": "92ac51eb678b95f449ad474e27cf3fd7e6dea09d",
+      "issue": 8451,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The oracle.get_printing call requires a live database; in production the bot always has DB access. The check is short-circuited when preferred_printing is falsy (normal card lookups) so there is zero overhead for the common case.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a user typed `!art into the roil | THB`, the bot would silently return the default art for \"Into the Roil\" (from whichever set Scryfall picks) rather than telling the user the card wasn't in THB. This happened because `image_fetcher.scryfall_image()` already falls back to the default art when `oracle.get_printing()` returns `None` for the requested set \u2014 the art command never validated whether the set actually contained the card.\n\n## What changed\n\nIn `discordbot/commands/art.py`, before deferring and fetching the image, we now check: if a `preferred_printing` (set code) was specified but no `preferred_printing_system_id` (exact Scryfall ID) was resolved, call `oracle.get_printing()` to confirm the card exists in that set. If not, send `\"<card name> was not in <SET>.\"` and return early. The `preferred_printing_system_id` guard ensures we don't block the lookup when an exact alternate-name printing has already been resolved.\n\nThe existing test in `network_io_test.py` was updated to add a `.get()` method to the `SimpleNamespace` card mock (matching how `Card`, a `Munch`/dict subclass, behaves).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit discordbot` \u2014 848 passed, 1 skipped (functional tests pre-marked as skipped upstream)\n\nFixes #8451",
+      "pr_title": "Return error when requested set has no printing for art command (#8451)",
+      "recorded_at": "2026-09-01T23:13:15Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8451,
   "triage": [
     {

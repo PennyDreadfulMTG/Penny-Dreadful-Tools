@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8428-1",
+      "branch": "sweep/8428-the-gatherling-scraper-assumes-your-mtgo",
+      "files_changed": 2,
+      "head_sha": "39144119d8f2f3222aa87d6bfc8a278c194f06f6",
+      "issue": 8428,
+      "lines_changed": 12,
+      "lint": "passed",
+      "notes": "The fix adds a DB lookup per player who has a discord_id but no explicit mtgo_username in the Gatherling response; this is a small minority of players per event and only runs during the scrape, so performance impact is negligible. The triage sketch suggested using `pd_person.name` but `pd_person.mtgo_username` is more precise since the function's purpose is to find an MTGO username specifically.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`find_mtgo_username()` in `decksite/scrapers/gatherling.py` had only two paths: (1) use the player's explicit `mtgo_username` from Gatherling's API, or (2) fall back to assuming the Gatherling username equals the MTGO username. Players who had linked their Discord account on Gatherling but hadn't explicitly set their MTGO username would have the wrong username assumed for their decks.\n\n## What changed\n\nAdded a third path in `find_mtgo_username()`: when a Gatherling `Player` has a `discord_id` but no `mtgo_username`, we call `person.maybe_load_person_by_discord_id()` to look them up in the PD database. If that person has an `mtgo_username` registered in PD, we return that (via `aliased()`) instead of falling back to the Gatherling username. The `person` module was already imported; no new imports were needed.\n\nA unit test `test_find_mtgo_username_via_discord_id` was added using `monkeypatch` to mock the DB call, confirming the new path resolves correctly.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit decksite/scrapers/gatherling_test.py` \u2014 849 passed, 1 skipped (full unit suite ran)\n\nFixes #8428",
+      "pr_title": "Check discord_id when gatherling mtgo_username is unset (#8428)",
+      "recorded_at": "2026-09-01T23:11:39Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/scrapers/gatherling_test.py",
+        "detail": "849 passed, 1 skipped in 18.50s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8428,
   "triage": [
     {

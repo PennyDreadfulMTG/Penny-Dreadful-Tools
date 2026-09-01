@@ -1,0 +1,14 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T23:02:02Z",
+    "note": "Retry: both prior workers were blocked by the Claude subscription session limit, which reset at 22:50 UTC. This was infrastructure quota exhaustion, not a malformed triage result.",
+    "verb": "retry-triage"
+  },
+  "bundled_at": "2026-09-01T22:58:20Z",
+  "created_at": "2026-09-01T21:17:18Z",
+  "evidence_refs": [],
+  "issue": 11213,
+  "kind": "attempts-exhausted",
+  "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
+  "summary": "malformed output after nudge"
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8578-1",
+      "branch": "sweep/8578-download-as-dsv-csv-option-on-large-tabl",
+      "files_changed": 1,
+      "head_sha": "a1c5e7b82eb906b48b8cf41f4bf306e21268b7e2",
+      "issue": 8578,
+      "lines_changed": 36,
+      "lint": "passed",
+      "notes": "The download uses Axios (already a dependency via datamanager.jsx) so no new package is needed. The `displayRank` field used in the rendered row is not included in the CSV in favour of the raw `rank` value, matching the issue's field list. No server-side changes were required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe rotation table (showing cards approaching/leaving Penny Dreadful legality) had no way to export its data. For large tables, users couldn't get the full dataset without manually paginating.\n\n## What changed\n\n`shared_web/static/js/rotationtable.jsx` (~35 lines):\n- Introduced a `RotationTable` class extending `Table` that adds a **Download CSV** button below the table.\n- On click, `downloadCSV()` fetches `/api/rotation/cards/` with `pageSize=99999` and the current `q`/`sortBy`/`sortOrder` state, serialises the response as CSV (columns: `name`, `hits`, `hitsNeeded`, `percent`, `percentNeeded`, `rank`), and triggers a browser download of `rotation.csv` via a temporary Blob URL.\n- The `Table` component instantiation was replaced with `RotationTable`; all other behavior is unchanged.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 **passed** (all checks).\n- This is a pure frontend change with no Python modifications; no Python unit tests were affected. There is no JS unit test suite for this component.\n\nFixes #8578",
+      "pr_title": "Add CSV download button to rotation table (#8578)",
+      "recorded_at": "2026-09-01T23:06:51Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed \u2014 no JS unit test suite exists for this file; unit tests for Python were not run as the change is frontend-only with no Python changes",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8578,
   "triage": [
     {

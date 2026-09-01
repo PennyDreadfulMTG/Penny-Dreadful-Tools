@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7951-1",
+      "branch": "sweep/7951-active-league-runs-text-makes-data-table",
+      "files_changed": 2,
+      "head_sha": "e61383c2d799e0f9bd9c1b7df1643b8180e65cc5",
+      "issue": 7951,
+      "lines_changed": 27,
+      "lint": "passed",
+      "notes": "The active-runs text now appears as '1-20 of 47 (\u2295 3 active league runs)' in the pagination bar for the React table, and in a tfoot row for the static fallback. No schema or data changes required. The existing view_test.py assertion on active_runs_text content is unaffected since it only checks the computed string value, not where it's rendered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe \"N active league runs\" text was rendered as an extra `<tr>` at the top of the `<tbody>` in both the React table (`table.jsx`) and the static Mustache fallback (`decktable.mustache`). This made the table one data row taller than intended, causing misalignment between the visible row count and the `1-X of Y` pagination text.\n\n## What changed\n\n**`shared_web/static/js/table.jsx`**: Removed the active-runs `<tr>` from `<tbody>` and instead append the text (with the \u2295 icon) inside the existing `renderPagination()` span, shown inline after the `start-end of total` count on page 0.\n\n**`decksite/templates/decktable.mustache`**: Removed the active-runs `<tr>` from `<tbody>` and moved it into a `<tfoot>` row below the data rows, so the static (non-JS) fallback table also no longer has a spurious extra body row.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected\n- Diff reviewed: every hunk serves #7951; no unrelated changes\n\nFixes #7951",
+      "pr_title": "Move active league runs text out of table body into pagination (#7951)",
+      "recorded_at": "2026-09-01T23:17:41Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.99s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7951,
   "triage": [
     {

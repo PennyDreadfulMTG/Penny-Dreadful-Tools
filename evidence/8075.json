@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8075,
+  "triage": [
+    {
+      "batch_id": "t-8075-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue has no body text, no comments, zero specifics about which errors or which translation task",
+          "ref": "gh issue view 8075 --comments",
+          "type": "search"
+        },
+        {
+          "detail": "update_translations.py was converted from DAILY/run() to ad_hoc() because it was 'unbugged' \u2014 shows translation task had known issues around this time",
+          "ref": "8c9099a8",
+          "type": "commit"
+        },
+        {
+          "detail": "Function is now ad_hoc, not scheduled, so it won't produce daily automated errors \u2014 unclear if underlying bug still present",
+          "ref": "maintenance/update_translations.py:7",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8075,
+      "notes": "Issue contains only 'Reported on Discord by bakert#2193' with no error message, stack trace, or task name. Cannot determine whether this refers to generate_translations.py, update_translations.py, or validate_translations.py, or whether it is still reproducible. Need the original Discord thread content or a reproduction to proceed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:02:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

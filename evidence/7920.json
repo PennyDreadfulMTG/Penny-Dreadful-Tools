@@ -1,0 +1,26 @@
+{
+  "fix": [],
+  "issue": 7920,
+  "triage": [
+    {
+      "batch_id": "t-7924-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Request is 'maybe set up a facebook group/slack group for whenever discord goes down' \u2014 a community infrastructure suggestion with no associated code",
+          "ref": "#7920",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7920,
+      "notes": "Pure organizational/product decision about backup community channels. No code change exists to make.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:03:20Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -37,5 +37,42 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-7828-1",
+      "final_comment": "Fixed in commit 2450e6b3 (May 2024), which deleted the server-side image chart generator (`decksite/charts/chart.py`) and migrated all charts to client-side Chart.js rendered via `<canvas>` elements. The issue's suggested JavaScript approach was adopted; `deck.mustache` now renders mana-cost charts via `<canvas>` and the person page's Colors Played chart (cited in the issue comments as the JS model to follow) likewise uses `<canvas>`.",
+      "issue": 7828,
+      "own_evidence": [
+        {
+          "detail": "independently checked: <canvas class=\"chart\" data-type=...> element confirms Chart.js browser rendering, no server-side image",
+          "ref": "decksite/templates/deck.mustache:9",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: Colors Played chart is a <canvas class=\"chart\"> element, consistent with JS-rendered chart",
+          "ref": "decksite/templates/person.mustache:36",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: charts/ directory contains only an empty __init__.py; chart.py was deleted",
+          "ref": "decksite/charts/__init__.py",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: PD.renderCharts() registers Chart.js and renders all <canvas class=\"chart\"> elements client-side",
+          "ref": "shared_web/static/js/pd.js:568-590",
+          "type": "code"
+        },
+        {
+          "detail": "independently verified: commit deletes decksite/charts/chart.py (76 lines of PIL-based server-side image generation) and updates templates to use <canvas> elements",
+          "ref": "2450e6b3",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:03:09Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

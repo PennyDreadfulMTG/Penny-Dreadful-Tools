@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8241-1",
+      "branch": "sweep/8241-make-pd500-command-a-bit-more-detailed-o",
+      "files_changed": 1,
+      "head_sha": "2e74ea799fb33a36f694d548dc5e3fc6aa954f1c",
+      "issue": 8241,
+      "lines_changed": 29,
+      "lint": "passed",
+      "notes": "The issue comment also mentioned centralizing PD 500 text in magic.tournaments and doing the same for the Kick Off command; those are separate improvements not touched here. The date fallback uses `year == 1970` to detect the sentinel value returned by pd500_date() when the season end is unknown \u2014 matching the existing pattern in decksite/views/pd500.py.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/pd500` slash command only posted a bare URL to the PD 500 information page, with no context about what the event is, when it's happening, or what players can win.\n\n## What changed\n\nUpdated `discordbot/commands/pd500.py` to import `magic.tournaments` and `shared.dtutil` and build a richer response that includes:\n- A short description: \"The Penny Dreadful 500 is the biggest PD tournament of the season.\"\n- The date of the next PD 500 (using `tournaments.pd500_date()` and `dtutil.display_date_with_date_and_year()`), or a fallback message when the next rotation date is unknown or the event has already passed.\n- The top prize in tix (using `tournaments.pd500_prizes()`, which was already computing this for the web view).\n- The URL to the full information page.\n\nAll data was already computed in `magic.tournaments`; the change is purely in the bot command layer.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (0 errors after removing an unused `datetime` import and an erroneous `f`-string prefix caught by the linter).\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected.\n\nFixes #8241",
+      "pr_title": "Show date, description, and top prize in !pd500 command (#8241)",
+      "recorded_at": "2026-09-01T23:13:49Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.62s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8241,
   "triage": [
     {

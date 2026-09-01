@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8019,
+  "triage": [
+    {
+      "batch_id": "t-8075-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Admin check via session.get('admin') is used but not exposed to the template as a property",
+          "ref": "logsite/views/match_view.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "Buttons list has no admin-only button or link to /admin/matches",
+          "ref": "logsite/templates/match.mustache:11-16",
+          "type": "code"
+        },
+        {
+          "detail": "/admin/matches/ route exists in decksite (not logsite) and reads request.form (POST), not GET params \u2014 pre-filling requires either GET-param support or a POST redirect",
+          "ref": "decksite/controllers/admin.py:157-165",
+          "type": "code"
+        },
+        {
+          "detail": "bakert commented 'Wut? )' and silasary admitted 'Wow, I was really lazy with this one :P' \u2014 issue is intentionally underspecified",
+          "ref": "#8019",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8019,
+      "notes": "The feature spans two codebases (logsite button, decksite form pre-fill). 'Pre-filled' is ambiguous: if it means just a link to /admin/matches/ with player names as query params, the decksite controller also needs to be updated to read request.args. Issue needs a clearer spec before implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:02:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

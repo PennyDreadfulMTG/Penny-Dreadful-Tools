@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7924,
+  "triage": [
+    {
+      "batch_id": "t-7924-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "latest_decks() uses LIMIT 500 AND d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY); if 500+ non-tournament decks were created in that window, no tournament decks are returned",
+          "ref": "decksite/data/deck.py:22",
+          "type": "code"
+        },
+        {
+          "detail": "home page iterates the deck list from latest_decks() to find the first Gatherling competition_id; if none appear in the list, tournament_decks stays empty and the 'Latest Tournament Top 8' section is omitted",
+          "ref": "decksite/views/home.py:40-52",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment confirms root cause: 'This is because we grab the last 500 decks. If the most recent 500 decks does not include any tournament decks we won't get the tournament.'",
+          "ref": "#7924",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": "In decksite/data/deck.py, remove the 'created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)' clause from latest_decks() so that all seasons' recent decks up to LIMIT 500 are considered, ensuring low-volume tournament weeks still appear. Alternatively, load the most recent completed tournament's decks via a separate load_competitions() query in decksite/main.py and pass them to Home alongside the latest_decks list.",
+      "issue": 7924,
+      "notes": "Removing the 30-day filter is the one-line fix. The separate-query approach is safer if high deck volume returns; either is under 20 changed lines with no schema changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:03:20Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

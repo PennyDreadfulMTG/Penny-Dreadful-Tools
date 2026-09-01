@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12380-1",
+      "branch": "sweep/12380-clarify-both-the-game-loss-and-sideboard",
+      "files_changed": 1,
+      "head_sha": "361be822b584912c280fa7efffa66d54dc222d09",
+      "issue": 12380,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Pure text clarification in a Mustache template; no Python logic changed. Unit tests are env-blocked due to a missing database in the cloud VM, but lint passes and the change is content-only with no behavioral risk.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe tournament bugs policy (`decksite/templates/bugpolicy.mustache`) had two ambiguous passages:\n\n1. **Game loss procedure**: After stating the game loss should be enacted by conceding, the text said nothing about sideboarding before the next game, leaving players uncertain whether normal between-game sideboarding applies.\n2. **Sideboarding in new-bug restart**: The sentence \"Sideboarding then takes place if it was not game 1\" was vague \u2014 it didn't specify which players sideboard or that they should sideboard from their original (unboarded) decklists.\n\n## What changed\n\n- **Game loss paragraph**: Added \"Both players may then sideboard as normal before the next game begins.\" so it is unambiguous that normal sideboarding rules apply after a bug-induced game loss.\n- **New-bug restart paragraph**: Replaced \"Sideboarding then takes place if it was not game 1\" with \"Both players then sideboard as normal (from their unboarded decklists) if it was not game 1\" to clarify who sideboards and from which deck state.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- Unit tests are env-blocked (database unavailable in this cloud VM); the change is content-only in a Mustache template with no Python logic changes.\n\nFixes #12380",
+      "pr_title": "Clarify game loss and sideboarding procedures in tournament bugs section (#12380)",
+      "recorded_at": "2026-09-01T23:15:44Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! Unit tests are env-blocked: the decksite view tests require a live database connection not available in this cloud VM; the change is purely Mustache template text with no Python logic.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12380,
   "triage": [
     {

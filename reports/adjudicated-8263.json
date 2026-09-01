@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T23:04:17Z",
+    "note": "Leave open as a correctly labelled external CubeDraft bot tracker; no implementation belongs in Penny-Dreadful-Tools.",
+    "verb": "report-only"
+  },
+  "bundled_at": "2026-09-01T23:01:55Z",
+  "created_at": "2026-09-01T22:59:26Z",
+  "evidence_refs": [
+    "evidence/8263.json#triage[0]"
+  ],
+  "issue": 8263,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The 'cubebot' label exists in the repo but no cubebot code is present. This may reference an external/third-party bot. Cannot determine status without more context on where the bot lives."
+}

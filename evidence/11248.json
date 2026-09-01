@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11248-3",
+      "branch": "sweep/11248-you-already-have-an-active-league-run-if",
+      "files_changed": 2,
+      "head_sha": "37e428d2582327854996b8a74c6393d62d079cc0",
+      "issue": 11248,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The triple-brace unescaping in the mustache template is safe because all mtgo_username error messages are static strings constructed in Python with no user-controlled content interpolated. The signup.py view already uses the same triple-brace pattern for `signed_up_msg_safe`, establishing the precedent.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a user tried to sign up for the league but already had an active run, the error message said \"visit the retire page\" as plain unlinked text. Users had no way to navigate directly to the retire page from the error.\n\n## What changed\n\n- `decksite/league.py:41`: Changed the static string to an f-string that embeds an HTML anchor (`<a href=\"{url_for('retire')}\">retire page</a>`) \u2014 `url_for` was already imported in this file.\n- `decksite/templates/signup.mustache:14`: Changed `{{form.errors.mtgo_username}}` to `{{{form.errors.mtgo_username}}}` (triple-brace = unescaped HTML) so the anchor tag is rendered rather than escaped. All `mtgo_username` error strings are constructed internally from static strings with no user input, so unescaped rendering is safe.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped\n\nFixes #11248",
+      "pr_title": "Make 'retire page' a clickable link in active league run error (#11248)",
+      "recorded_at": "2026-09-01T23:08:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 19.33s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11248,
   "triage": [
     {

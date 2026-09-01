@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7911,
+  "triage": [
+    {
+      "batch_id": "t-7924-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PerfectRun and FlawlessRun achievements already exist for 5-0 league runs; SQL uses dc.wins >= 5 AND dc.losses = 0 from deck_cache",
+          "ref": "decksite/data/achievements.py:407-431",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_omw() stores omw as a 0\u20131 fraction in deck_cache; dc.omw > 0.5 would express '>50% opponent match win percentage'",
+          "ref": "decksite/data/deck.py:614-643",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7911,
+      "notes": "The implementation is straightforward (a new CountedAchievement subclass ~20 lines), but the achievement name, display description, exact threshold (>50 vs >=50), and whether it should stack with PerfectRun or replace it for those runs all require an owner decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:03:20Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:03:20Z",
+  "evidence_refs": [
+    "evidence/7918.json#triage[0]"
+  ],
+  "issue": 7918,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The plausible fix in this repo would be to expand make_final_list() in rotation_script/rotation_script.py to also write the back-face name of any flip-layout legal card to legal_cards.txt. But confirming this is where PDBot performs its check requires access to the PDBot codebase."
+}

@@ -32,5 +32,27 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-8285-1",
+      "final_comment": "Resolved in commit b0c0b82e ('Get total results when fetching slice of results for cards'), which removed load_cards_count entirely and embedded COUNT(*) OVER () AS total directly in the load_cards SQL (decksite/data/card.py:303), so a single query now returns both the result set and the total count \u2014 matching the approach used by load_decks.",
+      "issue": 7716,
+      "own_evidence": [
+        {
+          "detail": "COUNT(*) OVER () AS total is embedded directly in the load_cards SQL query; load_cards returns a (cards, total) tuple from a single query with no separate count query",
+          "ref": "decksite/data/card.py:303",
+          "type": "code"
+        },
+        {
+          "detail": "Zero results \u2014 load_cards_count has been entirely removed from the codebase",
+          "ref": "grep -rn 'load_cards_count' decksite/",
+          "type": "search"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:06:39Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8096-1",
+      "branch": "sweep/8096-support-personid-archetypeid-decktype-an",
+      "files_changed": 1,
+      "head_sha": "e780a8afda615b717bc0284c72ccea73513cb49a",
+      "issue": 8096,
+      "lines_changed": 18,
+      "lint": "passed",
+      "notes": "All four new filters follow the exact same SQL patterns already used in decks_where/cards_where/leaderboard_api. The competition_join (which provides cs and ct aliases) is already included unconditionally in load_matches, so all alias references are valid. No schema changes required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/api/matches` endpoint accepted `competitionId` and `q` as filters but ignored `personId`, `archetypeId`, `deckType`, and `competitionSeriesId`, making it impossible for callers to scope match results by person, archetype, deck type, or competition series.\n\n## What changed\n\nIn `decksite/controllers/api.py`, `matches_api()` now reads four additional query parameters and appends the corresponding SQL clauses to the `where` string before calling `match.load_matches()`:\n\n- `personId` \u2192 `d.person_id = {id}` (same pattern used in `clauses.decks_where`)\n- `archetypeId` \u2192 `clauses.archetype_where(id)` (recursive via `archetype_closure`)\n- `deckType` (`'league'` / `'tournament'`) \u2192 `ct.name = 'League'` / `ct.name = 'Gatherling'` (same string literals used elsewhere)\n- `competitionSeriesId` \u2192 `cs.id = {id}` (`cs` is already in scope via `query.competition_join()` used inside `match.load_matches()`)\n\nThe docstring was updated to document all four new parameters.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped\n\nFixes #8096",
+      "pr_title": "Support personId, archetypeId, deckType, competitionSeriesId in /api/matches (#8096)",
+      "recorded_at": "2026-09-01T23:15:55Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 19.26s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8096,
   "triage": [
     {

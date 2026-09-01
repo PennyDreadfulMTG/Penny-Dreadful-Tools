@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8070,
+  "triage": [
+    {
+      "batch_id": "t-8075-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template renders archetype tree, decks, cards, chart, and matchups \u2014 no description field displayed anywhere",
+          "ref": "decksite/templates/archetype.mustache:1-27",
+          "type": "code"
+        },
+        {
+          "detail": "__getattr__ forwards attribute lookups to self.archetype, so {{description}} in the template will resolve correctly",
+          "ref": "decksite/views/archetype.py:104",
+          "type": "code"
+        },
+        {
+          "detail": "SQL query SELECTs a.description, so the field is present on returned archetype objects",
+          "ref": "decksite/data/archetype.py:549",
+          "type": "code"
+        },
+        {
+          "detail": "update_description() exists, confirming descriptions are maintained in the archetype table",
+          "ref": "decksite/data/archetype.py:163-164",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add {{#description}}<p class=\"archetype-description\">{{description}}</p>{{/description}} near the top of decksite/templates/archetype.mustache (e.g. before the Decks section). The description field is already fetched by load_archetypes() and accessible via __getattr__ in the Archetype view. No backend changes needed. The issue comment notes that some descriptions are admin-facing ('Put specific decks in a subarchetype'); the conditional block means only non-empty descriptions render, so updating descriptions is editorial work that can proceed independently.",
+      "issue": 8070,
+      "notes": "Comment on the issue requests descriptions be rewritten to be player-facing rather than admin-facing; that is editorial work not code. The template change is ~3 lines and isolated.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:02:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

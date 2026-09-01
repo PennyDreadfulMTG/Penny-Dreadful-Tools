@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8595-1",
+      "branch": "sweep/8595-consider-including-the-bug-details-in-th",
+      "files_changed": 2,
+      "head_sha": "daf11eff",
+      "issue": 8595,
+      "lines_changed": 53,
+      "lint": "passed",
+      "notes": "The em-dash separator `' \u2014 '` is safe: Magic card names do not contain that sequence. The `deckerrors.mustache` template needed no changes since it already renders each item with `{{.}}`. A potential future improvement (not touched here) would be to link the bug URL from the GitHub issue tracker, which would require changing the data structure from `set[str]` to a richer type.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/deckcheck/` deck legality page listed cards that had Magic Online bugs (both game-breaking and playable) by card name only, with no indication of *what* the bug was. Players had to navigate away to look up the bug description.\n\n## What changed\n\n**`decksite/form.py`**\n- `check_deck_legality()`: Changed the `banned_for_bugs` and `playable_bugs` set comprehensions to produce strings in the format `\"Card Name \u2014 bug description 1; bug description 2\"` instead of just `\"Card Name\"`. Cards with multiple bugs of the relevant type have their descriptions joined with `\"; \"`.\n- `card_messages_with_submitted_aliases()`: Refactored to call a new helper `_name_with_alias()` that splits on `' \u2014 '` to extract the canonical card name before doing the alias lookup, then re-appends the description suffix. This preserves the existing \"entered as\" alias display for cards submitted under alternate names.\n\n**`decksite/form_test.py`**\n- Added `test_card_messages_preserve_bug_description_suffix`: verifies alias lookup still works when the name has a `\u2014 description` suffix.\n- Added `test_card_messages_with_bug_description_no_alias`: verifies the description is passed through unchanged when no alias is present.\n\nThe `deckerrors.mustache` template already uses `{{.}}` to render each item in the list, so it displays the richer strings without any template changes.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen pytest decksite/form_test.py -v` \u2014 8 passed (MariaDB was running; `dev.py unit decksite` routes to a scraper path with no collected tests, so pytest was invoked directly on the test file)\n\nFixes #8595",
+      "pr_title": "Include bug description in /deckcheck/ card error/warning messages (#8595)",
+      "recorded_at": "2026-09-01T23:11:29Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest decksite/form_test.py -v",
+        "detail": "8 passed (6 pre-existing + 2 new tests covering bug-description suffix handling)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8595,
   "triage": [
     {

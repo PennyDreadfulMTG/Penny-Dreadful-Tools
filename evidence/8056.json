@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 8056,
+  "triage": [
+    {
+      "batch_id": "t-8075-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit 'Avoid issue creation being rejected by github by truncating overly long values' adds GITHUB_MAX_BODY_LEN = 65536 and truncation logic to shared/repo.py",
+          "ref": "1174a039",
+          "type": "commit"
+        },
+        {
+          "detail": "GITHUB_MAX_TITLE_LEN = 256 and GITHUB_MAX_BODY_LEN = 65536 constants defined",
+          "ref": "shared/repo.py:14-15",
+          "type": "code"
+        },
+        {
+          "detail": "if len(title) > GITHUB_MAX_TITLE_LEN: title = title[0:GITHUB_MAX_TITLE_LEN - 4] + '\u2026' and same pattern for body \u2014 exactly the fix proposed in the issue comment",
+          "ref": "shared/repo.py:88-91",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8056,
+      "notes": "The fix matches the proposed patch in the issue comment almost exactly, including the constant name and truncation with ellipsis.",
+      "proposed_comment": "This was fixed in commit 1174a039 ('Avoid issue creation being rejected by github by truncating overly long values'), which added GITHUB_MAX_BODY_LEN = 65536 and truncation logic to shared/repo.py \u2014 exactly the approach described in the issue comments.",
+      "recorded_at": "2026-09-01T23:02:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-8285-1",
+      "final_comment": "Fixed in commit 1174a039 ('Avoid issue creation being rejected by github by truncating overly long values'), which added GITHUB_MAX_BODY_LEN = 65536 and truncation with a trailing ellipsis for both issue title and body in shared/repo.py, directly addressing the 65536-character GitHub limit shown in the issue.",
+      "issue": 8056,
+      "own_evidence": [
+        {
+          "detail": "GITHUB_MAX_TITLE_LEN = 256 and GITHUB_MAX_BODY_LEN = 65536 constants confirmed in current master",
+          "ref": "shared/repo.py:14-15",
+          "type": "code"
+        },
+        {
+          "detail": "Both title and body are sliced and appended with an ellipsis before the GitHub API call; matches the 65536-character limit from the error in the issue comments",
+          "ref": "shared/repo.py:92-95",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:06:39Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

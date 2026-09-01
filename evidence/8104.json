@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8104-1",
+      "branch": "sweep/8104-validate-new-results-have-2-3-games-in-p",
+      "files_changed": 2,
+      "head_sha": "0d8b32a3e7be8f9e8973a1936031a452663355bf",
+      "issue": 8104,
+      "lines_changed": 12,
+      "lint": "passed",
+      "notes": "The validation fires only when both individual score fields pass their own checks (non-empty, integer), so existing error paths are unaffected. The note `1+1=2` is technically allowed by this rule (sum is 2) even though it represents a 1\u20131 draw which cannot occur in MTG; the admin form is likely flexible enough that this edge case is acceptable, and the issue asks only for the 2\u20133 total check.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`EditMatchForm.do_validation()` in `decksite/league.py` validated each of `left_games` and `right_games` independently (non-empty, integer) but never checked that their sum represented a valid match: 2 or 3 total games (covering 2\u20130, 0\u20132, 2\u20131, and 1\u20132 outcomes). Arbitrary values like 0+0, 4+0, or 3+3 would pass validation and be written to the database.\n\n## What changed\n\n- `decksite/league.py`: Added a cross-field check after both scores pass individual validation. If `int(left_games) + int(right_games) not in (2, 3)`, sets `errors['right_games'] = 'Results must total 2 or 3 games.'`\n- `decksite/league_test.py`: Added a valid case (2\u20131) and parametrized invalid cases (0+0, 3+3, 0+1, 4+0, 3+1) to `test_edit_match_form_validates_scores`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit decksite/league_test.py` \u2014 848 passed, 1 skipped (full suite ran)\n\nFixes #8104",
+      "pr_title": "Validate match results total 2 or 3 games in EditMatchForm (#8104)",
+      "recorded_at": "2026-09-01T23:16:17Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/league_test.py",
+        "detail": "848 passed, 1 skipped in 15.63s (full suite, not just league tests)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8104,
   "triage": [
     {

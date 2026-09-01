@@ -1,5 +1,5 @@
 import urllib.parse
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 from anytree import PreOrderIter
 from flask import g, session, url_for
@@ -8,7 +8,8 @@ from decksite.data import archetype
 from decksite.data.archetype import Archetype
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import fetcher, oracle, seasons
+from magic import fetcher, image_fetcher, oracle, seasons
+from magic.colors import find_colors
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -189,6 +190,24 @@ def prepare_archetype(a: archetype.Archetype, archetypes: list[archetype.Archety
         b['url'] = url_for('seasons.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None, season_id=season_id)
         # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
         b['depth'] = b.depth
+
+def prepare_archetypes_for_api(archetypes: list[Archetype], key_card_names: Mapping[int, Sequence[str]], cards_by_name: Mapping[str, Card], tournament_only: bool, season_id: int | str | None) -> None:
+    for a in archetypes:
+        key_cards = [cards_by_name[name] for name in key_card_names.get(a.id, [])]
+        a.key_cards = [
+            Card({'name': card.name, 'url': image_fetcher.scryfall_image(card, 'art_crop')})
+            for card in key_cards
+            if not is_uninteresting(card)
+        ][:5]
+        a.num_matches = (a.wins or 0) + (a.losses or 0) + (a.draws or 0)
+        colors, colored_symbols = find_colors(key_cards)
+        a.colors_safe = colors_html(colors, colored_symbols)
+    prepare_archetypes(archetypes, None, tournament_only, season_id)
+
+def is_uninteresting(c: Card) -> bool:
+    is_basic = 'Basic' in c.type_line
+    is_dual = '} or {' in c.oracle_text or '}, or {' in c.oracle_text
+    return c.is_land() and (is_basic or is_dual)
 
 def display_round(m: Container) -> str:
     if not m.get('elimination'):

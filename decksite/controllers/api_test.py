@@ -35,11 +35,9 @@ def test_archetypes2_serializes_win_percent_as_number_or_null(monkeypatch: pytes
         Container({'id': 2, 'name': 'Undefined', 'wins': 0, 'losses': 0, 'draws': 1, 'win_percent': None}),
     ]
     monkeypatch.setattr(api.archs, 'load_disjoint_archetypes', lambda **_kwargs: (results, len(results)))
-    monkeypatch.setattr(api.playability, 'key_cards_long', lambda _season_id: {})
+    monkeypatch.setattr(api.playability, 'key_cards_long', lambda *_args: {})
     monkeypatch.setattr(api.oracle, 'cards_by_name', lambda: {})
-    monkeypatch.setattr(api, 'find_colors', lambda _cards: ([], []))
-    monkeypatch.setattr(api, 'colors_html', lambda _colors, _symbols: '')
-    monkeypatch.setattr(api, 'prepare_archetypes', lambda *_args: None)
+    monkeypatch.setattr(api, 'prepare_archetypes_for_api', lambda *_args: None)
 
     with APP.test_request_context('/api/archetypes2/?seasonId=all'):
         response = api.archetypes2_api()

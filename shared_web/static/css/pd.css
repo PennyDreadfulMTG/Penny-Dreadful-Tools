@@ -2864,6 +2864,11 @@ Metagame
     border-radius: inherit; /* Don't round the corners on hover. */
 }
 
+.metagame-grid a:hover .stacked-bar-highlight {
+    background-color: var(--highlight-border);
+    transition-duration: 0s;
+}
+
 .metagame-grid .archetype {
     border: 0.05rem solid #ccc;
     font-size: var(--table-font-size);

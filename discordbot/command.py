@@ -256,11 +256,12 @@ async def autocomplete_card(ctx: AutocompleteContext) -> None:
 
 class MtgMixin:
     async def send_image_with_retry(self: 'MtgContext', image_file: str, text: str = '') -> None:  # type: ignore
-        message = await self.send(file=File(image_file), content=text)
+        escaped = escape_underscores(text)
+        message = await self.send(file=File(image_file), content=escaped)
         if message and message.attachments and message.attachments[0].size == 0:
             logging.warning('Message size is zero so resending')
             await message.delete()
-            await self.send(file=File(image_file), content=text)
+            await self.send(file=File(image_file), content=escaped)
 
     async def single_card_text(self: 'MtgContext', c: Card, f: Callable, show_legality: bool = True) -> None:  # type: ignore
         if c is None:
@@ -278,7 +279,7 @@ class MtgMixin:
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = await emoji.replace_emoji(f(c), self.bot)
         message = f'**{name}** {info_emoji} {text}{stale_card_information_warning()}'
-        await self.send(message)
+        await self.send(escape_underscores(message))
 
     async def post_cards(self: 'MtgContext', cards: list[Card], replying_to: User | Member | None = None, additional_text: str = '') -> None:  # type: ignore
         if len(cards) == 0:

@@ -550,10 +550,10 @@ def test_color_green() -> None:
     do_test('c:g', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)))')
 
 def test_or() -> None:
-    do_test('a OR b', "(name LIKE '%%a%%') OR (name LIKE '%%b%%')")
+    do_test('a OR b', "(name LIKE '%%a%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%a%%') OR (name LIKE '%%b%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%b%%')")
 
 def test_bad_or() -> None:
-    do_test('orgg', "(name LIKE '%%orgg%%')")
+    do_test('orgg', "(name LIKE '%%orgg%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%orgg%%')")
 
 def test_or_without_args() -> None:
     with pytest.raises(search.InvalidSearchException):
@@ -564,17 +564,23 @@ def test_not_without_args() -> None:
         do_test('c:r NOT', '')
 
 def test_or_with_args() -> None:
-    do_test('AA or GG', "(name LIKE '%%aa%%') OR (name LIKE '%%gg%%')")
+    do_test('AA or GG', "(name LIKE '%%aa%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%aa%%') OR (name LIKE '%%gg%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%gg%%')")
 
 def test_text() -> None:
     do_test('o:"target attacking"', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%target attacking%%')")
     do_test('fulloracle:"target attacking"', "(oracle_text LIKE '%%target attacking%%')")
 
 def test_name() -> None:
-    do_test('tension turtle', "(name LIKE '%%tension%%') AND (name LIKE '%%turtle%%')")
+    do_test('tension turtle', "(name LIKE '%%tension%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%tension%%') AND (name LIKE '%%turtle%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%turtle%%')")
+    do_test('rage', "(name LIKE '%%rage%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%rage%%')")
+
+@pytest.mark.functional
+def test_name_spaceless_functional() -> None:
+    # 'rage' matches 'Ajani, Sleeper Agent' because removing spaces from 'Sleeper Agent' gives 'SleeperAgent' which contains 'rage'
+    do_functional_test('rage', ['Ajani, Sleeper Agent'], [])
 
 def test_parentheses() -> None:
-    do_test('x OR (a OR (b AND c))', "(name LIKE '%%x%%') OR ((name LIKE '%%a%%') OR ((name LIKE '%%b%%') AND (name LIKE '%%c%%')))")
+    do_test('x OR (a OR (b AND c))', "(name LIKE '%%x%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%x%%') OR ((name LIKE '%%a%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%a%%') OR ((name LIKE '%%b%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%b%%') AND (name LIKE '%%c%%' OR LOWER(REPLACE(name, ' ', '')) LIKE '%%c%%')))")
 
 @pytest.mark.functional
 def test_toughness_functional() -> None:

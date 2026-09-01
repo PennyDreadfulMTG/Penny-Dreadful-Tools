@@ -220,6 +220,9 @@ def text_where(column: str, term: Token, exclude_parenthetical: bool = False) ->
         escaped = concat(intersperse(parts, 'name'))
     if exclude_parenthetical:
         column = f"REGEXP_REPLACE({column}, '\\\\([^)]*\\\\)', '')"
+    if column.endswith('name') and operator == 'LIKE':
+        spaceless_escaped = sqllikeescape(q.replace(' ', ''))
+        return f'({column} {operator} {escaped} OR LOWER(REPLACE({column}, \' \', \'\')) LIKE {spaceless_escaped})'
     return f'({column} {operator} {escaped})'
 
 def subtable_where(subtable: str, value: str, operator: str | None = None) -> str:

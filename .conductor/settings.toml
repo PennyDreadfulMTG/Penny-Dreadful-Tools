@@ -1,0 +1,21 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+# Shared Conductor settings. Machine-local overrides (run scripts, files to copy)
+# belong in .conductor/settings.local.toml, which takes precedence per-key.
+#
+# The setup script bootstraps CLOUD workspaces only: fresh cloud sandboxes have no
+# uv and no build deps, so without this `uv run` fails. Local workspaces are
+# assumed to already have a working dev environment and are left alone.
+# (A MariaDB server is deliberately NOT set up here to keep workspace creation
+# fast; agents that need to run DB-backed tests can install one — see
+# backlog_sweep/FIXER_PROMPT.md for a verified recipe.)
+
+[scripts]
+setup = """
+set -e
+if [ "${CONDUCTOR_IS_LOCAL:-0}" = "1" ]; then exit 0; fi
+export PATH="$HOME/.local/bin:$PATH"
+command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
+command -v pkg-config >/dev/null 2>&1 || sudo dnf install -y -q pkgconf-pkg-config mariadb-connector-c-devel gcc python3-devel
+uv sync --frozen
+"""

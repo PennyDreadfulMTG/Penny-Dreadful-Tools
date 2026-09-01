@@ -85,7 +85,7 @@ def load_decks_query(columns: str,
                      season_id: str | int | None = None,
                      ) -> str:
     if order_by is None:
-        order_by = 'active_date DESC, d.finish IS NULL, d.finish'
+        order_by = 'active_date DESC, d.finish IS NULL, d.finish, d.id'
     if group_by is None:
         group_by = ''
     else:
@@ -156,7 +156,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      season_id: str | int | None = None,
                      ) -> tuple[list[Deck], int]:
     if order_by is None:
-        order_by = 'active_date DESC, d.finish IS NULL, d.finish'
+        order_by = 'active_date DESC, d.finish IS NULL, d.finish, d.id'
 
     sql = """
         SELECT

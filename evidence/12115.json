@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12115,
+  "triage": [
+    {
+      "batch_id": "t-12135-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "css_url() appends ?v=<git-commit-hash-of-css-file> to bust cache on each deploy; the hash is cached in-memory per Flask worker process.",
+          "ref": "shared_web/base_view.py:55-56",
+          "type": "code"
+        },
+        {
+          "detail": "HTML pages use Cache-Control: no-cache, public, max-age=3600, meaning the browser must revalidate with the server each time before using the cached page.",
+          "ref": "decksite/cache.py:37-43",
+          "type": "code"
+        },
+        {
+          "detail": "Server-side cache is bypassed only when the browser sends Cache-Control: no-cache (hard refresh); Safari does not send this header on hard refresh per in-code comment.",
+          "ref": "decksite/cache.py:72",
+          "type": "code"
+        },
+        {
+          "detail": "No nginx config or CDN configuration found in the repo; cannot determine whether a proxy strips or ignores query-string cache busters upstream.",
+          "ref": "find . -name 'nginx*' -o -name '*.conf' (grep for cdn/cloudflare)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12115,
+      "notes": "The symptom (stale CSS fixed by Ctrl+Shift+Refresh) is consistent with either a CDN/proxy that ignores query-string cache busters, or a browser service worker. Cannot confirm root cause without server logs or a running environment. The in-code comment about Safari also suggests some known caching edge-cases exist.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:21:46Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

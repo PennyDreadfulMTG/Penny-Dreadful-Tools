@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12209-1",
+      "branch": "sweep/12209-add-an-achievement-for-touranment-top-8",
+      "files_changed": 1,
+      "head_sha": "20cc8fd0ba3d3f7a1ebee562c9def50e237cdca2",
+      "issue": 12209,
+      "lines_changed": 14,
+      "lint": "passed",
+      "notes": "The achievement title says 'Top 8' (matching the issue title) but the SQL uses `c.top_n` to handle all elimination-round sizes (Top 4, Top 8, Top 16), per the comment in the issue asking for 'elimination rounds'. No DB migration needed \u2014 preaggregation rebuilds the table on next run.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThere was no achievement for players who reach the elimination rounds (top N) of a Gatherling tournament, despite there being achievements for winning tournaments and winning specific events like the PD500.\n\n## What changed\n\nAdded a new `TournamentTop8` `CountedAchievement` subclass in `decksite/data/achievements.py` (after `TournamentWinner`). The SQL uses `d.finish <= c.top_n AND c.top_n > 0` which respects the per-competition `top_n` value already stored in the database \u2014 so it works for Top 4, Top 8, Top 16, etc., not just exactly 8. The `c.top_n > 0` guard excludes competitions that have no elimination rounds (where `top_n = 0`). The class auto-registers via the `__init_subclass__` mechanism; no DB migration is needed since `preaggregate_achievements` rebuilds `_achievements` from scratch.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (no regressions)\n- Manual diff review: every changed line serves #12209\n\nFixes #12209",
+      "pr_title": "Add TournamentTop8 achievement for reaching elimination rounds (#12209)",
+      "recorded_at": "2026-09-01T19:29:46Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 16.56s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12209,
+  "triage": [
+    {
+      "batch_id": "t-12209-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PD500Top8 exists with sql counting finish<=8 for one specific event; no general tournament top-8/elimination-rounds achievement exists",
+          "ref": "decksite/data/achievements.py:822",
+          "type": "code"
+        },
+        {
+          "detail": "Specialist and Generalist achievements already use 'd.finish <= c.top_n AND ct.name = Gatherling' \u2014 the exact SQL pattern for elimination rounds is established",
+          "ref": "decksite/data/achievements.py:751",
+          "type": "code"
+        },
+        {
+          "detail": "_achievements table is dropped and recreated on each preaggregate run, so a new achievement column requires no manual DB migration",
+          "ref": "decksite/data/preaggregation.py:6",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/achievements.py, add a new CountedAchievement subclass (e.g. TournamentElimination) with sql = \"COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)\" and detail_sql to match. Pattern is identical to PD500Top8 (line 822) minus the event-name filter. Add a row to Achievement.all_achievements by following the __init_subclass__ mechanism. No DB migration needed \u2014 preaggregation rebuilds the table.",
+      "issue": 12209,
+      "notes": "The bakert comment asks whether to call it 'elimination rounds' rather than 'top 8', and whether the \u2467 column in deck tables (prepare.py:205) should also reflect elimination rounds. The achievement itself is a clean isolated add; the deck-table column question may be out of scope for the same PR.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:22:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

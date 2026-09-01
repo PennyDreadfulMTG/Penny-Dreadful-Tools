@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:21:46Z",
+  "evidence_refs": [
+    "evidence/12115.json#triage[0]"
+  ],
+  "issue": 12115,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The symptom (stale CSS fixed by Ctrl+Shift+Refresh) is consistent with either a CDN/proxy that ignores query-string cache busters, or a browser service worker. Cannot confirm root cause without server logs or a running environment. The in-code comment about Safari also suggests some known caching edge-cases exist."
+}

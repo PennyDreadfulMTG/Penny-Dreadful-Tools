@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12024-1",
+      "branch": "sweep/12024-seasons-says-that-14-309-cards-are-legal",
+      "files_changed": 1,
+      "head_sha": "bd0597f33cf6ba26af55f3359bf20887df43e141",
+      "issue": 12024,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Single-line change; the fix relies on the already-existing `Card.__hash__` / `Card.__eq__` contract, which hashes and compares by canonical name. No schema or data changes required. No other issues observed in this code path.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`oracle.CARDS_BY_NAME` is a `dict[str, Card]` that maps both canonical card names **and** flavor-name aliases to the same `Card` object. So a card with one flavor-name alias appears **twice** as a value in the dict. In `decksite/views/seasons.py` the loop `for c in oracle.CARDS_BY_NAME.values()` iterated all values including duplicates, incrementing `cards_count` once per alias, which caused the `/seasons` page to display a higher legal-card count than the actual number of distinct cards (e.g. 14,309 vs the correct 14,235 from `legal_cards.txt`).\n\n## What changed\n\nWrapped the iterable in `set()` (`for c in set(oracle.CARDS_BY_NAME.values())`) so each `Card` object is visited exactly once. `Card.__hash__` hashes by canonical name and `Card.__eq__` compares canonical names, so the set correctly deduplicates alias entries.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (environment: MariaDB 11.8 on Amazon Linux 2023)\n\nFixes #12024",
+      "pr_title": "Fix seasons page overcounting legal cards due to flavor name aliases (#12024)",
+      "recorded_at": "2026-09-01T19:33:01Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.23s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12024,
+  "triage": [
+    {
+      "batch_id": "t-12083-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "iterates `oracle.CARDS_BY_NAME.values()` to count legal cards per season \u2014 but CARDS_BY_NAME has multiple keys (canonical name + flavor name aliases) pointing to the same Card object, so the same card is counted once per alias",
+          "ref": "decksite/views/seasons.py:19",
+          "type": "code"
+        },
+        {
+          "detail": "init() populates CARDS_BY_NAME with CARDS_BY_NAME[c.name]=c then also CARDS_BY_NAME[fn]=c for each flavor_name \u2014 same Card object stored under multiple keys",
+          "ref": "magic/oracle.py:20-29",
+          "type": "code"
+        },
+        {
+          "detail": "Card.__hash__ is defined as hash(self.name) \u2014 so set(CARDS_BY_NAME.values()) would correctly deduplicate to one Card per canonical name",
+          "ref": "magic/models/card.py:40",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `decksite/views/seasons.py` line 19, change `for c in oracle.CARDS_BY_NAME.values():` to `for c in set(oracle.CARDS_BY_NAME.values()):`. This deduplicates using the existing `Card.__hash__` (which hashes by canonical name), so cards with flavor-name aliases are counted exactly once instead of once per alias. This single-line change should eliminate the overcounting relative to `legal_cards.txt`.",
+      "issue": 12024,
+      "notes": "Confidence is medium because the exact magnitude of the discrepancy (14,309 vs 14,235 = 74) can only be verified against live DB data. The root cause (duplicate values in CARDS_BY_NAME) is confirmed statically.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:23:32Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12196,
+  "triage": [
+    {
+      "batch_id": "t-12209-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "ABBREVIATIONS dict contains rdw, ww, muc, mbc but NOT 'bug' (Sultai UBG shorthand) \u2014 the sanitizer does not recognize 'bug' as a color alias",
+          "ref": "decksite/deck_name.py:70",
+          "type": "code"
+        },
+        {
+          "detail": "WHITELIST has one entry 'Fix the Gargadon Bug Me Angy' to prevent the word 'bug' from being processed incorrectly \u2014 confirming the problem is real and only manually handled so far",
+          "ref": "decksite/deck_name.py:12",
+          "type": "code"
+        },
+        {
+          "detail": "normalize_colors has access to actual deck colors (the 'colors' param) but ABBREVIATIONS expansion happens before it and without color context, making context-aware 'bug'\u2192Sultai non-trivial",
+          "ref": "decksite/deck_name.py:180",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12196,
+      "notes": "A na\u00efve fix (add 'bug': 'Sultai' to ABBREVIATIONS) would rename non-Sultai decks called 'Bug X' incorrectly. A correct fix needs color-context awareness \u2014 either moving the 'bug' alias into normalize_colors (which has the colors param) or adding it to COLOR_COMBINATIONS patterns with a guard on actual deck colors. Both approaches require tests in deck_name_test.py and careful consideration of edge cases.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:22:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

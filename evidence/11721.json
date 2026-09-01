@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11721,
+  "triage": [
+    {
+      "batch_id": "t-11747-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Harden Discord bot errors and reboot reporting \u2014 added discordbot/error_handling.py with public_message(), updated bot.py and background.py to use it",
+          "ref": "c1bfbf0f",
+          "type": "commit"
+        },
+        {
+          "detail": "send_command_tracebacks=False passed to the interactions client, preventing the library from dumping raw tracebacks to Discord",
+          "ref": "discordbot/bot.py:37",
+          "type": "code"
+        },
+        {
+          "detail": "on_command_error handler calls error_handling.log_exception() (logs to file) then ctx.send(error_handling.public_message(event.error)) \u2014 user sees friendly 'Something went wrong. Error code XXXX' message, not a stack trace",
+          "ref": "discordbot/bot.py:113-114",
+          "type": "code"
+        },
+        {
+          "detail": "public_message() caps output at MAX_PUBLIC_ERROR_LENGTH=200, redacts secrets, never includes the traceback",
+          "ref": "discordbot/error_handling.py:33-44",
+          "type": "code"
+        },
+        {
+          "detail": "issue comment by bakert says 'This no longer happens, but we should defend against emitting stack traces into the Discord (in general!)' \u2014 confirming the specific case was already resolved",
+          "ref": "#11721",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11721,
+      "notes": "The GitHub issue-creation feature mentioned in the title (log a github ticket) is still unimplemented \u2014 shared/repo.py has create_issue() but it is not called from error_handling \u2014 but the core complaint (stack traces gobbed into Discord) is definitively resolved.",
+      "proposed_comment": "Stack traces are no longer sent to Discord: `send_command_tracebacks=False` was set in commit `c1bfbf0f` and `on_command_error` now sends a friendly error-code message via `error_handling.public_message()`. The GitHub-ticket-logging part of this request is not yet implemented, but the primary complaint is fixed.",
+      "recorded_at": "2026-09-01T19:30:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

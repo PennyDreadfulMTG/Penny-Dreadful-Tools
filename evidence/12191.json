@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12191,
+  "triage": [
+    {
+      "batch_id": "t-12191-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SESSION_COOKIE_DOMAIN is set but SESSION_COOKIE_PATH is not set; Flask defaults APPLICATION_ROOT to '/'",
+          "ref": "shared_web/flask_app.py:50",
+          "type": "code"
+        },
+        {
+          "detail": "set_cookie('page_size', ...) called with no path; Werkzeug 3.x defaults to path='/'",
+          "ref": "decksite/controllers/api.py:149",
+          "type": "code"
+        },
+        {
+          "detail": "Werkzeug sansio/response.py confirms: set_cookie path defaults to '/'",
+          "ref": "shared_web/flask_app.py:189-202",
+          "type": "code"
+        },
+        {
+          "detail": "Related cookie domain fix (pennydreadfulmagic.com -> .pennydreadfulmagic.com) merged Nov 2024, but that PR does not address path",
+          "ref": "#13309",
+          "type": "pr"
+        },
+        {
+          "detail": "No commits found setting SESSION_COOKIE_PATH; no path-specific cookie fix found",
+          "ref": "git log --grep='SESSION_COOKIE_PATH'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12191,
+      "notes": "Cannot view the screenshot in the comment that presumably shows the problem. Current Werkzeug (3.x) defaults set_cookie path to '/' and Flask defaults SESSION_COOKIE_PATH to APPLICATION_ROOT='/'. Issue is labeled '+question' indicating even the author was unsure what to do. Domain cookie issue was fixed in PR #13309 (Nov 2024) but issue remains open. Verifier should check if the bug is reproducible with the current Werkzeug version.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:24:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

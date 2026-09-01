@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12093,
+  "triage": [
+    {
+      "batch_id": "t-12135-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "with_test_db decorator defined here; it is decksite-DB-specific.",
+          "ref": "decksite/testutil.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "test_legality() calls oracle.load_card('Swamp') which queries the cards DB, but carries no @pytest.mark.functional annotation.",
+          "ref": "magic/oracle_test.py:11",
+          "type": "code"
+        },
+        {
+          "detail": "Example of correct annotation: both @with_test_db and @pytest.mark.functional applied together.",
+          "ref": "decksite/data/deck_test.py:78-79",
+          "type": "code"
+        },
+        {
+          "detail": "Mark logsite database-touching tests as functional (2023) \u2014 shows this has been an iterative effort, not yet complete.",
+          "ref": "48abd590",
+          "type": "commit"
+        },
+        {
+          "detail": "Fix a bad test annotation \u2014 confirms annotations are still being corrected ad hoc.",
+          "ref": "a095cea1",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12093,
+      "notes": "Requires systematically reviewing all *_test.py files to identify which tests touch the decksite DB (needs with_test_db) vs the cards-only DB (may only need functional) vs neither. Scope is open-ended across the whole test suite; also requires a judgment call about whether oracle/magic tests require with_test_db or only @pytest.mark.functional.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:21:46Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

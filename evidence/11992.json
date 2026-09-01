@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11992,
+  "triage": [
+    {
+      "batch_id": "t-12083-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "CARDS_BY_NAME is populated with canonical name (front face) and flavor_name aliases only \u2014 back face names of transform/DFC cards are never added as keys",
+          "ref": "magic/oracle.py:20-29",
+          "type": "code"
+        },
+        {
+          "detail": "add_aliases() only adds printed_name when `printed_name != face['name']` for English cards \u2014 for English DFCs the back face printed_name equals the face name so no alias is created for the back face",
+          "ref": "magic/multiverse.py:355-363",
+          "type": "code"
+        },
+        {
+          "detail": "valid_name() searches CARDS_BY_NAME by exact name, then by text before '/', then by canonicalized match \u2014 'Irencrag' (back face) would not match 'The Irencrag' (front face key) under any of these paths, raising InvalidDataException",
+          "ref": "magic/oracle.py:32-45",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `magic/oracle.py` inside `init()`, after `CARDS_BY_NAME[c.name] = c`, also index back face names from `c.get('names', '').split('|')[1:]` for cards with two faces \u2014 only adding a back-face name if it is not already a key in CARDS_BY_NAME (to avoid overriding front-face entries). This makes back-face names resolvable via `valid_name()` so the bot can look up legality for 'Irencrag' (the equipment form). Also update `decksite/views/seasons.py:19` to use `set(oracle.CARDS_BY_NAME.values())` to avoid overcounting newly-indexed back faces. ~10-15 lines total.",
+      "issue": 11992,
+      "notes": "Confidence is medium because the exact internal name of the equipment back face and its runtime behavior in the bot could not be verified without a live DB; however the static code path shows no mechanism exists to look up back face names of English DFCs.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:23:32Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

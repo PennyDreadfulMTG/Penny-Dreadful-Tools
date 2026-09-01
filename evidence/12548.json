@@ -32,5 +32,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Closing because this appears to be working correctly in current Safari and is no longer reproducible.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-01T19:18:56Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

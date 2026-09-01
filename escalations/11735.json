@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:30:01Z",
+  "evidence_refs": [
+    "evidence/11735.json#triage[0]"
+  ],
+  "issue": 11735,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "This is a deployment/infrastructure routing issue; the code-level /rotation route is correct. Related issues were closed April 2024, which may mean the multi-machine setup was decommissioned, but this cannot be verified from the repository alone."
+}

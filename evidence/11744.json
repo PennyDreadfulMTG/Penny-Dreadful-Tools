@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11744,
+  "triage": [
+    {
+      "batch_id": "t-11747-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PD validation only checks 'sum(maindeck) < 60'; no upper-bound check on main deck size, so 75 main + 0 sideboard passes validation",
+          "ref": "magic/legality.py:29",
+          "type": "code"
+        },
+        {
+          "detail": "text-format parser fallback path fills exactly 60 into main then up to 15 into sideboard; XML parser uses Sideboard='true'/'false' per card \u2014 if all cards were exported with Sideboard='false' a 75-card deck would land entirely in main",
+          "ref": "magic/decklist.py:37-81",
+          "type": "code"
+        },
+        {
+          "detail": "GatherlingDeck dataclass has separate maindeck/sideboard fields; unclear if source data could collapse them for berluspooky36's specific decks without DB access",
+          "ref": "grep -n 'sideboard' decksite/scrapers/gatherling.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11744,
+      "notes": "There is a clear validation gap (no max-60-main check in legality.py), but whether this caused the specific berluspooky36 decks or the decks arrived via a parsing/import edge case cannot be determined without database access to inspect the submitted decklists.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:30:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12135,
+  "triage": [
+    {
+      "batch_id": "t-12135-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "apply_rules_to_decks: when len(archetypes) > 1 it unconditionally sets rule_archetype_name = 'Bad rules'. No parent-child resolution exists.",
+          "ref": "decksite/data/rule.py:52-56",
+          "type": "code"
+        },
+        {
+          "detail": "The SQL groups by deck_id and checks COUNT(DISTINCT archetype_id) >= 1; the HAVING clause makes no use of archetype_closure ancestry.",
+          "ref": "decksite/data/rule.py:40-50",
+          "type": "code"
+        },
+        {
+          "detail": "archetype_closure table with ancestor/descendant/depth columns exists and supports parent-child queries, but is not used in rule matching.",
+          "ref": "decksite/data/archetype.py:46",
+          "type": "code"
+        },
+        {
+          "detail": "apply_rules_query: exclusion via rule_card.include=FALSE already exists (for specific cards), but there is no mechanism to express color-land exclusion rules.",
+          "ref": "decksite/data/rule.py:125-200",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12135,
+      "notes": "Two distinct sub-features: (1) parent-child resolution \u2014 requires joining archetype_closure in apply_rules_to_decks to detect ancestry, then picking the deepest (most specific) archetype; (2) color-awareness for exclusion rules \u2014 would require knowing what colors each land produces, a separate and substantially more complex addition. Neither part is trivially isolated.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:21:46Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

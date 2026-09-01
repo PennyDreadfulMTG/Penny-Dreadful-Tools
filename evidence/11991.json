@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11991,
+  "triage": [
+    {
+      "batch_id": "t-12083-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "retire flow calls ps.associate(d, session['id']) to link Discord ID to MTGO username after retiring",
+          "ref": "decksite/controllers/league.py:92-95",
+          "type": "code"
+        },
+        {
+          "detail": "add_signup() calls lg.signup(form) and redirects but never calls ps.associate \u2014 no Discord association happens at signup time even when session['id'] is set",
+          "ref": "decksite/controllers/league.py:44-52",
+          "type": "code"
+        },
+        {
+          "detail": "associate() runs `UPDATE person SET discord_id = %s WHERE id = (SELECT person_id FROM deck WHERE id = %s) AND discord_id IS NULL` \u2014 safe: only sets if not already associated",
+          "ref": "decksite/data/person.py:246-262",
+          "type": "code"
+        },
+        {
+          "detail": "league controller imports both `from flask import ... session` and `from decksite.data import person as ps` \u2014 all needed pieces are already in scope",
+          "ref": "decksite/controllers/league.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `decksite/controllers/league.py`, in `add_signup()` after `d = lg.signup(form)` (line ~47), add: `if session.get('id'): ps.associate(d, session['id'])`. This mirrors what the retire flow already does at line 95 and is safe because `associate()` only updates when `discord_id IS NULL`.",
+      "issue": 11991,
+      "notes": "Both imports needed (session, ps) are already at the top of the file. The associate() guard prevents overwriting an existing association.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:23:32Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11946,
+  "triage": [
+    {
+      "batch_id": "t-11951-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "`load_rotation_summary()` returns only `(runs, num_cards)` \u2014 no per-check summary counts exposed",
+          "ref": "decksite/data/rotation.py:44",
+          "type": "code"
+        },
+        {
+          "detail": "_rotation table already stores `hit_in_last_run BOOL` per card, so 'in this check' count is a simple COUNT WHERE hit_in_last_run=1",
+          "ref": "decksite/data/rotation.py:103",
+          "type": "code"
+        },
+        {
+          "detail": "Template shows runs/percent/num_cards but has no 'in this check' or 'eliminated this check' line",
+          "ref": "decksite/templates/rotation.mustache",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Extend `load_rotation_summary()` in `decksite/data/rotation.py` to also return `in_this_check` (COUNT WHERE hit_in_last_run=1) and `eliminated_this_check` (COUNT WHERE status='Eliminated' AND hit_in_last_run=0 AND hits + @total_runs - @runs_completed + 1 >= @hits_required). 2) Expose those counts in `decksite/views/rotation.py`. 3) Add a line to `decksite/templates/rotation.mustache` showing the summary. ~30-40 lines total, no schema change.",
+      "issue": 11946,
+      "notes": "The _rotation cache already computes all necessary columns (hit_in_last_run, status, hits). The 'eliminated this check' definition may need minor product clarification but a reasonable approximation is straightforward.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:28:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

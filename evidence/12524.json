@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12524-1",
+      "branch": "sweep/12524-seasons-all-decks-is-slow-to-load-the-fi",
+      "files_changed": 1,
+      "head_sha": "920b24ed201eca10c8418ac2c883a2a845750029",
+      "issue": 12524,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The redirect only covers /seasons/all/decks/ and /seasons/all/decks/<type>/; other /seasons/all/ sub-pages (archetypes, cards, people) remain unchanged since they aggregate meaningfully across seasons. The two-line change mirrors the existing redirect pattern for the current-season case.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`/seasons/all/decks/` performed an unbounded SQL query across every deck ever played (no season filter), making the first page load slow. The result was also uninteresting: sorted by date descending, it shows the same recent decks visible on `/decks/` (the current season), just much slower.\n\n## What changed\n\nAdded a redirect in `before_request` in `decksite/main.py`: any request matching `/seasons/all/decks/` or `/seasons/all/decks/<deck_type>/` is now redirected to the corresponding seasonless URL (`/decks/` or `/decks/<deck_type>/`). This is consistent with the existing redirect that removes the current-season prefix when navigating via `/seasons/<current_num>/...`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit decksite/main.py` \u2014 845 passed, 1 skipped\n\nFixes #12524",
+      "pr_title": "Redirect /seasons/all/decks/ to /decks/ (#12524)",
+      "recorded_at": "2026-09-01T19:27:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/main.py",
+        "detail": "845 passed, 1 skipped in 18.23s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12524,
   "triage": [
     {

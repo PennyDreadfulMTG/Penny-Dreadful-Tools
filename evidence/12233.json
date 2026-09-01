@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12233-1",
+      "branch": "sweep/12233-support-and-in-format-in-search-for-pd-s",
+      "files_changed": 2,
+      "head_sha": "c7955679de4fc08ad506f95285a93aab9c3bef55",
+      "issue": 12233,
+      "lines_changed": 14,
+      "lint": "passed",
+      "notes": "The four new assertions in `test_past_seasons` are `@pytest.mark.functional` and require a populated database to run; they mirror the pattern of the existing passing functional tests. Relational operators on non-PD formats (e.g., `f>=pauper`) fall through to the existing LIKE branch and will raise `InvalidValueException` if no matching format is found \u2014 reasonable behavior, no change needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `f:` / `format:` search filter accepted `:` and `=` operators but silently ignored any relational operator (`>=`, `>`, `<=`, `<`). The operator was never forwarded to `format_where`, so `f>=pd10` produced the same result as `f:pd10` (only season 10, not \"season 10 and later\").\n\n## What changed\n\n**`find/search.py`**\n- `parse_criterion`: pass `operator.value()` to `format_where` (was passing only `term.value()`).\n- `format_where`: updated signature to `(operator: str, term: str)`. Added a new branch: when the operator is `>=`, `>`, `<=`, or `<` *and* the term resolves to a specific PD season (not `ALL`), the function enumerates `seasons.SEASONS`, keeps the ones that satisfy the numeric comparison against the target season number, and collects `format_id`s for each matching season code. The existing `:` / `=` and `ALL` branches are unchanged.\n\n**`find/find_test.py`**\n- Added four assertions to the existing `test_past_seasons` functional test covering `f>=pds5`, `f<=pds1`, `f>pds1`, and `f<pds5`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- `uv run --frozen python dev.py unit find` \u2014 60 passed, 48 deselected. The new functional tests are marked `@pytest.mark.functional` and were not exercised (no live database with card-legality data was available in the cloud environment); they follow the same pattern as the existing `test_past_seasons` functional tests and are expected to pass against a real database.\n\nFixes #12233",
+      "pr_title": "Support >=, >, <=, < operators for PD season format filter (#12233)",
+      "recorded_at": "2026-09-01T19:21:25Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find",
+        "detail": "60 passed, 48 deselected in 0.27s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12233,
   "triage": [
     {

@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12179-1",
+      "branch": "sweep/12179-update-kick-off-and-pd500-pages-to-say-w",
+      "files_changed": 4,
+      "head_sha": "88fccc1a4ae2af96666c83d2599695105da3ebb3",
+      "issue": 12179,
+      "lines_changed": 71,
+      "lint": "passed",
+      "notes": "The helper function is placed in kickoff.py and imported by pd500.py; if these views grow further, it could be moved to a shared utility module. The `_rounds_info_for_template` function converts `StageType` enum keys to plain string-keyed dicts required by Mustache rendering.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe Season Kick Off and Penny Dreadful 500 pages had no information about how many swiss rounds are played based on player count, nor did they mention that WotC-standard swiss rounds are used or that there is a top-8 cut.\n\n## What changed\n\n- Added a `_rounds_info_for_template()` helper in `decksite/views/kickoff.py` that converts the existing `magic.tournaments.rounds_info()` data (which uses `StageType` enum keys) into template-friendly dicts with string keys: `player_range`, `swiss_rounds`, and `top_n`.\n- Exposed `self.rounds_info` in both `KickOff.__init__` and `PD500.__init__`.\n- Added a \"Swiss Rounds\" section to both `kickoff.mustache` and `pd500.mustache` with a table showing player count range, swiss rounds, and top cut. The PD500 description also explicitly mentions \"with a cut to top 8\".\n- `pd500.py` reuses the helper from `kickoff.py` to avoid duplication.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit magic` \u2014 845 passed, 1 skipped\n- Manual import test confirmed the helper function produces correct data for all 6 player-count ranges.\n\nFixes #12179",
+      "pr_title": "Add WotC-standard swiss rounds table to Kick Off and PD500 pages (#12179)",
+      "recorded_at": "2026-09-01T19:33:29Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic",
+        "detail": "845 passed, 1 skipped in 18.57s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12179,
+  "triage": [
+    {
+      "batch_id": "t-12191-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template shows bullet-point list with no mention of swiss rounds or top-8 cut",
+          "ref": "decksite/templates/kickoff.mustache:1-10",
+          "type": "code"
+        },
+        {
+          "detail": "Same \u2014 no swiss rounds or top-8 mention",
+          "ref": "decksite/templates/pd500.mustache:1-10",
+          "type": "code"
+        },
+        {
+          "detail": "rounds_info() function exists and returns the WotC-standard swiss round table (min_players, max_players, SWISS_ROUNDS, ELIMINATION_ROUNDS)",
+          "ref": "magic/tournaments.py:378",
+          "type": "code"
+        },
+        {
+          "detail": "No commits ever added swiss rounds to these templates",
+          "ref": "git log --oneline -S'swiss' -- decksite/templates/kickoff.mustache decksite/templates/pd500.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/views/kickoff.py and decksite/views/pd500.py: import rounds_info from magic.tournaments and expose it as self.rounds_info in __init__. In decksite/templates/kickoff.mustache and decksite/templates/pd500.mustache: add a section that renders the rounds table (columns: player count range, swiss rounds, top-N cut) and a note that there is a cut to top 8 where applicable. The data is already structured in magic/tournaments.py:378.",
+      "issue": 12179,
+      "notes": "Content-only change: no logic changes, no DB changes, no security surface. The issue comment asks to also mention the cut to top 8 \u2014 the elimination_rounds field in rounds_info() captures this.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:24:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

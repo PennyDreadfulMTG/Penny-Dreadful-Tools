@@ -1,0 +1,35 @@
+{
+  "fix": [],
+  "issue": 12206,
+  "triage": [
+    {
+      "batch_id": "t-12209-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Legal card list is fetched from pennydreadfulmtg.github.io/legal_cards.txt; PDBot is a separate system that reads pdmtgo.com/legal_cards.txt",
+          "ref": "magic/fetcher.py:166",
+          "type": "code"
+        },
+        {
+          "detail": "No commits in this repo reference And\u00faril or Narsil; no code fix for this specific card",
+          "ref": "git log -S 'Anduril' (empty)",
+          "type": "search"
+        },
+        {
+          "detail": "No merged PRs found addressing PDBot and And\u00faril legality",
+          "ref": "gh pr list --search 'Anduril OR pdbot legal' --state merged",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12206,
+      "notes": "PDBot is a separate service (pdbot.pennydreadfulmagic.com) not controlled by this repo. The issue may have been a transient data problem (card not yet on legal_cards.txt at the time), a DFC naming mismatch, or a Unicode handling issue in PDBot \u2014 none of which are determinable from static code review here.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:22:00Z"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,67 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12105-1",
+      "branch": "sweep/12105-maybe-surface-card-rank-on-the-card-deta",
+      "files_changed": 2,
+      "head_sha": "2c1a188da83d3f9b10592a3f88bb094f41c0feb6",
+      "issue": 12105,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "The `playability.rank()` call loads all card ranks (one DB query over the precomputed `_playability` table) on each uncached card page load. The `card()` endpoint is decorated `@cached()`, so this is only a concern on cache misses. The stats.mustache partial is also used in person.mustache; no rank is set for persons, so the conditional blocks simply don't render there.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe card detail page (`/cards/<name>/`) showed win record, tournament results, and Elo, but did not show the card's overall playability **rank** \u2014 a pre-computed metric already available via `playability.rank()` that tells you how a card ranks among all Penny Dreadful legal cards by playability score.\n\n## What changed\n\n- **`decksite/controllers/metagame.py`**: In the `card()` controller, added `from decksite.data import playability` and one line `c.rank = playability.rank().get(c.name)` after loading the card \u2014 sets the rank on the card object before the view is rendered.\n- **`decksite/templates/stats.mustache`**: Added a conditional `{{#rank}}<th class=\"n\">Rank</th>{{/rank}}` header and `{{#rank}}<td class=\"n\">#{{rank}}</td>{{/rank}}` data cell, matching the existing pattern used for the Elo column. The rank is only shown when the card has a positive playability rank; cards with zero playability (or that appear in the `person.mustache` context where rank is not set) render no column.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (ruff auto-fixed import ordering on the new `playability` import).\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped in 18.87s.\n\nFixes #12105",
+      "pr_title": "Surface card rank on card detail page (#12105)",
+      "recorded_at": "2026-09-01T19:32:33Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.87s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12105,
+  "triage": [
+    {
+      "batch_id": "t-12135-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "rank() returns dict[str, int] of card name to rank, derived from _playability table via ROW_NUMBER().",
+          "ref": "decksite/data/playability.py:117-119",
+          "type": "code"
+        },
+        {
+          "detail": "ranks_select() SQL assigns NULL rank to cards with zero playability, otherwise ranks by playability DESC.",
+          "ref": "decksite/data/query.py:61-74",
+          "type": "code"
+        },
+        {
+          "detail": "rank is already exposed in the /api/cards JSON feed but not in the card detail view.",
+          "ref": "decksite/controllers/api.py:238-245",
+          "type": "code"
+        },
+        {
+          "detail": "Card detail template renders stats.mustache for played cards and lists decks, but has no rank display.",
+          "ref": "decksite/templates/card.mustache:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "load_card() does not include rank in its SQL or assign it to the returned card object.",
+          "ref": "decksite/data/card.py:323-332",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) In decksite/controllers/metagame.py card() (line 78), import playability from decksite.data, call ranks = playability.rank() after loading c, and set c.rank = ranks.get(c.name). 2) In decksite/templates/stats.mustache add <th class=\"n\">Rank</th> and <td class=\"n\">{{#rank}}#{{rank}}{{/rank}}</td> to the header/body rows. Total change ~10 lines across 2 files.",
+      "issue": 12105,
+      "notes": "rank() returns overall all-time rank (not per-season), which is appropriate for a card detail page. The card view's __getattr__ delegates to self.card so setting c.rank on the Container makes it accessible in the template without changing views/card.py.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:21:46Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

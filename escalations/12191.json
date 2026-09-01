@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:24:00Z",
+  "evidence_refs": [
+    "evidence/12191.json#triage[0]"
+  ],
+  "issue": 12191,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Cannot view the screenshot in the comment that presumably shows the problem. Current Werkzeug (3.x) defaults set_cookie path to '/' and Flask defaults SESSION_COOKIE_PATH to APPLICATION_ROOT='/'. Issue is labeled '+question' indicating even the author was unsure what to do. Domain cookie issue was fixed in PR #13309 (Nov 2024) but issue remains open. Verifier should check if the bug is reproducibl"
+}

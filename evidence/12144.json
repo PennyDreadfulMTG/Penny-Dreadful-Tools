@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12144-1",
+      "branch": "sweep/12144-when-deck-name-finds-a-deck-that-is-only",
+      "files_changed": 2,
+      "head_sha": "d8e76ed79008cf7ee3c65e3aa140ea89a9c39dcc",
+      "issue": 12144,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "The fix is scoped exactly to the case where normalize_version reduces the entire name to a bare version token. No other code paths are affected. The pattern ^v\\d[\\.\\d]*$ is conservative and mirrors what normalize_version produces.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a deck is named something like `version 2`, `normalize_version` correctly converts it to `v2`. However, because the resulting name is non-empty, `add_colors_if_no_deck_name`, `normalize_colors`, and `add_archetype_if_just_colors` all skip over it \u2014 treating `v2` as a real deck name rather than an empty one. The deck ends up named `v2` instead of something meaningful like `Mono Blue Aggro v2`.\n\n## What changed\n\nIn `decksite/deck_name.py`, after `normalize_version`, added a check for whether the result is a bare version marker (`^v\\d[\\.\\d]*$`). If so, the version suffix is saved, the name is blanked, the color/archetype logic runs on the blank name as usual, and then the version suffix is appended to the result.\n\nUpdated the corresponding test in `decksite/deck_name_test.py` at line 246 to expect `'Mono Blue Aggro v2'` instead of `'v2'`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen pytest decksite/deck_name_test.py -v` \u2014 326 passed\n- `uv run --frozen python dev.py unit decksite/deck_name_test.py` \u2014 845 passed, 1 skipped\n\nFixes #12144",
+      "pr_title": "Supply colors and archetype for bare-version deck names (#12144)",
+      "recorded_at": "2026-09-01T19:23:46Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest decksite/deck_name_test.py -v && uv run --frozen python dev.py unit decksite/deck_name_test.py",
+        "detail": "326 passed in pytest run; 845 passed 1 skipped in full unit suite",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12144,
   "triage": [
     {

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11951,
+  "triage": [
+    {
+      "batch_id": "t-11951-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Mouseover tooltip URL built as `https://deckbox.org/mtg/{name}/tooltip` \u2014 purely external, no control over which card deckbox.org resolves for 'Red Herring'",
+          "ref": "shared_web/static/js/tooltips.js:307",
+          "type": "code"
+        },
+        {
+          "detail": "2024-11-28: skip all playtest cards from oracle db via promo_types filter \u2014 fixes bot but not deckbox.org tooltips",
+          "ref": "c9feea8f",
+          "type": "commit"
+        },
+        {
+          "detail": "No code changes to the tooltip URL construction that would route around deckbox.org",
+          "ref": "git log --oneline -- shared_web/static/js/tooltips.js",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11951,
+      "notes": "The bot-side fix (11950) was applied in c9feea8f; the mouseover issue is purely an external dependency on deckbox.org. Cannot verify without a live browser whether deckbox.org now shows the correct card \u2014 needs a manual check before deciding to contact deckbox.org or switch tooltip providers.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:28:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

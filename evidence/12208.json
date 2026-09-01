@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 12208,
+  "triage": [
+    {
+      "batch_id": "t-12209-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "May 14 2024 'Update fonts task to do more and be better' \u2014 added PREFER dict with explicit '\ud83c\udfc6': 'Segoe UI Symbol' override",
+          "ref": "bf6f840e",
+          "type": "commit"
+        },
+        {
+          "detail": "Current master has PREFER = { ... '\ud83c\udfc6': 'SegoeUISymbol', ... } \u2014 trophy emoji is explicitly NOT coming from Noto Emoji",
+          "ref": "maintenance/fonts.py:49",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12208,
+      "notes": "The issue suggested Symbola specifically; the author chose Segoe UI Symbol instead. If the Segoe version is still considered suboptimal, the one-line change in maintenance/fonts.py:49 to swap 'SegoeUISymbol' for 'Symbola' would be trivial, but that is a separate question.",
+      "proposed_comment": "This was addressed in commit bf6f840e (May 2024), which added an explicit PREFER dict to maintenance/fonts.py that overrides the Noto Emoji default for \ud83c\udfc6 and uses Segoe UI Symbol instead. The trophy is no longer sourced from Noto Emoji.",
+      "recorded_at": "2026-09-01T19:22:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12208-1",
+      "final_comment": "Fixed in commit bf6f840e (May 2024), which added an explicit PREFER dict to maintenance/fonts.py that maps \ud83c\udfc6 to Segoe UI Symbol, overriding the Noto Emoji default. The trophy emoji is no longer sourced from Noto Emoji in the generated symbols font.",
+      "issue": 12208,
+      "own_evidence": [
+        {
+          "detail": "Line 49 reads '\ud83c\udfc6': 'SegoeUISymbol', explicitly overriding the Noto Emoji default in the PREFER dict; independently verified in current master.",
+          "ref": "maintenance/fonts.py:49",
+          "type": "code"
+        },
+        {
+          "detail": "Diff confirmed: commit introduced the PREFER dict with '\ud83c\udfc6': 'Segoe UI Symbol' as part of a larger fonts.py rewrite on 2024-05-14.",
+          "ref": "bf6f840e",
+          "type": "commit"
+        },
+        {
+          "detail": "Issue is open with 0 comments; author's request was to avoid Noto Emoji for the trophy \u2014 the fix satisfies that by routing to SegoeUISymbol.",
+          "ref": "gh issue view 12208",
+          "type": "issue"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:24:44Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

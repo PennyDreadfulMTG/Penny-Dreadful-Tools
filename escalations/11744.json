@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:30:01Z",
+  "evidence_refs": [
+    "evidence/11744.json#triage[0]"
+  ],
+  "issue": 11744,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "There is a clear validation gap (no max-60-main check in legality.py), but whether this caused the specific berluspooky36 decks or the decks arrived via a parsing/import edge case cannot be determined without database access to inspect the submitted decklists."
+}

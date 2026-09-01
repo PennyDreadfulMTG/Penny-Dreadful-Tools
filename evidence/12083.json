@@ -1,0 +1,78 @@
+{
+  "fix": [],
+  "issue": 12083,
+  "triage": [
+    {
+      "batch_id": "t-12083-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "internal_server_error handler calls repo.create_issue('500 error at {path}\\n {exc}', ..., 'PennyDreadfulMTG/perf-reports', exception=exc) on every 500",
+          "ref": "shared_web/flask_app.py:92",
+          "type": "code"
+        },
+        {
+          "detail": "'Use the underlying original exception not the skinny werkzeug wrapper' \u2014 fixed the handler to pass the original exception correctly so create_issue would receive real exception data",
+          "ref": "9aeaa3be",
+          "type": "commit"
+        },
+        {
+          "detail": "'Don't let a None get through to format_exception' \u2014 fixed a follow-on bug in the same handler that could cause the issue creation to fail silently",
+          "ref": "81cd7a07",
+          "type": "commit"
+        },
+        {
+          "detail": "Referenced 500-trigger issue is now CLOSED",
+          "ref": "#12081",
+          "type": "issue"
+        },
+        {
+          "detail": "Referenced 500-trigger issue is now CLOSED",
+          "ref": "#12080",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12083,
+      "notes": "The feature was already present but had two bugs in the handler that caused it to fail silently in the specific cases cited. Both were fixed in April 2025.",
+      "proposed_comment": "This is implemented in `shared_web/flask_app.py` at the `internal_server_error` handler (line 92), which calls `repo.create_issue` on every 500 response. A pair of April 2025 fixes (commits 9aeaa3be and 81cd7a07) corrected the exception-wrapping and None-propagation bugs that would have silently prevented issue creation for the earlier 500s referenced here.",
+      "recorded_at": "2026-09-01T19:23:32Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12083-1",
+      "final_comment": "Implemented in `shared_web/flask_app.py` at `internal_server_error` (line 92), which calls `repo.create_issue` targeting `PennyDreadfulMTG/perf-reports` on every 500. Commit 9aeaa3be switched to using the unwrapped original exception for better stack traces; commit 81cd7a07 added a `is not None` guard that prevents a None from reaching `log_exception`/`format_exception` \u2014 without that guard, an AttributeError would propagate past the `create_issue` call and silently skip issue creation. The original examples (#12081, #12080) not generating reports was most likely due to unconfigured GitHub credentials (see #11200), a separate issue now closed.",
+      "issue": 12083,
+      "own_evidence": [
+        {
+          "detail": "internal_server_error handler calls repo.create_issue targeting PennyDreadfulMTG/perf-reports on every 500; exception=exc is passed with the unwrapped original exception",
+          "ref": "shared_web/flask_app.py:87-98",
+          "type": "code"
+        },
+        {
+          "detail": "log_exception calls repo.format_exception(e); if exc were None (pre-81cd7a07), traceback.format_exception would raise AttributeError, propagating past the create_issue try block and silently skipping issue creation",
+          "ref": "shared_web/flask_app.py:186-187",
+          "type": "code"
+        },
+        {
+          "detail": "create_issue returns None early if create_github_issues config is false or credentials missing \u2014 confirms silent failure path exists for misconfigured installs, consistent with closed issue #11200",
+          "ref": "shared/repo.py:80-86",
+          "type": "code"
+        },
+        {
+          "detail": "adds `and e.original_exception is not None` guard, verified this was the only change; without it, None propagated to log_exception -> format_exception -> AttributeError, bypassing the create_issue call",
+          "ref": "81cd7a07",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:33:15Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

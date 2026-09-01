@@ -1,0 +1,68 @@
+{
+  "fix": [],
+  "issue": 11957,
+  "triage": [
+    {
+      "batch_id": "t-11980-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR #14917 'Support equivalent Universes Within card names' \u2014 changed decklist.py so identical canonical names accumulate counts (add_card) instead of raising InvalidDataException; this removes the 'Invalid cards: Glenn' error when both UB and UW names are submitted",
+          "ref": "2a40b50e",
+          "type": "commit"
+        },
+        {
+          "detail": "normalize() now uses add_card() which sums counts for the same canonical name; old code raised InvalidDataException('More than one entry for {name}') which was caught and produced 'Invalid cards: Glenn'",
+          "ref": "magic/decklist.py:103-116",
+          "type": "code"
+        },
+        {
+          "detail": "use_submitted_aliases_in_card_messages() now annotates errors like 'Gregor, Shrewd Magistrate (entered as Glenn, the Voice of Calm; Gregor, Shrewd Magistrate)' \u2014 clear explanation of the duplicate",
+          "ref": "decksite/form.py:99-128",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11957,
+      "notes": "The fix depends on Scryfall storing the Walking Dead card names (Glenn, Negan, etc.) as flavor_names on the Universes Within cards (Gregor, Malik, etc.). The Negan/Malik case is explicitly tested at magic/decklist_test.py:808; Glenn/Gregor follows the same mechanism.",
+      "proposed_comment": "This was fixed by PR #14917 (commit 2a40b50e). Entering both the Universes Beyond name and the Universes Within name now produces a clear 'too many copies' error that names both the canonical card and the entered aliases, rather than the unhelpful 'Invalid cards' message.",
+      "recorded_at": "2026-09-01T19:27:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11957-1",
+      "final_comment": "Fixed by PR #14917 (commit 2a40b50e). Universes Beyond names are now recognized as valid aliases for their Universes Within equivalents, so entering both names accumulates to 8 copies and produces a clear 'too many copies' error that identifies the canonical card and each submitted alias, replacing the unhelpful 'Invalid cards' message.",
+      "issue": 11957,
+      "own_evidence": [
+        {
+          "detail": "normalize() now resolves UB names to canonical via oracle.valid_name(); add_card() accumulates counts, so 4 UB + 4 UW = 8 total, triggering Legality_Too_Many rather than Invalid cards",
+          "ref": "magic/decklist.py:104-115",
+          "type": "code"
+        },
+        {
+          "detail": "use_submitted_aliases_in_card_messages() appends '(entered as X)' parenthetical when submitted name differs from canonical, making the error message informative",
+          "ref": "decksite/form.py:99-128",
+          "type": "code"
+        },
+        {
+          "detail": "Explicit test case for two submitted aliases in Legality_Too_Many error matches the exact scenario from the issue",
+          "ref": "decksite/form_test.py:55-68",
+          "type": "test"
+        },
+        {
+          "detail": "Commit is present in master; PR #14917 (state: MERGED, merged 2026-08-22) is confirmed to be its parent PR",
+          "ref": "2a40b50e",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:32:48Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

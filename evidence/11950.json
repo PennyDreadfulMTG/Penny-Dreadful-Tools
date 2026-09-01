@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11950,
+  "triage": [
+    {
+      "batch_id": "t-11951-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "2024-11-28: 'Skip all playtest cards in cards db, now that Scryfall have given us a way' \u2014 added `if 'playtest' in p.get('promo_types', []):` to multiverse.py to exclude all Scryfall-tagged playtest cards from oracle",
+          "ref": "c9feea8f",
+          "type": "commit"
+        },
+        {
+          "detail": "2025-02-15: 'Remove special case code for playtest cards, we exclude those en masse now' \u2014 confirms general mechanism is sufficient, removed hardcoded card names",
+          "ref": "a7d6d6ee",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: `if 'playtest' in p.get('promo_types', []): continue` \u2014 ensures the Red Herring test card is excluded from oracle db, leaving only the real MKM card for bot search",
+          "ref": "magic/multiverse.py:253",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11950,
+      "notes": "Confidence is medium rather than high because verifying that Scryfall marks the Red Herring test card with promo_types=['playtest'] requires a live Scryfall API call that cannot be done in this static analysis. The commit message 'now that Scryfall have given us a way' strongly implies this is the case.",
+      "proposed_comment": "This should be fixed by commit c9feea8f (2024-11-28), which added a general mechanism to skip all Scryfall-tagged playtest cards from the oracle database. Only the real 'Red Herring' MKM card should remain in the cards db, so bot search should now return the correct result.",
+      "recorded_at": "2026-09-01T19:28:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

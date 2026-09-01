@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11977,
+  "triage": [
+    {
+      "batch_id": "t-11980-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "guess_banner() iterates season_playability descending and picks top card per color group \u2014 purely most-played, no uniqueness comparison",
+          "ref": "decksite/controllers/banners.py:119-139",
+          "type": "code"
+        },
+        {
+          "detail": "season_playability() SELECT name, playability FROM _season_playability WHERE season_id = N ORDER BY playability DESC LIMIT 100 \u2014 no cross-season comparison",
+          "ref": "decksite/data/playability.py:101-117",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comments contain a working SQL query using score_above_average = this_season.playability - AVG(prev seasons) to identify cards most unique to that season",
+          "ref": "#11977",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11977,
+      "notes": "The issue has detailed SQL sketches in comments. Implementation would require either a new preaggregate table (_season_banner_score or similar) or computing the score on-demand. Also needs product decisions on land/artifact separation and how to weight newly-legal cards with no prior-season data.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:27:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

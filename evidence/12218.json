@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12218-1",
+      "branch": "sweep/12218-the-notice-banner-that-advertises-things",
+      "files_changed": 1,
+      "head_sha": "5a421b73fe871d0ba0e1c33d1f41d78846f32dee",
+      "issue": 12218,
+      "lines_changed": 21,
+      "lint": "passed",
+      "notes": "Pure CSS change to a single file. The negative-margin technique mirrors how other full-bleed elements (e.g. .card-information-warning) already work in this codebase. The mobile media query breakpoint (900px) matches the existing override for main/header/footer padding.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe notice (banner) element that advertises events like the PD500 was constrained by `main`'s horizontal padding (`--spacing-page-with-marginalia`). The background color was applied to `.notice p` rather than `.notice` itself, so there was no way for it to visually break out of the content margins.\n\n## What changed\n\nIn `shared_web/static/css/pd.css`:\n- Added a `.notice` rule that moves `background: var(--tertiary-background)` from `.notice p` to `.notice`, and applies negative horizontal margins equal to `--spacing-page-with-marginalia` so the banner bleeds to the viewport edge.\n- Updated `.notice p` to use `padding: 1em var(--spacing-page-with-marginalia)` so text stays visually indented to the page margin.\n- Added a `@media (max-width: 900px)` block that mirrors the existing mobile override for `main` and `header`, resetting the margins to `-1rem` and padding to `1rem` on small screens.\n\nNo HTML changes were required.\n\n## Validation\n\n`uv run --frozen python dev.py lint` \u2014 passed. This is a CSS-only change with no Python logic; no unit tests cover CSS layout.\n\nFixes #12218",
+      "pr_title": "Stretch notice banner to full browser width (#12218)",
+      "recorded_at": "2026-09-01T19:19:22Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (CSS-only change; no Python unit tests applicable)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12218,
   "triage": [
     {

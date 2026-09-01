@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:28:10Z",
+  "evidence_refs": [
+    "evidence/11951.json#triage[0]"
+  ],
+  "issue": 11951,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The bot-side fix (11950) was applied in c9feea8f; the mouseover issue is purely an external dependency on deckbox.org. Cannot verify without a live browser whether deckbox.org now shows the correct card \u2014 needs a manual check before deciding to contact deckbox.org or switch tooltip providers."
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12226-1",
+      "branch": "sweep/12226-support-smart-quotes-in-card-search-by-c",
+      "files_changed": 2,
+      "head_sha": "4ec9ea3b00911cda4bc575e9f31f096b68646f3b",
+      "issue": 12226,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The new test_smart_apostrophe is marked functional and requires a populated cards DB; it is skipped in this environment identically to the existing test_smart_quotes. The fix is a one-line extension to the normalisation chain in search() with no impact on the tokeniser or parser.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`find/search.py`'s `search()` function already converted curly double quotes (U+201C/U+201D) to straight double quotes before tokenising the query, but did not handle curly/smart single quotes (U+2018/U+2019). Users whose keyboard auto-corrected an apostrophe in a search query (e.g. `n:Yawgmoth\u2019s`) received no results.\n\n## What changed\n\n**`find/search.py` line 24** \u2014 Extended the existing replace chain to also normalise U+2018 (left single quotation mark) and U+2019 (right single quotation mark / curly apostrophe) to a straight apostrophe.\n\n**`find/find_test.py`** \u2014 Added `test_smart_apostrophe` (functional, mirrors `test_smart_quotes`) that searches with a U+2019 curly apostrophe in the query and asserts the correct card is returned.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit find` \u2014 60 passed, 49 skipped (functional tests require populated cards DB; new test will run in CI)\n\nFixes #12226",
+      "pr_title": "Support smart single quotes in card search (#12226)",
+      "recorded_at": "2026-09-01T19:27:38Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find",
+        "detail": "60 passed, 49 deselected (functional/perf tests skipped; new test_smart_apostrophe is functional and will run in CI with a populated cards DB)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12226,
   "triage": [
     {

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11970,
+  "triage": [
+    {
+      "batch_id": "t-11980-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue itself states 'It's also low priority and a lot of work' and lists two required steps: new DB tables from Scryfall private tags API, and new find terms",
+          "ref": "#11970",
+          "type": "issue"
+        },
+        {
+          "detail": "find module implements search terms; adding otag:/atag: would require new tables and new term handlers, similar scope to existing format: or keyword: implementations",
+          "ref": "find/",
+          "type": "code"
+        },
+        {
+          "detail": "No existing otag or atag support found anywhere in the codebase",
+          "ref": "grep -rn 'otag\\|atag' magic/ find/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11970,
+      "notes": "Scryfall's private/tags endpoints (api.scryfall.com/private/tags/oracle and /tags/illustration) are required. These are private/undocumented endpoints; their availability and stability should be confirmed before investing in implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:27:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:22:00Z",
+  "evidence_refs": [
+    "evidence/12206.json#triage[0]"
+  ],
+  "issue": 12206,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "PDBot is a separate service (pdbot.pennydreadfulmagic.com) not controlled by this repo. The issue may have been a transient data problem (card not yet on legal_cards.txt at the time), a DFC naming mismatch, or a Unicode handling issue in PDBot \u2014 none of which are determinable from static code review here."
+}

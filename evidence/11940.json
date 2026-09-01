@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11940,
+  "triage": [
+    {
+      "batch_id": "t-11951-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "setup_decks shows 'Latest Tournament Top 8' from the most recent Gatherling competition \u2014 gets displaced by newer events (e.g. APAC) within hours",
+          "ref": "decksite/views/home.py:40",
+          "type": "code"
+        },
+        {
+          "detail": "Issue comment proposes two alternatives: (a) reuse the same winner banner for Kick Off, (b) highlight all decks rather than just the winner \u2014 these are mutually exclusive product decisions",
+          "ref": "issue comment",
+          "type": "behavior"
+        },
+        {
+          "detail": "No special pinning logic for 500 or Kick Off results; homepage deck_tables always reflects the most recent competition",
+          "ref": "decksite/templates/home.mustache",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11940,
+      "notes": "Two distinct design options are described in the issue comment. Owner needs to decide: pin the 500/Kick Off results for a fixed duration, show a winner banner, or highlight all top-8 decks. Implementation is straightforward once the design is chosen, but the design requires judgment.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:28:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

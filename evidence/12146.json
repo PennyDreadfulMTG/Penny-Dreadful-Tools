@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12146,
+  "triage": [
+    {
+      "batch_id": "t-12191-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize_version() normalizes version strings to 'v\\d[.\\d]*' in the canonical name \u2014 these are stored and rendered as plain text everywhere",
+          "ref": "decksite/deck_name.py:251",
+          "type": "code"
+        },
+        {
+          "detail": "Issue lists at least 4 distinct rendering contexts requiring changes: React tables, vanilla JS status bar, page_title (must remain plain text in some contexts), news \u2014 plus potentially a new name_html field in prepare.py",
+          "ref": "issue body",
+          "type": "behavior"
+        },
+        {
+          "detail": "No name_html field exists yet \u2014 would be a new addition to the data model and all consumers",
+          "ref": "git log --oneline -S'name_html'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12146,
+      "notes": "The issue body itself enumerates the scope \u2014 react tables, JS status bar, page_title (tricky), news, other deck.name usages \u2014 and notes a name_html approach as the cleanest path. This is a multi-system UI change requiring coordination across Python, React, and Mustache layers.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:24:00Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

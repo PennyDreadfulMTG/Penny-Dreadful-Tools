@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11739,
+  "triage": [
+    {
+      "batch_id": "t-11747-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "setcode = seasons.next_rotation_ex().mtgo_code (or last_rotation_ex().mtgo_code) with no None check; f'{setcode}_legal_cards.txt' produces 'None_legal_cards.txt' when mtgo_code is None",
+          "ref": "rotation_script/rotation_script.py:161-164",
+          "type": "code"
+        },
+        {
+          "detail": "same None-unsafe pattern in do_push()",
+          "ref": "rotation_script/rotation_script.py:198-201",
+          "type": "code"
+        },
+        {
+          "detail": "SetInfo.mtgo_code typed as str but SetInfo.parse() sets it directly from json['code'] which WIS can return as None for not-yet-announced sets",
+          "ref": "magic/seasons.py:70",
+          "type": "code"
+        },
+        {
+          "detail": "sets() function guards 'if s.code is not None' before using it, confirming None is a real runtime possibility",
+          "ref": "magic/seasons.py:143",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `rotation_script/rotation_script.py` at lines ~162 and ~200, add `assert setcode is not None, f'Could not determine rotation set code'` immediately after each `setcode = ...` assignment. Optionally add the same assertion before the `f'{setcode}_legal_cards.txt'` references. ~4 lines total across both call sites.",
+      "issue": 11739,
+      "notes": "The underlying source of None is WIS returning a null code for an upcoming set not yet officially named; the assertion converts a silent mis-named file into a loud early failure. A deeper fix would handle None gracefully, but an assertion is correct and safe here.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:30:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

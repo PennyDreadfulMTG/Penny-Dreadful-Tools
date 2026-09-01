@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11735,
+  "triage": [
+    {
+      "batch_id": "t-11747-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/rotation/ route is correctly defined in decksite and calls rtn.load_rotation_summary(); no proxy or redirect logic visible",
+          "ref": "decksite/controllers/resources.py:17-18",
+          "type": "code"
+        },
+        {
+          "detail": "related issue 'Make sure interestingness is up to date for rotation on the old machine' was CLOSED 2024-04-22, suggesting partial infrastructure resolution",
+          "ref": "#11949",
+          "type": "issue"
+        },
+        {
+          "detail": "related issue about stale rank data during rotation was also CLOSED 2024-04-22",
+          "ref": "#11674",
+          "type": "issue"
+        },
+        {
+          "detail": "no nginx or proxy configuration files found in repository; deployment infrastructure not version-controlled here",
+          "ref": "find . -name '*.conf' (excluding .venv)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11735,
+      "notes": "This is a deployment/infrastructure routing issue; the code-level /rotation route is correct. Related issues were closed April 2024, which may mean the multi-machine setup was decommissioned, but this cannot be verified from the repository alone.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:30:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

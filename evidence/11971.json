@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11971,
+  "triage": [
+    {
+      "batch_id": "t-11980-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "post_rotation.py already calls set_legal_cards_async() and update_pd_legality_async() before rebuild_cache(), addressing the database side of the fix",
+          "ref": "maintenance/post_rotation.py:21-22",
+          "type": "code"
+        },
+        {
+          "detail": "legal_cards() reads from _cache_card WHERE pd_legal; only refreshes in-memory LEGAL_CARDS when len==0 or force=True",
+          "ref": "magic/oracle.py:123-131",
+          "type": "code"
+        },
+        {
+          "detail": "background_task_update_cards calls oracle.init(force=True) but NOT oracle.legal_cards(force=True), so in-memory LEGAL_CARDS stays stale after rotation even when card data refreshes",
+          "ref": "discordbot/background.py:135",
+          "type": "code"
+        },
+        {
+          "detail": "pd_legal in _cache_card is SUM(CASE WHEN cl.format_id = {current_season} THEN 1 ELSE 0 END) \u2014 zero for all cards if new season's legality not yet populated",
+          "ref": "magic/multiverse.py:67",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add oracle.legal_cards(force=True) after oracle.init(force=True) at discordbot/background.py:135 so the in-memory legal cards list is refreshed whenever card data updates. Also verify that the bot skips serving requests during the rotation window (not just skipping db updates).",
+      "issue": 11971,
+      "notes": "The database-side fix (post_rotation.py) is already in place. The residual issue is that the bot's in-memory LEGAL_CARDS list (oracle.py:15) does not get refreshed by the hourly card-update background task. Adding one oracle.legal_cards(force=True) call to background_task_update_cards would address this, but a race condition still exists if the bot calls legal_cards between rotation and post_rotation.py completing.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:27:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

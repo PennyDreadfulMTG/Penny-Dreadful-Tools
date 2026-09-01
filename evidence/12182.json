@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12182-1",
+      "branch": "sweep/12182-when-you-visit-any-page-for-some-reason",
+      "files_changed": 1,
+      "head_sha": "bf9c504d6438af9523fc59721c599c165967653a",
+      "issue": 12182,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The fix is entirely mechanical \u2014 `cached_property` stores the result in the instance dict after first access, so subsequent attribute lookups on the same View object return the string directly without re-entering the descriptor. Each HTTP request creates a fresh View instance, so there is no cross-request state leakage.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `header.mustache` template references `notice_html` twice \u2014 once as a section guard (`{{#notice_html}}`) and once as the rendered value (`{{{notice_html}}}`). Pystache calls the method for each reference, so `notice_html()` ran twice per page request. This method can do a database query (loading the PD500 competition) and renders a template, making the double call both wasteful and noisy in logs.\n\n## What changed\n\nDecorated `View.notice_html` in `decksite/view.py` with `@functools.cached_property`. On the first pystache lookup the method runs and the result is stored in the instance dict; on the second lookup Python's normal attribute resolution returns the cached string directly without invoking the descriptor again.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n\nFixes #12182",
+      "pr_title": "Cache notice_html to prevent double invocation per page load (#12182)",
+      "recorded_at": "2026-09-01T19:32:19Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.01s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12182,
+  "triage": [
+    {
+      "batch_id": "t-12191-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template uses {{#notice_html}}...{{{notice_html}}}...{{/notice_html}} \u2014 pystache evaluates notice_html twice: once for section truthiness check, once for value rendering",
+          "ref": "decksite/templates/header.mustache:45-49",
+          "type": "code"
+        },
+        {
+          "detail": "notice_html is a plain def method; called via getattr which returns a bound method (callable), so pystache calls it both times. On PD500-week it runs competition.load_competitions() each call \u2014 a DB query per call",
+          "ref": "decksite/view.py:151",
+          "type": "code"
+        },
+        {
+          "detail": "No commits found modifying notice_html or adding caching to it \u2014 still unfixed",
+          "ref": "git log --oneline -S'notice_html'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/view.py: add `import functools` and decorate `notice_html` at line 151 with `@functools.cached_property`. This stores the result in the instance dict after the first pystache lookup, so the second lookup returns the cached string without a second call. No template changes needed.",
+      "issue": 12182,
+      "notes": "The double-call only invokes the DB (competition.load_competitions) during PD500 week; other times it just does time comparisons and returns ''. The @cached_property fix is safe because View instances are created per-request with no shared state.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:24:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12207,
+  "triage": [
+    {
+      "batch_id": "t-12209-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "add_colors_if_no_deck_name uses d.get('colors') from the DB; if stored colors are {R,G} for a deck with Lightning Helix, the sanitizer correctly produces 'Gruul'",
+          "ref": "decksite/deck_name.py:111",
+          "type": "code"
+        },
+        {
+          "detail": "set_colors calls find_colors over maindeck+sideboard to compute d.colors; Lightning Helix ({R}{W}) should contribute both R and W",
+          "ref": "decksite/data/deck.py:260",
+          "type": "code"
+        },
+        {
+          "detail": "No commits reference deck 239489 directly; no code fix identified for this specific deck",
+          "ref": "git log -S '239489'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12207,
+      "notes": "The sanitizer would produce 'Gruul Aggro' only if the stored colors for deck 239489 were {R,G} at normalization time. This requires DB access to verify \u2014 either the colors were stored incorrectly (a data integrity issue), or the deck was processed before Lightning Helix was added to the list. No systematic code bug is apparent from static analysis.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:22:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

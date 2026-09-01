@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11997,
+  "triage": [
+    {
+      "batch_id": "t-12083-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "defines get_or_insert_person_id \u2014 identical body to the copy in person.py:272",
+          "ref": "decksite/data/deck.py:453",
+          "type": "code"
+        },
+        {
+          "detail": "defines a second identical get_or_insert_person_id that is never called from within person.py (person.py:336 calls deck.get_or_insert_person_id instead)",
+          "ref": "decksite/data/person.py:272",
+          "type": "code"
+        },
+        {
+          "detail": "person.py imports deck at module level \u2014 so deck.py cannot import person at module level without a circular import, but a local import inside the function breaks the cycle safely",
+          "ref": "decksite/data/person.py:3",
+          "type": "code"
+        },
+        {
+          "detail": "only call-site of the deck.py copy: `person_id = get_or_insert_person_id(params.get('mtgo_username'), ...)`",
+          "ref": "decksite/data/deck.py:319",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Delete `deck.py:453-462` (the duplicate function). 2) In `deck.py` inside `add_deck` near line 319, add a local import `from decksite.data import person` and change the call to `person.get_or_insert_person_id(...)` \u2014 the local import breaks the would-be circular import. 3) In `person.py:336` change `deck.get_or_insert_person_id(mtgo_username, None, None)` to `get_or_insert_person_id(mtgo_username, None, None)` (the local function). The function already in `person.py:272` remains as the single canonical copy. ~10 lines changed total.",
+      "issue": 11997,
+      "notes": "bakert's comment ('I'm gonna remove the one on person but we should refactor the one on deck onto person if it's not a circular import or something') identified the circular import concern; using a local import inside add_deck is the standard Python idiom to resolve it without restructuring modules.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:23:32Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

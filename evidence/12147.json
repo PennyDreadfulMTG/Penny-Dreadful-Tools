@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12147,
+  "triage": [
+    {
+      "batch_id": "t-12191-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize_colors() finds all color words in the name, canonicalizes the first, then removes remaining color words \u2014 including ones embedded in phrases like 'I Need the Black'",
+          "ref": "decksite/deck_name.py:180",
+          "type": "code"
+        },
+        {
+          "detail": "WHITELIST already contains at least 8 entries for names with two color words used in different contexts, including 'Orzhov Tokens 1.1: Not Even Sure if I Need the Black' \u2014 a band-aid workaround",
+          "ref": "decksite/deck_name.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "Loop removes all secondary color_words unconditionally with name.replace(color_word, '', 1) \u2014 no check whether the color word is a genuine color descriptor or part of a phrase",
+          "ref": "decksite/deck_name.py:200-201",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12147,
+      "notes": "The issue asks 'maybe by just excluding them?' \u2014 i.e., skip normalization when 2+ color words are found. But this would break legitimate multi-color deck names like 'GW Aggro'. A correct fix requires a heuristic to distinguish color words as descriptors vs. embedded in phrases (e.g., preceded by articles like 'the'/'a'). The change must be tested against the full deck_name_test.py suite and the existing whitelist entries.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:24:00Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

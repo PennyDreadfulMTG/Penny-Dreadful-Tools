@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11747,
+  "triage": [
+    {
+      "batch_id": "t-11747-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "background_task_tournament_reminders() builds an embed with title, description, and 'Starting in'/'Pre-register' fields, but no mention of game timers",
+          "ref": "discordbot/background.py:169-185",
+          "type": "code"
+        },
+        {
+          "detail": "search returned only IntervalTrigger/sleep timer references, no MTGO game-timer reminder text anywhere in the bot",
+          "ref": "grep -rn '25.min|game.*timer' discordbot/ --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In `discordbot/background.py` inside `background_task_tournament_reminders()`, add an embed field before the `send()` call (around line 184) such as `embed.add_field(name='Game timer:', value='Set your MTGO game timer to 25 minutes (the default).')` \u2014 approximately 1\u20132 lines.",
+      "issue": 11747,
+      "notes": "The feature request is for the 4-hour and 30-minute pre-tournament announcements; the 5-minute 'Starting now' embed is sent in the same block so the field would appear in all three unless explicitly gated.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:30:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

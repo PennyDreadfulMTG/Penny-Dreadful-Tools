@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11980,
+  "triage": [
+    {
+      "batch_id": "t-11980-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SIDEBOARD_WEIGHT = 0.2 means sideboard-only cards (companions like Yorion) are counted at 20% weight vs maindeck plays",
+          "ref": "decksite/data/playability.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "interesting() uses playability thresholds of 0.01 and 0.1; a companion in 20% of sideboards gets playability ~0.04, below 'heavily-played' threshold",
+          "ref": "magic/rotation.py:15-23",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_season_playability uses num_decks_maindeck + num_decks_sideboard_only * SIDEBOARD_WEIGHT",
+          "ref": "decksite/data/playability.py:230-248",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11980,
+      "notes": "The /rotation/changes page itself (rotationchanges.mustache) does not currently show 'interesting' markers at all \u2014 those only appear on /rotation/speculation. The issue is whether interesting() should use a different metric for companion/sideboard-heavy cards. Requires deciding on a new threshold or a sideboard-aware heuristic.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:27:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

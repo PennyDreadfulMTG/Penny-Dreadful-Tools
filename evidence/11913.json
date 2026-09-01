@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11913,
+  "triage": [
+    {
+      "batch_id": "t-11951-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "`contains_cards_clause` uses a single `WHERE card IN (x,y,z) GROUP BY deck_id HAVING COUNT(DISTINCT card) = n` \u2014 for n>=3, MySQL must group all rows matching ANY of the n cards before filtering, causing timeout",
+          "ref": "decksite/data/deck.py:522",
+          "type": "code"
+        },
+        {
+          "detail": "`load_decks_by_cards` passes the result directly into `load_decks` with no query timeout or season filter",
+          "ref": "decksite/data/deck.py:511",
+          "type": "code"
+        },
+        {
+          "detail": "No merged PR found that addresses the archetype search timeout; the only related recent commit (20e3eed1) added card validation, not performance",
+          "ref": "gh pr list --search '11913' --state all",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Rewrite `contains_cards_clause` in `decksite/data/deck.py:522` so that for non-negated multi-card searches, instead of a single `GROUP BY \u2026 HAVING COUNT(DISTINCT card) = n`, it generates one `AND d.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(name)})` clause per card. Each per-card subquery uses the existing `idx_card_deck_id_sideboard_n` index efficiently, and the AND chain short-circuits without a large GROUP BY. ~15 lines changed, no schema migration.",
+      "issue": 11913,
+      "notes": "The negated (NOT IN) path uses `>= 1` which is already a single-card-style check, so only the positive path needs the rewrite. Existing test coverage for `load_decks_by_cards` should be extended with a 3-card case.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:28:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

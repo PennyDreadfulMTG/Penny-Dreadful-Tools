@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:27:09Z",
+  "evidence_refs": [
+    "evidence/11980.json#triage[0]"
+  ],
+  "issue": 11980,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The /rotation/changes page itself (rotationchanges.mustache) does not currently show 'interesting' markers at all \u2014 those only appear on /rotation/speculation. The issue is whether interesting() should use a different metric for companion/sideboard-heavy cards. Requires deciding on a new threshold or a sideboard-aware heuristic."
+}

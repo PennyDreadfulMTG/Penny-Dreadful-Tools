@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T19:22:00Z",
+  "evidence_refs": [
+    "evidence/12207.json#triage[0]"
+  ],
+  "issue": 12207,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The sanitizer would produce 'Gruul Aggro' only if the stored colors for deck 239489 were {R,G} at normalization time. This requires DB access to verify \u2014 either the colors were stored incorrectly (a data integrity issue), or the deck was processed before Lightning Helix was added to the list. No systematic code bug is apparent from static analysis."
+}

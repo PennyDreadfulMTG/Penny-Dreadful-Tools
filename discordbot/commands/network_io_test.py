@@ -167,6 +167,7 @@ async def test_whois_discord_defers_before_fetching(monkeypatch: pytest.MonkeyPa
 @pytest.mark.asyncio
 async def test_art_defers_before_downloading(monkeypatch: pytest.MonkeyPatch) -> None:
     card = SimpleNamespace(name='Island')
+    card.get = lambda key, default=None: getattr(card, key, default)
     ctx = SimpleNamespace(author=SimpleNamespace(mention='<@123>'), defer=AsyncMock(), send=AsyncMock(), send_image_with_retry=AsyncMock())
 
     async def download(_card: object, _path: str, version: str) -> bool:

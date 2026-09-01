@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11252-1",
+      "branch": "sweep/11252-add-attribution-of-https-keyrune-andrewg",
+      "files_changed": 2,
+      "head_sha": "7f3f77a4dcc8ff7beeeb0a8face168aec1f83c35",
+      "issue": 11252,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Pure HTML template addition; no logic, no CSS changes. The logsite footer is minimal (no existing `<section>` wrapper) so the line was added directly inside `<footer>` to match surrounding style.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe site uses the [Keyrune](https://keyrune.andrewgioia.com/) icon font for Magic set symbols (loaded in both decksite and logsite headers) but had no attribution to the library's author anywhere visible to users.\n\n## What changed\n\n- `decksite/templates/footer.mustache`: Added `<p>Set icons courtesy of <a href=\"https://keyrune.andrewgioia.com/\">keyrune.andrewgioia.com</a>.</p>` inside the existing attribution `<section>` alongside the deckbox.org credit.\n- `logsite/templates/footer.mustache`: Added the same attribution line inside the `<footer>` element.\n\nTwo 1-line template edits, no logic changes.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- Unit tests not run (no database available in this environment); the change is pure HTML template text with no code paths to exercise.\n\nFixes #11252",
+      "pr_title": "Add keyrune set icon attribution to footers (#11252)",
+      "recorded_at": "2026-09-01T20:42:56Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed!",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11252,
   "triage": [
     {

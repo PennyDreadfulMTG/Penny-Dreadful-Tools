@@ -2,10 +2,10 @@
   "counters": {
     "infra_failures": 0,
     "nudges": 40,
-    "workspaces_created": 281
+    "workspaces_created": 297
   },
   "daily": {
-    "closures": 35,
+    "closures": 37,
     "day": "2026-09-01",
     "prs": 25
   },
@@ -203,6 +203,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:27Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:57Z"
         }
       ],
       "issue": 10512,
@@ -215,7 +229,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -232,6 +246,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:27Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:57Z"
         }
       ],
       "issue": 10531,
@@ -245,7 +273,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -262,6 +290,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:27Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:57Z"
         }
       ],
       "issue": 10771,
@@ -274,7 +316,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -291,6 +333,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:27Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:57Z"
         }
       ],
       "issue": 10780,
@@ -303,7 +359,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -350,6 +406,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:27Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:57Z"
         }
       ],
       "issue": 11082,
@@ -362,7 +432,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -379,6 +449,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:25Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:45Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:45Z"
         }
       ],
       "issue": 11150,
@@ -391,7 +475,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -408,6 +492,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:25Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:45Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:45Z"
         }
       ],
       "issue": 11151,
@@ -420,7 +518,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -437,6 +535,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:25Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:45Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:45Z"
         }
       ],
       "issue": 11165,
@@ -449,7 +561,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -466,6 +578,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:25Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:45Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:45Z"
         }
       ],
       "issue": 11166,
@@ -478,7 +604,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -495,6 +621,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:38:25Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:45Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:45Z"
         }
       ],
       "issue": 11168,
@@ -508,7 +648,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -525,6 +665,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:53Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:41:09Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:41:09Z"
         }
       ],
       "issue": 11170,
@@ -537,7 +691,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -554,6 +708,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:53Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:41:09Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:41:09Z"
         }
       ],
       "issue": 11176,
@@ -566,7 +734,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -583,6 +751,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:53Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:41:09Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:41:09Z"
         }
       ],
       "issue": 11181,
@@ -595,7 +777,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -612,6 +794,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:53Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:41:09Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:41:09Z"
         }
       ],
       "issue": 11184,
@@ -624,7 +820,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -641,6 +837,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:53Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:41:09Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:41:09Z"
         }
       ],
       "issue": 11186,
@@ -653,7 +863,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -670,6 +880,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:51Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:33Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:33Z"
         }
       ],
       "issue": 11193,
@@ -684,7 +908,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -701,6 +925,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:51Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:33Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:33Z"
         }
       ],
       "issue": 11194,
@@ -713,7 +951,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -730,6 +968,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:51Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:33Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:33Z"
         }
       ],
       "issue": 11196,
@@ -742,7 +994,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -759,6 +1011,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:51Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:33Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:33Z"
         }
       ],
       "issue": 11201,
@@ -772,7 +1038,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -789,6 +1055,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:51Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:33Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:33Z"
         }
       ],
       "issue": 11206,
@@ -801,7 +1081,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -818,6 +1098,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:50Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:20Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:20Z"
         }
       ],
       "issue": 11209,
@@ -831,7 +1125,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -848,6 +1142,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:50Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:20Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:20Z"
         }
       ],
       "issue": 11212,
@@ -860,7 +1168,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -877,6 +1185,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:50Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:20Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:20Z"
         }
       ],
       "issue": 11213,
@@ -889,7 +1211,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -906,6 +1228,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:50Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:20Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:20Z"
         }
       ],
       "issue": 11215,
@@ -918,7 +1254,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -935,6 +1271,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:50Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:20Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:40:20Z"
         }
       ],
       "issue": 11216,
@@ -947,7 +1297,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -964,6 +1314,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:48Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:19Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:43:19Z"
         }
       ],
       "issue": 11219,
@@ -976,7 +1340,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -993,6 +1357,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:48Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:19Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:43:19Z"
         }
       ],
       "issue": 11220,
@@ -1005,7 +1383,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -1022,6 +1400,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:48Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:19Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:43:19Z"
         }
       ],
       "issue": 11222,
@@ -1034,7 +1426,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -1051,6 +1443,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:48Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:19Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:43:19Z"
         }
       ],
       "issue": 11223,
@@ -1063,7 +1469,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -1080,6 +1486,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T20:37:48Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:19Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T20:43:19Z"
         }
       ],
       "issue": 11229,
@@ -1092,7 +1512,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -1124,6 +1544,20 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:14:09Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:46Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:44:08Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T20:44:08Z"
         }
       ],
       "issue": 11231,
@@ -1135,7 +1569,7 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -1215,6 +1649,20 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:14:09Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:39Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:43Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T20:43:43Z"
         }
       ],
       "issue": 11236,
@@ -1226,7 +1674,7 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -1280,7 +1728,14 @@
     },
     "11243": {
       "class": "obsolete",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T20:41:14Z",
+        "external": false,
+        "reason": "not_planned",
+        "verified_by_batch": "v-11279-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/11243.json",
@@ -1303,6 +1758,26 @@
           "event": "RESULT_RECORDED",
           "status": "verify_pending",
           "ts": "2026-09-01T20:14:09Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "verify_leased",
+          "ts": "2026-09-01T20:37:12Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "verified",
+          "ts": "2026-09-01T20:39:43Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-09-01T20:41:12Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T20:41:14Z"
         }
       ],
       "issue": 11243,
@@ -1318,9 +1793,9 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verify_pending",
+      "status": "closed",
       "title": "magic/tournaments_test.py::test_get_all_next_tournament_dates is disabled and should be fixed",
-      "verdict": null
+      "verdict": "CONFIRMED"
     },
     "11244": {
       "class": "needs-work",
@@ -1482,6 +1957,20 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:12:31Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:36Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:44:20Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T20:44:20Z"
         }
       ],
       "issue": 11248,
@@ -1493,7 +1982,7 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -1526,6 +2015,20 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:12:31Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:33Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:55Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T20:43:55Z"
         }
       ],
       "issue": 11249,
@@ -1537,7 +2040,7 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -1570,6 +2073,20 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:13:55Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:31Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:40:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T20:40:07Z"
         }
       ],
       "issue": 11250,
@@ -1581,7 +2098,7 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -1614,6 +2131,16 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:13:55Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:29Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T20:42:56Z"
         }
       ],
       "issue": 11252,
@@ -1624,13 +2151,16 @@
       ],
       "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/11252-add-attribution-of-https-keyrune-andrewg",
+        "head_sha": "7f3f77a4dcc8ff7beeeb0a8face168aec1f83c35"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "fix_pushed",
       "title": "Add attribution of https://keyrune.andrewgioia.com/ somewhere (footer?)",
       "verdict": null
     },
@@ -1659,6 +2189,20 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:13:55Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:26Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:44:31Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T20:44:31Z"
         }
       ],
       "issue": 11253,
@@ -1670,7 +2214,7 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -1724,7 +2268,14 @@
     },
     "11279": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T20:41:12Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-11279-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/11279.json",
@@ -1747,6 +2298,26 @@
           "event": "RESULT_RECORDED",
           "status": "verify_pending",
           "ts": "2026-09-01T20:13:55Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "verify_leased",
+          "ts": "2026-09-01T20:37:12Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "verified",
+          "ts": "2026-09-01T20:39:43Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-09-01T20:41:10Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T20:41:12Z"
         }
       ],
       "issue": 11279,
@@ -1762,9 +2333,9 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verify_pending",
+      "status": "closed",
       "title": "Stop asking for the \"join servers\" permission at Discord login",
-      "verdict": null
+      "verdict": "CONFIRMED"
     },
     "11282": {
       "class": "question",
@@ -2116,7 +2687,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11300.json",
       "history": [
         {
@@ -2151,6 +2725,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:06:03Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:23Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:39:42Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T20:39:42Z"
         }
       ],
       "issue": 11300,
@@ -2163,11 +2751,11 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "escalated",
       "title": "legalIcons is kind of a wild thing to be sending over the wire with every cards api response",
       "verdict": null
     },
@@ -2583,7 +3171,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11325.json",
       "history": [
         {
@@ -2618,6 +3209,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "fix_pending",
           "ts": "2026-09-01T20:06:17Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T20:37:17Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:43:31Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T20:43:31Z"
         }
       ],
       "issue": 11325,
@@ -2629,11 +3234,11 @@
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "escalated",
       "title": "A card search of `ci:g mana:{` causes a db error",
       "verdict": null
     },
@@ -15782,7 +16387,7 @@
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
         "ci": {
-          "checked_at": "2026-09-01T20:32:03Z",
+          "checked_at": "2026-09-01T20:47:35Z",
           "failed": [],
           "state": "green"
         },
@@ -16476,7 +17081,7 @@
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-01T20:32:01Z",
+          "checked_at": "2026-09-01T20:47:34Z",
           "failed": [],
           "state": "green"
         },
@@ -16550,7 +17155,7 @@
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-01T20:31:59Z",
+          "checked_at": "2026-09-01T20:47:32Z",
           "failed": [],
           "state": "green"
         },
@@ -16667,7 +17272,7 @@
         "adopted": false,
         "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
         "ci": {
-          "checked_at": "2026-09-01T20:31:58Z",
+          "checked_at": "2026-09-01T20:47:31Z",
           "failed": [],
           "state": "green"
         },
@@ -16863,7 +17468,7 @@
         "adopted": false,
         "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
         "ci": {
-          "checked_at": "2026-09-01T20:31:57Z",
+          "checked_at": "2026-09-01T20:47:30Z",
           "failed": [],
           "state": "green"
         },
@@ -16980,7 +17585,7 @@
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-01T20:31:55Z",
+          "checked_at": "2026-09-01T20:47:29Z",
           "failed": [],
           "state": "green"
         },
@@ -17167,7 +17772,7 @@
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-01T20:31:54Z",
+          "checked_at": "2026-09-01T20:47:27Z",
           "failed": [],
           "state": "green"
         },
@@ -17511,7 +18116,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-01T20:31:52Z",
+          "checked_at": "2026-09-01T20:47:26Z",
           "failed": [],
           "state": "green"
         },
@@ -17585,7 +18190,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-01T20:31:51Z",
+          "checked_at": "2026-09-01T20:47:24Z",
           "failed": [],
           "state": "green"
         },
@@ -17747,7 +18352,7 @@
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-01T20:31:50Z",
+          "checked_at": "2026-09-01T20:47:23Z",
           "failed": [],
           "state": "green"
         },
@@ -17864,7 +18469,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-01T20:31:48Z",
+          "checked_at": "2026-09-01T20:47:22Z",
           "failed": [],
           "state": "green"
         },
@@ -18047,7 +18652,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-01T20:31:47Z",
+          "checked_at": "2026-09-01T20:47:20Z",
           "failed": [],
           "state": "green"
         },
@@ -18234,7 +18839,7 @@
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
         "ci": {
-          "checked_at": "2026-09-01T20:31:45Z",
+          "checked_at": "2026-09-01T20:47:19Z",
           "failed": [],
           "state": "green"
         },
@@ -18350,7 +18955,7 @@
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-01T20:31:44Z",
+          "checked_at": "2026-09-01T20:47:17Z",
           "failed": [],
           "state": "green"
         },
@@ -18438,7 +19043,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-01T20:31:42Z",
+          "checked_at": "2026-09-01T20:47:16Z",
           "failed": [],
           "state": "green"
         },
@@ -18512,7 +19117,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-01T20:31:41Z",
+          "checked_at": "2026-09-01T20:47:13Z",
           "failed": [],
           "state": "green"
         },
@@ -18777,7 +19382,7 @@
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-01T20:31:40Z",
+          "checked_at": "2026-09-01T20:47:11Z",
           "failed": [],
           "state": "green"
         },
@@ -19036,7 +19641,7 @@
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-01T20:31:39Z",
+          "checked_at": "2026-09-01T20:47:10Z",
           "failed": [],
           "state": "green"
         },
@@ -19167,7 +19772,7 @@
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-01T20:31:37Z",
+          "checked_at": "2026-09-01T20:47:09Z",
           "failed": [],
           "state": "green"
         },
@@ -19255,7 +19860,7 @@
         "adopted": false,
         "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
         "ci": {
-          "checked_at": "2026-09-01T20:31:36Z",
+          "checked_at": "2026-09-01T20:47:07Z",
           "failed": [],
           "state": "green"
         },
@@ -19371,7 +19976,7 @@
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-01T20:31:34Z",
+          "checked_at": "2026-09-01T20:47:06Z",
           "failed": [],
           "state": "green"
         },
@@ -19714,7 +20319,7 @@
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-01T20:31:33Z",
+          "checked_at": "2026-09-01T20:47:04Z",
           "failed": [],
           "state": "green"
         },
@@ -19788,7 +20393,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-01T20:31:32Z",
+          "checked_at": "2026-09-01T20:47:02Z",
           "failed": [],
           "state": "green"
         },
@@ -20952,7 +21557,7 @@
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-01T20:31:28Z",
+          "checked_at": "2026-09-01T20:46:58Z",
           "failed": [],
           "state": "green"
         },
@@ -31254,13 +31859,13 @@
     }
   },
   "last_bundle_at": "2026-09-01T18:57:14Z",
-  "last_master_sha": "60eb16f10363ee2c9b01cdcb957d332adce697e3",
-  "last_mirror_at": "2026-09-01T20:16:15Z",
-  "last_seq": 4600,
-  "last_snapshot_at": "2026-09-01T20:32:04Z",
+  "last_master_sha": "aa185ccd5da24d326ad51ee2e723b82986b3d9f7",
+  "last_mirror_at": "2026-09-01T20:32:06Z",
+  "last_seq": 4851,
+  "last_snapshot_at": "2026-09-01T20:47:36Z",
   "pause_level": 1,
-  "pause_seconds": 0,
-  "pause_until": "2026-09-01T20:35:52Z",
+  "pause_seconds": 1842,
+  "pause_until": "2026-09-01T21:09:30Z",
   "paused": true,
   "pr_backpressure": false,
   "workspaces": {
@@ -31371,6 +31976,22 @@
       "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
       "state": "archived",
       "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
+    },
+    "02a1007f-d2a7-4011-a167-c472550a77a5": {
+      "batch_id": "f-11252-1",
+      "created_at": "2026-09-01T20:37:29Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11252
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:39:26.223Z",
+      "session_id": "846abfc0-52fc-4054-a4d5-4425cd304abb",
+      "state": "archived",
+      "workspace_id": "02a1007f-d2a7-4011-a167-c472550a77a5"
     },
     "02a5ac4a-3c68-4187-878b-6f29e3c62f25": {
       "batch_id": "t-11980-1",
@@ -32754,6 +33375,26 @@
       "state": "archived",
       "workspace_id": "43e1b0b7-043f-4d1a-a6bd-9007ff0109e7"
     },
+    "43e9185a-fd9a-4742-99e8-309a6e4a43d5": {
+      "batch_id": "t-11229-1",
+      "created_at": "2026-09-01T20:37:48Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11229,
+        11223,
+        11222,
+        11220,
+        11219
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T20:39:20.965Z",
+      "session_id": "21afbdfc-4e06-4e53-bdb4-48188af3e91c",
+      "state": "archived",
+      "workspace_id": "43e9185a-fd9a-4742-99e8-309a6e4a43d5"
+    },
     "44d2fcfb-fa86-4089-b31b-515c94e77b6d": {
       "batch_id": "f-12621-1",
       "created_at": "2026-08-23T21:48:36Z",
@@ -32959,6 +33600,22 @@
       "state": "archived",
       "workspace_id": "4f7ae776-0096-4ea5-af28-704a4ab95626"
     },
+    "5072fde9-cd32-465f-8c56-727df8d8339e": {
+      "batch_id": "f-11325-2",
+      "created_at": "2026-09-01T20:37:17Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11325
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:39:23.731Z",
+      "session_id": "65b2f0df-eb37-4aaa-9f58-35d9b9ef06a3",
+      "state": "archived",
+      "workspace_id": "5072fde9-cd32-465f-8c56-727df8d8339e"
+    },
     "5137c60e-01eb-46c7-b92a-43e33ae5f213": {
       "batch_id": "v-11683-1",
       "created_at": "2026-09-01T19:52:45Z",
@@ -32998,6 +33655,22 @@
       "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
       "state": "archived",
       "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+    },
+    "54b8b030-8e2e-4ee9-a609-007710fb4b9b": {
+      "batch_id": "f-11236-1",
+      "created_at": "2026-09-01T20:37:39Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11236
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:38:46.778Z",
+      "session_id": "47e41c56-3f6b-4e58-8b7d-6c6ad6bc27a8",
+      "state": "archived",
+      "workspace_id": "54b8b030-8e2e-4ee9-a609-007710fb4b9b"
     },
     "55855882-3478-476c-a20a-d9bf4ce8da6c": {
       "batch_id": "v-12516-1",
@@ -33236,6 +33909,22 @@
       "session_id": "644b8294-d657-4588-8143-180d62599c63",
       "state": "archived",
       "workspace_id": "66814841-ca2e-48aa-b439-91b426816aab"
+    },
+    "6686150e-5833-4487-ab10-662b824ea230": {
+      "batch_id": "f-11249-1",
+      "created_at": "2026-09-01T20:37:33Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11249
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:38:54.014Z",
+      "session_id": "ab7ebe8c-911d-4741-9c46-88fcbab4c68b",
+      "state": "archived",
+      "workspace_id": "6686150e-5833-4487-ab10-662b824ea230"
     },
     "66c22b04-050e-47bd-80ed-2dac6b2f5334": {
       "batch_id": "v-11957-1",
@@ -33521,6 +34210,22 @@
       "session_id": "3354611e-2e53-471b-bac6-479f955dffc8",
       "state": "archived",
       "workspace_id": "7797ce45-b58c-4d16-87d7-1afe18b0c57b"
+    },
+    "783c6bcb-0fb9-4a80-8094-3ab40ad9cf48": {
+      "batch_id": "f-11300-2",
+      "created_at": "2026-09-01T20:37:23Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11300
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:39:16.856Z",
+      "session_id": "a697ab86-a7fb-4cf6-b024-b56533f78783",
+      "state": "archived",
+      "workspace_id": "783c6bcb-0fb9-4a80-8094-3ab40ad9cf48"
     },
     "78852691-249e-4a9c-8ebf-38a3349c4fc5": {
       "batch_id": "t-12243-1",
@@ -33835,6 +34540,39 @@
       "state": "archived",
       "workspace_id": "881db609-66ca-49a3-99ed-16b25f7ef03a"
     },
+    "892e175e-f3d8-41d0-b596-969b106a05cd": {
+      "batch_id": "f-11231-1",
+      "created_at": "2026-09-01T20:37:46Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11231
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:38:49.454Z",
+      "session_id": "4f137750-9599-4597-b410-036157ca091b",
+      "state": "archived",
+      "workspace_id": "892e175e-f3d8-41d0-b596-969b106a05cd"
+    },
+    "8a4403c6-5ee7-4029-a206-00ad8c8f801b": {
+      "batch_id": "v-11279-1",
+      "created_at": "2026-09-01T20:37:12Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": true
+      },
+      "issues": [
+        11279,
+        11243
+      ],
+      "kind": "verify",
+      "last_transcript_at": "2026-09-01T20:38:24.206Z",
+      "session_id": "e968c933-2f2c-40f3-89a1-48880c800bca",
+      "state": "archived",
+      "workspace_id": "8a4403c6-5ee7-4029-a206-00ad8c8f801b"
+    },
     "8b670ddb-d4dd-43f1-bd2a-8ce33d98ae88": {
       "batch_id": "f-12546-1",
       "created_at": "2026-09-01T18:14:03Z",
@@ -33886,6 +34624,22 @@
       "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
       "state": "archived",
       "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
+    },
+    "8c8ed49e-ed9a-420f-ae22-607399bb39ac": {
+      "batch_id": "f-11248-1",
+      "created_at": "2026-09-01T20:37:36Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11248
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:38:57.437Z",
+      "session_id": "1f6ddd05-d95b-4626-918f-6f9bde87caa9",
+      "state": "archived",
+      "workspace_id": "8c8ed49e-ed9a-420f-ae22-607399bb39ac"
     },
     "8d38b84f-722c-411a-9950-a083da96485b": {
       "batch_id": "f-12573-1",
@@ -34082,6 +34836,22 @@
       "session_id": "16e34f39-0ce6-49e8-8245-b6c90948eeb9",
       "state": "archived",
       "workspace_id": "96f5d954-e9bf-4843-a9ea-3c99a9e68c57"
+    },
+    "9775b1d0-44b8-412a-945c-7492b8b55a69": {
+      "batch_id": "f-11250-1",
+      "created_at": "2026-09-01T20:37:31Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11250
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:39:14.773Z",
+      "session_id": "65630cfa-f465-4b1d-b7cf-bbfe89a2910e",
+      "state": "archived",
+      "workspace_id": "9775b1d0-44b8-412a-945c-7492b8b55a69"
     },
     "9797799e-c084-47fc-8997-5f19710ca267": {
       "batch_id": "f-12719-1",
@@ -34648,6 +35418,22 @@
       "state": "archived",
       "workspace_id": "b2c768a0-c7b3-46d8-86a0-d91371a86392"
     },
+    "b3681664-5622-42e6-a8a0-e9b58b107f48": {
+      "batch_id": "f-11253-1",
+      "created_at": "2026-09-01T20:37:26Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11253
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T20:38:53.998Z",
+      "session_id": "ac76f4df-442a-4b49-9c2f-c36217a70374",
+      "state": "archived",
+      "workspace_id": "b3681664-5622-42e6-a8a0-e9b58b107f48"
+    },
     "b3f85b3a-a5b2-4d74-8f37-51e077f02be3": {
       "batch_id": "t-11951-1",
       "created_at": "2026-09-01T19:16:48Z",
@@ -34866,6 +35652,26 @@
       "state": "archived",
       "workspace_id": "bc8bef9b-461a-4a2e-8f33-4ba9df248c8e"
     },
+    "be388d62-b864-4e52-919c-e90f51a790de": {
+      "batch_id": "t-11216-1",
+      "created_at": "2026-09-01T20:37:50Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11216,
+        11215,
+        11213,
+        11212,
+        11209
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T20:39:13.115Z",
+      "session_id": "f28fb96e-e3f3-458e-b33a-5bbb8bb15a37",
+      "state": "archived",
+      "workspace_id": "be388d62-b864-4e52-919c-e90f51a790de"
+    },
     "bed84262-6cde-4b7f-8d78-d8587226d574": {
       "batch_id": "f-12553-1",
       "created_at": "2026-09-01T18:14:00Z",
@@ -35077,6 +35883,26 @@
       "session_id": "ab030b1a-3e6a-4db0-a05a-efe959a475a0",
       "state": "archived",
       "workspace_id": "c832d1aa-15f7-478b-a896-73d3108d2e5c"
+    },
+    "c9cd69bf-a390-4d71-8f1b-1bdc85398268": {
+      "batch_id": "t-11206-1",
+      "created_at": "2026-09-01T20:37:51Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11206,
+        11201,
+        11196,
+        11194,
+        11193
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T20:38:39.395Z",
+      "session_id": "346a21ab-fe95-488a-bbb3-0d19f6f5e94d",
+      "state": "archived",
+      "workspace_id": "c9cd69bf-a390-4d71-8f1b-1bdc85398268"
     },
     "cb2e252f-3d32-4e8d-9cfc-5993383cfb78": {
       "batch_id": "t-12276-1",
@@ -35566,6 +36392,26 @@
       "state": "archived",
       "workspace_id": "e3f263cf-f344-4512-ac46-f2297a88a762"
     },
+    "e574fdee-a071-4abc-901d-cca9a8bc5d3b": {
+      "batch_id": "t-11168-1",
+      "created_at": "2026-09-01T20:38:25Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11168,
+        11166,
+        11165,
+        11151,
+        11150
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "e47a2028-7a3d-44f8-b990-6b60788478c1",
+      "state": "archived",
+      "workspace_id": "e574fdee-a071-4abc-901d-cca9a8bc5d3b"
+    },
     "e5bf6123-7c8c-4ed6-bb8a-8a7d36cc606e": {
       "batch_id": "t-12444-1",
       "created_at": "2026-09-01T18:25:43Z",
@@ -35641,6 +36487,26 @@
       "session_id": "ac7081ed-f9c9-4797-9e33-136a97211d21",
       "state": "archived",
       "workspace_id": "e5dde6ee-b819-482c-9d9d-d71ef8bbd6bb"
+    },
+    "e795bc49-8564-40dc-9297-106e09231de1": {
+      "batch_id": "t-11082-1",
+      "created_at": "2026-09-01T20:38:27Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11082,
+        10780,
+        10771,
+        10531,
+        10512
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "3ddce61f-4748-4b3f-8ee4-f0f01b549154",
+      "state": "archived",
+      "workspace_id": "e795bc49-8564-40dc-9297-106e09231de1"
     },
     "e8123856-b23c-462d-ad4d-01f1e606633d": {
       "batch_id": "t-12662-1",
@@ -36015,6 +36881,26 @@
       "session_id": "bf4d9ae7-7c0a-4825-b7d4-83ea7106af28",
       "state": "archived",
       "workspace_id": "fde54f80-ba23-4dcd-8615-ea35226b169d"
+    },
+    "fde81779-6a45-4d5c-a570-2a8d91976606": {
+      "batch_id": "t-11186-1",
+      "created_at": "2026-09-01T20:37:53Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11186,
+        11184,
+        11181,
+        11176,
+        11170
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T20:39:13.199Z",
+      "session_id": "25cebb00-369f-4c57-8d6e-ebf80cd2032e",
+      "state": "archived",
+      "workspace_id": "fde81779-6a45-4d5c-a570-2a8d91976606"
     },
     "fe71ede8-4143-421b-81b5-fd3b665cdb0d": {
       "batch_id": "f-11677-1",

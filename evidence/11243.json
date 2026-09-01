@@ -27,5 +27,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-11279-1",
+      "final_comment": "The test was removed in commit 12fda960 (May 2024) with the explicit rationale that re-implementing it correctly would require either depending on the decksite seasons table or switching season-detection approaches \u2014 a scope the maintainer decided wasn't worth it. The issue's premise (the test is disabled/xfail) is no longer true; the test doesn't exist at all.",
+      "issue": 11243,
+      "own_evidence": [
+        {
+          "detail": "diff confirmed: entire test_get_all_next_tournament_dates function (with @pytest.mark.xfail decorator) deleted from magic/tournaments_test.py",
+          "ref": "12fda960",
+          "type": "commit"
+        },
+        {
+          "detail": "independently checked: 107-line file contains no test_get_all_next_tournament_dates, no xfail marker, no freezegun import \u2014 test is fully gone",
+          "ref": "magic/tournaments_test.py",
+          "type": "code"
+        },
+        {
+          "detail": "maintainer commit message explicitly states re-implementing correctly would require decksite dependency or season-detection rework and is not worth the scope change",
+          "ref": "12fda960",
+          "type": "commit_message"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T20:39:43Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

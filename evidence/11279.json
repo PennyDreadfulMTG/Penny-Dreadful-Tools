@@ -32,5 +32,37 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-11279-1",
+      "final_comment": "The 'guilds.join' scope (the Discord permission labelled 'Join servers for you') was removed from the OAuth flow in commit 52dba59c. Current master requests only ['identify', 'guilds'] (shared_web/oauth.py:15). The add_to_guild() helper at shared_web/oauth.py:49 remains as unreachable dead code but does not affect the authorization prompt.",
+      "issue": 11279,
+      "own_evidence": [
+        {
+          "detail": "independently checked: scope = ['identify', 'guilds'] \u2014 no guilds.join present",
+          "ref": "shared_web/oauth.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "add_to_guild() defined here but grep -rn add_to_guild finds no callers anywhere in the repo",
+          "ref": "shared_web/oauth.py:49",
+          "type": "code"
+        },
+        {
+          "detail": "grep -rn 'guilds.join' returned zero results \u2014 removal is complete",
+          "ref": "project-wide",
+          "type": "grep"
+        },
+        {
+          "detail": "diff confirmed: -scope = ['identify', 'guilds', 'guilds.join'] +scope = ['identify', 'guilds']",
+          "ref": "52dba59c",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T20:39:43Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

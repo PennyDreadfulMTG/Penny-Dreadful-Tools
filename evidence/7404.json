@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7404,
+  "triage": [
+    {
+      "batch_id": "t-7452-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Reactified achievement detail page \u2014 resolves the blocker bakert cited in the issue comment",
+          "ref": "443790d0",
+          "type": "commit"
+        },
+        {
+          "detail": "Classes cover LeaguePlayer, PerfectRun, FlawlessRun etc. but no LeagueTop8 or LeagueWinner class exists",
+          "ref": "decksite/data/achievements.py:390-868",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_achievements() rebuilds _achievements dynamically from all Achievement subclasses \u2014 adding new achievements does not require a traditional schema migration",
+          "ref": "decksite/data/achievements.py:74-76",
+          "type": "code"
+        },
+        {
+          "detail": "Empty \u2014 confirming no such achievement exists",
+          "ref": "grep -rn 'LeagueTop\\|league_top8\\|league_winner\\|LeagueWin' decksite/data/achievements.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7404,
+      "notes": "The reactification blocker is resolved, but 'league top 8' and 'league winner' map to monthly leaderboard positions, not d.finish on individual runs (unlike tournament achievements). The correct SQL needs clarification on how leaderboard rank is persisted. Also needs product judgment on what constitutes a 'league winner' each season.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:44:34Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

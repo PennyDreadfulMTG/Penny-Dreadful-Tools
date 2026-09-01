@@ -1,0 +1,56 @@
+{
+  "fix": [],
+  "issue": 7543,
+  "triage": [
+    {
+      "batch_id": "t-7543-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "next_tournament_name and next_tournament_time are initialized to None on every View",
+          "ref": "decksite/view.py:52-53",
+          "type": "code"
+        },
+        {
+          "detail": "setup_tournaments() sets those fields from tournaments.next_tournament_info()",
+          "ref": "decksite/view.py:276-278",
+          "type": "code"
+        },
+        {
+          "detail": "setup_tournaments() is called on the home page",
+          "ref": "decksite/views/home.py:19",
+          "type": "code"
+        },
+        {
+          "detail": "setup_tournaments() is also called on the tournaments page",
+          "ref": "decksite/views/tournaments.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "home page includes tournamentcalendar partial",
+          "ref": "decksite/templates/home.mustache:34",
+          "type": "code"
+        },
+        {
+          "detail": "shows 'X is in Y' but only included on home and tournaments pages, not in site-wide banner/layout",
+          "ref": "decksite/templates/tournamentcalendar.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "site-wide banner template has no tournament countdown; it's not present on every page",
+          "ref": "decksite/templates/banner.mustache:1-13",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "The countdown data (next_tournament_name, next_tournament_time) is already computed and shown on the home page and tournaments page via decksite/templates/tournamentcalendar.mustache. To add it site-wide, call setup_tournaments() in decksite/view.py's prepare() method (or in before_request) and include {{> tournamentcalendar}} in a base layout template such as banner.mustache or a new shared partial. The data fetch in tournaments.next_tournament_info() would then run on every request.",
+      "issue": 7543,
+      "notes": "The feature is partially done (home + tournaments pages). Whether to add it to the global layout or a status bar is the remaining product/implementation decision. The data pipeline already exists.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:35:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

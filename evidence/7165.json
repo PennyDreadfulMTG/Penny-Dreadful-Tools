@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7165,
+  "triage": [
+    {
+      "batch_id": "t-7165-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "times_from_location blindly takes info['results'][0] from Google Maps Geocoding with no filtering on result type; 'television' or 'ninja' can resolve to a business (type: establishment/point_of_interest) instead of a geographic location",
+          "ref": "magic/fetcher.py:352",
+          "type": "code"
+        },
+        {
+          "detail": "formatted_address returned is also from results[0] unconditionally, confirming no geographic-vs-business filtering exists",
+          "ref": "magic/fetcher.py:365",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In magic/fetcher.py, in times_from_location, after fetching info['results'], add a step that prefers results whose 'types' list contains a geographic type (e.g. locality, administrative_area_level_1, administrative_area_level_2, country, political) before falling back to results[0]. Assign this preferred result to a local variable and use it for both the geometry/location lookup (line 352) and the formatted_address return (line 365). Change is confined to magic/fetcher.py, ~10\u201315 lines.",
+      "issue": 7165,
+      "notes": "No schema changes, no new dependencies; Google Geocoding already returns a 'types' array per result that makes this filter straightforward.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:46:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

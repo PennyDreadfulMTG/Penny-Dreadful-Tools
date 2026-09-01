@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7327,
+  "triage": [
+    {
+      "batch_id": "t-7452-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "explanations dict has 'archetype' key but its text only covers how archetypes are assigned to existing decks; nothing about conditions for a new archetype to be created",
+          "ref": "discordbot/commands/explain.py:14-25",
+          "type": "code"
+        },
+        {
+          "detail": "Empty \u2014 no 'sorting' or 'archetype-sorting' key exists in the explanations dict",
+          "ref": "grep -n 'sorting\\|archetype.sort' discordbot/commands/explain.py",
+          "type": "search"
+        },
+        {
+          "detail": "Autocomplete and key lookup are generic; adding a new key to explanations is sufficient to wire up !explain sorting",
+          "ref": "discordbot/commands/explain.py:141-144",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/explain.py, add a 'sorting' entry to the explanations dict (around line 120, after existing entries) with concise text along the lines of: 'New archetypes are created when a deck sees significant play, including being adopted by players other than its original creator. Join #archetype-sorting if you want to help or discuss.' Then add alias lines (like the existing drop/retire alias) mapping 'archetype-sorting' and 'archetypes' to 'sorting'. ~6 lines total.",
+      "issue": 7327,
+      "notes": "bakert's comment in the issue stresses brevity; the fix_sketch text is intentionally short. The issue discussion has a longer draft from adambiltcliffe but bakert wanted something pithier.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:44:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

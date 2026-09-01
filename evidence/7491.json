@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7491,
+  "triage": [
+    {
+      "batch_id": "t-7493-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "'*.po' is gitignored \u2014 individual language translation files are downloaded from POEditor at runtime, not stored in git",
+          "ref": ".gitignore:48",
+          "type": "code"
+        },
+        {
+          "detail": "Only messages.pot is tracked; no language subdirectories exist in the repo",
+          "ref": "shared_web/translations/",
+          "type": "code"
+        },
+        {
+          "detail": "'Make update translations ad hoc until it is unbugged' \u2014 workaround that stops running update_translations in CI but does not fix the underlying bad translations in POEditor",
+          "ref": "8c9099a8",
+          "type": "commit"
+        },
+        {
+          "detail": "error() marks invalid strings as fuzzy rather than deleting them \u2014 warnings are suppressed in output but bad translations persist in POEditor",
+          "ref": "maintenance/validate_translations.py:46",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7491,
+      "notes": "The Japanese .po file had malformed plural entries (missing %(num)d, unknown named placeholders). CI was shielded by making the update step ad hoc, but the translations in POEditor are still broken. A real fix requires editing the POEditor project to correct the Japanese plural forms, then re-enabling scheduled translation updates. This is a content fix in an external system, not a code change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:41Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

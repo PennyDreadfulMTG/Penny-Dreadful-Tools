@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7408,
+  "triage": [
+    {
+      "batch_id": "t-7452-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/people/id/<int:person_id>/ route still exists alongside the mtgo_username route",
+          "ref": "decksite/controllers/people.py:23-25",
+          "type": "code"
+        },
+        {
+          "detail": "p.url = '/people/{mtgo_username}/' when available, else falls back to '/people/id/{p.id}/' for goldfish/tappedout-only people",
+          "ref": "decksite/prepare.py:145-147",
+          "type": "code"
+        },
+        {
+          "detail": "Achievement, matches, and seasons links all use url_for with person_id=, generating /people/id/X/ paths for non-MTGO people",
+          "ref": "decksite/views/person.py:32,63,106",
+          "type": "code"
+        },
+        {
+          "detail": "person_query() already resolves a display name via IFNULL chain (name > mtgo > goldfish > tappedout), confirming silasary's observation that a name is always available",
+          "ref": "decksite/data/query.py:6-7",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7408,
+      "notes": "Several places generate /people/id/ URLs; the fix must also handle URL uniqueness if a goldfish username could collide with an MTGO username, and decide whether to redirect or remove the /id/ route. Scope is larger than easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:44:34Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11151-2",
+      "branch": "sweep/11151-when-scryfall-is-down-the-scry-command-s",
+      "files_changed": 2,
+      "head_sha": "fee12de3a246f9e270269d65cbf358674a84fd32",
+      "issue": 11151,
+      "lines_changed": 14,
+      "lint": "passed",
+      "notes": "The fix is purely defensive: initialize `result_json = None` before the retry loop and return gracefully if all retries fail. No logic change for the happy path. The `--noconftest` flag was required for unit tests because `conftest.py` unconditionally tries to connect to MySQL on startup; all directly relevant tests passed cleanly.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `search_scryfall` (`magic/fetcher.py`), the retry loop (`for _ in range(3)`) catches `FetchException` on every attempt but never initializes `result_json` before the loop. If all three attempts fail (e.g. Scryfall is fully unreachable), `result_json` is never assigned, and the next line (`if 'code' in result_json.keys()`) raises `UnboundLocalError: local variable 'result_json' referenced before assignment`.\n\n## What changed\n\n- Initialize `result_json = None` before the retry loop so it always has a defined value.\n- After the loop, check `if result_json is None` and return `False, [], []` with a human-readable print message (`'Scryfall appears to be unreachable'`) instead of crashing.\n- Added `test_search_scryfall_returns_empty_when_scryfall_unreachable` to `magic/fetcher_test.py` to cover this path.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- `uv run --frozen python -m pytest magic/fetcher_test.py -v --noconftest` \u2014 5 passed (4 pre-existing + 1 new). The full suite (`dev.py unit magic`) is env-blocked because `conftest.py` requires a MySQL database connection that is not available in this sandbox.\n\nFixes #11151",
+      "pr_title": "Fix UnboundLocalError in search_scryfall when Scryfall is unreachable (#11151)",
+      "recorded_at": "2026-09-01T23:46:25Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest magic/fetcher_test.py -v --noconftest",
+        "detail": "5 passed (including new test_search_scryfall_returns_empty_when_scryfall_unreachable); full suite env-blocked due to missing DB (conftest.py requires MySQL connection)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11151,
   "triage": [
     {

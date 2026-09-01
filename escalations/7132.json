@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:46:07Z",
+  "evidence_refs": [
+    "evidence/7132.json#triage[0]"
+  ],
+  "issue": 7132,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The owner must define what '2c' and '1' mean numerically (which week threshold?), whether /rotation/speculation/1 should require admin auth like the current page, and whether converting the existing page to '2c' is a breaking change for current users."
+}

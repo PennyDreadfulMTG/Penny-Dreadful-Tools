@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6785,
+  "triage": [
+    {
+      "batch_id": "t-6785-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "template uses {{> livedecktable}} (React component) for achievement detail \u2014 the perf side was addressed",
+          "ref": "decksite/templates/personachievements.mustache:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "Reactify achievement detail page \u2014 commit says 'still lumbering and massive' and notes it still loads all achievement data",
+          "ref": "443790d0",
+          "type": "commit"
+        },
+        {
+          "detail": "view still calls prepare_decks() and loads all achievement data; no redesign for comprehensibility has been done",
+          "ref": "decksite/views/person_achievements.py:1-25",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6785,
+      "notes": "Perf partially addressed in 443790d0 (React conversion), but commit itself acknowledges 'still lumbering'; the comprehensibility redesign (showing things better than raw deck tables) is untouched and requires a design decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:15Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

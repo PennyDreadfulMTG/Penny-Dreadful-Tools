@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:45:54Z",
+  "evidence_refs": [
+    "evidence/6690.json#triage[0]"
+  ],
+  "issue": 6690,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The proposed SQL in the comments would expand what data is deleted (non-retired decks with no matches in ended competitions). Per triage rules, any change to data retention is needs-product-decision, not easy-fix. The author's own ambivalence confirms this."
+}

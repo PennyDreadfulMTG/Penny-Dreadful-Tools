@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7361,
+  "triage": [
+    {
+      "batch_id": "t-7452-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "public() returns True for admin/demimod unconditionally when is_in_current_run, so admins see the full deck without any indication the deck is normally hidden",
+          "ref": "decksite/views/deck.py:124-135",
+          "type": "code"
+        },
+        {
+          "detail": "{{#public}} block shows decklist with no note; only {{^public}} block explains the deck is hidden \u2014 admins never see that message",
+          "ref": "decksite/templates/deck.mustache:1-14",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/deck.py, add a method admin_only_visible() returning self.is_in_current_run and bool(session.get('admin') or session.get('demimod')). In decksite/templates/deck.mustache, inside the {{#public}} block add {{#admin_only_visible}}<p class=\"admin demimod\">This deck is in an active league run and is only visible to you because you are an admin or demimod.</p>{{/admin_only_visible}}. Total change ~8 lines.",
+      "issue": 7361,
+      "notes": "Purely additive display change; no data or logic is altered. The existing 'section class=\"admin demimod\"' CSS pattern already hides such notes from regular users.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:44:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

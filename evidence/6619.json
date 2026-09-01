@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6619,
+  "triage": [
+    {
+      "batch_id": "t-6651-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Removes winner and record columns from matchrow.mustache and matchtable.mustache UI, but explicitly leaves db schema and SQLAlchemy model in place",
+          "ref": "b675a86",
+          "type": "commit"
+        },
+        {
+          "detail": "winner_id column still defined in Game model",
+          "ref": "logsite/data/game.py:19",
+          "type": "code"
+        },
+        {
+          "detail": "insert_game() never sets winner_id \u2014 column is always NULL because PDBot does not yet report it",
+          "ref": "logsite/data/game.py:37",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6619,
+      "notes": "Issue is 7 years old (2019). The SQLAlchemy/db plumbing is intentionally preserved awaiting PDBot integration; silasary's 2019 comment confirms this is a PDBot-side dependency, not a pure decksite change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

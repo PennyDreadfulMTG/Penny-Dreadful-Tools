@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6787,
+  "triage": [
+    {
+      "batch_id": "t-6832-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Zero results \u2014 no flair concept exists anywhere in the codebase",
+          "ref": "grep -rn 'flair' /home/vercel-sandbox/penny-dreadful-tools/ (excluding venv)",
+          "type": "search"
+        },
+        {
+          "detail": "Achievements system exists and tracks tournament wins/league standings, providing the data source a flair feature could query",
+          "ref": "decksite/data/achievements.py",
+          "type": "code"
+        },
+        {
+          "detail": "Tournament leaderboards endpoint exists, confirming leaderboard data is available but not surfaced as user flair",
+          "ref": "decksite/controllers/competitions.py:43-46",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6787,
+      "notes": "New feature with no prior implementation; would require: deciding which achievements earn which flair, storing/computing current flair per person, displaying it on person pages and potentially in deck attribution across the site. No comments from the author clarifying scope or priority.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

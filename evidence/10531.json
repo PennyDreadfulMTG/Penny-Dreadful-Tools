@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-10531-2",
+      "branch": "sweep/10531-if-you-give-the-bot-multiple-different-p",
+      "files_changed": 2,
+      "head_sha": "cd716c56642ccc9faabccb25132aa373d517bbd4",
+      "issue": 10531,
+      "lines_changed": 25,
+      "lint": "passed",
+      "notes": "The fix is a one-line key change in the deduplication dict. The three new tests cover all meaningful cases. No schema or data changes required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`uniqify_cards` in `discordbot/command.py` deduplicates cards using only the canonical card name as the dictionary key. When a user asked for the same card with multiple different set-code suffixes \u2014 e.g. `[[Vindicate|G07]]`, `[[Vindicate|J13]]`, `[[Vindicate|MP2]]` \u2014 all three resolved to the same key `\"vindicate\"`, so only the last one survived.\n\n## What changed\n\nThe deduplication key in `uniqify_cards` now includes the `preferred_printing` field: `card.canonicalize(c.name) + '|' + (c.get('preferred_printing') or '')`. Cards with no explicit printing still share a key (the empty-string suffix) and are correctly deduplicated; cards with different explicit set codes produce distinct keys and are all preserved.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit discordbot` \u2014 851 passed, 1 skipped (full suite, with 3 new unit tests for `uniqify_cards` covering: no-printing deduplication, same-printing deduplication, and distinct-printing preservation)\n\nFixes #10531",
+      "pr_title": "Fix uniqify_cards to preserve multiple explicit set-code printings (#10531)",
+      "recorded_at": "2026-09-01T23:48:52Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "851 passed, 1 skipped (full suite including 3 new tests for uniqify_cards)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 10531,
   "triage": [
     {

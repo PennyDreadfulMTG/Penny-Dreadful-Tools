@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11201-1",
+      "branch": "sweep/11201-the-checkbox-on-bugs-looks-wonky-and-sho",
+      "files_changed": 2,
+      "head_sha": "c9a3e5738ae47529584c26e0b1a5f9da26f57d7a",
+      "issue": 11201,
+      "lines_changed": 26,
+      "lint": "passed",
+      "notes": "Pure CSS/template change. The native checkbox is hidden but still functional \u2014 keyboard users can tab to the label and activate it, and the JS change handler fires normally. The adjacent-sibling selector (.toggle-illegal + label) requires the label to immediately follow the input in the DOM, which it does in bugs.mustache.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/bugs/` page had a plain browser-default checkbox to toggle visibility of cards not legal in Penny Dreadful. The checkbox had no `id` attribute, so the `<label for=\"toggle_illegal\">` was not properly associated with it. The checkbox visual also did not match the site's button style conventions.\n\n## What changed\n\n- **`decksite/templates/bugs.mustache`**: Added `id=\"toggle_illegal\"` to the checkbox so the label association works correctly.\n- **`shared_web/static/css/pd.css`**: Replaced the trivial `.toggle-illegal { margin-left: 0 }` rule with CSS that visually hides the native checkbox (opacity/position/dimensions zeroed) and styles the adjacent `<label>` as a toggle button matching the site's existing `.button` conventions (same border-radius, font-size, padding, color variables). When the checkbox is checked, the label gets the site's highlight background color to show active state. No JavaScript changes were needed \u2014 the existing `change` event listener on `.toggle-illegal` continues to work since the hidden checkbox still receives programmatic events.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected\n\nFixes #11201",
+      "pr_title": "Style toggle-illegal as a button instead of a plain checkbox (#11201)",
+      "recorded_at": "2026-09-01T23:35:22Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.26s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11201,
   "triage": [
     {

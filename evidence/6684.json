@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6684,
+  "triage": [
+    {
+      "batch_id": "t-6690-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "pd.js is 840 lines; the file contains numerous unrelated PD.init* functions (initDismiss, initMenu, initTypeahead, renderCharts, etc.)",
+          "ref": "shared_web/static/js/pd.js:1-840",
+          "type": "code"
+        },
+        {
+          "detail": "max-lines is set to 650 (raised from default 300); pd.js at 840 lines violates even this relaxed limit",
+          "ref": "eslint.config.mjs:max-lines",
+          "type": "code"
+        },
+        {
+          "detail": "partial split already done (datamanager.jsx, decktable.jsx, table.jsx, cardtable.jsx, etc. extracted) but pd.js remains at 840 lines",
+          "ref": "ls shared_web/static/js/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6684,
+      "notes": "Splitting a legacy 840-line vanilla-JS file containing ~25 heterogeneous PD.* functions into coherent ES modules, updating all callers, and then reducing the ESLint limit to 300 would require well over 150 changed lines and careful dependency analysis.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:45:54Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

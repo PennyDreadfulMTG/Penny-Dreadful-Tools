@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6628,
+  "triage": [
+    {
+      "batch_id": "t-6651-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No matches \u2014 neither Weekend Warrior nor Ultimate Warrior achievement exists in current code",
+          "ref": "grep -n 'Weekend Warrior|Ultimate Warrior|APAC' decksite/data/achievements.py",
+          "type": "search"
+        },
+        {
+          "detail": "TournamentPlayer exists and counts gatherling entries, showing the pattern is implementable, but which tournaments count for 'PD Sat, APAC and Sunday' and whether these tournaments still run on the same schedule needs owner confirmation",
+          "ref": "decksite/data/achievements.py:359",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6628,
+      "notes": "The achievements don't exist yet. The decision needed is: are the named tournament slots (PD Sat, APAC, Sunday) still the current schedule and does an owner want to add these? Tournament schedule may have changed since 2019.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

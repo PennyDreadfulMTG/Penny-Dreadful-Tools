@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-10172-1",
+      "branch": "sweep/10172-dreadrise-command-doesn-t-process-400-er",
+      "files_changed": 1,
+      "head_sha": "bf51993c2cc8589689e350ee8cd940d6d8081d31",
+      "issue": 10172,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "The fix is a 2-line change aligning cardsearch error handling with the existing pattern used by decks and matchups. The `get('success', True)` default means well-formed success responses (where 'success' is absent but the data is present) are not falsely treated as errors \u2014 though in practice the fetcher always includes 'success'.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `cardsearch` command in `discordbot/commands/dreadrise.py` checked for an `err` key in the API response (`if 'err' in card_data and card_data['err']:`), but `dreadrise_search_json` in `magic/fetcher.py` never sets an `err` key \u2014 it returns `{'success': False, 'reason': '...'}` on failure. This meant any 400/500 error from the Dreadrise API was silently swallowed and the command would crash trying to index into `card_data['sample']` on an error response that didn't have that key.\n\nThe `decks` and `matchups` subcommands already correctly used `if not data['success']:`, making `cardsearch` the odd one out.\n\n## What changed\n\nIn `discordbot/commands/dreadrise.py` lines 26\u201327:\n- Changed `if 'err' in card_data and card_data['err']:` \u2192 `if not card_data.get('success', True):`\n- Changed `card_data['reason']` \u2192 `card_data.get('reason', 'Unknown error')` for robustness\n\nThis makes `cardsearch` consistent with `decks` and `matchups` and correctly surfaces errors from the Dreadrise API.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped in 18.08s\n\nFixes #10172",
+      "pr_title": "Fix card search error handling to use success/reason fields (#10172)",
+      "recorded_at": "2026-09-01T23:39:36Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.08s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 10172,
   "triage": [
     {

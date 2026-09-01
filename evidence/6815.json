@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 6815,
+  "triage": [
+    {
+      "batch_id": "t-6832-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Decks view only has a league_only bool; no tournament_only support or three-way toggle",
+          "ref": "decksite/views/decks.py:4-12",
+          "type": "code"
+        },
+        {
+          "detail": "/people/ route has no deck_type parameter at all \u2014 no league/tournament filtering",
+          "ref": "decksite/controllers/people.py:15-18",
+          "type": "code"
+        },
+        {
+          "detail": "Current toggle is binary (Tournaments Only on/off); no three-way all/league/tournament component exists",
+          "ref": "decksite/templates/buttons.mustache:2-10",
+          "type": "code"
+        },
+        {
+          "detail": "/decks/ validate_deck_type allows only [DeckType.ALL, DeckType.LEAGUE]; /decks/tournament/ would raise DoesNotExistException",
+          "ref": "decksite/controllers/metagame.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "/archetypes/ validate_deck_type allows only [DeckType.ALL, DeckType.TOURNAMENT]; /archetypes/league/ would raise DoesNotExistException",
+          "ref": "decksite/controllers/metagame.py:119",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6815,
+      "notes": "Substantial scope: needs a new React three-way toggle component, data-layer support for all missing combinations (tournament filter on decks, league filter on archetypes/cards/card), route validator updates, and people-page filter plumbing. Subsumes #6798.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

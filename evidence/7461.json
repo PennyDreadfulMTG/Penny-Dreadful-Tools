@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7461,
+  "triage": [
+    {
+      "batch_id": "t-7493-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "before_request() skips auth.check_perms() for static_url_path, /banner/, /favicon.ico, /robots.txt \u2014 but never sets session.modified = False, so Flask-Session still emits Set-Cookie for every static response",
+          "ref": "decksite/main.py:78-91",
+          "type": "code"
+        },
+        {
+          "detail": "No commit has ever set session.modified in decksite \u2014 the fix has not been applied",
+          "ref": "git log -S'session.modified' -- decksite/",
+          "type": "search"
+        },
+        {
+          "detail": "No merged PR addressing this issue",
+          "ref": "gh pr list --search 'session.modified' --state merged",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/main.py:before_request(), inside the block that already identifies static paths (simple_paths list), add 'session.modified = False' when the request path matches a simple_path prefix. This prevents Flask-Session from touching the session cookie for asset requests. The change is 1-2 lines in decksite/main.py. Optionally add an after_request hook that strips Set-Cookie from responses whose request.path starts with APP.static_url_path for belt-and-suspenders coverage.",
+      "issue": 7461,
+      "notes": "The lru_cache/logged-in-as-wrong-person incident mentioned in comments reinforces the value of keeping session completely out of static responses. The fix is minimal and isolated to decksite/main.py:before_request.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:41Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

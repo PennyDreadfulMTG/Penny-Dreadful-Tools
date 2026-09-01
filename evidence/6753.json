@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6753,
+  "triage": [
+    {
+      "batch_id": "t-6785-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current code uses two separate @APP.route decorators (lines 125 and 126) rather than a single route with defaults={'deck_type': None}; the original /tournaments/ endpoint no longer exists \u2014 it was generalized to <any(tournament,league):deck_type>",
+          "ref": "decksite/controllers/metagame.py:125-130",
+          "type": "code"
+        },
+        {
+          "detail": "no hardcoded /tournaments/ archetype route found in current master; issue's specific target route is gone",
+          "ref": "grep -n 'archetypes.*tournament' decksite/__init__.py",
+          "type": "search"
+        },
+        {
+          "detail": "same two-decorator pattern used for the archetypes (no archetype_id) view \u2014 both could adopt Flask defaults={} pattern consistently",
+          "ref": "decksite/controllers/metagame.py:113-116",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/metagame.py, add `defaults={'deck_type': None}` to the base route decorators at lines 113, 115, 125, and 127 (e.g., `@APP.route('/archetypes/<archetype_id>/', defaults={'deck_type': None})`). Update the function signatures from `deck_type: str | None = None` to `deck_type: str | None` since the default is now supplied by the decorator. This is a pure refactoring with no behavior change.",
+      "issue": 6753,
+      "notes": "The spirit of the issue (removing the hardcoded /tournaments/ route) was already addressed by generalizing to <any(tournament,league):deck_type>; the remaining work is a minor style improvement using Flask's defaults={} pattern.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:15Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

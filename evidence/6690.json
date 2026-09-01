@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6690,
+  "triage": [
+    {
+      "batch_id": "t-6690-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current DELETE WHERE clause requires `retired = 1` AND no deck_match rows; does not cover non-retired decks in ended competitions",
+          "ref": "maintenance/delete_unplayed_retired_decks.py:8-17",
+          "type": "code"
+        },
+        {
+          "detail": "author explicitly says 'I'm equivocal' about expanding the cleanup to include non-retired unplayed decks from ended competitions",
+          "ref": "issue #6690 comment by bakert",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6690,
+      "notes": "The proposed SQL in the comments would expand what data is deleted (non-retired decks with no matches in ended competitions). Per triage rules, any change to data retention is needs-product-decision, not easy-fix. The author's own ambivalence confirms this.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:45:54Z",
+      "risk": "high"
+    }
+  ],
+  "verify": []
+}

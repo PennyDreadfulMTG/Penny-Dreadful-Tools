@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6886,
+  "triage": [
+    {
+      "batch_id": "t-6963-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template has no Scryfall link; only links are the canonical_url alternate-printing link and alternate_printed_names links",
+          "ref": "decksite/templates/card.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "Card view does not set any scryfall_url property; card data model has no card-level scryfall_uri (only set-level in magic/card.py:124)",
+          "ref": "decksite/views/card.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "bakert commented 'I\u2019m not against the link either', confirming intent to add",
+          "ref": "#6886",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": "In decksite/views/card.py __init__, add self.scryfall_url = f'https://scryfall.com/search?q=%21%22{urllib.parse.quote(self.display_name)}%22'. In decksite/templates/card.mustache, add a link e.g. '<a class=\"external\" href=\"{{scryfall_url}}\">View on Scryfall</a>' in the card-image-block section. No data or schema changes needed.",
+      "issue": 6886,
+      "notes": "scryfall_uri is not stored at the card level in this database (only at set level), but constructing a Scryfall exact-name search URL from the display_name is reliable and matches how the rest of the codebase references Scryfall (e.g., main.py:69 uses a similar api.scryfall.com/cards/named pattern).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:19Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

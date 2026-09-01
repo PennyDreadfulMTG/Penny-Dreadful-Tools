@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-10105-1",
+      "branch": "sweep/10105-scryfall-search-on-the-pennydreadfulmagi",
+      "files_changed": 2,
+      "head_sha": "3fc8c3e5d5550ddeede47cf700f9c7232870eda0",
+      "issue": 10105,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "The fix is 3 lines in parse() \u2014 the minimal correct change. It also correctly rejects nested empty expressions like `(())`. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nSearching for `()` (or any empty parenthesized expression) on the site caused a broken SQL query. `parse()` in `find/search.py` would return an empty string when given an expression with no tokens (e.g. the inner expression of `()`). That empty string was then used directly in a SQL `WHERE` clause, producing invalid SQL and a server error.\n\n## What changed\n\nIn `find/search.py`, at the end of `parse()`, before returning the trimmed result, we now check if it is empty and raise `InvalidSearchException('Empty search expression')` if so. This is consistent with how other malformed inputs (unbalanced parens, unclosed strings, etc.) are handled: `card_search_where` already catches `InvalidSearchException` and returns `('FALSE', error_str)` \u2014 a safe, user-visible error instead of a crash.\n\nA unit test `test_empty_parentheses` was added to `find/find_test.py` to cover the `()` case.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit find` \u2014 61 tests passed (48 deselected as functional/perf), including the new `test_empty_parentheses` test\n\nFixes #10105",
+      "pr_title": "Raise InvalidSearchException for empty search expressions like () (#10105)",
+      "recorded_at": "2026-09-01T23:39:47Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find",
+        "detail": "61 passed, 48 deselected in 0.26s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 10105,
   "triage": [
     {

@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 7525,
+  "triage": [
+    {
+      "batch_id": "t-7543-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "currently shows '(not legal in {legality_format})' for any illegal card with no distinction for MTGO unavailability",
+          "ref": "discordbot/emoji.py:67-68",
+          "type": "code"
+        },
+        {
+          "detail": "legal = c.legal_in(legality_format) \u2014 only checks PD legality, not MTGO availability",
+          "ref": "discordbot/emoji.py:59",
+          "type": "code"
+        },
+        {
+          "detail": "mtgo_id field exists in card model but is not checked in info_emoji",
+          "ref": "magic/abc/card_description.py:54",
+          "type": "code"
+        },
+        {
+          "detail": "no 'not available online' message exists anywhere in discordbot code",
+          "ref": "grep -rn 'not available online' discordbot/",
+          "type": "search"
+        },
+        {
+          "detail": "MTGO availability must be based on price history absence, not just mtgo_id \u2014 'cards in the mtgo codebase that aren't obtainable or tradable'",
+          "ref": "#7525 comment by silasary",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7525,
+      "notes": "The reliable MTGO availability signal (price history absence) is not stored in the cards table per the 2020 comment thread. Using mtgo_id alone would be misleading. Implementing this requires either storing price-history-based availability in the cards table, or making a separate price check in the bot when displaying card info. More than a small isolated change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:35:33Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

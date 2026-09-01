@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11219-1",
+      "branch": "sweep/11219-archetype-detail-page-could-have-a-peopl",
+      "files_changed": 3,
+      "head_sha": "41fa285fb284e37b3b227c0b6b7c0d5d3e91bce8",
+      "issue": 11219,
+      "lines_changed": 17,
+      "lint": "passed",
+      "notes": "The People table shows stats across the full archetype subtree (via archetype_closure) consistent with how the Decks and Cards tables behave. The tournament-only toggle on the archetype page does not yet filter the People table (the `/api/people/` endpoint doesn't support `deckType`); that is a pre-existing gap and out of scope for this issue. The comment in the issue mentions the Card detail page could also benefit; that is a separate, untouched issue.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe archetype detail page showed Decks and Cards live tables but had no People section, even though `_arch_person_stats` already contains per-person stats for every archetype.\n\n## What changed\n\n- **`decksite/controllers/api.py`**: Extended `people_api()` to accept an `archetypeId` query parameter. When provided, the `WHERE` clause is narrowed to only people who have played a deck belonging to that archetype (or any of its descendants via `archetype_closure`).\n- **`decksite/templates/livepeopletable.mustache`** (new): A partial matching the existing `livecardtable` / `livedecktable` pattern. It renders a `persontable` div that the existing `persontable.jsx` picks up; it passes `data-archetype-id` so the JS automatically filters the `/api/people/` call to the current archetype.\n- **`decksite/templates/archetype.mustache`**: Added a People section using `{{> livepeopletable}}` directly after the Cards section.\n\nNo view or controller logic needed changing because `archetype.id` is already accessible in the template context via the existing `__getattr__` delegation in `views/archetype.py`, and the JS `DataManager` already forwards `archetypeId` to whatever endpoint the table uses.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed on all touched files.\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (pre-existing skip, unrelated functional test).\n\nFixes #11219",
+      "pr_title": "Add People table to archetype detail page (#11219)",
+      "recorded_at": "2026-09-01T23:39:25Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 19.11s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11219,
   "triage": [
     {

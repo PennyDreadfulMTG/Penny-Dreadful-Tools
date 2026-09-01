@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7133,
+  "triage": [
+    {
+      "batch_id": "t-7165-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit 'welcome and back-for-more commands' (2024-04-05) added the /welcome slash command, well after issue creation 2020-03-29",
+          "ref": "2f267103",
+          "type": "commit"
+        },
+        {
+          "detail": "Welcome extension defines /welcome slash command that fetches oracle.cards_by_name()['Welcome to the Fold'] and sends it with card art via image_fetcher",
+          "ref": "discordbot/commands/welcome.py:11-16",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7133,
+      "notes": "PR #12137 merged this feature. The back-for-more companion command was added in the same commit.",
+      "proposed_comment": "The /welcome command was added in commit 2f267103 and is live in discordbot/commands/welcome.py. It posts 'Welcome to the Fold' card art as requested.",
+      "recorded_at": "2026-09-01T23:46:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

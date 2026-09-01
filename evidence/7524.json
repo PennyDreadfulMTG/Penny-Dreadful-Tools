@@ -1,0 +1,68 @@
+{
+  "fix": [],
+  "issue": 7524,
+  "triage": [
+    {
+      "batch_id": "t-7543-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "commit message: 'Add facility to change permissions without logout' \u2014 added check_perms(), permission_changes table (decksite/sql/69.sql), and the before_request hook",
+          "ref": "1d600101",
+          "type": "commit"
+        },
+        {
+          "detail": "before_request hook calls auth.check_perms() on every non-static request",
+          "ref": "decksite/main.py:77-81",
+          "type": "code"
+        },
+        {
+          "detail": "check_perms() reads permission_changes table and updates session['admin'] and session['demimod'] on the spot \u2014 no logout required",
+          "ref": "decksite/auth.py:84-92",
+          "type": "code"
+        },
+        {
+          "detail": "permission_changes() queries the permission_changes DB table for the user's discord_id and returns the set of permissions to apply",
+          "ref": "decksite/data/permission.py:11-15",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7524,
+      "notes": "The broader architectural overhaul described in bakert's comment (fully DB-backed sessions, admin UI tool) was not done, but the issue title and immediate need are satisfied. Close if that's acceptable.",
+      "proposed_comment": "This was implemented in commit 1d600101 (March 2024). Admins can now insert a row in the `permission_changes` table for a user's Discord ID, and on their next page load `check_perms()` (called in `before_request`) will update the session without requiring a logout. The full DB-backed session overhaul from the comment thread was not built, but the core requirement \u2014 no forced logout \u2014 is satisfied.",
+      "recorded_at": "2026-09-01T23:35:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-7524-1",
+      "final_comment": "Implemented in commit 1d600101 (March 2024). Admins can insert a row in the `permission_changes` table for a user's Discord ID with a value of 'admin', 'demimod', or NULL (to revoke); on the user's next page load, `check_perms()` (called in `before_request`) reads the table and updates the session without requiring logout. The full DB-backed session overhaul described in the comments was not built, but the core requirement \u2014 changing permissions without a forced logout \u2014 is satisfied.",
+      "issue": 7524,
+      "own_evidence": [
+        {
+          "detail": "check_perms() reads permission_changes table via permission.permission_changes(current_id) and updates session['admin'] and session['demimod'] on every page load; both grant and revoke work without logout as long as a row exists in the table (NULL permission used to revoke)",
+          "ref": "decksite/auth.py:84-92",
+          "type": "code"
+        },
+        {
+          "detail": "permission_changes() executes SQL against permission_changes table returning a set of Permission enum values; Permission.NONE (NULL) is used for revocation, allowing admins to grant or revoke without the user logging out",
+          "ref": "decksite/data/permission.py:11-15",
+          "type": "code"
+        },
+        {
+          "detail": "before_request hook calls auth.check_perms() on every non-static page request, confirmed independently",
+          "ref": "decksite/main.py:77-81",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:39:59Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

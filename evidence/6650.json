@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6650,
+  "triage": [
+    {
+      "batch_id": "t-6651-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Some endpoints return {success: True} directly (drop, doorprize, rotation_clear_cache)",
+          "ref": "decksite/controllers/api.py:636",
+          "type": "code"
+        },
+        {
+          "detail": "Most data endpoints return return_camelized_json(r) with raw data objects and no status envelope \u2014 the two patterns are inconsistent and no decorator exists to enforce uniformity",
+          "ref": "decksite/controllers/api.py:147",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6650,
+      "notes": "Still valid: the API returns mixed shapes (raw data vs {success: True} vs {cards: [...]}). Fixing requires deciding on a contract and updating all call sites \u2014 too broad for easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

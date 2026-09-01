@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11194-1",
+      "branch": "sweep/11194-nwdl-join-uses-ifnull-to-handle-the-case",
+      "files_changed": 1,
+      "head_sha": "ea077d858f2d0c048fb7b026ed1531261f30da6a",
+      "issue": 11194,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Core fix is one character change (INNER \u2192 LEFT). The losses and draws expressions already handle NULL correctly via SQL three-valued logic (NULL < x and NULL = x both evaluate to NULL/false). The person.py IFNULL(odm.deck_id, 0) on line 193 is dead code since odm is INNER JOINed \u2014 a reviewer may wish to clean it up, but it does no harm and is out of scope for this issue.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`nwdl_join()` in `decksite/data/deck.py` computes per-deck wins/losses/draws for aggregation queries. The wins column uses `IFNULL(odm.games, 0)` to handle bye matches (where there is no opponent `deck_match` row), so a bye should count as a win. However, the join to `deck_match AS odm` was `INNER JOIN`, which means bye matches \u2014 those with no opponent entry \u2014 were silently dropped from the result set entirely before the `IFNULL` could fire. Byes were being ignored rather than counted as wins.\n\n## What changed\n\nChanged `INNER JOIN deck_match AS odm` to `LEFT JOIN deck_match AS odm` in `nwdl_join()` (`decksite/data/deck.py`). With a `LEFT JOIN`, bye matches produce a `NULL` `odm.games` value; the existing `IFNULL(odm.games, 0)` on the wins column correctly counts the bye as a win, and the losses/draws comparisons with `NULL` safely evaluate to false (ELSE 0), so no further changes are needed.\n\nAlso audited `person.py:193` and `achievements.py:449,470,513,621,633`:\n- `person.py:193`: INNER JOIN is intentional \u2014 the query computes head-to-head stats between two persons, and a bye has no opponent person; subsequent INNER JOINs to `deck` and `person` tables would filter byes out regardless.\n- `achievements.py:449,470,513`: These are League-only queries (filtered by `competition_ids_by_type_select('League')`). Penny Dreadful League is an async self-scheduled format with no byes, so the INNER JOINs are safe and intentional.\n\n## Validation\n\n- `uv run --frozen python dev.py lint`: all checks passed\n- `uv run --frozen python dev.py unit`: 848 passed, 1 skipped, 89 deselected (unit+functional filter)\n\nFixes #11194",
+      "pr_title": "Fix nwdl_join to use LEFT JOIN so byes are counted as wins (#11194)",
+      "recorded_at": "2026-09-01T23:39:14Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.05s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11194,
   "triage": [
     {

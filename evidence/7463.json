@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7463,
+  "triage": [
+    {
+      "batch_id": "t-7493-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "!stillbugged and !notbugged appear only as user-facing footer text, not as command handlers \u2014 they are MTGO in-game commands, not Discord commands",
+          "ref": "discordbot/commands/modobug.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "Only one match: the footer string in modobug.py; no implementation in this repo",
+          "ref": "grep -r 'stillbugged' penny-dreadful-tools/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "PDBot hosted at pdbot.pennydreadfulmagic.com \u2014 separate service; !stillbugged is handled inside PDBot's command parser, not here",
+          "ref": "logsite/importing.py:32",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7463,
+      "notes": "The !stillbugged command's case-sensitive card name matching is inside PDBot's MTGO command handler, which is not in this repository. A fix would require normalizing the card name (e.g., lowercasing both sides of the comparison) in PDBot's command parsing code. This repo has no lever to change that behavior.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:41Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

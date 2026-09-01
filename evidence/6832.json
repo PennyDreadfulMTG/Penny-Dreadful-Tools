@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6832,
+  "triage": [
+    {
+      "batch_id": "t-6832-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Three CSS files loaded synchronously: main CSS via cache-busted querystring, /banner/banner.css (dynamically generated), and keyrune.css from CDN \u2014 no critical-CSS inlining or defer exists",
+          "ref": "decksite/templates/header.mustache:7-9",
+          "type": "code"
+        },
+        {
+          "detail": "Author states 'I'm not sure the complexity here is worth the savings' and identifies intro box (loaded by JS after an API call) as bigger mobile culprit; intro box requires rethinking JS-based visibility to avoid needing a JS-gated API call",
+          "ref": "issue #6832 comment thread",
+          "type": "behavior"
+        },
+        {
+          "detail": "No commits found addressing CSS splitting, critical CSS inlining, or deferred stylesheet loading",
+          "ref": "git log --oneline --grep='CSS|pagespeed|critical' -- decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6832,
+      "notes": "The author has actively monitored PageSpeed scores over years with varying results; the core open question is whether to inline critical CSS and defer the rest, and how to handle the intro box without a JS-gated API call. Both require owner judgment on complexity vs benefit tradeoff.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

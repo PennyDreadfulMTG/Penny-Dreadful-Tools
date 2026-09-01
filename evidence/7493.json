@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7493,
+  "triage": [
+    {
+      "batch_id": "t-7493-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Verification.main() immediately prints 'Verification is currently disabled because GitHub projects does not support this any more' and returns \u2014 the feature is dead in this repo",
+          "ref": "modo_bugs/verification.py:3",
+          "type": "code"
+        },
+        {
+          "detail": "No verify command handler exists in the discordbot; no Discord slash command named verify",
+          "ref": "grep -r 'verify' discordbot/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "PDBot is hosted at pdbot.pennydreadfulmagic.com \u2014 a separate service whose source is not in this repository",
+          "ref": "logsite/importing.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "Removed 'explain verify' from discordbot when 'verification now works again' (fixes #7615); the PDBot-side !verify command is a separate system",
+          "ref": "a6125318a9",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7493,
+      "notes": "The !verify command lives in PDBot (MTGO in-game bot, separate codebase at pdbot.pennydreadfulmagic.com). A fix requires either a PDBot code change to return a friendlier error when called without args, or a product decision to retire the command given verification.py is already fully disabled. The improvement silasary describes (defaulting to Gatherling, or showing 'please specify full command') cannot be implemented from this repo.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:41Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7514,
+  "triage": [
+    {
+      "batch_id": "t-7543-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "no 'not a league game' or similar in-game chat message found anywhere in this repo",
+          "ref": "grep -rn 'not a league' penny-dreadful-tools/",
+          "type": "search"
+        },
+        {
+          "detail": "PDBot is identified by api_token on match report submissions \u2014 decksite handles PDBot's API calls but does not contain PDBot's in-game chat code",
+          "ref": "decksite/league.py:216",
+          "type": "code"
+        },
+        {
+          "detail": "no PDBot source code present in this repo \u2014 PDBot is a separate system",
+          "ref": "find penny-dreadful-tools -name '*.py' -path '*/pdbot*'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7514,
+      "notes": "The bug is about what PDBot says in the MTGO in-game chat when detecting a match between two league-registered players. PDBot's code is not in this repository. Cannot determine from current master whether the in-game message has been corrected or the !notleague flow implemented.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:35:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11206-1",
+      "branch": "sweep/11206-card-detail-page-could-show-who-has-play",
+      "files_changed": 5,
+      "head_sha": "53b8705773208194892c0b69eb65f6b1bdbd86d6",
+      "issue": 11206,
+      "lines_changed": 68,
+      "lint": "passed",
+      "notes": "The two tables will be empty for cards with no preaggregated data (new installs before first preaggregate run); the @retry_after_calling decorator on load_card_person_stats handles this by triggering preaggregate_card_person on the first miss. The 'Highest Win Rate' table requires at least one win or loss (HAVING SUM(wins+losses) > 0) to avoid showing players who only drew.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe card detail page had no information about which players had played a card most often or had the best win rate with it.\n\n## What changed\n\n- **`decksite/data/card.py`**: Added `load_card_person_stats(card_name, season_id, n=5)` that queries the existing `_card_person_stats` preaggregate table joined with `person`, returning two ranked lists: top N players by `num_decks` and top N players by `win_percent` (filtered to those with at least one match).\n- **`decksite/controllers/metagame.py`**: Calls `load_card_person_stats` in the `card` route handler and attaches `person_url` to each player entry before passing both lists to the view.\n- **`decksite/views/card.py`**: Accepts `top_players_by_decks` and `top_players_by_win` and exposes `show_top_players_by_decks` / `show_top_players_by_win` booleans for the template.\n- **`decksite/templates/card.mustache`**: Adds two new sections \u2014 \"Most Played By\" and \"Highest Win Rate\" \u2014 each rendering a small table of up to 5 players with links to their person pages.\n- **`decksite/controllers/metagame_test.py`**: Updated three existing tests to monkeypatch `load_card_person_stats` and accept the new view constructor parameters.\n\nNo schema changes required \u2014 all data is already present in `_card_person_stats`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (pre-existing skip)\n\nFixes #11206",
+      "pr_title": "Show top players on card detail page (#11206)",
+      "recorded_at": "2026-09-01T23:39:03Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11206,
   "triage": [
     {

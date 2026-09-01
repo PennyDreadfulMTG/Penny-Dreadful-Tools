@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6940,
+  "triage": [
+    {
+      "batch_id": "t-6963-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Fixed skipped per-match Elo by changing '==' to '!=' in match.py:33; this was the bug identified in issue comments as '959d9c5'",
+          "ref": "35a9792a",
+          "type": "commit"
+        },
+        {
+          "detail": "adjust_elo() uses current DB Elo values \u2014 incremental approach that diverges from the full replay",
+          "ref": "decksite/data/elo.py:27",
+          "type": "code"
+        },
+        {
+          "detail": "Scheduled job replays ALL matches from scratch in chronological order, starting everyone at STARTING_ELO=1500; always overrides per-match values",
+          "ref": "maintenance/elo.py:10",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6940,
+      "notes": "The per-match bug (wrong == condition) was fixed in 35a9792a, reducing the magnitude of jumps. However, the two algorithms remain architecturally different \u2014 incremental vs. full replay \u2014 and will still diverge whenever matches arrive out of chronological order or after the nightly job runs. A real fix would require either removing per-match updates entirely and relying on the scheduled job, or making per-match updates do a replay from the affected match forward.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:19Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

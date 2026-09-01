@@ -107,6 +107,37 @@
       "recorded_at": "2026-09-01T22:59:37Z",
       "refutation_reason": "PR #12694 implemented dark mode for decksite only. The issue is labeled '* logsite' and a comment by the author explicitly requests sharing the preference between decksite and logsite. logsite/templates/header.mustache contains no dark mode initialization and logsite/templates/menu.mustache contains no toggle, so logsite users cannot enable dark mode. The fix is partial.",
       "verdict": "REFUTED"
+    },
+    {
+      "batch_id": "v-7738-1",
+      "final_comment": null,
+      "issue": 7738,
+      "own_evidence": [
+        {
+          "detail": "No darkmode.mustache inclusion or equivalent dark mode script; logsite header has no dark mode initialization",
+          "ref": "logsite/templates/header.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "No dark mode toggle present; decksite's menu.mustache has the toggle at line 25-31, logsite's equivalent is absent",
+          "ref": "logsite/templates/menu.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "Issue is explicitly labeled for logsite scope; reporter comment states 'share cookie between decksite and logsite'",
+          "ref": "#7738 label: * logsite",
+          "type": "issue"
+        },
+        {
+          "detail": "Confirms decksite includes darkmode.mustache; logsite has no analogous inclusion",
+          "ref": "decksite/templates/header.mustache:28",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:37:07Z",
+      "refutation_reason": "The issue is labeled '* logsite' and a reporter comment explicitly requests sharing dark mode with logsite. Logsite currently has no dark mode: its header.mustache does not load a dark mode script, its menu.mustache has no toggle, and there are no dark mode CSS variable overrides in any logsite file. The proposed closure even concedes logsite is not covered. The fix is partial (decksite only) and the issue should remain open.",
+      "verdict": "REFUTED"
     }
   ]
 }

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-10771-1",
+      "branch": "sweep/10771-anonymize-active-decks-viewed-by-non-adm",
+      "files_changed": 2,
+      "head_sha": "a45de7c64780baa5f6cf5f4322b140baa1e33ffc",
+      "issue": 10771,
+      "lines_changed": 41,
+      "lint": "passed",
+      "notes": "The fix uses the existing `clauses.exclude_active_league_runs` helper that is already applied to the public deck listing for non-admins, so the logic is consistent with the rest of the codebase. The `except_person_id` parameter ensures a sorter's own active run is not hidden from them. No schema or data migration required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/admin/archetypes/` sort queue (`EditArchetypes`) loaded all unreviewed decks with `WHERE NOT d.reviewed` regardless of whether the viewer was an admin or a demimod (non-admin sorter). This meant that demimod sorters could see opponents' active league runs \u2014 the deck name, cards, and person \u2014 before those runs were complete, creating an information advantage.\n\n## What changed\n\nIn `decksite/views/edit_archetypes.py`, the deck-queue query now conditionally appends the `exclude_active_league_runs(viewer_id)` clause (already used elsewhere in the codebase via `decksite/data/clauses.py`) when the viewer does not have admin privileges. Admin users continue to see all unreviewed decks unchanged. Non-admin sorters see only decks from completed or retired league runs (plus their own active runs, which the clause exempts via `except_person_id`).\n\nTwo unit tests were added to `decksite/controllers/admin_test.py` to pin this behaviour:\n- `test_edit_archetypes_excludes_active_league_runs_for_non_admin` \u2014 verifies the league-run exclusion clause is present in the `load_decks` call when no admin session key is set.\n- `test_edit_archetypes_includes_active_league_runs_for_admin` \u2014 verifies that admins receive only the `NOT d.reviewed` filter (no exclusion).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit decksite/controllers/admin_test.py` \u2014 850 passed, 1 skipped (full suite run against a live MariaDB instance bootstrapped in the sandbox)\n\nFixes #10771",
+      "pr_title": "Exclude active league runs from sort queue for non-admin sorters (#10771)",
+      "recorded_at": "2026-09-01T23:42:16Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/controllers/admin_test.py",
+        "detail": "850 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 10771,
   "triage": [
     {

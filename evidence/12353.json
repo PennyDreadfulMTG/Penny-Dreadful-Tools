@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12353-1",
+      "branch": "sweep/12353-once-we-rotate-the-rank-of-new-this-seas",
+      "files_changed": 1,
+      "head_sha": "375c8f8f342d30624d071205a92c869ecb316830",
+      "issue": 12353,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The additional UPDATE only fires for cards with `rank IS NULL` that are first-time PD-legal this season, so it cannot affect established cards with non-NULL ranks. The only edge case is cards that joined PD mid-season via supplemental rotation and have 0 playability \u2014 they would also get `rank = 0`, which is arguably correct (they are still very new). The `_legal_cards` table is guaranteed to exist when `cache_rotation()` runs because it is a prerequisite for `_playability`, which is already referenced in the same function.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nAfter a seasonal rotation, cards that are new to Penny Dreadful (first-time legal) would show with rank `NULL` (displayed as `-`) on `/rotation` instead of rank `0` (displayed as `NEW`). This happened because:\n\n1. During rotation tracking, `cache_rotation()` correctly sets `rank = 0` for cards matching `-f:pdall` (never legal in any PD format).\n2. Once the season flips, those same new cards become legal in the current PD season \u2014 so `-f:pdall` no longer matches them.\n3. Their playability in `_playability` is `0` (no play history yet, they just rotated in), so `ranks_select()` returns `NULL` for them.\n4. The `/rotation` page then sorts and displays them as uninteresting (`-` rank) even though they are brand-new to the format.\n\n## What changed\n\nAdded a second `UPDATE` in `cache_rotation()` (`decksite/data/rotation.py`) that runs after the existing `-f:pdall` update. It sets `rank = 0` for any card in `_rotation` that:\n- Still has `rank IS NULL` (not already assigned a rank)\n- Is in `_legal_cards` for the current season (just became legal)\n- Is NOT in `_legal_cards` for any previous season (never been in PD before)\n\nThis precisely identifies \"new-this-season\" cards and marks them as `NEW` for proper display and sort ordering on `/rotation`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python -m pytest decksite/ magic/rotation_test.py -m 'not functional and not perf'` \u2014 429 passed, 6 deselected (no DB-dependent tests could run; no new DB tests added since the logic is a SQL-level fix in the preaggregate step)\n\nFixes #12353",
+      "pr_title": "Fix new-this-season cards showing NULL rank on /rotation after rotation (#12353)",
+      "recorded_at": "2026-09-01T23:38:52Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest decksite/ magic/rotation_test.py -v --ignore=decksite/scrapers -m 'not functional and not perf'",
+        "detail": "429 passed, 6 deselected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12353,
   "triage": [
     {

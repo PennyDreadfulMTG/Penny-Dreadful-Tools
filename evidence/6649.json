@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6649,
+  "triage": [
+    {
+      "batch_id": "t-6651-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "decks_order_by appends hardcoded secondary sorts (d.finish ASC, cache.active_date DESC) regardless of prior user sort \u2014 no dynamic memory of previous sort columns",
+          "ref": "decksite/data/clauses.py:52",
+          "type": "code"
+        },
+        {
+          "detail": "cards_order_by similarly uses fixed secondary tiebreakers; the user's previous sort choice is never threaded through as a secondary column",
+          "ref": "decksite/data/clauses.py:71",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6649,
+      "notes": "Feature is still absent. Implementing it requires the frontend to track sort history across column clicks and pass multiple sort params to the API, then clauses.py to compose them \u2014 cross-layer change too large for easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

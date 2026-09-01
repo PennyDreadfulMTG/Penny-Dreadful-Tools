@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6689,
+  "triage": [
+    {
+      "batch_id": "t-6690-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "deck_sort constructs and returns a composite string (e.g. 'AAXXX...name') used as sort key; no integer pre-computation exists",
+          "ref": "magic/oracle.py:159-173",
+          "type": "code"
+        },
+        {
+          "detail": "only one relevant commit afa2eff3d (sort order when attaching); no performance improvement to deck_sort itself",
+          "ref": "git log --oneline -S'deck_sort' -- magic/oracle.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In magic/oracle.py: rename current deck_sort body to a private _deck_sort_str(c). Add module-level DECK_SORT_KEYS: dict[str, int] = {}. In init(), after CARDS_BY_NAME is populated, build DECK_SORT_KEYS by sorting cards via _deck_sort_str and zip-mapping to range indices. Change deck_sort(c: Card) -> int to return DECK_SORT_KEYS.get(c.name, 0). Update magic/oracle_test.py comparisons (still valid for int). ~30-40 lines across oracle.py and oracle_test.py.",
+      "issue": 6689,
+      "notes": "The referenced issue #5481 (slow season pages) is closed; this issue remains open on its own merits. Medium confidence because adding integer pre-computation must handle the case where deck_sort is called before init() populates CARDS_BY_NAME.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:45:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

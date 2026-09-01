@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6678,
+  "triage": [
+    {
+      "batch_id": "t-6690-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "no existing route, template, or controller found for this feature",
+          "ref": "grep -r 'what beats\\|good against\\|beats.*rdw' --include='*.py' --include='*.html' .",
+          "type": "search"
+        },
+        {
+          "detail": "author provides a proof-of-concept SQL for 'what beats Channel+Rofellos' but notes the feature is undefined: query parameters (which cards to filter by, win rate threshold, minimum sample size, time window, UI entry point) are all unspecified",
+          "ref": "issue #6678 comment by bakert",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6678,
+      "notes": "The SQL sketch in comments shows the query shape, but decisions about UI (dedicated page? deck page widget?), input format, minimum-match threshold, and scope (all-time vs current season) must be made before implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:45:54Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

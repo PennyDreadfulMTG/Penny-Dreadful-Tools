@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11082-1",
+      "branch": "sweep/11082-banner-css-is-only-dynamic-because-it-wr",
+      "files_changed": 2,
+      "head_sha": "1b0eba9f514f61d9ee997982419ae6a17d9b8770",
+      "issue": 11082,
+      "lines_changed": 104,
+      "lint": "passed",
+      "notes": "The `bannercss()` route at `/banner/banner.css` is intentionally kept for backwards-compat; a future cleanup could remove it. The 101-rule cap (season 0\u2013100) is well beyond the current season count; if the game reaches season 101 a trivial one-line addition is needed. No test existed for the CSS content of the banner route and none was added since the touched files are static assets.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nEvery page load issued a separate HTTP request for `/banner/banner.css`, a dynamically generated stylesheet that produced one `header.season-N::before { background-image: url(\"/banner/N.png\"); }` rule per known season. This extra round-trip was unnecessary because `pd.css` is already served, cached, and gzip-compressed.\n\n## What changed\n\n- **`shared_web/static/css/pd.css`**: Added 101 static CSS rules covering `header.season-0::before` through `header.season-100::before`, each setting the correct `background-image` URL. This is only ~3 KB uncompressed and compresses well with gzip alongside the rest of `pd.css`.\n- **`decksite/templates/header.mustache`**: Removed the `<link rel=\"stylesheet\" href=\"/banner/banner.css\">` tag, eliminating the extra HTTP request on every page load.\n\nThe `bannercss()` route in `decksite/controllers/banners.py` is left in place for backwards compatibility (e.g. bookmarks or cached pages), but it no longer needs to be consulted by the main site.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (no Python files changed; CSS/Mustache linting clean)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped in 18.80s\n\nFixes #11082",
+      "pr_title": "Inline banner CSS into pd.css, remove dynamic /banner/banner.css request (#11082)",
+      "recorded_at": "2026-09-01T23:36:56Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 18.80s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11082,
   "triage": [
     {

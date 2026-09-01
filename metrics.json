@@ -8,22 +8,22 @@
   "counts": {
     "closed": 47,
     "deferred_human": 41,
-    "escalated": 69,
-    "fix_leased": 12,
-    "fix_pending": 1,
-    "fix_pushed": 124,
-    "pending": 156,
+    "escalated": 77,
+    "fix_leased": 6,
+    "fix_pending": 2,
+    "fix_pushed": 137,
+    "pending": 96,
     "pr_open": 43,
-    "reported": 174,
+    "reported": 184,
     "skipped": 1,
-    "triage_leased": 15,
+    "triage_leased": 45,
     "triaged": 7,
-    "verified": 7,
+    "verified": 11,
     "verify_leased": 2
   },
-  "heartbeat": "2026-09-01T23:32:00Z",
+  "heartbeat": "2026-09-01T23:47:18Z",
   "max_open_prs": 30,
-  "open_escalations": 69,
+  "open_escalations": 77,
   "open_sweep_prs": 25,
   "pause_until": null,
   "paused": false,
@@ -31,8 +31,8 @@
   "pr_backpressure": false,
   "totals": {
     "infra_failures": 0,
-    "nudges": 48,
-    "workspaces_created": 425
+    "nudges": 50,
+    "workspaces_created": 449
   },
   "unregistered_workspaces": []
 }

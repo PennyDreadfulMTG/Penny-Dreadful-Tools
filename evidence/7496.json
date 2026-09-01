@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 7496,
+  "triage": [
+    {
+      "batch_id": "t-7543-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "July 6 2020: '/api/league now sends an RFC3339 date not a unix timestamp \u2014 There may be wider implications to this but for now get the background job working. See #7496.' \u2014 updated discordbot/bot.py (1 line change)",
+          "ref": "ae0c3302",
+          "type": "commit"
+        },
+        {
+          "detail": "current code: diff = round((dtutil.parse_rfc3339(league['end_date']) - datetime.datetime.now(tz=datetime.UTC)) / ...) \u2014 correctly parses the RFC3339 date from the API",
+          "ref": "discordbot/background.py:299",
+          "type": "code"
+        },
+        {
+          "detail": "'end_date': fields.DateTime() \u2014 flask_restx DateTime field emits RFC3339; the bot now parses this format correctly",
+          "ref": "decksite/controllers/api.py:74",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7496,
+      "notes": "The date format standardization question raised in comments (RFC3339 vs ISO 8601 for public API) was left open per bakert's last comment suggesting maybe closing. If the API format question is still live it should be a separate issue.",
+      "proposed_comment": "The immediate failure \u2014 the background task crashing because it tried to parse an RFC3339 date string as a unix integer \u2014 was fixed in commit ae0c3302 (July 2020). The current code in `discordbot/background.py:299` correctly calls `dtutil.parse_rfc3339(league['end_date'])`. The broader API date-format discussion (RFC3339 vs ISO 8601) from the comments was not resolved, but the bug itself is gone.",
+      "recorded_at": "2026-09-01T23:35:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-7524-1",
+      "final_comment": "The immediate bug \u2014 background task crashing because it called datetime.datetime.fromtimestamp() on an RFC3339 string \u2014 was fixed in commit ae0c3302 (July 2020). The current code in discordbot/background.py:299 correctly calls dtutil.parse_rfc3339(league['end_date']). The broader API date-format discussion (RFC3339 vs ISO 8601) from the thread was never resolved, but the original reporter noted in Nov 2021 that no further action was planned and suggested closing.",
+      "issue": 7496,
+      "own_evidence": [
+        {
+          "detail": "diff shows discordbot/bot.py changed from datetime.datetime.fromtimestamp(league['end_date']) to dtutil.parse_rfc3339(league['end_date']), directly fixing the crash from treating an RFC3339 string as an int unix timestamp",
+          "ref": "ae0c3302",
+          "type": "commit"
+        },
+        {
+          "detail": "current master code uses dtutil.parse_rfc3339(league['end_date']) confirming the fix survived the bot.py -> background.py refactor",
+          "ref": "discordbot/background.py:299",
+          "type": "code"
+        },
+        {
+          "detail": "end_date is serialized as fields.DateTime() (RFC3339), consistent with what the bot now parses; the API and consumer are in agreement",
+          "ref": "decksite/controllers/api.py:74",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:39:59Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8667-2",
+      "branch": "sweep/8667-feature-best-control-player-and-similar",
+      "files_changed": 4,
+      "head_sha": "b3a277f4311681d8f28d321fe06751229ff1aa46",
+      "issue": 8667,
+      "lines_changed": 67,
+      "lint": "passed",
+      "notes": "The implementation uses the existing `_arch_person_stats` preaggregated table, so no schema migration is needed. The feature uses win-rate as the ranking heuristic (as suggested in the issue comments) rather than a per-archetype Elo, which would require a new scheduled job and schema changes. The table shows up to 10 players; this limit and the minimum-game threshold are easy to tune.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe archetype detail page had no information about which players perform best with a given archetype. Issue #8667 requested a \"Best Control Player\" (and similar) section on archetype detail pages.\n\n## What changed\n\n- **`decksite/data/archetype.py`**: Added `load_people(archetype_id, season_id, tournament_only)` that queries the pre-aggregated `_arch_person_stats` table (which already exists), joins with `person` to get names, and returns up to 10 players sorted by win percentage (descending), then wins (descending). Only players with at least one recorded game are included.\n- **`decksite/controllers/metagame.py`**: Calls `archs.load_people(...)` and passes the result to the `Archetype` view.\n- **`decksite/views/archetype.py`**: Accepts the `people` list, runs `prepare.prepare_people()` on it (sets player URLs and `show_record`), and sets `show_top_players = len(people) > 0`.\n- **`decksite/templates/archetype.mustache`**: Added a \"Top Players\" section (conditionally shown via `show_top_players`) with a table of Player / Decks / Record / Win% columns, placed before the Matchups section.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (no regressions)\n- No live DB integration test was run (the preaggregated table `_arch_person_stats` was already proven to exist by the existing `load_archetypes(person_id=...)` query that uses it).\n\nFixes #8667",
+      "pr_title": "Add top players table to archetype detail page (#8667)",
+      "recorded_at": "2026-09-01T23:42:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8667,
   "triage": [
     {

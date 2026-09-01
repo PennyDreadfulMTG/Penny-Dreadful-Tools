@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6963,
+  "triage": [
+    {
+      "batch_id": "t-6963-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "make_api_response() filters to Format.PENNY_DREADFUL.value ('Penny Dreadful') only; Format enum has no PD Eternal entry",
+          "ref": "decksite/scrapers/gatherling.py:166",
+          "type": "code"
+        },
+        {
+          "detail": "No commits mentioning PD Eternal in gatherling scraper history",
+          "ref": "git log --oneline --all --grep='PD Eternal|Eternal' -- decksite/scrapers/gatherling.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6963,
+      "notes": "The code at gatherling.py:166 definitively filters out any non-PENNY_DREADFUL format events, so PD Eternal is never scraped. However, without live Gatherling access I cannot determine if PD Eternal tournaments still run in 2026 \u2014 if the format is defunct, this is obsolete; if still active, it needs adding to the Format enum and process_tournament logic.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:19Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

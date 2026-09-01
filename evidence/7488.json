@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7488,
+  "triage": [
+    {
+      "batch_id": "t-7493-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "run() does no time-gating: it always processes prices if n < TOTAL_RUNS and the rotation window is open; there is no check of when the last run file was written",
+          "ref": "rotation_script/rotation_script.py:30-80",
+          "type": "code"
+        },
+        {
+          "detail": "rotation.files() returns sorted list of Run_N.txt files; os.path.getmtime on the last entry gives elapsed time since most recent run",
+          "ref": "magic/rotation.py:36-38",
+          "type": "code"
+        },
+        {
+          "detail": "TOTAL_RUNS = 168, so runs should be spaced ~1 hour apart over 7 days; detecting 'due' means checking if mtime of latest file is > ~55 minutes ago",
+          "ref": "magic/rotation.py:13",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In rotation_script/rotation_script.py:run(), after the n==0 early-return block (~line 50), add: if files exist, check os.path.getmtime(files[-1]); if fewer than 3300 seconds (55 min) have elapsed, print 'Run not due, skipping' and return. This keeps the script idempotent when called frequently. Separately, update the external scheduler (cron/systemd) to invoke the script every 5 minutes instead of every hour. No schema change, no data change, under 10 lines.",
+      "issue": 7488,
+      "notes": "bakert's comment already outlines the approach (run every 5 mins, only write a file if an hour has passed). The code change is isolated to rotation_script.py and is fully reversible.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:41Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

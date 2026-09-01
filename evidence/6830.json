@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6830,
+  "triage": [
+    {
+      "batch_id": "t-6832-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "css_url and js_url use version querystrings (?v=<git_commit_hash>) enabling safe far-future caching, but no far-future Expires or max-age header is set for these routes",
+          "ref": "shared_web/base_view.py:56-65",
+          "type": "code"
+        },
+        {
+          "detail": "The /banner/banner.css route returns a dynamically-generated CSS response with no Cache-Control or Expires header set",
+          "ref": "decksite/controllers/banners.py:37-43",
+          "type": "code"
+        },
+        {
+          "detail": "The cached() decorator sets 'no-cache' Cache-Control for HTML pages \u2014 static assets are served by Flask default send_from_directory with no long-lived caching configured",
+          "ref": "decksite/cache.py:43-44",
+          "type": "code"
+        },
+        {
+          "detail": "No commits found setting far-future Expires or max-age headers for static assets; only session/DB expiry commits returned",
+          "ref": "git log --oneline --grep='Expires|cache header|max-age' | head -20",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6830,
+      "notes": "Comments on the issue indicate this should be done in CloudFlare or nginx rather than Flask; banner.css is also a candidate since it is dynamically generated but infrequently changes. The decision of whether to fix in Flask (SEND_FILE_MAX_AGE_DEFAULT) vs CloudFlare cache rules is an infrastructure judgment call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

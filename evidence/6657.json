@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6657,
+  "triage": [
+    {
+      "batch_id": "t-6690-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "renderPagination() renders only '{start}-{end} of {total}' plus prev/next arrows; no current page number, no jump-to-first, no jump-to-last",
+          "ref": "shared_web/static/js/table.jsx:80-94",
+          "type": "code"
+        },
+        {
+          "detail": "preRenderPagination() already exposes {start, end, total}; this.state.page and this.state.pageSize are also available to compute numPages and current page number",
+          "ref": "shared_web/static/js/datamanager.jsx:110-116",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/table.jsx, update renderPagination(): compute numPages = Math.ceil(total / this.state.pageSize) and currentPage = this.state.page + 1, then add 'Page N of M' text, a \u21e4 first-page link (active when page > 0) via this.movePage(0), and a \u21e5 last-page link (active when end < total) via this.movePage(numPages - 1). ~20-25 line change confined to table.jsx.",
+      "issue": 6657,
+      "notes": "All data needed (page, pageSize, total) is already in component state; no backend changes needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:45:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

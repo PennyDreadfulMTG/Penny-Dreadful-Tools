@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6906,
+  "triage": [
+    {
+      "batch_id": "t-6963-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_competitions() already SELECTs season.season_id, so data is available in the Competition model",
+          "ref": "decksite/data/competition.py:63",
+          "type": "code"
+        },
+        {
+          "detail": "Competition view never reads competition.season_id or converts it to a display name; template therefore has no season variable to render",
+          "ref": "decksite/views/competition.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "Template shows no season info or league end date; only start_date is surfaced via self.date in the view",
+          "ref": "decksite/templates/competition.mustache:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/competition.py __init__, add self.season_num = competition.season_id (already loaded by SQL) and self.end_date = dtutil.display_date(competition.end_date). In decksite/templates/competition.mustache, add a header or subtitle line like 'Season {{season_num}}' and for leagues show the date range using {{end_date}}. No schema or data changes needed.",
+      "issue": 6906,
+      "notes": "season_id is already loaded in the SQL query; the fix is purely in the view and template layers. end_date is also already loaded (data/competition.py:55) but not displayed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:19Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:37:07Z",
+  "evidence_refs": [
+    "evidence/7738.json#verify[1]"
+  ],
+  "issue": 7738,
+  "kind": "verifier-refuted",
+  "question": "Verifier returned REFUTED \u2014 drop the closure, re-triage, or override?",
+  "summary": "The issue is labeled '* logsite' and a reporter comment explicitly requests sharing dark mode with logsite. Logsite currently has no dark mode: its header.mustache does not load a dark mode script, its menu.mustache has no toggle, and there are no dark mode CSS variable overrides in any logsite file. The proposed closure even concedes logsite is not covered. The fix is partial (decksite only) and "
+}

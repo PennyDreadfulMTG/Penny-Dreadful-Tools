@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6798,
+  "triage": [
+    {
+      "batch_id": "t-6832-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/decks/<any(tournament,league):deck_type>/ route exists but validator allows only [DeckType.ALL, DeckType.LEAGUE]; /decks/tournament/ raises DoesNotExistException",
+          "ref": "decksite/controllers/metagame.py:23,28",
+          "type": "code"
+        },
+        {
+          "detail": "/archetypes/<any(tournament,league):deck_type>/ route exists but validator allows only [DeckType.ALL, DeckType.TOURNAMENT]; /archetypes/league/ raises DoesNotExistException",
+          "ref": "decksite/controllers/metagame.py:114,119",
+          "type": "code"
+        },
+        {
+          "detail": "Decks view has only league_only flag; no tournament_only support in data or view layer for decks",
+          "ref": "decksite/views/decks.py:4-12",
+          "type": "code"
+        },
+        {
+          "detail": "DB schema has deck_type ENUM('league','tournament','other') so data layer can distinguish types; just the application filtering layer is incomplete",
+          "ref": "decksite/data/archetype.py:214",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6798,
+      "notes": "This is a subset of #6815 (which adds people pages and a three-way toggle on top). Fixing this specific inconsistency alone (adding tournament filter to /decks/ and league filter to /archetypes/) would touch controllers/metagame.py validator logic, the Decks view, data/deck.py query layer, and the toggle template \u2014 roughly 60\u2013100 lines but the correctness of the data queries needs verification.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

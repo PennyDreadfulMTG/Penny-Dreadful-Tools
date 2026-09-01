@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6651,
+  "triage": [
+    {
+      "batch_id": "t-6651-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Explicitly removes load_people_stats and merges all stats into a single load_people query via preaggregation, resolving the performance concern that motivated the optional-flag request",
+          "ref": "1cde06d1",
+          "type": "commit"
+        },
+        {
+          "detail": "Current load_people has all stats (wins, losses, win_percent, tournament_wins, etc.) inline in one SQL query; no separate load_people_stats function exists",
+          "ref": "decksite/data/person.py:94",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6651,
+      "notes": "The issue requested an optional flag for performance; the actual fix used preaggregation to make a combined query fast enough to always include stats, making the flag unnecessary. Issue can be closed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

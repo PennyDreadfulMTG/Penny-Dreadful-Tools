@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11168-1",
+      "branch": "sweep/11168-we-don-t-seem-to-use-arch-disjoint-perso",
+      "files_changed": 1,
+      "head_sha": "7492f376646bdc7b3f2f3b7f3976dcf638c1b35d",
+      "issue": 11168,
+      "lines_changed": 122,
+      "lint": "passed",
+      "notes": "The `_arch_disjoint_person_stats` and `_matchup_ps_stats` cache tables may still exist in production databases after this change; they will simply no longer be refreshed. Any DB migration to DROP these tables is a separate cleanup step outside this PR's scope.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nTwo cache tables were being built during `preaggregate()` but never read:\n- `_arch_disjoint_person_stats` (built by `preaggregate_disjoint_archetype_person()`)\n- `_matchup_ps_stats` (built by `preaggregate_matchups_person()`)\n\nBoth `load_disjoint_archetypes()` and `load_matchups()` had `person_id` branches that would select from these tables, but a search of all callers confirmed that neither function is ever called with a `person_id` argument \u2014 the only callers are `metagame.py:135` and `api.py:448`, and neither passes `person_id`.\n\n## What changed\n\n- Removed `preaggregate_disjoint_archetype_person()` and its call in `preaggregate()`\n- Removed `preaggregate_matchups_person()` and its call in `preaggregate()`\n- Removed the dead `person_id` branch from `load_disjoint_archetypes()` (simplifying signature to drop the `person_id` parameter)\n- Removed the dead `person_id` branch from `load_matchups()` (simplifying signature to drop the `person_id` parameter)\n\nThese are derived cache tables with no callers, not primary data, so removal has no data-retention impact.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped in 19.72s\n\nFixes #11168",
+      "pr_title": "Remove unused _arch_disjoint_person_stats and _matchup_ps_stats preaggregation (#11168)",
+      "recorded_at": "2026-09-01T23:38:41Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 19.72s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11168,
   "triage": [
     {

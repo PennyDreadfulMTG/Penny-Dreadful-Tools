@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6776,
+  "triage": [
+    {
+      "batch_id": "t-6785-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "side nav already applies {{#current}}current{{/current}} to top-level and submenu items",
+          "ref": "decksite/templates/menu.mustache:10",
+          "type": "code"
+        },
+        {
+          "detail": "footer submenu links render with no current class: <a {{#is_external}}class='external'{{/is_external}} href='{{url}}'> \u2014 current state is never applied",
+          "ref": "decksite/templates/footer.mustache:5-10",
+          "type": "code"
+        },
+        {
+          "detail": "Menu.__post_init__ calls set_current() which sets item.current for all items including submenu items, so data is available but footer template ignores it",
+          "ref": "shared_web/menu.py:14-24",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/footer.mustache, change the submenu anchor from `<a {{#is_external}}class=\"external\"{{/is_external}} href=\"{{url}}\">` to `<a class=\"{{#current}}current {{/current}}{{#is_external}}external{{/is_external}}\" href=\"{{url}}\">` (and similarly for the top-level section links). Add a small CSS rule in shared_web/static/css/pd.css to visually distinguish the current item in the footer context (e.g., bold or underline). No logic changes required since `current` is already set on all MenuItem objects.",
+      "issue": 6776,
+      "notes": "The normal (side nav) menu already handles current highlighting correctly; only the footer bottom submenu is missing it. Pure template and CSS change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:15Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

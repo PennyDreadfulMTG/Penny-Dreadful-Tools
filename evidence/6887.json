@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6887,
+  "triage": [
+    {
+      "batch_id": "t-6963-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue comment from wldevries: 'sorting is already implemented (click table header)'; bakert replied: 'Filtering is in some ways a specific kind of sorting I\u2019m not sure if we need it'",
+          "ref": "#6887",
+          "type": "issue"
+        },
+        {
+          "detail": "Table uses data-sortInitialOrder which provides client-side sorting; no filtering mechanism exists",
+          "ref": "decksite/templates/competitions.mustache:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6887,
+      "notes": "Sorting (the simpler ask) is already implemented. The remaining request is color/winrate filtering, which the project owner explicitly said they are uncertain about. Decision needed: is per-column filtering on the league deck table worth implementing?",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:48:19Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6770,
+  "triage": [
+    {
+      "batch_id": "t-6785-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "noTablesorter = 'table.live' \u2014 only live tables are excluded; table.calendar is not excluded",
+          "ref": "shared_web/static/js/pd.js:130",
+          "type": "code"
+        },
+        {
+          "detail": "$(selector).not(noTablesorter).tablesorter({}) \u2014 applies tablesorter to all main tables including table.calendar",
+          "ref": "shared_web/static/js/pd.js:198",
+          "type": "code"
+        },
+        {
+          "detail": "calendar table has no data-text sort hints; Date column renders <time> elements whose visible text is hidden/repeated by pd.js line 407, making sort nonsensical",
+          "ref": "decksite/templates/tournamentcalendar.mustache:1-32",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/pd.js line 130, change `var noTablesorter = 'table.live';` to `var noTablesorter = 'table.live, table.calendar';`. This is a one-line change that removes tablesorter from the tournament calendar on / and /tournaments/ without affecting any other tables.",
+      "issue": 6770,
+      "notes": "Single character-class addition in pd.js; no template or backend changes needed. Confirmed the issue is still present: tournamentcalendar.mustache has no sort-data attributes and pd.js hides repeated month cells, making the sort order meaningless.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:15Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

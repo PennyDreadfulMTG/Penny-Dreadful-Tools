@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7452,
+  "triage": [
+    {
+      "batch_id": "t-7452-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "type_query() uses GROUP_CONCAT with position=1 filter, so only the front-face type_line is ever indexed; adventure/split/MDFC back-face types are silently dropped",
+          "ref": "magic/card.py:294-296",
+          "type": "code"
+        },
+        {
+          "detail": "layout='adventure' is stored but type_line for the non-creature side is not separately retained in cards._cache_card, so 't:instant' cannot match an adventure card",
+          "ref": "magic/multiverse.py",
+          "type": "code"
+        },
+        {
+          "detail": "No current code path handles adventure-type lookup; the issue's workaround 'layout:adventure' still applies",
+          "ref": "grep -rn \"t:adventure\" discordbot/ decksite/",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7452,
+      "notes": "bakert's final comment in the issue already scopes the work well: store per-face type_lines (pipe-separated like mana_cost/names), then update search, the bot, card detail page, and any display code that assumes type_line has no pipe. This touches the card data model, multiverse import, search SQL, and potentially templates \u2014 not a small isolated change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:44:34Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

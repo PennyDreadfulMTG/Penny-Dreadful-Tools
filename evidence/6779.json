@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6779,
+  "triage": [
+    {
+      "batch_id": "t-6785-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "admin_menu() dynamically builds menu from all /admin GET routes \u2014 results in 10+ submenu items for admins",
+          "ref": "decksite/controllers/admin.py:27-35",
+          "type": "code"
+        },
+        {
+          "detail": "admin submenu items shown in narrow mobile nav (--main-menu-width: 120px, --submenu-width: 240px) with no special handling for long admin lists",
+          "ref": "decksite/templates/menu.mustache:1-24",
+          "type": "code"
+        },
+        {
+          "detail": "no fixing commits found; PR #14881 was about auth requirements for admin routes, not mobile UI",
+          "ref": "git log --grep 'mobile.*admin\\|admin.*mobile' -10",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6779,
+      "notes": "Requires UX/CSS judgment on how to handle a long admin submenu on mobile \u2014 whether to collapse it, scroll it, or hide it differently; too much design judgment for easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:49:15Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

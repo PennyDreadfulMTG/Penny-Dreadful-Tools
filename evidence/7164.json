@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7164,
+  "triage": [
+    {
+      "batch_id": "t-7165-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit 'Preselect rule-matching archetypes.' (2020-04-12) added the rule_archetype_id preselection logic, filed after issue creation date 2020-04-03",
+          "ref": "5be92375",
+          "type": "commit"
+        },
+        {
+          "detail": "When d.get('rule_archetype_id') is set, the code builds d.archetypes with selected:True on the matching archetype, prepopulating the dropdown for decks the rules engine is confident about",
+          "ref": "decksite/views/edit_archetypes.py:23-31",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7164,
+      "notes": "Commit date (2020-04-12) is 9 days after issue creation (2020-04-03), confirming this was a direct fix.",
+      "proposed_comment": "This was implemented in commit 5be92375 ('Preselect rule-matching archetypes.'). The archetype dropdown in /admin/archetypes/ is now automatically preselected when a rule matches a deck, which is exactly the 'really sure' case described here.",
+      "recorded_at": "2026-09-01T23:46:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7150,
+  "triage": [
+    {
+      "batch_id": "t-7165-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "determine_end_of_league shows leagues end at month boundaries or rotation; no carry-over mechanism exists anywhere in the file for incomplete 5-match runs",
+          "ref": "decksite/league.py:308-330",
+          "type": "code"
+        },
+        {
+          "detail": "Confirms no carry-over logic is implemented",
+          "ref": "grep -n 'carry|carryover|incomplete' decksite/league.py returned no matches",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7150,
+      "notes": "The owner must decide: does carry-over preserve partial record (e.g. 2-1), or does it start the player fresh with the same deck? Does it require a new DB entry per competition, or a cross-competition foreign key? These decisions gate schema design.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:46:07Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

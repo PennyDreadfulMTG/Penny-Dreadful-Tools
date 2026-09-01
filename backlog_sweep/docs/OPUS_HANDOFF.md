@@ -1,6 +1,10 @@
 # OPUS_HANDOFF — Instructions for the Opus 5 Manager
 
-> **Historical note (2026-09):** written for the original `.context/backlog-sweep/` layout (code in `bin/`, prompts at the root). The committed layout is `backlog_sweep/` with prompts beside `dispatcher.py` and state in `backlog_sweep/state/` (gitignored). See `../README.md` and `../RUNBOOK.md`.
+> **Historical record only (2026-09). Do not use this file to operate a new
+> campaign.** It documents the original `.context/backlog-sweep/` build and
+> contains superseded paths and policies, including the pre-draft PR policy. The
+> committed implementation lives in `backlog_sweep/`; use `../README.md` and
+> `../RUNBOOK.md` as the current operating instructions.
 
 
 You are an Opus 5 session in the manager workspace

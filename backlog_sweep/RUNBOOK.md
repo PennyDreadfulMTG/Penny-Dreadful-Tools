@@ -19,8 +19,10 @@ start from zero.
    dispatcher uses it for all `gh` operations, including PR operations. Put it in
    `backlog_sweep/state/.gh_token` (gitignored; never mirrored). It dies with
    the sandbox; re-paste on recovery.
-4. **A manager agent** (Opus-class recommended) in the manager workspace, given
-   `docs/OPUS_HANDOFF.md`. Humans talk to the manager; nobody talks to workers.
+4. **A manager agent** (Opus-class recommended) in the manager workspace, told to
+   read this runbook and `README.md`. `docs/OPUS_HANDOFF.md` is the historical
+   build handoff from the first campaign, not current operating instructions.
+   Humans talk to the manager; nobody talks to workers.
 
 ## Start a campaign
 
@@ -33,8 +35,7 @@ python3 backlog_sweep/dispatcher.py init         # enumerate the queue from GitH
 python3 backlog_sweep/dispatcher.py tick --dry-run   # inspect the plan; journals nothing
 ```
 
-Then, deliberately and in this order (see `docs/OPUS_HANDOFF.md` for the full
-gate discipline):
+Then, deliberately and in this order:
 
 1. Run one **canary worker** to validate workspace boot, git push auth, and
    output parsing.

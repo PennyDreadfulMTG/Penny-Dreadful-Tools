@@ -64,7 +64,7 @@ def ranks_select() -> str:
             name,
             CASE
                 WHEN playability = 0 THEN NULL
-                ELSE ROW_NUMBER() OVER (ORDER BY playability DESC)
+                ELSE RANK() OVER (ORDER BY playability DESC)
             END AS rank
         FROM
             _playability

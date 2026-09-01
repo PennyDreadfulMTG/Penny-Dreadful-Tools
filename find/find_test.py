@@ -692,6 +692,28 @@ def test_incomplete_query() -> None:
     with pytest.raises(search.InvalidSearchException):
         do_test('c:', '')
 
+def test_order_param_is_no_op_in_where() -> None:
+    do_test('c:r order:name', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (1 = 1)')
+
+def test_sort_param_is_no_op_in_where() -> None:
+    do_test('c:r sort:numDecks', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (1 = 1)')
+
+def test_order_from_query_name() -> None:
+    assert search.order_from_query('c:r order:name') == ('name', 'ASC')
+
+def test_order_from_query_numDecks() -> None:
+    assert search.order_from_query('t:creature order:numDecks') == ('numDecks', 'DESC')
+
+def test_order_from_query_sort_alias() -> None:
+    assert search.order_from_query('c:u sort:winPercent') == ('winPercent', 'DESC')
+
+def test_order_from_query_no_order() -> None:
+    assert search.order_from_query('c:r') == (None, None)
+
+def test_order_invalid_value() -> None:
+    with pytest.raises(search.InvalidValueException):
+        do_test('order:bogus', '')
+
 def do_functional_test(query: str, yes: list[str], no: list[str], check_scryfall: bool = False) -> None:
     found = search.search(query)
     for name in yes:

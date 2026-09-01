@@ -198,6 +198,8 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return f'NOT ({is_subquery(term.value())})'
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
+    if key.value() in ['order', 'sort']:
+        return order_where(term.value())
     raise InvalidCriterionException
 
 def text_where(column: str, term: Token, exclude_parenthetical: bool = False) -> str:
@@ -366,6 +368,40 @@ def playable_where(term: str) -> str:
         where = f"REPLACE({where}, '{{{symbol}}}', '')"
     return f"{where} = ''"
 
+
+# Maps order:/sort: values to (sortBy, sortOrder) tuples used by cards_order_by.
+ORDER_BY_MAP: dict[str, tuple[str, str]] = {
+    'name': ('name', 'ASC'),
+    'numDecks': ('numDecks', 'DESC'),
+    'decks': ('numDecks', 'DESC'),
+    'record': ('record', 'DESC'),
+    'wins': ('record', 'DESC'),
+    'winPercent': ('winPercent', 'DESC'),
+    'tournamentWins': ('tournamentWins', 'DESC'),
+    'tournamentTop8s': ('tournamentTop8s', 'DESC'),
+    'perfectRuns': ('perfectRuns', 'DESC'),
+}
+
+def order_where(value: str) -> str:
+    if value.lower() not in {k.lower() for k in ORDER_BY_MAP}:
+        raise InvalidValueException(f"Invalid sort value '{value}'. Valid values: {', '.join(ORDER_BY_MAP)}")
+    return '(1 = 1)'
+
+def order_from_query(query: str) -> tuple[str | None, str | None]:
+    """Extract order:/sort: directive from a query string. Returns (sortBy, sortOrder) or (None, None)."""
+    query = query.replace('“', '"').replace('”', '"')
+    try:
+        expression = tokenize(query)
+        tokens = expression.tokens()
+        for i, token in enumerate(tokens):
+            if token.__class__ == Key and token.value() in ['order', 'sort'] and i + 2 < len(tokens):
+                term = tokens[i + 2]
+                for key, mapping in ORDER_BY_MAP.items():
+                    if term.value().lower() == key.lower():
+                        return mapping
+    except InvalidSearchException:
+        pass
+    return None, None
 
 # Look up the id of a value if we have a lookup table for it.
 # Raise if not found in that table.

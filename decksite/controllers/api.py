@@ -18,6 +18,7 @@ from decksite.data.achievements import Achievement
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
+from find.search import order_from_query
 from magic import database as magic_database
 from magic import image_fetcher, layout, oracle, seasons, tournaments
 from magic.colors import find_colors
@@ -208,7 +209,14 @@ def cards2_api() -> Response:
             'message': <str>,
         }
     """
-    order_by = clauses.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    q = request.args.get('q', '').strip()
+    sort_by = request.args.get('sortBy')
+    sort_order = request.args.get('sortOrder')
+    if not sort_by and q:
+        q_sort_by, q_sort_order = order_from_query(q)
+        sort_by = sort_by or q_sort_by
+        sort_order = sort_order or q_sort_order
+    order_by = clauses.cards_order_by(sort_by, sort_order)
     page, page_size, limit = pagination(request.args)
     archetype_id = request.args.get('archetypeId') or None
     competition_id = request.args.get('competitionId') or None
@@ -216,7 +224,6 @@ def cards2_api() -> Response:
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     base_query = request.args.get('baseQuery')
-    q = request.args.get('q', '').strip()
     additional_where, message = clauses.card_search_where(q, base_query, 'cs.name') if q or base_query else ('TRUE', '')
     all_legal = request.args.get('allLegal', False)
     cs, total = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, competition_id=competition_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)

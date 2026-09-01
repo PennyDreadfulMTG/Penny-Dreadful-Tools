@@ -15,9 +15,9 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
         SELECT
             name,
             hits,
-            percent,
+            hits_percent,
             hits_needed,
-            percent_needed,
+            hits_needed_percent,
             rank,
             status,
             hit_in_last_run,
@@ -86,9 +86,9 @@ def cache_rotation() -> None:
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL PRIMARY KEY,
             hits TINYINT UNSIGNED NOT NULL,
-            percent TINYINT UNSIGNED NOT NULL,
+            hits_percent TINYINT UNSIGNED NOT NULL,
             hits_needed TINYINT UNSIGNED NOT NULL,
-            percent_needed MEDIUMINT NOT NULL,
+            hits_needed_percent MEDIUMINT NOT NULL,
             rank INT,
             hit_in_last_run BOOL NOT NULL,
             status VARCHAR(20) NOT NULL
@@ -96,9 +96,9 @@ def cache_rotation() -> None:
         SELECT
             rr.name,
             COUNT(*) AS hits,
-            ROUND(COUNT(*) / @runs_completed * 100) AS percent,
+            ROUND(COUNT(*) / @runs_completed * 100) AS hits_percent,
             GREATEST(0, @hits_required - COUNT(*)) AS hits_needed,
-            IF(@runs_remaining = 0, 0, ROUND((GREATEST(0, @hits_required - COUNT(*)) / @runs_remaining) * 100)) AS percent_needed,
+            IF(@runs_remaining = 0, 0, ROUND((GREATEST(0, @hits_required - COUNT(*)) / @runs_remaining) * 100)) AS hits_needed_percent,
             p.rank,
             SUM(IF(number = @runs_completed, 1, 0)) AS hit_in_last_run,
             CASE

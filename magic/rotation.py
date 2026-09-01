@@ -121,11 +121,11 @@ def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_l
         return None
     if not layout.is_playable_layout(c.layout):
         return None
-    percent = to_percent(hits / runs)
+    hits_percent = to_percent(hits / runs)
     if remaining_runs == 0:
-        percent_needed = '0'
+        hits_needed_percent = '0'
     else:
-        percent_needed = str(to_percent(hits_needed / remaining_runs))
+        hits_needed_percent = str(to_percent(hits_needed / remaining_runs))
     if remaining_runs + hits < TOTAL_RUNS / 2:
         status = 'Not Legal'
     elif hits >= TOTAL_RUNS / 2:
@@ -136,8 +136,8 @@ def process_score(name: str, hits: int, cs: dict[str, Card], runs: int, latest_l
     c.update({
         'hits': hits,
         'hits_needed': hits_needed,
-        'percent': percent,
-        'percent_needed': percent_needed,
+        'hits_percent': hits_percent,
+        'hits_needed_percent': hits_needed_percent,
         'status': status,
         'hit_in_last_run': hit_in_last_run,
     })

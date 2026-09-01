@@ -21,8 +21,8 @@ const renderRow = (table, card) => (
             }
         </td>
         <td className="name">{renderCard(card)}</td>
-        <td className="n">{card.hits} ({card.percent}%)</td>
-        <td className="n">{card.hitsNeeded} ({card.percentNeeded}%)</td>
+        <td className="n">{card.hits} ({card.hitsPercent}%)</td>
+        <td className="n">{card.hitsNeeded} ({card.hitsNeededPercent}%)</td>
         <td className="n">{card.displayRank}</td>
     </tr>
 );

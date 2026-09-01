@@ -263,6 +263,10 @@ def color_where(subtable: str, operator: str, term: str) -> str:
         colors = set(COLOR_COMBINATIONS_LOWER[term])
     else:
         colors = set(term)
+    valid_colors = {'w', 'u', 'b', 'r', 'g', 'm', 'c'}
+    for color in colors:
+        if color not in valid_colors:
+            raise InvalidValueException(f"Invalid color '{color}'. Valid colors are: w, u, b, r, g, m (multicolored), c (colorless)")
     if 'c' in colors and len(colors) > 1 and subtable != 'produced_mana':
         raise InvalidValueException('A card cannot be colorless and colored')
     if 'm' in colors and len(colors) > 1:

@@ -396,6 +396,14 @@ def test_multicolored_with_other_colors() -> None:
     with pytest.raises(search.InvalidValueException):
         do_test('c:bm', '')
 
+def test_invalid_color_letter_c() -> None:
+    with pytest.raises(search.InvalidValueException):
+        do_test('c:rgwbx', '')
+
+def test_invalid_color_letter_ci() -> None:
+    with pytest.raises(search.InvalidValueException):
+        do_test('ci:rgwbx', '')
+
 @pytest.mark.functional
 def test_multicolored_coloridentity_functional() -> None:
     do_functional_test('ci>=b', ['Dark Ritual', 'Golos, Tireless Pilgrim', 'Murderous Redcap', 'Swamp'], ['Black Lotus', 'Daze', 'Plains'])

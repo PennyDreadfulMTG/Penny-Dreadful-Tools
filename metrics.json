@@ -7,29 +7,29 @@
   },
   "counts": {
     "closed": 47,
-    "deferred_human": 47,
-    "escalated": 2,
-    "fix_pending": 9,
+    "deferred_human": 46,
+    "escalated": 33,
+    "fix_pending": 4,
     "fix_pushed": 94,
-    "pending": 319,
+    "pending": 294,
     "pr_open": 43,
     "reported": 126,
     "skipped": 1,
     "triaged": 7,
     "verify_pending": 4
   },
-  "heartbeat": "2026-09-01T21:06:51Z",
+  "heartbeat": "2026-09-01T21:21:35Z",
   "max_open_prs": 30,
-  "open_escalations": 2,
+  "open_escalations": 33,
   "open_sweep_prs": 25,
-  "pause_until": "2026-09-01T21:09:30Z",
+  "pause_until": "2026-09-01T21:42:48Z",
   "paused": true,
   "phase": "phase2",
   "pr_backpressure": false,
   "totals": {
     "infra_failures": 0,
     "nudges": 40,
-    "workspaces_created": 297
+    "workspaces_created": 313
   },
   "unregistered_workspaces": []
 }

@@ -123,3 +123,16 @@ def cache_rotation() -> None:
     preaggregation.preaggregate(table, sql)
     sql = f'UPDATE _rotation SET rank = 0 WHERE {where}'
     db().execute(sql)
+    # After a rotation, new-to-format cards are now PD-legal so -f:pdall no longer catches them,
+    # but their playability is still 0 (no play history). Mark them rank=0 (NEW) explicitly.
+    current_season_id = seasons.current_season_num()
+    sql = f"""
+        UPDATE _rotation SET rank = 0
+        WHERE rank IS NULL
+        AND name IN (
+            SELECT name FROM _legal_cards
+            WHERE season_id = {current_season_id}
+            AND name NOT IN (SELECT name FROM _legal_cards WHERE season_id < {current_season_id})
+        )
+    """
+    db().execute(sql)

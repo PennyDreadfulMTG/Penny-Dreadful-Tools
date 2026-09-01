@@ -263,7 +263,21 @@ def load_cards(
         archetype_id: int | None = None,
         competition_id: int | None = None,
         person_id: int | None = None,
-        season_id: int | None = None,
+        season_id: str | int | None = None,
+        tournament_only: bool = False,
+        all_legal: bool = False,
+) -> list[Card]:
+    cs, _ = load_cards_with_total(additional_where, order_by, limit, archetype_id, competition_id, person_id, season_id, tournament_only, all_legal)
+    return cs
+
+def load_cards_with_total(
+        additional_where: str = 'TRUE',
+        order_by: str = 'num_decks DESC, record, name',
+        limit: str = '',
+        archetype_id: int | None = None,
+        competition_id: int | None = None,
+        person_id: int | None = None,
+        season_id: str | int | None = None,
         tournament_only: bool = False,
         all_legal: bool = False,
 ) -> tuple[list[Card], int]:
@@ -321,7 +335,7 @@ def load_cards(
 
 @retry_after_calling(preaggregate_card)
 def load_card(name: str, tournament_only: bool = False, season_id: int | None = None) -> Card:
-    cs, _ = load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only)
+    cs = load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only)
     c = guarantee.at_most_one(cs)
     if c:
         return c

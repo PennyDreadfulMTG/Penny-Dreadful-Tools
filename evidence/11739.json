@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11739-1",
+      "branch": "sweep/11739-rotation-script-got-confused-and-thought",
+      "files_changed": 1,
+      "head_sha": "31bcdc1adb00438d88057efd3e7b1a58b4e20618",
+      "issue": 11739,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The two assertions are the minimal safe fix: they turn a silent wrong-filename failure into a loud, early abort with a clear message. No test could be added without a live DB; the existing test file also requires DB access. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `rotation_script/rotation_script.py`, both `make_final_list()` (line ~164) and `do_push()` (line ~204) used `seasons.next_rotation_ex().mtgo_code` / `seasons.last_rotation_ex().mtgo_code` to form the filename `{setcode}_legal_cards.txt`. When either call returned `None` (e.g. the next rotation set was not yet known to the database), Python silently converted it to the string `\"None\"`, producing the file `None_legal_cards.txt` and committing it to the GitHub Pages repo without any error signal.\n\n## What changed\n\nAdded `assert setcode is not None, 'Could not determine rotation set code'` immediately after each of the two `setcode` assignments \u2014 one in `make_final_list()` and one in `do_push()`. This causes the script to abort with a clear error message rather than silently producing an incorrectly named file.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- Unit tests for `rotation_script` require a live database connection which is unavailable in this cloud sandbox; the tests could not be run (env-blocked).\n\nFixes #11739",
+      "pr_title": "Assert setcode is not None before writing season file (#11739)",
+      "recorded_at": "2026-09-01T19:39:12Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest rotation_script/rotation_script_test.py -v",
+        "detail": "rotation_script tests require a live database (DatabaseConnectionRefusedException: Failed to initialize database in `cards`). No database available in this cloud sandbox. lint passed.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 11739,
   "triage": [
     {

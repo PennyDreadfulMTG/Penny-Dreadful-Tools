@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11992-1",
+      "branch": "sweep/11992-when-the-irencrag-transform-into-the-equ",
+      "files_changed": 3,
+      "head_sha": "6aa4989c708024d54a9f70274c24657282900038",
+      "issue": 11992,
+      "lines_changed": 26,
+      "lint": "passed",
+      "notes": "The fix is safe for all multi-face layouts: split cards already have `c.name = 'Fire // Ice'` (front+back combined), so their back-face entries like 'Ice' are added only if no standalone 'Ice' card exists. Transform, modal_dfc, and meld cards get their distinct back-face names indexed. The seasons.py set() change is correctness-only with no performance concern.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a double-faced card like *The Irencrag // Irencrag* transforms, the bot looks up the back-face name (\"Irencrag\") to check legality. `oracle.init()` only indexed cards by their front-face name (`c.name`), so \"Irencrag\" was not found in `CARDS_BY_NAME`, causing the bot to report the card as not legal.\n\n## What changed\n\n**`magic/oracle.py`** \u2014 In `init()`, after indexing `CARDS_BY_NAME[c.name] = c`, iterate over `c.names[1:]` (the back-face names stored as a list by `determine_value`) and add each to `CARDS_BY_NAME` only if it is not already a key. This preserves front-face entries and avoids overwriting cards that happen to share a name with a back face.\n\n**`decksite/views/seasons.py`** \u2014 The seasons page counts legal cards by iterating `oracle.CARDS_BY_NAME.values()`. With back-face names now also pointing to the same `Card` object, the same card would be counted twice. Changed to `set(oracle.CARDS_BY_NAME.values())`, which deduplicates via `Card.__hash__` (based on `card.name`).\n\n**`magic/oracle_test.py`** \u2014 Added two unit tests: one verifying that back-face names are indexed, and one verifying that a back-face name does not override an existing front-face card entry.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 847 passed, 1 skipped (full unit suite)\n\nFixes #11992",
+      "pr_title": "Index back-face names in oracle so transform cards resolve by back-face name (#11992)",
+      "recorded_at": "2026-09-01T19:38:54Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/oracle_test.py",
+        "detail": "847 passed, 1 skipped (full unit suite via dev.py unit); 17 passed for oracle_test.py in isolation (including 2 new tests)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11992,
   "triage": [
     {

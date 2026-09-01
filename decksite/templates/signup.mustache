@@ -12,7 +12,7 @@
             <div>
                 <label for="mtgo_username">{{TT_MTGO_USERNAME}}</label>
                 <input {{#form.errors.mtgo_username}}class="error"{{/form.errors.mtgo_username}} type="text" name="mtgo_username" id="mtgo_username" value="{{form.mtgo_username}}">
-                <div class="error">{{form.errors.mtgo_username}}</div>
+                <div class="error">{{{form.errors.mtgo_username}}}</div>
             </div>
             {{> recentdecks}}
             <div>

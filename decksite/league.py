@@ -38,7 +38,7 @@ class SignUpForm(DecklistForm):
         elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
             self.errors['mtgo_username'] = f'Magic Online Username is too long (max {card.MAX_LEN_VARCHAR})'
         elif active_decks_by(self.mtgo_username):
-            self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the retire page."
+            self.errors['mtgo_username'] = f"You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the <a href=\"{url_for('retire')}\">retire page</a>."
         elif person.is_banned(self.mtgo_username):
             self.errors['mtgo_username'] = 'You are currently banned from Penny Dreadful. Visit the Discord to appeal – pennydreadfulmagic.com/discord'
         if len(self.name) == 0:

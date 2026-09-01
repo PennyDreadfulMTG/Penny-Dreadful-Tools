@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:14:21Z",
+    "note": "Choose whether /seasons/all/decks should be optimized, redirected, or retired; the issue does not specify the desired product outcome.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:10:09Z",
   "created_at": "2026-09-01T18:05:40Z",
   "evidence_refs": [

@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:14:22Z",
+    "note": "Needs narrow-viewport visual reproduction before removing a shadow; static CSS identifies candidates but not the intended element.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:10:09Z",
   "created_at": "2026-09-01T18:00:40Z",
   "evidence_refs": [

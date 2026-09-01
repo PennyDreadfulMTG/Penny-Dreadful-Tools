@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:14:22Z",
+    "note": "Confirm whether the existing guild emoji setup is insufficient and choose the Discord emoji deployment approach before implementation.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:10:09Z",
   "created_at": "2026-09-01T17:56:05Z",
   "evidence_refs": [

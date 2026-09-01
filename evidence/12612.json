@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12612-1",
+      "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
+      "files_changed": 1,
+      "head_sha": "ff42516de5c1a75443263c2a039e91c54d14f8ac",
+      "issue": 12612,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The `post_cards` method in MtgMixin was already safe \u2014 it routes through the module-level `send()` and `send_image_with_retry()` which both call `escape_underscores()`. Only the two class-method overrides were missing escaping. No schema or data changes required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `MtgMixin` class methods `single_card_text` and `send_image_with_retry` called `self.send()` (the raw Discord library send) directly, bypassing the module-level `send()` wrapper that applies `escape_underscores()`. Card names containing underscores (e.g. names that resolve to oracle text with underscores) would render as Discord markdown formatting rather than literal underscores.\n\nThe module-level `send()` at line 165 already escapes underscores correctly; the class methods were a gap.\n\n## What changed\n\n- `MtgMixin.single_card_text` (`command.py:282`): wrap the composed message with `escape_underscores()` before passing to `self.send()`.\n- `MtgMixin.send_image_with_retry` (`command.py:259,263`): escape the `text` parameter once up front and reuse the escaped string for both the initial send and the retry, avoiding double-escaping.\n\nOnly `discordbot/command.py` was modified; 4 lines changed (+4, -3 net +1).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit discordbot` \u2014 845 passed, 1 skipped (functional test explicitly skipped by the repo)\n- `discordbot/command_test.py::test_escape_underscores` confirms the escaping logic itself is correct\n\nFixes #12612",
+      "pr_title": "Markdown-escape card names in MtgMixin send paths (#12612)",
+      "recorded_at": "2026-09-01T18:15:08Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "845 passed, 1 skipped in 18.94s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12612,
   "triage": [
     {

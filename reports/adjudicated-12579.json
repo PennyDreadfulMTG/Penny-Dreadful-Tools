@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:16:02Z",
+    "note": "Remove the two unused catch bindings in grid.jsx; CI reports only no-unused-vars at lines 26 and 32. Preserve localStorage behavior and keep PR #15064 draft.",
+    "verb": "queue-fixup"
+  },
   "bundled_at": null,
   "created_at": "2026-09-01T18:13:44Z",
   "evidence_refs": [

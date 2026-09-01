@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:14:21Z",
+    "note": "Deck search is a feature-sized product decision: public access, search UI, supported filters, and query semantics need definition.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:10:09Z",
   "created_at": "2026-09-01T17:58:28Z",
   "evidence_refs": [

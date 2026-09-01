@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:14:28Z",
+    "note": "Fix only the jslint eqeqeq error at metagamegrid.jsx:45 while preserving null handling; keep PR #15059 draft.",
+    "verb": "queue-fixup"
+  },
   "bundled_at": "2026-09-01T18:10:09Z",
   "created_at": "2026-09-01T18:10:01Z",
   "evidence_refs": [

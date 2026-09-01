@@ -1,13 +1,13 @@
 {
   "counters": {
     "infra_failures": 0,
-    "nudges": 11,
-    "workspaces_created": 94
+    "nudges": 12,
+    "workspaces_created": 98
   },
   "daily": {
     "closures": 0,
     "day": "2026-09-01",
-    "prs": 16
+    "prs": 18
   },
   "invariants": [
     {
@@ -8941,10 +8941,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12524.json",
       "history": [
         {
@@ -8965,6 +8962,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:05:40Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:21Z"
         }
       ],
       "issue": 12524,
@@ -8972,14 +8974,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose whether /seasons/all/decks should be optimized, redirected, or retired; the issue does not specify the desired product outcome.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "/seasons/all/decks/ is slow to load the first page and not interesting",
       "verdict": null
     },
@@ -9661,10 +9663,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12548.json",
       "history": [
         {
@@ -9685,6 +9684,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:58:28Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:21Z"
         }
       ],
       "issue": 12548,
@@ -9692,14 +9696,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Needs reproduction in Safari and the original screenshot before changing shared footer CSS.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Footer margins aren't working properly on Safari",
       "verdict": null
     },
@@ -9750,10 +9754,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12550.json",
       "history": [
         {
@@ -9774,6 +9775,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:58:28Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:21Z"
         }
       ],
       "issue": 12550,
@@ -9781,14 +9787,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Deck search is a feature-sized product decision: public access, search UI, supported filters, and query semantics need definition.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Deck Search",
       "verdict": null
     },
@@ -9839,10 +9845,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12552.json",
       "history": [
         {
@@ -9863,6 +9866,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:56:05Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:22Z"
         }
       ],
       "issue": 12552,
@@ -9870,14 +9878,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Confirm whether the existing guild emoji setup is insufficient and choose the Discord emoji deployment approach before implementation.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Consider manamoji for Discord emoji",
       "verdict": null
     },
@@ -10195,10 +10203,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12559.json",
       "history": [
         {
@@ -10219,6 +10224,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:00:40Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:22Z"
         }
       ],
       "issue": 12559,
@@ -10226,14 +10236,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Needs narrow-viewport visual reproduction before removing a shadow; static CSS identifies candidates but not the intended element.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Header seems to have a drop shadow on narrow view (when mobile menu showing)",
       "verdict": null
     },
@@ -10267,29 +10277,30 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T18:10:21Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T18:15:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T18:15:07Z"
         }
       ],
       "issue": 12560,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12560-1",
-        "expires_at": "2026-09-01T19:40:21Z",
-        "granted_at": "2026-09-01T18:10:21Z",
-        "kind": "fix",
-        "session_id": "644b8294-d657-4588-8143-180d62599c63",
-        "workspace_id": "66814841-ca2e-48aa-b439-91b426816aab"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pending",
       "title": "Hover on mobile menu over the main options is dark gray which is ugly - change to highlight maybe or something",
       "verdict": null
     },
@@ -10521,6 +10532,20 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T18:07:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T18:14:55Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T18:14:55Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T18:15:58Z"
         }
       ],
       "issue": 12566,
@@ -10528,18 +10553,18 @@
         "triage"
       ],
       "lease": {
-        "attempt": 1,
-        "batch_id": "f-12566-1",
-        "expires_at": "2026-09-01T19:37:56Z",
-        "granted_at": "2026-09-01T18:07:56Z",
+        "attempt": 2,
+        "batch_id": "f-12566-2",
+        "expires_at": "2026-09-01T19:45:58Z",
+        "granted_at": "2026-09-01T18:15:58Z",
         "kind": "fix",
-        "session_id": "c7afb89b-dfad-4980-8db7-531935308d6f",
-        "workspace_id": "22e2bb79-115a-41e6-93cf-e286f74999e9"
+        "session_id": "c09e900f-d361-42f2-a67a-87df76e11197",
+        "workspace_id": "8657b31e-6f68-477d-9283-ff18ca60e133"
       },
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -10594,10 +10619,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12568.json",
       "history": [
         {
@@ -10618,6 +10640,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:59:02Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:22Z"
         }
       ],
       "issue": 12568,
@@ -10625,14 +10652,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Specify which metagame signal belongs on the home page and how it should be presented.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Expose something about metagame on home",
       "verdict": null
     },
@@ -10640,10 +10667,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12569.json",
       "history": [
         {
@@ -10664,6 +10688,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:59:02Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:22Z"
         }
       ],
       "issue": 12569,
@@ -10671,14 +10700,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose the metagame visualization: normalize relative to the leader or redesign the tile; both satisfy the stated goal differently.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Meta share is not a convincing design on /metagame",
       "verdict": null
     },
@@ -10833,7 +10862,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-01T18:13:50Z",
+          "checked_at": "2026-09-01T18:15:45Z",
           "state": "pending"
         },
         "head_sha": "f738dad7e0e9c4e9dbb6362d13337dcc087f799a",
@@ -10902,7 +10931,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-01T18:13:49Z",
+          "checked_at": "2026-09-01T18:15:44Z",
           "state": "pending"
         },
         "head_sha": "280428814c8ed08a07184782d33da010b018ae30",
@@ -11176,7 +11205,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-01T18:13:46Z",
+          "checked_at": "2026-09-01T18:15:42Z",
           "state": "pending"
         },
         "head_sha": "a3a8858ff4bd9a351490c21f04d1bba38e1ac90e",
@@ -11202,6 +11231,15 @@
         "question": "PR #15064 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
       },
       "evidence_file": "evidence/12579.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12579-sort-should-be-sticky-on-metagame",
+        "failed": [
+          "jslint"
+        ],
+        "log_tail": "### jslint\ntext(-), resilient_parsing=False, show_default=None, terminal_width=None, token_normalize_func=None)\njslint\tRun jslint\t2026-09-01T18:07:42.3851427Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 281, in jslint\njslint\tRun jslint\t2026-09-01T18:07:42.3851941Z     do_jslint(fix)\njslint\tRun jslint\t2026-09-01T18:07:42.3852187Z       fix = False\njslint\tRun jslint\t2026-09-01T18:07:42.3853107Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 276, in do_jslint\njslint\tRun jslint\t2026-09-01T18:07:42.3853765Z     subprocess.check_call(cmd + files, shell=ON_WINDOWS)\njslint\tRun jslint\t2026-09-01T18:07:42.3854137Z       fix = False\njslint\tRun jslint\t2026-09-01T18:07:42.3856949Z       files = ['decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-09-01T18:07:42.3859609Z       cmd = ['./node_modules/.bin/eslint']\njslint\tRun jslint\t2026-09-01T18:07:42.3860207Z   File \"/opt/hostedtoolcache/Python/3.13.15/x64/lib/python3.13/subprocess.py\", line 419, in check_call\njslint\tRun jslint\t2026-09-01T18:07:42.3860797Z     raise CalledProcessError(retcode, cmd)\njslint\tRun jslint\t2026-09-01T18:07:42.3863349Z       popenargs = (['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx'])\njslint\tRun jslint\t2026-09-01T18:07:42.3865759Z       kwargs = {'shell': False}\njslint\tRun jslint\t2026-09-01T18:07:42.3866058Z       retcode = 1\njslint\tRun jslint\t2026-09-01T18:07:42.3868505Z       cmd = ['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-09-01T18:07:42.3873490Z subprocess.CalledProcessError: Command '['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']' returned non-zero exit status 1.\njslint\tRun jslint\t2026-09-01T18:07:42.4864235Z ##[error]Process completed with ex",
+        "pr": 15064
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -11246,6 +11284,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:13:44Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T18:16:02Z"
         }
       ],
       "issue": 12579,
@@ -11274,7 +11317,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_pending",
       "title": "Sort should be sticky on /metagame",
       "verdict": null
     },
@@ -11330,7 +11373,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-01T18:13:42Z",
+          "checked_at": "2026-09-01T18:15:41Z",
           "state": "pending"
         },
         "head_sha": "f0b8921b6c1bd09896f95e50a1f90463112f93d8",
@@ -11526,6 +11569,15 @@
         "question": "PR #15060 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
       },
       "evidence_file": "evidence/12584.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
+        "failed": [
+          "jslint"
+        ],
+        "log_tail": "### jslint\nnc=None)\njslint\tRun jslint\t2026-09-01T18:11:04.6390906Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 281, in jslint\njslint\tRun jslint\t2026-09-01T18:11:04.6391436Z     do_jslint(fix)\njslint\tRun jslint\t2026-09-01T18:11:04.6391796Z       fix = False\njslint\tRun jslint\t2026-09-01T18:11:04.6392350Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 276, in do_jslint\njslint\tRun jslint\t2026-09-01T18:11:04.6392984Z     subprocess.check_call(cmd + files, shell=ON_WINDOWS)\njslint\tRun jslint\t2026-09-01T18:11:04.6393422Z       fix = False\njslint\tRun jslint\t2026-09-01T18:11:04.6395543Z       files = ['decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-09-01T18:11:04.6397647Z       cmd = ['./node_modules/.bin/eslint', '--format', 'compact']\njslint\tRun jslint\t2026-09-01T18:11:04.6398336Z   File \"/opt/hostedtoolcache/Python/3.13.15/x64/lib/python3.13/subprocess.py\", line 419, in check_call\njslint\tRun jslint\t2026-09-01T18:11:04.6399050Z     raise CalledProcessError(retcode, cmd)\njslint\tRun jslint\t2026-09-01T18:11:04.6401318Z       popenargs = (['./node_modules/.bin/eslint', '--format', 'compact', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx'])\njslint\tRun jslint\t2026-09-01T18:11:04.6403299Z       kwargs = {'shell': False}\njslint\tRun jslint\t2026-09-01T18:11:04.6403685Z       retcode = 2\njslint\tRun jslint\t2026-09-01T18:11:04.6405904Z       cmd = ['./node_modules/.bin/eslint', '--format', 'compact', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-09-01T18:11:04.6410285Z subprocess.CalledProcessError: Command '['./node_modules/.bin/eslint', '--format', 'compact', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']' returned non-zero exit status 2.\njslint\tRun jslint\t2026-09-01T18:11:04.7267589Z ##[error]Process completed with ex",
+        "pr": 15060
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -11570,13 +11622,31 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:10:08Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T18:14:25Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T18:15:53Z"
         }
       ],
       "issue": 12584,
       "labels": [
         "triage"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "u-12584-1",
+        "expires_at": "2026-09-01T19:45:53Z",
+        "granted_at": "2026-09-01T18:15:53Z",
+        "kind": "fix",
+        "session_id": "6de0be58-25c1-4a5d-b642-479b4c8658c3",
+        "workspace_id": "dc9b4c8b-f55a-476f-a2e6-efa852b117d4"
+      },
       "notes": null,
       "pr": {
         "adopted": false,
@@ -11598,7 +11668,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_leased",
       "title": "jslint's output is about 1000 lines long if it encounters an issue",
       "verdict": null
     },
@@ -11668,7 +11738,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-01T18:13:38Z",
+          "checked_at": "2026-09-01T18:15:40Z",
           "state": "pending"
         },
         "head_sha": "069160e03eb8fa6ae525a7653a792347552669d2",
@@ -11741,7 +11811,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-01T18:10:06Z",
+          "checked_at": "2026-09-01T18:15:39Z",
           "failed": [],
           "state": "green"
         },
@@ -11763,10 +11833,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12587.json",
       "history": [
         {
@@ -11787,6 +11854,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:58:50Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:22Z"
         }
       ],
       "issue": 12587,
@@ -11794,14 +11866,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose the card-query boundary for decksite before replacing the local is_uninteresting heuristic.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Exclusion of uninteresting lands in key cards in /api/archetypes2 is a bit of a hack",
       "verdict": null
     },
@@ -11809,10 +11881,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12588.json",
       "history": [
         {
@@ -11833,6 +11902,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T17:56:16Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T18:14:22Z"
         }
       ],
       "issue": 12588,
@@ -11840,14 +11914,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Define the low-sample threshold and desired empty-state or tile behavior before implementation.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "When play count is low the middle section of a /metagame tile feels \"empty\"",
       "verdict": null
     },
@@ -11855,10 +11929,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12589.json",
       "history": [
         {
@@ -11907,21 +11978,39 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:09:34Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T18:14:22Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T18:15:51Z"
         }
       ],
       "issue": 12589,
       "labels": [
         "triage"
       ],
-      "lease": null,
-      "notes": null,
+      "lease": {
+        "attempt": 3,
+        "batch_id": "f-12589-3",
+        "expires_at": "2026-09-01T19:45:51Z",
+        "granted_at": "2026-09-01T18:15:51Z",
+        "kind": "fix",
+        "session_id": "9dad3588-2008-4cba-b6d1-071aa1871c21",
+        "workspace_id": "c2ddc71b-af8d-4f6b-a3d6-27982d0c0564"
+      },
+      "notes": "Retry with the existing non-mutating slice fix sketch; prior attempts failed to return valid dispatcher output, not because the fix was disproven.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_leased",
       "title": "When switching between sort orders on /metagame there's a \"flash\" of some other content while the new stuff is loading in",
       "verdict": null
     },
@@ -12345,29 +12434,42 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T18:07:41Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T18:14:33Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-01T18:15:26Z"
         }
       ],
       "issue": 12598,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 2,
-        "batch_id": "f-12598-2",
-        "expires_at": "2026-09-01T19:37:41Z",
-        "granted_at": "2026-09-01T18:07:41Z",
-        "kind": "fix",
-        "session_id": "b8f87a8c-392b-4f42-b932-12a28e738423",
-        "workspace_id": "1711fd2e-a63f-4027-9fdb-9ed4554ac638"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "adopted": false,
+        "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
+        "ci": {
+          "checked_at": "2026-09-01T18:15:37Z",
+          "state": "pending"
+        },
+        "head_sha": "ea2317ee87738494b5f3d7487f2d603d8047c31b",
+        "number": 15069,
+        "opened_at": "2026-09-01T18:15:26Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15069"
+      },
       "stage_attempts": {
         "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "pr_open",
       "title": "If you don't supply a data-class-name to a .decktable we write class=\"live undefined\" in the resulting HTML",
       "verdict": null
     },
@@ -12468,6 +12570,15 @@
         "question": "PR #15059 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
       },
       "evidence_file": "evidence/12600.json",
+      "fixup": {
+        "attempt": 1,
+        "branch": "sweep/12600-win-percent-should-never-be-a-string",
+        "failed": [
+          "jslint"
+        ],
+        "log_tail": "### jslint\ntext(-), resilient_parsing=False, show_default=None, terminal_width=None, token_normalize_func=None)\njslint\tRun jslint\t2026-09-01T18:10:25.5056775Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 281, in jslint\njslint\tRun jslint\t2026-09-01T18:10:25.5057451Z     do_jslint(fix)\njslint\tRun jslint\t2026-09-01T18:10:25.5057735Z       fix = False\njslint\tRun jslint\t2026-09-01T18:10:25.5058438Z   File \"/home/runner/work/Penny-Dreadful-Tools/Penny-Dreadful-Tools/dev.py\", line 276, in do_jslint\njslint\tRun jslint\t2026-09-01T18:10:25.5059262Z     subprocess.check_call(cmd + files, shell=ON_WINDOWS)\njslint\tRun jslint\t2026-09-01T18:10:25.5059713Z       fix = False\njslint\tRun jslint\t2026-09-01T18:10:25.5063151Z       files = ['decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-09-01T18:10:25.5066895Z       cmd = ['./node_modules/.bin/eslint']\njslint\tRun jslint\t2026-09-01T18:10:25.5067687Z   File \"/opt/hostedtoolcache/Python/3.13.15/x64/lib/python3.13/subprocess.py\", line 419, in check_call\njslint\tRun jslint\t2026-09-01T18:10:25.5068484Z     raise CalledProcessError(retcode, cmd)\njslint\tRun jslint\t2026-09-01T18:10:25.5072139Z       popenargs = (['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx'])\njslint\tRun jslint\t2026-09-01T18:10:25.5075470Z       kwargs = {'shell': False}\njslint\tRun jslint\t2026-09-01T18:10:25.5075813Z       retcode = 1\njslint\tRun jslint\t2026-09-01T18:10:25.5079350Z       cmd = ['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']\njslint\tRun jslint\t2026-09-01T18:10:25.5086567Z subprocess.CalledProcessError: Command '['./node_modules/.bin/eslint', 'decksite/webpack.config.js', 'eslint.config.mjs', 'shared_web/static/js/charts.js', 'shared_web/static/js/pd.js', 'shared_web/static/js/tooltips.js', 'shared_web/static/js/cardtable.jsx', 'shared_web/static/js/datamanager.jsx', 'shared_web/static/js/decktable.jsx', 'shared_web/static/js/grid.jsx', 'shared_web/static/js/headtoheadtable.jsx', 'shared_web/static/js/leaderboardtable.jsx', 'shared_web/static/js/matchtable.jsx', 'shared_web/static/js/metagamegrid.jsx', 'shared_web/static/js/persontable.jsx', 'shared_web/static/js/rotationtable.jsx', 'shared_web/static/js/table.jsx']' returned non-zero exit status 1.\njslint\tRun jslint\t2026-09-01T18:10:25.6082247Z ##[error]Process completed with ex",
+        "pr": 15059
+      },
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -12512,13 +12623,31 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:10:01Z"
+        },
+        {
+          "event": "FIXUP_DISPATCHED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T18:14:28Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T18:15:46Z"
         }
       ],
       "issue": 12600,
       "labels": [
         "triage"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "u-12600-1",
+        "expires_at": "2026-09-01T19:45:46Z",
+        "granted_at": "2026-09-01T18:15:46Z",
+        "kind": "fix",
+        "session_id": "8f5c100b-a1eb-4535-9b20-c2667ad08aa8",
+        "workspace_id": "27c74aaf-63f8-4042-87b7-0c9a163858b1"
+      },
       "notes": null,
       "pr": {
         "adopted": false,
@@ -12540,7 +12669,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_leased",
       "title": "win_percent should never be a string",
       "verdict": null
     },
@@ -12809,29 +12938,42 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T18:07:36Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T18:15:08Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-01T18:15:23Z"
         }
       ],
       "issue": 12612,
       "labels": [
         "triage"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12612-1",
-        "expires_at": "2026-09-01T19:37:36Z",
-        "granted_at": "2026-09-01T18:07:36Z",
-        "kind": "fix",
-        "session_id": "4243069f-0ddd-446c-a5a1-09e2a48c1821",
-        "workspace_id": "c6c249dd-9c10-429e-8580-9d7bdf62b762"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "adopted": false,
+        "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
+        "ci": {
+          "checked_at": "2026-09-01T18:15:36Z",
+          "state": "pending"
+        },
+        "head_sha": "ff42516de5c1a75443263c2a039e91c54d14f8ac",
+        "number": 15068,
+        "opened_at": "2026-09-01T18:15:23Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15068"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "pr_open",
       "title": "Markdown-escape card names in bot output",
       "verdict": null
     },
@@ -12887,7 +13029,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-01T18:13:33Z",
+          "checked_at": "2026-09-01T18:15:35Z",
           "state": "pending"
         },
         "head_sha": "863d8501f167b7298be9ba927500a67bc34c9c19",
@@ -24353,9 +24495,9 @@
   },
   "last_bundle_at": null,
   "last_master_sha": "adf64b9851e225beca4796126b19e19d88010366",
-  "last_mirror_at": "2026-09-01T18:07:59Z",
-  "last_seq": 2151,
-  "last_snapshot_at": "2026-09-01T18:14:15Z",
+  "last_mirror_at": "2026-09-01T18:14:16Z",
+  "last_seq": 2216,
+  "last_snapshot_at": "2026-09-01T18:16:08Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,
@@ -24499,7 +24641,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T18:09:30.138Z",
       "session_id": "b8f87a8c-392b-4f42-b932-12a28e738423",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "1711fd2e-a63f-4027-9fdb-9ed4554ac638"
     },
     "19bae21c-22c7-4f2f-819a-42da9e4f9c95": {
@@ -24635,7 +24777,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T18:10:23.504Z",
       "session_id": "c7afb89b-dfad-4980-8db7-531935308d6f",
-      "state": "nudged",
+      "state": "archived",
       "workspace_id": "22e2bb79-115a-41e6-93cf-e286f74999e9"
     },
     "241e604b-fd75-499f-8161-685c56693289": {
@@ -24673,6 +24815,22 @@
       "session_id": "b9422a59-65ab-4df2-8a05-418e39e68448",
       "state": "archived",
       "workspace_id": "2587039b-c8f5-448a-aea6-dd7ace97074a"
+    },
+    "27c74aaf-63f8-4042-87b7-0c9a163858b1": {
+      "batch_id": "u-12600-1",
+      "created_at": "2026-09-01T18:15:46Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12600
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "8f5c100b-a1eb-4535-9b20-c2667ad08aa8",
+      "state": "running",
+      "workspace_id": "27c74aaf-63f8-4042-87b7-0c9a163858b1"
     },
     "27d0a4fe-2634-4400-8a55-ecf0a552d6ec": {
       "batch_id": "f-12617-1",
@@ -25003,7 +25161,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T18:11:20.070Z",
       "session_id": "644b8294-d657-4588-8143-180d62599c63",
-      "state": "nudged",
+      "state": "archived",
       "workspace_id": "66814841-ca2e-48aa-b439-91b426816aab"
     },
     "67f1415a-3e0c-4d15-8246-6d4f6ce66084": {
@@ -25156,7 +25314,7 @@
       "batch_id": "f-12571-1",
       "created_at": "2026-09-01T18:07:54Z",
       "harvest": {
-        "malformed_attempts": 0,
+        "malformed_attempts": 1,
         "parsed": false
       },
       "issues": [
@@ -25165,8 +25323,24 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T18:09:50.675Z",
       "session_id": "135698f7-7bef-4711-9fe1-e79bac388be9",
-      "state": "running",
+      "state": "nudged",
       "workspace_id": "85bcfd2d-f886-4446-b4ab-1289970efd44"
+    },
+    "8657b31e-6f68-477d-9283-ff18ca60e133": {
+      "batch_id": "f-12566-2",
+      "created_at": "2026-09-01T18:15:58Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12566
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "c09e900f-d361-42f2-a67a-87df76e11197",
+      "state": "running",
+      "workspace_id": "8657b31e-6f68-477d-9283-ff18ca60e133"
     },
     "86fb3de0-ca15-4dee-957f-908070552957": {
       "batch_id": "t-12539-1",
@@ -25699,6 +25873,22 @@
       "state": "archived",
       "workspace_id": "c253d43a-2ed9-4d79-9ef1-f399033c6a7a"
     },
+    "c2ddc71b-af8d-4f6b-a3d6-27982d0c0564": {
+      "batch_id": "f-12589-3",
+      "created_at": "2026-09-01T18:15:51Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12589
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "9dad3588-2008-4cba-b6d1-071aa1871c21",
+      "state": "running",
+      "workspace_id": "c2ddc71b-af8d-4f6b-a3d6-27982d0c0564"
+    },
     "c6c249dd-9c10-429e-8580-9d7bdf62b762": {
       "batch_id": "f-12612-1",
       "created_at": "2026-09-01T18:07:36Z",
@@ -25712,7 +25902,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T18:10:15.322Z",
       "session_id": "4243069f-0ddd-446c-a5a1-09e2a48c1821",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "c6c249dd-9c10-429e-8580-9d7bdf62b762"
     },
     "c832d1aa-15f7-478b-a896-73d3108d2e5c": {
@@ -25746,6 +25936,22 @@
       "session_id": "06c6f4df-c07e-4a0f-912c-d226257942f5",
       "state": "archived",
       "workspace_id": "cfaa4402-c20c-4d2d-bdb4-4817e7f37277"
+    },
+    "dc9b4c8b-f55a-476f-a2e6-efa852b117d4": {
+      "batch_id": "u-12584-1",
+      "created_at": "2026-09-01T18:15:53Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12584
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "6de0be58-25c1-4a5d-b642-479b4c8658c3",
+      "state": "running",
+      "workspace_id": "dc9b4c8b-f55a-476f-a2e6-efa852b117d4"
     },
     "ddd9b345-ca3d-4986-9226-b63299208844": {
       "batch_id": "f-12711-1",

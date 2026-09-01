@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:14:22Z",
+    "note": "Specify which metagame signal belongs on the home page and how it should be presented.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:10:09Z",
   "created_at": "2026-09-01T17:59:02Z",
   "evidence_refs": [

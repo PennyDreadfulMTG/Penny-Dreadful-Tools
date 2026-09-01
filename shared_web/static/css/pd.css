@@ -57,6 +57,10 @@ abbr {
     text-decoration: none;
 }
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 /*
 
 Typography
@@ -431,7 +435,6 @@ footer {
     background-color: var(--tertiary-background);
     border-top: 0.05rem solid var(--border);
     bottom: 0;
-    box-sizing: border-box; /* So we can just say 100% width and have the status bar with padding fit the screen. */
     color: var(--tertiary-text);
     left: 0;
     padding-bottom: 1em;
@@ -1582,10 +1585,6 @@ that element doesn't suddenly start floating above the subnav and the status bar
 
 */
 
-nav * {
-    box-sizing: border-box;
-}
-
 header, nav, main, footer {
     position: relative;
 }
@@ -1733,7 +1732,6 @@ We also show the meta share of a deck in this way.
     border-bottom: 0.05rem solid var(--border);
     border-right: 0.05rem solid var(--border);
     border-top: 0.05rem solid var(--border);
-    box-sizing: border-box;
     display: inline-block;
     height: calc(18rem / 20); /* height (18px) + td.contains-mana-bar padding-top (3px) + td.contains-mana-bar padding-bottom (4px) must equal main td padding-top (5px) + main td padding-bottom (5px) + main td font-size (15px) * main td line-height (1). */
 }
@@ -2085,7 +2083,6 @@ button, main input, select, textarea, .uploader-label {
 
 
 button, input, form label, select, textarea {
-    box-sizing: border-box; /* Ignore padding when sizing so we can get elements the same height more easily. */
     margin-top: 1rem;
 }
 
@@ -2242,7 +2239,6 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 .intro {
     background: var(--tertiary-background);
     border: 0.05rem solid var(--border);
-    box-sizing: border-box;
     max-width: calc(var(--max-readable-line-length) + 4.1rem); /* Preserve the readable content width while including the padding and border in the box's width. */
     padding: 2rem;
     position: relative; /* So that we can absolutely position the dismiss x in the corner. */
@@ -2345,7 +2341,6 @@ Search
 
 .search input {
     border: 0;
-    box-sizing: border-box; /* Lets us specify width the same as the search results below it without having to account for padding. */
     font-size: var(--reading-font-size);
     line-height: var(--reading-line-height); /* Give the search text a little room to breathe. */
     /*
@@ -2613,7 +2608,6 @@ main .ss-grid a.season-icon-link:hover, main .season-grid a.season-icon-link:hov
 
 .season-grid .season-icon-link {
     align-items: center;
-    box-sizing: border-box; /* So the padding doesn't push the cells past their minimum size. */
     display: flex;
     justify-content: center;
     min-height: 1.777rem;
@@ -2673,7 +2667,6 @@ Notification Badges
 .badge {
     background-color: var(--badge-background);
     border-radius: 0.85em; /* Half the height, so one or two digits is a circle and a rare three-digit count is a tidy pill rather than spilling out of one. */
-    box-sizing: border-box; /* So the min-width is the whole circle, padding included. */
     color: var(--badge-text);
     font-size: 0.6rem; /* Smaller than the smallest text token. A badge hangs off an icon so it has to read as smaller than one. */
     height: 1.7em;
@@ -2771,7 +2764,6 @@ Achievements
 }
 
 .achievement-bar span {
-    box-sizing: border-box; /* Let's us specify height 100% without having to account for padding. */
     display: inline-block;
     height: 100%; /* All parts of the bar should have the same height. */
     left: 0;
@@ -2963,7 +2955,6 @@ Metagame
 
 .metagame-grid .card {
     border: 0.05rem solid var(--line);
-    box-sizing: border-box;
     display: block;
     margin: 0;
     width: 100%;
@@ -3015,10 +3006,6 @@ From https://codepen.io/mallendeo/pen/eLIiG
 
 .toggle {
     display: none;
-}
-
-.toggle, .toggle::after, .toggle::before, .toggle *, .toggle *:after, .toggle *:before, .toggle + .toggle-button {
-    box-sizing: border-box;
 }
 
 .toggle::-moz-selection, .toggle::after::-moz-selection, .toggle::before::-moz-selection, .toggle *::-moz-selection, .toggle *:after::-moz-selection, .toggle *:before::-moz-selection, .toggle + .toggle-button::-moz-selection {
@@ -3137,7 +3124,6 @@ The old menu used to use most of this, now it's just used by the language switch
 
 .language-menu {
     background: var(--language-menu-background);
-    box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
     color: var(--language-menu-text);
     display: none;
     left: 0;

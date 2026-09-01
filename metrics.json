@@ -7,9 +7,9 @@
   },
   "counts": {
     "closed": 47,
-    "deferred_human": 46,
+    "deferred_human": 45,
     "escalated": 33,
-    "fix_pending": 4,
+    "fix_pending": 5,
     "fix_pushed": 94,
     "pending": 294,
     "pr_open": 43,
@@ -18,7 +18,7 @@
     "triaged": 7,
     "verify_pending": 4
   },
-  "heartbeat": "2026-09-01T21:21:35Z",
+  "heartbeat": "2026-09-01T21:29:34Z",
   "max_open_prs": 30,
   "open_escalations": 33,
   "open_sweep_prs": 25,

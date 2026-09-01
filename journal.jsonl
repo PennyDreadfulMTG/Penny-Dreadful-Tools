@@ -5261,3 +5261,56 @@
 {"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 5261, "ts": "2026-09-01T21:19:17Z"}
 {"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 5262, "ts": "2026-09-01T21:19:18Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 5262, "seq": 5263, "ts": "2026-09-01T21:21:35Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 5264, "ts": "2026-09-01T21:22:46Z"}
+{"event": "ADJUDICATED", "issue": 12587, "note": "Replace the /api/archetypes2 key-card is_uninteresting oracle/type-line string heuristics with the existing shared Scryfall-like card-search implementation. Express the intended filter directly: exclude basic lands and lands with color identity greater than one, while retaining mono-colour and colourless utility lands. Reuse the same card-query boundary in _legal_cards where applicable rather than adding another local predicate. Add focused tests for basics, multicolour lands, and eligible utility lands. Any resulting PR must remain draft.", "seq": 5265, "status": "fix_pending", "ts": "2026-09-01T21:23:37Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5265, "seq": 5266, "ts": "2026-09-01T21:23:37Z"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 5267, "ts": "2026-09-01T21:23:53Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 5268, "ts": "2026-09-01T21:23:57Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 5269, "ts": "2026-09-01T21:23:58Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 5270, "ts": "2026-09-01T21:23:59Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 5271, "ts": "2026-09-01T21:24:01Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 5272, "ts": "2026-09-01T21:24:02Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 5273, "ts": "2026-09-01T21:24:03Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 5274, "ts": "2026-09-01T21:24:05Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 5275, "ts": "2026-09-01T21:24:06Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 5276, "ts": "2026-09-01T21:24:07Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 5277, "ts": "2026-09-01T21:24:08Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 5278, "ts": "2026-09-01T21:24:10Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 5279, "ts": "2026-09-01T21:24:11Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 5280, "ts": "2026-09-01T21:24:12Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 5281, "ts": "2026-09-01T21:24:14Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 5282, "ts": "2026-09-01T21:24:15Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 5283, "ts": "2026-09-01T21:24:17Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 5284, "ts": "2026-09-01T21:24:18Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 5285, "ts": "2026-09-01T21:24:20Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 5286, "ts": "2026-09-01T21:24:21Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 5287, "ts": "2026-09-01T21:24:23Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 5288, "ts": "2026-09-01T21:24:24Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 5289, "ts": "2026-09-01T21:24:26Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 5290, "ts": "2026-09-01T21:24:27Z"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 5291, "ts": "2026-09-01T21:29:02Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 5292, "ts": "2026-09-01T21:29:06Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 5293, "ts": "2026-09-01T21:29:07Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 5294, "ts": "2026-09-01T21:29:08Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 5295, "ts": "2026-09-01T21:29:10Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 5296, "ts": "2026-09-01T21:29:11Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 5297, "ts": "2026-09-01T21:29:12Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 5298, "ts": "2026-09-01T21:29:14Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 5299, "ts": "2026-09-01T21:29:15Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 5300, "ts": "2026-09-01T21:29:16Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 5301, "ts": "2026-09-01T21:29:17Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 5302, "ts": "2026-09-01T21:29:19Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 5303, "ts": "2026-09-01T21:29:21Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 5304, "ts": "2026-09-01T21:29:23Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 5305, "ts": "2026-09-01T21:29:24Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 5306, "ts": "2026-09-01T21:29:25Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 5307, "ts": "2026-09-01T21:29:26Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 5308, "ts": "2026-09-01T21:29:27Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 5309, "ts": "2026-09-01T21:29:29Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 5310, "ts": "2026-09-01T21:29:30Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 5311, "ts": "2026-09-01T21:29:31Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 5312, "ts": "2026-09-01T21:29:32Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 5313, "ts": "2026-09-01T21:29:33Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 5314, "ts": "2026-09-01T21:29:34Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5314, "seq": 5315, "ts": "2026-09-01T21:29:34Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5315, "seq": 5316, "ts": "2026-09-01T21:30:34Z"}

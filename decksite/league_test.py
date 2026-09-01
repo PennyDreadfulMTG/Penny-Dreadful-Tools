@@ -17,6 +17,14 @@ def test_edit_match_form_validates_scores() -> None:
     form = league.EditMatchForm(ImmutableMultiDict({'left_id': '1', 'right_id': '2', 'left_games': '0', 'right_games': '2'}))
     assert form.validate()
 
+    form = league.EditMatchForm(ImmutableMultiDict({'left_id': '1', 'right_id': '2', 'left_games': '2', 'right_games': '1'}))
+    assert form.validate()
+
+    for left, right in [('0', '0'), ('3', '3'), ('0', '1'), ('4', '0'), ('3', '1')]:
+        form = league.EditMatchForm(ImmutableMultiDict({'left_id': '1', 'right_id': '2', 'left_games': left, 'right_games': right}))
+        assert not form.validate(), f'Expected {left}+{right} to be invalid'
+        assert form.errors == {'right_games': 'Results must total 2 or 3 games.'}, f'Wrong error for {left}+{right}'
+
 
 def test_edit_match_form_requires_two_different_decks() -> None:
     form = league.EditMatchForm(ImmutableMultiDict({'left_id': '', 'right_id': 'one', 'left_games': '2', 'right_games': '1'}))

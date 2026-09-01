@@ -81,6 +81,10 @@ class EditMatchForm(Form):
                 int(score)
             except ValueError:
                 self.errors[field] = 'Score must be a whole number.'
+        if not self.errors.get('left_games') and not self.errors.get('right_games'):
+            total = int(self.left_games) + int(self.right_games)
+            if total not in (2, 3):
+                self.errors['right_games'] = 'Results must total 2 or 3 games.'
 
 
 class ReportForm(Form):

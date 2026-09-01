@@ -54,6 +54,14 @@ def test_find_mtgo_username() -> None:
     assert gatherling.find_mtgo_username('AlvaroCarvalho', ps) == 'AlvaroCarvalho'  # mtgo is not set
     assert gatherling.find_mtgo_username('-IceBR-', ps) == '-iceb-'  # mtgo is set and different
 
+def test_find_mtgo_username_via_discord_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    data = json.loads(PLAYERS)
+    ps = [gatherling.Player(**p) for p in data]
+    fake_person = type('Person', (), {'mtgo_username': 'AlvaroRealMTGO'})()
+    monkeypatch.setattr(gatherling.person, 'maybe_load_person_by_discord_id', lambda _discord_id: fake_person)
+    # AlvaroCarvalho has discord_id set but no mtgo_username; discord lookup should supply the MTGO name
+    assert gatherling.find_mtgo_username('AlvaroCarvalho', ps) == 'AlvaroRealMTGO'
+
 def test_gatherling_url() -> None:
     assert gatherling.gatherling_url('/') == 'https://gatherling.com/'
 

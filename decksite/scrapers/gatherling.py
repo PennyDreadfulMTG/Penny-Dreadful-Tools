@@ -296,6 +296,10 @@ def find_mtgo_username(gatherling_username: GatherlingUsername, players: list[Pl
         if p.name == gatherling_username:
             if p.mtgo_username is not None:
                 return aliased(p.mtgo_username)
+            if p.discord_id is not None:
+                pd_person = person.maybe_load_person_by_discord_id(p.discord_id)
+                if pd_person and pd_person.mtgo_username:
+                    return aliased(pd_person.mtgo_username)
     return aliased(gatherling_username)  # Best guess given that we don't know for certain
 
 def gatherling_url(href: str) -> str:

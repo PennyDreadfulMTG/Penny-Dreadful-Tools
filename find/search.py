@@ -193,8 +193,12 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
     if key.value() == 'mana' or key.value() == 'm':
         return mana_where(operator.value(), term.value())
     if key.value() == 'is' or key.value() == 'has':
+        if operator.value() != ':':
+            raise InvalidSearchException('`is:` and `has:` only support the `:` operator')
         return is_subquery(term.value())
     if key.value() == 'not':
+        if operator.value() != ':':
+            raise InvalidSearchException('`not:` only supports the `:` operator')
         return f'NOT ({is_subquery(term.value())})'
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())

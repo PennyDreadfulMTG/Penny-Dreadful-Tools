@@ -361,6 +361,11 @@ def test_edition() -> None:
 def test_special_chars() -> None:
     do_test('o:a_c%', "(REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%a\\_c\\%%%%')")
 
+def test_is_requires_colon_operator() -> None:
+    for query in ('is>commander', 'is>=commander', 'is<commander', 'not>commander'):
+        with pytest.raises(search.InvalidSearchException):
+            do_test(query, '')
+
 
 @pytest.mark.functional
 def test_tilde_functional() -> None:

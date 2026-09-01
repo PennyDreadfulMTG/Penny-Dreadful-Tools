@@ -12,7 +12,7 @@ class Seasons(View):
         # Don't show "all time" on this page as it is not fully supported yet.
         seasons = [season for season in self.all_seasons() if season['num'] is not None]
         cards_count: dict[str, int] = {}
-        for c in oracle.CARDS_BY_NAME.values():
+        for c in set(oracle.CARDS_BY_NAME.values()):
             for f, is_legal in c.legalities.items():
                 if is_legal and 'Penny Dreadful' in f:
                     cards_count[f] = cards_count.get(f, 0) + 1

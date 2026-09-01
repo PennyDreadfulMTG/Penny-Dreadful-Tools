@@ -110,24 +110,24 @@ def decode_card_name(name: str) -> str:
         name = '+' + name.lstrip()
     return name
 
-@APP.route('/archetypes/')
+@APP.route('/archetypes/', defaults={'deck_type': None})
 @APP.route('/archetypes/<any(tournament,league):deck_type>/')
-@SEASONS.route('/archetypes/')
+@SEASONS.route('/archetypes/', defaults={'deck_type': None})
 @SEASONS.route('/archetypes/<any(tournament,league):deck_type>/')
 @cached()
-def archetypes(deck_type: str | None = None) -> str:
+def archetypes(deck_type: str | None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
     view = Archetypes(all_archetypes, tournament_only=tournament_only)
     return view.page()
 
-@APP.route('/archetypes/<archetype_id>/')
+@APP.route('/archetypes/<archetype_id>/', defaults={'deck_type': None})
 @APP.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
-@SEASONS.route('/archetypes/<archetype_id>/')
+@SEASONS.route('/archetypes/<archetype_id>/', defaults={'deck_type': None})
 @SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
-def archetype(archetype_id: str, deck_type: str | None = None) -> str:
+def archetype(archetype_id: str, deck_type: str | None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '))

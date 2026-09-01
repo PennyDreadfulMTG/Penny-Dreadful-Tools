@@ -30,7 +30,7 @@ def admin_menu() -> Menu:
     endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for endpoint in endpoints:
         name = titlecase.titlecase(str(endpoint).replace('_', ' ')) if endpoint else 'Admin Home'
-        permission_required = 'demimod' if name in ['Edit Archetypes', 'Edit Rules'] else 'admin'
+        permission_required = getattr(APP.view_functions.get(endpoint), 'permission_required', 'admin')
         m.append(MenuItem(name, endpoint=endpoint, permission_required=permission_required))
     m.append(MenuItem(gettext('Rotation Speculation'), endpoint='rotation_speculation', permission_required='admin'))
     return Menu(m)

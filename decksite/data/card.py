@@ -101,6 +101,7 @@ def preaggregate_card_archetype() -> None:
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             archetype_id INT NOT NULL,
+            total_n INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
@@ -118,6 +119,7 @@ def preaggregate_card_archetype() -> None:
             season.season_id,
             d.archetype_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            SUM(dc.n) AS total_n,
             IFNULL(SUM(dsum.wins), 0) AS wins,
             IFNULL(SUM(dsum.losses), 0) AS losses,
             IFNULL(SUM(dsum.draws), 0) AS draws,
@@ -128,8 +130,8 @@ def preaggregate_card_archetype() -> None:
         FROM
             deck AS d
         INNER JOIN
-            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
-            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
+            -- Deduplicate per (card, deck) while summing copies across main and sideboard. See #5493, #7588.
+            (SELECT card, deck_id, SUM(n) AS n FROM deck_card GROUP BY card, deck_id) AS dc ON d.id = dc.deck_id
         {query.competition_join()}
         {query.season_join()}
         {deck.nwdl_join()}
@@ -288,6 +290,14 @@ def load_cards(
     else:
         from_clause = f'{table} AS cs'
     season_query = query.season_query(season_id, 'cs.season_id')
+    extra_select = ''
+    if archetype_id:
+        archetype_season_query = query.season_query(season_id, 'dc2.season_id')
+        total_archetype_decks_subquery = f'(SELECT COUNT(DISTINCT d2.id) FROM deck AS d2 LEFT JOIN deck_cache AS dc2 ON d2.id = dc2.deck_id WHERE d2.archetype_id = {archetype_id} AND ({archetype_season_query}))'
+        extra_select = (
+            f',IFNULL(ROUND(SUM(IFNULL(total_n, 0)) / NULLIF(SUM(IFNULL(num_decks, 0)), 0), 1), \'\') AS avg_copies'
+            f',IFNULL(ROUND(SUM(IFNULL(num_decks, 0)) / NULLIF({total_archetype_decks_subquery}, 0) * 100), \'\') AS pct_of_decks'
+        )
     sql = f"""
         SELECT
             cs.name,
@@ -299,8 +309,9 @@ def load_cards(
             SUM(IFNULL(perfect_runs, 0)) AS perfect_runs,
             SUM(IFNULL(tournament_wins, 0)) AS tournament_wins,
             SUM(IFNULL(tournament_top8s, 0)) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
-            COUNT(*) OVER () AS total
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            {extra_select}
+            ,COUNT(*) OVER () AS total
         FROM
             {from_clause}
         WHERE

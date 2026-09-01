@@ -86,6 +86,7 @@ def normalize(d: Deck) -> str:
         name = d.original_name
         if whitelisted(name):
             return name
+        name = name.lstrip('¿')
         name = titlecase.titlecase(name)
         if whitelisted(name):
             return name.replace('#General', '#general')

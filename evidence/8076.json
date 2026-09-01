@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8076,
+  "triage": [
+    {
+      "batch_id": "t-8097-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/link/ route exists for users to link their own Discord accounts (login_required, not admin_required)",
+          "ref": "decksite/controllers/resources.py:100-110",
+          "type": "code"
+        },
+        {
+          "detail": "/admin/unlink/ exists to remove links, but no /admin/link/ exists to create links on behalf of users",
+          "ref": "decksite/controllers/admin.py:218-238",
+          "type": "code"
+        },
+        {
+          "detail": "Only comment from bakert: 'I think just because they can do it themselves' \u2014 acknowledges the gap is intentional by design",
+          "ref": "#8076",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8076,
+      "notes": "This is a design question rather than a bug. The asymmetry (admin can unlink but not link) is by design: users link themselves at /link/. If linking-on-behalf-of is ever needed (e.g. a user can't use OAuth), that would be a separate feature request.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:11Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

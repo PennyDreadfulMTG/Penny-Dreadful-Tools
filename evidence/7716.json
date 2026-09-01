@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7716,
+  "triage": [
+    {
+      "batch_id": "t-7729-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit 'Get total results when fetching slice of results for cards' removed load_cards_count and added COUNT(*) OVER () AS total to load_cards, making a single query return both data and total count",
+          "ref": "b0c0b82e",
+          "type": "commit"
+        },
+        {
+          "detail": "Current load_cards SQL contains COUNT(*) OVER () AS total; function returns tuple (cs, rs[0]['total']) \u2014 same pattern as the post-fix load_decks",
+          "ref": "decksite/data/card.py:303",
+          "type": "code"
+        },
+        {
+          "detail": "Returns no results; load_cards_count no longer exists in the codebase",
+          "ref": "grep -rn 'load_cards_count' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7716,
+      "notes": "The commit references #12412 rather than #7716, but the code change is exactly what this issue described. Safe to close.",
+      "proposed_comment": "This was resolved in commit b0c0b82e (May 2024), which removed `load_cards_count` and added `COUNT(*) OVER () AS total` directly to the `load_cards` SQL, matching the approach already used by `load_decks`. No separate count query exists any longer.",
+      "recorded_at": "2026-09-01T23:00:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

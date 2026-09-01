@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7812,
+  "triage": [
+    {
+      "batch_id": "t-7847-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Archetypes ordered by num_decks DESC \u2014 directly the behavior the issue objects to",
+          "ref": "decksite/data/archetype.py:73",
+          "type": "code"
+        },
+        {
+          "detail": "Card playability queries use COUNT(*) AS num_decks as primary weight metric, not match counts",
+          "ref": "decksite/data/playability.py:157-222",
+          "type": "code"
+        },
+        {
+          "detail": "num_decks appears 20+ times across just these two files; a systemic change affects ordering, playability scores, display columns, and tests across the entire decksite layer",
+          "ref": "grep num_decks decksite/data/archetype.py decksite/data/playability.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7812,
+      "notes": "Switching ordering weight from num_decks to num_matches requires auditing every query that sorts or weights by deck count, updating SQL, adjusting display columns and labels, and running regression tests. The change may also shift what archetypes appear prominent in the metagame, which is a product judgment call as much as a technical one.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

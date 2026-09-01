@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7743,
+  "triage": [
+    {
+      "batch_id": "t-7753-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "exact_matches are returned before fuzzy_matches \u2014 exact-over-partial is implemented, matching the 'After player request I implemented exact match' comment",
+          "ref": "decksite/controllers/api.py:795",
+          "type": "code"
+        },
+        {
+          "detail": "typeahead.json generation does not include legality or play-count fields; legal-over-not-legal and heavily-played-over-not-played sorting remain unimplemented",
+          "ref": "maintenance/typeahead.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7743,
+      "notes": "One of the three requested improvements (exact over partial) was already done. The remaining two (legal priority, play-count priority) need typeahead data augmentation plus a sorting key in the search endpoint \u2014 more than a trivial patch.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:56:17Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

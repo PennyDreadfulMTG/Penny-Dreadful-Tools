@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7931,
+  "triage": [
+    {
+      "batch_id": "t-7951-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Comment explicitly reads: 'See #7931. This will create elements that flexbox thinks it needs to layout. We need to switch to flexbox layouts everywhere and remove this.' \u2014 acknowledges the issue as still open work",
+          "ref": "shared_web/static/css/pd.css:492",
+          "type": "code"
+        },
+        {
+          "detail": "Dozens of remaining `float: left/right` rules throughout the stylesheet (lines 1788, 1796, 1807, 1892, 2124, 3012, 3149, 3260, 3269, 3278, 3310, 3378, 3385, 3415, 3422)",
+          "ref": "shared_web/static/css/pd.css:1788-3422",
+          "type": "code"
+        },
+        {
+          "detail": "No completing commit found; only partial work done (data tables exempted from clearfix per issue comment)",
+          "ref": "git log --grep='7931'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7931,
+      "notes": "Partial progress was made (data tables exempted from the clearfix rule per a comment in the issue), but full float removal is a large site-wide CSS refactoring well beyond ~150 lines with significant regression risk.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:48Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

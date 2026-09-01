@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7711,
+  "triage": [
+    {
+      "batch_id": "t-7729-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prepare.py is 272 lines and still a single file with 10+ functions (prepare_cards, prepare_decks, prepare_people, prepare_archetypes, prepare_matches, prepare_leaderboard, etc.)",
+          "ref": "decksite/prepare.py:1-272",
+          "type": "code"
+        },
+        {
+          "detail": "No prepare/ subdirectory exists; structure has not been started",
+          "ref": "find decksite -type d -name prepare",
+          "type": "search"
+        },
+        {
+          "detail": "Importer 'from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people' would need updating",
+          "ref": "decksite/controllers/api.py:19",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7711,
+      "notes": "Pure refactor with no behavior change; the effort is the mechanical work of splitting 272 lines across prepare/card.py, prepare/deck.py, prepare/__init__.py and updating imports in api.py, view.py, prepare_test.py and any view subclasses \u2014 likely well over 150 changed lines in aggregate.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

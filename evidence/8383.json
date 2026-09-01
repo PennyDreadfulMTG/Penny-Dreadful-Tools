@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8383,
+  "triage": [
+    {
+      "batch_id": "t-8435-2",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Container inherits from Munch; munch is still an active dependency",
+          "ref": "shared/container.py:3",
+          "type": "code"
+        },
+        {
+          "detail": "55 files import Container directly; total import lines (including 'from shared import container') reach 128 \u2014 pervasive use across the codebase",
+          "ref": "grep -rn 'from shared.container import' . --include='*.py' | wc -l",
+          "type": "search"
+        },
+        {
+          "detail": "Container is a dict subclass with arbitrary attribute access; slotted replacements require knowing all attributes per class in advance",
+          "ref": "shared/container.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8383,
+      "notes": "Scope is large: each Container usage would need to be converted to a typed dataclass or attrs class with explicit slots, requiring per-site analysis of what attributes are set. A pragmatic first step would be to replace Container in one isolated module (e.g. news.py) as a proof of concept and measure the memory/perf benefit before committing to the full refactor.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:59Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

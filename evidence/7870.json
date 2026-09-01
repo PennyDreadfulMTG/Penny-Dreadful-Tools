@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7870,
+  "triage": [
+    {
+      "batch_id": "t-7895-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No results \u2014 no existing MTGO online-status checking capability in the discord bot or pdbot integration",
+          "ref": "grep -rn 'user.*online|online.*check|is_online' --include='*.py' discordbot/",
+          "type": "search"
+        },
+        {
+          "detail": "Tournament reminder background task queries Gatherling for upcoming events but does not check MTGO player online status; no mechanism to fetch per-player MTGO presence",
+          "ref": "discordbot/background.py:212-241",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7870,
+      "notes": "Requires either a Gatherling API to fetch registered player list, plus an MTGO presence API (if one exists) to verify each player is online. Neither integration is currently present. Scope and feasibility depend on MTGO API availability, which is not a given.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:55Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

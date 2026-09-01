@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8451,
+  "triage": [
+    {
+      "batch_id": "t-8608-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Art command downloads image without checking if preferred_printing was found; no guard for the case where the card was not in the requested set",
+          "ref": "discordbot/commands/art.py:14-22",
+          "type": "code"
+        },
+        {
+          "detail": "scryfall_image() silently falls back to name-only URL (no set) when oracle.get_printing(c, preferred_printing) returns None",
+          "ref": "magic/image_fetcher.py:33-42",
+          "type": "code"
+        },
+        {
+          "detail": "Flavor command correctly handles this: returns 'No flavor text for {c.preferred_printing}' when preferred_printing set but no matching printing found \u2014 the same pattern is needed in art.py",
+          "ref": "discordbot/commands/flavor.py:16-23",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/art.py, after the 'if card is not None:' check, add: import oracle at top; then check 'if card.get(\"preferred_printing\") and oracle.get_printing(card, card.get(\"preferred_printing\")) is None: await ctx.send(f\"{ctx.author.mention}: {card.name} was not in {card.get(\\\"preferred_printing\\\").upper()}.\"); return'. ~5 lines in art.py.",
+      "issue": 8451,
+      "notes": "The functional test in discordbot/functional_test.py:52 tests flavor with a set pipe ('capital offense|UST') but there is no analogous test for art with a wrong set \u2014 a new unit test would be appropriate alongside the fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:01:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -11,7 +11,7 @@
   "bundle_min_items": 10,
   "ci_recheck_minutes": 5,
   "closures_enabled": true,
-  "concurrency_cap": 16,
+  "concurrency_cap": 0,
   "daily_close_cap": 40,
   "daily_pr_cap": 25,
   "forbidden_paths": [

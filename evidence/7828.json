@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7828,
+  "triage": [
+    {
+      "batch_id": "t-7847-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Remove old chart image generation in favor of Chart.js \u2014 ripped out decksite/charts/chart.py and all image-based rendering",
+          "ref": "2450e6b3",
+          "type": "commit"
+        },
+        {
+          "detail": "Chart now uses <canvas class='chart' data-type=... data-labels=... data-series=... data-options=...>, i.e. Chart.js",
+          "ref": "decksite/templates/deck.mustache:10",
+          "type": "code"
+        },
+        {
+          "detail": "Person page Colors Played chart uses same Canvas/Chart.js pattern",
+          "ref": "decksite/templates/person.mustache:36",
+          "type": "code"
+        },
+        {
+          "detail": "history_chart() returns JSON dict with type/labels/series/options for Chart.js rendering, no server-side image generation",
+          "ref": "decksite/views/archetype.py:21-50",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7828,
+      "notes": "The decksite/charts/ directory still exists but only contains __init__.py; the old chart.py is gone.",
+      "proposed_comment": "This was fixed in commit 2450e6b3 (May 2024), which removed all server-side image chart generation (`decksite/charts/chart.py`) and migrated every chart to Chart.js rendered via `<canvas>` elements in the browser. The person-page Colors Played chart the issue comments reference was the model for this migration.",
+      "recorded_at": "2026-09-01T22:57:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

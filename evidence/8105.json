@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 8105,
+  "triage": [
+    {
+      "batch_id": "t-8105-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "active_league(should_load_decks=True) still called on every PDBot API request with no caching",
+          "ref": "decksite/controllers/api.py:559",
+          "type": "code"
+        },
+        {
+          "detail": "active_league(should_load_decks=True) still called on every /admin/matches/ page load",
+          "ref": "decksite/controllers/admin.py:162",
+          "type": "code"
+        },
+        {
+          "detail": "2020 partial fix moved matches display to livematchtable but commit message explicitly notes 'Sadly we still have to load all decks for the dropdowns for adding a match'",
+          "ref": "aeb4bb74",
+          "type": "commit"
+        },
+        {
+          "detail": "should_load_decks triggers full deck.load_decks() call loading complete deck objects including card lists",
+          "ref": "decksite/data/competition.py:91-104",
+          "type": "code"
+        },
+        {
+          "detail": "No caching mechanism found in league.py for the active_league result",
+          "ref": "grep -rn cache decksite/league.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8105,
+      "notes": "A meaningful fix requires either (a) caching the active_league result with short TTL, (b) splitting the admin dropdown to load only deck metadata (not full card lists), or (c) creating a leaner PDBot endpoint. All three require architectural decisions about caching strategy or API surface.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:44Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

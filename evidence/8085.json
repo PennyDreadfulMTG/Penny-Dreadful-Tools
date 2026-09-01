@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 8085,
+  "triage": [
+    {
+      "batch_id": "t-8097-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Reactify achievement detail page \u2014 added sections with h2 headings and livedecktable usage in personachievements.mustache",
+          "ref": "443790d0",
+          "type": "commit"
+        },
+        {
+          "detail": "Template now has <section><h2>{{title}}</h2>\u2026{{> livedecktable}}\u2026</section> per earned achievement \u2014 core asks done",
+          "ref": "decksite/templates/personachievements.mustache:1-16",
+          "type": "code"
+        },
+        {
+          "detail": "Show active league runs in achievement tables \u2014 further improvement after reactification",
+          "ref": "0d0ba9dd",
+          "type": "commit"
+        },
+        {
+          "detail": "Restrict season picker to relevant seasons for achievements \u2014 further improvement",
+          "ref": "8fa73f4d",
+          "type": "commit"
+        },
+        {
+          "detail": "bakert's comment on the issue explicitly says 'The spacing and ordering might be a little off still so leaving this open for further improvements'",
+          "ref": "#8085",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8085,
+      "notes": "The main reported asks (h2 headings, livedecktable for decklist achievements) are implemented in 443790d0 and subsequent commits. The issue remains open for unspecified spacing/ordering polish \u2014 needs a visual review against the live page to determine exactly what remains.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:11Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

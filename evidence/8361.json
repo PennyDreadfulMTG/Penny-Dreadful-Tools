@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8361,
+  "triage": [
+    {
+      "batch_id": "t-8372-2",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "update_cards() runs apply_rules_query() scoped to a single rule_id; this CTE joins rule_card, deck, and deck_card across the entire deck corpus",
+          "ref": "decksite/data/rule.py:249-267",
+          "type": "code"
+        },
+        {
+          "detail": "apply_rules_query() is a multi-CTE query: rule_card_count \u2192 candidates (deck \u00d7 deck_card join) \u2192 exclusion check; slow for large datasets",
+          "ref": "decksite/data/rule.py:272-370",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commits found; author comments show latency improved with innodb_file_buffer change then crept back to 7s+",
+          "ref": "git log --oneline --grep='8361|rule.*speed|rule.*perf|rule.*fast' --all",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8361,
+      "notes": "Root cause is the CTE in apply_rules_query joining deck and deck_card for all decks to re-match one rule. Indexing on deck_card(card, sideboard, n) or limiting the deck set searched might help, but profiling is needed before picking a fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:51Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

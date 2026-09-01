@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8508,
+  "triage": [
+    {
+      "batch_id": "t-8608-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "select name='{{prefix}}archetype_id'; when prefix is empty all queue selects get the same name 'archetype_id'",
+          "ref": "decksite/templates/archetypedropdown.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "Loop over self.queue never sets d['prefix'], so all archetypedropdowns render with name='archetype_id'",
+          "ref": "decksite/views/edit_archetypes.py:28-43",
+          "type": "code"
+        },
+        {
+          "detail": "Server reads archetype_ids = request.form.getlist('archetype_id') positionally; fails when browser restores shifted values on tab-reopen",
+          "ref": "decksite/controllers/admin.py:86-91",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/edit_archetypes.py, add d['prefix'] = f'{d.id}_' inside the queue loop so each dropdown renders as name='12345_archetype_id'. In decksite/controllers/admin.py, replace the getlist('archetype_id') approach with reading form.get(f'{deck_id}_archetype_id') for each deck_id in the submitted deck_id list. ~15 lines total across two files.",
+      "issue": 8508,
+      "notes": "The other archetypedropdown usages on the same page (Move, Rename, Update Description) are not inside the queue loop and will still have empty prefix, so they remain name='archetype_id' \u2014 no change needed for those code paths.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:01:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

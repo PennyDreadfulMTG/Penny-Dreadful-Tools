@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8627,
+  "triage": [
+    {
+      "batch_id": "t-8727-2",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Give both face names for modal dfcs in scryfall feed \u2014 added 'Torrent Sculptor // Flamethrower Sonata' style naming for modal_dfc cards in the cardfeed, April 2022",
+          "ref": "15ce8a20",
+          "type": "commit"
+        },
+        {
+          "detail": "Expand the number of layouts where we show all faces in cardfeed \u2014 broadened to use the shared send_scryfall_two_names helper covering modal_dfc, May 2022",
+          "ref": "6206b81f",
+          "type": "commit"
+        },
+        {
+          "detail": "send_scryfall_two_names() returns True for 'modal_dfc' layout; cardfeed emits 'Torrent Sculptor // Flamethrower Sonata'",
+          "ref": "decksite/controllers/api.py:838-839",
+          "type": "code"
+        },
+        {
+          "detail": "'modal_dfc': Layout(has_two_names=True, ...) \u2014 confirms modal_dfc cards have two names in the cardfeed output",
+          "ref": "magic/layout.py:48",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8627,
+      "notes": "Cannot verify PDBot runtime behavior directly; medium confidence because PDBot depends on the cardfeed and the cardfeed fix is specifically scoped to this problem. The fix also addresses the related #8642 (gatherling scraper) issue.",
+      "proposed_comment": "This was fixed by commit 15ce8a20 (April 2022), which gave both face names for modal DFCs in the cardfeed (e.g., 'Torrent Sculptor // Flamethrower Sonata'). The current code at decksite/controllers/api.py:838-839 confirms modal_dfc cards emit both names.",
+      "recorded_at": "2026-09-01T23:00:22Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

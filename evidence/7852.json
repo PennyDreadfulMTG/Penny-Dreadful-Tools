@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 7852,
+  "triage": [
+    {
+      "batch_id": "t-7895-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "latest_decks() and load_decks() still type season_id as str | int | None",
+          "ref": "decksite/data/deck.py:21",
+          "type": "code"
+        },
+        {
+          "detail": "load_people() still types season_id as str | int | None",
+          "ref": "decksite/data/person.py:97",
+          "type": "code"
+        },
+        {
+          "detail": "load_leaderboard() still types season_id as str | int | None \u2014 the specific case called out in the issue",
+          "ref": "decksite/data/competition.py:142",
+          "type": "code"
+        },
+        {
+          "detail": "season_query() accepts str | int | None and explicitly handles season_id == 'all' \u2014 the mixed representation remains",
+          "ref": "decksite/data/query.py:50-56",
+          "type": "code"
+        },
+        {
+          "detail": "season_id() returns int | str | None depending on all_return_value, perpetuating the mixed type",
+          "ref": "magic/seasons.py:241-244",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7852,
+      "notes": "Owner comment says 'might be more a case of cleaning up on a case-by-case basis'; the mixed type is endemic across at least 8 files. A complete overhaul would touch deck.py, person.py, competition.py, match.py, query.py, seasons.py, prepare.py, and possibly more \u2014 well beyond easy-fix scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:55Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

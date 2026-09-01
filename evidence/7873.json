@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7873,
+  "triage": [
+    {
+      "batch_id": "t-7895-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "@APP.route and @SEASONS.route exist for '/decks/<any(tournament,league):deck_type>/' \u2014 the singular /tournament/ URL works but plural /tournaments/ would 404",
+          "ref": "decksite/controllers/metagame.py:22-25",
+          "type": "code"
+        },
+        {
+          "detail": "People routes (/people/, /people/<username>/, etc.) have no deck_type parameter \u2014 /people/tournaments/ and /people/<user>/tournaments/ do not exist",
+          "ref": "decksite/controllers/people.py:15-55",
+          "type": "code"
+        },
+        {
+          "detail": "Owner comment: 'a pretty broad set of changes needed to switch from an ad hoc leagueOnly/tournamentOnly world to one where every page can have /tournament/ or /league/ appended'; mentions UI redesign for the toggle and React-driven deck_type state",
+          "ref": "#7873",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7873,
+      "notes": "The singular /seasons/<id>/decks/tournament/ URL already works today via existing SEASONS routes. The open work is: (1) people pages need deck_type support, (2) API calls need threading, (3) the plural-vs-singular URL naming should be resolved, (4) UI toggle should be redesigned. This is multi-controller scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:55Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

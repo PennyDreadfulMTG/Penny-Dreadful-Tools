@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 8252,
+  "triage": [
+    {
+      "batch_id": "t-8295-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No /add/ route exists in the decksite; the feature has not been built",
+          "ref": "grep -rn 'route.*add\\|/add\\b' decksite/controllers --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "bakert explicitly noted 'This conflicts with Matt's (not-yet-enacted) idea that we should only have competitive decks on pdm (to reduce sorting burden/noise)' \u2014 the feature conflicts with an open policy question",
+          "ref": "#8252",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8252,
+      "notes": "The feature is unbuilt and gated on a product call about whether pdm should accept non-competitive decks at all. That upstream decision must be made first.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:26Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7847,
+  "triage": [
+    {
+      "batch_id": "t-7847-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No /people/tournament/ route exists; only /people/ and /people/<mtgo_username>/ are registered under SEASONS",
+          "ref": "decksite/controllers/people.py:15-60",
+          "type": "code"
+        },
+        {
+          "detail": "load_people() has no deck_type parameter; SQL aggregates all decks without filtering by source/competition type",
+          "ref": "decksite/data/person.py:94-142",
+          "type": "code"
+        },
+        {
+          "detail": "Author noted 'Things like head-to-head and unique-cards-played would need some work', confirming known sub-feature complexity beyond the listing page itself",
+          "ref": "bakert comment on issue",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7847,
+      "notes": "Would require: new route in people.py controller, a deck_type param added to load_people() with a WHERE clause filtering by competition_id IS NOT NULL (for tournament) or source (for league), and the People view updated to show the filter. Sub-pages like head-to-head and unique cards would still need further work per the author's own comment.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

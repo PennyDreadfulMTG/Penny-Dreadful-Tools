@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8624,
+  "triage": [
+    {
+      "batch_id": "t-8727-2",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "List of archetype sorters and their activity \u2014 basic dashboard created at /admin/sorters/ showing name, num_decks_sorted, sorted_per_day (all-time), last_sorted",
+          "ref": "8843ce8c",
+          "type": "commit"
+        },
+        {
+          "detail": "Template shows Username, # Decks, Avg (all-time), Last \u2014 no revoke button, no differentiation of revoked users",
+          "ref": "decksite/templates/sorters.mustache:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "load_sorters() SQL computes all-time sorted_per_day (MAX-MIN date range), not a rolling 30/90-day window; no join with permissions table to filter active sorters",
+          "ref": "decksite/data/person.py:367-399",
+          "type": "code"
+        },
+        {
+          "detail": "Search returned no results \u2014 no revoke-permission endpoint exists for the sorters dashboard",
+          "ref": "grep -n 'revoke|remove.*role|demimod.*remove' decksite/controllers/admin.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8624,
+      "notes": "Three outstanding sub-items: (1) revoke-permission button missing from template and no endpoint for it; (2) revoked users not distinguished (no permission-table join); (3) sorted_per_day is all-time average, not 30/90-day rolling. The 'people with no sorts appearing' sub-item appears fixed by the existing INNER JOIN in load_sorters().",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:22Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

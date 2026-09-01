@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8241,
+  "triage": [
+    {
+      "batch_id": "t-8295-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Command currently posts only a URL via fetcher.decksite_url('/tournaments/pd500/') with no date, prizes, or description",
+          "ref": "discordbot/commands/pd500.py:1-13",
+          "type": "code"
+        },
+        {
+          "detail": "pd500_date() and pd500_prizes() already exist and return the date and prize table, ready to be used in a bot response",
+          "ref": "magic/tournaments.py:131",
+          "type": "code"
+        },
+        {
+          "detail": "kickoff.py is identical in structure, so pd500.py can be updated the same way without new patterns",
+          "ref": "discordbot/commands/kickoff.py:1-14",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Update discordbot/commands/pd500.py to import magic.tournaments, call tournaments.pd500_date() and tournaments.pd500_prizes(), and send a formatted message that includes the tournament date, a short description ('biggest PD tournament of the season'), and top prize alongside the URL. All data is already available; the change is ~20-30 lines in one file.",
+      "issue": 8241,
+      "notes": "bakert's comment also suggests adding a proxy in explain.py and centralizing copy in magic.tournaments, but the core request (richer bot response) is self-contained in pd500.py. Scope can be narrowed to that file alone.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

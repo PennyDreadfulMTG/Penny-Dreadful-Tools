@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7704,
+  "triage": [
+    {
+      "batch_id": "t-7729-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Person view has no door prize or credit fields; no doorprize data is passed to or displayed on the player page",
+          "ref": "decksite/views/person.py:19-109",
+          "type": "code"
+        },
+        {
+          "detail": "set_doorprize() inserts into doorprize table but there is no function to query credit owed per person or track paid status",
+          "ref": "decksite/data/competition.py:204-206",
+          "type": "code"
+        },
+        {
+          "detail": "POST /api/doorprize endpoint records a winner but there is no mechanism to mark credit as paid or expose owed credit via the site",
+          "ref": "decksite/controllers/api.py:628-635",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7704,
+      "notes": "Feature requires new data infrastructure (querying doorprize by person, tracking paid/unpaid state), new person-page UI, and possibly an admin interface to mark credit as issued \u2014 scope is bigger than easy-fix and the 'credited' state needs a product definition.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

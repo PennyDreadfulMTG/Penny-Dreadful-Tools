@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8428,
+  "triage": [
+    {
+      "batch_id": "t-8435-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "find_mtgo_username() loops over players and returns aliased(gatherling_username) as a best guess when no mtgo_username is set",
+          "ref": "decksite/scrapers/gatherling.py:294",
+          "type": "code"
+        },
+        {
+          "detail": "Player dataclass has discord_id: int | None \u2014 gatherling API returns discord_id for many players (confirmed in test fixture at gatherling_test.py:72)",
+          "ref": "decksite/scrapers/gatherling.py:115",
+          "type": "code"
+        },
+        {
+          "detail": "maybe_load_person_by_discord_id(discord_id) exists and returns a Person with their mtgo_username if known to PD",
+          "ref": "decksite/data/person.py:47",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In find_mtgo_username() at decksite/scrapers/gatherling.py:294, after checking p.mtgo_username and before falling back to aliased(gatherling_username), add: `if p.discord_id is not None: pd_person = person.maybe_load_person_by_discord_id(p.discord_id); if pd_person and pd_person.name: return pd_person.name`. Add `from decksite.data import person` import at the top. ~8 lines added.",
+      "issue": 8428,
+      "notes": "The gatherling test fixture (gatherling_test.py:72) confirms many players have discord_id populated. A unit test for the improved find_mtgo_username() would be straightforward to add.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:59Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

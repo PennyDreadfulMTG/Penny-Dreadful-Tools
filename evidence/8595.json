@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8595,
+  "triage": [
+    {
+      "batch_id": "t-8608-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "check_deck_legality() builds banned_for_bugs and playable_bugs as sets of card names only; bug descriptions are never stored",
+          "ref": "decksite/form.py:89-96",
+          "type": "code"
+        },
+        {
+          "detail": "Template renders only the card name string ({{.}}) in the Legality_Bugs and Warnings_Bugs lists, no description",
+          "ref": "decksite/templates/deckerrors.mustache:14-21",
+          "type": "code"
+        },
+        {
+          "detail": "Bug rows include description, classification, url, bannable \u2014 all available on c.bugs[n]",
+          "ref": "magic/multiverse.py:84",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/form.py:check_deck_legality(), change the set comprehensions to include bug descriptions, e.g. f'{c.name} \u2014 {bug[\"description\"]}' for each relevant bug; update card_messages_with_submitted_aliases() to split on ' \u2014 ' when doing alias lookup; update deckerrors.mustache to optionally link the bug URL if desired. Touches decksite/form.py and decksite/templates/deckerrors.mustache, <50 lines.",
+      "issue": 8595,
+      "notes": "The bug data (description, url) is already loaded on each card; no additional queries needed. The alias-lookup in card_messages_with_submitted_aliases must be updated to extract the canonical name prefix before looking up in aliases.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:01:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8714,
+  "triage": [
+    {
+      "batch_id": "t-8727-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "show_add_rule_prompt is set per-deck when similarity==100%, but edit_rules_url is a single generic URL (url_for('edit_rules')) without an archetype_id \u2014 the [+] link does not pre-fill the archetype",
+          "ref": "decksite/views/edit_archetypes.py:34-35",
+          "type": "code"
+        },
+        {
+          "detail": "[+] prompt exists in the queue row but href='{{edit_rules_url}}' uses the generic URL, not a deck-specific one with archetype_id",
+          "ref": "decksite/templates/editarchetypes.mustache:27-29",
+          "type": "code"
+        },
+        {
+          "detail": "The dropdown supports a 'selected' property per-option, so pre-selection is already supported by the template infrastructure",
+          "ref": "decksite/templates/archetypedropdown.mustache:4",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Three files: (1) decksite/views/edit_archetypes.py \u2014 change edit_rules_url to be per-deck using url_for('edit_rules', archetype_id=d.archetype_id) for decks where show_add_rule_prompt is True. (2) decksite/controllers/admin.py \u2014 in edit_rules(), read optional archetype_id GET param and pass to view. (3) decksite/views/edit_rules.py \u2014 accept preselect_archetype_id; mark the matching archetype as selected=True in the archetypes list for the New Rule form. No schema changes required.",
+      "issue": 8714,
+      "notes": "The [+] prompt (commit 95b0c604 from PR #8419) is already there; this just completes it by wiring up the archetype pre-selection.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:22Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

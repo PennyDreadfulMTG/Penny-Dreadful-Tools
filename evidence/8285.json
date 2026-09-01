@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8285,
+  "triage": [
+    {
+      "batch_id": "t-8295-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Added TRAILBLAZER_CARD_PREVIEW_SIZE=12 limit, additional_trailblazer_card flag, and a 'Show all N...' toggle button in the person template",
+          "ref": "360e9e44",
+          "type": "commit"
+        },
+        {
+          "detail": "TRAILBLAZER_CARD_PREVIEW_SIZE = 12 caps the visible list to 12 cards",
+          "ref": "decksite/views/person.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "querySelectorAll('.trailblazer-card-list-toggle') JS wires up expand/collapse toggle so long lists are hidden behind a 'Show all N...' link",
+          "ref": "shared_web/static/js/pd.js:111",
+          "type": "code"
+        },
+        {
+          "detail": "trailblazer-card-list-toggle link with aria-expanded and hidden attributes confirms the collapse UI is in place",
+          "ref": "decksite/templates/person.mustache:81",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8285,
+      "notes": "The fix landed 2026-08-21, after bakert's comment about mouseover making the issue worse. The collapse/expand behavior is now present in the current master.",
+      "proposed_comment": "This was resolved in commit 360e9e44 (\"Show seasons for cards played first\"), which capped the Cards Played First section to 12 entries by default and added a JavaScript-powered \"Show all N\u2026\" toggle for longer lists.",
+      "recorded_at": "2026-09-01T22:59:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

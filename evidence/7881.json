@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7881,
+  "triage": [
+    {
+      "batch_id": "t-7895-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "cache_rotation() builds _rotation entirely from `FROM rotation_runs AS rr`, so any card with 0 rotation hits is absent from the table",
+          "ref": "decksite/data/rotation.py:96-116",
+          "type": "code"
+        },
+        {
+          "detail": "_legal_cards table exists and is populated with (season_id, name) rows for all PD-legal cards per season; can be used as the driving table in the LEFT JOIN",
+          "ref": "decksite/data/playability.py:121-148",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `decksite/data/rotation.py` `cache_rotation()`, change the FROM clause from `FROM rotation_runs AS rr` to `FROM _legal_cards AS lc LEFT JOIN rotation_runs AS rr ON lc.name = rr.name AND rr.season_id = @next_season_id WHERE lc.season_id = {seasons.current_season_num()}`, and change `COUNT(*) AS hits` to `COALESCE(COUNT(rr.name), 0)` / adjust GROUP BY to use `lc.name`. This includes all currently-legal cards in the output with 0 hits where no rotation run has seen them. Also update `load_rotation_summary()` to reflect total card count from `_legal_cards` for the current season. No schema changes needed.",
+      "issue": 7881,
+      "notes": "Change is confined to the SQL inside cache_rotation() and a small adjustment to load_rotation_summary(). No DB schema migration; _rotation is a preaggregated table rebuilt on every cache update.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

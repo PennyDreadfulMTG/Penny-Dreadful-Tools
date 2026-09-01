@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 8100,
+  "triage": [
+    {
+      "batch_id": "t-8105-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "setup_matches() hides opponent_deck_name to '(Active League Run)' for non-admins \u2014 name hiding is done",
+          "ref": "decksite/data/match.py:127",
+          "type": "code"
+        },
+        {
+          "detail": "show_active_deck_names=session.get('admin', False) passed to load_matches \u2014 admin check in place",
+          "ref": "decksite/controllers/api.py:396",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_matches() runs after setup_matches and still sets opponent_deck_url from opponent_deck_id \u2014 the deck URL is still exposed in the JSON response even when the name is anonymized",
+          "ref": "decksite/prepare.py:162-164",
+          "type": "code"
+        },
+        {
+          "detail": "Person matches page still uses a static HTML table, not livematchtable \u2014 the expansion requested in the issue is not done",
+          "ref": "decksite/templates/personmatches.mustache:1-35",
+          "type": "code"
+        },
+        {
+          "detail": "person_matches route calls load_matches_by_person() directly and renders a full static page; no livematchtable, no pagination",
+          "ref": "decksite/controllers/people.py:57-62",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8100,
+      "notes": "The name-hiding part is partially done but the deck URL leaks; the livematchtable expansion to /people/{username}/matches requires converting the route to paginate via /api/matches and reworking the PersonMatches view and template. Both are needed to fulfill the full issue.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:44Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7744,
+  "triage": [
+    {
+      "batch_id": "t-7753-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "typeahead search does only exact string match and substring (q in name), no Levenshtein/fuzzy matching; 'fire ice' would not find 'Fire // Ice'",
+          "ref": "decksite/controllers/api.py:792",
+          "type": "code"
+        },
+        {
+          "detail": "FuzzyTerm-based whoosh search exists and handles fuzzy matching but is only used by the Discord bot, not the web typeahead",
+          "ref": "magic/whoosh_search.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7744,
+      "notes": "Connecting whoosh to the web typeahead endpoint requires either rewriting init_search_cache to run queries through WhooshSearch per keystroke (latency concern) or building a fuzzy-normalized alternate-name index into typeahead.json at build time.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:56:17Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

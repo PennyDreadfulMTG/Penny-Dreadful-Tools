@@ -1,0 +1,68 @@
+{
+  "fix": [],
+  "issue": 7738,
+  "triage": [
+    {
+      "batch_id": "t-7753-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR 'Dark mode' merged 2024-05-30, commit 87293666",
+          "ref": "#12694",
+          "type": "pr"
+        },
+        {
+          "detail": "html.dark-mode ruleset present; color-scheme: light dark at line 559; toggle container at line 876",
+          "ref": "shared_web/static/css/pd.css:635",
+          "type": "code"
+        },
+        {
+          "detail": "dark-mode-toggle-container click handler stores and applies the dark-mode class",
+          "ref": "shared_web/static/js/pd.js:209",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7738,
+      "notes": "Feature fully shipped; multiple follow-up PRs refined contrast and image handling afterward.",
+      "proposed_comment": "Dark mode was implemented in PR #12694 (merged May 2024). The site now has a toggle in the navigation and full `html.dark-mode` CSS coverage. This issue can be closed.",
+      "recorded_at": "2026-09-01T22:56:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-7738-1",
+      "final_comment": null,
+      "issue": 7738,
+      "own_evidence": [
+        {
+          "detail": "no darkmode script or class initialization \u2014 dark mode never activates on logsite",
+          "ref": "logsite/templates/header.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "no dark-mode-toggle-container element \u2014 logsite has no user-facing toggle",
+          "ref": "logsite/templates/menu.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "setDarkMode script only included in decksite header, not shared with logsite",
+          "ref": "decksite/templates/darkmode.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "PR touched only decksite templates; logsite templates were not modified",
+          "ref": "pr #12694 files: decksite/templates/header.mustache only",
+          "type": "pr"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T22:59:37Z",
+      "refutation_reason": "PR #12694 implemented dark mode for decksite only. The issue is labeled '* logsite' and a comment by the author explicitly requests sharing the preference between decksite and logsite. logsite/templates/header.mustache contains no dark mode initialization and logsite/templates/menu.mustache contains no toggle, so logsite users cannot enable dark mode. The fix is partial.",
+      "verdict": "REFUTED"
+    }
+  ]
+}

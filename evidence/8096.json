@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8096,
+  "triage": [
+    {
+      "batch_id": "t-8097-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "matches_api() docstring and implementation only support competitionId, page, pageSize, q, sortBy, sortOrder, seasonId \u2014 personId, archetypeId, deckType, and competitionSeriesId are absent",
+          "ref": "decksite/controllers/api.py:363-396",
+          "type": "code"
+        },
+        {
+          "detail": "load_matches() already JOINs deck (d), competition (c), competition_series (cs), competition_type (ct) \u2014 all columns needed for the new filters exist",
+          "ref": "decksite/data/match.py:57-118",
+          "type": "code"
+        },
+        {
+          "detail": "archetype_where() helper already exists and works against d.archetype_id which is in the match query",
+          "ref": "decksite/data/clauses.py:212-255",
+          "type": "code"
+        },
+        {
+          "detail": "leaderboards_api() already shows the competitionSeriesId pattern: try/except int() then append cs.id WHERE clause \u2014 identical pattern needed for matches",
+          "ref": "decksite/controllers/api.py:325-355",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/api.py, inside matches_api(), add WHERE clause handling for four new params following existing patterns: (1) personId \u2192 append 'd.person_id = {int(personId)}' to where; (2) archetypeId \u2192 append clauses.archetype_where(int(archetypeId)); (3) deckType \u2192 append \"ct.name = 'League'\" or \"ct.name = 'Gatherling'\" based on value; (4) competitionSeriesId \u2192 try/except int parse, append 'cs.id = {id}' (cs is already in competition_join). Also update the docstring. Total ~25 lines.",
+      "issue": 8096,
+      "notes": "All necessary JOINs are already in place via query.competition_join() and the deck JOIN; no schema changes required. The competitionSeriesId pattern can be copied verbatim from leaderboards_api() at api.py:351-353.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:11Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

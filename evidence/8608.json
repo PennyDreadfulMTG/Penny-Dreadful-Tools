@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 8608,
+  "triage": [
+    {
+      "batch_id": "t-8608-2",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Author's own comment says 'I guess I've talked myself out of wanting to be able to say `c:w order:penny`' and ends with 'Not sure about this one. Will ponder.'",
+          "ref": "#8608",
+          "type": "issue"
+        },
+        {
+          "detail": "Key.values list has no 'order' or 'sort' entry; the feature does not exist in the codebase",
+          "ref": "find/tokens.py:62",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8608,
+      "notes": "The reporter is also the project owner (bakert) and their own comment half-rejects the idea. The decision is whether the value of client-side ordering via query syntax outweighs implementation cost, since column-header sorting already covers the common cases.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:01:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

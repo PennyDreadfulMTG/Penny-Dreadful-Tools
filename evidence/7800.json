@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7800,
+  "triage": [
+    {
+      "batch_id": "t-7847-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No code for this feature exists anywhere in decksite/",
+          "ref": "grep -r 'sideboard.*archetype\\|effective.*against\\|anti.*archetype' decksite/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Author noted 'I'm not sure if we can surface the right list of cards without using game logs to look at what sb cards are played in matches against the archetype', indicating significant data and design questions remain open",
+          "ref": "bakert comment on issue",
+          "type": "behavior"
+        },
+        {
+          "detail": "No sideboard-analysis view or data module exists",
+          "ref": "ls decksite/views/ | grep sideboard",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7800,
+      "notes": "Requires new game-log data collection or mining of existing match data to identify sideboard cards played against each archetype, a new SQL query or data pipeline, and a new UI section on the archetype page. The author's comment suggests the product approach is itself unresolved.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

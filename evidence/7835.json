@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7835,
+  "triage": [
+    {
+      "batch_id": "t-7847-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "flavor_text() returns the same message 'No flavor text for {preferred_printing}' whether the set is invalid, the card is not in that set, or the card is in the set but has no flavor text",
+          "ref": "discordbot/commands/flavor.py:16-24",
+          "type": "code"
+        },
+        {
+          "detail": "Line already compares preferred_printing against both set_code and set_name (case-insensitive), so long set names already work",
+          "ref": "discordbot/commands/flavor.py:18",
+          "type": "code"
+        },
+        {
+          "detail": "oracle.get_printing(card, setcode) can determine if a card exists in a set (returns None if not); only a set-existence helper is missing for the third error case",
+          "ref": "magic/oracle.py:141-153",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Add oracle.get_set_by_name_or_code(s: str) -> Container | None in magic/oracle.py querying `SELECT id FROM set WHERE code = %s OR name LIKE %s`. 2) In discordbot/commands/flavor.py:flavor_text(), after the loop: if preferred_printing is set, call oracle.get_printing(c, preferred_printing) \u2014 if it returns a printing but no flavor, say 'No flavor text for {card} in {set}'; if get_printing returns None but the set is valid (oracle.get_set_by_name_or_code returns a row), say '{card} was not printed in {set}'; if the set is also unknown, say 'Unknown set: {preferred_printing}'. Total ~40 lines across 2 files.",
+      "issue": 7835,
+      "notes": "The 'wrong codes' part (e.g. INN for Innistrad) mentioned as optional in the issue is a fuzzier feature and can be omitted from this fix. No schema change needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

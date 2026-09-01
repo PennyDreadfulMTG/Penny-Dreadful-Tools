@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8372,
+  "triage": [
+    {
+      "batch_id": "t-8372-2",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current legality section uses {{> legal}} partial with legal_icons (season icons); no popularity-over-time chart exists for cards",
+          "ref": "decksite/templates/card.mustache:18-22",
+          "type": "code"
+        },
+        {
+          "detail": "Card view computes legal_seasons but has no history_chart or per-season usage stats",
+          "ref": "decksite/views/card.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "Archetype view already has history_chart() with meta_share per season \u2014 analogous feature exists for archetypes but not cards",
+          "ref": "decksite/views/archetype.py:21-63",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commits found",
+          "ref": "git log --oneline --grep='8372|card popularity|card.*history.*chart' --all",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8372,
+      "notes": "The issue author explicitly says 'Not sure' about the key design question: whether to use logarithmic, percentile, or per-card-relative Y-axis scaling. That unresolved product decision must be answered before implementation begins.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:51Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

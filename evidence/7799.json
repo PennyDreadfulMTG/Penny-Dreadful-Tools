@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7799,
+  "triage": [
+    {
+      "batch_id": "t-7799-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Archetype tree uses plain HTML <table class='archetypes'>, not a React JSX component \u2014 still not reactified",
+          "ref": "decksite/templates/archetypetree.mustache:1-30",
+          "type": "code"
+        },
+        {
+          "detail": "Matchups results section uses a plain HTML table rendered server-side, not a React component",
+          "ref": "decksite/templates/matchups.mustache:1-50",
+          "type": "code"
+        },
+        {
+          "detail": "rotation.mustache uses class='rotationtable' which maps to this React component \u2014 confirming the originally-unchecked 'rotation changes' item is now done",
+          "ref": "shared_web/static/js/rotationtable.jsx:1",
+          "type": "code"
+        },
+        {
+          "detail": "Confirms head-to-head is done; leaderboardtable.jsx, matchtable.jsx, cardtable.jsx also exist \u2014 partial completion confirmed",
+          "ref": "shared_web/static/js/headtoheadtable.jsx:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7799,
+      "notes": "Remaining work: archetype tree (noted as 'hard to design' in comments) and matchups results table. Each requires a new JSX component plus a corresponding API endpoint. The archetype tree is hierarchical and may need a custom tree-rendering React component rather than a simple table.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:58:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8295,
+  "triage": [
+    {
+      "batch_id": "t-8295-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "p.elo is a single global column on the person table, not joined to any season table \u2014 Elo is inherently not per-season by design",
+          "ref": "decksite/data/person.py:81",
+          "type": "code"
+        },
+        {
+          "detail": "ELO adjustment writes directly to person.elo with no season context, confirming global storage",
+          "ref": "decksite/data/elo.py:1-40",
+          "type": "code"
+        },
+        {
+          "detail": "bakert explicitly labeled this 'intended behavior' but acknowledged it is 'possibly bad and certainly confusing', making it a product call, not a bug",
+          "ref": "#8295",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8295,
+      "notes": "Implementing per-season Elo would require a schema migration (new person_season_elo table or equivalent). The decision is whether Elo should remain a single rolling rating (like chess) or reset/recalculate per-season.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:26Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

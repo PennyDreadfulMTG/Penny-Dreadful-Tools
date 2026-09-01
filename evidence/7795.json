@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7795,
+  "triage": [
+    {
+      "batch_id": "t-7799-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Person view exposes archetypes and achievements but generates no narrative bio text",
+          "ref": "decksite/views/person.py:20-27",
+          "type": "code"
+        },
+        {
+          "detail": "Person template shows achievements section only; no pen-pic/bio section exists",
+          "ref": "decksite/templates/person.mustache:8-19",
+          "type": "code"
+        },
+        {
+          "detail": "No results \u2014 feature entirely unimplemented",
+          "ref": "grep -rn 'bio|pen_pic|pen.pic' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7795,
+      "notes": "Owner must decide: which stats to highlight (macroarchetype preferences, tournament wins, league completions, season tenure), what sentence templates to write, what thresholds trigger each statement, and whether to hash on username for stability as the comments suggest.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:58:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7753,
+  "triage": [
+    {
+      "batch_id": "t-7753-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "on_member_add exists but only sends a welcome message; no member count is stored anywhere",
+          "ref": "discordbot/bot.py:137",
+          "type": "code"
+        },
+        {
+          "detail": "search returned no results \u2014 no member count tracking or historical storage exists",
+          "ref": "grep -rn 'member_count' --include='*.py' discordbot/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7753,
+      "notes": "Would require: storing periodic guild member counts (Redis or DB), an event hook or scheduled task to record counts, and a chart page on decksite/logsite. Non-trivial scope across discord bot, storage, and site.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:56:17Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

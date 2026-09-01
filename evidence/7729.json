@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7729,
+  "triage": [
+    {
+      "batch_id": "t-7729-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "person() handles both /people/<mtgo_username>/ and /people/id/<int:person_id>/ routes but never redirects from the ID-based route to the vanity URL",
+          "ref": "decksite/controllers/people.py:22-35",
+          "type": "code"
+        },
+        {
+          "detail": "archetype() serves content for numeric archetype_id without redirecting to the name-based URL; load_archetype at data/archetype.py:28-39 distinguishes int vs string inputs",
+          "ref": "decksite/controllers/metagame.py:125-139",
+          "type": "code"
+        },
+        {
+          "detail": "load_person() already fetches the mtgo_username via ps.load_person_by_id, making the redirect straightforward for users who have one",
+          "ref": "decksite/controllers/people.py:64-68",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/people.py person(): after loading p when called with person_id and p.mtgo_username is not None, return redirect(url_for('.person', mtgo_username=p.mtgo_username), code=301). In decksite/controllers/metagame.py archetype(): after loading a, if archetype_id.isdigit() return redirect(url_for('.archetype', archetype_id=a.name.replace(' ', '+')), code=301). Each change is 3-5 lines.",
+      "issue": 7729,
+      "notes": "Issue comment flags that Goldfish/Tapped-Out-only users have no vanity URL to redirect to; the fix handles this gracefully by only redirecting when mtgo_username is present. Archetypes always have names so no edge case there.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7796,
+  "triage": [
+    {
+      "batch_id": "t-7799-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "cards2_api() accepts no maindeck/sideboard parameter; the docstring lists all accepted params and none relate to deck position",
+          "ref": "decksite/controllers/api.py:184-220",
+          "type": "code"
+        },
+        {
+          "detail": "The SQL uses 'SELECT DISTINCT card, deck_id FROM deck_card' specifically to avoid maindeck/sideboard double-counting \u2014 the stats tables aggregate both together",
+          "ref": "decksite/data/card.py:28-29",
+          "type": "code"
+        },
+        {
+          "detail": "cardtable.jsx renders no maindeck/sideboard/both radio UI",
+          "ref": "shared_web/static/js/cardtable.jsx:1-80",
+          "type": "code"
+        },
+        {
+          "detail": "No results \u2014 radio control not implemented anywhere",
+          "ref": "grep -rn 'maindeck.*radio|sideboard.*radio' shared_web/static/js/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7796,
+      "notes": "The preaggregate tables (_card_stats, _card_person_stats, _card_archetype_stats) combine maindeck and sideboard counts via DISTINCT. Supporting the filter requires either new/modified preaggregate tables or a live-query path, plus API and JSX changes \u2014 too large for easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:58:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7895,
+  "triage": [
+    {
+      "batch_id": "t-7895-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "parse_queries() strips backtick-delimited content with re.sub before scanning for [card] patterns, but has no equivalent strip for Discord > quote lines",
+          "ref": "discordbot/command.py:62",
+          "type": "code"
+        },
+        {
+          "detail": "Full parse_queries function: to_scan strips backticks only; a > quoted line like '> [Lightning Bolt]' would still match the card-name regex",
+          "ref": "discordbot/command.py:61-67",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `discordbot/command.py` inside `parse_queries()`, after line 62 add one line: `to_scan = re.sub(r'(?m)^>.*$', '', to_scan)` to strip Discord quote lines (lines beginning with >) before scanning for bracketed card names, mirroring the existing backtick stripping. Add a test case to `discordbot/command_test.py` verifying a message with `> [Card Name]` returns no queries.",
+      "issue": 7895,
+      "notes": "The comment at line 62 explicitly describes the intent ('Ignore angle brackets inside backticks') so the pattern for quote lines is directly analogous. One-line regex change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

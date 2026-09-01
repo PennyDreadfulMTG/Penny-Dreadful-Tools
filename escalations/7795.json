@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T22:58:20Z",
+  "created_at": "2026-09-01T22:58:02Z",
+  "evidence_refs": [
+    "evidence/7795.json#triage[0]"
+  ],
+  "issue": 7795,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Owner must decide: which stats to highlight (macroarchetype preferences, tournament wins, league completions, season tenure), what sentence templates to write, what thresholds trigger each statement, and whether to hash on username for stability as the comments suggest."
+}

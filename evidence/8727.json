@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8727,
+  "triage": [
+    {
+      "batch_id": "t-8727-2",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Expand the number of layouts where we show all faces in cardfeed \u2014 adds 'flip' to the layouts that emit both face names (e.g., 'Erayo, Prodigy Ascendant // Erayo's Essence'), requested by Scryfall/PDBot, May 2022",
+          "ref": "6206b81f",
+          "type": "commit"
+        },
+        {
+          "detail": "send_scryfall_two_names() returns True for 'flip' layout (it is in layout.has_two_names() and not in layout.has_meld_back()), so the cardfeed sends both names",
+          "ref": "decksite/controllers/api.py:838-839",
+          "type": "code"
+        },
+        {
+          "detail": "'flip': Layout(has_two_names=True) \u2014 confirms flip cards have two canonical names and will be included in the two-name cardfeed output",
+          "ref": "magic/layout.py:43",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8727,
+      "notes": "Cannot directly verify PDBot runtime behavior without a running instance; confidence is medium because the cardfeed fix is the most likely cause and the code evidence is solid, but PDBot is a separate application.",
+      "proposed_comment": "This appears to have been fixed by PR #8646's follow-up work: commit 6206b81f (May 2022) expanded the cardfeed to emit both face names for flip-layout cards (e.g., 'Erayo, Prodigy Ascendant // Erayo's Essence'). The current code at decksite/controllers/api.py:838-839 confirms send_scryfall_two_names returns True for the flip layout.",
+      "recorded_at": "2026-09-01T23:00:22Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

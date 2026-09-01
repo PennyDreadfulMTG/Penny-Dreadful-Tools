@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7760,
+  "triage": [
+    {
+      "batch_id": "t-7799-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Archetype routes use numeric id: '/archetypes/<archetype_id>/' \u2014 no slug-based canonical URL",
+          "ref": "decksite/controllers/metagame.py:125-128",
+          "type": "code"
+        },
+        {
+          "detail": "Card routes accept raw path (mixed-case, %20-encoded) with no canonical redirect to lowercase-hyphenated form",
+          "ref": "decksite/controllers/metagame.py:73-76",
+          "type": "code"
+        },
+        {
+          "detail": "No canonical meta tags or 301 redirects for URL normalization",
+          "ref": "grep -rn 'rel.*canonical|301' decksite/main.py",
+          "type": "search"
+        },
+        {
+          "detail": "Existing redirects handle seasons/0 and discord but not card/archetype URL canonicalization",
+          "ref": "decksite/main.py:46-87",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7760,
+      "notes": "Author's last comment explicitly moves this to backlog: 'choosing backlog as that's the middle ground.' Completing it requires: slug generation for archetypes/cards, 301 redirect middleware, split-card URL handling, and rel=canonical meta tags \u2014 multiple interconnected changes across routing, templates, and URL generation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:58:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7750,
+  "triage": [
+    {
+      "batch_id": "t-7753-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "only ad-hoc mentions of !retire and !record; no comprehensive PDBot command list exists anywhere in the codebase",
+          "ref": "discordbot/commands/explain.py:153",
+          "type": "code"
+        },
+        {
+          "detail": "PDBot MTGO commands only mentioned in scattered explain.py strings, no dedicated listing page or command",
+          "ref": "grep -rn '!record|!retire' --include='*.py' --include='*.html' .",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7750,
+      "notes": "Scope is unclear: 'ingame bot' likely means PDBot (MTGO), which only has !record and !retire documented. Owner should decide whether this means a website page, a Discord command, or an in-game message \u2014 that determines implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:56:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

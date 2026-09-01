@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T23:01:55Z",
+  "created_at": "2026-09-01T23:00:22Z",
+  "evidence_refs": [
+    "evidence/8667.json#triage[0]"
+  ],
+  "issue": 8667,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Owner decision needed: use per-archetype Elo (new computation) or per-archetype win rate from the existing preaggregate table, and over what time period. Per-archetype win-rate data is already precomputed in _archetype_person_stats; showing the top player by win rate per archetype per season would be a simpler starting point."
+}

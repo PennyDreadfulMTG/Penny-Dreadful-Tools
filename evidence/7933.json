@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7933,
+  "triage": [
+    {
+      "batch_id": "t-7951-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "ROW_NUMBER() OVER (ORDER BY points DESC, wins DESC, person) AS finish is computed after the WHERE clause filtering, so a person-name text search recalculates rank 1..N within the filtered result set",
+          "ref": "decksite/data/competition.py:157",
+          "type": "code"
+        },
+        {
+          "detail": "The text search filter `clauses.text_match_where(query.person_query(), q)` is merged into the same `where` string as competition_id/season filters, all passed to load_leaderboard() as the inner WHERE clause \u2014 so the ROW_NUMBER window function sees only the filtered rows",
+          "ref": "decksite/controllers/api.py:340-355",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commit found for this issue",
+          "ref": "git log --grep='7933'",
+          "type": "search"
+        },
+        {
+          "detail": "prepare_leaderboard sets entry.position from entry.finish (the ROW_NUMBER), confirming that positions 1-8 get the circled-number glyphs \u2014 wrong when calculated on a filtered set",
+          "ref": "decksite/prepare.py:152-153",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add an `outer_where: str = 'TRUE'` parameter to `load_leaderboard()` in `decksite/data/competition.py`. Wrap the existing SQL as a subquery and apply `outer_where` and the ORDER BY/LIMIT in the outer query, keeping `COUNT(*) OVER ()` in the outer SELECT as the new total. In `decksite/controllers/api.py`, extract the person-name text filter into `outer_where` and keep only competition_id/season filters in the inner `where`.",
+      "issue": 7933,
+      "notes": "The SQL query is ~50 lines and complex; the subquery wrapper is straightforward but needs careful testing to ensure total counts, ordering, and all callers of load_leaderboard() still work correctly.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:48Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

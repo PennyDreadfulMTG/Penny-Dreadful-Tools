@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8104,
+  "triage": [
+    {
+      "batch_id": "t-8105-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Added EditMatchForm class with validation, but only checks deck IDs are valid integers and scores are whole numbers \u2014 no total-games check",
+          "ref": "dca77b4c",
+          "type": "commit"
+        },
+        {
+          "detail": "EditMatchForm.do_validation() validates that scores are integers but never checks that left_games + right_games is 2 or 3",
+          "ref": "decksite/league.py:62-84",
+          "type": "code"
+        },
+        {
+          "detail": "Existing tests cover missing/non-integer scores and same-deck selection, but no test for invalid game totals like 0+0 or 3+3",
+          "ref": "decksite/league_test.py:13-26",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/league.py:EditMatchForm.do_validation(), after the existing per-field integer checks, add a cross-field validation block: if both scores parsed without error, compute total = int(self.left_games) + int(self.right_games) and set self.errors['right_games'] = 'Results must total 2 or 3 games.' if total not in (2, 3). Add corresponding test cases in decksite/league_test.py (e.g., 0+0, 1+1, 3+3).",
+      "issue": 8104,
+      "notes": "dca77b4c added the form and infrastructure but missed this specific validation; the surrounding code structure is already in place making this a small additive change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:44Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7766,
+  "triage": [
+    {
+      "batch_id": "t-7799-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "update_index filters to playable layouts only: 'cards = [c for c in cards if layout.is_playable_layout(c.layout)]' \u2014 vanguard is excluded",
+          "ref": "magic/whoosh_write.py:33",
+          "type": "code"
+        },
+        {
+          "detail": "'vanguard': Layout(playable=False) \u2014 avatar/vanguard cards are non-playable and thus never indexed",
+          "ref": "magic/layout.py:63",
+          "type": "code"
+        },
+        {
+          "detail": "WhooshSearcher builds a single pygtrie from the index; no fallback to non-playable cards",
+          "ref": "magic/whoosh_search.py:83-160",
+          "type": "code"
+        },
+        {
+          "detail": "Design decision already agreed: search normal cards first, fall back to extras (two-index approach) \u2014 bakert confirmed 'That sounds like a good behavior'",
+          "ref": "#7766 comment by silasary",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": "Add a STORED boolean 'playable' field to the Whoosh schema in magic/whoosh_write.py; remove the playable-layout filter from update_index so all cards (including vanguard) are indexed; tag each document with its playable status. In magic/whoosh_search.py WhooshSearcher.initialize_trie(), build two tries \u2014 self.trie (playable-only) and self.trie_all (all cards) \u2014 from the playable flag. In search(), run against the playable trie first and fall back to trie_all only when the primary returns no matches.",
+      "issue": 7766,
+      "notes": "No schema migration, no data deletion, affects only the Whoosh full-text search (bot card lookups and site typeahead). The existing whoosh_search_test.py and whoosh_write_test.py provide a clear pattern for new tests covering the extras fallback.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:58:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

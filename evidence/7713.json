@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7713,
+  "triage": [
+    {
+      "batch_id": "t-7729-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No toLocaleString, numeral, or comma-formatting applied to numeric elements; PD.formatPercentage exists for percentages only",
+          "ref": "shared_web/static/js/pd.js:1-841",
+          "type": "code"
+        },
+        {
+          "detail": "num_decks rendered as {{num_decks}} with class='n' \u2014 raw integer, no formatting",
+          "ref": "decksite/templates/archetypetree.mustache:29",
+          "type": "code"
+        },
+        {
+          "detail": "Issue author explored toLocaleString and numeral.js but noted localization complexity and left approach undecided",
+          "ref": "issue-7713-comment-1",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7713,
+      "notes": "The open question from comments is whether to use JS toLocaleString (locale-aware but client-side flash) or a fixed approach like thin spaces (locale-neutral but non-standard). A decision on approach is needed before coding; the templates already use class='n' which could serve as a selector.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:33Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

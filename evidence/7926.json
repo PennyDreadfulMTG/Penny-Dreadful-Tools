@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7926,
+  "triage": [
+    {
+      "batch_id": "t-7951-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No trios tournament code exists in the codebase \u2014 this is a planning/event discussion, not a software defect or feature",
+          "ref": "grep -r 'trios' --include='*.py' --include='*.html'",
+          "type": "search"
+        },
+        {
+          "detail": "Labeled '+ task, - backlog'; comments discuss event format ideas (team construction, streaming rules) \u2014 entirely a product/community planning conversation",
+          "ref": "gh issue view 7926",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7926,
+      "notes": "No code changes are implied by this issue in its current state; it would need to become a concrete feature spec before it could be actioned as a software task.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

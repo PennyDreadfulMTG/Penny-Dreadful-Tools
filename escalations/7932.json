@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T23:01:55Z",
+  "created_at": "2026-09-01T22:59:48Z",
+  "evidence_refs": [
+    "evidence/7932.json#triage[0]"
+  ],
+  "issue": 7932,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The issue itself says 'Consider adding' and includes a question mark around the threshold condition ('when number of items is high?'). Owner needs to decide: first/last buttons only, or also a page-number input; and what the threshold should be."
+}

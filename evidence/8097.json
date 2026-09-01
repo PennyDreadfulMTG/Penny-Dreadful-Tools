@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8097,
+  "triage": [
+    {
+      "batch_id": "t-8097-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "DoesNotExistException is still registered to not_found, which returns 404 'Endpoint not found' for all /api/ paths",
+          "ref": "shared_web/flask_app.py:29",
+          "type": "code"
+        },
+        {
+          "detail": "season_id() raises DoesNotExistException for any unrecognized season value (e.g. seasonId=100)",
+          "ref": "magic/seasons.py:241-259",
+          "type": "code"
+        },
+        {
+          "detail": "decks endpoint calls seasons.season_id() with no try/except, so invalid seasonId still triggers the 404 path",
+          "ref": "decksite/controllers/api.py:142",
+          "type": "code"
+        },
+        {
+          "detail": "Issue reproduces per the code path: invalid seasonId \u2192 DoesNotExistException \u2192 not_found \u2192 404 NOTFOUND",
+          "ref": "https://pennydreadfulmagic.com/api/decks/?archetypeId=1&seasonId=100",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8097,
+      "notes": "bakert's second comment explicitly scopes this as needing an overhaul: test suite, an exception-capturing wrapper for all API endpoints, a helper for seasonId parsing, fixes to order_by asserts, and input validation review for all querystring params. The narrow fix (wrapping seasons.season_id() calls in try/except per-endpoint) would address several callsites (api.py:142, 174, 217, 271, 305, 447) but bakert wants a systematic approach rather than individual patches.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:11Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

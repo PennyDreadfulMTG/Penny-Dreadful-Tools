@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8667,
+  "triage": [
+    {
+      "batch_id": "t-8727-2",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Archetype detail page shows Decks, Cards, Meta Share, and Matchups sections \u2014 no 'best player' section exists",
+          "ref": "decksite/templates/archetype.mustache:1-25",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_archetype_person() pre-computes per-person per-archetype per-season wins/losses, so the data exists \u2014 but the display and metric choice are absent",
+          "ref": "decksite/data/archetype.py:251-267",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment: 'Probably using an Elo for the current season for that player only... might be reasonable to do this for (num_archetypes_played * num_players), or it might not. If not could we use some heuristic?' \u2014 explicitly unresolved metric/performance question",
+          "ref": "#8667",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8667,
+      "notes": "Owner decision needed: use per-archetype Elo (new computation) or per-archetype win rate from the existing preaggregate table, and over what time period. Per-archetype win-rate data is already precomputed in _archetype_person_stats; showing the top player by win rate per archetype per season would be a simpler starting point.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:22Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

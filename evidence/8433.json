@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8433,
+  "triage": [
+    {
+      "batch_id": "t-8435-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "with_test_db() drops, creates, and sets up the test DB by calling database.setup() which applies all migrations",
+          "ref": "decksite/testutil.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "setup() iterates over decksite/sql/ and applies every patch file in order",
+          "ref": "decksite/database.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "76 migration files currently exist, all applied on every test invocation",
+          "ref": "ls decksite/sql/ | wc -l",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Generate `decksite/schema.sql` by dumping the current DB schema (`mysqldump --no-data decksite > decksite/schema.sql`), commit it, and modify decksite/testutil.py's with_test_db() to execute schema.sql directly instead of calling database.setup(). Add a dev.py task (or CI check) to regenerate schema.sql whenever a new file is added to decksite/sql/. The code change is ~10 lines in testutil.py plus the schema.sql file.",
+      "issue": 8433,
+      "notes": "Generating schema.sql requires a live database (not available in this environment). The comment notes uncertainty about whether this is actually faster \u2014 should time it before committing. Maintenance discipline needed: schema.sql must be updated whenever a new migration file is added.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:59Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

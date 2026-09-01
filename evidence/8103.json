@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8103,
+  "triage": [
+    {
+      "batch_id": "t-8105-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Add Match form uses standard HTML form with method='post' and button type='submit' \u2014 full page reload on every action",
+          "ref": "decksite/templates/editmatches.mustache:1-30",
+          "type": "code"
+        },
+        {
+          "detail": "post_matches() handler handles add/change/delete via form POST and returns redirect(), confirming no inline API path exists",
+          "ref": "decksite/controllers/admin.py:168-184",
+          "type": "code"
+        },
+        {
+          "detail": "Matches display is already API-driven via livematchtable partial, but the Add/Change/Delete form actions are not",
+          "ref": "decksite/templates/editmatches.mustache:33",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8103,
+      "notes": "Scope is clearly > 150 lines: needs new API endpoints (POST/PATCH/DELETE for matches), JavaScript event handlers to submit asynchronously and update the table, and template rework. The livematchtable infrastructure already exists as a model.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:44Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

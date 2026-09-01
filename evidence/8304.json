@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8304,
+  "triage": [
+    {
+      "batch_id": "t-8372-2",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Partially addressed: added retired status and wins\u2013losses to left-side <select> options per issue title; right-side select still lacks the same info",
+          "ref": "de517ba0",
+          "type": "commit"
+        },
+        {
+          "detail": "Both player selectors are still plain <select> dropdowns over all active league decks; no typeahead implemented",
+          "ref": "decksite/templates/editmatches.mustache:4-15",
+          "type": "code"
+        },
+        {
+          "detail": "No typeahead commits ever touched editmatches.mustache",
+          "ref": "git log --oneline --grep='typeahead|autocomplete' -- decksite/templates/editmatches.mustache",
+          "type": "search"
+        },
+        {
+          "detail": "edit_matches() loads all decks via lg.active_league(should_load_decks=True) on every page request; still expensive",
+          "ref": "decksite/controllers/admin.py:162",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8304,
+      "notes": "The core request \u2014 replace <select> with a typeahead to avoid loading thousands of deck details per page \u2014 is unaddressed. Also the right_id select was not updated in de517ba0 so it lacks the retired/wins\u2013losses info that the left_id select received.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:51Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

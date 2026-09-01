@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8341,
+  "triage": [
+    {
+      "batch_id": "t-8372-2",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "meta_share field already computed per archetype and is available for threshold filtering",
+          "ref": "decksite/data/archetype.py:22",
+          "type": "code"
+        },
+        {
+          "detail": "Template already uses {{^hide_archetype}} guard; setting hide_archetype=True for low-share archetypes in prepare.py would be the implementation hook",
+          "ref": "decksite/templates/archetypetree.mustache:25-39",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commits found",
+          "ref": "git log --oneline --grep='8341|archetype.*hide|self.*hide|archetype.*threshold' --all",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8341,
+      "notes": "The threshold value n% is unspecified in the issue and requires a product decision; also the scope ('maybe other things') is unclear. Once n% is decided the implementation is straightforward in prepare.py.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:51Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

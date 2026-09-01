@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7932,
+  "triage": [
+    {
+      "batch_id": "t-7951-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current renderPagination() only has prev/next arrows and '1-X of Y' text; no jump-to-start, jump-to-end, or page-number input",
+          "ref": "shared_web/static/js/table.jsx:77-96",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commit found; feature not implemented",
+          "ref": "git log --grep='7932'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7932,
+      "notes": "The issue itself says 'Consider adding' and includes a question mark around the threshold condition ('when number of items is high?'). Owner needs to decide: first/last buttons only, or also a page-number input; and what the threshold should be.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

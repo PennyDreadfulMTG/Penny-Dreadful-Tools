@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8305,
+  "triage": [
+    {
+      "batch_id": "t-8372-2",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "deck_cache stores legal_formats as JSON; the data to filter 'legal this season' already exists",
+          "ref": "decksite/data/deck.py:240",
+          "type": "code"
+        },
+        {
+          "detail": "decks_where() has no filter for legal_formats; no 'legal this season' filter parameter handled",
+          "ref": "decksite/data/clauses.py:212-249",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commits found",
+          "ref": "git log --oneline --grep='8305|legal.*search|deck.*legal.*season' --all",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8305,
+      "notes": "Confidence medium because the issue title is ambiguous ('decks that legal this season' \u2014 filtering decks by their card legality vs. filtering to just the current season). UI/API design decisions need clarifying before implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:57:51Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

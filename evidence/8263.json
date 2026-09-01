@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 8263,
+  "triage": [
+    {
+      "batch_id": "t-8295-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No cubebot, CubeDraft bot, or cube-related bot module found anywhere in this repository",
+          "ref": "grep -r 'cube\\|CubeDraft\\|cubebot' decksite discordbot --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "No merged PRs reference a CubeDraft bot",
+          "ref": "gh pr list --search 'cubebot OR cube_bot OR CubeDraft' --state all",
+          "type": "search"
+        },
+        {
+          "detail": "Issue is labeled '* cubebot' and comment says 'This is one for @jgabrielygalan', implying the bot may be an external service outside this repo",
+          "ref": "#8263",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8263,
+      "notes": "The 'cubebot' label exists in the repo but no cubebot code is present. This may reference an external/third-party bot. Cannot determine status without more context on where the bot lives.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:26Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

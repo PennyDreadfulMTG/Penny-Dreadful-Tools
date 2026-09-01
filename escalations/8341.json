@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T22:58:20Z",
+  "created_at": "2026-09-01T22:57:51Z",
+  "evidence_refs": [
+    "evidence/8341.json#triage[0]"
+  ],
+  "issue": 8341,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The threshold value n% is unspecified in the issue and requires a product decision; also the scope ('maybe other things') is unclear. Once n% is decided the implementation is straightforward in prepare.py."
+}

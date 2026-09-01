@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 8101,
+  "triage": [
+    {
+      "batch_id": "t-8105-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Date cell is <td data-text=\"{{date_sort}}\">{{display_date}}</td> \u2014 no title attribute with exact date",
+          "ref": "decksite/templates/personmatches.mustache:29",
+          "type": "code"
+        },
+        {
+          "detail": "Same pattern: {{display_date}} rendered without a title attribute",
+          "ref": "decksite/templates/deckmatches.mustache:33",
+          "type": "code"
+        },
+        {
+          "detail": "display_date() returns only relative text ('3 days ago', 'Jan 3rd') with no exact ISO date; no companion exact-date function exists",
+          "ref": "shared/dtutil.py:66-77",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_decks sets d.display_date and d.date_sort but no d.display_date_title",
+          "ref": "decksite/prepare.py:103-104",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_matches sets m.display_date and m.date_sort but no m.display_date_title",
+          "ref": "decksite/prepare.py:159-160",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Add exact_date(dt) to shared/dtutil.py returning e.g. dt.astimezone(WOTC_TZ).strftime('%Y-%m-%d %H:%M %Z'). 2) In decksite/prepare.py, set d.display_date_title = dtutil.exact_date(d.active_date) for decks and m.display_date_title = dtutil.exact_date(m.date) for matches. 3) Wrap {{display_date}} in a <span title=\"{{display_date_title}}\"> in the affected templates: deckmatches.mustache, personmatches.mustache, deckrow.mustache, competitions.mustache, news.mustache, playernotes.mustache, subtitle.mustache.",
+      "issue": 8101,
+      "notes": "The pattern of using title attributes is already established in prepare.py for top8_safe and stars_safe; this follows the same convention. No schema changes, no data-retention implications.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:44Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

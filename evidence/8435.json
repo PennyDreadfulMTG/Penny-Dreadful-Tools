@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 8435,
+  "triage": [
+    {
+      "batch_id": "t-8435-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "url_for('competition', competition_id=m.competition_id) still called in data layer; even has an 'if g:' guard as an in-code acknowledgment of the problem",
+          "ref": "decksite/data/match.py:126",
+          "type": "code"
+        },
+        {
+          "detail": "url_for('deck', deck_id=d.id) embedded in Container constructor \u2014 still a flask call in the data layer",
+          "ref": "decksite/data/news.py:39",
+          "type": "code"
+        },
+        {
+          "detail": "url_for('signup') called inside description_safe property \u2014 another flask call in data layer",
+          "ref": "decksite/data/achievements.py:399",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_matches() already exists in prepare.py and is the correct place to add competition_url; prepare.py:107 already sets competition_url for decks via a plain string, not url_for",
+          "ref": "decksite/prepare.py:156",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/prepare.py, add `if m.get('competition_id'): m.competition_url = url_for('competition', competition_id=m.competition_id)` inside prepare_matches(). Remove the corresponding line from decksite/data/match.py:126 and the now-unneeded `from flask import g, url_for` import. For news.py, add a prepare_news() function in prepare.py that sets .url on each news Container, and remove url_for from the Container constructors in news.py:39 and 46. The achievements.py case (line 399) should be left as a follow-up or redesigned to return a plain text description and let the template add the link.",
+      "issue": 8435,
+      "notes": "The 'if g:' guard at match.py:126 is the prior author's workaround \u2014 that line is already known to be misplaced. The achievements case is architecturally trickier (url_for in a property) and may warrant a separate issue.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:59Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

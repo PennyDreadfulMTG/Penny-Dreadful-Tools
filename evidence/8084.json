@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 8084,
+  "triage": [
+    {
+      "batch_id": "t-8097-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No route, view, template, or data query exists for set popularity \u2014 feature has not been started",
+          "ref": "grep -rn 'popularity|set_popularity|set.*season' decksite/",
+          "type": "search"
+        },
+        {
+          "detail": "No set-related API endpoints exist in decksite",
+          "ref": "grep -rn 'sets|set_code|set_name' decksite/controllers/api.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 8084,
+      "notes": "This is a pure feature request with no existing implementation. Would need a new data query (joining deck_card to card set info), a new API endpoint or view, and a new template. Scope is likely > 150 lines end-to-end.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:00:11Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

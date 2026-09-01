@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7951,
+  "triage": [
+    {
+      "batch_id": "t-7951-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Active runs text is rendered as an extra <tr> in the tbody, adding a row that only spans 3 columns regardless of how many header columns the table has, causing height misalignment between adjacent tables",
+          "ref": "shared_web/static/js/table.jsx:61-68",
+          "type": "code"
+        },
+        {
+          "detail": "renderPagination() renders the 1-X of Y footer where the active runs text could be placed instead",
+          "ref": "shared_web/static/js/table.jsx:77-96",
+          "type": "code"
+        },
+        {
+          "detail": "active_runs_text is already passed as a data attribute on the container div, so the React component receives it as a prop",
+          "ref": "decksite/templates/livedecktable.mustache:5",
+          "type": "code"
+        },
+        {
+          "detail": "Static (non-React) table also still renders active_runs_text as an extra <tr>",
+          "ref": "decksite/templates/decktable.mustache:32-38",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `shared_web/static/js/table.jsx`, remove the active-runs `<tr>` from the tbody (lines 61-68) and instead render `this.props.activeRunsText` inside `renderPagination()` alongside the existing '1-X of Y' span. Optionally also update `decksite/templates/decktable.mustache` to remove lines 32-38 and put the text in the footer row for the static fallback table.",
+      "issue": 7951,
+      "notes": "The comment in the issue says 'I'm not sure it's worth solving half the problem' because the table header area also has variable height (page-size select only appears when >20 items). Moving the active runs text to the footer solves the tbody row-count mismatch; the header height variation is a separate concern.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T22:59:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

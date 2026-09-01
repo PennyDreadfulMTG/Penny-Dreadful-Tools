@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 8578,
+  "triage": [
+    {
+      "batch_id": "t-8608-2",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The entire file; no CSV/download button or export functionality exists",
+          "ref": "shared_web/static/js/rotationtable.jsx:1-42",
+          "type": "code"
+        },
+        {
+          "detail": "rotation_cards_api() already accepts q/sortBy/sortOrder/page/pageSize; a large pageSize can fetch all cards at once for client-side CSV generation",
+          "ref": "decksite/controllers/api.py:466-497",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a download button to shared_web/static/js/rotationtable.jsx that fetches all cards from /api/rotation/cards/ (with pageSize=99999 and current q/sortBy/sortOrder params), then serialises them as CSV (name, hits, hitsNeeded, percent, percentNeeded, rank) and triggers a browser download via a Blob URL. No server-side changes required. ~30 lines in rotationtable.jsx.",
+      "issue": 8578,
+      "notes": "Client-side approach avoids adding a new server endpoint. The API already returns all needed fields in camelCase. Webpack rebuild needed after editing the JSX.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:01:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

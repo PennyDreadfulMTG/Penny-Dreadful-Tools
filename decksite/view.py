@@ -230,6 +230,7 @@ class View(BaseView):
         for c in getattr(self, 'competitions', []):
             c.competition_url = f'/competitions/{c.id}/'
             c.display_date = dtutil.display_date(c.start_date)
+            c.display_date_title = dtutil.display_date_tooltip(c.start_date)
             c.competition_ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = c.type == 'League'

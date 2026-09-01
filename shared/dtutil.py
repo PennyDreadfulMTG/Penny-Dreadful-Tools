@@ -76,6 +76,9 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
         return 'just now'
     return f'{display_time(diff, granularity)} {suffix}'
 
+def display_date_tooltip(dt: datetime.datetime, tz: Any = WOTC_TZ) -> str:
+    return dt.astimezone(tz).strftime('%Y-%m-%d %H:%M %Z')
+
 def display_date_with_date_and_year(dt: datetime.datetime, tz: Any = WOTC_TZ) -> str:
     s = f'{dt.astimezone(tz):%b _%d_}'
     return replace_day_with_ordinal(s)

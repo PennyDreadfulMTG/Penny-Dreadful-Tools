@@ -102,6 +102,7 @@ def prepare_deck(d: Deck) -> None:
         d.person_url = url_for('seasons.person', person_id=d.person_id, season_id=d.season_id)
     d.date_sort = dtutil.dt2ts(d.active_date)
     d.display_date = dtutil.display_date(d.active_date)
+    d.display_date_title = dtutil.display_date_tooltip(d.active_date)
     d.show_record = d.wins or d.losses or d.draws
     if d.competition_id:
         d.competition_url = f'/competitions/{d.competition_id}/'
@@ -157,6 +158,7 @@ def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
     for m in ms:
         if m.get('date'):
             m.display_date = dtutil.display_date(m.date)
+            m.display_date_title = dtutil.display_date_tooltip(m.date)
             m.date_sort = dtutil.dt2ts(m.date)
         if m.get('person'):
             m.person_url = url_for('person', mtgo_username=m.person)

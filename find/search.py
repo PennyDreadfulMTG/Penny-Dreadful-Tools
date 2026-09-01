@@ -21,7 +21,7 @@ UNQUOTED_STRING = 'unquoted_string'
 VALUE_LOOKUP: dict[str, dict[str, int]] = {}
 
 def search(query: str) -> set[str]:
-    query = query.replace('“', '"').replace('”', '"')
+    query = query.replace('“', '"').replace('”', '"').replace('‘', "'").replace('’', "'")
     where = parse(tokenize(query))
     base_query = multiverse.cached_base_query(where)
     sql = f'{base_query} ORDER BY NULL'

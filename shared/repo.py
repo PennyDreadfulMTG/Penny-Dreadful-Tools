@@ -9,7 +9,7 @@ from github import Github, Issue, PullRequest
 from github.GithubException import GithubException
 from requests.exceptions import RequestException
 
-from shared import configuration, dtutil
+from shared import configuration, dtutil, logger
 
 GITHUB_MAX_TITLE_LEN = 256
 GITHUB_MAX_BODY_LEN = 65536
@@ -76,13 +76,13 @@ def create_issue(content: str,
         elif 'YandexBot' in ua or 'Googlebot' in ua or 'bingbot' in ua:
             labels.append('Search Engine')
 
-    print(title + '\n' + body, file=sys.stderr)
+    logger.warning(title + '\n' + body)
     if not configuration.create_github_issues.value:
-        print('Not creating github issue - configured to not do so')
+        logger.info('Not creating github issue - configured to not do so')
         return None
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
-        print('Not creating github issue - missing username or password')
+        logger.info('Not creating github issue - missing username or password')
         return None
 
     for secret in REDACTED_STRINGS:
@@ -112,7 +112,7 @@ def create_issue(content: str,
         issue = git_repo.create_issue(title=title, body=body, labels=labels)
         return issue
     except GithubException as e:
-        print(f'Problem creating issue: {e}', file=sys.stderr)
+        logger.error(f'Problem creating issue: {e}')
         return None
 
 def safe_data(data: dict[str, str]) -> dict[str, str]:
@@ -150,9 +150,9 @@ def get_pull_requests(start_date: datetime.datetime,
             if len(pulls) >= max_pull_requests:
                 return pulls
     except RequestException as e:
-        print('Github pulls error (request)', e)
+        logger.error('Github pulls error (request)', e)
     except GithubException as e:
-        print('Gihub pulls error (github)', e)
+        logger.error('Gihub pulls error (github)', e)
     return pulls
 
 

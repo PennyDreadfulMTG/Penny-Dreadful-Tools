@@ -120,6 +120,7 @@ export const renderCard = (card) => (
 );
 
 Table.propTypes = {
+    "className": PropTypes.oneOf(["", "with-marginalia"]),
     "renderHeaderRow": PropTypes.func.isRequired,
     "renderRow": PropTypes.func.isRequired
 };

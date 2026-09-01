@@ -83,5 +83,6 @@ export class Grid extends DataManager {
 }
 
 Grid.propTypes = {
+    "className": PropTypes.oneOf(["", "metagame-grid"]),
     "renderSort": PropTypes.func
 };

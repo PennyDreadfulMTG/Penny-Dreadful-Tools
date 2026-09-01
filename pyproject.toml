@@ -125,6 +125,7 @@ select = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"backlog_sweep/*" = ["T201", "UP031", "E741"]
 "rotation_script/*" = ["T201"]
 "shared/*" = ["T201"]
 "maintenance/*" = ["T201"]

@@ -164,6 +164,16 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """,
         {},
     ),
+    'scryfall': (
+        """
+        Scryfall is a powerful Magic card search engine.
+        You can use `f:pd` to filter results to cards legal in Penny Dreadful.
+        """,
+        {
+            'Scryfall': 'https://scryfall.com/',
+            'Penny Dreadful Legal Cards': 'https://scryfall.com/search?q=f%3Apd',
+        },
+    ),
     'spectating': (
         """
         Spectating tournament and league matches is allowed and encouraged.

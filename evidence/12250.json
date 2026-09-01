@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12250,
+  "triage": [
+    {
+      "batch_id": "t-12250-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "history command takes a single Card parameter via slash_card_option; no multi-card or '+' parsing exists",
+          "ref": "discordbot/commands/history.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "slash_card_option wraps a single STRING option with autocomplete; no mechanism for multiple card inputs",
+          "ref": "discordbot/command.py:219-231",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12250,
+      "notes": "Supporting '+'-delimited multi-card input requires product decisions: parse the string (losing per-card autocomplete), add card2/card3 optional slash-command options, or create a dedicated multi-card command. Output format for combined histories also needs definition.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:16Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

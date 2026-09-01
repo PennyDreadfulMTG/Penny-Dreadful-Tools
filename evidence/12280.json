@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12280,
+  "triage": [
+    {
+      "batch_id": "t-12282-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "42 Python occurrences of season_num across decksite, discordbot, magic modules",
+          "ref": "grep -rn 'season_num' --include='*.py' (42 hits)",
+          "type": "search"
+        },
+        {
+          "detail": "season_num(code_to_look_for: str) -> int takes a season code string and returns its ordinal integer",
+          "ref": "magic/seasons.py:185",
+          "type": "code"
+        },
+        {
+          "detail": "season_id(v: int | str, all_return_value=...) already exists as a different function that converts any value (including 'all', None) to a season id \u2014 direct rename would conflict",
+          "ref": "magic/seasons.py:241",
+          "type": "code"
+        },
+        {
+          "detail": "current_season_num() and next_season_num() are the main public entrypoints; renaming them to current_season_id/next_season_id requires resolving the naming clash with the existing season_id() function first",
+          "ref": "magic/seasons.py:176-183",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12280,
+      "notes": "The rename is blocked by the pre-existing season_id() function at seasons.py:241 which has different semantics (handles 'all', None, int, str). Renaming must also decide whether to merge or disambiguate these two functions. 42 call sites across multiple modules.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:01:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

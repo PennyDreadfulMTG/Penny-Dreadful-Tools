@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:58:28Z",
+    "note": "Choose the achievements ordering: alphabetical, rarity, category, or curated order.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:57:14Z",
   "created_at": "2026-09-01T18:56:25Z",
   "evidence_refs": [

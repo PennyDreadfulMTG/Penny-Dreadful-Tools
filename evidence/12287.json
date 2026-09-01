@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12287,
+  "triage": [
+    {
+      "batch_id": "t-12288-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "competition view shows archetype tree but no per-archetype aggregation stats (count in field, top-8 count, etc.)",
+          "ref": "decksite/views/competition.py:25-28",
+          "type": "code"
+        },
+        {
+          "detail": "PD500 view shows archetype column per deck but no macro summary",
+          "ref": "decksite/views/pd500.py:34",
+          "type": "code"
+        },
+        {
+          "detail": "no aggregated archetype-stats view found for tournaments",
+          "ref": "find . -name '*.py' -path '*/views/*' | xargs grep -l 'archetype'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12287,
+      "notes": "Requires new data query aggregating archetype counts + top-8/top-16 placements per tournament, new view class, and new template. Non-trivial but no DB migration needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

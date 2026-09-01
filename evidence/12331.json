@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12331-1",
+      "branch": "sweep/12331-we-need-more-resolution-on-playability",
+      "files_changed": 1,
+      "head_sha": "d30c4fe4435125026fd3a56cb05ffc14a651bda5",
+      "issue": 12331,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "The preaggregation tables are fully rebuilt on each run so no migration script is required. The change is limited to schema precision only; query logic is unchanged. No other issues found in the area.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe four preaggregation tables in `decksite/data/playability.py` stored `playability` as `DECIMAL(6,5)`, giving only 5 decimal places and a minimum representable non-zero value of 0.00001 (1-in-100,000). Cards played in fewer than 1 in 100,000 decks would round to exactly 0.00000, making them indistinguishable from completely unplayed cards. The practical threshold discussed in issue #12331 is around 1-in-200,000 (0.000005), which is already below the old precision limit.\n\n## What changed\n\nAll four `playability DECIMAL(6,5)` column definitions in the four preaggregation table `CREATE TABLE` statements were changed to `DECIMAL(10,9)`, giving 9 decimal places and a minimum non-zero value of 0.000000001 \u2014 well below any realistic playability threshold. These tables are preaggregates rebuilt on every run, so no manual migration is needed.\n\nFiles changed: `decksite/data/playability.py` (4 lines changed)\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (18s)\n\nFixes #12331",
+      "pr_title": "Increase playability column precision from DECIMAL(6,5) to DECIMAL(10,9) (#12331)",
+      "recorded_at": "2026-09-01T19:01:17Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.12s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12331,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12299-1",
+      "branch": "sweep/12299-rotation-caching-on-decksite-is-not-robu",
+      "files_changed": 1,
+      "head_sha": "fd05835467af1994e5a35ecdd1b60bbb1197599e",
+      "issue": 12299,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The fix only affects the code path where a card name in the rotation cache table has no corresponding oracle entry. In normal operation this never fires; during the brief post-release window before the oracle is updated it prevents a KeyError crash and logs a warning instead. No schema changes, no DB migrations needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`load_rotation()` in `decksite/data/rotation.py` called `cards[c.name]` (line 41) to look up each rotation card in the oracle dictionary. If a card name from the `_rotation` table was not yet present in the oracle (which happens in the window between a set release and the oracle DB being updated), this raised a `KeyError` and crashed the entire rotation page load.\n\n## What changed\n\nReplaced the direct dictionary access with `cards.get(c.name)`. If the lookup returns `None` (card not in oracle), the card container is left without oracle fields and a `logger.warning` is emitted. This matches the graceful-degradation intent the surrounding `try/except DatabaseException` block already establishes.\n\n**Diff:** 1 file, +5 / -1 lines, all in `decksite/data/rotation.py`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks).\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected. MariaDB was available in the test environment so the full suite including DB-dependent tests ran successfully.\n\nFixes #12299",
+      "pr_title": "Handle missing oracle card gracefully in rotation cache (#12299)",
+      "recorded_at": "2026-09-01T19:01:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 17.69s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12299,
   "triage": [
     {

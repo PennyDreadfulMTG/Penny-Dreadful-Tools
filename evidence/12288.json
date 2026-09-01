@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12288,
+  "triage": [
+    {
+      "batch_id": "t-12288-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "hardcoded 'Banned', 'Restricted' strings in legality checks",
+          "ref": "magic/legality.py:62-66",
+          "type": "code"
+        },
+        {
+          "detail": "hardcoded 'Legal' string in legal_in() comparison",
+          "ref": "magic/models/card.py:49",
+          "type": "code"
+        },
+        {
+          "detail": "hardcoded 'Legal' inside SQL insert string",
+          "ref": "magic/multiverse.py:541",
+          "type": "code"
+        },
+        {
+          "detail": "12 Python files contain these string literals",
+          "ref": "grep -rln \"'Legal'|'Banned'|'Restricted'|'Not_Legal'|'Not Legal'\" --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12288,
+      "notes": "No DB schema change needed (strings stay in DB; enum converts at Python boundary), but 12 files must be updated in a coordinated way with careful testing. Some strings appear embedded inside SQL fragments in multiverse.py which adds complexity.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:52Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

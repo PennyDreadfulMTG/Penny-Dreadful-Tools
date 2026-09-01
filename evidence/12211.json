@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12211,
+  "triage": [
+    {
+      "batch_id": "t-12226-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "returns HTTP 403 \u2014 cannot enumerate specific findings; scope of outstanding issues is unknown",
+          "ref": "gh api repos/PennyDreadfulMTG/Penny-Dreadful-Tools/code-scanning/alerts",
+          "type": "behavior"
+        },
+        {
+          "detail": "results are all dependency bumps (codeql-action, npm packages); no PR specifically addressing code-scanning findings",
+          "ref": "gh pr list --search 'code scanning OR security' --state merged --limit 10",
+          "type": "search"
+        },
+        {
+          "detail": "no commits found addressing code-scanning alert findings",
+          "ref": "git log --grep='code.scan\\|codeql\\|security.finding'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12211,
+      "notes": "Cannot enumerate the specific alerts without code-scanning API access. The issue bundles multiple unknown findings plus an operational ask ('schedule looking regularly'), making total scope unclear. Each finding would likely be its own PR; some may be security-sensitive once visible.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:13:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

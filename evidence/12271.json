@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12271,
+  "triage": [
+    {
+      "batch_id": "t-12271-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Second remove_pd regex r'(^| )[\\[({]?pd ?-?[])}]?' matches '[PD ' in '[PD '32]', strips it, leaving \"'32] Izzet Twin (Alt )\"",
+          "ref": "decksite/deck_name.py:156",
+          "type": "code"
+        },
+        {
+          "detail": "remove_season with season_id=32 matches '32]' via r'(?:[\\[({]|\\b)32(?:[])}]|\\b)' and removes it, leaving leading \"'\" in name",
+          "ref": "decksite/deck_name.py:273",
+          "type": "code"
+        },
+        {
+          "detail": "test_remove_pd has no test case for [PD '32] format with apostrophe-prefixed season number, confirming the case is unhandled",
+          "ref": "decksite/deck_name_test.py:339-346",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py, add a regex to remove_pd() before the existing generic second pattern to handle the apostrophe-season format: `name = re.sub(r\"(^| )[\\[({]?pd ?'\\d+[])}]?([ -]|$)\", '\\\\1\\\\2', name, flags=re.IGNORECASE).strip()`. Add a test in decksite/deck_name_test.py for `remove_pd(\"[PD '32] Izzet Twin (alt.)\", 32) == \"Izzet Twin (alt.)\"`. ~5 lines changed.",
+      "issue": 12271,
+      "notes": "The ordering of remove_pd before remove_brackets is the root enabler; the generic second pattern in remove_pd is too greedy. Fixing in remove_pd is cleaner than reordering the calls.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

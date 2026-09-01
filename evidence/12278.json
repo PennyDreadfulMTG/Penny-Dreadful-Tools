@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12278,
+  "triage": [
+    {
+      "batch_id": "t-12282-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_rotation_summary() reads from _rotation DB table \u2014 decksite no longer uses magic/rotation.py redis cache",
+          "ref": "decksite/data/rotation.py:44",
+          "type": "code"
+        },
+        {
+          "detail": "rotation() route calls rtn.load_rotation_summary() directly; no read_rotation_files() call",
+          "ref": "decksite/controllers/resources.py:17-22",
+          "type": "code"
+        },
+        {
+          "detail": "Still calls rotation.read_rotation_files() and also uses redis.sismember() for rotation:summary:status keys \u2014 discordbot has not been migrated",
+          "ref": "discordbot/emoji.py:79",
+          "type": "code"
+        },
+        {
+          "detail": "read_rotation_files() and rotation_redis_store() still populate and serve from redis; called by discordbot emoji.py and rotation_hype_message()",
+          "ref": "magic/rotation.py:55-61",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12278,
+      "notes": "Retiring the redis cache requires refactoring discordbot/emoji.py and the rotation hype pipeline to use a different data source (direct file read or the /api/rotation/cards endpoint). Non-trivial architectural change for the discordbot side.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:01:30Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

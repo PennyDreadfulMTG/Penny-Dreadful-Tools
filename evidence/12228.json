@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12228,
+  "triage": [
+    {
+      "batch_id": "t-12231-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "text_where for name columns does LIKE '%rage%' against the raw name column; 'Ajani, Sleeper Agent' \u2192 'Sleeper Agent' has 'r' from 'Sleeper' and 'age' from 'Agent' separated by a space, so the substring 'rage' is not found",
+          "ref": "find/search.py:207-217",
+          "type": "code"
+        },
+        {
+          "detail": "sqllikeescape('rage') \u2192 '%rage%'; MySQL LIKE '%rage%' against 'Ajani, Sleeper Agent' fails because the space is not stripped before comparison; spaceless form 'Ajani,SleeperAgent' does contain 'rage' at the r/A boundary (case-insensitive)",
+          "ref": "find/search.py:217",
+          "type": "behavior"
+        },
+        {
+          "detail": "no commit found that added spaceless name matching to the name search path; the bug is still present",
+          "ref": "git log --oneline -S'spaceless' -- find/search.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In find/search.py text_where (line 203), after computing `escaped = sqllikeescape(q)` for name columns, also compute a spaceless escaped form with `q.replace(' ', '')` and extend the returned clause to `(name LIKE {escaped} OR LOWER(REPLACE(name, ' ', '')) LIKE {spaceless_escaped})`. Add a test case in find/find_test.py asserting that searching 'rage' includes 'Ajani, Sleeper Agent'. Total change is ~10 lines in search.py and ~2 lines in find_test.py.",
+      "issue": 12228,
+      "notes": "The spaceless OR clause only widens matches and cannot break existing searches. Care should be taken to also strip spaces from the search term itself so that 'sleeper agent' (with space) still matches spaceless-style.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

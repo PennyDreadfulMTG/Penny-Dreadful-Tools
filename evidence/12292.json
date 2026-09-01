@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12292-1",
+      "branch": "sweep/12292-percent-and-needed-percent-should-be-cal",
+      "files_changed": 3,
+      "head_sha": "f5aefea2ecd55b49f6ed152a8266676658d41708",
+      "issue": 12292,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The `_rotation` table is a precomputed cache; after merge, production requires a cache rebuild (hit `/api/rotation/clear_cache`) before the rotation page will display correct data. No user data is affected \u2014 only the cache table schema changes. No other callers of the renamed keys were found.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe rotation scoring data used ambiguous field names `percent` and `percent_needed` that didn't make clear what they counted \u2014 they represent the percentage of hits out of runs completed and the percentage of hits still needed from remaining runs, respectively.\n\n## What changed\n\n- **`magic/rotation.py`**: Renamed local variables `percent` \u2192 `hits_percent` and `percent_needed` \u2192 `hits_needed_percent` in `process_score()`, and updated the dict keys passed to `Card.update()`.\n- **`decksite/data/rotation.py`**: Renamed the SQL column definitions (`percent` \u2192 `hits_percent`, `percent_needed` \u2192 `hits_needed_percent`) in the `CREATE TABLE` statement, the `SELECT \u2026 AS` aliases in the cache-building query, and the column names in `load_rotation()`'s SELECT list.\n- **`shared_web/static/js/rotationtable.jsx`**: Updated the JSX row renderer from `card.percent` \u2192 `card.hitsPercent` and `card.percentNeeded` \u2192 `card.hitsNeededPercent` (snake_case fields are automatically camelCased by the API layer).\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0).\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected (17.96 s) against a live MariaDB instance.\n- Note: the `_rotation` table is a precomputed cache rebuilt via `force_cache_update()` / `/api/rotation/clear_cache`; after merge, production will need a cache rebuild to pick up the renamed columns.\n\nFixes #12292",
+      "pr_title": "Rename percent/percent_needed to hits_percent/hits_needed_percent (#12292)",
+      "recorded_at": "2026-09-01T19:10:35Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 17.96s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12292,
   "triage": [
     {

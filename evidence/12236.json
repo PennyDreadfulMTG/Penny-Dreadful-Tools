@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12236,
+  "triage": [
+    {
+      "batch_id": "t-12243-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "commit message: 'added kickoff top8s and victories achievements' \u2014 added KickoffTop8 and KickoffWinner classes",
+          "ref": "53ec4676",
+          "type": "commit"
+        },
+        {
+          "detail": "KickoffWinner class exists with key='kickoff_wins', title='Season Kick Off Winner', description='Win the Season Kick Off.'",
+          "ref": "decksite/data/achievements.py:864",
+          "type": "code"
+        },
+        {
+          "detail": "SQL counts d.finish=1 for Gatherling competitions named like '%%Kick off%%'",
+          "ref": "decksite/data/achievements.py:868",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12236,
+      "notes": "A follow-up commit a27da37d also fixed kickoff achievements to use competition flags for more robust name matching.",
+      "proposed_comment": "This achievement was added in commit 53ec4676 (June 2025). Both KickoffTop8 and KickoffWinner achievements now exist in decksite/data/achievements.py.",
+      "recorded_at": "2026-09-01T19:12:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

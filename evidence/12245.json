@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12245,
+  "triage": [
+    {
+      "batch_id": "t-12250-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "rotation_redis_store() builds cs from Counter(lines).most_common() \u2014 only cards that appeared in at least one rotation file are processed; zero-hit cards are never added to cs",
+          "ref": "magic/rotation.py:63-98",
+          "type": "code"
+        },
+        {
+          "detail": "newly_eliminated = [c for c in cs if ...] \u2014 cs never contains zero-hit cards, so they can never appear in newly_eliminated",
+          "ref": "magic/rotation.py:158",
+          "type": "code"
+        },
+        {
+          "detail": "Comment on issue confirms: 'Rotation doesn't know any cards exist that don't have at least one hit'",
+          "ref": "#12245",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12245,
+      "notes": "Fix requires querying oracle for all playable cards and computing the zero-hit set at the run where they first become eliminated (runs == threshold + 1 = 85 for TOTAL_RUNS=168). Product judgment needed on whether to list zero-hit eliminated cards by name or just by count, and whether the oracle.cards_by_name() call in rotation_hype_message() is acceptable performance-wise.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:16Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

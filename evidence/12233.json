@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12233,
+  "triage": [
+    {
+      "batch_id": "t-12243-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "parse_criterion calls format_where(term.value()) discarding the operator entirely \u2014 no range support",
+          "ref": "find/search.py:189",
+          "type": "code"
+        },
+        {
+          "detail": "format_where(term) signature takes only the term string, not operator \u2014 always returns exact-match format_ids",
+          "ref": "find/search.py:310",
+          "type": "code"
+        },
+        {
+          "detail": "SEASONS list is ordered by season number (index 0 = season 1 = EMN), enabling straightforward numeric range filtering",
+          "ref": "magic/seasons.py:15",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In find/search.py: (1) change line 190 to pass operator: `return format_where(operator.value(), term.value())`; (2) update format_where signature to `def format_where(operator: str, term: str) -> str:`; (3) when term is a PD season and operator is one of >=, >, <=, <, parse the season number, enumerate seasons.SEASONS filtered by that comparison, collect all matching format_ids via a LIKE query for each season code, and union them. The existing `:` and `=` cases keep current behavior. About 25-35 lines net added.",
+      "issue": 12233,
+      "notes": "Tests exist in find/find_test.py:333 (test_past_seasons) and 626 (test_format_functional) \u2014 new test cases for f>=pd10 should be added alongside the fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

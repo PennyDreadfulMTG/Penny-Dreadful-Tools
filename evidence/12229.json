@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12229,
+  "triage": [
+    {
+      "batch_id": "t-12231-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "'spell' subquery is 't:artifact OR t:battle OR t:creature OR t:enchantment OR t:instant OR t:planeswalker OR t:sorcery' \u2014 type-based, excludes lands",
+          "ref": "find/search.py:453",
+          "type": "code"
+        },
+        {
+          "detail": "playable_layouts() returns all layouts where playable=True, which includes adventure, case, class, flip, leveler, meld, modal_dfc, mutate, normal, prototype, reversible_card, saga, split, transform \u2014 layout-based, includes lands",
+          "ref": "magic/layout.py:69-70",
+          "type": "code"
+        },
+        {
+          "detail": "playable_layouts is used to filter cards by layout (e.g. exclude tokens/emblems), a distinct concern from card type; a land card is in playable_layouts but not in is:spell, so they are not equivalent",
+          "ref": "magic/oracle.py:242",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12229,
+      "notes": "The short answer to the question is 'no' \u2014 is:spell and layout.playable filter on different axes (type line vs. layout) and are not interchangeable. No code change is needed unless the author identifies a specific redundant usage.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

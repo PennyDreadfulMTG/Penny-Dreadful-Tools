@@ -62,3 +62,23 @@ Nothing is awaiting a decision from bakert.
 - #12461 — Choose between a card-requirement feature for archetypes and a one-time admin reclassification of affected decks. (2026-09-01T18:55:54Z)
 
 - #12490 — Choose the loader API shape and list-versus-Sequence policy before a cross-cutting refactor. (2026-09-01T18:55:54Z)
+
+- #12293 — Choose the achievements ordering: alphabetical, rarity, category, or curated order. (2026-09-01T18:58:28Z)
+
+- #12294 — The title alone does not identify whether this is a DB snapshot, deployment sequencing, or playability-regeneration problem; provide reproduction/context. (2026-09-01T18:58:28Z)
+
+- #12298 — Choose and approve the external ranking source and fallback semantics for newly legal cards. (2026-09-01T18:58:28Z)
+
+- #12302 — Define companion and wish-target weights relative to ordinary sideboard cards before changing the playability algorithm. (2026-09-01T18:58:28Z)
+
+- #12310 — Define the card-page concept: most plays, most wins, or an expert threshold and display. (2026-09-01T18:58:28Z)
+
+- #12352 — Dropping season.number requires an approved production schema migration despite the code change being small. (2026-09-01T18:58:28Z)
+
+- #12353 — Choose whether to special-case new-card ranks, move the experience to /rotation/changes, or hide /rotation outside its window. (2026-09-01T18:58:29Z)
+
+- #12356 — Needs EXPLAIN and timings against production-scale data before proposing indexes; all obvious join indexes already exist. (2026-09-01T18:58:29Z)
+
+- #12485 — After two malformed fixer attempts, choose the public API contract: add a season-specific path or omit season from decks_url. (2026-09-01T18:58:29Z)
+
+- #12491 — After two malformed fixer attempts, choose the post-rotation navigation policy instead of guessing an arbitrary seven-day menu window. (2026-09-01T18:58:29Z)

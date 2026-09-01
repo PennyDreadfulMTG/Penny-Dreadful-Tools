@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12248,
+  "triage": [
+    {
+      "batch_id": "t-12250-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Merged 2024-08-07: 'Say how many runs before the next confirmed cards in hype message' \u2014 adds 'Next new cards confirmed in N runs time' (go-in timing only)",
+          "ref": "#12968",
+          "type": "pr"
+        },
+        {
+          "detail": "soonest_new_card computed from max_hits_in_undecided but no equivalent 'soonest elimination' exists; shows 'runs time' not 'hours'",
+          "ref": "magic/rotation.py:162-163,179",
+          "type": "code"
+        },
+        {
+          "detail": "background_task_rotation_hype fires on IntervalTrigger(hours=1), confirming 1 run == 1 hour so the conversion is trivial",
+          "ref": "discordbot/background.py:264",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In magic/rotation.py rotation_hype_message(): add min_hits_in_undecided = min([c.hits for c in cs if c.status == 'Undecided'], default=threshold) and soonest_elimination = TOTAL_RUNS - runs + min_hits_in_undecided - threshold + 1; add a 'Next elimination in {soonest_elimination} hours' line; rename 'runs time' to 'hours' on line 179. Touch only magic/rotation.py, ~8 lines.",
+      "issue": 12248,
+      "notes": "The 'go in' half was done by PR #12968; the 'or out' half and the runs\u2192hours labeling remain. TOTAL_RUNS=168 over 7 days confirms 1 run per hour.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12226,
+  "triage": [
+    {
+      "batch_id": "t-12226-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current code replaces curly double quotes only: query.replace('\\u201c', '\"').replace('\\u201d', '\"') \u2014 no replacement for U+2018/U+2019 curly apostrophes",
+          "ref": "find/search.py:24",
+          "type": "code"
+        },
+        {
+          "detail": "PR #11976 added double-quote smart-quote support (Feb 2024); issue #12226 was opened April 2024, title explicitly says 'converting to apostrophe AND double quote', so single-quote half is still missing",
+          "ref": "fb4058cb",
+          "type": "commit"
+        },
+        {
+          "detail": "no merged PR addressing curly apostrophe replacement found",
+          "ref": "gh pr list --search 'apostrophe' --state merged",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In find/search.py:24, extend the replace chain: add .replace('\\u2018', \"'\").replace('\\u2019', \"'\") for left/right single quotation marks. Add a test in find/find_test.py mirroring test_smart_quotes but with a curly apostrophe in the query (e.g. a card name or oracle text containing an apostrophe).",
+      "issue": 12226,
+      "notes": "The double-quote half was fixed in fb4058cb; only the apostrophe half of the issue title remains. One-line code change plus one test.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:13:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

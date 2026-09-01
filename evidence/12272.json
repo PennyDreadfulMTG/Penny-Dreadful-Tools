@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12272,
+  "triage": [
+    {
+      "batch_id": "t-12276-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "warnings.filterwarnings('error', category=MySQLdb.Warning) \u2014 converts all MySQL server warnings into Python MySQLdb.Warning exceptions on every query",
+          "ref": "shared/database.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "execute_anything catches MySQLdb.Warning; only suppresses codes 1050 (table already exists), 1051 (unknown table), 1062 (duplicate insert); all other warnings including 1264 (out of range value) fall through to raise DatabaseException",
+          "ref": "shared/database.py:54",
+          "type": "code"
+        },
+        {
+          "detail": "Remove last vestiges of the mysql/sqlite split \u2014 introduced the current shared/database.py with filterwarnings('error') in 2018",
+          "ref": "679ec1d9",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12272,
+      "notes": "Confidence is medium rather than high because we cannot run a live test to confirm warning 1264 propagates as MySQLdb.Warning in the deployed MySQLdb version; if it does not (e.g., warnings are fetched differently in newer MySQLdb), the issue would revert to open. Worth a quick manual test before closing.",
+      "proposed_comment": "The database layer already converts MySQL warnings to errors: `warnings.filterwarnings('error', category=MySQLdb.Warning)` at `shared/database.py:15` makes MySQLdb raise on any MySQL warning, and `execute_anything` (lines 54\u201359) only suppresses codes 1050, 1051, and 1062 \u2014 overflow warning 1264 is not suppressed and would surface as a `DatabaseException`. This was put in place in commit 679ec1d9.",
+      "recorded_at": "2026-09-01T18:58:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12342-1",
+      "branch": "sweep/12342-rank-is-now-giving-cards-with-playabilit",
+      "files_changed": 1,
+      "head_sha": "ac1b82c6f344cab9ee3d6b94e7b183924d6d3ec3",
+      "issue": 12342,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single keyword change from ROW_NUMBER() to RANK() in the SQL window function. No schema changes. The NULL guard for zero-playability cards was already in place and is untouched. The issue comment notes '(1) I fixed (1)' referring to the NULL rank bug already being resolved; this PR fixes item (2): ties now share a rank.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`ranks_select()` in `decksite/data/query.py` used `ROW_NUMBER() OVER (ORDER BY playability DESC)` to assign card ranks. `ROW_NUMBER()` always assigns a unique sequential integer, so when multiple cards share the same playability score the tie-breaking is arbitrary (effectively alphabetical by whatever the DB returns), giving each tied card a different rank.\n\n## What changed\n\nChanged `ROW_NUMBER()` to `RANK()` (one word, one line). `RANK()` assigns the same rank to all rows with equal `ORDER BY` values and skips subsequent rank numbers, so tied cards now share a rank and the sequence jumps correctly (e.g. two cards tied for rank 1 \u2192 both get rank 1, next card gets rank 3).\n\nThe existing `CASE WHEN playability = 0 THEN NULL` guard is unchanged, so zero-playability cards still receive a NULL rank.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks).\n- Unit tests required a populated Scryfall database; DB was started but data population timed out in the cloud environment. The fix is a single SQL keyword swap with no surrounding logic changes.\n\nFixes #12342",
+      "pr_title": "Use RANK() instead of ROW_NUMBER() so cards with equal playability share a rank (#12342)",
+      "recorded_at": "2026-09-01T19:05:14Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "Lint passed. Unit tests require a populated database (cards DB loads Scryfall data) and timed out in the CI environment; the DB was started but data loading exceeded the timeout budget. The change is a one-word SQL window function swap with no code logic, so env-blocked DB tests are not a meaningful coverage gap here.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12342,
   "triage": [
     {

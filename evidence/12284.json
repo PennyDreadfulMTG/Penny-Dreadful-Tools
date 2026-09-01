@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12284,
+  "triage": [
+    {
+      "batch_id": "t-12288-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_rotation() queries only _rotation table which contains cards with at least one hit in rotation_runs; cards with 0 hits are never populated",
+          "ref": "decksite/data/rotation.py:14-19",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment 2024-04-28: 'at the very least we should be showing all cards that were legal in the preceding season'",
+          "ref": "#12284",
+          "type": "issue"
+        },
+        {
+          "detail": "bakert comment 2024-05-02: 'Could do legal-last-season or ever-legal with _legal_cards' \u2014 three distinct options still undecided",
+          "ref": "#12284",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12284,
+      "notes": "Owner must decide between three approaches: all-MTGO cards, ever-PD-legal cards (f:pdall), or cards-legal-last-season. Each has different data volume and UI implications.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12223,
+  "triage": [
+    {
+      "batch_id": "t-12226-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "enter_date_dt is parsed with WOTC_TZ (America/Los_Angeles), so rotation fires at midnight Pacific per WIS JSON",
+          "ref": "magic/seasons.py:89",
+          "type": "code"
+        },
+        {
+          "detail": "WOTC_TZ = pytz.timezone('America/Los_Angeles') \u2014 the timezone used for all rotation date parsing",
+          "ref": "shared/dtutil.py:20",
+          "type": "code"
+        },
+        {
+          "detail": "rotation_offset() adds only whole-day timedeltas (7 or 14 days), no hour adjustment \u2014 time-of-day stays at midnight Pacific",
+          "ref": "magic/seasons.py:50-57",
+          "type": "code"
+        },
+        {
+          "detail": "no commit found changing rotation time-of-day",
+          "ref": "git log --grep='rotation.*time\\|midnight\\|pacific'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12223,
+      "notes": "Title explicitly says 'think about' \u2014 this is a discussion item. The decision required: what time of day should PD rotation fire, and should a fractional timedelta be added in rotation_offset() or should WIS dates be re-interpreted? An owner must weigh player-timezone fairness vs. complexity.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:13:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

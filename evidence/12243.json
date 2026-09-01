@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12243,
+  "triage": [
+    {
+      "batch_id": "t-12243-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Completionist SQL counts all d.retired=1 decks but description says 'without retiring an unfinished league run' \u2014 decks with 5 matches are finished but still trigger the condition",
+          "ref": "decksite/data/achievements.py:815",
+          "type": "code"
+        },
+        {
+          "detail": "description_safe explicitly says 'unfinished' but SQL has no match-count guard",
+          "ref": "decksite/data/achievements.py:811",
+          "type": "code"
+        },
+        {
+          "detail": "5 matches is the league completion threshold per the form validation message",
+          "ref": "decksite/league.py:249",
+          "type": "code"
+        },
+        {
+          "detail": "deck.is_finished checks wins+draws+losses >= 5 OR self.retired, confirming retired and 5-match are independent states",
+          "ref": "magic/models/deck.py:29",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/achievements.py:815, change the Completionist SQL from `COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0` to `COUNT(CASE WHEN d.retired = 1 AND (COALESCE(dc.wins, 0) + COALESCE(dc.draws, 0) + COALESCE(dc.losses, 0)) < 5 THEN 1 ELSE NULL END) = 0`. The dc alias (deck_cache) is already joined in the preaggregate query (achievements.py:103). This makes the SQL match the description 'without retiring an unfinished league run'.",
+      "issue": 12243,
+      "notes": "The 83 retired-but-5-match decks directly cause the Completionist achievement to be incorrectly denied. dc is a LEFT JOIN so COALESCE is needed for decks with no cache row.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

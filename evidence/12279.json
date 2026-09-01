@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12279,
+  "triage": [
+    {
+      "batch_id": "t-12282-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue body itself poses open questions: 'It's not clear we're at the right spot yet with any of this', proposes checkboxes/radio buttons, asks about admin vs non-admin sort differences",
+          "ref": "#12279",
+          "type": "issue"
+        },
+        {
+          "detail": "Current /rotation uses a JS-driven live table via rotation_cards_api; sort order determined by clauses.rotation_order_by() at decksite/data/clauses.py:143",
+          "ref": "decksite/templates/rotation.mustache + decksite/controllers/api.py:467",
+          "type": "behavior"
+        },
+        {
+          "detail": "Author explicitly says 'I got to a decent basic state here but leaving this ticket open for possible radios or other improvements' \u2014 work is intentionally incomplete pending decisions",
+          "ref": "#12279 comment 1",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12279,
+      "notes": "The owner explicitly left this open for product decisions. Decisions needed: which sort behaviors to expose as radio buttons/checkboxes, whether admin vs non-admin gets different defaults, whether to support hits>32 type filter syntax in UI.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:01:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

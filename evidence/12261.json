@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12261,
+  "triage": [
+    {
+      "batch_id": "t-12271-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Existing /scry command calls fetcher.search_scryfall() exclusively \u2014 no local rotation data path",
+          "ref": "discordbot/commands/scry.py:15-17",
+          "type": "code"
+        },
+        {
+          "detail": "No rotation-specific search command exists in discordbot/commands/",
+          "ref": "grep -rn 'rotscry|pdscry|rotation_search' discordbot/",
+          "type": "search"
+        },
+        {
+          "detail": "dreadrise.py provides a partial workaround: PD-legal first, then others, but still calls external Dreadrise API not local rotation files",
+          "ref": "discordbot/commands/dreadrise.py:33-35",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12261,
+      "notes": "Requires product decisions: command name, whether it wraps the internal find engine (find/search.py) with f:pd, or queries rotation-run file data directly (magic/rotation.py:read_rotation_files). The distinction matters for pre-rotation-complete season queries.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

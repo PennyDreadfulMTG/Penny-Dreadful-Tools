@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12256-1",
+      "branch": "sweep/12256-c-ur-works-on-scryfall-but-not-in-our-se",
+      "files_changed": 3,
+      "head_sha": "b2f898dcd6f7ef5f3befeb745aa3e43523630d57",
+      "issue": 12256,
+      "lines_changed": 10,
+      "lint": "passed",
+      "notes": "The `!=` operator is now tokenized but unhandled in `math_where` and `rarity_where`; those functions already return `(1 <> 1)` (always-false) for unknown operators, so `pow!=3` tokenizes but silently returns no results \u2014 a pre-existing gap, not a regression introduced here.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`c!=ur` (and similar `!=` color queries) failed because `!=` was not in `Operator.values` in `find/tokens.py`. The tokenizer matched `!` first (a strict substring of `!=`), leaving `=ur` unparseable. Even if tokenizing succeeded, `color_where()` in `find/search.py` had no branch for the `!=` operator.\n\n## What changed\n\n- **`find/tokens.py`**: Added `'!='` to `Operator.values` before `'!'` (longer token must precede its strict substring, per the existing comment).\n- **`find/search.py`**: Added an early return in `color_where()` for `operator == '!='` that recursively calls `color_where` with `'='` and wraps the result in `NOT (...)`. This handles both named colors (`c!=ur`) and integer color counts (`c!=2`).\n- **`find/find_test.py`**: Added a unit test verifying the generated SQL and a `@pytest.mark.functional` test (requires live DB) verifying correct card results.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit find` \u2014 61 passed (49 functional tests deselected; they require a live card database not available in the CI environment)\n\nFixes #12256",
+      "pr_title": "Support != operator in color search (#12256)",
+      "recorded_at": "2026-09-01T19:10:05Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find",
+        "detail": "61 passed, 49 deselected in 1.01s (non-functional; functional tests require live DB with card data)",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12256,
+  "triage": [
+    {
+      "batch_id": "t-12271-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Operator.values = ['<=', '>=', ':', '!', '<', '>', '='] \u2014 '!=' is absent; parser greedily matches '!' leaving '=ur' as the value string",
+          "ref": "find/tokens.py:72",
+          "type": "code"
+        },
+        {
+          "detail": "color_where() handles operators '=', '!', '<=', ':', '>=', '<', '>' but has no '!=' branch \u2014 '=ur' passed as term produces wrong SQL treating '=' as a color symbol",
+          "ref": "find/search.py:282-290",
+          "type": "code"
+        },
+        {
+          "detail": "No commits adding != operator support to find/ module",
+          "ref": "git log --oneline -S'!=' -- find/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In find/tokens.py, add '!=' to Operator.values before '!' (comment says strict substrings must come later, so '!=' must precede '!'): values = ['<=', '>=', '!=', ':', '!', '<', '>', '=']. In find/search.py color_where(), add a branch for operator '!=' that wraps the '=' SQL in NOT: compute the = result and return f'NOT ({eq_result})'. Also add '!=' to find_test.py functional tests. ~15 lines total.",
+      "issue": 12256,
+      "notes": "Only the color/color_identity criterion is reported broken; other criteria (type, rarity, etc.) may also lack != support but are not in scope for this issue. The fix is self-contained to find/ module.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

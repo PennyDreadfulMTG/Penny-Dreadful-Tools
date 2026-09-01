@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12377-1",
+      "branch": "sweep/12377-i-d-like-realrhinos1-0-to-realrhinos-v1",
+      "files_changed": 2,
+      "head_sha": "895e2a2094631a7478907d56a7eee28ec01ae7fb",
+      "issue": 12377,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The lookbehind `(?<![\\d.v ])` (excluding digits, dots, 'v', and space) was required to prevent 9 regressions caused by the simpler `(?<![v ])` form, which matched sub-sequences inside already-processed version strings like `4.22` inside `v9.24.22`. All 327 tests pass.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nDeck names like `RealRhinos1.0` were not being normalized to `RealRhinos v1` because all three existing patterns in `normalize_version` require either an explicit version keyword (`v`, `ver`, `mk`, etc.) or a whitespace character before the dotted number. A name where the version is concatenated directly without a space matched none of them.\n\n## What changed\n\nAdded a fourth pattern `r'()(?<![\\ d.v ])(\\d\\.\\d[\\.\\d]*)$'` to `normalize_version` in `decksite/deck_name.py`. The negative lookbehind `(?<![\\d.v ])` is critical: it prevents the pattern from re-matching sub-sequences inside version strings that earlier patterns already processed (e.g. `4.22` inside `v9.24.22`, or `1.3` inside `v31.3`). The empty capture group `()` satisfies the spacer logic at line 314, which inserts a space when `group(1) != '-'`, producing `RealRhinos v1`.\n\nAdded test case `('RealRhinos1.0', 'RealRhinos v1', [], None, 1)` to `decksite/deck_name_test.py`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen pytest decksite/deck_name_test.py` \u2014 327 passed (326 pre-existing + 1 new), 0 failures. Confirmed `RDW23` \u2192 `Rdw23` is unaffected (no dot in `23`).\n\nFixes #12377",
+      "pr_title": "Normalize dotted version numbers appended directly to deck names (#12377)",
+      "recorded_at": "2026-09-01T19:01:05Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest decksite/deck_name_test.py",
+        "detail": "327 passed in 7.77s (326 pre-existing + 1 new RealRhinos1.0 test)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12377,
   "triage": [
     {

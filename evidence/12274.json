@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12274,
+  "triage": [
+    {
+      "batch_id": "t-12276-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template renders .detail (a live deck table) after each achievement with no explicit spacing control; whitespace/layout issues remain",
+          "ref": "decksite/templates/personachievements.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "Reactify achievement detail page \u2014 improved page size and introduced React-based deck loading but did not address column inconsistency, .detail whitespace, or emoji padding",
+          "ref": "443790d0",
+          "type": "commit"
+        },
+        {
+          "detail": "Trophy emoji in <span class='earned'> with no margin/padding CSS \u2014 emoji spacing complaint is still present",
+          "ref": "decksite/templates/achievements.mustache:38",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12274,
+      "notes": "The title issue (different achievements showing different column sets) and the comment issues (whitespace, emoji spacing, wide-screen layout) are related but distinct; all require CSS/template work and design judgment on desired final layout.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:58:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

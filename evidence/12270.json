@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12270,
+  "triage": [
+    {
+      "batch_id": "t-12271-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "parse_season raises InvalidValueException(f\"Could not get a Penny Dreadful season from '{term}'\") \u2014 verbose message",
+          "ref": "find/search.py:519",
+          "type": "code"
+        },
+        {
+          "detail": "MAX_PUBLIC_ERROR_LENGTH = 200 with truncation already applied for Discord bot \u2014 Discord display is already handled",
+          "ref": "discordbot/error_handling.py:11",
+          "type": "code"
+        },
+        {
+          "detail": "Web UI: card_search_where catches InvalidSearchException and returns str(e) as display message with no truncation",
+          "ref": "decksite/data/clauses.py:276-278",
+          "type": "code"
+        },
+        {
+          "detail": "6 InvalidSearchException subclasses (InvalidTokenException, InvalidModeException, InvalidValueException, InvalidCriterionException etc.) all have verbose messages \u2014 systematic change needed",
+          "ref": "find/search.py:537-549",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12270,
+      "notes": "The issue proposes adding a short_message field to InvalidSearchException to enforce short messages at write time. This requires updating the exception class hierarchy in find/search.py, all 8+ raise sites, and the web UI template/display code \u2014 broader than an easy-fix. Alternatively, truncation could be added to the decksite display layer, but the issue author prefers the short_message approach.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

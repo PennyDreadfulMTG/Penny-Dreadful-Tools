@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12321-1",
+      "final_comment": "Fixed in PR #13354 (commit b823df16): the clear_cache endpoint now fires the work off via subprocess.Popen and returns immediately, eliminating the Cloudflare gateway timeout.",
+      "issue": 12318,
+      "own_evidence": [
+        {
+          "detail": "Commit exists and is merged; message and diff match the described fix exactly",
+          "ref": "b823df16",
+          "type": "commit"
+        },
+        {
+          "detail": "PR is in MERGED state",
+          "ref": "pr #13354",
+          "type": "pr"
+        },
+        {
+          "detail": "Independently read: rotation_clear_cache() calls subprocess.Popen(cmd) with no wait/join and immediately returns {success: True}, confirming the async fire-and-forget pattern that eliminates the gateway timeout",
+          "ref": "decksite/controllers/api.py:639-646",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:01:54Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

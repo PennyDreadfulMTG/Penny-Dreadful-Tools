@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12230,
+  "triage": [
+    {
+      "batch_id": "t-12231-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "the hack is still present: 'creatureland': 't:land -t:creature o:/becomes? a.* creature/ -\"Argoth, Sanctum of Nature\" -o:/target .* becomes/' \u2014 Argoth is excluded by name rather than by proper oracle-text scoping",
+          "ref": "find/search.py:437",
+          "type": "code"
+        },
+        {
+          "detail": "the underlying cause is that meld card backs share oracle_text with the front in the DB, so any regex matching meld-back text also matches the front; fixing it properly requires querying face-scoped oracle text, which is not currently supported in the search layer",
+          "ref": "find/search.py:437",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12230,
+      "notes": "The workaround is fragile: any future meld land with 'becomes a creature' oracle text on the back would need to be manually excluded. A proper fix requires the search engine to scope oracle_text queries to specific card faces for meld cards, which is a non-trivial schema or query change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:21Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

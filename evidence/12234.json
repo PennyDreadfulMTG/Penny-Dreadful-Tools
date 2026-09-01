@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12234,
+  "triage": [
+    {
+      "batch_id": "t-12243-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "swiss command has num_players, num_rounds, top_n slash options \u2014 no num_byes parameter",
+          "ref": "discordbot/commands/swiss.py:17",
+          "type": "code"
+        },
+        {
+          "detail": "swisscalc() uses a closed-form MTGSalvation formula that assumes all players start at 0-0; byes require splitting the player pool into two starting distributions (0-0 and 1-0) and merging them",
+          "ref": "discordbot/commands/swiss.py:57",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12234,
+      "notes": "The current algorithm is a single-distribution closed-form formula. Supporting byes requires running two separate distributions (bye and non-bye players) and merging at each round step, which is a non-trivial algorithmic extension well beyond 150 lines.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

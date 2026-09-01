@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12218,
+  "triage": [
+    {
+      "batch_id": "t-12226-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "main has 'padding: 0 var(--spacing-page-with-marginalia)' which constrains all children including .notice",
+          "ref": "shared_web/static/css/pd.css:359",
+          "type": "code"
+        },
+        {
+          "detail": ".notice p carries background: var(--tertiary-background) but .notice has no negative margins, so the colored background stops at main's padding edge \u2014 exactly the reported problem",
+          "ref": "shared_web/static/css/pd.css:144-154",
+          "type": "code"
+        },
+        {
+          "detail": "--spacing-page-with-marginalia: calc(96rem / 20) is available as a CSS var for the negative-margin calc",
+          "ref": "shared_web/static/css/pd.css:533",
+          "type": "code"
+        },
+        {
+          "detail": ".notice div is directly inside <main>, which is the padded container",
+          "ref": "decksite/templates/header.mustache:45-49",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css near the .notice block: add negative horizontal margins to .notice matching --spacing-page-with-marginalia, move background from .notice p to .notice, and add matching padding-left/right to .notice p so text stays indented. Add a @media (max-width: 900px) override using -1rem. No HTML changes needed.",
+      "issue": 12218,
+      "notes": "The issue screenshot shows the notice ending at the page margins; the fix is ~10 lines of CSS. The 'look a lot nicer' comment is subjective but the specific measurable ask (full-width) is mechanically achievable. Design polish can be a follow-up.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:13:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

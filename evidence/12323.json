@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12323-1",
+      "branch": "sweep/12323-archetype-playability-dings-a-card-for-n",
+      "files_changed": 1,
+      "head_sha": "a36d68471a329fab4c12d8c9f73a2e87753a4595",
+      "issue": 12323,
+      "lines_changed": 31,
+      "lint": "passed",
+      "notes": "The three previously-used tables (_archetype_card_count, _archetype_count, _card_count) are now only populated but never read by anything else; they could be removed in a follow-up cleanup PR but are left in place here to minimise scope. The fix mirrors exactly the pattern already used by _season_archetype_playability, just aggregated with SUM() across legal seasons.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`preaggregate_archetype_playability()` computed all-time playability by joining `_archetype_card_count` (numerator) against `_archetype_count` (denominator). `_archetype_count` counts **all** decks in the archetype across every season, including seasons where the card was not legal. This made the denominator too large for cards with limited legality windows, deflating their playability score.\n\nFor example, Dark Ritual in Necro Midrange showed 0.41 all-time playability even though it was 0.74 in the only season it was legal \u2014 because the denominator included all seasons of Necro Midrange decks, not just the seasons where Dark Ritual was legal.\n\n## What changed\n\nReplaced the three-table join (`_archetype_card_count`, `_archetype_count`, `_card_count`) with a GROUP BY aggregation over the season-level tables:\n\n- Start from `_season_archetype_card_count` \u2014 which already filters through `_legal_cards` (via an INNER JOIN added in #9121), so it only has rows for (card, season) pairs where the card was legal.\n- JOIN `_season_archetype_count` on matching `season_id` AND `archetype_id` \u2014 giving us archetype deck counts only for seasons where the card was legal.\n- JOIN `_season_card_count` and `_season_count` on `season_id` \u2014 for the global-popularity penalty term, also limited to legal seasons.\n- `SUM()` each count and `GROUP BY name, archetype_id`.\n\nNo schema changes \u2014 the output table definition (`_archetype_playability`) is unchanged.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (no DB-dependent tests exist for this function; the fix is SQL logic verified by inspection)\n\nFixes #12323",
+      "pr_title": "Fix _archetype_playability to exclude illegal seasons from denominator (#12323)",
+      "recorded_at": "2026-09-01T19:07:11Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.95s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12323,
   "triage": [
     {

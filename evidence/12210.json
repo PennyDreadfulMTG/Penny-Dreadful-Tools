@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12210,
+  "triage": [
+    {
+      "batch_id": "t-12226-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current whois_mtgo() returns only the Discord mention for the MTGO name \u2014 no stats, Elo, season count, archetype, or tournament data",
+          "ref": "discordbot/commands/whois.py:26-33",
+          "type": "code"
+        },
+        {
+          "detail": "Person view has decks, archetypes, achievements, trailblazer cards but no narrative pen-picture sentence generation",
+          "ref": "decksite/views/person.py:1-70",
+          "type": "code"
+        },
+        {
+          "detail": "no pen_picture or player summary function found anywhere in the codebase",
+          "ref": "grep -rn 'pen_picture\\|pen-picture\\|player.*summary' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Comments from bakert show draft narrative sentences ('bakert99 (Elo 1976) has played 30 seasons...') as desired output, confirming the feature is not yet implemented",
+          "ref": "#12210",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12210,
+      "notes": "The feature requires aggregating Elo, season count, top archetypes, PD500 results, tournament wins, and league 50-0 data into a narrative sentence for both the bot (whois) and a decksite page. Multi-component new feature with design decisions on format and scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:13:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

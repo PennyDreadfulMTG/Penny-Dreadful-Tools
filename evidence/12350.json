@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12350-1",
+      "branch": "sweep/12350-matchups-doesn-t-know-about-newly-legal",
+      "files_changed": 1,
+      "head_sha": "2b2d7e196f5bd96d9558840d649f45853ae1ac4d",
+      "issue": 12350,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single one-character parameter change. The `all_legal` path is already used by other card-list endpoints and covered by an existing test (`test_load_cards_all`). No schema or data migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/matchups` endpoint builds a card selector using `cs.load_cards()` (no arguments). Without `all_legal=True`, `load_cards` queries only `_card_stats`, which only contains cards that have appeared in at least one competitive deck in the current season. Early in a season, newly-legal cards that haven't been played yet are invisible \u2014 they don't appear in the selector even though they're legal and could be searched.\n\n## What changed\n\n`decksite/controllers/metagame.py` line 161: changed `cs.load_cards()` to `cs.load_cards(all_legal=True)`.\n\nWith `all_legal=True`, `load_cards` uses `_legal_cards LEFT JOIN _card_stats` instead of just `_card_stats`, so every currently-legal card appears in the list even if it has zero competitive plays \u2014 exactly the same pattern used by other card-list endpoints in the codebase.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python -m pytest decksite/ -x -q` \u2014 432 passed, 0 failures (includes `decksite/data/card_test.py::test_load_cards_all` which directly covers the `all_legal` code path)\n\nFixes #12350",
+      "pr_title": "Include newly legal cards with no plays in /matchups card selector (#12350)",
+      "recorded_at": "2026-09-01T18:58:51Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest decksite/ -x -q --tb=short",
+        "detail": "432 passed, 7 warnings in 30.02s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12350,
   "triage": [
     {

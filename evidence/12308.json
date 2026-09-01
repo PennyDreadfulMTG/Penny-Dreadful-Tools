@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12308-1",
+      "branch": "sweep/12308-when-we-are-in-rotation-pdm-should-guide",
+      "files_changed": 1,
+      "head_sha": "1ceaf84be1a8f971048fe25c0fbf534470246cd2",
+      "issue": 12308,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The fix adds 5 lines in one file, following the exact pattern already used in discordbot/commands/explain.py and discordbot/commands/hype.py. No tests were added because the changed code path has no existing unit tests for slash command response content (discordbot/command_test.py tests query parsing, not command output); the change is a straightforward conditional append.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/rotation` Discord slash command only reported the time until the next rotation. When a rotation was actively in progress (within 7 days), it gave no link to the decksite's rotation page where users can see exactly what cards are entering and leaving the format.\n\n## What changed\n\nIn `discordbot/commands/rotation.py`:\n- Added imports for `fetcher` and `rotation` from `magic`\n- After building the rotation message, check `rotation.in_rotation()`; if `True`, append a link to `fetcher.decksite_url('/rotation/')` so users are directed to the full rotation details page\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected (full unit suite including discordbot tests)\n\nFixes #12308",
+      "pr_title": "Guide users to /rotation page when rotation is in progress (#12308)",
+      "recorded_at": "2026-09-01T19:04:59Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.16s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12308,
   "triage": [
     {

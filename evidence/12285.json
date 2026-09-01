@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12285-1",
+      "branch": "sweep/12285-default-sorts-and-live-table-improvement",
+      "files_changed": 2,
+      "head_sha": "8db0d014a3ba6b65573e018436b2969bbc944f2e",
+      "issue": 12285,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The fix is purely client-side (JS + Mustache template). No DB, no schema change, no auth impact. The `sort` function in datamanager.jsx already handles the toggle correctly once the initial state is seeded; the only issue was the missing initial state and wrong default direction in the bind.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe rotation page's `\u21c5` column header was bound with `sort.bind(table, 'hitInLastRun', 'DESC')`, but the server default is `hitInLastRun ASC`. Additionally, the `<div class=\"rotationtable\">` element had no `data-initial-sort-by` / `data-initial-sort-order` attributes, so the React component's initial state didn't know it was already sorted by `hitInLastRun ASC`.\n\nThe result: visiting the rotation page, clicking any other column (e.g. Rank), then clicking \u21c5 applied `hitInLastRun DESC` \u2014 the wrong (reversed) order \u2014 because the sort function treats the first click on a new column as a fresh sort using the hardcoded `'DESC'`. The second click would toggle to `ASC`, which is the expected \"good\" default.\n\n## What changed\n\n- **`shared_web/static/js/rotationtable.jsx`**: Changed `sort.bind(table, 'hitInLastRun', 'DESC')` \u2192 `sort.bind(table, 'hitInLastRun', 'ASC')` so clicking \u21c5 when on another column lands in `ASC` (the \"good\" default order) instead of `DESC`.\n- **`decksite/templates/rotation.mustache`**: Added `data-initial-sort-by=\"hitInLastRun\"` and `data-initial-sort-order=\"ASC\"` to the rotationtable div, matching the server default (`clauses.rotation_order_by` defaults to `hitInLastRun ASC` when no sort params are provided). This ensures the component's toggle logic correctly treats the initial state as already sorted by `hitInLastRun ASC`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (All checks passed)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped\n- `git diff HEAD` confirmed exactly 3 targeted lines changed across 2 files\n\nFixes #12285",
+      "pr_title": "Fix hitInLastRun default sort direction and initial UI state (#12285)",
+      "recorded_at": "2026-09-01T19:13:01Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12285,
+  "triage": [
+    {
+      "batch_id": "t-12288-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "rotation API defaults to hitInLastRun ASC when no sortBy provided",
+          "ref": "decksite/data/clauses.py:143-148",
+          "type": "code"
+        },
+        {
+          "detail": "\u21c5 column header binds sort with 'DESC' default, opposite to server ASC default",
+          "ref": "shared_web/static/js/rotationtable.jsx:6",
+          "type": "code"
+        },
+        {
+          "detail": "rotationtable div passes no data-initial-sort-by or data-initial-sort-order; DataManager starts with sortBy=undefined",
+          "ref": "decksite/templates/rotation.mustache:11-12",
+          "type": "code"
+        },
+        {
+          "detail": "DataManager initialises sortBy from props.initialSortBy; if undefined, first click on any column uses the bound default rather than toggling",
+          "ref": "shared_web/static/js/datamanager.jsx:22-23",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/rotationtable.jsx:6 change sort.bind(table, 'hitInLastRun', 'DESC') to sort.bind(table, 'hitInLastRun', 'ASC') to match the server default. In decksite/templates/rotation.mustache add data-initial-sort-by='hitInLastRun' data-initial-sort-order='ASC' to the rotationtable div so UI state reflects the initial server sort and subsequent clicks toggle correctly. ~3 lines total.",
+      "issue": 12285,
+      "notes": "Issue describes the problem as general to all live tables; the rotation-specific fix above is the concrete case. A broader DataManager-level fix for all tables would be a separate effort. Medium confidence because the exact failure scenario may differ from my analysis.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

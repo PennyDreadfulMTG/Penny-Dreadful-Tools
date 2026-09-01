@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12231,
+  "triage": [
+    {
+      "batch_id": "t-12231-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "tests use broad searches like 'is:spell' and 'c>=br is:spell f:duel' that may return many cards; all functional tests are marked @pytest.mark.functional",
+          "ref": "find/find_test.py:130-140",
+          "type": "code"
+        },
+        {
+          "detail": "bakert explicitly framed this as a question \u2014 'I'm not sure if they're slow' \u2014 with no actionable defect identified",
+          "ref": "issue title ends with '?'",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12231,
+      "notes": "Author opened this as a self-directed question about whether the functional tests are actually slow; no evidence they are, and no actionable change was proposed. Suitable to close as answered or keep open as a tracking note.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

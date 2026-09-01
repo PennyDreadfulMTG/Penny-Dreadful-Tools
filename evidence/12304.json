@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12304-1",
+      "branch": "sweep/12304-legal-not-legal-undecided-should-be-an-e",
+      "files_changed": 5,
+      "head_sha": "4d31cc74",
+      "issue": 12304,
+      "lines_changed": 55,
+      "lint": "passed",
+      "notes": "StrEnum members hash and compare equal to their plain-string values, so dict lookups keyed by status string continue to work without changes to callers. The SQL wire format is unchanged \u2014 the enum values are still plain strings on the DB side.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe rotation status values `'Legal'`, `'Not Legal'`, and `'Undecided'` were bare string literals scattered across 5 files, making them fragile to typos and hard to discover.\n\n## What changed\n\nAdded a `RotationStatus(StrEnum)` class in `magic/rotation.py` with members `LEGAL = 'Legal'`, `NOT_LEGAL = 'Not Legal'`, and `UNDECIDED = 'Undecided'`. Because `StrEnum` members ARE strings (Python 3.11+, required by this project's `pyproject.toml`), existing DB column values and SQL wire format are unchanged. All 24 bare string literals in `magic/rotation.py`, `decksite/data/rotation.py`, `decksite/data/clauses.py`, `decksite/controllers/api.py`, and `discordbot/commands/history.py` were replaced with the enum members (SQL f-strings use `'{RotationStatus.X}'` to preserve SQL quoting).\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all 5 changed files)\n- `uv run --frozen python dev.py unit <touched files>` \u2014 845 passed, 1 skipped (env-blocked functional test unrelated to this change)\n\nFixes #12304",
+      "pr_title": "Add RotationStatus StrEnum to replace magic strings (#12304)",
+      "recorded_at": "2026-09-01T19:04:46Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/rotation.py decksite/data/rotation.py decksite/data/clauses.py decksite/controllers/api.py discordbot/commands/history.py",
+        "detail": "845 passed, 1 skipped in 17.62s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12304,
   "triage": [
     {

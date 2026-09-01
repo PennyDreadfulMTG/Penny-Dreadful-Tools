@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-12321-1",
+      "final_comment": "Duplicate of #7452, which tracks the broader fix for multi-face card type searching (split cards, adventure cards, MDFCs). The root cause is the same: type_query() in magic/card.py only indexes the front face (position=1), so is:mdfc t:land misses back-face lands. Closing here; track progress in #7452.",
+      "issue": 12321,
+      "own_evidence": [
+        {
+          "detail": "Author bakert explicitly stated 'This is a manifestation of #7452' in the issue thread",
+          "ref": "gh issue view 12321 --comments",
+          "type": "comment"
+        },
+        {
+          "detail": "Issue #7452 is still OPEN with title 'Support types properly in search and elsewhere for Split cards, Adventure cards, MDFCs' \u2014 covers the same root cause",
+          "ref": "gh issue view 7452",
+          "type": "issue"
+        },
+        {
+          "detail": "type_query() independently verified: only selects position=1 (front face), so MDFC back-face types (e.g. land) are excluded \u2014 confirming the duplicate relationship",
+          "ref": "magic/card.py:294-297",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:01:54Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

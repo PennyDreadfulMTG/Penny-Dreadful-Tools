@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12297-2",
+      "branch": "sweep/12297-don-t-cast-person-id-in-decks-where",
+      "files_changed": 2,
+      "head_sha": "ffb9f968e2d95bbce09f6fe58831f9ef3414b441",
+      "issue": 12297,
+      "lines_changed": 14,
+      "lint": "passed",
+      "notes": "The fix is two one-liner changes plus a test. The achievementKey code path had identical issues for both personId and seasonId; both are fixed. No other callers of decks_where are affected.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `decksite/data/clauses.py`, inside the `achievementKey` branch of `decks_where`, the code unconditionally called `int(args.get('personId', ''))` and `int(args.get('seasonId', ''))`. When either key was absent from `args`, `args.get()` returned `''` (the default), and `int('')` raised a `ValueError`. This path is entered whenever `achievementKey` is present, regardless of whether `personId` or `seasonId` are also supplied.\n\n## What changed\n\n- `decksite/data/clauses.py` lines 236\u2013237: replaced `int(args.get('personId', ''))` / `int(args.get('seasonId', ''))` with conditional expressions that produce `None` when the key is absent \u2014 matching the `int | None` signature of `achievements.load_deck_ids`, which already handles `None` correctly.\n- `decksite/data/clauses_test.py`: added `test_decks_where_achievement_without_person_or_season` which monkeypatches `achievements.load_deck_ids` and asserts that calling `decks_where` with only `achievementKey` (no `personId`/`seasonId`) does not raise.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python -m pytest decksite/data/clauses_test.py -v` \u2014 6 passed (MariaDB 11.8 running locally; conftest required DB to be up)\n\nFixes #12297",
+      "pr_title": "Don't cast personId/seasonId to int when absent in decks_where (#12297)",
+      "recorded_at": "2026-09-01T19:12:07Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest decksite/data/clauses_test.py -v",
+        "detail": "6 passed in 2.78s (includes new regression test for the fix)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12297,
   "triage": [
     {

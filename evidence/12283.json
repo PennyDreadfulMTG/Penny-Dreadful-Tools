@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12283,
+  "triage": [
+    {
+      "batch_id": "t-12288-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "function named in the title does not exist anywhere in current master",
+          "ref": "grep -rn 'if_not_in_rotation_return' . --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "in_rotation() is the only function that checks rotation state; callers use it directly with inline conditionals",
+          "ref": "magic/rotation.py:25-33",
+          "type": "code"
+        },
+        {
+          "detail": "issue body ends with \ud83e\udd14 and discusses Run_xxx.txt edge-case concerns; reads as thinking-out-loud, not a concrete defect",
+          "ref": "#12283",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12283,
+      "notes": "The issue body (Run_xxx.txt file concerns) and the title (a janky helper function) appear to address separate concerns. Neither is an actionable defect in current code.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

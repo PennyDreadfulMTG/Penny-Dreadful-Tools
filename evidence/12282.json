@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12282-1",
+      "branch": "sweep/12282-include-the-full-latest-hype-message-at",
+      "files_changed": 2,
+      "head_sha": "5a121ea10a5c174dc1c85c0a053e96c0237de58d",
+      "issue": 12282,
+      "lines_changed": 10,
+      "lint": "passed",
+      "notes": "The hype message is only shown when `in_rotation` is True and `runs > 0`, so the page is unchanged outside of active rotation. The `asyncio.run()` call is synchronous-safe because the Flask route handler is sync; if the site ever migrates to async Flask, this would need revisiting. The function may call Redis and external services (card ranks), which could add latency on the first page load after a rotation run.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/rotation` page showed run stats and card data but omitted the same hype summary message that the Discord bot posts after each rotation run. Visitors had to check Discord to see which cards were newly confirmed legal, newly eliminated, or just got their first hit.\n\n## What changed\n\n- **`decksite/views/rotation.py`**: Added `asyncio.run(rotation.rotation_hype_message(True))` in `Rotation.__init__` when `in_rotation` is True and runs > 0. The Discord-format URL (`<https://...>`) is stripped via regex since the user is already on the rotation page.\n- **`decksite/templates/rotation.mustache`**: Added `{{#hype_message}}<pre>{{hype_message}}</pre>{{/hype_message}}` directly after the rotation status line, so the hype summary appears at the top of the page when rotation is active.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (mypy clean on the touched file)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped\n\nFixes #12282",
+      "pr_title": "Show latest rotation hype message at top of /rotation (#12282)",
+      "recorded_at": "2026-09-01T19:10:21Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic.rotation_test",
+        "detail": "845 passed, 1 skipped in 20.17s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12282,
+  "triage": [
+    {
+      "batch_id": "t-12282-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Rotation view constructor has no hype_message field; template has no hype display",
+          "ref": "decksite/views/rotation.py:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "Template shows rotation_msg and run stats only; no hype text block",
+          "ref": "decksite/templates/rotation.mustache:1-18",
+          "type": "code"
+        },
+        {
+          "detail": "rotation_hype_message(hype_command: bool) exists and computes full hype text; declared async but has no await calls inside, so asyncio.run() works from sync Flask context",
+          "ref": "magic/rotation.py:151",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `decksite/views/rotation.py`, import asyncio and call `asyncio.run(rotation.rotation_hype_message(True))` during `__init__` when `in_rotation` is True; store result as `self.hype_message`. In `decksite/templates/rotation.mustache`, add `{{#hype_message}}<pre>{{hype_message}}</pre>{{/hype_message}}` before the runs stats block. Optionally strip the Discord URL line from the hype text in the view.",
+      "issue": 12282,
+      "notes": "rotation_hype_message is declared async but contains no await expressions; asyncio.run() is safe here. The comment on the issue (cookies/personalization) is a separate enhancement idea, not part of the basic request.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:01:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

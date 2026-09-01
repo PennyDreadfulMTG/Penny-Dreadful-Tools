@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12257-1",
+      "branch": "sweep/12257-during-rotation-it-would-probably-make-s",
+      "files_changed": 1,
+      "head_sha": "30ea7c12507be55f0a4d5187a7c55579c6c529a6",
+      "issue": 12257,
+      "lines_changed": 5,
+      "lint": "passed",
+      "notes": "The sort only fires during an active rotation window (rotation.in_rotation() returns False otherwise), so there is no behaviour change outside of rotation. Cards with undecided next-season status are treated as 'not next_in', placing them in the {in,out} or {out,out} bucket \u2014 consistent with how emoji.py treats undecided cards as non-confirmed-legal.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nDuring rotation, when the bot responded with multiple card matches (e.g. `[Lightning Bolt]`), the cards were displayed in arbitrary order (deduplication insertion order). The issue asked that during a rotation window, cards be ordered by their rotation status: `{in,in}` (currently legal, confirmed next season) first, then `{in,out}`, then `{out,in}`, then `{out,out}`, with alphabetical ordering as a tiebreaker within each group.\n\n## What changed\n\nIn `discordbot/command.py`, inside `post_cards()`, after the existing `uniqify_cards()` call, a sort step is added that is gated on `rotation.in_rotation()`. The sort key is a tuple `(not currently_in, not next_in, card.name)` where:\n- `currently_in = c.legal_in(seasons.current_season_name())`\n- `next_in = redis.sismember('decksite:rotation:summary:legal', c.name)`\n\nTwo new imports were added (`rotation`, `seasons` from `magic`; `redis_wrapper as redis` from `shared`), both already available in the codebase and used the same way in `discordbot/emoji.py`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (ruff auto-fixed import ordering, then clean)\n- `uv run --frozen python dev.py unit discordbot` \u2014 845 passed, 1 skipped (functional test intentionally skipped per existing marker)\n\nFixes #12257",
+      "pr_title": "Sort bot card responses by rotation status during rotation (#12257)",
+      "recorded_at": "2026-09-01T19:09:49Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "845 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12257,
+  "triage": [
+    {
+      "batch_id": "t-12271-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "post_cards() has no rotation-status sorting; cards displayed in search-result order regardless of rotation status",
+          "ref": "discordbot/command.py:283-313",
+          "type": "code"
+        },
+        {
+          "detail": "Rotation status already read from Redis sets 'decksite:rotation:summary:{legal,notlegal,undecided}' via redis.sismember \u2014 lookup infrastructure exists",
+          "ref": "discordbot/emoji.py:75-77",
+          "type": "code"
+        },
+        {
+          "detail": "rotation.in_rotation() available to gate sorting logic to rotation period only",
+          "ref": "magic/rotation.py:25",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/command.py, in post_cards() (or in uniqify_cards), add a sort step gated on rotation.in_rotation(): for each card, determine (current_pd_legal, next_season_confirmed_in) using oracle.legal_cards() and redis.sismember for 'decksite:rotation:summary:legal'/'notlegal', then sort by tuple (not next_in, not current_in, name). Files: discordbot/command.py (~25 lines added). No schema changes.",
+      "issue": 12257,
+      "notes": "The 'out,in' bucket is for cards not currently PD-legal but confirmed for next season \u2014 rare but valid during late rotation. The existing Redis sets only track next-season status, so current-season legality must come from oracle.legal_cards().",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

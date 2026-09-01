@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12235,
+  "triage": [
+    {
+      "batch_id": "t-12243-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bakert commented: 'This is cute but the incompleteness would be forever annoying.' \u2014 the reporter themselves flagged the core objection",
+          "ref": "#12235",
+          "type": "issue"
+        },
+        {
+          "detail": "No implementation of log-scanning achievements exists in current master",
+          "ref": "grep -r 'memory.lapse' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12235,
+      "notes": "The issue proposer (bakert) expressed explicit reservations about completeness in the only comment. The decision needed is whether incomplete/retroactively-unearnable achievements are acceptable design.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12227,
+  "triage": [
+    {
+      "batch_id": "t-12231-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "seasons.ALL = 'ALL' is defined but inconsistently used: magic/seasons.py:265 checks against ('all', 0, None) mixing lowercase 'all', integer 0, and None as all-season sentinels",
+          "ref": "magic/seasons.py:11",
+          "type": "code"
+        },
+        {
+          "detail": "many URL-building call sites use lowercase string 'all' directly rather than seasons.ALL",
+          "ref": "decksite/view.py:111-119",
+          "type": "code"
+        },
+        {
+          "detail": "seasonnum == 0 is used as the all-seasons sentinel in some code paths",
+          "ref": "decksite/controllers/banners.py:72",
+          "type": "code"
+        },
+        {
+          "detail": "found 10+ distinct sites using 0 or 'all' (lowercase) instead of seasons.ALL; 'composite types' likely means adding a Python type alias (e.g. SeasonId = int | Literal['ALL']) but this is unspecified in the issue",
+          "ref": "grep -rn \"season.*== 0\\|season.*'all'\" --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12227,
+      "notes": "The refactoring touches 10+ files across decksite and magic modules; the 'add composite types' part requires a design decision about what type alias to introduce and where. Larger in scope than easy-fix and somewhat vague without further specification from the author.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:12:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

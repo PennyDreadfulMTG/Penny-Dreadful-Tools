@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12276,
+  "triage": [
+    {
+      "batch_id": "t-12276-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "assert sort_order in ['ASC', 'DESC'] \u2014 AssertionError is not registered in flask error handlers, so an invalid sort_order returns 500/HTML instead of 400/JSON; same pattern repeats at lines 61, 80, 100, 116, 132, 150, 195",
+          "ref": "decksite/data/clauses.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "sort_options[sort_by] with no try/except \u2014 KeyError on invalid sort_by key produces unhandled 500",
+          "ref": "decksite/data/clauses.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "int(request.args.get('personId', 0)) with no try/except \u2014 ValueError on non-integer personId produces 500",
+          "ref": "decksite/controllers/api.py:307",
+          "type": "code"
+        },
+        {
+          "detail": "Only BadRequestException and DoesNotExistException are registered as error handlers; InvalidArgumentException and AssertionError are not, so they surface as 500s",
+          "ref": "shared_web/flask_app.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "Pagination catches InvalidArgumentException and re-raises as BadRequest, but order_by calls do not \u2014 inconsistent coverage",
+          "ref": "decksite/controllers/api.py:837",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12276,
+      "notes": "Checklist in the issue also requests ASC/DESC and sort_by dicts to be converted to enums \u2014 a design-level refactor beyond just adding exception handling. Scope exceeds easy-fix threshold.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:58:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

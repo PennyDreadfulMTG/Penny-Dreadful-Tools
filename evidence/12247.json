@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12247,
+  "triage": [
+    {
+      "batch_id": "t-12250-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "TournamentOrganizer.hosts hardcodes only 'chaosblackdoom' as a retired TO",
+          "ref": "decksite/data/achievements.py:323",
+          "type": "code"
+        },
+        {
+          "detail": "TournamentHosting hardcodes 'stash86' but not chaosblackdoom \u2014 lists are inconsistent",
+          "ref": "decksite/views/tournament_hosting.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "Merged, added chaosblackdoom to achievements but did not consolidate with tournament_hosting or add stash86 to achievements",
+          "ref": "#12246",
+          "type": "pr"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12247,
+      "notes": "Decision needed: which past TOs should be in the hardcoded list? The two lists must be reconciled. Per-season tracking would require a larger data model change. The minimum fix (consolidating lists + adding named retired TOs) is trivial code once the authoritative TO list is decided.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:00:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

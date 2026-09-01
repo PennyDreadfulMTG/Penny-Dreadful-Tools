@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:58:28Z",
+    "note": "Dropping season.number requires an approved production schema migration despite the code change being small.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:57:14Z",
   "created_at": "2026-09-01T18:53:31Z",
   "evidence_refs": [

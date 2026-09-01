@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12273,
+  "triage": [
+    {
+      "batch_id": "t-12276-1",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "wins INTEGER, losses INTEGER, finish INTEGER \u2014 signed; conceptually non-negative",
+          "ref": "decksite/sql/1.sql:38",
+          "type": "code"
+        },
+        {
+          "detail": "n INTEGER (card count in deck_card) \u2014 signed; conceptually non-negative",
+          "ref": "decksite/sql/1.sql:51",
+          "type": "code"
+        },
+        {
+          "detail": "rotation_runs.number is TINYINT UNSIGNED \u2014 only existing UNSIGNED column, showing the pattern is understood but not yet applied broadly",
+          "ref": "decksite/sql/70.sql:2",
+          "type": "code"
+        },
+        {
+          "detail": "Only one UNSIGNED column found across 76 SQL migration files; dozens of candidate INT columns across person, deck, competition, match tables remain signed",
+          "ref": "grep -rn UNSIGNED decksite/sql",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12273,
+      "notes": "Requires ALTER TABLE statements for many columns across multiple tables; UNSIGNED changes to columns with existing data require verifying no negative values exist first to avoid migration failures.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:58:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

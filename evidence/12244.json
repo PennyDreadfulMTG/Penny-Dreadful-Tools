@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 12244,
+  "triage": [
+    {
+      "batch_id": "t-12250-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Apr 18 2024 'Show cards in order of interestingness in rotation hype message' \u2014 added list_of_most_interesting() with sorting by cardfeed rank; never-before-legal cards receive rank 1 (highest priority)",
+          "ref": "20a87a97",
+          "type": "commit"
+        },
+        {
+          "detail": "list_of_most_interesting() sorts by (rank or 999999, name); never-before-legal cards get rank 1 via oracle query so they sort first; Footbottom Feast (legal before, played) now appears after never-before-legal and heavily-played cards",
+          "ref": "magic/rotation.py:185-202",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12244,
+      "notes": "The fixing commit cited #9165 (a separate issue) but the behavior change directly addresses the ordering complaint in #12244. Issue can be closed.",
+      "proposed_comment": "The ordering fix was shipped in commit 20a87a97 (April 2024): hype message cards are now sorted by interestingness \u2014 never-before-legal cards rank first, then by cardfeed play-rate rank, so a previously-legal lightly-played card like Footbottom Feast will appear well down the list.",
+      "recorded_at": "2026-09-01T19:00:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12244-1",
+      "final_comment": null,
+      "issue": 12244,
+      "own_evidence": [
+        {
+          "detail": "Commit message says 'Fixes #9165', not #12244; was authored 4 days before issue #12244 was even opened, yet issue #12244 reports the problem persisting in the 84th run.",
+          "ref": "20a87a97",
+          "type": "commit"
+        },
+        {
+          "detail": "Never-before-legal cards get rank 1, previously-legal cards keep their cardfeed rank. If cardfeed rank 1 = most popular, popular previously-legal cards share rank 1 and intermix with never-before-legal cards, potentially allowing a lightly-played previously-legal card to still appear.",
+          "ref": "magic/rotation.py:193-199",
+          "type": "code"
+        },
+        {
+          "detail": "FetchException fallback skips the sort entirely, reverting to pre-fix behavior if cardfeed is unavailable.",
+          "ref": "magic/rotation.py:196-198",
+          "type": "code"
+        },
+        {
+          "detail": "Author bakert commented 'It's supposed to be ordering never-before-legal and heavily-played cards first' \u2014 phrasing suggests the fix did not fully work for this case, not that it was already resolved.",
+          "ref": "github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/12244#issuecomment-2070465584",
+          "type": "issue_comment"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:07:38Z",
+      "refutation_reason": "Issue #12244 was filed 4 days after commit 20a87a97, specifically reporting that the 84th run (which occurred after the fix) still showed Footbottom Feast. The commit itself references 'Fixes #9165', not this issue. The code's fallback behavior (no sort if cardfeed fails) and the ranking scheme (never-before-legal gets rank 1, same as most popular previously-legal cards) leave open the possibility of the problem recurring. Cannot independently confirm the fix resolves this specific report.",
+      "verdict": "UNCERTAIN"
+    }
+  ]
+}

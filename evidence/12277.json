@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12277,
+  "triage": [
+    {
+      "batch_id": "t-12282-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR 'Fix issues with achievements that should show other people's decks' \u2014 fixes bug 1 (checked in issue body)",
+          "ref": "#12399",
+          "type": "pr"
+        },
+        {
+          "detail": "Show active league runs in achievement tables \u2014 adds prepare_decks() override to PersonAchievements at decksite/views/person_achievements.py:18-23, properly propagating hide_active_runs to each achievement detail and calling prepare_active_runs; in master as of Aug 21 2026; addresses the 'hiding active league runs even from admins' part of bug 2",
+          "ref": "0d0ba9dd",
+          "type": "commit"
+        },
+        {
+          "detail": "hide_active_runs = not session.get('admin', False) \u2014 only admin flag is checked, not deck ownership; non-admin owners still get active runs moved to summary text",
+          "ref": "decksite/view.py:46",
+          "type": "code"
+        },
+        {
+          "detail": "Bug 3 (tournaments entered count vs decks shown is one off) remains unchecked and unverified; may relate to active-run hiding producing a visible count mismatch for non-admins",
+          "ref": "#12277",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12277,
+      "notes": "Bug 2 appears substantially addressed by 0d0ba9dd (in master). Bug 3 (one-off count) is still unverified: the active-run text now accounts for hidden decks but the achievement legend count (from SQL) and the visible deck list could still appear mismatched for non-admins with an active run qualifying for the achievement.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:01:30Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

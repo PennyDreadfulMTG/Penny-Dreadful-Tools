@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12275,
+  "triage": [
+    {
+      "batch_id": "t-12276-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_archetype_playability uses _archetype_card_count and _card_count (all-time totals) for its playability ratio",
+          "ref": "decksite/data/playability.py:420",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_season_archetype_playability uses _season_archetype_card_count and _season_card_count (per-season totals) \u2014 deliberate asymmetry but the question is whether it's the right design",
+          "ref": "decksite/data/playability.py:288",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12275,
+      "notes": "Already labelled 'question' by the author. The discrepancy is real code but the right resolution is an owner decision about whether all-time vs season-scoped is the correct denominator for archetype playability.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:58:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

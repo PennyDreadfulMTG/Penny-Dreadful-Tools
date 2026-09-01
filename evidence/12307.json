@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12307-1",
+      "branch": "sweep/12307-why-do-we-cast-precent-needed-to-a-str-i",
+      "files_changed": 1,
+      "head_sha": "7eb23c5fee47b94801f74ee8ff8afec8d24af5b3",
+      "issue": 12307,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Two-character type fix only. The `percent` field (line 124) has always been stored as int without str() cast \u2014 this change makes `percent_needed` consistent with it. No template or downstream code checked string-type for this field.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `magic/rotation.py`, `process_score` stored `percent_needed` as a string (`'0'` and `str(to_percent(...))`) while all other numeric card attributes (`hits`, `hits_needed`, `percent`) were stored as integers. This was an inconsistency with no benefit \u2014 no downstream consumer of the Redis dict depends on `percent_needed` being a string.\n\n## What changed\n\n- `magic/rotation.py` line 126: `percent_needed = '0'` \u2192 `percent_needed = 0`\n- `magic/rotation.py` line 128: `percent_needed = str(to_percent(hits_needed / remaining_runs))` \u2192 `percent_needed = to_percent(hits_needed / remaining_runs)`\n\n`to_percent` already returns an `int` (via `round()`), so removing the `str()` wrapper makes the type consistent with `percent` and the other int fields.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n\nFixes #12307",
+      "pr_title": "Fix percent_needed type inconsistency in process_score (#12307)",
+      "recorded_at": "2026-09-01T19:05:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.00s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12307,
   "triage": [
     {

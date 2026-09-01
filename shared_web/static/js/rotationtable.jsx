@@ -1,4 +1,5 @@
 import { Table, renderCard } from "./table";
+import Axios from "axios";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
@@ -27,10 +28,43 @@ const renderRow = (table, card) => (
     </tr>
 );
 
+class RotationTable extends Table {
+    downloadCSV() {
+        const { q, sortBy, sortOrder } = this.state;
+        const params = { q, sortBy, sortOrder, pageSize: 99999, page: 0 };
+        Axios.get("/api/rotation/cards/", { params }).then((response) => {
+            const headers = ["name", "hits", "hitsNeeded", "percent", "percentNeeded", "rank"];
+            const rows = response.data.objects.map((card) =>
+                headers.map((h) => JSON.stringify(card[h] ?? "")).join(",")
+            );
+            const csv = [headers.join(","), ...rows].join("\n");
+            const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "rotation.csv";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    render() {
+        const result = super.render();
+        if (!this.state.loadedOnce) {
+            return result;
+        }
+        return (
+            <React.Fragment>
+                {result}
+                <button className="download-csv" onClick={this.downloadCSV.bind(this)}>Download CSV</button>
+            </React.Fragment>
+        );
+    }
+}
+
 [...document.getElementsByClassName("rotationtable")].forEach((e) => {
     if (e !== null) {
         const table =
-            <Table
+            <RotationTable
                 endpoint="/api/rotation/cards/"
                 renderHeaderRow={renderHeaderRow}
                 renderRow={renderRow}

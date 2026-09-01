@@ -175,7 +175,7 @@ class UpdatedDecks(Resource):
         season = seasons.season_id(str(request.args.get('seasonId')), None)
         timestamp = int(request.args.get('since', 0))
         if timestamp < 1e9:
-            raise InvalidArgumentException('Invalid timestamp!')
+            raise BadRequest('Invalid timestamp — supply a Unix timestamp >= 1e9 as ?since=<int>')
         page, page_size, limit = pagination(request.args)
         where = '(' + clauses.decks_where(request.args, False, None) + ') AND ' + clauses.decks_updated_since(timestamp)
         ds, total = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)

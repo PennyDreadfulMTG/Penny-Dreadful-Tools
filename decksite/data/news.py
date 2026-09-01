@@ -29,6 +29,7 @@ def all_news(ds: list[Deck], start_date: datetime.datetime | None = None, end_da
         if item.date < start_date:
             break
         item.display_date = dtutil.display_date(item.date)
+        item.display_date_title = dtutil.exact_date(item.date)
         results.append(item)
         if len(results) >= max_items:
             break

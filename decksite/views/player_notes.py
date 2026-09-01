@@ -14,6 +14,7 @@ class PlayerNotes(View):
         for n in notes:
             n.date_sort = dtutil.dt2ts(n.created_date)
             n.display_date = dtutil.display_date(n.created_date)
+            n.display_date_title = dtutil.exact_date(n.created_date)
             n.subject_url = url_for('person', person_id=n.subject_id)
             n.creator_url = url_for('person', person_id=n.creator_id)
         self.notes = notes

@@ -63,6 +63,9 @@ def day_of_week(dt: datetime.datetime, tz: Any) -> str:
 def form_date(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime(FORM_FORMAT)
 
+def exact_date(dt: datetime.datetime) -> str:
+    return dt.astimezone(WOTC_TZ).strftime('%Y-%m-%d %H:%M %Z')
+
 def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
     start = now()
     if (start - dt) > datetime.timedelta(365):

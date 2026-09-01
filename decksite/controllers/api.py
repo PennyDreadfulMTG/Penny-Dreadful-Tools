@@ -271,6 +271,13 @@ def people_api() -> Response:
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     where = clauses.text_where(query.person_query(), q) if q else 'TRUE'
+    archetype_id = request.args.get('archetypeId') or None
+    if archetype_id:
+        try:
+            archetype_id = int(archetype_id)
+            where = f'({where}) AND d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'
+        except (ValueError, TypeError):
+            pass
     people, total = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people)
     r = {'page': page, 'total': total, 'objects': people}

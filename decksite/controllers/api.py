@@ -273,7 +273,7 @@ def people_api() -> Response:
     q = request.args.get('q', '').strip()
     where = clauses.text_where(query.person_query(), q) if q else 'TRUE'
     people, total = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
-    prepare_people(people)
+    prepare_people(people, season_id)
     r = {'page': page, 'total': total, 'objects': people}
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))

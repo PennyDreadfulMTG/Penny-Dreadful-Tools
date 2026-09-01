@@ -139,9 +139,14 @@ def prepare_deck(d: Deck) -> None:
             total += c['n'] * c.card.cmc
     d.average_cmc = round(total / max(1, num_cards), 2)
 
-def prepare_people(ps: Sequence[Person]) -> None:
+def prepare_people(ps: Sequence[Person], season_id: int | str | None = None) -> None:
     for p in ps:
-        if p.get('mtgo_username'):
+        if season_id == 0:
+            if p.get('mtgo_username'):
+                p.url = f'/seasons/all/people/{p.mtgo_username.lower()}/'
+            else:
+                p.url = f'/seasons/all/people/id/{p.id}/'
+        elif p.get('mtgo_username'):
             p.url = f'/people/{p.mtgo_username.lower()}/'
         else:
             p.url = f'/people/id/{p.id}/'

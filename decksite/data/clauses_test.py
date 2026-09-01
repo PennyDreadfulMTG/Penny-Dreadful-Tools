@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from decksite.data import clauses
+from decksite.data import achievements, clauses
 from decksite.deck_type import DeckType
 from shared.pd_exception import InvalidArgumentException
 
@@ -45,6 +45,14 @@ def test_card_where_rejects_unknown_name(monkeypatch: pytest.MonkeyPatch) -> Non
 
     monkeypatch.setattr(clauses.oracle, 'valid_name', invalid_name)
     assert clauses.card_where('Definitely Not a Card') == 'FALSE'
+
+def test_decks_where_achievement_without_person_or_season(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Before fix: int(args.get('personId', '')) raised ValueError when personId was absent.
+    monkeypatch.setattr(achievements, 'load_deck_ids', lambda key, person_id, season_id: set())
+    args = {'achievementKey': 'some_key'}
+    # Must not raise ValueError
+    result = clauses.decks_where(args, True, None)
+    assert 'd.person_id' not in result
 
 def test_limit() -> None:
     args = {'page': '1', 'pageSize': '150'}

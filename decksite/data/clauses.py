@@ -233,8 +233,8 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
         parts.append(f'c.id = {competition_id}')
     if args.get('achievementKey'):
         achievement_key = str(args.get('achievementKey'))
-        achievement_person_id = int(args.get('personId', ''))
-        season_id = int(args.get('seasonId', ''))
+        achievement_person_id = int(args.get('personId')) if args.get('personId') else None
+        season_id = int(args.get('seasonId')) if args.get('seasonId') else None
         deck_ids = achievements.load_deck_ids(achievement_key, achievement_person_id, season_id)
         # Some achievements load decks from multiple people by id …
         if deck_ids:

@@ -21,6 +21,9 @@ def init(force: bool = False) -> None:
         CARDS_BY_NAME.clear()
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
+            for back_face_name in c.names[1:]:
+                if back_face_name not in CARDS_BY_NAME:
+                    CARDS_BY_NAME[back_face_name] = c
         for c in load_cards_with_flavor_names():
             for fn in c.flavor_names.split('|'):
                 existing = CARDS_BY_NAME.get(fn)

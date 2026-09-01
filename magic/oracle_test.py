@@ -104,6 +104,28 @@ def test_init_rebuilds_names_and_ignores_alias_collisions(monkeypatch: pytest.Mo
     assert oracle.CARDS_BY_NAME['Shared Name'] is canonical
     assert oracle.CARDS_BY_NAME['Alternate Name'] is aliased
 
+def test_init_indexes_back_face_names(monkeypatch: pytest.MonkeyPatch) -> None:
+    transform_card = Card({'name': 'The Irencrag', 'names': 'The Irencrag|Irencrag'})
+    monkeypatch.setattr(oracle, 'CARDS_BY_NAME', {})
+    monkeypatch.setattr(oracle, 'load_cards', lambda: [transform_card])
+    monkeypatch.setattr(oracle, 'load_cards_with_flavor_names', lambda: [])
+
+    oracle.init(force=True)
+
+    assert oracle.CARDS_BY_NAME['The Irencrag'] is transform_card
+    assert oracle.CARDS_BY_NAME['Irencrag'] is transform_card
+
+def test_init_back_face_does_not_override_existing_front_face(monkeypatch: pytest.MonkeyPatch) -> None:
+    front_card = Card({'name': 'Irencrag'})
+    transform_card = Card({'name': 'The Irencrag', 'names': 'The Irencrag|Irencrag'})
+    monkeypatch.setattr(oracle, 'CARDS_BY_NAME', {})
+    monkeypatch.setattr(oracle, 'load_cards', lambda: [front_card, transform_card])
+    monkeypatch.setattr(oracle, 'load_cards_with_flavor_names', lambda: [])
+
+    oracle.init(force=True)
+
+    assert oracle.CARDS_BY_NAME['Irencrag'] is front_card
+
 def test_load_cards() -> None:
     cards = oracle.load_cards(['Think Twice', 'Swamp'])
     assert len(cards) == 2

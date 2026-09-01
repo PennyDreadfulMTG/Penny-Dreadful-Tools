@@ -3,9 +3,9 @@
             <footer>
                 {{#menu}}
                     <section class="{{#admin_only}}admin{{/admin_only}} {{#demimod_only}}demimod{{/demimod_only}}">
-                        <p><b><a class="menuitem" href="{{url}}">{{name}}</a></b></p>
+                        <p><b><a class="menuitem {{#current}}current {{/current}}" href="{{url}}">{{name}}</a></b></p>
                         {{#submenu}}
-                            <p class="{{#admin_only}}admin{{/admin_only}} {{#demimod_only}}demimod{{/demimod_only}}"><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{name}}</a></p>
+                            <p class="{{#admin_only}}admin{{/admin_only}} {{#demimod_only}}demimod{{/demimod_only}}"><a class="{{#current}}current {{/current}}{{#is_external}}external{{/is_external}}" href="{{url}}">{{name}}</a></p>
                         {{/submenu}}
                     </section>
                 {{/menu}}

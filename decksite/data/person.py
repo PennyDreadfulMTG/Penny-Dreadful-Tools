@@ -141,6 +141,21 @@ def load_people(where: str = 'TRUE',
         p.season_id = season_id
     return people, 0 if not rs else rs[0]['total']
 
+def load_people_statless(where: str = 'TRUE') -> list[Person]:
+    person_query = query.person_query()
+    sql = f"""
+        SELECT
+            p.id,
+            {person_query} AS name,
+            p.mtgo_username
+        FROM
+            person AS p
+        WHERE
+            {where}
+    """
+    rs = db().select(sql)
+    return [Person(r) for r in rs]
+
 def seasons_active(person_id: int) -> list[int]:
     sql = f"""
         SELECT

@@ -77,7 +77,7 @@ def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None =
     enemy_deck_ids = rs['enemy_deck_ids'].split(',') if rs['enemy_deck_ids'] else []
     match_ids = rs['match_ids'].split(',') if rs['match_ids'] else []
     if match_ids:
-        ms, _ = match.load_matches(where='m.id IN (' + ', '.join(match_ids) + ')', order_by='m.date DESC, m.round DESC')
+        ms, _ = match.load_matches(where='m.id IN (' + ', '.join(match_ids) + ') AND d.id IN (' + ', '.join(hero_deck_ids) + ')', order_by='m.date DESC, m.round DESC')
     else:
         ms = []
     return MatchupResults(

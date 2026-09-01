@@ -19,6 +19,10 @@ def test_command_setup_does_not_load_test_modules(monkeypatch: pytest.MonkeyPatc
     bot.load_extension.assert_called_once_with('.spoiler', 'discordbot.commands')
 
 
+def test_parse_queries_ignores_discord_quote_lines() -> None:
+    assert command.parse_queries('> [Lightning Bolt]', False) == []
+    assert command.parse_queries('> [Lightning Bolt]\n[Counterspell]', False) == ['counterspell']
+
 def test_roughly_matches() -> None:
     assert command.roughly_matches('hello', 'hello')
     assert command.roughly_matches('signup', 'Sign Up')

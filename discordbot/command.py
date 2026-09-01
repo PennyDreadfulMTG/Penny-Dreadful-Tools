@@ -60,6 +60,7 @@ async def respond_to_card_names(ctx: 'MtgMessageContext') -> None:
 
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> list[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, flags=re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.
+    to_scan = re.sub(r'(?m)^>.*$', '', to_scan)  # Ignore bracketed cards inside Discord quote lines (lines beginning with >).
     if scryfall_compatability_mode:
         queries = re.findall(r'(?<!\[)\[([^\]]*)\](?!\])', to_scan)  # match [card] but not [[card]]
     else:

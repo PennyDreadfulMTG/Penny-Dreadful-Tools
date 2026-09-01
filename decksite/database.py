@@ -26,22 +26,26 @@ def setup_in_app_context() -> None:
         setup()
 
 def setup() -> None:
-    db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
-    version = db_version()
-    patches = os.listdir('decksite/sql')
-    patches.sort(key=lambda n: int(n.split('.')[0]))
-    for fn in patches:
-        path = os.path.join('decksite/sql', fn)
-        n = int(fn.split('.')[0])
-        if version < n:
-            logger.warning(f'Patching database to v{n}')
-            fh = open(path)
-            sql = fh.read()
-            for stmt in sql.split(';'):
-                if stmt.strip() != '':
-                    db().execute(stmt)
-            fh.close()
-            db().execute(f'INSERT INTO db_version (version) VALUES ({n})')
+    db().get_lock('decksite_migration', -1)
+    try:
+        db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
+        version = db_version()
+        patches = os.listdir('decksite/sql')
+        patches.sort(key=lambda n: int(n.split('.')[0]))
+        for fn in patches:
+            path = os.path.join('decksite/sql', fn)
+            n = int(fn.split('.')[0])
+            if version < n:
+                logger.warning(f'Patching database to v{n}')
+                fh = open(path)
+                sql = fh.read()
+                for stmt in sql.split(';'):
+                    if stmt.strip() != '':
+                        db().execute(stmt)
+                fh.close()
+                db().execute(f'INSERT INTO db_version (version) VALUES ({n})')
+    finally:
+        db().release_lock('decksite_migration')
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)

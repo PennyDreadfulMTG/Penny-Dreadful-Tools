@@ -340,7 +340,8 @@ def leaderboards_api() -> Response:
     order_by = clauses.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
     q = request.args.get('q', '').strip()
-    where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
+    outer_where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
+    where = 'TRUE'
     try:
         competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
@@ -352,7 +353,7 @@ def leaderboards_api() -> Response:
         where += f' AND (cs.id = {competition_series_id})'
     except ValueError:
         pass
-    entries, total = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id)
+    entries, total = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id, outer_where=outer_where)
     prepare_leaderboard(entries)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_camelized_json(r)

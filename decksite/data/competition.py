@@ -139,11 +139,11 @@ def series(season_id: int | None = None) -> list[dict[str, Any]]:
     """
     return [Container(r) for r in db().select(sql)]
 
-def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: str | int | None = None) -> tuple[Sequence[Container], int]:
+def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'competition_series_id', limit: str = '', season_id: str | int | None = None, outer_where: str = 'TRUE') -> tuple[Sequence[Container], int]:
     person_query = query.person_query()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.season_id')
-    sql = f"""
+    inner_sql = f"""
         SELECT
             p.id AS person_id,
             {person_query} AS person,
@@ -155,8 +155,7 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
             -- Points are complicated because tournaments count entries while leagues do not and leagues count 5-0s but tournaments do not.
             (CASE WHEN ct.name <> 'League' THEN COUNT(DISTINCT d.id) ELSE 0 END) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) + COUNT(DISTINCT CASE WHEN five_ohs.five_oh AND ct.name = 'League' THEN d.id ELSE NULL END) AS points,
             ROW_NUMBER() OVER (ORDER BY points DESC, wins DESC, person) AS finish,
-            season.season_id,
-            COUNT(*) OVER () AS total
+            season.season_id
         FROM
             competition AS c
         INNER JOIN
@@ -189,6 +188,15 @@ def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.
             ({where}) AND ({season_query})
         GROUP BY
             {group_by}
+    """
+    sql = f"""
+        SELECT
+            lb.*,
+            COUNT(*) OVER () AS total
+        FROM
+            ({inner_sql}) AS lb
+        WHERE
+            ({outer_where})
         ORDER BY
             {order_by},
             points DESC,

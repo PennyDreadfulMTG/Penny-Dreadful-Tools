@@ -1,4 +1,5 @@
 import sys
+import unicodedata
 from typing import Any, TypedDict, cast
 
 import inflect
@@ -36,6 +37,12 @@ class SeasonInfoDescription(TypedDict, total=False):
     tournament_leaderboards_url: str
     legality_name: str | None
     legal_cards_url: str | None
+
+def strip_unsafe_chars(s: str) -> str:
+    # Strip Unicode Symbol characters (emoji, pictographs) that render poorly in <title> and og: tags.
+    # Preserves CJK, Greek, Cyrillic, and other letter/number characters.
+    return ''.join(c for c in s if not unicodedata.category(c).startswith('S'))
+
 
 class View(BaseView):
     def __init__(self) -> None:
@@ -145,7 +152,7 @@ class View(BaseView):
             season = ' - All Time'
         else:
             season = f' - Season {get_season_id()}'
-        return f'{self.page_title()}{season} – pennydreadfulmagic.com'
+        return strip_unsafe_chars(f'{self.page_title()}{season} – pennydreadfulmagic.com')
 
     # Site-wide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:

@@ -4,6 +4,7 @@ from flask import g
 
 from decksite import build_menu, view
 from decksite.main import APP
+from decksite.view import strip_unsafe_chars
 from decksite.views.person_achievements import PersonAchievements
 from magic import seasons
 from shared.container import Container
@@ -68,6 +69,17 @@ def test_menu_badge_is_entirely_linked() -> None:
         }]})
 
     assert '<a class="badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
+
+def test_strip_unsafe_chars_removes_emoji() -> None:
+    assert strip_unsafe_chars('Stop That✋') == 'Stop That'
+    assert strip_unsafe_chars('No Emoji Here') == 'No Emoji Here'
+    # Preserves CJK, Greek, Cyrillic
+    assert strip_unsafe_chars('日本語') == '日本語'
+    assert strip_unsafe_chars('Ελληνικά') == 'Ελληνικά'
+    assert strip_unsafe_chars('Кириллица') == 'Кириллица'
+    # Strips multiple emoji
+    assert strip_unsafe_chars('🎮 Gaming 🃏 Deck') == ' Gaming  Deck'
+
 
 def test_build_menu_uses_endpoint_override_for_active_league() -> None:
     with APP.test_request_context('/competitions/123/'):

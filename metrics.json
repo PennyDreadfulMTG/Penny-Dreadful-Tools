@@ -8,27 +8,27 @@
   "counts": {
     "closed": 47,
     "deferred_human": 43,
-    "escalated": 46,
-    "fix_pending": 3,
+    "escalated": 93,
+    "fix_pending": 1,
     "fix_pushed": 94,
-    "pending": 289,
+    "pending": 244,
     "pr_open": 43,
     "reported": 126,
     "skipped": 1,
     "triaged": 7
   },
-  "heartbeat": "2026-09-01T22:11:43Z",
+  "heartbeat": "2026-09-01T22:26:22Z",
   "max_open_prs": 30,
-  "open_escalations": 46,
+  "open_escalations": 93,
   "open_sweep_prs": 25,
-  "pause_until": "2026-09-01T22:15:32Z",
+  "pause_until": "2026-09-01T22:49:20Z",
   "paused": true,
   "phase": "phase2",
   "pr_backpressure": false,
   "totals": {
     "infra_failures": 0,
     "nudges": 40,
-    "workspaces_created": 329
+    "workspaces_created": 345
   },
   "unregistered_workspaces": []
 }

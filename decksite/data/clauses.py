@@ -103,6 +103,7 @@ def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'numMatches': 'num_matches',
         'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',
         'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
+        'elo': 'opp.elo',
     }
     return sort_options[sort_by] + f' {sort_order}, num_matches DESC, record, name'
 

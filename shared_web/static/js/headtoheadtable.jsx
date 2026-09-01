@@ -8,6 +8,7 @@ const renderHeaderRow = (table) => (
         <th className="n num-matches" onClick={table.sort.bind(table, "numMatches", "DESC")}># Matches</th>
         <th className="n record" onClick={table.sort.bind(table, "record", "DESC")}>Record</th>
         <th className="n win-percent"onClick={table.sort.bind(table, "winPercent", "DESC")}>Win %</th>
+        <th className="n elo" onClick={table.sort.bind(table, "elo", "DESC")}>Elo</th>
     </tr>
 );
 
@@ -17,6 +18,7 @@ const renderRow = (table, entry) => (
         <td className="n"><a href={entry.url}>{entry.numMatches}</a></td>
         <td className="n">{renderRecord({...entry,...{"showRecord": true}})}</td>
         <td className="n">{renderWinPercent({...entry,...{"showRecord": true}})}</td>
+        <td className="n">{entry.elo}</td>
     </tr>
 );
 

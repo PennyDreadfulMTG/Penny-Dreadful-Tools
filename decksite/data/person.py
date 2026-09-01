@@ -226,6 +226,7 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
             SUM(losses) AS losses,
             SUM(draws) AS draws,
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            opp.elo,
             COUNT(*) OVER () AS total
         FROM
             _head_to_head_stats AS hths

@@ -9,6 +9,13 @@ const n = (num) => {
     return Number(Math.round(num)).toLocaleString();
 };
 
+const sortExplanations = {
+    quality: "Quality is the 99% confidence lower bound for win rate. It rewards a strong record, but discounts decks with fewer matches.",
+    qualityOptimistic: "Quality (Optimistic) is the 50% confidence lower bound for win rate. It discounts decks with fewer matches less heavily.",
+    qualityStrict: "Quality (Strict) is the 99.999% confidence lower bound for win rate. It discounts decks with fewer matches more heavily.",
+    potential: "Potential is the 99% confidence upper bound for win rate. It highlights decks that could be strong despite having fewer matches."
+};
+
 //  once everything is in place mouseover everything and makes ure the titles are right
 const renderItem = (grid, archetype) => (
     <a className="archetype" href={archetype.url} key={archetype.id}>
@@ -52,7 +59,7 @@ const renderItem = (grid, archetype) => (
             </div>
             {typeof archetype.qualityScore === "number" && (
                 <div className="cell r quality">
-                    <span title="Quality">
+                    <span title={sortExplanations.quality}>
                         <span className="quality-star">★</span>{Number(archetype.qualityScore * 100).toFixed(0)}
                     </span>
                 </div>
@@ -89,7 +96,12 @@ const renderSort = (grid) => (
     <React.Fragment>
         {"Sorted by "}
         <form className="inline">
-            <select value={grid.state.sortBy} onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
+            <select
+                key={grid.state.sortBy}
+                onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}
+                title={sortExplanations[grid.state.sortBy]}
+                value={grid.state.sortBy}
+            >
                 <option value="quality">Quality</option>
                 <option value="qualityOptimistic">Quality (Optimistic)</option>
                 <option value="qualityStrict">Quality (Strict)</option>

@@ -583,6 +583,8 @@ def person_api(person: str, season_id: int = -1) -> Response:
 
 @APP.route('/api/person/<person>/decks')
 @APP.route('/api/person/<person>/decks/')
+@APP.route('/api/person/<person>/decks/<int:season_id>')
+@APP.route('/api/person/<person>/decks/<int:season_id>/')
 @fill_args('season_id')
 def person_decks_api(person: str, season_id: int = 0) -> Response:
     p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)

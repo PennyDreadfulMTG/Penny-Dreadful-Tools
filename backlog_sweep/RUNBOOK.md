@@ -28,11 +28,12 @@ start from zero.
 
 ```bash
 cd <repo>
-python3 backlog_sweep/dispatcher.py --help       # sanity check
-cp backlog_sweep/config.example.json backlog_sweep/state/config.json  # after mkdir -p backlog_sweep/state
+uv run --frozen python backlog_sweep/dispatcher.py --help       # sanity check
+mkdir -p backlog_sweep/state
+cp backlog_sweep/config.example.json backlog_sweep/state/config.json
 # edit config: frontier_max/min for this campaign's issue range, pilot_limit, caps
-python3 backlog_sweep/dispatcher.py init         # enumerate the queue from GitHub
-python3 backlog_sweep/dispatcher.py tick --dry-run   # inspect the plan; journals nothing
+uv run --frozen python backlog_sweep/dispatcher.py init         # enumerate the queue from GitHub
+uv run --frozen python backlog_sweep/dispatcher.py tick --dry-run   # inspect the plan; journals nothing
 ```
 
 Then, deliberately and in this order:
@@ -45,7 +46,8 @@ Then, deliberately and in this order:
 4. `config set mutations_enabled=true prs_enabled=true closures_enabled=true`
    only with the owner's explicit sign-off, starting with pilot-sized caps
    (`daily_close_cap=15 daily_pr_cap=10 pilot_limit=40`).
-5. Start the daemon: `python3 backlog_sweep/dispatcher.py daemon` (backgrounded).
+5. Start the daemon:
+   `uv run --frozen python backlog_sweep/dispatcher.py daemon` (backgrounded).
    It ticks every 60 s; it is safe to kill and restart at any time.
 6. **Spot-check everything the pilot mutates** before raising any cap.
 
@@ -70,14 +72,48 @@ workspaces). `dispatcher.py status` prints a one-screen summary.
 
 ## Recovery (sandbox died, daemon crashed, anything)
 
-1. Fresh workspace on this repo. Restore state: check out `sweep-state` into
-   `backlog_sweep/state/` (journal + snapshot + evidence survive; ≤15 min loss).
-2. Re-create `state/.gh_token` (step 3 above).
-3. `python3 backlog_sweep/dispatcher.py recover` — replays the journal and
-   reconciles against live GitHub and live Conductor workspaces (adopts running
-   workers, expires dead leases, settles half-executed mutations, skips issues
-   humans closed meanwhile).
-4. Restart the daemon.
+1. Create a fresh workspace on the branch containing this toolkit (`master` once
+   this change is merged). Restore the mirrored state without switching away
+   from the code branch:
+
+   ```bash
+   git fetch origin sweep-state
+   mkdir -p backlog_sweep/state
+   git archive origin/sweep-state | tar -x -C backlog_sweep/state
+   ```
+
+   The journal, snapshot, evidence, and reports survive with at most the mirror
+   interval of loss. The PAT is deliberately absent.
+2. Re-create `backlog_sweep/state/.gh_token` with the classic `repo`-scoped PAT
+   from prerequisite 3. Enter it interactively so it does not land in shell
+   history:
+
+   ```bash
+   uv run --frozen python - <<'PY'
+   from getpass import getpass
+   from pathlib import Path
+
+   token_file = Path("backlog_sweep/state/.gh_token")
+   token_file.write_text(getpass("Classic GitHub PAT (repo scope): ").strip() + "\n")
+   token_file.chmod(0o600)
+   PY
+   ```
+3. Inspect before changing anything, then reconcile against live GitHub and
+   Conductor. Recovery adopts running workers, expires dead leases, settles
+   half-executed mutations, and skips issues humans closed meanwhile:
+
+   ```bash
+   uv run --frozen python backlog_sweep/dispatcher.py status
+   uv run --frozen python backlog_sweep/dispatcher.py recover --dry-run
+   uv run --frozen python backlog_sweep/dispatcher.py recover
+   uv run --frozen python backlog_sweep/dispatcher.py mirror
+   uv run --frozen python backlog_sweep/dispatcher.py status
+   ```
+
+   Confirm the restored config still has `spawning_enabled=false` before this
+   exercise if the goal is recovery validation rather than resuming work.
+4. Restart the daemon only after the recovery output is understood. Change gates
+   or caps separately, with the owner's explicit approval.
 
 ## Ending a campaign
 

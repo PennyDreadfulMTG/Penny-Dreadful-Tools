@@ -19,6 +19,13 @@ archetypes, gave ~99% true-archetype shortlist recall in held-out backtests. Opu
 three seasons put >=90-confidence guesses at ~99% agreement with human labels; the production
 model is configurable because a cheaper model must be validated independently.
 
+The structured answer makes the model identify the primary plan, intended castable colors,
+literal decklist evidence, competing candidates, and whether the chosen name's qualifiers fit.
+These are judgment aids rather than mechanical color rules: reanimation targets, alternate
+costs, narrow sideboard splashes, and incidental activations can all be deliberately off-color.
+They are logged with the candidates and final choice so a bad suggestion can be investigated;
+confidence and the chosen archetype remain the only values stored in the database.
+
 Playability and archetype card profiles are database-preaggregated, and load_decks can reuse
 Redis-cached deck objects. Similarity scores are still recomputed for every nonempty run; the
 new-card lookup is bounded to cards in that run. A refusal, error, or NONE OF THESE result
@@ -77,8 +84,17 @@ SYSTEM_PROMPT = (
     'single build-around card (e.g. Battle of Wits) can define a deck if the deck can find it. '
     'When several candidates fit, prefer the most specific; broad buckets (plain Aggro/Combo/'
     'Control/Midrange) are fallbacks. The player-given deck name is a hint (often the archetype '
-    'or a key card) but can be a joke or wrong. For each deck you are given a short list of '
-    'candidate archetypes pre-selected as most similar. Pick the single best-fitting candidate. '
+    'or a key card) but can be a joke or wrong. Candidate profiles are background only: never '
+    'claim a profile card is in the submitted deck unless it appears in the literal decklist. '
+    'Treat restrictive words in candidate names--such as colors, tribes, or named engines like '
+    'Post--as claims that need decklist evidence. Infer intended castable colors from the manabase '
+    'and normally cast spells, allowing for off-color cheat or reanimation targets, alternate '
+    'costs, narrow sideboard splashes, and incidental activations. Prefer a leaf whose qualifiers '
+    'fit; if a leaf is contradicted, choose the most specific candidate without the false '
+    'qualifier. If two archetypes genuinely fit, use the primary game plan; if they are '
+    'co-primary, use the number of cards devoted to each defining package as a tiebreaker. For '
+    'each deck you are given a short list of candidate archetypes pre-selected as most similar. '
+    'Pick the single best-fitting candidate. '
     f'If none of the candidates could reasonably describe the deck, answer "{NONE_ANSWER}". Set '
     'possible_new_variant to true if the deck looks like a distinct new take that is not quite '
     'any candidate even when one fits on cards alone.'
@@ -87,6 +103,26 @@ SYSTEM_PROMPT = (
 OUTPUT_SCHEMA = {
     'type': 'object',
     'properties': {
+        'primary_plan': {'type': 'string', 'description': "The deck's primary game plan, as one short phrase."},
+        'intended_castable_colors': {
+            'type': 'array',
+            'items': {'type': 'string'},
+            'description': 'Colors the deck is built to cast, after accounting for the stated exceptions.',
+        },
+        'evidence_cards': {
+            'type': 'array',
+            'items': {'type': 'string'},
+            'description': 'At most three exact card names from the submitted decklist supporting the choice.',
+        },
+        'competing_archetypes': {
+            'type': 'array',
+            'items': {'type': 'string'},
+            'description': 'At most two candidate names that most plausibly compete with the choice.',
+        },
+        'qualifier_check': {
+            'type': 'string',
+            'description': 'One concise sentence checking restrictive words in the chosen archetype name.',
+        },
         'archetype': {'type': 'string'},
         # Anthropic structured outputs do not support the JSON Schema minimum/maximum
         # keywords when schemas are sent directly rather than through an SDK.
@@ -94,7 +130,17 @@ OUTPUT_SCHEMA = {
         'possible_new_variant': {'type': 'boolean'},
         'variant_note': {'type': 'string'},
     },
-    'required': ['archetype', 'confidence', 'possible_new_variant', 'variant_note'],
+    'required': [
+        'primary_plan',
+        'intended_castable_colors',
+        'evidence_cards',
+        'competing_archetypes',
+        'qualifier_check',
+        'archetype',
+        'confidence',
+        'possible_new_variant',
+        'variant_note',
+    ],
     'additionalProperties': False,
 }
 
@@ -129,12 +175,34 @@ def _classify_one(api_key: str, model: str, d: Deck, meta: Metadata, new_cards: 
     if data is None:
         return
     chosen = (data.get('archetype') or '').strip()
+    confidence = max(0, min(100, int(data.get('confidence') or 0)))
+    candidate_names = [name for _aid, name in candidates]
+    evidence_cards = [str(name) for name in data.get('evidence_cards', [])]
+    logger.info(
+        'archetype_classifier: deck %s candidates=%s -> %r confidence=%s; plan=%r; colors=%s; evidence=%s; qualifier_check=%r; competing=%s; new_variant=%s',
+        d.id,
+        candidate_names,
+        chosen,
+        confidence,
+        data.get('primary_plan'),
+        data.get('intended_castable_colors'),
+        evidence_cards,
+        data.get('qualifier_check'),
+        data.get('competing_archetypes'),
+        data.get('possible_new_variant'),
+    )
+    listed_cards = {c.name for zone in ('maindeck', 'sideboard') for c in d.get(zone, [])}
+    unsupported_evidence = [name for name in evidence_cards if name not in listed_cards]
+    if unsupported_evidence:
+        logger.warning(
+            'archetype_classifier: deck %s cited cards absent from submitted decklist: %s',
+            d.id,
+            unsupported_evidence,
+        )
     if chosen.upper() == NONE_ANSWER or chosen.lower() not in name_to_id:
         # Nothing fit: leave for a human. A future novelty pass can use this + possible_new_variant.
-        logger.info('archetype_classifier: deck %s -> no candidate (%r, new_variant=%s)', d.id, chosen, data.get('possible_new_variant'))
         return
     archetype_id = name_to_id[chosen.lower()]
-    confidence = max(0, min(100, int(data.get('confidence') or 0)))
     archetype.assign(d.id, archetype_id, None, False, confidence)
 
 

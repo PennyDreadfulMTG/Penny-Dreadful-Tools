@@ -102,7 +102,25 @@ def test_call_requests_structured_json(monkeypatch: pytest.MonkeyPatch) -> None:
     assert confidence_schema['type'] == 'integer'
     assert 'minimum' not in confidence_schema
     assert 'maximum' not in confidence_schema
+    assert output_format['schema']['required'] == [
+        'primary_plan',
+        'intended_castable_colors',
+        'evidence_cards',
+        'competing_archetypes',
+        'qualifier_check',
+        'archetype',
+        'confidence',
+        'possible_new_variant',
+        'variant_note',
+    ]
     assert kwargs['json']['messages'] == [{'role': 'user', 'content': 'deck prompt'}]
+
+
+def test_system_prompt_grounds_qualifiers_without_treating_colors_as_mechanical() -> None:
+    assert 'never claim a profile card is in the submitted deck' in archetype_classifier.SYSTEM_PROMPT
+    assert 'Infer intended castable colors from the manabase and normally cast spells' in archetype_classifier.SYSTEM_PROMPT
+    assert 'off-color cheat or reanimation targets' in archetype_classifier.SYSTEM_PROMPT
+    assert 'number of cards devoted to each defining package as a tiebreaker' in archetype_classifier.SYSTEM_PROMPT
 
 
 @pytest.mark.parametrize(('reported', 'stored'), [(-10, 0), (92, 92), (120, 100)])
@@ -121,6 +139,49 @@ def test_classify_one_clamps_confidence(monkeypatch: pytest.MonkeyPatch, reporte
     archetype_classifier._classify_one('secret', 'model', Container(id=1), {}, set())
 
     assign.assert_called_once_with(1, 7, None, False, stored)
+
+
+def test_classify_one_logs_decision_context_and_unsupported_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    assign = mock.Mock()
+    monkeypatch.setattr(
+        archetype_classifier,
+        '_shortlist',
+        lambda _d, _meta: [(7, 'Rakdos Reanimator'), (8, 'Traditional Reanimator')],
+    )
+    monkeypatch.setattr(archetype_classifier, '_deck_prompt', lambda _d, _candidates, _meta, _new_cards: 'prompt')
+    monkeypatch.setattr(
+        archetype_classifier,
+        '_call',
+        lambda _api_key, _model, _prompt: {
+            'primary_plan': 'reanimate large creatures',
+            'intended_castable_colors': ['White', 'Black', 'Red'],
+            'evidence_cards': ['Priest of Fell Rites', 'Card From Candidate Profile'],
+            'competing_archetypes': ['Rakdos Reanimator'],
+            'qualifier_check': 'Rakdos is too narrow because the deck is built to cast white spells.',
+            'archetype': 'Traditional Reanimator',
+            'confidence': 96,
+            'possible_new_variant': False,
+            'variant_note': '',
+        },
+    )
+    monkeypatch.setattr(archetype_classifier.archetype, 'assign', assign)
+    caplog.set_level('INFO', logger=archetype_classifier.__name__)
+    source = Container(
+        id=1,
+        maindeck=[CardRef('Priest of Fell Rites', 4)],
+        sideboard=[],
+    )
+
+    archetype_classifier._classify_one('secret', 'model', source, {}, set())
+
+    assign.assert_called_once_with(1, 8, None, False, 96)
+    assert "candidates=['Rakdos Reanimator', 'Traditional Reanimator']" in caplog.text
+    assert "plan='reanimate large creatures'" in caplog.text
+    assert "colors=['White', 'Black', 'Red']" in caplog.text
+    assert "cited cards absent from submitted decklist: ['Card From Candidate Profile']" in caplog.text
 
 
 def test_call_logs_anthropic_error_response(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:

@@ -127,10 +127,13 @@ def archetypes(deck_type: str | None = None) -> str:
 @SEASONS.route('/archetypes/<archetype_id>/')
 @SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
-def archetype(archetype_id: str, deck_type: str | None = None) -> str:
+def archetype(archetype_id: str, deck_type: str | None = None) -> str | wrappers.Response:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '))
+    if archetype_id.isdigit():
+        assert request.endpoint is not None
+        return redirect(url_for(request.endpoint, archetype_id=a.name.replace(' ', '+'), deck_type=deck_type), code=301)
     all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
     archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
     seasons_active = archs.seasons_active(a.id)

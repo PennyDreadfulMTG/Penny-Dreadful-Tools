@@ -1,4 +1,4 @@
-from flask import redirect, url_for
+from flask import redirect, request, url_for
 from werkzeug import wrappers
 
 from decksite import APP, SEASONS, get_season_id
@@ -24,8 +24,11 @@ def people() -> str:
 @SEASONS.route('/people/<mtgo_username>/')
 @SEASONS.route('/people/id/<int:person_id>/')
 @cached()
-def person(mtgo_username: str | None = None, person_id: int | None = None) -> str:
+def person(mtgo_username: str | None = None, person_id: int | None = None) -> str | wrappers.Response:
     p = load_person(mtgo_username, person_id, season_id=get_season_id())
+    if person_id is not None and p.mtgo_username is not None:
+        assert request.endpoint is not None
+        return redirect(url_for(request.endpoint, mtgo_username=p.mtgo_username), code=301)
     person_archetypes = archs.load_archetypes(person_id=p.id, season_id=get_season_id())
     all_archetypes = archs.load_archetypes(season_id=get_season_id())
     trailblazer_cards = cs.trailblazer_cards(p.id)
@@ -38,8 +41,11 @@ def person(mtgo_username: str | None = None, person_id: int | None = None) -> st
 @APP.route('/people/id/<int:person_id>/achievements/')
 @SEASONS.route('/people/<mtgo_username>/achievements/')
 @SEASONS.route('/people/id/<int:person_id>/achievements/')
-def person_achievements(mtgo_username: str | None = None, person_id: int | None = None) -> str:
+def person_achievements(mtgo_username: str | None = None, person_id: int | None = None) -> str | wrappers.Response:
     p = load_person(mtgo_username, person_id, season_id=get_season_id())
+    if person_id is not None and p.mtgo_username is not None:
+        assert request.endpoint is not None
+        return redirect(url_for(request.endpoint, mtgo_username=p.mtgo_username), code=301)
     p_achs = achs.load_achievements(p, season_id=get_season_id(), with_detail=True)
     seasons_active = ps.seasons_active(p.id)
     view = PersonAchievements(p, p_achs, seasons_active)
@@ -54,8 +60,11 @@ def achievements_redirect() -> wrappers.Response:
 @SEASONS.route('/people/<mtgo_username>/matches/')
 @SEASONS.route('/people/id/<int:person_id>/matches/')
 @cached()
-def person_matches(mtgo_username: str | None = None, person_id: int | None = None) -> str:
+def person_matches(mtgo_username: str | None = None, person_id: int | None = None) -> str | wrappers.Response:
     p = load_person(mtgo_username, person_id, season_id=get_season_id())
+    if person_id is not None and p.mtgo_username is not None:
+        assert request.endpoint is not None
+        return redirect(url_for(request.endpoint, mtgo_username=p.mtgo_username), code=301)
     matches = ms.load_matches_by_person(person_id=p.id, season_id=get_season_id())
     matches.reverse()  # We want the latest at the top.
     view = PersonMatches(p, matches)

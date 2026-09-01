@@ -15766,6 +15766,11 @@
           "event": "ADJUDICATED",
           "status": "deferred_human",
           "ts": "2026-09-01T18:55:54Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T21:53:19Z"
         }
       ],
       "issue": 12490,
@@ -15773,14 +15778,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Choose the loader API shape and list-versus-Sequence policy before a cross-cutting refactor.",
+      "notes": "Refactor load_decks, load_people, and analogous loaders so the ordinary API returns list[T] only and does not calculate COUNT(*) OVER(). Add explicit *_with_total entry points for paginated callers that need a total. Standardize concrete collection return types on list[T], and factor repeated row-to-object/total extraction into an appropriate helper. Migrate callers carefully and add focused tests showing ordinary loaders omit total-count work while paginated loaders preserve totals. Any resulting PR must remain draft.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "deferred_human",
+      "status": "fix_pending",
       "title": "Should load_people, load_decks, etc. return total or not",
       "verdict": null
     },
@@ -15842,6 +15847,11 @@
           "event": "ADJUDICATED",
           "status": "deferred_human",
           "ts": "2026-09-01T18:58:29Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T21:48:46Z"
         }
       ],
       "issue": 12491,
@@ -15849,14 +15859,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": "After two malformed fixer attempts, choose the post-rotation navigation policy instead of guessing an arbitrary seven-day menu window.",
+      "notes": "Keep the Resources > Rotation Tracking link visible from seven days before rotation through seven days after rotation. Rotation Changes remains permanently linked. Do not merge the two pages as part of this issue. Add boundary tests for before, during, and after the window. Any resulting PR must remain draft.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "deferred_human",
+      "status": "fix_pending",
       "title": "/rotation is not linked in the menu after rotation even though it continues to work",
       "verdict": null
     },
@@ -17416,7 +17426,7 @@
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
         "ci": {
-          "checked_at": "2026-09-01T21:48:43Z",
+          "checked_at": "2026-09-01T21:54:11Z",
           "failed": [],
           "state": "green"
         },
@@ -18110,7 +18120,7 @@
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-01T21:48:42Z",
+          "checked_at": "2026-09-01T21:54:09Z",
           "failed": [],
           "state": "green"
         },
@@ -18184,7 +18194,7 @@
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-01T21:48:41Z",
+          "checked_at": "2026-09-01T21:54:08Z",
           "failed": [],
           "state": "green"
         },
@@ -18301,7 +18311,7 @@
         "adopted": false,
         "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
         "ci": {
-          "checked_at": "2026-09-01T21:48:40Z",
+          "checked_at": "2026-09-01T21:54:06Z",
           "failed": [],
           "state": "green"
         },
@@ -18497,7 +18507,7 @@
         "adopted": false,
         "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
         "ci": {
-          "checked_at": "2026-09-01T21:48:38Z",
+          "checked_at": "2026-09-01T21:54:05Z",
           "failed": [],
           "state": "green"
         },
@@ -18614,7 +18624,7 @@
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-01T21:48:37Z",
+          "checked_at": "2026-09-01T21:54:03Z",
           "failed": [],
           "state": "green"
         },
@@ -18801,7 +18811,7 @@
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-01T21:48:36Z",
+          "checked_at": "2026-09-01T21:54:02Z",
           "failed": [],
           "state": "green"
         },
@@ -19181,7 +19191,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-01T21:48:35Z",
+          "checked_at": "2026-09-01T21:54:00Z",
           "failed": [],
           "state": "green"
         },
@@ -19255,7 +19265,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-01T21:48:33Z",
+          "checked_at": "2026-09-01T21:53:59Z",
           "failed": [],
           "state": "green"
         },
@@ -19417,7 +19427,7 @@
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-01T21:48:32Z",
+          "checked_at": "2026-09-01T21:53:57Z",
           "failed": [],
           "state": "green"
         },
@@ -19534,7 +19544,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-01T21:48:30Z",
+          "checked_at": "2026-09-01T21:53:56Z",
           "failed": [],
           "state": "green"
         },
@@ -19717,7 +19727,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-01T21:48:29Z",
+          "checked_at": "2026-09-01T21:53:55Z",
           "failed": [],
           "state": "green"
         },
@@ -19904,7 +19914,7 @@
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
         "ci": {
-          "checked_at": "2026-09-01T21:48:28Z",
+          "checked_at": "2026-09-01T21:53:54Z",
           "failed": [],
           "state": "green"
         },
@@ -20020,7 +20030,7 @@
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-01T21:48:27Z",
+          "checked_at": "2026-09-01T21:53:53Z",
           "failed": [],
           "state": "green"
         },
@@ -20108,7 +20118,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-01T21:48:26Z",
+          "checked_at": "2026-09-01T21:53:51Z",
           "failed": [],
           "state": "green"
         },
@@ -20182,7 +20192,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-01T21:48:25Z",
+          "checked_at": "2026-09-01T21:53:50Z",
           "failed": [],
           "state": "green"
         },
@@ -20466,7 +20476,7 @@
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-01T21:48:23Z",
+          "checked_at": "2026-09-01T21:53:49Z",
           "failed": [],
           "state": "green"
         },
@@ -20725,7 +20735,7 @@
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-01T21:48:22Z",
+          "checked_at": "2026-09-01T21:53:48Z",
           "failed": [],
           "state": "green"
         },
@@ -20856,7 +20866,7 @@
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-01T21:48:21Z",
+          "checked_at": "2026-09-01T21:53:46Z",
           "failed": [],
           "state": "green"
         },
@@ -20944,7 +20954,7 @@
         "adopted": false,
         "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
         "ci": {
-          "checked_at": "2026-09-01T21:48:20Z",
+          "checked_at": "2026-09-01T21:53:45Z",
           "failed": [],
           "state": "green"
         },
@@ -21060,7 +21070,7 @@
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-01T21:48:18Z",
+          "checked_at": "2026-09-01T21:53:44Z",
           "failed": [],
           "state": "green"
         },
@@ -21403,7 +21413,7 @@
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-01T21:48:17Z",
+          "checked_at": "2026-09-01T21:53:42Z",
           "failed": [],
           "state": "green"
         },
@@ -21477,7 +21487,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-01T21:48:16Z",
+          "checked_at": "2026-09-01T21:53:41Z",
           "failed": [],
           "state": "green"
         },
@@ -22641,7 +22651,7 @@
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-01T21:48:13Z",
+          "checked_at": "2026-09-01T21:53:38Z",
           "failed": [],
           "state": "green"
         },
@@ -32021,6 +32031,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:44:00Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:50:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:50:07Z"
         }
       ],
       "issue": 8892,
@@ -32029,23 +32048,15 @@
         "- backlog",
         "* archetypes"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-8969-1",
-        "expires_at": "2026-09-01T22:44:00Z",
-        "granted_at": "2026-09-01T21:44:00Z",
-        "kind": "triage",
-        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
-        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "Feature request: on the /admin/rules page, add a button \"reassign all\" (maybe with some kind of confirmation to not accidentally click it) which puts all decks displayed at the page to their rule assigned archetype unless they're double assigned",
       "verdict": null
     },
@@ -32064,6 +32075,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:44:00Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:50:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:50:07Z"
         }
       ],
       "issue": 8929,
@@ -32071,23 +32091,15 @@
         "* search",
         "+ feature"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-8969-1",
-        "expires_at": "2026-09-01T22:44:00Z",
-        "granted_at": "2026-09-01T21:44:00Z",
-        "kind": "triage",
-        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
-        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "Support `in:{set}` in card search (for `is:spikey -in:leg`)",
       "verdict": null
     },
@@ -32106,6 +32118,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:44:00Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:50:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:50:07Z"
         }
       ],
       "issue": 8951,
@@ -32113,23 +32134,15 @@
         "+ bug",
         "* modo bot"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-8969-1",
-        "expires_at": "2026-09-01T22:44:00Z",
-        "granted_at": "2026-09-01T21:44:00Z",
-        "kind": "triage",
-        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
-        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "if only one match player is in a tournament, pdbot reports it to #tournament room",
       "verdict": null
     },
@@ -32148,6 +32161,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:44:00Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:50:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:50:07Z"
         }
       ],
       "issue": 8968,
@@ -32155,23 +32177,15 @@
         "+ improvement",
         "* search"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-8969-1",
-        "expires_at": "2026-09-01T22:44:00Z",
-        "granted_at": "2026-09-01T21:44:00Z",
-        "kind": "triage",
-        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
-        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "Support 'devotion:' in search",
       "verdict": null
     },
@@ -32190,6 +32204,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:44:00Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:50:07Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:50:07Z"
         }
       ],
       "issue": 8969,
@@ -32197,23 +32220,15 @@
         "+ improvement",
         "* search"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-8969-1",
-        "expires_at": "2026-09-01T22:44:00Z",
-        "granted_at": "2026-09-01T21:44:00Z",
-        "kind": "triage",
-        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
-        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "Support >, >=. <, <= operators in 'mana:' in search",
       "verdict": null
     },
@@ -32665,6 +32680,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:43:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:49:56Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:49:56Z"
         }
       ],
       "issue": 9121,
@@ -32672,23 +32696,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-9167-1",
-        "expires_at": "2026-09-01T22:43:56Z",
-        "granted_at": "2026-09-01T21:43:56Z",
-        "kind": "triage",
-        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
-        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "Some decks are not legal in the season that their deck_cache.season_id or deck.created_date or contents imply",
       "verdict": null
     },
@@ -32707,6 +32723,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:43:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:49:56Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:49:56Z"
         }
       ],
       "issue": 9141,
@@ -32715,23 +32740,15 @@
         "* decks",
         "- backlog"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-9167-1",
-        "expires_at": "2026-09-01T22:43:56Z",
-        "granted_at": "2026-09-01T21:43:56Z",
-        "kind": "triage",
-        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
-        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "Explicitly ROUND playabilty to 5 decimal places to avoid mariadb warnings",
       "verdict": null
     },
@@ -32750,6 +32767,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:43:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:49:56Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:49:56Z"
         }
       ],
       "issue": 9142,
@@ -32759,23 +32785,15 @@
         "\u2020 ui",
         "* rotation"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-9167-1",
-        "expires_at": "2026-09-01T22:43:56Z",
-        "granted_at": "2026-09-01T21:43:56Z",
-        "kind": "triage",
-        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
-        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "/rotation/ uses rotationkey.mustache which claims that never before legal, heavily played and moderately played cards will have a different visual treatment but this is no longer true (we have rank instead)",
       "verdict": null
     },
@@ -32794,6 +32812,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:43:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:49:56Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:49:56Z"
         }
       ],
       "issue": 9145,
@@ -32802,23 +32829,15 @@
         "* decks",
         "- backlog"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-9167-1",
-        "expires_at": "2026-09-01T22:43:56Z",
-        "granted_at": "2026-09-01T21:43:56Z",
-        "kind": "triage",
-        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
-        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "the INSERT INTO at the end of preaggregate_season_stats should really happen *before* the _new table is swapped out but for expediency in switching off multiple sql statements i moved it after the preaggregate call",
       "verdict": null
     },
@@ -32837,6 +32856,15 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T21:43:56Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:49:56Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:49:56Z"
         }
       ],
       "issue": 9167,
@@ -32844,23 +32872,15 @@
         "+ improvement",
         "* modo bot"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-9167-1",
-        "expires_at": "2026-09-01T22:43:56Z",
-        "granted_at": "2026-09-01T21:43:56Z",
-        "kind": "triage",
-        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
-        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "pending",
       "title": "PDBot should still list a no-show time when it goes into overflow mode",
       "verdict": null
     },
@@ -33480,9 +33500,9 @@
   },
   "last_bundle_at": "2026-09-01T20:57:52Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
-  "last_mirror_at": "2026-09-01T21:30:36Z",
-  "last_seq": 5597,
-  "last_snapshot_at": "2026-09-01T21:48:43Z",
+  "last_mirror_at": "2026-09-01T21:48:45Z",
+  "last_seq": 5651,
+  "last_snapshot_at": "2026-09-01T21:57:35Z",
   "pause_level": 1,
   "pause_seconds": 5502,
   "pause_until": "2026-09-01T22:15:32Z",
@@ -34622,7 +34642,7 @@
       "kind": "triage",
       "last_transcript_at": "2026-09-01T21:45:10.300Z",
       "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
     },
     "2e4a3c33-b812-4d0a-aad8-b56980457831": {
@@ -35295,7 +35315,7 @@
       "kind": "triage",
       "last_transcript_at": "2026-09-01T21:44:59.643Z",
       "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
     },
     "4b96a344-7c18-463c-b271-156cfe50e407": {

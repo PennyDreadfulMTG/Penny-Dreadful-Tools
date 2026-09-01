@@ -7,7 +7,7 @@ from typing import Any, TypeVar
 import fasteners
 import six
 
-from shared.pd_exception import DatabaseException
+from shared.pd_exception import DatabaseException, DatabaseNoSuchTableException
 
 T = TypeVar('T')
 FuncType = Callable[..., T]
@@ -20,7 +20,7 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType[T]
         def wrapper(*args: list[Any], **kwargs: dict[str, Any]) -> Any:
             try:
                 return decorated_func(*args, **kwargs)
-            except DatabaseException as e:
+            except DatabaseNoSuchTableException as e:
                 logger.error(f"Got {e} trying to call {decorated_func.__name__} so calling {retry_func.__name__} first. If this is happening on user time that's undesirable.")
                 retry_func()
                 try:

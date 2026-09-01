@@ -2,7 +2,7 @@
   "counters": {
     "infra_failures": 0,
     "nudges": 40,
-    "workspaces_created": 313
+    "workspaces_created": 329
   },
   "daily": {
     "closures": 40,
@@ -29,6 +29,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:23Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:04Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:04Z"
         }
       ],
       "issue": 10068,
@@ -41,7 +55,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -58,6 +72,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:21Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:42Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:45:42Z"
         }
       ],
       "issue": 10105,
@@ -70,7 +98,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -87,6 +115,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:21Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:42Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:45:42Z"
         }
       ],
       "issue": 10114,
@@ -99,7 +141,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -116,6 +158,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:21Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:42Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:45:42Z"
         }
       ],
       "issue": 10116,
@@ -129,7 +185,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -146,6 +202,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:21Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:42Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:45:42Z"
         }
       ],
       "issue": 10172,
@@ -158,7 +228,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -175,6 +245,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:21Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:42Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:45:42Z"
         }
       ],
       "issue": 10198,
@@ -186,7 +270,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -197,7 +281,10 @@
       "class": null,
       "closure": null,
       "confidence": null,
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": null,
       "history": [
         {
@@ -217,6 +304,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "pending",
           "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:20Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:42Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:47:42Z"
         }
       ],
       "issue": 10512,
@@ -229,10 +330,10 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 1,
+        "triage": 2,
         "verify": 0
       },
-      "status": "pending",
+      "status": "escalated",
       "title": "https://pennydreadfulmagic.com/decks/193372/ shows as Not Legal but it is legal",
       "verdict": null
     },
@@ -240,7 +341,10 @@
       "class": null,
       "closure": null,
       "confidence": null,
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": null,
       "history": [
         {
@@ -260,6 +364,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "pending",
           "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:20Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:42Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:47:42Z"
         }
       ],
       "issue": 10531,
@@ -273,10 +391,10 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 1,
+        "triage": 2,
         "verify": 0
       },
-      "status": "pending",
+      "status": "escalated",
       "title": "If you give the bot multiple different printings of a card, it only shows you one of them.",
       "verdict": null
     },
@@ -284,7 +402,10 @@
       "class": null,
       "closure": null,
       "confidence": null,
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": null,
       "history": [
         {
@@ -304,6 +425,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "pending",
           "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:20Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:42Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:47:42Z"
         }
       ],
       "issue": 10771,
@@ -316,10 +451,10 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 1,
+        "triage": 2,
         "verify": 0
       },
-      "status": "pending",
+      "status": "escalated",
       "title": "anonymize active decks viewed by non-admin sorters",
       "verdict": null
     },
@@ -327,7 +462,10 @@
       "class": null,
       "closure": null,
       "confidence": null,
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": null,
       "history": [
         {
@@ -347,6 +485,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "pending",
           "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:20Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:42Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:47:42Z"
         }
       ],
       "issue": 10780,
@@ -359,10 +511,10 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 1,
+        "triage": 2,
         "verify": 0
       },
-      "status": "pending",
+      "status": "escalated",
       "title": "Reactify /admin/archetypes search results",
       "verdict": null
     },
@@ -400,7 +552,10 @@
       "class": null,
       "closure": null,
       "confidence": null,
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": null,
       "history": [
         {
@@ -420,6 +575,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "pending",
           "ts": "2026-09-01T20:40:57Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:20Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:42Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:47:42Z"
         }
       ],
       "issue": 11082,
@@ -432,10 +601,10 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 1,
+        "triage": 2,
         "verify": 0
       },
-      "status": "pending",
+      "status": "escalated",
       "title": "banner.css is only dynamic because it writes out rules for each season but it'd be better (performance-wise) to write out rules up to season 100 and send them (gzipped) in the main css than it is to make a separate call for the banner css so maybe do that",
       "verdict": null
     },
@@ -2986,7 +3155,10 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11291.json",
       "history": [
         {
@@ -3036,6 +3208,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "fix_pending",
           "ts": "2026-09-01T21:12:59Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T21:43:19Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:32Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:47:32Z"
         }
       ],
       "issue": 11291,
@@ -3048,11 +3234,11 @@
       "notes": "The primary regression was fixed, but a card with zero decks still renders an empty table and 0-0 of 0 pagination. Implement a useful no-results state for live deck tables without restoring the broken server-side has_decks guard.",
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "escalated",
       "title": "We used to wrap the decktable on the card detail page in a has_decks if - but now we show it even when there's no decks",
       "verdict": "UNCERTAIN"
     },
@@ -6161,7 +6347,10 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "medium",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "verify stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11712.json",
       "history": [
         {
@@ -6201,6 +6390,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "verify_pending",
           "ts": "2026-09-01T21:14:59Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "verify_leased",
+          "ts": "2026-09-01T21:43:02Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:53Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:45:53Z"
         }
       ],
       "issue": 11712,
@@ -6214,9 +6417,9 @@
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
-        "verify": 1
+        "verify": 2
       },
-      "status": "verify_pending",
+      "status": "escalated",
       "title": "When you cache a deck name, scan all other decknames for the non-latin characters in it and log a bug if there's a new character we haven't seen before",
       "verdict": null
     },
@@ -6427,7 +6630,10 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "verify stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11735.json",
       "history": [
         {
@@ -6467,6 +6673,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "verify_pending",
           "ts": "2026-09-01T21:14:59Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "verify_leased",
+          "ts": "2026-09-01T21:43:02Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:53Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:45:53Z"
         }
       ],
       "issue": 11735,
@@ -6481,9 +6701,9 @@
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
-        "verify": 1
+        "verify": 2
       },
-      "status": "verify_pending",
+      "status": "escalated",
       "title": "/rotation is served from the old machine's version of decksite which means (among other things) that it has outdated interestingness and outdated css",
       "verdict": null
     },
@@ -7088,7 +7308,10 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "medium",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "verify stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11950.json",
       "history": [
         {
@@ -7128,6 +7351,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "verify_pending",
           "ts": "2026-09-01T21:14:59Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "verify_leased",
+          "ts": "2026-09-01T21:43:02Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:53Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:45:53Z"
         }
       ],
       "issue": 11950,
@@ -7141,9 +7378,9 @@
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
-        "verify": 1
+        "verify": 2
       },
-      "status": "verify_pending",
+      "status": "escalated",
       "title": "The test card Red Herring \"beats\" the real Red Herring when searched on the bot",
       "verdict": null
     },
@@ -8478,7 +8715,10 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "verify stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/12191.json",
       "history": [
         {
@@ -8518,6 +8758,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "verify_pending",
           "ts": "2026-09-01T21:14:59Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "verify_leased",
+          "ts": "2026-09-01T21:43:02Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:45:53Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:45:53Z"
         }
       ],
       "issue": 12191,
@@ -8531,9 +8785,9 @@
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
-        "verify": 1
+        "verify": 2
       },
-      "status": "verify_pending",
+      "status": "escalated",
       "title": "We seem to set cookies for paths other than /",
       "verdict": null
     },
@@ -9634,7 +9888,10 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/12244.json",
       "history": [
         {
@@ -9684,6 +9941,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "fix_pending",
           "ts": "2026-09-01T21:13:10Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T21:43:12Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:15Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:46:15Z"
         }
       ],
       "issue": 12244,
@@ -9697,11 +9968,11 @@
       "notes": "The cited earlier commit predates this report and does not fully distinguish never-before-legal cards from rank-1 previously legal cards; its fetch-failure path skips sorting. Fix and test rotation hype ordering so never-before-legal cards come first, then heavily played returning cards, with a deterministic safe fallback.",
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "escalated",
       "title": "Hype message for 84th run included \"Footbottom Feast\" which has been legal before and even played a few times",
       "verdict": "UNCERTAIN"
     },
@@ -10704,7 +10975,10 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/12284.json",
       "history": [
         {
@@ -10744,6 +11018,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "fix_pending",
           "ts": "2026-09-01T21:13:53Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T21:43:09Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:58Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:46:58Z"
         }
       ],
       "issue": 12284,
@@ -10756,11 +11044,11 @@
       "notes": "Implement the issue owner's stated minimum: /rotation should include every card that was legal in the immediately preceding season, including cards with zero hits in the current rotation data. Reuse existing legal-card history where possible and add focused tests.",
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "escalated",
       "title": "Consider showing every magic card ever printed (or maybe released on MTGO) in /rotation",
       "verdict": null
     },
@@ -17128,7 +17416,7 @@
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
         "ci": {
-          "checked_at": "2026-09-01T21:29:34Z",
+          "checked_at": "2026-09-01T21:48:43Z",
           "failed": [],
           "state": "green"
         },
@@ -17822,7 +18110,7 @@
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-01T21:29:33Z",
+          "checked_at": "2026-09-01T21:48:42Z",
           "failed": [],
           "state": "green"
         },
@@ -17896,7 +18184,7 @@
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-01T21:29:32Z",
+          "checked_at": "2026-09-01T21:48:41Z",
           "failed": [],
           "state": "green"
         },
@@ -18013,7 +18301,7 @@
         "adopted": false,
         "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
         "ci": {
-          "checked_at": "2026-09-01T21:29:31Z",
+          "checked_at": "2026-09-01T21:48:40Z",
           "failed": [],
           "state": "green"
         },
@@ -18209,7 +18497,7 @@
         "adopted": false,
         "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
         "ci": {
-          "checked_at": "2026-09-01T21:29:30Z",
+          "checked_at": "2026-09-01T21:48:38Z",
           "failed": [],
           "state": "green"
         },
@@ -18326,7 +18614,7 @@
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-01T21:29:29Z",
+          "checked_at": "2026-09-01T21:48:37Z",
           "failed": [],
           "state": "green"
         },
@@ -18513,7 +18801,7 @@
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-01T21:29:27Z",
+          "checked_at": "2026-09-01T21:48:36Z",
           "failed": [],
           "state": "green"
         },
@@ -18644,7 +18932,10 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/12569.json",
       "history": [
         {
@@ -18689,6 +18980,20 @@
           "event": "RETRY_SCHEDULED",
           "status": "fix_pending",
           "ts": "2026-09-01T21:14:16Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T21:43:06Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:47Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T21:46:47Z"
         }
       ],
       "issue": 12569,
@@ -18699,11 +19004,11 @@
       "notes": "Redesign /metagame meta-share display as a fixed-width ten-segment absolute meter, not a bar normalized to the current leader. Each full segment represents one percentage point; partially fill the active segment so shares below 1% remain visible and proportions are preserved. Cap the visual scale at 10% and show an unambiguous overflow chevron/marker above 10%, while always displaying the exact percentage separately in a stable right-aligned tabular-number field. Keep the meter width independent of the label, make overflow and the exact value accessible, and add focused rendering/threshold tests.",
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "escalated",
       "title": "Meta share is not a convincing design on /metagame",
       "verdict": null
     },
@@ -18876,7 +19181,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-01T21:29:26Z",
+          "checked_at": "2026-09-01T21:48:35Z",
           "failed": [],
           "state": "green"
         },
@@ -18950,7 +19255,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-01T21:29:25Z",
+          "checked_at": "2026-09-01T21:48:33Z",
           "failed": [],
           "state": "green"
         },
@@ -19112,7 +19417,7 @@
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-01T21:29:24Z",
+          "checked_at": "2026-09-01T21:48:32Z",
           "failed": [],
           "state": "green"
         },
@@ -19229,7 +19534,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-01T21:29:23Z",
+          "checked_at": "2026-09-01T21:48:30Z",
           "failed": [],
           "state": "green"
         },
@@ -19412,7 +19717,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-01T21:29:21Z",
+          "checked_at": "2026-09-01T21:48:29Z",
           "failed": [],
           "state": "green"
         },
@@ -19599,7 +19904,7 @@
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
         "ci": {
-          "checked_at": "2026-09-01T21:29:19Z",
+          "checked_at": "2026-09-01T21:48:28Z",
           "failed": [],
           "state": "green"
         },
@@ -19715,7 +20020,7 @@
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-01T21:29:17Z",
+          "checked_at": "2026-09-01T21:48:27Z",
           "failed": [],
           "state": "green"
         },
@@ -19803,7 +20108,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-01T21:29:16Z",
+          "checked_at": "2026-09-01T21:48:26Z",
           "failed": [],
           "state": "green"
         },
@@ -19877,7 +20182,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-01T21:29:15Z",
+          "checked_at": "2026-09-01T21:48:25Z",
           "failed": [],
           "state": "green"
         },
@@ -19930,6 +20235,20 @@
           "event": "ADJUDICATED",
           "status": "fix_pending",
           "ts": "2026-09-01T21:23:37Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T21:43:04Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:10Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T21:47:10Z"
         }
       ],
       "issue": 12587,
@@ -19940,7 +20259,7 @@
       "notes": "Replace the /api/archetypes2 key-card is_uninteresting oracle/type-line string heuristics with the existing shared Scryfall-like card-search implementation. Express the intended filter directly: exclude basic lands and lands with color identity greater than one, while retaining mono-colour and colourless utility lands. Reuse the same card-query boundary in _legal_cards where applicable rather than adding another local predicate. Add focused tests for basics, multicolour lands, and eligible utility lands. Any resulting PR must remain draft.",
       "pr": null,
       "stage_attempts": {
-        "fix": 0,
+        "fix": 1,
         "triage": 0,
         "verify": 0
       },
@@ -20147,7 +20466,7 @@
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-01T21:29:14Z",
+          "checked_at": "2026-09-01T21:48:23Z",
           "failed": [],
           "state": "green"
         },
@@ -20406,7 +20725,7 @@
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-01T21:29:12Z",
+          "checked_at": "2026-09-01T21:48:22Z",
           "failed": [],
           "state": "green"
         },
@@ -20537,7 +20856,7 @@
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-01T21:29:11Z",
+          "checked_at": "2026-09-01T21:48:21Z",
           "failed": [],
           "state": "green"
         },
@@ -20625,7 +20944,7 @@
         "adopted": false,
         "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
         "ci": {
-          "checked_at": "2026-09-01T21:29:10Z",
+          "checked_at": "2026-09-01T21:48:20Z",
           "failed": [],
           "state": "green"
         },
@@ -20741,7 +21060,7 @@
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-01T21:29:08Z",
+          "checked_at": "2026-09-01T21:48:18Z",
           "failed": [],
           "state": "green"
         },
@@ -21084,7 +21403,7 @@
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-01T21:29:07Z",
+          "checked_at": "2026-09-01T21:48:17Z",
           "failed": [],
           "state": "green"
         },
@@ -21158,7 +21477,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-01T21:29:06Z",
+          "checked_at": "2026-09-01T21:48:16Z",
           "failed": [],
           "state": "green"
         },
@@ -22322,7 +22641,7 @@
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-01T21:29:02Z",
+          "checked_at": "2026-09-01T21:48:13Z",
           "failed": [],
           "state": "green"
         },
@@ -31480,6 +31799,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:31Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:48:06Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:48:06Z"
         }
       ],
       "issue": 8732,
@@ -31493,7 +31826,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31510,6 +31843,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:31Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:48:06Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:48:06Z"
         }
       ],
       "issue": 8784,
@@ -31523,7 +31870,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31540,6 +31887,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:31Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:48:06Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:48:06Z"
         }
       ],
       "issue": 8806,
@@ -31552,7 +31913,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31569,6 +31930,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:31Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:48:06Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:48:06Z"
         }
       ],
       "issue": 8836,
@@ -31581,7 +31956,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31598,6 +31973,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:31Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:48:06Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:48:06Z"
         }
       ],
       "issue": 8884,
@@ -31610,7 +31999,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31627,6 +32016,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:00Z"
         }
       ],
       "issue": 8892,
@@ -31635,7 +32029,15 @@
         "- backlog",
         "* archetypes"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-8969-1",
+        "expires_at": "2026-09-01T22:44:00Z",
+        "granted_at": "2026-09-01T21:44:00Z",
+        "kind": "triage",
+        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
+        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -31643,7 +32045,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Feature request: on the /admin/rules page, add a button \"reassign all\" (maybe with some kind of confirmation to not accidentally click it) which puts all decks displayed at the page to their rule assigned archetype unless they're double assigned",
       "verdict": null
     },
@@ -31657,6 +32059,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:00Z"
         }
       ],
       "issue": 8929,
@@ -31664,7 +32071,15 @@
         "* search",
         "+ feature"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-8969-1",
+        "expires_at": "2026-09-01T22:44:00Z",
+        "granted_at": "2026-09-01T21:44:00Z",
+        "kind": "triage",
+        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
+        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -31672,7 +32087,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Support `in:{set}` in card search (for `is:spikey -in:leg`)",
       "verdict": null
     },
@@ -31686,6 +32101,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:00Z"
         }
       ],
       "issue": 8951,
@@ -31693,7 +32113,15 @@
         "+ bug",
         "* modo bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-8969-1",
+        "expires_at": "2026-09-01T22:44:00Z",
+        "granted_at": "2026-09-01T21:44:00Z",
+        "kind": "triage",
+        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
+        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -31701,7 +32129,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "if only one match player is in a tournament, pdbot reports it to #tournament room",
       "verdict": null
     },
@@ -31715,6 +32143,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:00Z"
         }
       ],
       "issue": 8968,
@@ -31722,7 +32155,15 @@
         "+ improvement",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-8969-1",
+        "expires_at": "2026-09-01T22:44:00Z",
+        "granted_at": "2026-09-01T21:44:00Z",
+        "kind": "triage",
+        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
+        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -31730,7 +32171,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Support 'devotion:' in search",
       "verdict": null
     },
@@ -31744,6 +32185,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:44:00Z"
         }
       ],
       "issue": 8969,
@@ -31751,7 +32197,15 @@
         "+ improvement",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-8969-1",
+        "expires_at": "2026-09-01T22:44:00Z",
+        "granted_at": "2026-09-01T21:44:00Z",
+        "kind": "triage",
+        "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
+        "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -31759,7 +32213,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Support >, >=. <, <= operators in 'mana:' in search",
       "verdict": null
     },
@@ -31773,6 +32227,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:59Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:53Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:53Z"
         }
       ],
       "issue": 8970,
@@ -31786,7 +32254,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31803,6 +32271,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:59Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:53Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:53Z"
         }
       ],
       "issue": 8971,
@@ -31815,7 +32297,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31832,6 +32314,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:59Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:53Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:53Z"
         }
       ],
       "issue": 8975,
@@ -31844,7 +32340,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31861,6 +32357,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:59Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:53Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:53Z"
         }
       ],
       "issue": 8976,
@@ -31874,7 +32384,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31891,6 +32401,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:59Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:53Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:53Z"
         }
       ],
       "issue": 9030,
@@ -31903,7 +32427,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31920,6 +32444,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:57Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:21Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:21Z"
         }
       ],
       "issue": 9065,
@@ -31932,7 +32470,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31949,6 +32487,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:57Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:21Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:21Z"
         }
       ],
       "issue": 9069,
@@ -31961,7 +32513,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -31978,6 +32530,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:57Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:21Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:21Z"
         }
       ],
       "issue": 9079,
@@ -31990,7 +32556,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32007,6 +32573,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:57Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:21Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:21Z"
         }
       ],
       "issue": 9086,
@@ -32020,7 +32600,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32037,6 +32617,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:57Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:47:21Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:47:21Z"
         }
       ],
       "issue": 9089,
@@ -32049,7 +32643,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32066,6 +32660,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:56Z"
         }
       ],
       "issue": 9121,
@@ -32073,7 +32672,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-9167-1",
+        "expires_at": "2026-09-01T22:43:56Z",
+        "granted_at": "2026-09-01T21:43:56Z",
+        "kind": "triage",
+        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
+        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -32081,7 +32688,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Some decks are not legal in the season that their deck_cache.season_id or deck.created_date or contents imply",
       "verdict": null
     },
@@ -32095,6 +32702,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:56Z"
         }
       ],
       "issue": 9141,
@@ -32103,7 +32715,15 @@
         "* decks",
         "- backlog"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-9167-1",
+        "expires_at": "2026-09-01T22:43:56Z",
+        "granted_at": "2026-09-01T21:43:56Z",
+        "kind": "triage",
+        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
+        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -32111,7 +32731,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Explicitly ROUND playabilty to 5 decimal places to avoid mariadb warnings",
       "verdict": null
     },
@@ -32125,6 +32745,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:56Z"
         }
       ],
       "issue": 9142,
@@ -32134,7 +32759,15 @@
         "\u2020 ui",
         "* rotation"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-9167-1",
+        "expires_at": "2026-09-01T22:43:56Z",
+        "granted_at": "2026-09-01T21:43:56Z",
+        "kind": "triage",
+        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
+        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -32142,7 +32775,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "/rotation/ uses rotationkey.mustache which claims that never before legal, heavily played and moderately played cards will have a different visual treatment but this is no longer true (we have rank instead)",
       "verdict": null
     },
@@ -32156,6 +32789,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:56Z"
         }
       ],
       "issue": 9145,
@@ -32164,7 +32802,15 @@
         "* decks",
         "- backlog"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-9167-1",
+        "expires_at": "2026-09-01T22:43:56Z",
+        "granted_at": "2026-09-01T21:43:56Z",
+        "kind": "triage",
+        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
+        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -32172,7 +32818,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "the INSERT INTO at the end of preaggregate_season_stats should really happen *before* the _new table is swapped out but for expediency in switching off multiple sql statements i moved it after the preaggregate call",
       "verdict": null
     },
@@ -32186,6 +32832,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:56Z"
         }
       ],
       "issue": 9167,
@@ -32193,7 +32844,15 @@
         "+ improvement",
         "* modo bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-9167-1",
+        "expires_at": "2026-09-01T22:43:56Z",
+        "granted_at": "2026-09-01T21:43:56Z",
+        "kind": "triage",
+        "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
+        "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -32201,7 +32860,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "PDBot should still list a no-show time when it goes into overflow mode",
       "verdict": null
     },
@@ -32215,6 +32874,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:55Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:36Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:36Z"
         }
       ],
       "issue": 9172,
@@ -32228,7 +32901,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32245,6 +32918,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:55Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:36Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:36Z"
         }
       ],
       "issue": 9213,
@@ -32257,7 +32944,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32274,6 +32961,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:55Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:36Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:36Z"
         }
       ],
       "issue": 9284,
@@ -32287,7 +32988,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32304,6 +33005,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:55Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:36Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:36Z"
         }
       ],
       "issue": 9325,
@@ -32318,7 +33033,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32335,6 +33050,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:55Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:36Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:36Z"
         }
       ],
       "issue": 9340,
@@ -32349,7 +33078,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32366,6 +33095,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:24Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:25Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:25Z"
         }
       ],
       "issue": 9383,
@@ -32379,7 +33122,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32396,6 +33139,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:24Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:25Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:25Z"
         }
       ],
       "issue": 9548,
@@ -32409,7 +33166,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32426,6 +33183,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:24Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:25Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:25Z"
         }
       ],
       "issue": 9549,
@@ -32438,7 +33209,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32455,6 +33226,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:24Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:25Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:25Z"
         }
       ],
       "issue": 9560,
@@ -32467,7 +33252,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32484,6 +33269,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:24Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:25Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:25Z"
         }
       ],
       "issue": 9586,
@@ -32497,7 +33296,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32514,6 +33313,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:23Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:04Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:04Z"
         }
       ],
       "issue": 9588,
@@ -32527,7 +33340,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32544,6 +33357,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:23Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:04Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:04Z"
         }
       ],
       "issue": 9604,
@@ -32556,7 +33383,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32573,6 +33400,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:23Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:04Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:04Z"
         }
       ],
       "issue": 9696,
@@ -32586,7 +33427,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32603,6 +33444,20 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T21:43:23Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T21:46:04Z"
+        },
+        {
+          "event": "RETRY_SCHEDULED",
+          "status": "pending",
+          "ts": "2026-09-01T21:46:04Z"
         }
       ],
       "issue": 9960,
@@ -32615,7 +33470,7 @@
       "pr": null,
       "stage_attempts": {
         "fix": 0,
-        "triage": 0,
+        "triage": 1,
         "verify": 0
       },
       "status": "pending",
@@ -32624,13 +33479,13 @@
     }
   },
   "last_bundle_at": "2026-09-01T20:57:52Z",
-  "last_master_sha": "9a1c5dea8073267b330aca5a07d1eccb6e3ace33",
-  "last_mirror_at": "2026-09-01T21:22:46Z",
-  "last_seq": 5316,
-  "last_snapshot_at": "2026-09-01T21:30:34Z",
+  "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
+  "last_mirror_at": "2026-09-01T21:30:36Z",
+  "last_seq": 5597,
+  "last_snapshot_at": "2026-09-01T21:48:43Z",
   "pause_level": 1,
-  "pause_seconds": 3697,
-  "pause_until": "2026-09-01T21:42:48Z",
+  "pause_seconds": 5502,
+  "pause_until": "2026-09-01T22:15:32Z",
   "paused": true,
   "pr_backpressure": false,
   "workspaces": {
@@ -33073,6 +33928,26 @@
       "session_id": "39658c01-4ab7-4767-bbb6-8cf18dd2b1f4",
       "state": "archived",
       "workspace_id": "0fc3531a-9f57-4374-bec4-7925d84266d2"
+    },
+    "1074a051-91ac-48a1-bced-6d1e8937f440": {
+      "batch_id": "t-10198-1",
+      "created_at": "2026-09-01T21:43:21Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        10198,
+        10172,
+        10116,
+        10114,
+        10105
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:20.692Z",
+      "session_id": "f42fdbf9-4264-4cd5-adee-4d9f508c952e",
+      "state": "archived",
+      "workspace_id": "1074a051-91ac-48a1-bced-6d1e8937f440"
     },
     "1095383a-3d7c-46f6-8a65-f32063af1780": {
       "batch_id": "f-11462-1",
@@ -33730,6 +34605,26 @@
       "state": "archived",
       "workspace_id": "2e172e52-f205-4798-ba63-274c1b5cb308"
     },
+    "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2": {
+      "batch_id": "t-9167-1",
+      "created_at": "2026-09-01T21:43:56Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        9167,
+        9145,
+        9142,
+        9141,
+        9121
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:45:10.300Z",
+      "session_id": "6db93d49-e811-4341-9cde-2719946b0a20",
+      "state": "running",
+      "workspace_id": "2e1e5976-e733-4b3e-9b08-45c71dc3d8e2"
+    },
     "2e4a3c33-b812-4d0a-aad8-b56980457831": {
       "batch_id": "f-11410-1",
       "created_at": "2026-09-01T19:58:47Z",
@@ -34228,6 +35123,25 @@
       "state": "archived",
       "workspace_id": "43e9185a-fd9a-4742-99e8-309a6e4a43d5"
     },
+    "44bca193-8042-44a5-a04e-9f24e754e2c2": {
+      "batch_id": "v-12191-2",
+      "created_at": "2026-09-01T21:43:02Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12191,
+        11950,
+        11735,
+        11712
+      ],
+      "kind": "verify",
+      "last_transcript_at": "2026-09-01T21:44:06.827Z",
+      "session_id": "7de2df5f-b9c7-42c6-bd5b-5115b8d89389",
+      "state": "archived",
+      "workspace_id": "44bca193-8042-44a5-a04e-9f24e754e2c2"
+    },
     "44d2fcfb-fa86-4089-b31b-515c94e77b6d": {
       "batch_id": "f-12621-1",
       "created_at": "2026-08-23T21:48:36Z",
@@ -34364,6 +35278,26 @@
       "state": "archived",
       "workspace_id": "49df3e76-d502-4550-8a7b-9035eca9f425"
     },
+    "4b12deae-b598-4c24-9695-66cb4be41fe6": {
+      "batch_id": "t-8969-1",
+      "created_at": "2026-09-01T21:44:00Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        8969,
+        8968,
+        8951,
+        8929,
+        8892
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:59.643Z",
+      "session_id": "d2938bb9-9e21-4323-9cb5-79b1534cb540",
+      "state": "running",
+      "workspace_id": "4b12deae-b598-4c24-9695-66cb4be41fe6"
+    },
     "4b96a344-7c18-463c-b271-156cfe50e407": {
       "batch_id": "t-12452-1",
       "created_at": "2026-09-01T18:25:40Z",
@@ -34384,6 +35318,26 @@
       "state": "archived",
       "workspace_id": "4b96a344-7c18-463c-b271-156cfe50e407"
     },
+    "4baf7448-1a9f-465f-b4aa-5be33618fb32": {
+      "batch_id": "t-10068-1",
+      "created_at": "2026-09-01T21:43:23Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        10068,
+        9960,
+        9696,
+        9604,
+        9588
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:07.605Z",
+      "session_id": "3dd51715-513b-46ce-9705-0f64d53e00bd",
+      "state": "archived",
+      "workspace_id": "4baf7448-1a9f-465f-b4aa-5be33618fb32"
+    },
     "4d844dcb-294a-4d21-b40c-f20fc653555c": {
       "batch_id": "f-12465-1",
       "created_at": "2026-09-01T18:37:45Z",
@@ -34399,6 +35353,42 @@
       "session_id": "5651232d-29e1-48eb-b008-f49d21b8ee7a",
       "state": "archived",
       "workspace_id": "4d844dcb-294a-4d21-b40c-f20fc653555c"
+    },
+    "4da94011-d13f-4e69-9b52-03310c13e170": {
+      "batch_id": "f-12244-2",
+      "created_at": "2026-09-01T21:43:12Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12244
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T21:44:11.768Z",
+      "session_id": "7494fdfb-ff61-489b-90a2-4653c3829018",
+      "state": "archived",
+      "workspace_id": "4da94011-d13f-4e69-9b52-03310c13e170"
+    },
+    "4e2a62c5-07fa-4d44-9d45-68716cc513d2": {
+      "batch_id": "t-9586-1",
+      "created_at": "2026-09-01T21:43:24Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        9586,
+        9560,
+        9549,
+        9548,
+        9383
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:09.009Z",
+      "session_id": "b66ad24b-3253-472e-a438-0b5942ed4c1d",
+      "state": "archived",
+      "workspace_id": "4e2a62c5-07fa-4d44-9d45-68716cc513d2"
     },
     "4e67d01f-0677-4514-a1b7-5d687a36f74f": {
       "batch_id": "v-11293-1",
@@ -34468,6 +35458,26 @@
       "session_id": "ce6ab169-29fe-4537-8fe3-1f118b5b2a63",
       "state": "archived",
       "workspace_id": "5137c60e-01eb-46c7-b92a-43e33ae5f213"
+    },
+    "514a8d85-0f34-4c55-a1d8-2f8a22813dab": {
+      "batch_id": "t-9340-1",
+      "created_at": "2026-09-01T21:43:55Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        9340,
+        9325,
+        9284,
+        9213,
+        9172
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:55.661Z",
+      "session_id": "344d9331-d835-4b0e-9e96-5f8e1630b89e",
+      "state": "archived",
+      "workspace_id": "514a8d85-0f34-4c55-a1d8-2f8a22813dab"
     },
     "54905183-aee4-45a6-b2fd-19f5d2216edf": {
       "batch_id": "t-11672-1",
@@ -34658,6 +35668,22 @@
       "session_id": "693f108d-6faa-4de1-bc27-8b3fe54056e3",
       "state": "archived",
       "workspace_id": "60627955-5518-4cb2-98b3-aa102e697663"
+    },
+    "611b3e19-49ec-4417-b0dc-255ca31b61c7": {
+      "batch_id": "f-12569-2",
+      "created_at": "2026-09-01T21:43:06Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12569
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T21:43:53.446Z",
+      "session_id": "c7390137-b6a4-4be5-adfa-dc63b9b88566",
+      "state": "archived",
+      "workspace_id": "611b3e19-49ec-4417-b0dc-255ca31b61c7"
     },
     "62e2440d-6d11-452b-b8d8-71b85b83b9d6": {
       "batch_id": "f-11304-1",
@@ -34862,6 +35888,22 @@
       "session_id": "9a7ddd99-045c-435e-97c4-12fc05101e30",
       "state": "archived",
       "workspace_id": "6b00d25f-071d-4338-9abc-54b09bf676f6"
+    },
+    "6b8872de-4fb8-49b5-a2c0-7e7e6cbbec1a": {
+      "batch_id": "f-12284-2",
+      "created_at": "2026-09-01T21:43:09Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12284
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T21:43:53.421Z",
+      "session_id": "e3ed4685-6ded-4fc9-b78c-e5a0235becfe",
+      "state": "archived",
+      "workspace_id": "6b8872de-4fb8-49b5-a2c0-7e7e6cbbec1a"
     },
     "6dc2f0f5-92bf-45cc-8812-40ac66417ad7": {
       "batch_id": "f-12664-1",
@@ -35521,6 +36563,42 @@
       "session_id": "7c6f009e-ab1a-4294-b76b-6f8bc766bead",
       "state": "archived",
       "workspace_id": "8e6ab4b7-0b7c-49bc-a461-d55563e39e32"
+    },
+    "8f29fa43-bf1e-4c51-a23b-6e10f60275b3": {
+      "batch_id": "f-12587-1",
+      "created_at": "2026-09-01T21:43:04Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        12587
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T21:44:06.715Z",
+      "session_id": "309fbd4d-0754-48bd-911a-98234b1a0c32",
+      "state": "archived",
+      "workspace_id": "8f29fa43-bf1e-4c51-a23b-6e10f60275b3"
+    },
+    "8f6a3a7b-1807-4adc-abf1-f75c0f8da1be": {
+      "batch_id": "t-9089-1",
+      "created_at": "2026-09-01T21:43:57Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        9089,
+        9086,
+        9079,
+        9069,
+        9065
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:58.182Z",
+      "session_id": "61d4e1de-cb8f-4dfe-b5c7-96b58164adc7",
+      "state": "archived",
+      "workspace_id": "8f6a3a7b-1807-4adc-abf1-f75c0f8da1be"
     },
     "91901008-9888-43de-bb8a-4842642bcb84": {
       "batch_id": "f-12537-1",
@@ -36537,6 +37615,22 @@
       "state": "archived",
       "workspace_id": "bc8bef9b-461a-4a2e-8f33-4ba9df248c8e"
     },
+    "bda43177-e918-4984-aa87-d2b57128dca2": {
+      "batch_id": "f-11291-2",
+      "created_at": "2026-09-01T21:43:19Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11291
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T21:44:19.335Z",
+      "session_id": "db6a308e-9d42-4882-a699-79166abedf8c",
+      "state": "archived",
+      "workspace_id": "bda43177-e918-4984-aa87-d2b57128dca2"
+    },
     "be388d62-b864-4e52-919c-e90f51a790de": {
       "batch_id": "t-11216-1",
       "created_at": "2026-09-01T20:37:50Z",
@@ -36921,6 +38015,26 @@
       "state": "archived",
       "workspace_id": "cfe8efc6-7395-49ab-929f-3f7256f4baaf"
     },
+    "d08c90d0-981c-47e2-9968-c27b97f5d814": {
+      "batch_id": "t-11082-2",
+      "created_at": "2026-09-01T21:43:20Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11082,
+        10780,
+        10771,
+        10531,
+        10512
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:44:06.652Z",
+      "session_id": "0c9c1fe8-9186-47a1-8d71-7510bbd1d4e0",
+      "state": "archived",
+      "workspace_id": "d08c90d0-981c-47e2-9968-c27b97f5d814"
+    },
     "d3fad23d-4907-4cbb-aa60-830477188d4e": {
       "batch_id": "t-12226-1",
       "created_at": "2026-09-01T19:05:54Z",
@@ -37088,6 +38202,26 @@
       "session_id": "a7e90432-170b-4258-991f-a68fb056c7a3",
       "state": "archived",
       "workspace_id": "d91452c3-6826-4bcd-85ef-2ef93ab25c67"
+    },
+    "daee3a5c-8eee-4999-8314-463bd9906f8d": {
+      "batch_id": "t-9030-1",
+      "created_at": "2026-09-01T21:43:59Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        9030,
+        8976,
+        8975,
+        8971,
+        8970
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:45:04.311Z",
+      "session_id": "ee39214c-4de5-44c8-8970-f70bfd9721a6",
+      "state": "archived",
+      "workspace_id": "daee3a5c-8eee-4999-8314-463bd9906f8d"
     },
     "dbce7479-e49e-4f75-af74-2c5d9294ce8c": {
       "batch_id": "f-12228-2",
@@ -37764,6 +38898,26 @@
       "session_id": "8ce4448c-ce22-4612-b457-617ebcfadd35",
       "state": "archived",
       "workspace_id": "f2c8a1fd-d328-4386-b573-057974ff6650"
+    },
+    "f328bb33-6256-41d2-ace8-3ec8aa34e9b6": {
+      "batch_id": "t-8884-1",
+      "created_at": "2026-09-01T21:44:31Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        8884,
+        8836,
+        8806,
+        8784,
+        8732
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T21:45:15.148Z",
+      "session_id": "0cd42068-4ada-4e23-b743-a6607de735c3",
+      "state": "archived",
+      "workspace_id": "f328bb33-6256-41d2-ace8-3ec8aa34e9b6"
     },
     "f447c72e-e3f3-4e9d-8978-7cdcb668eed5": {
       "batch_id": "f-12521-1",

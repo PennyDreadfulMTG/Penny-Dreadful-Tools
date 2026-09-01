@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11997-1",
+      "branch": "sweep/11997-there-are-two-identical-get-or-insert-pe",
+      "files_changed": 2,
+      "head_sha": "81e5fb43293e777560cb4fd81c3cc4cb6852c3e7",
+      "issue": 11997,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The local import pattern (`from decksite.data import person as person_data` inside `add_deck`) is the standard approach to break circular imports in this codebase. No behaviour change \u2014 the function body is identical; only the module it lives in changes.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`get_or_insert_person_id` existed as an identical duplicate in both `decksite/data/deck.py` (lines 453-459) and `decksite/data/person.py` (lines 272-278). The canonical home for this function is `person.py` since it inserts/selects from the `person` table. However:\n- `deck.add_deck()` was calling the local copy on `deck.py`\n- `person.link_discord()` was calling `deck.get_or_insert_person_id()` (the wrong module)\n\nThe duplicate on `deck.py` existed to avoid a circular import (`person.py` imports `deck` at module level, so `deck.py` cannot import `person` at module level).\n\n## What changed\n\n- **`decksite/data/deck.py`**: Deleted the duplicate `get_or_insert_person_id` function (8 lines). In `add_deck()`, added a local (function-scoped) import `from decksite.data import person as person_data` and changed the call to `person_data.get_or_insert_person_id(...)`. The local import avoids the circular-import issue.\n- **`decksite/data/person.py`**: Changed `person.link_discord()` to call the local `get_or_insert_person_id(...)` directly instead of `deck.get_or_insert_person_id(...)`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n\nFixes #11997",
+      "pr_title": "Move get_or_insert_person_id from deck to person (#11997)",
+      "recorded_at": "2026-09-01T19:36:10Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.71s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11997,
   "triage": [
     {

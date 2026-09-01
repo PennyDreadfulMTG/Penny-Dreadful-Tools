@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11991-1",
+      "branch": "sweep/11991-we-should-associate-a-magic-online-usern",
+      "files_changed": 1,
+      "head_sha": "98087eabce912dffd86604ceb5afff524524194e",
+      "issue": 11991,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Change is 2 lines, mirrors an identical pattern in retire_deck() at line 95. The associate() SQL has a WHERE discord_id IS NULL guard so existing associations are never overwritten. No schema changes needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a user signed up for the league while authenticated via Discord, their Discord ID was not being associated with their Magic Online username/person record. The `retire_deck()` flow already called `ps.associate()` (line 95), but `add_signup()` did not.\n\n## What changed\n\nIn `decksite/controllers/league.py`, added two lines to `add_signup()` after `d = lg.signup(form)` to call `ps.associate(d, session['id'])` when a Discord session is active. This exactly mirrors the existing pattern in `retire_deck()`. The `associate()` function is safe to call unconditionally because it only writes when `discord_id IS NULL`, preventing overwrites of existing associations.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n\nFixes #11991",
+      "pr_title": "Associate Discord ID with person on league signup (#11991)",
+      "recorded_at": "2026-09-01T19:36:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 19.78s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11991,
   "triage": [
     {

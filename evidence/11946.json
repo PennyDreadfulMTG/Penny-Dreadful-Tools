@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11946-1",
+      "branch": "sweep/11946-top-of-rotation-page-should-show-in-this",
+      "files_changed": 4,
+      "head_sha": "7a47e0ef637843a963be58c6f1b22c561346aa76",
+      "issue": 11946,
+      "lines_changed": 36,
+      "lint": "passed",
+      "notes": "The eliminated_this_check query uses `hits_needed > 0` as an implicit safety guard (Legal cards have hits_needed=0 and can't appear with status='Not Legal', so the condition is redundant but harmless). No schema changes. The `_rotation` table may be empty between rotations; the `runs > 0` guard prevents a spurious second query in that case.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/rotation/` page summary line only showed runs completed and total card count. Users had no way to see how many cards appeared in the most recent check (`in_this_check`) or how many cards were eliminated (became 'Not Legal') specifically due to that check (`eliminated_this_check`).\n\n## What changed\n\n- **`decksite/data/rotation.py`** \u2014 `load_rotation_summary()` now returns a 4-tuple `(runs, num_cards, in_this_check, eliminated_this_check)`. `in_this_check` is `SUM(hit_in_last_run)` from `_rotation`. `eliminated_this_check` counts cards where `status = 'Not Legal'`, `hit_in_last_run = 0`, and `hits_needed <= TOTAL_RUNS - runs_completed + 1` (i.e., the card was still viable before this run but wasn't seen and is now eliminated).\n- **`decksite/controllers/resources.py`** \u2014 unpacks the new 4-tuple and passes the two new counts to the `Rotation` view.\n- **`decksite/views/rotation.py`** \u2014 `Rotation.__init__` accepts `in_this_check` and `eliminated_this_check` (defaulting to 0 for backward compatibility) and exposes them as instance attributes.\n- **`decksite/templates/rotation.mustache`** \u2014 adds a `<p>This check: {{in_this_check}} cards in, {{eliminated_this_check}} cards eliminated.</p>` line inside the existing `{{#runs}}` guard.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected in 18.69s\n- The `decksite/data/rotation_test.py` existing test (`test_update_rotation_runs_stores_canonical_names`) continued to pass; no new DB-dependent tests were added since the function requires a live `_rotation` table.\n\nFixes #11946",
+      "pr_title": "Show in-this-check and eliminated-this-check counts on rotation page (#11946)",
+      "recorded_at": "2026-09-01T19:37:02Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/data/rotation_test.py",
+        "detail": "845 passed, 1 skipped in 18.69s (full suite ran)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11946,
   "triage": [
     {

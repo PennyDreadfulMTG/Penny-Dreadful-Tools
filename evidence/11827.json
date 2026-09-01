@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11827,
+  "triage": [
+    {
+      "batch_id": "t-11887-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The 60/15 fallback parsing path (triggered when no empty-line or Sideboard separator is present) could misplace basics or sideboard cards depending on exact card count and ordering",
+          "ref": "magic/decklist.py:43-79",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comment points to deck 232812 as probably the source deck; no further diagnostic information given",
+          "ref": "gh issue view 11827 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "Only pyupgrade and Universes Within name changes made to decklist.py after the issue was filed; the parsing logic is unchanged",
+          "ref": "git log --oneline --after=2024-04-11 -- magic/decklist.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11827,
+      "notes": "The parsing bug likely still exists but is triggered by a specific decklist format for deck 233082. Without the raw decklist text from the database the exact failure mode cannot be identified.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:36:37Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

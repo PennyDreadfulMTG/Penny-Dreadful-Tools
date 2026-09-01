@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11858,
+  "triage": [
+    {
+      "batch_id": "t-11887-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "card_img_class='two-faces' only set for layouts ['transform', 'meld', 'modal_dfc']; if The Everflowing Well has a different DFC layout it would display only one face on the card page",
+          "ref": "decksite/prepare.py:26",
+          "type": "code"
+        },
+        {
+          "detail": "Popup card images on mouseover come from deckbox.org, a third-party service; DFC support there is not controllable by this codebase",
+          "ref": "decksite/templates/footer.mustache:19",
+          "type": "code"
+        },
+        {
+          "detail": "The card is not referenced in the codebase; its Scryfall layout type cannot be determined without database access",
+          "ref": "grep -r 'Everflowing' . (no results outside test file)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11858,
+      "notes": "Need to confirm whether the bug is on the deckbox.org hover tooltip (third-party, hard to fix) or on the site's own card page image (fixable by adding the card's layout to prepare.py:26). Requires DB access to check the card's layout field.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:36:37Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

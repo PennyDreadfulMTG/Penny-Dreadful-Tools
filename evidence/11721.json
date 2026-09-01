@@ -42,5 +42,37 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-11721-1",
+      "final_comment": null,
+      "issue": 11721,
+      "own_evidence": [
+        {
+          "detail": "log_exception() writes only to a local rotating log file; no call to repo.create_issue() or any GitHub API \u2014 auto-filing GitHub tickets on bot errors is absent",
+          "ref": "discordbot/error_handling.py:46-53",
+          "type": "code"
+        },
+        {
+          "detail": "on_command_error sends error_handling.public_message() (friendly message, no stack trace) \u2014 stack-trace suppression half is confirmed fixed",
+          "ref": "discordbot/bot.py:102-114",
+          "type": "code"
+        },
+        {
+          "detail": "send_command_tracebacks=False confirmed present, preventing framework-level traceback dumps to Discord",
+          "ref": "discordbot/bot.py:37",
+          "type": "code"
+        },
+        {
+          "detail": "commit 'Harden Discord bot errors and reboot reporting' introduced error_handling.py, confirmed it adds only file-based logging, no GitHub issue creation",
+          "ref": "c1bfbf0f",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:35:44Z",
+      "refutation_reason": "The proposed status is COMPLETED, but the proposed closing comment itself concedes 'The GitHub-ticket-logging part of this request is not yet implemented.' The issue title explicitly names 'log a github ticket' as a requirement alongside the friendly message. Independently verified: error_handling.log_exception() logs only to a local file; there is no call to repo.create_issue() or any GitHub API from the error-handling path. Closing as COMPLETED while a named, title-level feature is absent is contradictory. Appropriate disposition is NOT_PLANNED (if auto-GitHub-ticket-logging is out of scope) rather than COMPLETED.",
+      "verdict": "REFUTED"
+    }
+  ]
 }

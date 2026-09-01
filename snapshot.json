@@ -1,11 +1,11 @@
 {
   "counters": {
     "infra_failures": 0,
-    "nudges": 32,
-    "workspaces_created": 224
+    "nudges": 34,
+    "workspaces_created": 238
   },
   "daily": {
-    "closures": 20,
+    "closures": 22,
     "day": "2026-09-01",
     "prs": 25
   },
@@ -1988,6 +1988,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:36Z"
         }
       ],
       "issue": 11325,
@@ -1995,7 +2000,15 @@
         "+ bug",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11348-1",
+        "expires_at": "2026-09-01T20:38:36Z",
+        "granted_at": "2026-09-01T19:38:36Z",
+        "kind": "triage",
+        "session_id": "d7ddce21-f6aa-4c75-a067-5548217b3a8f",
+        "workspace_id": "1a1dda06-ef7e-4d73-809a-2214883ad047"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2003,7 +2016,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "A card search of `ci:g mana:{` causes a db error",
       "verdict": null
     },
@@ -2017,6 +2030,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:36Z"
         }
       ],
       "issue": 11328,
@@ -2024,7 +2042,15 @@
         "+ improvement",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11348-1",
+        "expires_at": "2026-09-01T20:38:36Z",
+        "granted_at": "2026-09-01T19:38:36Z",
+        "kind": "triage",
+        "session_id": "d7ddce21-f6aa-4c75-a067-5548217b3a8f",
+        "workspace_id": "1a1dda06-ef7e-4d73-809a-2214883ad047"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2032,7 +2058,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\"over 10,000 more\" on /about/ is now a bit out of date - get it dynamically?",
       "verdict": null
     },
@@ -2046,6 +2072,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:36Z"
         }
       ],
       "issue": 11329,
@@ -2054,7 +2085,15 @@
         "+ perf",
         "- important"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11348-1",
+        "expires_at": "2026-09-01T20:38:36Z",
+        "granted_at": "2026-09-01T19:38:36Z",
+        "kind": "triage",
+        "session_id": "d7ddce21-f6aa-4c75-a067-5548217b3a8f",
+        "workspace_id": "1a1dda06-ef7e-4d73-809a-2214883ad047"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2062,7 +2101,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "The War on Slowness",
       "verdict": null
     },
@@ -2076,6 +2115,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:36Z"
         }
       ],
       "issue": 11342,
@@ -2083,7 +2127,15 @@
         "+ bug",
         "* api"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11348-1",
+        "expires_at": "2026-09-01T20:38:36Z",
+        "granted_at": "2026-09-01T19:38:36Z",
+        "kind": "triage",
+        "session_id": "d7ddce21-f6aa-4c75-a067-5548217b3a8f",
+        "workspace_id": "1a1dda06-ef7e-4d73-809a-2214883ad047"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2091,7 +2143,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "https://pennydreadfulmagic.com/api/decks/updated/ is a 500",
       "verdict": null
     },
@@ -2105,6 +2157,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:36Z"
         }
       ],
       "issue": 11348,
@@ -2112,7 +2169,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11348-1",
+        "expires_at": "2026-09-01T20:38:36Z",
+        "granted_at": "2026-09-01T19:38:36Z",
+        "kind": "triage",
+        "session_id": "d7ddce21-f6aa-4c75-a067-5548217b3a8f",
+        "workspace_id": "1a1dda06-ef7e-4d73-809a-2214883ad047"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2120,7 +2185,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "The site says a lot of decks are legal in Oathbreaker but that format is singleton so it's mostly a lie",
       "verdict": null
     },
@@ -2134,6 +2199,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:35Z"
         }
       ],
       "issue": 11384,
@@ -2141,7 +2211,15 @@
         "+ bug",
         "* discord bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11411-1",
+        "expires_at": "2026-09-01T20:38:35Z",
+        "granted_at": "2026-09-01T19:38:35Z",
+        "kind": "triage",
+        "session_id": "1ff07bfd-16ed-4c31-bfbf-f48d6fcbd318",
+        "workspace_id": "e5d44615-7570-4a39-9514-3358bbde1c08"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2149,7 +2227,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "We deleted the Reddit webhook (Server Settings, Integrations, Webooks) because it was infinitely spamming #general",
       "verdict": null
     },
@@ -2163,6 +2241,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:35Z"
         }
       ],
       "issue": 11405,
@@ -2170,7 +2253,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11411-1",
+        "expires_at": "2026-09-01T20:38:35Z",
+        "granted_at": "2026-09-01T19:38:35Z",
+        "kind": "triage",
+        "session_id": "1ff07bfd-16ed-4c31-bfbf-f48d6fcbd318",
+        "workspace_id": "e5d44615-7570-4a39-9514-3358bbde1c08"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2178,7 +2269,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "https://pennydreadfulmagic.com/export/206751/ fails because `TypeError: http header must be encodable in latin1`",
       "verdict": null
     },
@@ -2192,6 +2283,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:35Z"
         }
       ],
       "issue": 11406,
@@ -2200,7 +2296,15 @@
         "* decks",
         "\u2020 ui"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11411-1",
+        "expires_at": "2026-09-01T20:38:35Z",
+        "granted_at": "2026-09-01T19:38:35Z",
+        "kind": "triage",
+        "session_id": "1ff07bfd-16ed-4c31-bfbf-f48d6fcbd318",
+        "workspace_id": "e5d44615-7570-4a39-9514-3358bbde1c08"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2208,7 +2312,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "https://pennydreadfulmagic.com/charts/cmc/69882-cmc.png is all messed up",
       "verdict": null
     },
@@ -2222,6 +2326,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:35Z"
         }
       ],
       "issue": 11410,
@@ -2229,7 +2338,15 @@
         "+ improvement",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11411-1",
+        "expires_at": "2026-09-01T20:38:35Z",
+        "granted_at": "2026-09-01T19:38:35Z",
+        "kind": "triage",
+        "session_id": "1ff07bfd-16ed-4c31-bfbf-f48d6fcbd318",
+        "workspace_id": "e5d44615-7570-4a39-9514-3358bbde1c08"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2237,7 +2354,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "c:rgwbx gives helpful feedback, but ci:rgwbx does not \u2013 neither return any results",
       "verdict": null
     },
@@ -2251,6 +2368,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:35Z"
         }
       ],
       "issue": 11411,
@@ -2258,7 +2380,15 @@
         "+ bug",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11411-1",
+        "expires_at": "2026-09-01T20:38:35Z",
+        "granted_at": "2026-09-01T19:38:35Z",
+        "kind": "triage",
+        "session_id": "1ff07bfd-16ed-4c31-bfbf-f48d6fcbd318",
+        "workspace_id": "e5d44615-7570-4a39-9514-3358bbde1c08"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2266,7 +2396,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "loyalty<3 finds non-planeswalkers",
       "verdict": null
     },
@@ -2280,6 +2410,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:33Z"
         }
       ],
       "issue": 11443,
@@ -2287,7 +2422,15 @@
         "+ improvement",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11566-1",
+        "expires_at": "2026-09-01T20:38:33Z",
+        "granted_at": "2026-09-01T19:38:33Z",
+        "kind": "triage",
+        "session_id": "492c9918-99bc-4d95-877e-575deb32e53e",
+        "workspace_id": "969c478d-1a04-47f0-a0a1-c3d01e85a9bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2295,7 +2438,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\"Minsc and Boo\" doesn't find any cards in whoosh search (because the real name uses an ampersand)",
       "verdict": null
     },
@@ -2309,6 +2452,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:33Z"
         }
       ],
       "issue": 11444,
@@ -2316,7 +2464,15 @@
         "+ bug",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11566-1",
+        "expires_at": "2026-09-01T20:38:33Z",
+        "granted_at": "2026-09-01T19:38:33Z",
+        "kind": "triage",
+        "session_id": "492c9918-99bc-4d95-877e-575deb32e53e",
+        "workspace_id": "969c478d-1a04-47f0-a0a1-c3d01e85a9bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2324,7 +2480,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\"Eomer\" doesn't find the card in whoosh search (but a bunch of others instead) \u2013 probably because it has an accent?",
       "verdict": null
     },
@@ -2338,6 +2494,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:33Z"
         }
       ],
       "issue": 11462,
@@ -2346,7 +2507,15 @@
         "* decks",
         "\u2020 ui"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11566-1",
+        "expires_at": "2026-09-01T20:38:33Z",
+        "granted_at": "2026-09-01T19:38:33Z",
+        "kind": "triage",
+        "session_id": "492c9918-99bc-4d95-877e-575deb32e53e",
+        "workspace_id": "969c478d-1a04-47f0-a0a1-c3d01e85a9bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2354,7 +2523,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "tournaments-only views like https://pennydreadfulmagic.com/archetypes/16/tournament/ should drop the 5\u20130s column from the deck table",
       "verdict": null
     },
@@ -2368,6 +2537,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:33Z"
         }
       ],
       "issue": 11466,
@@ -2375,7 +2549,15 @@
         "+ improvement",
         "* discord bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11566-1",
+        "expires_at": "2026-09-01T20:38:33Z",
+        "granted_at": "2026-09-01T19:38:33Z",
+        "kind": "triage",
+        "session_id": "492c9918-99bc-4d95-877e-575deb32e53e",
+        "workspace_id": "969c478d-1a04-47f0-a0a1-c3d01e85a9bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2383,7 +2565,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Add throwbacks to the list of channels that gets the gatherling explain report message not the league message",
       "verdict": null
     },
@@ -2397,6 +2579,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:33Z"
         }
       ],
       "issue": 11566,
@@ -2405,7 +2592,15 @@
         "\u2020 ui",
         "* logsite"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11566-1",
+        "expires_at": "2026-09-01T20:38:33Z",
+        "granted_at": "2026-09-01T19:38:33Z",
+        "kind": "triage",
+        "session_id": "492c9918-99bc-4d95-877e-575deb32e53e",
+        "workspace_id": "969c478d-1a04-47f0-a0a1-c3d01e85a9bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2413,7 +2608,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "https://logs.pennydreadfulmagic.com/match/259575466/ has rightways scroll",
       "verdict": null
     },
@@ -2427,6 +2622,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:26Z"
         }
       ],
       "issue": 11568,
@@ -2434,7 +2634,15 @@
         "+ bug",
         "* deck names"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11583-1",
+        "expires_at": "2026-09-01T20:38:26Z",
+        "granted_at": "2026-09-01T19:38:26Z",
+        "kind": "triage",
+        "session_id": "5f95c441-6671-4d8e-981e-fafded316505",
+        "workspace_id": "e1aab998-e3dc-43a3-851a-23e6fcc60748"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2442,7 +2650,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\"Unplayable Garbage Feat a Bug\" was sanitized to \"Unplayable Garbage Feat a Sultai\"",
       "verdict": null
     },
@@ -2456,6 +2664,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:26Z"
         }
       ],
       "issue": 11577,
@@ -2463,7 +2676,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11583-1",
+        "expires_at": "2026-09-01T20:38:26Z",
+        "granted_at": "2026-09-01T19:38:26Z",
+        "kind": "triage",
+        "session_id": "5f95c441-6671-4d8e-981e-fafded316505",
+        "workspace_id": "e1aab998-e3dc-43a3-851a-23e6fcc60748"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2471,7 +2692,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "https://gatherling.com/deck.php?mode=view&id=120952 has a card substitution that we need to do manually in the db",
       "verdict": null
     },
@@ -2485,6 +2706,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:26Z"
         }
       ],
       "issue": 11578,
@@ -2492,7 +2718,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11583-1",
+        "expires_at": "2026-09-01T20:38:26Z",
+        "granted_at": "2026-09-01T19:38:26Z",
+        "kind": "triage",
+        "session_id": "5f95c441-6671-4d8e-981e-fafded316505",
+        "workspace_id": "e1aab998-e3dc-43a3-851a-23e6fcc60748"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2500,7 +2734,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Something is very wrong with https://pennydreadfulmagic.com/competitions/4330/",
       "verdict": null
     },
@@ -2514,6 +2748,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:26Z"
         }
       ],
       "issue": 11582,
@@ -2521,7 +2760,15 @@
         "* monolith",
         "+ feature"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11583-1",
+        "expires_at": "2026-09-01T20:38:26Z",
+        "granted_at": "2026-09-01T19:38:26Z",
+        "kind": "triage",
+        "session_id": "5f95c441-6671-4d8e-981e-fafded316505",
+        "workspace_id": "e1aab998-e3dc-43a3-851a-23e6fcc60748"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2529,7 +2776,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Use https://github.com/cderickson/MTGO-Tracker to analyze our logs",
       "verdict": null
     },
@@ -2543,6 +2790,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:26Z"
         }
       ],
       "issue": 11583,
@@ -2550,7 +2802,15 @@
         "+ feature",
         "* archetypes"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11583-1",
+        "expires_at": "2026-09-01T20:38:26Z",
+        "granted_at": "2026-09-01T19:38:26Z",
+        "kind": "triage",
+        "session_id": "5f95c441-6671-4d8e-981e-fafded316505",
+        "workspace_id": "e1aab998-e3dc-43a3-851a-23e6fcc60748"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2558,7 +2818,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Use Machine Learning to classify decks",
       "verdict": null
     },
@@ -2572,6 +2832,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:24Z"
         }
       ],
       "issue": 11591,
@@ -2579,7 +2844,15 @@
         "+ question",
         "- backlog"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11620-1",
+        "expires_at": "2026-09-01T20:38:24Z",
+        "granted_at": "2026-09-01T19:38:24Z",
+        "kind": "triage",
+        "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
+        "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2587,7 +2860,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Consider paying a streamer (Sam Black?) to get into Penny Dreadful and brew/play as a marketing exercise",
       "verdict": null
     },
@@ -2601,6 +2874,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:24Z"
         }
       ],
       "issue": 11594,
@@ -2608,7 +2886,15 @@
         "+ improvement",
         "* monolith"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11620-1",
+        "expires_at": "2026-09-01T20:38:24Z",
+        "granted_at": "2026-09-01T19:38:24Z",
+        "kind": "triage",
+        "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
+        "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2616,7 +2902,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "The date of rotation and the PD 500 should be said to be \"expected\" until such time as we have a firm release date for the next set",
       "verdict": null
     },
@@ -2630,6 +2916,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:24Z"
         }
       ],
       "issue": 11614,
@@ -2637,7 +2928,15 @@
         "+ improvement",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11620-1",
+        "expires_at": "2026-09-01T20:38:24Z",
+        "granted_at": "2026-09-01T19:38:24Z",
+        "kind": "triage",
+        "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
+        "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2645,7 +2944,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Update the bug rules to explain that if a known game-breaking bug is triggered for any reason the card's owner gets a game loss for that game and the match should be remade with games conceded until the record is correct",
       "verdict": null
     },
@@ -2659,6 +2958,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:24Z"
         }
       ],
       "issue": 11619,
@@ -2666,7 +2970,15 @@
         "+ improvement",
         "* monolith"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11620-1",
+        "expires_at": "2026-09-01T20:38:24Z",
+        "granted_at": "2026-09-01T19:38:24Z",
+        "kind": "triage",
+        "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
+        "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2674,7 +2986,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "When we are rebuilding the cards db it would be nice to peek at decksite.deck_cards and check that every card we think should exist will exist after cards db is swapped out",
       "verdict": null
     },
@@ -2688,6 +3000,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:38:24Z"
         }
       ],
       "issue": 11620,
@@ -2696,7 +3013,15 @@
         "+ question",
         "* monolith"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11620-1",
+        "expires_at": "2026-09-01T20:38:24Z",
+        "granted_at": "2026-09-01T19:38:24Z",
+        "kind": "triage",
+        "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
+        "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2704,7 +3029,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Decide what to do about Negan, the Cold-Blooded getting \"renamed\" to Malik, Grim Manipulator",
       "verdict": null
     },
@@ -2718,6 +3043,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:38Z"
         }
       ],
       "issue": 11621,
@@ -2725,7 +3055,15 @@
         "+ question",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11639-1",
+        "expires_at": "2026-09-01T20:34:38Z",
+        "granted_at": "2026-09-01T19:34:38Z",
+        "kind": "triage",
+        "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
+        "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2733,7 +3071,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Running maintenance daily by hand on the commandline on decksite produces a lot of errors about dependency installing (but works anyway)",
       "verdict": null
     },
@@ -2747,6 +3085,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:38Z"
         }
       ],
       "issue": 11623,
@@ -2754,7 +3097,15 @@
         "+ bug",
         "* api"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11639-1",
+        "expires_at": "2026-09-01T20:34:38Z",
+        "granted_at": "2026-09-01T19:34:38Z",
+        "kind": "triage",
+        "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
+        "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2762,7 +3113,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "/decks/updated gives a 500 if you don't supply a querystring",
       "verdict": null
     },
@@ -2776,6 +3127,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:38Z"
         }
       ],
       "issue": 11625,
@@ -2783,7 +3139,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11639-1",
+        "expires_at": "2026-09-01T20:34:38Z",
+        "granted_at": "2026-09-01T19:34:38Z",
+        "kind": "triage",
+        "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
+        "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2791,7 +3155,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Sometimes people (or at least one person) can't login, and we don't do a great job of surfacing that",
       "verdict": null
     },
@@ -2805,6 +3169,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:38Z"
         }
       ],
       "issue": 11631,
@@ -2812,7 +3181,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11639-1",
+        "expires_at": "2026-09-01T20:34:38Z",
+        "granted_at": "2026-09-01T19:34:38Z",
+        "kind": "triage",
+        "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
+        "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2820,7 +3197,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\u00c9omer of the Riddermark sorts last at /rotation/speculation \u2013 that's not my expectation",
       "verdict": null
     },
@@ -2834,6 +3211,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:38Z"
         }
       ],
       "issue": 11639,
@@ -2841,7 +3223,15 @@
         "+ bug",
         "* decks"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11639-1",
+        "expires_at": "2026-09-01T20:34:38Z",
+        "granted_at": "2026-09-01T19:34:38Z",
+        "kind": "triage",
+        "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
+        "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2849,7 +3239,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\"Unclassified\" should not appear in /metagame",
       "verdict": null
     },
@@ -2863,6 +3253,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:05Z"
         }
       ],
       "issue": 11645,
@@ -2870,7 +3265,15 @@
         "+ bug",
         "* discord bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11672-1",
+        "expires_at": "2026-09-01T20:34:05Z",
+        "granted_at": "2026-09-01T19:34:05Z",
+        "kind": "triage",
+        "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
+        "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2878,7 +3281,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "/time EST gives me Jamaica and not New York which is not what I expect",
       "verdict": null
     },
@@ -2892,6 +3295,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:05Z"
         }
       ],
       "issue": 11649,
@@ -2899,7 +3307,15 @@
         "+ bug",
         "* discord bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11672-1",
+        "expires_at": "2026-09-01T20:34:05Z",
+        "granted_at": "2026-09-01T19:34:05Z",
+        "kind": "triage",
+        "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
+        "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2907,7 +3323,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "The discord bot announced the PD 500 was starting now when a normal PD Saturday was starting - earlier messages were correctly marked as PD Saturday - maybe to do with our changing rotation date?",
       "verdict": null
     },
@@ -2921,6 +3337,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:05Z"
         }
       ],
       "issue": 11656,
@@ -2928,7 +3349,15 @@
         "+ bug",
         "* modo bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11672-1",
+        "expires_at": "2026-09-01T20:34:05Z",
+        "granted_at": "2026-09-01T19:34:05Z",
+        "kind": "triage",
+        "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
+        "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2936,7 +3365,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "PDBot does not account for people who drop after the last round and would have otherwise made top 8 when giving out the door prize",
       "verdict": null
     },
@@ -2950,6 +3379,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:05Z"
         }
       ],
       "issue": 11667,
@@ -2958,7 +3392,15 @@
         "* monolith",
         "+ test"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11672-1",
+        "expires_at": "2026-09-01T20:34:05Z",
+        "granted_at": "2026-09-01T19:34:05Z",
+        "kind": "triage",
+        "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
+        "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2966,7 +3408,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "`pipenv run python3 dev.py unit parser_test` runs all the unit tests not just parser_test",
       "verdict": null
     },
@@ -2980,6 +3422,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:05Z"
         }
       ],
       "issue": 11672,
@@ -2987,7 +3434,15 @@
         "+ bug",
         "* discord bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11672-1",
+        "expires_at": "2026-09-01T20:34:05Z",
+        "granted_at": "2026-09-01T19:34:05Z",
+        "kind": "triage",
+        "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
+        "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -2995,7 +3450,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "You cannot use flavor names to call the bot, but you should be able to",
       "verdict": null
     },
@@ -3009,6 +3464,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:04Z"
         }
       ],
       "issue": 11677,
@@ -3016,7 +3476,15 @@
         "+ bug",
         "* search"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11695-1",
+        "expires_at": "2026-09-01T20:34:04Z",
+        "granted_at": "2026-09-01T19:34:04Z",
+        "kind": "triage",
+        "session_id": "a5869bb9-047c-4a2b-a5fb-0a6905c559c5",
+        "workspace_id": "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3024,7 +3492,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "t:orc finds sorceries",
       "verdict": null
     },
@@ -3038,6 +3506,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:04Z"
         }
       ],
       "issue": 11680,
@@ -3045,7 +3518,15 @@
         "+ question",
         "* deck names"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11695-1",
+        "expires_at": "2026-09-01T20:34:04Z",
+        "granted_at": "2026-09-01T19:34:04Z",
+        "kind": "triage",
+        "session_id": "a5869bb9-047c-4a2b-a5fb-0a6905c559c5",
+        "workspace_id": "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3053,7 +3534,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "White jund gets automatically renamed into brgw if it's not the entire deck name, despite there being a deck archetype with the same name https://pennydreadfulmagic.com/decks/224930/",
       "verdict": null
     },
@@ -3067,6 +3548,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:04Z"
         }
       ],
       "issue": 11683,
@@ -3074,7 +3560,15 @@
         "+ bug",
         "* admin"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11695-1",
+        "expires_at": "2026-09-01T20:34:04Z",
+        "granted_at": "2026-09-01T19:34:04Z",
+        "kind": "triage",
+        "session_id": "a5869bb9-047c-4a2b-a5fb-0a6905c559c5",
+        "workspace_id": "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3082,7 +3576,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "If you POST to /admin/rules by creating a new archetype but don't select a parent archetype you get a 500 instead of a nice error message",
       "verdict": null
     },
@@ -3096,6 +3590,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:04Z"
         }
       ],
       "issue": 11685,
@@ -3103,7 +3602,15 @@
         "+ bug",
         "* monolith"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11695-1",
+        "expires_at": "2026-09-01T20:34:04Z",
+        "granted_at": "2026-09-01T19:34:04Z",
+        "kind": "triage",
+        "session_id": "a5869bb9-047c-4a2b-a5fb-0a6905c559c5",
+        "workspace_id": "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3111,7 +3618,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "Our subtypes func and maybe other stuff may break when Doctor Who cards are out because of Time Lord as a subtype",
       "verdict": null
     },
@@ -3125,6 +3632,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:04Z"
         }
       ],
       "issue": 11695,
@@ -3132,7 +3644,15 @@
         "* decks",
         "+ task"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11695-1",
+        "expires_at": "2026-09-01T20:34:04Z",
+        "granted_at": "2026-09-01T19:34:04Z",
+        "kind": "triage",
+        "session_id": "a5869bb9-047c-4a2b-a5fb-0a6905c559c5",
+        "workspace_id": "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3140,7 +3660,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "\"simic failed, let's go back to monou\" cleans up to \"Failed, Let's Go Back to Simic\"",
       "verdict": null
     },
@@ -3154,6 +3674,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:02Z"
         }
       ],
       "issue": 11697,
@@ -3161,7 +3686,15 @@
         "+ bug",
         "* deck names"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11715-1",
+        "expires_at": "2026-09-01T20:34:02Z",
+        "granted_at": "2026-09-01T19:34:02Z",
+        "kind": "triage",
+        "session_id": "81fcfdfe-1ae9-4762-af1c-fc08c439b525",
+        "workspace_id": "e5c89f3d-9744-4604-b743-250c444d7a55"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3169,7 +3702,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": ": \ud83d\udecc\ud83d\udecc\ud83d\udecc sanitizes to nothing",
       "verdict": null
     },
@@ -3183,6 +3716,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:02Z"
         }
       ],
       "issue": 11709,
@@ -3190,7 +3728,15 @@
         "+ bug",
         "* modo bot"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11715-1",
+        "expires_at": "2026-09-01T20:34:02Z",
+        "granted_at": "2026-09-01T19:34:02Z",
+        "kind": "triage",
+        "session_id": "81fcfdfe-1ae9-4762-af1c-fc08c439b525",
+        "workspace_id": "e5c89f3d-9744-4604-b743-250c444d7a55"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3198,7 +3744,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "[Grishnakh, brash instigator] got caught with \"not legal\" by pdbot",
       "verdict": null
     },
@@ -3212,6 +3758,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:02Z"
         }
       ],
       "issue": 11712,
@@ -3219,7 +3770,15 @@
         "+ improvement",
         "* deck names"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11715-1",
+        "expires_at": "2026-09-01T20:34:02Z",
+        "granted_at": "2026-09-01T19:34:02Z",
+        "kind": "triage",
+        "session_id": "81fcfdfe-1ae9-4762-af1c-fc08c439b525",
+        "workspace_id": "e5c89f3d-9744-4604-b743-250c444d7a55"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3227,7 +3786,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "When you cache a deck name, scan all other decknames for the non-latin characters in it and log a bug if there's a new character we haven't seen before",
       "verdict": null
     },
@@ -3241,6 +3800,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:02Z"
         }
       ],
       "issue": 11714,
@@ -3249,7 +3813,15 @@
         "* decks",
         "\u2020 ui"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11715-1",
+        "expires_at": "2026-09-01T20:34:02Z",
+        "granted_at": "2026-09-01T19:34:02Z",
+        "kind": "triage",
+        "session_id": "81fcfdfe-1ae9-4762-af1c-fc08c439b525",
+        "workspace_id": "e5c89f3d-9744-4604-b743-250c444d7a55"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3257,7 +3829,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "The season 20 banner has an MDFC as the green card and it displays wonky",
       "verdict": null
     },
@@ -3271,6 +3843,11 @@
         {
           "event": "ISSUE_ENQUEUED",
           "ts": "2026-08-23T20:51:29Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "triage_leased",
+          "ts": "2026-09-01T19:34:02Z"
         }
       ],
       "issue": 11715,
@@ -3279,7 +3856,15 @@
         "* decks",
         "\u2020 ui"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "t-11715-1",
+        "expires_at": "2026-09-01T20:34:02Z",
+        "granted_at": "2026-09-01T19:34:02Z",
+        "kind": "triage",
+        "session_id": "81fcfdfe-1ae9-4762-af1c-fc08c439b525",
+        "workspace_id": "e5c89f3d-9744-4604-b743-250c444d7a55"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3287,7 +3872,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pending",
+      "status": "triage_leased",
       "title": "News icons are a little close to the news headlines",
       "verdict": null
     },
@@ -3295,7 +3880,10 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "verifier-refuted",
+        "question": "Verifier returned REFUTED \u2014 drop the closure, re-triage, or override?"
+      },
       "evidence_file": "evidence/11721.json",
       "history": [
         {
@@ -3321,6 +3909,11 @@
           "event": "LEASE_GRANTED",
           "status": "verify_leased",
           "ts": "2026-09-01T19:31:10Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T19:35:44Z"
         }
       ],
       "issue": 11721,
@@ -3328,15 +3921,7 @@
         "+ improvement",
         "* discord bot"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "v-11721-1",
-        "expires_at": "2026-09-01T20:31:10Z",
-        "granted_at": "2026-09-01T19:31:10Z",
-        "kind": "verify",
-        "session_id": "e9365bb4-d179-4a31-a7f3-9c195e43766b",
-        "workspace_id": "587a530f-e5cb-41e1-b253-5221fe6d2a71"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3344,9 +3929,9 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verify_leased",
+      "status": "escalated",
       "title": "Discord bot should say something like \"Oops I can't do that right now\" and log a github ticket rather than gobbing out at stack trace into Discord",
-      "verdict": null
+      "verdict": "REFUTED"
     },
     "11735": {
       "class": "unclear",
@@ -3421,6 +4006,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T19:30:01Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T19:34:01Z"
         }
       ],
       "issue": 11739,
@@ -3428,7 +4018,15 @@
         "+ bug",
         "* rotation"
       ],
-      "lease": null,
+      "lease": {
+        "attempt": 1,
+        "batch_id": "f-11739-1",
+        "expires_at": "2026-09-01T21:04:01Z",
+        "granted_at": "2026-09-01T19:34:01Z",
+        "kind": "fix",
+        "session_id": "a5cad30b-2c4c-4a00-89ba-a975eec740ba",
+        "workspace_id": "a78b9898-715a-4bdd-bc87-c19a1e34d3fd"
+      },
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3436,7 +4034,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "fix_leased",
       "title": "rotation script got confused, and thought the new season was None_legal_cards.txt",
       "verdict": null
     },
@@ -3512,6 +4110,16 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pending",
           "ts": "2026-09-01T19:30:01Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T19:33:58Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:37:18Z"
         }
       ],
       "issue": 11747,
@@ -3521,22 +4129,25 @@
       ],
       "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/11747-game-timers",
+        "head_sha": "1cb54a93"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pending",
+      "status": "fix_pushed",
       "title": "Game timers",
       "verdict": null
     },
     "11814": {
-      "class": null,
+      "class": "easy-fix",
       "closure": null,
-      "confidence": null,
+      "confidence": "high",
       "escalation": null,
-      "evidence_file": null,
+      "evidence_file": "evidence/11814.json",
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -3546,6 +4157,21 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T19:20:20Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "triaged",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T19:38:22Z"
         }
       ],
       "issue": 11814,
@@ -3555,12 +4181,12 @@
       ],
       "lease": {
         "attempt": 1,
-        "batch_id": "t-11887-1",
-        "expires_at": "2026-09-01T20:20:20Z",
-        "granted_at": "2026-09-01T19:20:20Z",
-        "kind": "triage",
-        "session_id": "9c6be3b7-dfda-45bc-9163-ba11205e0929",
-        "workspace_id": "91e4120c-cd3d-4066-a97e-fec06221dcff"
+        "batch_id": "f-11814-1",
+        "expires_at": "2026-09-01T21:08:22Z",
+        "granted_at": "2026-09-01T19:38:22Z",
+        "kind": "fix",
+        "session_id": "63fb1afe-b552-475f-8ec4-d98e04ab857d",
+        "workspace_id": "71bb78df-e7ae-415b-8ac2-8bfc687e9197"
       },
       "notes": null,
       "pr": null,
@@ -3569,16 +4195,19 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "fix_leased",
       "title": "slash explain modmail",
       "verdict": null
     },
     "11827": {
-      "class": null,
+      "class": "unclear",
       "closure": null,
-      "confidence": null,
-      "escalation": null,
-      "evidence_file": null,
+      "confidence": "low",
+      "escalation": {
+        "kind": "class-escalate",
+        "question": "Triaged unclear \u2014 needs a human/product call."
+      },
+      "evidence_file": "evidence/11827.json",
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -3588,6 +4217,16 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T19:20:20Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "triaged",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T19:36:37Z"
         }
       ],
       "issue": 11827,
@@ -3595,15 +4234,7 @@
         "+ bug",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-11887-1",
-        "expires_at": "2026-09-01T20:20:20Z",
-        "granted_at": "2026-09-01T19:20:20Z",
-        "kind": "triage",
-        "session_id": "9c6be3b7-dfda-45bc-9163-ba11205e0929",
-        "workspace_id": "91e4120c-cd3d-4066-a97e-fec06221dcff"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3611,16 +4242,19 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "escalated",
       "title": "https://pennydreadfulmagic.com/decks/233082/ is missing basics and has the sb in the main",
       "verdict": null
     },
     "11858": {
-      "class": null,
+      "class": "unclear",
       "closure": null,
-      "confidence": null,
-      "escalation": null,
-      "evidence_file": null,
+      "confidence": "low",
+      "escalation": {
+        "kind": "class-escalate",
+        "question": "Triaged unclear \u2014 needs a human/product call."
+      },
+      "evidence_file": "evidence/11858.json",
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -3630,6 +4264,16 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T19:20:20Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "triaged",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T19:36:37Z"
         }
       ],
       "issue": 11858,
@@ -3638,15 +4282,7 @@
         "* decks",
         "\u2020 ui"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "t-11887-1",
-        "expires_at": "2026-09-01T20:20:20Z",
-        "granted_at": "2026-09-01T19:20:20Z",
-        "kind": "triage",
-        "session_id": "9c6be3b7-dfda-45bc-9163-ba11205e0929",
-        "workspace_id": "91e4120c-cd3d-4066-a97e-fec06221dcff"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -3654,16 +4290,16 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "escalated",
       "title": "The Everflowing Well only displays a single side on mouseover but it is a DFC",
       "verdict": null
     },
     "11865": {
-      "class": null,
+      "class": "easy-fix",
       "closure": null,
-      "confidence": null,
+      "confidence": "high",
       "escalation": null,
-      "evidence_file": null,
+      "evidence_file": "evidence/11865.json",
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -3673,6 +4309,21 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T19:20:20Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "triaged",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T19:38:19Z"
         }
       ],
       "issue": 11865,
@@ -3682,12 +4333,12 @@
       ],
       "lease": {
         "attempt": 1,
-        "batch_id": "t-11887-1",
-        "expires_at": "2026-09-01T20:20:20Z",
-        "granted_at": "2026-09-01T19:20:20Z",
-        "kind": "triage",
-        "session_id": "9c6be3b7-dfda-45bc-9163-ba11205e0929",
-        "workspace_id": "91e4120c-cd3d-4066-a97e-fec06221dcff"
+        "batch_id": "f-11865-1",
+        "expires_at": "2026-09-01T21:08:19Z",
+        "granted_at": "2026-09-01T19:38:19Z",
+        "kind": "fix",
+        "session_id": "62f874bd-4281-406a-8260-34ff9d2a758a",
+        "workspace_id": "7e4dd2c2-7b3e-4032-8055-a59194d436b1"
       },
       "notes": null,
       "pr": null,
@@ -3696,16 +4347,16 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "fix_leased",
       "title": "Don't show the Arena printing of Raging Goblin by default on the bot",
       "verdict": null
     },
     "11887": {
-      "class": null,
+      "class": "easy-fix",
       "closure": null,
-      "confidence": null,
+      "confidence": "high",
       "escalation": null,
-      "evidence_file": null,
+      "evidence_file": "evidence/11887.json",
       "history": [
         {
           "event": "ISSUE_ENQUEUED",
@@ -3715,6 +4366,21 @@
           "event": "LEASE_GRANTED",
           "status": "triage_leased",
           "ts": "2026-09-01T19:20:20Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "triaged",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "LEASE_GRANTED",
+          "status": "fix_leased",
+          "ts": "2026-09-01T19:38:16Z"
         }
       ],
       "issue": 11887,
@@ -3725,12 +4391,12 @@
       ],
       "lease": {
         "attempt": 1,
-        "batch_id": "t-11887-1",
-        "expires_at": "2026-09-01T20:20:20Z",
-        "granted_at": "2026-09-01T19:20:20Z",
-        "kind": "triage",
-        "session_id": "9c6be3b7-dfda-45bc-9163-ba11205e0929",
-        "workspace_id": "91e4120c-cd3d-4066-a97e-fec06221dcff"
+        "batch_id": "f-11887-1",
+        "expires_at": "2026-09-01T21:08:16Z",
+        "granted_at": "2026-09-01T19:38:16Z",
+        "kind": "fix",
+        "session_id": "621eda38-9e91-42a9-a329-67d8d26c65ed",
+        "workspace_id": "2d1cb9c1-2a46-4d41-9993-e9d42b409039"
       },
       "notes": null,
       "pr": null,
@@ -3739,7 +4405,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "triage_leased",
+      "status": "fix_leased",
       "title": "It would be nice to provide a total count on /admin/archetypes after a search",
       "verdict": null
     },
@@ -3773,6 +4439,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:31:16Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:36:50Z"
         }
       ],
       "issue": 11913,
@@ -3780,23 +4451,18 @@
         "+ perf",
         "* archetypes"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-11913-1",
-        "expires_at": "2026-09-01T21:01:16Z",
-        "granted_at": "2026-09-01T19:31:16Z",
-        "kind": "fix",
-        "session_id": "a0e688e7-221f-4d86-9550-5a5095399b07",
-        "workspace_id": "9c3ae3a9-9645-4246-8f6f-75062fc14c36"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/11913-queries-with-more-than-2-terms-cards-on",
+        "head_sha": "2d34371f5ba0c66177deef5877528b14ad1d8b7b"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "Queries with more than 2 terms (cards) on /admin/archetypes Search for Decks timeout instead of completing successfully",
       "verdict": null
     },
@@ -3877,6 +4543,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:28:43Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:37:02Z"
         }
       ],
       "issue": 11946,
@@ -3884,23 +4555,18 @@
         "+ improvement",
         "* rotation"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-11946-1",
-        "expires_at": "2026-09-01T20:58:43Z",
-        "granted_at": "2026-09-01T19:28:43Z",
-        "kind": "fix",
-        "session_id": "01d8955e-60e0-41a0-ab07-f2f80152b2f3",
-        "workspace_id": "aa142ca1-ba91-4162-b05f-374e5f55b2d4"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/11946-top-of-rotation-page-should-show-in-this",
+        "head_sha": "7a47e0ef637843a963be58c6f1b22c561346aa76"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "Top of rotation page should show \"in this check/eliminated this check\"",
       "verdict": null
     },
@@ -4001,7 +4667,14 @@
     },
     "11957": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T19:33:48Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-11957-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/11957.json",
@@ -4029,6 +4702,21 @@
           "event": "LEASE_GRANTED",
           "status": "verify_leased",
           "ts": "2026-09-01T19:28:32Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "verified",
+          "ts": "2026-09-01T19:32:48Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-09-01T19:33:45Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T19:33:48Z"
         }
       ],
       "issue": 11957,
@@ -4036,15 +4724,7 @@
         "+ improvement",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "v-11957-1",
-        "expires_at": "2026-09-01T20:28:32Z",
-        "granted_at": "2026-09-01T19:28:32Z",
-        "kind": "verify",
-        "session_id": "93c6cb61-f177-4f2c-b94e-a2e64154796f",
-        "workspace_id": "66c22b04-050e-47bd-80ed-2dac6b2f5334"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -4052,9 +4732,9 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verify_leased",
+      "status": "closed",
       "title": "When you supply the Universes Beyond name and the Universes Within name we don't do a good job of telling you that's what's wrong on /deckcheck",
-      "verdict": null
+      "verdict": "CONFIRMED"
     },
     "11970": {
       "class": "needs-work",
@@ -4268,6 +4948,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:28:40Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:36:23Z"
         }
       ],
       "issue": 11991,
@@ -4275,23 +4960,18 @@
         "+ improvement",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-11991-1",
-        "expires_at": "2026-09-01T20:58:40Z",
-        "granted_at": "2026-09-01T19:28:40Z",
-        "kind": "fix",
-        "session_id": "bf10b3fd-1548-4eef-8fbf-d60db854b66a",
-        "workspace_id": "82250d8e-a6fb-4468-913a-92f093c032c1"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/11991-we-should-associate-a-magic-online-usern",
+        "head_sha": "98087eabce912dffd86604ceb5afff524524194e"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "We should \"associate\" a Magic Online username with a Discord ID (and a user record) on league signup while authenticated, as well as on retire (which we already do)",
       "verdict": null
     },
@@ -4382,6 +5062,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:28:35Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:36:10Z"
         }
       ],
       "issue": 11997,
@@ -4389,23 +5074,18 @@
         "+ refactoring",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-11997-1",
-        "expires_at": "2026-09-01T20:58:35Z",
-        "granted_at": "2026-09-01T19:28:35Z",
-        "kind": "fix",
-        "session_id": "b9aade40-1e43-4f4d-9c05-e8faf18f8ee2",
-        "workspace_id": "7f67cbb3-cfbf-4f32-a8b4-a15faa38a4ef"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/11997-there-are-two-identical-get-or-insert-pe",
+        "head_sha": "81e5fb43293e777560cb4fd81c3cc4cb6852c3e7"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "there are two identical get_or_insert_person_id funcs, one on decksite.data.deck and one on decksite.data.person \u2013 only the one on deck is used - but it should live on person",
       "verdict": null
     },
@@ -4439,6 +5119,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:26:05Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:33:01Z"
         }
       ],
       "issue": 12024,
@@ -4446,29 +5131,31 @@
         "+ bug",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12024-1",
-        "expires_at": "2026-09-01T20:56:05Z",
-        "granted_at": "2026-09-01T19:26:05Z",
-        "kind": "fix",
-        "session_id": "dcd6adf4-8d27-471c-8393-1c1d6a777be6",
-        "workspace_id": "7bf8febe-3406-4e05-a87c-de0212838f2a"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12024-seasons-says-that-14-309-cards-are-legal",
+        "head_sha": "bd0597f33cf6ba26af55f3359bf20887df43e141"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "/seasons says that 14.309 cards are legal in Season 32 but pdmtgo.com/legal_cards.txt has 14,235 entries",
       "verdict": null
     },
     "12083": {
       "class": "already-fixed",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T19:33:45Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "v-12083-1"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12083.json",
@@ -4496,6 +5183,21 @@
           "event": "LEASE_GRANTED",
           "status": "verify_leased",
           "ts": "2026-09-01T19:25:47Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "verified",
+          "ts": "2026-09-01T19:33:15Z"
+        },
+        {
+          "event": "MUTATION_PLANNED",
+          "status": "closing",
+          "ts": "2026-09-01T19:33:42Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T19:33:45Z"
         }
       ],
       "issue": 12083,
@@ -4504,15 +5206,7 @@
         "* decks",
         "- important"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "v-12083-1",
-        "expires_at": "2026-09-01T20:25:47Z",
-        "granted_at": "2026-09-01T19:25:47Z",
-        "kind": "verify",
-        "session_id": "2c86437a-0fc1-41fe-b385-d2edab74c387",
-        "workspace_id": "8ba955a4-1524-4703-81e9-8100b2aa4d21"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
@@ -4520,9 +5214,9 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "verify_leased",
+      "status": "closed",
       "title": "When a 500 occurs on pdm it should send a perf-reports email (create an issue)",
-      "verdict": null
+      "verdict": "CONFIRMED"
     },
     "12093": {
       "class": "needs-work",
@@ -4598,6 +5292,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:22:30Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:32:33Z"
         }
       ],
       "issue": 12105,
@@ -4605,23 +5304,18 @@
         "* decks",
         "+ feature"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12105-1",
-        "expires_at": "2026-09-01T20:52:30Z",
-        "granted_at": "2026-09-01T19:22:30Z",
-        "kind": "fix",
-        "session_id": "90fab600-a2c6-445a-9b39-d7386e5dcec7",
-        "workspace_id": "321921ab-e6c3-4d68-bd2d-af7bdf7ceac0"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12105-maybe-surface-card-rank-on-the-card-deta",
+        "head_sha": "2c1a188da83d3f9b10592a3f88bb094f41c0feb6"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "Maybe surface card RANK on the card detail page?",
       "verdict": null
     },
@@ -5149,6 +5843,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:26:03Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:33:29Z"
         }
       ],
       "issue": 12179,
@@ -5156,23 +5855,18 @@
         "+ improvement",
         "* decks"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12179-1",
-        "expires_at": "2026-09-01T20:56:03Z",
-        "granted_at": "2026-09-01T19:26:03Z",
-        "kind": "fix",
-        "session_id": "373ee942-68a8-480d-b46a-e97dc36120c6",
-        "workspace_id": "b2c768a0-c7b3-46d8-86a0-d91371a86392"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12179-update-kick-off-and-pd500-pages-to-say-w",
+        "head_sha": "88fccc1a4ae2af96666c83d2599695105da3ebb3"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "Update kick off and pd500 pages to say we used wotc-standard swiss rounds and list them there",
       "verdict": null
     },
@@ -5206,6 +5900,11 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:26:00Z"
+        },
+        {
+          "event": "RESULT_RECORDED",
+          "status": "fix_pushed",
+          "ts": "2026-09-01T19:32:19Z"
         }
       ],
       "issue": 12182,
@@ -5214,23 +5913,18 @@
         "* decks",
         "+ perf"
       ],
-      "lease": {
-        "attempt": 1,
-        "batch_id": "f-12182-1",
-        "expires_at": "2026-09-01T20:56:00Z",
-        "granted_at": "2026-09-01T19:26:00Z",
-        "kind": "fix",
-        "session_id": "8da34312-9a17-4e9d-a354-c310cb7730e8",
-        "workspace_id": "1d25d77e-eade-4f6a-853d-f3beeae4b2c9"
-      },
+      "lease": null,
       "notes": null,
-      "pr": null,
+      "pr": {
+        "branch": "sweep/12182-when-you-visit-any-page-for-some-reason",
+        "head_sha": "bf9c504d6438af9523fc59721c599c165967653a"
+      },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "fix_pushed",
       "title": "When you visit any page for some reason view.notice_html gets called twice",
       "verdict": null
     },
@@ -6275,7 +6969,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "medium",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/12243.json",
       "history": [
         {
@@ -6315,6 +7012,15 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T19:25:51Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T19:36:09Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T19:36:09Z"
         }
       ],
       "issue": 12243,
@@ -6322,23 +7028,15 @@
         "+ question",
         "* decks"
       ],
-      "lease": {
-        "attempt": 2,
-        "batch_id": "f-12243-2",
-        "expires_at": "2026-09-01T20:55:51Z",
-        "granted_at": "2026-09-01T19:25:51Z",
-        "kind": "fix",
-        "session_id": "a8904645-2424-4208-b24a-1f2ac3f8fae6",
-        "workspace_id": "6596d84a-3eb9-4c6c-808c-d910e5a08734"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "escalated",
       "title": "There are 83 retired decks that played 5 matches",
       "verdict": null
     },
@@ -13798,7 +14496,7 @@
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
         "ci": {
-          "checked_at": "2026-09-01T19:31:08Z",
+          "checked_at": "2026-09-01T19:38:13Z",
           "failed": [],
           "state": "green"
         },
@@ -14457,7 +15155,7 @@
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-01T19:31:07Z",
+          "checked_at": "2026-09-01T19:38:12Z",
           "failed": [],
           "state": "green"
         },
@@ -14531,7 +15229,7 @@
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-01T19:31:06Z",
+          "checked_at": "2026-09-01T19:38:11Z",
           "failed": [],
           "state": "green"
         },
@@ -14648,7 +15346,7 @@
         "adopted": false,
         "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
         "ci": {
-          "checked_at": "2026-09-01T19:31:04Z",
+          "checked_at": "2026-09-01T19:38:10Z",
           "failed": [],
           "state": "green"
         },
@@ -14827,7 +15525,7 @@
         "adopted": false,
         "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
         "ci": {
-          "checked_at": "2026-09-01T19:31:03Z",
+          "checked_at": "2026-09-01T19:38:08Z",
           "failed": [],
           "state": "green"
         },
@@ -14944,7 +15642,7 @@
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-01T19:31:02Z",
+          "checked_at": "2026-09-01T19:38:07Z",
           "failed": [],
           "state": "green"
         },
@@ -15131,7 +15829,7 @@
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-01T19:31:01Z",
+          "checked_at": "2026-09-01T19:38:06Z",
           "failed": [],
           "state": "green"
         },
@@ -15457,7 +16155,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-01T19:30:59Z",
+          "checked_at": "2026-09-01T19:38:05Z",
           "failed": [],
           "state": "green"
         },
@@ -15531,7 +16229,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-01T19:30:58Z",
+          "checked_at": "2026-09-01T19:38:03Z",
           "failed": [],
           "state": "green"
         },
@@ -15693,7 +16391,7 @@
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-01T19:30:57Z",
+          "checked_at": "2026-09-01T19:38:02Z",
           "failed": [],
           "state": "green"
         },
@@ -15810,7 +16508,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-01T19:30:56Z",
+          "checked_at": "2026-09-01T19:38:01Z",
           "failed": [],
           "state": "green"
         },
@@ -15993,7 +16691,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-01T19:30:54Z",
+          "checked_at": "2026-09-01T19:38:00Z",
           "failed": [],
           "state": "green"
         },
@@ -16180,7 +16878,7 @@
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
         "ci": {
-          "checked_at": "2026-09-01T19:30:53Z",
+          "checked_at": "2026-09-01T19:37:59Z",
           "failed": [],
           "state": "green"
         },
@@ -16296,7 +16994,7 @@
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-01T19:30:52Z",
+          "checked_at": "2026-09-01T19:37:57Z",
           "failed": [],
           "state": "green"
         },
@@ -16384,7 +17082,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-01T19:30:50Z",
+          "checked_at": "2026-09-01T19:37:56Z",
           "failed": [],
           "state": "green"
         },
@@ -16458,7 +17156,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-01T19:30:49Z",
+          "checked_at": "2026-09-01T19:37:55Z",
           "failed": [],
           "state": "green"
         },
@@ -16723,7 +17421,7 @@
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-01T19:30:48Z",
+          "checked_at": "2026-09-01T19:37:54Z",
           "failed": [],
           "state": "green"
         },
@@ -16982,7 +17680,7 @@
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-01T19:30:46Z",
+          "checked_at": "2026-09-01T19:37:53Z",
           "failed": [],
           "state": "green"
         },
@@ -17113,7 +17811,7 @@
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-01T19:30:45Z",
+          "checked_at": "2026-09-01T19:37:46Z",
           "failed": [],
           "state": "green"
         },
@@ -17201,7 +17899,7 @@
         "adopted": false,
         "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
         "ci": {
-          "checked_at": "2026-09-01T19:30:44Z",
+          "checked_at": "2026-09-01T19:37:45Z",
           "failed": [],
           "state": "green"
         },
@@ -17317,7 +18015,7 @@
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-01T19:30:43Z",
+          "checked_at": "2026-09-01T19:37:44Z",
           "failed": [],
           "state": "green"
         },
@@ -17660,7 +18358,7 @@
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-01T19:30:41Z",
+          "checked_at": "2026-09-01T19:37:43Z",
           "failed": [],
           "state": "green"
         },
@@ -17734,7 +18432,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-01T19:30:40Z",
+          "checked_at": "2026-09-01T19:37:42Z",
           "failed": [],
           "state": "green"
         },
@@ -18898,7 +19596,7 @@
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-01T19:30:36Z",
+          "checked_at": "2026-09-01T19:37:38Z",
           "failed": [],
           "state": "green"
         },
@@ -29201,9 +29899,9 @@
   },
   "last_bundle_at": "2026-09-01T18:57:14Z",
   "last_master_sha": "adf64b9851e225beca4796126b19e19d88010366",
-  "last_mirror_at": "2026-09-01T19:18:46Z",
-  "last_seq": 3752,
-  "last_snapshot_at": "2026-09-01T19:31:17Z",
+  "last_mirror_at": "2026-09-01T19:34:42Z",
+  "last_seq": 3891,
+  "last_snapshot_at": "2026-09-01T19:38:37Z",
   "pause_level": 0,
   "pause_seconds": 0,
   "pause_until": null,
@@ -29281,6 +29979,26 @@
       "session_id": "b8d847ac-750d-4b76-94bb-e0c1adf705f5",
       "state": "archived",
       "workspace_id": "017f1fce-4b96-401a-8e7e-94679bc5eb3c"
+    },
+    "0194a190-b800-4f06-8098-faedb104f3c3": {
+      "batch_id": "t-11639-1",
+      "created_at": "2026-09-01T19:34:38Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11639,
+        11631,
+        11625,
+        11623,
+        11621
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T19:35:34.638Z",
+      "session_id": "f9a54428-a65d-45fc-b929-cff6eb0423ad",
+      "state": "running",
+      "workspace_id": "0194a190-b800-4f06-8098-faedb104f3c3"
     },
     "02a5ac4a-3c68-4187-878b-6f29e3c62f25": {
       "batch_id": "t-11980-1",
@@ -29754,6 +30472,26 @@
       "state": "archived",
       "workspace_id": "1a0ab44a-7f0d-4c12-9a1a-979c0cda8f13"
     },
+    "1a1dda06-ef7e-4d73-809a-2214883ad047": {
+      "batch_id": "t-11348-1",
+      "created_at": "2026-09-01T19:38:36Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11348,
+        11342,
+        11329,
+        11328,
+        11325
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "d7ddce21-f6aa-4c75-a067-5548217b3a8f",
+      "state": "running",
+      "workspace_id": "1a1dda06-ef7e-4d73-809a-2214883ad047"
+    },
     "1b991c86-b4fe-4d4f-8fa7-81e507b969f8": {
       "batch_id": "t-12271-1",
       "created_at": "2026-09-01T18:50:52Z",
@@ -29801,7 +30539,7 @@
         11992
       ],
       "kind": "fix",
-      "last_transcript_at": "2026-09-01T19:29:41.956Z",
+      "last_transcript_at": "2026-09-01T19:33:04.662Z",
       "session_id": "f4426b22-ec81-45a4-8c7c-a013c8b2f069",
       "state": "running",
       "workspace_id": "1c7bb979-1e89-4162-9fea-be5bd97773a2"
@@ -29819,7 +30557,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T19:27:59.799Z",
       "session_id": "8da34312-9a17-4e9d-a354-c310cb7730e8",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "1d25d77e-eade-4f6a-853d-f3beeae4b2c9"
     },
     "1e6caf5c-718a-4829-8719-c051c5b5b1d8": {
@@ -30017,7 +30755,7 @@
         12141
       ],
       "kind": "fix",
-      "last_transcript_at": null,
+      "last_transcript_at": "2026-09-01T19:34:41.175Z",
       "session_id": "6cc36ba6-a8e1-46d8-9ade-6476d9ad6ccc",
       "state": "running",
       "workspace_id": "25ac600d-3eea-425e-9a7a-469dc40a3a84"
@@ -30073,6 +30811,22 @@
       "session_id": "ee0e4930-05c5-4b27-808f-016123d1ecb4",
       "state": "archived",
       "workspace_id": "2d183d20-98cf-4967-a540-63d59000151d"
+    },
+    "2d1cb9c1-2a46-4d41-9993-e9d42b409039": {
+      "batch_id": "f-11887-1",
+      "created_at": "2026-09-01T19:38:16Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11887
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "621eda38-9e91-42a9-a329-67d8d26c65ed",
+      "state": "running",
+      "workspace_id": "2d1cb9c1-2a46-4d41-9993-e9d42b409039"
     },
     "2e172e52-f205-4798-ba63-274c1b5cb308": {
       "batch_id": "t-12534-1",
@@ -30143,7 +30897,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T19:26:55.684Z",
       "session_id": "90fab600-a2c6-445a-9b39-d7386e5dcec7",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "321921ab-e6c3-4d68-bd2d-af7bdf7ceac0"
     },
     "33ddb196-9391-44eb-803b-5adf051fad69": {
@@ -30566,6 +31320,26 @@
       "state": "archived",
       "workspace_id": "4f7ae776-0096-4ea5-af28-704a4ab95626"
     },
+    "54905183-aee4-45a6-b2fd-19f5d2216edf": {
+      "batch_id": "t-11672-1",
+      "created_at": "2026-09-01T19:34:05Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11672,
+        11667,
+        11656,
+        11649,
+        11645
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T19:35:27.755Z",
+      "session_id": "75aa9d0b-3867-4bdf-9b1b-fc80a2425902",
+      "state": "running",
+      "workspace_id": "54905183-aee4-45a6-b2fd-19f5d2216edf"
+    },
     "55855882-3478-476c-a20a-d9bf4ce8da6c": {
       "batch_id": "v-12516-1",
       "created_at": "2026-09-01T18:29:28Z",
@@ -30609,15 +31383,15 @@
       "created_at": "2026-09-01T19:31:10Z",
       "harvest": {
         "malformed_attempts": 0,
-        "parsed": false
+        "parsed": true
       },
       "issues": [
         11721
       ],
       "kind": "verify",
-      "last_transcript_at": null,
+      "last_transcript_at": "2026-09-01T19:33:50.453Z",
       "session_id": "e9365bb4-d179-4a31-a7f3-9c195e43766b",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "587a530f-e5cb-41e1-b253-5221fe6d2a71"
     },
     "5a13996e-929e-46bc-a70a-a0145e1d3db9": {
@@ -30692,16 +31466,16 @@
       "batch_id": "f-12243-2",
       "created_at": "2026-09-01T19:25:51Z",
       "harvest": {
-        "malformed_attempts": 0,
+        "malformed_attempts": 1,
         "parsed": false
       },
       "issues": [
         12243
       ],
       "kind": "fix",
-      "last_transcript_at": "2026-09-01T19:27:48.506Z",
+      "last_transcript_at": "2026-09-01T19:33:26.211Z",
       "session_id": "a8904645-2424-4208-b24a-1f2ac3f8fae6",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "6596d84a-3eb9-4c6c-808c-d910e5a08734"
     },
     "65cced83-a789-4b22-9904-948404ceada1": {
@@ -30769,7 +31543,7 @@
       "kind": "verify",
       "last_transcript_at": "2026-09-01T19:29:22.333Z",
       "session_id": "93c6cb61-f177-4f2c-b94e-a2e64154796f",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "66c22b04-050e-47bd-80ed-2dac6b2f5334"
     },
     "67f1415a-3e0c-4d15-8246-6d4f6ce66084": {
@@ -30892,6 +31666,22 @@
       "session_id": "8a200552-7a7c-4f14-9b59-bc82624e6d2b",
       "state": "archived",
       "workspace_id": "71449e44-b56d-41dd-9a27-a635e4e7d966"
+    },
+    "71bb78df-e7ae-415b-8ac2-8bfc687e9197": {
+      "batch_id": "f-11814-1",
+      "created_at": "2026-09-01T19:38:22Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11814
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "63fb1afe-b552-475f-8ec4-d98e04ab857d",
+      "state": "running",
+      "workspace_id": "71bb78df-e7ae-415b-8ac2-8bfc687e9197"
     },
     "7247454c-d0aa-42b1-b351-a15b17ddd69b": {
       "batch_id": "f-12560-2",
@@ -31026,7 +31816,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T19:28:12.197Z",
       "session_id": "dcd6adf4-8d27-471c-8393-1c1d6a777be6",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "7bf8febe-3406-4e05-a87c-de0212838f2a"
     },
     "7c33a8f8-bd29-4f8e-9fc3-081d1a1e2bdc": {
@@ -31062,6 +31852,22 @@
       "state": "archived",
       "workspace_id": "7df26599-bdf6-4da1-a1e9-1825a56e0c7f"
     },
+    "7e4dd2c2-7b3e-4032-8055-a59194d436b1": {
+      "batch_id": "f-11865-1",
+      "created_at": "2026-09-01T19:38:19Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11865
+      ],
+      "kind": "fix",
+      "last_transcript_at": null,
+      "session_id": "62f874bd-4281-406a-8260-34ff9d2a758a",
+      "state": "running",
+      "workspace_id": "7e4dd2c2-7b3e-4032-8055-a59194d436b1"
+    },
     "7ecf8a8a-0eb9-4f6a-9d82-fe227eebcafa": {
       "batch_id": "f-12580-1",
       "created_at": "2026-09-01T18:02:07Z",
@@ -31083,15 +31889,15 @@
       "created_at": "2026-09-01T19:28:35Z",
       "harvest": {
         "malformed_attempts": 0,
-        "parsed": false
+        "parsed": true
       },
       "issues": [
         11997
       ],
       "kind": "fix",
-      "last_transcript_at": "2026-09-01T19:29:40.760Z",
+      "last_transcript_at": "2026-09-01T19:34:37.173Z",
       "session_id": "b9aade40-1e43-4f4d-9c05-e8faf18f8ee2",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "7f67cbb3-cfbf-4f32-a8b4-a15faa38a4ef"
     },
     "7feda093-4223-4e45-b127-c84b6fe13281": {
@@ -31131,15 +31937,15 @@
       "created_at": "2026-09-01T19:28:40Z",
       "harvest": {
         "malformed_attempts": 0,
-        "parsed": false
+        "parsed": true
       },
       "issues": [
         11991
       ],
       "kind": "fix",
-      "last_transcript_at": null,
+      "last_transcript_at": "2026-09-01T19:34:35.711Z",
       "session_id": "bf10b3fd-1548-4eef-8fbf-d60db854b66a",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "82250d8e-a6fb-4468-913a-92f093c032c1"
     },
     "85bcfd2d-f886-4446-b4ab-1289970efd44": {
@@ -31239,8 +32045,28 @@
       "kind": "verify",
       "last_transcript_at": "2026-09-01T19:26:55.541Z",
       "session_id": "2c86437a-0fc1-41fe-b385-d2edab74c387",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "8ba955a4-1524-4703-81e9-8100b2aa4d21"
+    },
+    "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd": {
+      "batch_id": "t-11620-1",
+      "created_at": "2026-09-01T19:38:24Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11620,
+        11619,
+        11614,
+        11594,
+        11591
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "2b15f03e-9609-4bee-8ddc-d5b0dd33a3f6",
+      "state": "running",
+      "workspace_id": "8c67dd08-db58-42dd-ab5c-4aaac5b6a6bd"
     },
     "8d38b84f-722c-411a-9950-a083da96485b": {
       "batch_id": "f-12573-1",
@@ -31295,7 +32121,7 @@
       "created_at": "2026-09-01T19:20:20Z",
       "harvest": {
         "malformed_attempts": 0,
-        "parsed": false
+        "parsed": true
       },
       "issues": [
         11887,
@@ -31305,9 +32131,9 @@
         11814
       ],
       "kind": "triage",
-      "last_transcript_at": "2026-09-01T19:21:48.377Z",
+      "last_transcript_at": "2026-09-01T19:34:06.404Z",
       "session_id": "9c6be3b7-dfda-45bc-9163-ba11205e0929",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "91e4120c-cd3d-4066-a97e-fec06221dcff"
     },
     "934f3aaf-cfcb-4cb5-b33b-7e484a5246ee": {
@@ -31401,6 +32227,26 @@
       "session_id": "8aed6dd1-2825-406e-bbac-74d746f4e9aa",
       "state": "archived",
       "workspace_id": "953ee0c8-c8ac-4e8e-b665-133ebab0c391"
+    },
+    "969c478d-1a04-47f0-a0a1-c3d01e85a9bd": {
+      "batch_id": "t-11566-1",
+      "created_at": "2026-09-01T19:38:33Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11566,
+        11466,
+        11462,
+        11444,
+        11443
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "492c9918-99bc-4d95-877e-575deb32e53e",
+      "state": "running",
+      "workspace_id": "969c478d-1a04-47f0-a0a1-c3d01e85a9bd"
     },
     "96f5d954-e9bf-4843-a9ea-3c99a9e68c57": {
       "batch_id": "f-12670-1",
@@ -31555,15 +32401,15 @@
       "created_at": "2026-09-01T19:31:16Z",
       "harvest": {
         "malformed_attempts": 0,
-        "parsed": false
+        "parsed": true
       },
       "issues": [
         11913
       ],
       "kind": "fix",
-      "last_transcript_at": null,
+      "last_transcript_at": "2026-09-01T19:33:57.509Z",
       "session_id": "a0e688e7-221f-4d86-9550-5a5095399b07",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "9c3ae3a9-9645-4246-8f6f-75062fc14c36"
     },
     "9cbf4818-0e5d-45ce-a4c6-8e78e5f19603": {
@@ -31682,6 +32528,22 @@
       "state": "archived",
       "workspace_id": "a61ba23e-7e08-48d5-8c61-9b65ec63b193"
     },
+    "a78b9898-715a-4bdd-bc87-c19a1e34d3fd": {
+      "batch_id": "f-11739-1",
+      "created_at": "2026-09-01T19:34:01Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11739
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T19:35:27.846Z",
+      "session_id": "a5cad30b-2c4c-4a00-89ba-a975eec740ba",
+      "state": "running",
+      "workspace_id": "a78b9898-715a-4bdd-bc87-c19a1e34d3fd"
+    },
     "a8182f8b-0e00-489e-b884-8ef096f149ab": {
       "batch_id": "t-12710-1",
       "created_at": "2026-08-23T21:30:13Z",
@@ -31727,15 +32589,15 @@
       "created_at": "2026-09-01T19:28:43Z",
       "harvest": {
         "malformed_attempts": 0,
-        "parsed": false
+        "parsed": true
       },
       "issues": [
         11946
       ],
       "kind": "fix",
-      "last_transcript_at": "2026-09-01T19:29:34.631Z",
+      "last_transcript_at": "2026-09-01T19:35:35.517Z",
       "session_id": "01d8955e-60e0-41a0-ab07-f2f80152b2f3",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "aa142ca1-ba91-4162-b05f-374e5f55b2d4"
     },
     "aa239be1-2bd7-4a1e-8939-886ef7299e87": {
@@ -31892,7 +32754,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T19:28:15.707Z",
       "session_id": "373ee942-68a8-480d-b46a-e97dc36120c6",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "b2c768a0-c7b3-46d8-86a0-d91371a86392"
     },
     "b3f85b3a-a5b2-4d74-8f37-51e077f02be3": {
@@ -32341,6 +33203,22 @@
       "state": "archived",
       "workspace_id": "cfaa4402-c20c-4d2d-bdb4-4817e7f37277"
     },
+    "cfe8efc6-7395-49ab-929f-3f7256f4baaf": {
+      "batch_id": "f-11747-1",
+      "created_at": "2026-09-01T19:33:58Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": true
+      },
+      "issues": [
+        11747
+      ],
+      "kind": "fix",
+      "last_transcript_at": "2026-09-01T19:35:36.299Z",
+      "session_id": "d3c84281-bf08-48de-9da7-46333373d74d",
+      "state": "archived",
+      "workspace_id": "cfe8efc6-7395-49ab-929f-3f7256f4baaf"
+    },
     "d3fad23d-4907-4cbb-aa60-830477188d4e": {
       "batch_id": "t-12226-1",
       "created_at": "2026-09-01T19:05:54Z",
@@ -32465,16 +33343,16 @@
       "batch_id": "f-12228-2",
       "created_at": "2026-09-01T19:25:57Z",
       "harvest": {
-        "malformed_attempts": 0,
+        "malformed_attempts": 1,
         "parsed": false
       },
       "issues": [
         12228
       ],
       "kind": "fix",
-      "last_transcript_at": "2026-09-01T19:29:36.036Z",
+      "last_transcript_at": "2026-09-01T19:35:28.490Z",
       "session_id": "e50ed121-9b64-444e-84f5-43e5c25a8291",
-      "state": "running",
+      "state": "nudged",
       "workspace_id": "dbce7479-e49e-4f75-af74-2c5d9294ce8c"
     },
     "dc9b4c8b-f55a-476f-a2e6-efa852b117d4": {
@@ -32609,6 +33487,26 @@
       "state": "archived",
       "workspace_id": "e07de2ef-3d2a-46ba-90e5-a9c4a39da1b7"
     },
+    "e1aab998-e3dc-43a3-851a-23e6fcc60748": {
+      "batch_id": "t-11583-1",
+      "created_at": "2026-09-01T19:38:26Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11583,
+        11582,
+        11578,
+        11577,
+        11568
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "5f95c441-6671-4d8e-981e-fafded316505",
+      "state": "running",
+      "workspace_id": "e1aab998-e3dc-43a3-851a-23e6fcc60748"
+    },
     "e1fbccc4-e068-43f1-82da-3b9caefbfffe": {
       "batch_id": "t-12135-1",
       "created_at": "2026-09-01T19:11:00Z",
@@ -32697,6 +33595,46 @@
       "state": "archived",
       "workspace_id": "e5bf6123-7c8c-4ed6-bb8a-8a7d36cc606e"
     },
+    "e5c89f3d-9744-4604-b743-250c444d7a55": {
+      "batch_id": "t-11715-1",
+      "created_at": "2026-09-01T19:34:02Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11715,
+        11714,
+        11712,
+        11709,
+        11697
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T19:34:53.808Z",
+      "session_id": "81fcfdfe-1ae9-4762-af1c-fc08c439b525",
+      "state": "running",
+      "workspace_id": "e5c89f3d-9744-4604-b743-250c444d7a55"
+    },
+    "e5d44615-7570-4a39-9514-3358bbde1c08": {
+      "batch_id": "t-11411-1",
+      "created_at": "2026-09-01T19:38:35Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11411,
+        11410,
+        11406,
+        11405,
+        11384
+      ],
+      "kind": "triage",
+      "last_transcript_at": null,
+      "session_id": "1ff07bfd-16ed-4c31-bfbf-f48d6fcbd318",
+      "state": "running",
+      "workspace_id": "e5d44615-7570-4a39-9514-3358bbde1c08"
+    },
     "e5dde6ee-b819-482c-9d9d-d71ef8bbd6bb": {
       "batch_id": "f-12578-1",
       "created_at": "2026-09-01T18:04:27Z",
@@ -32732,6 +33670,26 @@
       "session_id": "7d3a02cd-7d35-402e-adc3-d75e30f8d0f8",
       "state": "archived",
       "workspace_id": "e8123856-b23c-462d-ad4d-01f1e606633d"
+    },
+    "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861": {
+      "batch_id": "t-11695-1",
+      "created_at": "2026-09-01T19:34:04Z",
+      "harvest": {
+        "malformed_attempts": 0,
+        "parsed": false
+      },
+      "issues": [
+        11695,
+        11685,
+        11683,
+        11680,
+        11677
+      ],
+      "kind": "triage",
+      "last_transcript_at": "2026-09-01T19:35:35.356Z",
+      "session_id": "a5869bb9-047c-4a2b-a5fb-0a6905c559c5",
+      "state": "running",
+      "workspace_id": "e8e168cf-c2e4-4d45-b689-3a5f0a0a6861"
     },
     "e93c7807-431b-42d6-92bd-9376ac6807b7": {
       "batch_id": "f-12350-1",

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11913-1",
+      "branch": "sweep/11913-queries-with-more-than-2-terms-cards-on",
+      "files_changed": 2,
+      "head_sha": "2d34371f5ba0c66177deef5877528b14ad1d8b7b",
+      "issue": 11913,
+      "lines_changed": 47,
+      "lint": "passed",
+      "notes": "The negated path (exclude decks containing any of the listed cards) retains the GROUP BY approach since it remains efficient and correct for that case. No schema or data migration needed. The fix is confined to SQL generation in a single function.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `contains_cards_clause` function in `decksite/data/deck.py` used a single subquery with `GROUP BY deck_id HAVING COUNT(DISTINCT card) = n` for non-negated multi-card searches. With 3+ card terms, the database had to scan the entire `deck_card` table, group all rows by `deck_id`, and filter \u2014 O(rows) work with no useful index selectivity, causing timeouts on `/admin/archetypes` Search for Decks.\n\n## What changed\n\nFor non-negated searches, replaced the single GROUP BY subquery with one `d.id IN (SELECT deck_id FROM deck_card WHERE card = ?)` clause per card, AND-chained together. Each single-card subquery hits the existing `idx_card_deck_id_sideboard_n` index directly and is highly selective. The AND chain short-circuits after the rarest card eliminates most deck IDs.\n\nFor negated searches (exclude decks containing any of these cards), the GROUP BY approach is retained unchanged \u2014 it remains correct and efficient for the `>= 1` case.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (no warnings)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (full suite)\n- Three new unit tests added in `decksite/data/deck_test.py` covering single-card, multi-card non-negated, and negated cases at the SQL-generation level (no live DB required)\n\nFixes #11913",
+      "pr_title": "Fix multi-card archetype search timeout by replacing GROUP BY with per-card subqueries (#11913)",
+      "recorded_at": "2026-09-01T19:36:50Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/data/deck_test.py",
+        "detail": "848 passed, 1 skipped in 18.52s (full suite collected, not just deck_test.py)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11913,
   "triage": [
     {

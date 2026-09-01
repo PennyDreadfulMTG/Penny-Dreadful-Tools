@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11887,
+  "triage": [
+    {
+      "batch_id": "t-11887-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "has_search_results is a boolean; no count property is computed or exposed",
+          "ref": "decksite/views/archetype_search.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "search results table is rendered inside {{#has_search_results}} with no count displayed anywhere in the block",
+          "ref": "decksite/templates/archetypesearch.mustache:22",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/archetype_search.py add self.search_result_count = len(search_results) after line 14. In decksite/templates/archetypesearch.mustache, inside the {{#has_search_results}} block, add a line like <p>{{search_result_count}} decks found</p> before or after the table.",
+      "issue": 11887,
+      "notes": "Purely additive UI change; the count value is already computable from the existing search_results list.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:36:37Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

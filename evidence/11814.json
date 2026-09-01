@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11814,
+  "triage": [
+    {
+      "batch_id": "t-11887-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The explanations dict has topics archetype through wrongdeck plus aliases; 'modmail' is absent",
+          "ref": "discordbot/commands/explain.py:14-220",
+          "type": "code"
+        },
+        {
+          "detail": "keys = sorted(explanations.keys()) is the autocomplete list used by the slash command; adding 'modmail' to the dict is all that is required",
+          "ref": "discordbot/commands/explain.py:221",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/explain.py, add a 'modmail' entry to the explanations dict (around line 220) with a short string explaining how to use the ModMail Discord bot and how to format messages (e.g. include the subject matter clearly, mention your MTGO username). Include a link dict with a ModMail help URL if one exists. No other files need changing.",
+      "issue": 11814,
+      "notes": "Pure text addition to an existing dict; the command infrastructure already handles new keys automatically via autocomplete and lookup.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:36:37Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

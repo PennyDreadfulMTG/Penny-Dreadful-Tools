@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11865,
+  "triage": [
+    {
+      "batch_id": "t-11887-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "When neither preferred_printing_system_id nor preferred_printing is set, falls through to bare Scryfall named-card URL which returns the default (Arena) printing for Raging Goblin",
+          "ref": "magic/image_fetcher.py:44-50",
+          "type": "code"
+        },
+        {
+          "detail": "get_printings() joins the set table but SELECTs only s.code and s.name; s.digital and s.set_type are not available on Printing objects",
+          "ref": "magic/oracle.py:133-137",
+          "type": "code"
+        },
+        {
+          "detail": "The set table schema includes digital (BOOLEAN) and set_type columns, confirming they are queryable",
+          "ref": "magic/card.py:124-132",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In oracle.py:get_printings() extend the SELECT to include s.digital and s.set_type. Add a new function get_non_digital_printing(c: Card) -> Printing | None that returns the first printing where digital is falsy. In image_fetcher.py:scryfall_image(), in the else branch (no preferred_printing set), call get_non_digital_printing and use its set_code in the URL if a non-digital printing exists.",
+      "issue": 11865,
+      "notes": "Read-only SQL change; only affects the fallback image URL path when no preferred_printing is explicitly set. Admin-set preferred_printing overrides take precedence as before.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:36:37Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

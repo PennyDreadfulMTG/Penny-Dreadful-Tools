@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11747-1",
+      "branch": "sweep/11747-game-timers",
+      "files_changed": 1,
+      "head_sha": "1cb54a93",
+      "issue": 11747,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "The change is a single `add_field` call inside the existing `if diff <= 14400:` guard, so it only fires when a reminder is actually sent. No logic paths were altered. No pre-existing tests cover this function, and the discordbot area relies on a live Discord gateway for integration testing.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nTournament reminder embeds sent to the Discord channel did not mention the MTGO game timer setting, so players sometimes used non-default timers and ran into time issues during Penny Dreadful tournaments.\n\n## What changed\n\nAdded one `embed.add_field` call inside `background_task_tournament_reminders()` in `discordbot/background.py` (inside the `diff <= 14400` block, just before the embed is sent). The new field reads:\n- **Name:** `Game timer:`\n- **Value:** `Set your MTGO game timer to 25 minutes (the default).`\n\nThis field appears on every tournament reminder sent within 4 hours of the event start, alongside the existing countdown and pre-registration link fields.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks clean)\n- Unit tests for `discordbot/background.py` \u2014 `not-applicable`: there are no existing unit tests for `background_task_tournament_reminders`; it is an async Discord-gateway-dependent task with no test harness in the repo. The database was also unavailable in this cloud environment.\n\nFixes #11747",
+      "pr_title": "Add game timer reminder to tournament announcements (#11747)",
+      "recorded_at": "2026-09-01T19:37:18Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "Tests require a live database connection (MariaDB not running in this cloud environment). No unit tests exist for background_task_tournament_reminders \u2014 the function is async, Discord-gateway-dependent, and has no test coverage in the repo.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 11747,
   "triage": [
     {

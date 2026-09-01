@@ -9,7 +9,7 @@ dependencies = [
     "better-profanity",
     "cachelib==0.17.0",
     "click==8.5.0",
-    "coverage==7.15.4",
+    "coverage==7.16.0",
     "feedparser==6.0.14",
     "flask-restx",
     "ftfy==6.3.1",

@@ -35,6 +35,15 @@ def test_archetype_win_percent_auto_order_remains_descending() -> None:
     assert ordered.startswith(f'{expression} DESC')
 
 
+@pytest.mark.parametrize('sort_by', ['quality', 'qualityOptimistic', 'qualityStrict', 'potential'])
+@pytest.mark.parametrize('sort_order', ['ASC', 'DESC'])
+def test_archetype_quality_ordering_puts_nulls_last(sort_by: str, sort_order: str) -> None:
+    sql = clauses.archetype_order_by(sort_by, sort_order)
+    expression, ordered = sql.split(' IS NULL ASC, ', 1)
+
+    assert ordered.startswith(f'{expression} {sort_order}')
+
+
 def test_decks_where() -> None:
     args = {'deckType': DeckType.LEAGUE.value}
     assert "= 'League'" in clauses.decks_where(args, False, 1)

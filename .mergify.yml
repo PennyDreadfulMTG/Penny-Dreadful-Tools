@@ -53,6 +53,7 @@ pull_request_rules:
       when CI passes and trusted comitter
     conditions:
       - author=@PennyDreadfulMTG/automerge
+      - author!=bakert
     actions:
       queue:
 priority_rules:

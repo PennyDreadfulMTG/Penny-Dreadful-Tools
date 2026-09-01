@@ -183,5 +183,28 @@ def test_refresh_picks_up_an_index_rebuilt_by_another_process(monkeypatch: pytes
     assert searcher.search('Black Lo').get_best_match() == 'Black Lotus'
     assert searcher.search('Ancestral Re').get_best_match() == 'Ancestral Recall'
 
+def test_ampersand_alias_finds_card(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(WhooshConstants, 'index_dir', str(tmp_path))
+    ix = create_in(tmp_path, whoosh_write.WhooshWriter().schema)
+    writer = ix.writer()
+    for card_id, canonical_name, name in [
+        (1, 'Minsc & Boo, Timeless Heroes', 'Minsc & Boo, Timeless Heroes'),
+        (1, 'Minsc & Boo, Timeless Heroes', 'Minsc and Boo, Timeless Heroes'),
+    ]:
+        writer.update_document(
+            id=card_id,
+            canonical_name=canonical_name,
+            name=name,
+            name_tokenized=name,
+            name_stemmed=name,
+            name_normalized=name,
+        )
+    writer.commit()
+
+    searcher = WhooshSearcher()
+
+    result = searcher.search('Minsc and Boo')
+    assert result.get_best_match() == 'Minsc & Boo, Timeless Heroes'
+
 def indexable_card(card_id: int, name: str) -> Card:
     return Card({'id': card_id, 'name': name, 'names': name, 'flavor_names': None, 'layout': 'normal'})

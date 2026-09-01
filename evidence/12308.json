@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12308,
+  "triage": [
+    {
+      "batch_id": "t-12310-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "rotation command calls only seasons.message() \u2014 no in_rotation() check, no URL to /rotation/ page",
+          "ref": "discordbot/commands/rotation.py:9-11",
+          "type": "code"
+        },
+        {
+          "detail": "@APP.route('/rotation/') confirms the page exists",
+          "ref": "decksite/controllers/resources.py:17",
+          "type": "code"
+        },
+        {
+          "detail": "decksite_url() helper is available to construct the URL",
+          "ref": "magic/fetcher.py:111",
+          "type": "code"
+        },
+        {
+          "detail": "explain command already imports and uses rotation.in_rotation() as a pattern to follow",
+          "ref": "discordbot/commands/explain.py:288",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/rotation.py: import `rotation` from `magic` and `fetcher` from `magic`. In the rotation slash command, check `rotation.in_rotation()`; if True, append `fetcher.decksite_url('/rotation/')` to the message sent to the user. About 5-8 additional lines.",
+      "issue": 12308,
+      "notes": "The explain command already has a pattern for this (explain.py:288). The fix is a straight copy of that idiom into the simpler rotation command.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:57Z",
+    "note": "Override verifier's recent-activity flag: live issue timeline has no comments or activity since 2024; PR #14984 and current code independently confirm the fix.",
+    "verb": "close-completed"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:42:49Z",
   "evidence_refs": [

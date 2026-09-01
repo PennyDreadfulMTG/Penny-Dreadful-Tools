@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:53Z",
+    "note": "Requires a schema-backed offensive-name record and an admin or user moderation workflow; migration and scope need approval.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:52:04Z",
   "evidence_refs": [

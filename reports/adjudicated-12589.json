@@ -1,14 +1,14 @@
 {
   "adjudication": {
-    "at": "2026-09-01T18:14:22Z",
-    "note": "Retry with the existing non-mutating slice fix sketch; prior attempts failed to return valid dispatcher output, not because the fix was disproven.",
-    "verb": "queue-fix"
+    "at": "2026-09-01T18:55:54Z",
+    "note": "Stop retrying after three malformed worker replies. Preserve the non-mutating keyCards.slice(1) fix sketch in evidence for manual follow-up.",
+    "verb": "report-only"
   },
-  "bundled_at": "2026-09-01T18:10:09Z",
-  "created_at": "2026-09-01T18:09:34Z",
+  "bundled_at": "2026-09-01T18:52:26Z",
+  "created_at": "2026-09-01T18:22:32Z",
   "evidence_refs": [],
   "issue": 12589,
   "kind": "attempts-exhausted",
-  "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
+  "question": "fix stage failed 3 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
   "summary": "malformed output after nudge"
 }

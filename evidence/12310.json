@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12310,
+  "triage": [
+    {
+      "batch_id": "t-12310-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_card_person() builds _card_person_stats with per-person per-card stats, so the raw data exists",
+          "ref": "decksite/data/card.py:146",
+          "type": "code"
+        },
+        {
+          "detail": "card page shows stats section and a live deck table but no 'top players' or 'expert' section",
+          "ref": "decksite/templates/card.mustache:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's own comment asks 'What's the actual thing we want to show\u2026 How would that be defined?' \u2014 product definition is open",
+          "ref": "#12310",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12310,
+      "notes": "Data infrastructure (_card_person_stats) exists but the display concept (played most? most wins? 'expert' threshold?) needs an owner decision before implementation can begin.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

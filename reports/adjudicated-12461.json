@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:54Z",
+    "note": "Choose between a card-requirement feature for archetypes and a one-time admin reclassification of affected decks.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:28:31Z",
   "evidence_refs": [

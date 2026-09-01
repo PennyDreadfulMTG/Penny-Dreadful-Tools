@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12323,
+  "triage": [
+    {
+      "batch_id": "t-12323-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_archetype_playability uses _archetype_count (all decks, all seasons) as denominator",
+          "ref": "decksite/data/playability.py:420",
+          "type": "code"
+        },
+        {
+          "detail": "_archetype_count SQL: SELECT d.archetype_id, COUNT(*) AS num_decks FROM deck \u2014 no season or legality filter",
+          "ref": "decksite/data/playability.py:460",
+          "type": "code"
+        },
+        {
+          "detail": "_season_archetype_card_count joins _legal_cards to exclude illegal-season appearances, but _archetype_card_count (used by all-time query) has no such filter",
+          "ref": "decksite/data/playability.py:216",
+          "type": "code"
+        },
+        {
+          "detail": "Brainstorm in Mono Blue Tempo: numerator counts only decks where Brainstorm was played (legal seasons), denominator counts ALL Mono Blue Tempo decks across ALL seasons \u2014 artificially depresses score for cards with gaps in legality",
+          "ref": "decksite/data/playability.py:420-460",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In preaggregate_archetype_playability (decksite/data/playability.py:420), replace the join on _archetype_card_count/_archetype_count/_card_count with a GROUP BY aggregate over _season_archetype_card_count JOIN _season_archetype_count ON matching season_id and archetype_id, JOIN _season_card_count and _season_count \u2014 using SUM() over each. This naturally limits the denominator to only seasons where the card was legal (because _season_archetype_card_count already filters via _legal_cards). No schema change needed \u2014 the output table definition is unchanged.",
+      "issue": 12323,
+      "notes": "Related to issue #12322 (testing request for this exact logic). The _archetype_card_count and _archetype_count helper tables may become unused after this fix and could be cleaned up separately.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

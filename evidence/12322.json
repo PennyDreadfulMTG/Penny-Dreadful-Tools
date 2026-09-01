@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12322,
+  "triage": [
+    {
+      "batch_id": "t-12323-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No test file for playability exists; decksite/data/playability.py has no corresponding test file",
+          "ref": "find . -name '*playability*test*' -o -name '*test*playability*'",
+          "type": "search"
+        },
+        {
+          "detail": "Full preaggregate pipeline with 12 functions covering legal cards, per-season counts, and cross-season aggregations \u2014 dense multi-step SQL with no test coverage",
+          "ref": "decksite/data/playability.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12322,
+      "notes": "Requires a dummy DB fixture with ~10 cards, 3 archetypes, 3 seasons, plus running the full preaggregate chain and asserting on output values \u2014 non-trivial test infrastructure. The Kapsho Kitefins case and the #12323 all-time legality bug would be good primary test cases.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

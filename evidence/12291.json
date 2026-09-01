@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12291,
+  "triage": [
+    {
+      "batch_id": "t-12293-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "When objects array is empty, Table renders with empty tbody and pagination showing '0-0 of 0' \u2014 no dedicated empty-state message",
+          "ref": "shared_web/static/js/table.jsx:17-22",
+          "type": "code"
+        },
+        {
+          "detail": "Every achievement with a legend unconditionally renders {{> livedecktable}} which triggers an AJAX request even when there are no decks",
+          "ref": "decksite/templates/personachievements.mustache:10",
+          "type": "code"
+        },
+        {
+          "detail": "The person page already gates deck sections with {{#has_decks}}; person_achievements does not have equivalent gating",
+          "ref": "decksite/templates/person.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "Person view sets has_decks = len(person.decks) > 0 \u2014 the server-side pattern exists but is not applied to achievement detail tables",
+          "ref": "decksite/views/person.py:26",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12291,
+      "notes": "Two approaches exist: add a client-side empty state to Table/DataManager (simplest, single JS change but still makes the AJAX request), or determine server-side whether each achievement detail has decks and skip rendering the table div. The second requires deciding across multiple affected views.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:25Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -46,3 +46,19 @@ Nothing is awaiting a decision from bakert.
 - #12587 — Choose the card-query boundary for decksite before replacing the local is_uninteresting heuristic. (2026-09-01T18:14:22Z)
 
 - #12588 — Define the low-sample threshold and desired empty-state or tile behavior before implementation. (2026-09-01T18:14:22Z)
+
+- #12345 — Choose the post-rotation UX: auto-hide /rotation, redirect to /rotation/changes, or redesign the messaging. (2026-09-01T18:55:53Z)
+
+- #12347 — Choose how low-confidence archetype guesses should appear: suppress, hold for moderation, or use a hybrid threshold. (2026-09-01T18:55:53Z)
+
+- #12348 — Requires a schema-backed offensive-name record and an admin or user moderation workflow; migration and scope need approval. (2026-09-01T18:55:53Z)
+
+- #12349 — Maintainers disagree on substring filtering versus accepting the Scunthorpe tradeoff; record an explicit policy or close as wontfix. (2026-09-01T18:55:54Z)
+
+- #12380 — Provide the intended tournament-policy wording for game losses and sideboarding before changing templates. (2026-09-01T18:55:54Z)
+
+- #12425 — Door-prize eligibility is selected in the separate PDBot project; route the fix there before settling this issue. (2026-09-01T18:55:54Z)
+
+- #12461 — Choose between a card-requirement feature for archetypes and a one-time admin reclassification of affected decks. (2026-09-01T18:55:54Z)
+
+- #12490 — Choose the loader API shape and list-versus-Sequence policy before a cross-cutting refactor. (2026-09-01T18:55:54Z)

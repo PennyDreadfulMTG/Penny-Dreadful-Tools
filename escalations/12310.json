@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T18:57:14Z",
+  "created_at": "2026-09-01T18:56:14Z",
+  "evidence_refs": [
+    "evidence/12310.json#triage[0]"
+  ],
+  "issue": 12310,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Data infrastructure (_card_person_stats) exists but the display concept (played most? most wins? 'expert' threshold?) needs an owner decision before implementation can begin."
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T18:57:14Z",
+  "created_at": "2026-09-01T18:56:25Z",
+  "evidence_refs": [
+    "evidence/12293.json#triage[0]"
+  ],
+  "issue": 12293,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The decision needed is what ordering to replace sort-by-percent with: alphabetical, by achievement rarity (inverted percent), by type/category, or a manually curated order. The issue text explicitly says 'Think about the order' rather than specifying the desired outcome."
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12311,
+  "triage": [
+    {
+      "batch_id": "t-12323-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "mana_where() handles only ':' (LIKE contains) and '=' (exact match) operators; line 343 raises InvalidTokenException for any other operator including >=, <=, >, <",
+          "ref": "find/search.py:329",
+          "type": "code"
+        },
+        {
+          "detail": "else: raise InvalidTokenException(f'mana expects `:` or `=` not `{operator}`. Did you want cmc?') \u2014 still present in current master",
+          "ref": "find/search.py:342",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12311,
+      "notes": "The semantics of mana>=x are not specified in the issue body (empty). Scryfall's mana>=x means the mana cost contains at least the specified quantity of each listed symbol \u2014 requires product judgment on exact behavior before implementation, and a non-trivial extension to mana_where() and mana parsing.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:02Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

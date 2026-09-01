@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12289,
+  "triage": [
+    {
+      "batch_id": "t-12293-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Person.decks property lazy-loads all decks for a person in a season via deck.load_decks() on first access",
+          "ref": "decksite/data/models/person.py:9-13",
+          "type": "code"
+        },
+        {
+          "detail": "p.decks is accessed only to get p.decks[0].is_in_current_run() \u2014 loads all decks just to check the most recent one",
+          "ref": "decksite/controllers/admin.py:260-261",
+          "type": "code"
+        },
+        {
+          "detail": "self.decks = person.decks and self.has_decks = len(person.decks) > 0 both trigger the full load; decks are also iterated for color chart",
+          "ref": "decksite/views/person.py:25-26",
+          "type": "code"
+        },
+        {
+          "detail": "'decks': p.decks \u2014 API endpoint also uses the property to return all decks",
+          "ref": "decksite/controllers/api.py:591",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12289,
+      "notes": "Removing the property requires identifying which callers legitimately need all decks (person view, API) vs. those that need only a targeted query (admin ban check needs only the active league deck). Each caller would need its own purpose-built query.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:25Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

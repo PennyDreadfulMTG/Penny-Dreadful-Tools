@@ -68,6 +68,19 @@
       "recorded_at": "2026-09-01T18:42:49Z",
       "refutation_reason": null,
       "verdict": "CONFIRMED"
+    },
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Fixed by PR #14984 (merged 2026-08-24, commit 2f6cdc35): the seasons-played section now uses a CSS grid layout (`season-grid` / `season-icon-link`) with symmetric `padding: 0 0.238rem`, replacing the old bare `<i>` elements whose Keyrune `margin-right` caused the off-centre, asymmetric hover highlight.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-01T18:55:54Z",
+      "verdict": "CONFIRMED"
     }
   ]
 }

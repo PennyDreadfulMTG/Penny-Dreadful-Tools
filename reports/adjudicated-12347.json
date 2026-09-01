@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:53Z",
+    "note": "Choose how low-confidence archetype guesses should appear: suppress, hold for moderation, or use a hybrid threshold.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:52:04Z",
   "evidence_refs": [

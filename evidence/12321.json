@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12321,
+  "triage": [
+    {
+      "batch_id": "t-12323-1",
+      "class": "duplicate",
+      "confidence": "high",
+      "duplicate_of": 7452,
+      "evidence": [
+        {
+          "detail": "Issue author explicitly commented 'This is a manifestation of #7452'; #7452 is OPEN and titled 'Support types properly in search and elsewhere for Split cards, Adventure cards, MDFCs'",
+          "ref": "#7452",
+          "type": "issue"
+        },
+        {
+          "detail": "type_query() returns GROUP_CONCAT(CASE WHEN position = 1 THEN type_line ELSE '' END) \u2014 only the front face's type is stored in _cache_card",
+          "ref": "magic/card.py:294",
+          "type": "code"
+        },
+        {
+          "detail": "search() queries _cache_card directly via cached_base_query; t:land becomes (type_line LIKE '%land%') on the cached single-face type_line, so MDFCs with land on position 2 are not found",
+          "ref": "find/search.py:23",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12321,
+      "notes": "The root cause is that _cache_card.type_line only stores position=1 type data; fixing this for all MDFC/split/adventure searches is the scope of #7452.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

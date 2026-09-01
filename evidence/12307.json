@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12307,
+  "triage": [
+    {
+      "batch_id": "t-12310-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "percent_needed = '0' \u2014 hardcoded string zero",
+          "ref": "magic/rotation.py:126",
+          "type": "code"
+        },
+        {
+          "detail": "percent_needed = str(to_percent(hits_needed / remaining_runs)) \u2014 explicit str() cast",
+          "ref": "magic/rotation.py:128",
+          "type": "code"
+        },
+        {
+          "detail": "'hits_needed': hits_needed \u2014 kept as int, inconsistent with percent_needed",
+          "ref": "magic/rotation.py:138",
+          "type": "code"
+        },
+        {
+          "detail": "rotationtable.jsx reads card.percentNeeded from the decksite API (decksite/data/rotation.py SQL path), not from the redis dict \u2014 downstream JSX is unaffected by this change",
+          "ref": "grep -rn percent_needed shared_web/static/js/",
+          "type": "search"
+        },
+        {
+          "detail": "redis still imported and used \u2014 issue note 'rip out redis' precondition has not been met",
+          "ref": "magic/rotation.py:10",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In magic/rotation.py line 126 change `percent_needed = '0'` to `percent_needed = 0`; line 128 change `percent_needed = str(to_percent(...))` to `percent_needed = to_percent(...)`. Two-character changes; no downstream consumer of the redis dict depends on the string type.",
+      "issue": 12307,
+      "notes": "The decksite rotation table reads percent_needed from its own SQL preaggregate (decksite/data/rotation.py), not from the redis dict, so there is no breakage risk on the site side.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12306,
+  "triage": [
+    {
+      "batch_id": "t-12310-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "pagination uses this.state.page and search uses this.state.q \u2014 pure React state, no window.history / pushState / URLSearchParams anywhere in the file",
+          "ref": "shared_web/static/js/table.jsx:1-100",
+          "type": "code"
+        },
+        {
+          "detail": "six separate table JSX files (cardtable, decktable, headtoheadtable, leaderboardtable, matchtable, persontable) all extend the same Table/DataManager \u2014 all would need updating",
+          "ref": "decksite/webpack.config.js:7-14",
+          "type": "code"
+        },
+        {
+          "detail": "issue body itself notes debouncing complexity: must not store every character of a search query ('f:p', 'f:pe', 'f:pen', \u2026)",
+          "ref": "#12306",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12306,
+      "notes": "The work spans datamanager.jsx (state \u2192 URL sync, popstate handler, debouncing logic) plus all six concrete table components; well above the 150-line easy-fix bar. A library like react-router or use-query-params would reduce boilerplate but adds a dependency decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:14Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

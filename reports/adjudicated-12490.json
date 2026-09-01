@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:54Z",
+    "note": "Choose the loader API shape and list-versus-Sequence policy before a cross-cutting refactor.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:26:48Z",
   "evidence_refs": [

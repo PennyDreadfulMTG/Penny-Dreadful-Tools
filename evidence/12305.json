@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12305,
+  "triage": [
+    {
+      "batch_id": "t-12310-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_achievements calls a.detail(p, season_id) for every achievement unconditionally when with_detail=True \u2014 18 of 23 achievements have detail_sql and thus trigger deck.load_decks()",
+          "ref": "decksite/data/achievements.py:27-28",
+          "type": "code"
+        },
+        {
+          "detail": "person_achievements controller always passes with_detail=True",
+          "ref": "decksite/controllers/people.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "template only renders {{#detail}} inside {{#legend}} \u2014 detail is never shown for unearned achievements, so loading it is wasted work",
+          "ref": "decksite/templates/personachievements.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_decks already guards 'if achievement.detail is not None' so skipping detail for unearned achievements is safe",
+          "ref": "decksite/views/person_achievements.py:14-20",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/achievements.py line 27 change `if with_detail:` block to `if with_detail and desc.legend:` so detail is only loaded for achievements the person has earned. One-word addition; eliminates up to 18 deck.load_decks() calls for players who have earned few achievements.",
+      "issue": 12305,
+      "notes": "For players with no achievements the page currently executes 18 deck queries and discards all results; after the fix it executes 0. For players who have earned many achievements, savings are proportional to unearned count.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:14Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:54Z",
+    "note": "Door-prize eligibility is selected in the separate PDBot project; route the fix there before settling this issue.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:35:42Z",
   "evidence_refs": [

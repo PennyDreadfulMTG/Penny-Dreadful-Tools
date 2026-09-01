@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12318,
+  "triage": [
+    {
+      "batch_id": "t-12323-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Prevent flakiness in rotation page update by running cache clear in a subprocess \u2014 replaced threading with subprocess.Popen",
+          "ref": "b823df16",
+          "type": "commit"
+        },
+        {
+          "detail": "More stable rotation page refresh \u2014 merged 2024-11-21",
+          "ref": "#13354",
+          "type": "pr"
+        },
+        {
+          "detail": "rotation_clear_cache() now calls subprocess.Popen(cmd) and immediately returns {'success': True} \u2014 the cache clear runs async in a child process, no longer blocking the HTTP request",
+          "ref": "decksite/controllers/api.py:639",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12318,
+      "notes": "Earlier commits also addressed this (6f3ed5d8 lighter rotation cache bust, d12224bf decksite DB caching layer). The subprocess approach in b823df16 is the definitive fix for the timeout.",
+      "proposed_comment": "Fixed in PR #13354 (commit b823df16): the clear_cache endpoint now fires the work off via `subprocess.Popen` and returns immediately, eliminating the Cloudflare gateway timeout.",
+      "recorded_at": "2026-09-01T18:56:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

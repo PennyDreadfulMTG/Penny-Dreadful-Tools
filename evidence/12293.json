@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12293,
+  "triage": [
+    {
+      "batch_id": "t-12293-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Achievements are sorted by -ad.percent (descending by percent of players who have earned each achievement)",
+          "ref": "decksite/data/achievements.py:37",
+          "type": "code"
+        },
+        {
+          "detail": "The 'Player' achievement (play any match) is a BooleanAchievement that nearly all active players earn, giving it a ~100% rate and placing it first in the sorted list",
+          "ref": "decksite/data/achievements.py:344-357",
+          "type": "code"
+        },
+        {
+          "detail": "desc.percent = a.percent(season_id=season_id) \u2014 this is the field driving the sort",
+          "ref": "decksite/data/achievements.py:30",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12293,
+      "notes": "The decision needed is what ordering to replace sort-by-percent with: alphabetical, by achievement rarity (inverted percent), by type/category, or a manually curated order. The issue text explicitly says 'Think about the order' rather than specifying the desired outcome.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:25Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

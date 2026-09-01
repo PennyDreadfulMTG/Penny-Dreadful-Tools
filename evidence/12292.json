@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12292,
+  "triage": [
+    {
+      "batch_id": "t-12293-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SQL schema and query use 'percent' and 'percent_needed' as column names in the _rotation cache table",
+          "ref": "decksite/data/rotation.py:89-101",
+          "type": "code"
+        },
+        {
+          "detail": "process_score() sets 'percent' and 'percent_needed' keys on Card objects returned from rotation file processing",
+          "ref": "magic/rotation.py:124-140",
+          "type": "code"
+        },
+        {
+          "detail": "Frontend uses card.percent and card.percentNeeded (camelized via humps in return_camelized_json)",
+          "ref": "shared_web/static/js/rotationtable.jsx:24-25",
+          "type": "code"
+        },
+        {
+          "detail": "return_camelized_json uses humps.camelize(), so percent_needed \u2192 percentNeeded; rename to hits_needed_percent \u2192 hitsNeededPercent",
+          "ref": "shared_web/api.py:59-60",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Rename 'percent' \u2192 'hits_percent' and 'percent_needed' \u2192 'hits_needed_percent' in: (1) magic/rotation.py process_score() dict keys (~4 lines), (2) decksite/data/rotation.py SQL column definitions and SELECT (~6 lines), (3) rotationtable.jsx card.percent \u2192 card.hitsPercent and card.percentNeeded \u2192 card.hitsNeededPercent (~2 lines). After merge, clear Redis rotation cache via /api/rotation/clear_cache and trigger a rotation cache rebuild. No user data is affected \u2014 _rotation is a precomputed cache table.",
+      "issue": 12292,
+      "notes": "The _rotation table is a cache-only table rebuilt from rotation_runs; renaming its columns requires rebuilding the cache after deploy. Redis stores Card objects with these field names, so cache must also be cleared after deploy.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:25Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12290,
+  "triage": [
+    {
+      "batch_id": "t-12293-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "pytest.skip('These need to be rewritten', allow_module_level=True) \u2014 entire module skipped",
+          "ref": "discordbot/functional_test.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "Commit 'Disable broken tests' added the skip in Oct 2023 when bot moved to interactions.py slash commands",
+          "ref": "6eae9dc3",
+          "type": "commit"
+        },
+        {
+          "detail": "Commands now use @slash_command() decorator from interactions.py; the old functional_test.py fixture and ContextForTests class predate this architecture",
+          "ref": "discordbot/commands/barbs.py:7",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12290,
+      "notes": "The existing test infrastructure (ContextForTests, find_command logic using application_commands and prefixed_commands) was written for the old discord.py library; rewriting requires building a new mock context compatible with the interactions.py Extension/slash_command architecture.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:56:25Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

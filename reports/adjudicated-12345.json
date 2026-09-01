@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-01T18:55:53Z",
+    "note": "Choose the post-rotation UX: auto-hide /rotation, redirect to /rotation/changes, or redesign the messaging.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-01T18:52:26Z",
   "created_at": "2026-09-01T18:52:04Z",
   "evidence_refs": [

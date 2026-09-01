@@ -3004,3 +3004,92 @@
 {"attempt": 1, "batch_id": "f-12297-1", "event": "LEASE_GRANTED", "expires_at": "2026-09-01T20:25:08Z", "issue": 12297, "kind": "fix", "seq": 3004, "session_id": "288cc818-bb22-498c-9101-aa8d0b5708c4", "ts": "2026-09-01T18:55:08Z", "workspace_id": "254dd35d-ef1a-43b0-b195-ab7ac8941786"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 3004, "seq": 3005, "ts": "2026-09-01T18:55:08Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 3005, "seq": 3006, "ts": "2026-09-01T18:55:08Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 3007, "ts": "2026-09-01T18:55:10Z"}
+{"event": "ADJUDICATED", "issue": 12345, "note": "Choose the post-rotation UX: auto-hide /rotation, redirect to /rotation/changes, or redesign the messaging.", "seq": 3008, "status": "deferred_human", "ts": "2026-09-01T18:55:53Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3008, "seq": 3009, "ts": "2026-09-01T18:55:53Z"}
+{"event": "ADJUDICATED", "issue": 12347, "note": "Choose how low-confidence archetype guesses should appear: suppress, hold for moderation, or use a hybrid threshold.", "seq": 3010, "status": "deferred_human", "ts": "2026-09-01T18:55:53Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3010, "seq": 3011, "ts": "2026-09-01T18:55:53Z"}
+{"event": "ADJUDICATED", "issue": 12348, "note": "Requires a schema-backed offensive-name record and an admin or user moderation workflow; migration and scope need approval.", "seq": 3012, "status": "deferred_human", "ts": "2026-09-01T18:55:53Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3012, "seq": 3013, "ts": "2026-09-01T18:55:53Z"}
+{"event": "ADJUDICATED", "issue": 12349, "note": "Maintainers disagree on substring filtering versus accepting the Scunthorpe tradeoff; record an explicit policy or close as wontfix.", "seq": 3014, "status": "deferred_human", "ts": "2026-09-01T18:55:54Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3014, "seq": 3015, "ts": "2026-09-01T18:55:54Z"}
+{"event": "ADJUDICATED", "issue": 12380, "note": "Provide the intended tournament-policy wording for game losses and sideboarding before changing templates.", "seq": 3016, "status": "deferred_human", "ts": "2026-09-01T18:55:54Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3016, "seq": 3017, "ts": "2026-09-01T18:55:54Z"}
+{"event": "ADJUDICATED", "issue": 12425, "note": "Door-prize eligibility is selected in the separate PDBot project; route the fix there before settling this issue.", "seq": 3018, "status": "deferred_human", "ts": "2026-09-01T18:55:54Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3018, "seq": 3019, "ts": "2026-09-01T18:55:54Z"}
+{"event": "ADJUDICATED", "issue": 12461, "note": "Choose between a card-requirement feature for archetypes and a one-time admin reclassification of affected decks.", "seq": 3020, "status": "deferred_human", "ts": "2026-09-01T18:55:54Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3020, "seq": 3021, "ts": "2026-09-01T18:55:54Z"}
+{"event": "ADJUDICATED", "issue": 12490, "note": "Choose the loader API shape and list-versus-Sequence policy before a cross-cutting refactor.", "seq": 3022, "status": "deferred_human", "ts": "2026-09-01T18:55:54Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3022, "seq": 3023, "ts": "2026-09-01T18:55:54Z"}
+{"event": "ADJUDICATED", "issue": 12589, "note": "Stop retrying after three malformed worker replies. Preserve the non-mutating keyCards.slice(1) fix sketch in evidence for manual follow-up.", "seq": 3024, "status": "reported", "ts": "2026-09-01T18:55:54Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3024, "seq": 3025, "ts": "2026-09-01T18:55:54Z"}
+{"event": "ADJUDICATED", "issue": 12502, "note": "Override verifier's recent-activity flag: live issue timeline has no comments or activity since 2024; PR #14984 and current code independently confirm the fix.", "seq": 3026, "status": "closing", "ts": "2026-09-01T18:55:54Z", "verb": "close-completed"}
+{"event": "MUTATION_PLANNED", "issue": 12502, "kind": "close", "reason": "completed", "seq": 3027, "ts": "2026-09-01T18:55:54Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 12502, "reason": "completed", "seq": 3028, "ts": "2026-09-01T18:55:57Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3028, "seq": 3029, "ts": "2026-09-01T18:55:57Z"}
+{"batch_id": "t-12323-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12323, "kind": "triage", "seq": 3030, "status": "triaged", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12323, "kind": "triage", "seq": 3031, "status": "fix_pending", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12322, "kind": "triage", "seq": 3032, "status": "triaged", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12322, "kind": "triage", "seq": 3033, "status": "reported", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "duplicate", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12321, "kind": "triage", "seq": 3034, "status": "triaged", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "duplicate", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12321, "kind": "triage", "seq": 3035, "status": "verify_pending", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12318, "kind": "triage", "seq": 3036, "status": "triaged", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "already-fixed", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12318, "kind": "triage", "seq": 3037, "status": "verify_pending", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12311, "kind": "triage", "seq": 3038, "status": "triaged", "ts": "2026-09-01T18:56:02Z"}
+{"batch_id": "t-12323-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12311, "kind": "triage", "seq": 3039, "status": "reported", "ts": "2026-09-01T18:56:02Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 3040, "ts": "2026-09-01T18:56:13Z", "verified_state": "archived", "workspace_id": "baaf38ce-24be-4a5e-959b-d2a1a3257215"}
+{"batch_id": "t-12310-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12310, "kind": "triage", "seq": 3041, "status": "triaged", "ts": "2026-09-01T18:56:14Z"}
+{"event": "ESCALATED", "issue": 12310, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 3042, "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12308, "kind": "triage", "seq": 3043, "status": "triaged", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12308, "kind": "triage", "seq": 3044, "status": "fix_pending", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12307, "kind": "triage", "seq": 3045, "status": "triaged", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12307, "kind": "triage", "seq": 3046, "status": "fix_pending", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12306, "kind": "triage", "seq": 3047, "status": "triaged", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12306, "kind": "triage", "seq": 3048, "status": "reported", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12305, "kind": "triage", "seq": 3049, "status": "triaged", "ts": "2026-09-01T18:56:14Z"}
+{"batch_id": "t-12310-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12305, "kind": "triage", "seq": 3050, "status": "fix_pending", "ts": "2026-09-01T18:56:14Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 3051, "ts": "2026-09-01T18:56:24Z", "verified_state": "archived", "workspace_id": "c57e9535-4d4e-4f0c-a317-0b05b5ad82d4"}
+{"batch_id": "t-12293-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12293, "kind": "triage", "seq": 3052, "status": "triaged", "ts": "2026-09-01T18:56:25Z"}
+{"event": "ESCALATED", "issue": 12293, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 3053, "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12292, "kind": "triage", "seq": 3054, "status": "triaged", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12292, "kind": "triage", "seq": 3055, "status": "fix_pending", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12291, "kind": "triage", "seq": 3056, "status": "triaged", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12291, "kind": "triage", "seq": 3057, "status": "reported", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12290, "kind": "triage", "seq": 3058, "status": "triaged", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12290, "kind": "triage", "seq": 3059, "status": "reported", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12289, "kind": "triage", "seq": 3060, "status": "triaged", "ts": "2026-09-01T18:56:25Z"}
+{"batch_id": "t-12293-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 12289, "kind": "triage", "seq": 3061, "status": "reported", "ts": "2026-09-01T18:56:25Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 3062, "ts": "2026-09-01T18:56:36Z", "verified_state": "archived", "workspace_id": "ffb86a51-3beb-4923-8a9d-1b5c536f7e1d"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 3063, "ts": "2026-09-01T18:56:43Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 3064, "ts": "2026-09-01T18:56:46Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 3065, "ts": "2026-09-01T18:56:48Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 3066, "ts": "2026-09-01T18:56:49Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 3067, "ts": "2026-09-01T18:56:50Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 3068, "ts": "2026-09-01T18:56:51Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 3069, "ts": "2026-09-01T18:56:53Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 3070, "ts": "2026-09-01T18:56:54Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 3071, "ts": "2026-09-01T18:56:55Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 3072, "ts": "2026-09-01T18:56:56Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 3073, "ts": "2026-09-01T18:56:57Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 3074, "ts": "2026-09-01T18:56:59Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 3075, "ts": "2026-09-01T18:57:00Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 3076, "ts": "2026-09-01T18:57:01Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 3077, "ts": "2026-09-01T18:57:02Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 3078, "ts": "2026-09-01T18:57:04Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 3079, "ts": "2026-09-01T18:57:05Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 3080, "ts": "2026-09-01T18:57:07Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 3081, "ts": "2026-09-01T18:57:08Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 3082, "ts": "2026-09-01T18:57:09Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 3083, "ts": "2026-09-01T18:57:11Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 3084, "ts": "2026-09-01T18:57:12Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 3085, "ts": "2026-09-01T18:57:13Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 3086, "ts": "2026-09-01T18:57:14Z"}
+{"batch_id": "v-12321-1", "event": "WORKSPACE_CREATED", "issues": [12321, 12318], "kind": "verify", "seq": 3087, "session_id": "d77511c2-d8ce-4da4-b5ca-b510c1562c54", "ts": "2026-09-01T18:57:16Z", "workspace_id": "eb0569bb-6f84-4587-a1c6-a2a908ade928"}
+{"attempt": 1, "batch_id": "v-12321-1", "event": "LEASE_GRANTED", "expires_at": "2026-09-01T19:57:16Z", "issue": 12321, "kind": "verify", "seq": 3088, "session_id": "d77511c2-d8ce-4da4-b5ca-b510c1562c54", "ts": "2026-09-01T18:57:16Z", "workspace_id": "eb0569bb-6f84-4587-a1c6-a2a908ade928"}
+{"attempt": 1, "batch_id": "v-12321-1", "event": "LEASE_GRANTED", "expires_at": "2026-09-01T19:57:16Z", "issue": 12318, "kind": "verify", "seq": 3089, "session_id": "d77511c2-d8ce-4da4-b5ca-b510c1562c54", "ts": "2026-09-01T18:57:16Z", "workspace_id": "eb0569bb-6f84-4587-a1c6-a2a908ade928"}
+{"batch_id": "f-12323-1", "event": "WORKSPACE_CREATED", "issues": [12323], "kind": "fix", "seq": 3090, "session_id": "ba4bc506-e3c6-47e2-8d2d-dda097278f4c", "ts": "2026-09-01T18:57:19Z", "workspace_id": "3eac50ea-66cb-447c-bfdd-d6cebd0af58b"}
+{"attempt": 1, "batch_id": "f-12323-1", "event": "LEASE_GRANTED", "expires_at": "2026-09-01T20:27:19Z", "issue": 12323, "kind": "fix", "seq": 3091, "session_id": "ba4bc506-e3c6-47e2-8d2d-dda097278f4c", "ts": "2026-09-01T18:57:19Z", "workspace_id": "3eac50ea-66cb-447c-bfdd-d6cebd0af58b"}
+{"batch_id": "f-12308-1", "event": "WORKSPACE_CREATED", "issues": [12308], "kind": "fix", "seq": 3092, "session_id": "a5fa51a1-adc6-4524-b754-c698e7e35eff", "ts": "2026-09-01T18:57:21Z", "workspace_id": "d7ae9554-326e-4e0c-b7b4-1deb49607ac0"}
+{"attempt": 1, "batch_id": "f-12308-1", "event": "LEASE_GRANTED", "expires_at": "2026-09-01T20:27:21Z", "issue": 12308, "kind": "fix", "seq": 3093, "session_id": "a5fa51a1-adc6-4524-b754-c698e7e35eff", "ts": "2026-09-01T18:57:21Z", "workspace_id": "d7ae9554-326e-4e0c-b7b4-1deb49607ac0"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3093, "seq": 3094, "ts": "2026-09-01T18:57:21Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 3094, "seq": 3095, "ts": "2026-09-01T18:58:08Z"}

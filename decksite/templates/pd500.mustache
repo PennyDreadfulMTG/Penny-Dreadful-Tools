@@ -11,6 +11,28 @@
     </section>
     {{> newtopd}}
     <section>
+        <h2>{{_ Swiss Rounds}}</h2>
+        <p>This tournament uses WotC-standard swiss rounds, with a cut to top 8.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th class="n">Players</th>
+                    <th class="n">Swiss Rounds</th>
+                    <th class="n">Top Cut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#rounds_info}}
+                    <tr>
+                        <td class="n">{{player_range}}</td>
+                        <td class="n">{{swiss_rounds}}</td>
+                        <td class="n">{{#top_n}}Top {{top_n}}{{/top_n}}{{^top_n}}None{{/top_n}}</td>
+                    </tr>
+                {{/rounds_info}}
+            </tbody>
+        </table>
+    </section>
+    <section>
         <h2>{{_ Prizes}}</h2>
         <table>
             <thead>

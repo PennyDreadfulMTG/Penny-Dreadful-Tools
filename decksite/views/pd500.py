@@ -2,6 +2,7 @@ from flask import url_for
 
 from decksite.tournament import CompetitionFlag
 from decksite.view import View
+from decksite.views.kickoff import _rounds_info_for_template
 from magic import tournaments
 from magic.models import Deck
 from shared import dtutil
@@ -24,6 +25,7 @@ class PD500(View):
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
         self.prizes = tournaments.pd500_prizes()
+        self.rounds_info = _rounds_info_for_template()
 
         # Set up the "Past Winners" table
         self.past_winners = {

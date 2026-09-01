@@ -23,13 +23,13 @@ export class Grid extends DataManager {
                 if (stored.sortBy) this.state.sortBy = stored.sortBy;
                 if (stored.sortOrder) this.state.sortOrder = stored.sortOrder;
             }
-        } catch (e) { /* ignore corrupt storage */ }
+        } catch { /* ignore corrupt storage */ }
     }
 
     sort(sortBy, sortOrder = "AUTO") {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify({ sortBy, sortOrder }));
-        } catch (e) { /* ignore storage errors */ }
+        } catch { /* ignore storage errors */ }
         this.setState({ sortBy, sortOrder, "page": 0 });
     }
 

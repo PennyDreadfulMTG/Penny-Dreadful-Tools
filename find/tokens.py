@@ -69,7 +69,7 @@ class Key(Token):
 
 class Operator(Token):
     # Strict substrings of other operators must appear later in the list.
-    values = ['<=', '>=', ':', '!', '<', '>', '=']
+    values = ['<=', '>=', '!=', ':', '!', '<', '>', '=']
 
 
 class String(Token):

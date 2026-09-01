@@ -250,6 +250,8 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     all_colors = {'w', 'u', 'b', 'r', 'g'}
     if term == 'multicolored':
         term = 'm'
+    if operator == '!=':
+        return f'NOT ({color_where(subtable, "=", term)})'
     try:
         season_id = int(term)
         if operator == ':':

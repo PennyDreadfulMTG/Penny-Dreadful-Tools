@@ -460,6 +460,13 @@ def test_color_exclusively2_functional() -> None:
 def test_color_exclusively2() -> None:
     do_test('c!rg', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
 
+def test_color_not_equal() -> None:
+    do_test('c!=ur', 'NOT (((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 2))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2)))')
+
+@pytest.mark.functional
+def test_color_not_equal_functional() -> None:
+    do_functional_test('c!=ur', ['Lightning Bolt', 'Murderous Redcap', 'Progenitus'], ['Electrolyze', 'Izzet Signet'])
+
 def test_colorless_with_color() -> None:
     with pytest.raises(search.InvalidValueException):
         do_test('c:cr', '')

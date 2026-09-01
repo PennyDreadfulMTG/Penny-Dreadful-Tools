@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12465-1",
+      "branch": "sweep/12465-rip-out-the-oembed-stuff",
+      "files_changed": 6,
+      "head_sha": "c61706001b2ecf7629064e95bc53c2bc8d28dbf9",
+      "issue": 12465,
+      "lines_changed": 60,
+      "lint": "passed",
+      "notes": "Pure deletion of dead code \u2014 the oembed endpoint was never used by Discord per the comment in the code. The smoke.py guard removal is safe because the `/decks/<id>/oembed` route no longer exists. No schema or data migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe oembed endpoint (`/decks/<id>/oembed`) was added to support Discord rich embeds but Discord never implemented support for it. The endpoint, its view class, the template, and the `<link rel=\"alternate\">` tag in the HTML header were all dead code.\n\n## What changed\n\n- Deleted `decksite/templates/deckembed.mustache` (the oembed HTML template)\n- Removed `deck_embed()` route and function from `decksite/controllers/api.py`\n- Removed unused `from shared_web import template` import that was only needed by `deck_embed()`\n- Removed `oembed_url()` method and `DeckEmbed` class from `decksite/views/deck.py`\n- Removed `DeckEmbed` from `decksite/views/__init__.py` imports and `__all__`\n- Removed the `{{#oembed_url}}...{{/oembed_url}}` block from `decksite/templates/header.mustache`\n- Removed the `or rule_path.endswith('/oembed')` guard from `shared_web/smoke.py` (no longer needed since the route is gone)\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped in 19.65s\n\nFixes #12465",
+      "pr_title": "Remove oembed endpoint and related code (#12465)",
+      "recorded_at": "2026-09-01T18:46:15Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 19.65s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12465,
   "triage": [
     {

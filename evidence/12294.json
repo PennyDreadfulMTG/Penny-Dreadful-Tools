@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12294,
+  "triage": [
+    {
+      "batch_id": "t-12298-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue has zero comments; the title 'copy decksite back to old machine to get playability' is the only description",
+          "ref": "gh issue view 12294",
+          "type": "behavior"
+        },
+        {
+          "detail": "Dev DB dump uses mariadb-dump with --no-data for schema and full data minus person_note; precomputed _playability tables would be included, so a standard DB restore should carry playability",
+          "ref": "maintenance/dev_db.py:22",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate() can regenerate all _playability tables from deck data on any machine with a populated DB",
+          "ref": "decksite/data/playability.py:14",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12294,
+      "notes": "Without comments or additional context it is impossible to determine whether the issue is about a missing table in a DB snapshot, a deployment sequencing problem, or something else; the 'important + refactoring' label suggests the author knows the solution space but has not written it down.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:54:15Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

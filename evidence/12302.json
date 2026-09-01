@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12302,
+  "triage": [
+    {
+      "batch_id": "t-12304-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SIDEBOARD_WEIGHT = 0.2 applied uniformly to all sideboard cards in every playability aggregation",
+          "ref": "decksite/data/playability.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_season_archetype_playability uses (maindeck + sideboard_only * SIDEBOARD_WEIGHT) \u2014 no special case for companions or wish targets",
+          "ref": "decksite/data/playability.py:307",
+          "type": "code"
+        },
+        {
+          "detail": "COMPANIONS = search.search('is:companion') \u2014 companion list is computed but not referenced in playability module",
+          "ref": "decksite/data/rule.py:13",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12302,
+      "notes": "The decision requires agreeing on what weight companions (always accessible from sideboard) and wish-accessible cards deserve relative to ordinary sideboard cards \u2014 that is a product/algorithm judgment, not a clear bug.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

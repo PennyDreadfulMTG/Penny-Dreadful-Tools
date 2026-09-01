@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12454-1",
+      "branch": "sweep/12454-reduce-gap-between-bars-and-datalabel-in",
+      "files_changed": 2,
+      "head_sha": "717bdea4f93a9908018166c3093ce8af791b5656",
+      "issue": 12454,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The multiplier value (1.1) was chosen to match the triage sketch recommendation. If labels clip on very short bars or at unusual aspect ratios, the value can be tuned further toward 1.15 without any architectural changes. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nChart.js bar charts on the deck and person pages set their y-axis (or x-axis for horizontal bars) `max` value to `round(max_value * 1.3)`. This 30% headroom above the tallest bar was intended to leave space for the datalabel, but it created an unnecessarily large gap between the top of each bar and its label.\n\n## What changed\n\nReduced the multiplier from `1.3` to `1.1` in two places:\n\n- `decksite/views/deck.py` line 61 \u2014 mana cost distribution chart (vertical bars)\n- `decksite/views/person.py` line 51 \u2014 colour distribution chart (horizontal bars)\n\nThe 10% headroom is still enough for Chart.js to render datalabels without clipping while keeping labels visually close to their bars.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `python -m pytest decksite/views/ -x -q` \u2014 9 passed\n\nFixes #12454",
+      "pr_title": "Reduce gap between bars and datalabels in charts (#12454)",
+      "recorded_at": "2026-09-01T18:46:48Z",
+      "risk": "low",
+      "tests": {
+        "command": "python -m pytest decksite/views/ -x -q",
+        "detail": "9 passed in 2.39s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12454,
   "triage": [
     {

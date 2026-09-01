@@ -1,0 +1,51 @@
+{
+  "fix": [],
+  "issue": 12304,
+  "triage": [
+    {
+      "batch_id": "t-12304-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "process_score assigns status as bare string literals 'Not Legal', 'Legal', 'Undecided'",
+          "ref": "magic/rotation.py:130-134",
+          "type": "code"
+        },
+        {
+          "detail": "hype_message compares c.status against the same literals in 5 more places",
+          "ref": "magic/rotation.py:158-162",
+          "type": "code"
+        },
+        {
+          "detail": "cache_rotation SQL CASE writes the same three literals into the _rotation table",
+          "ref": "decksite/data/rotation.py:105-107",
+          "type": "code"
+        },
+        {
+          "detail": "rotation sort-order SQL compares status against 'Undecided' and 'Legal' in two CASE blocks and an IF()",
+          "ref": "decksite/data/clauses.py:155-168",
+          "type": "code"
+        },
+        {
+          "detail": "API endpoint filters with status <> 'Undecided' as a raw string",
+          "ref": "decksite/controllers/api.py:491",
+          "type": "code"
+        },
+        {
+          "detail": "24 occurrences across 5 files; no existing RotationStatus enum found",
+          "ref": "grep -rn \"'Legal'\\|'Not Legal'\\|'Undecided'\" --include='*.py' (excluding tests/legalities)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add a StrEnum (or Enum with str values) `RotationStatus` in `magic/rotation.py` with members `LEGAL = 'Legal'`, `NOT_LEGAL = 'Not Legal'`, `UNDECIDED = 'Undecided'`. Replace the 24 bare string literals in `magic/rotation.py`, `decksite/data/rotation.py`, `decksite/data/clauses.py`, `decksite/controllers/api.py`, and `discordbot/commands/history.py`. The DB column `status VARCHAR(20)` in `_rotation` stays unchanged \u2014 the enum values are still plain strings on the wire.",
+      "issue": 12304,
+      "notes": "The issue mentions 'possibly in the db also'; changing the MySQL column to an ENUM type would require a migration and is a separate question. The Python-only refactoring is self-contained and safe.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

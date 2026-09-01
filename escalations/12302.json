@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:53:42Z",
+  "evidence_refs": [
+    "evidence/12302.json#triage[0]"
+  ],
+  "issue": 12302,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The decision requires agreeing on what weight companions (always accessible from sideboard) and wish-accessible cards deserve relative to ordinary sideboard cards \u2014 that is a product/algorithm judgment, not a clear bug."
+}

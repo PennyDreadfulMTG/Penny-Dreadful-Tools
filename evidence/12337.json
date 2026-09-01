@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12337,
+  "triage": [
+    {
+      "batch_id": "t-12343-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "next_season_num() returns the season's sequential number (not the DB id/PK)",
+          "ref": "magic/seasons.py:182-183",
+          "type": "code"
+        },
+        {
+          "detail": "season_id = seasons.next_season_num() \u2014 stores a season *number* in a variable called season_id, illustrating the confusion",
+          "ref": "decksite/data/rotation.py:58",
+          "type": "code"
+        },
+        {
+          "detail": "SQL schema uses season_id as FK referencing season.id, but season.number is the human-visible season number \u2014 the two concepts collide in variable names throughout the codebase",
+          "ref": "decksite/data/archetype.py:204-219",
+          "type": "code"
+        },
+        {
+          "detail": "next_season_num is called in 20+ places and its result is frequently assigned to variables named season_id, propagating the ambiguity",
+          "ref": "grep -rn 'next_season_num\\|season_num\\b' decksite/ magic/ shared/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12337,
+      "notes": "The issue body itself says 'This may not be resolvable' \u2014 the DB schema uses season.id as PK and season.number for the sequential number, but large portions of the codebase blur the two. A full rename would touch 20+ files. Scope is well beyond 150 lines.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:53Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

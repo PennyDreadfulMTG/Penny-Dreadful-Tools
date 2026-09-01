@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12347,
+  "triage": [
+    {
+      "batch_id": "t-12350-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Classifier writes guesses with reviewed=FALSE so they pre-fill the admin queue; confidence score lands in deck_cache.similarity but its threshold for display is not yet defined",
+          "ref": "decksite/data/archetype_classifier.py:1-30",
+          "type": "code"
+        },
+        {
+          "detail": "Issue proposes three mutually exclusive UX strategies: suppress low-confidence guesses, hold for moderation, or something else \u2014 no owner decision recorded",
+          "ref": "#12347",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12347,
+      "notes": "An owner must decide whether to suppress uncertain guesses (a UX tradeoff: fewer confusing labels vs. an empty archetype field), hold them for review (latency tradeoff), or pursue a hybrid. The confidence signal already exists in deck_cache.similarity.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:52:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

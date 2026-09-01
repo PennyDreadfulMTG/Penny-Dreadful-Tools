@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12299,
+  "triage": [
+    {
+      "batch_id": "t-12304-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "c.update(cards[c.name]) raises KeyError if a card name in _rotation is absent from oracle.cards_by_name()",
+          "ref": "decksite/data/rotation.py:41",
+          "type": "code"
+        },
+        {
+          "detail": "Old redis-backed system used cs.get(name) which returns None gracefully for missing cards \u2014 explicit robustness the new code lost",
+          "ref": "magic/rotation.py:106",
+          "type": "code"
+        },
+        {
+          "detail": "Introduced the decksite DB caching layer; the new load_rotation replaced the .get() pattern with direct dict access",
+          "ref": "d12224bf",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": "In `decksite/data/rotation.py` around line 41, change the loop to `card_data = cards.get(c.name); if card_data: c.update(card_data) else: logger.warning(...)`. This restores the same graceful handling the old code had when a rotation-file card name is not yet in the oracle (e.g. immediately after a set release before the DB is updated).",
+      "issue": 12299,
+      "notes": "The label says '+ question' but the author's 'If so, fix pls' makes intent clear; the fix is 4-5 lines with no behavior change for the normal path.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

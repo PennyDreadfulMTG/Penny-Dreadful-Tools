@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12385-1",
+      "branch": "sweep/12385-now-that-we-have-the-500-and-kick-off-co",
+      "files_changed": 2,
+      "head_sha": "1842025cb72aa5d866101144b0ad27fc9e04077b",
+      "issue": 12385,
+      "lines_changed": 20,
+      "lint": "passed",
+      "notes": "The `cf` alias (from `competition_flag AS cf`) in achievements.py queries is still joined but no longer referenced \u2014 the join remains valid and harmless since it's needed by the base query in query.py. The numeric values used (2 = KICK_OFF, 3 = PENNY_DREADFUL_500) are the enum values computed at import time via f-strings, consistent with how clauses.py already uses the flag.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nFour achievement SQL fragments in `decksite/data/achievements.py` and one competition query in `decksite/view.py` used `cf.name LIKE '%%Penny Dreadful 500%%'` or `c.name LIKE '%%Penny Dreadful 500%%'`/`cf.name LIKE '%%Kick off%%'` to identify special competitions. These LIKE patterns are fragile (match by name substring) and unnecessary now that competitions are tagged with a `competition_flag_id` FK to the `competition_flag` table.\n\n## What changed\n\n- `decksite/data/achievements.py`: added `from decksite.tournament import CompetitionFlag`; replaced 8 `cf.name LIKE '%%...%%'` conditions with `c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value}` (= 3) or `c.competition_flag_id = {CompetitionFlag.KICK_OFF.value}` (= 2) in the `PD500Top8`, `PD500Winner`, `KickoffTop8`, and `KickoffWinner` achievement classes.\n- `decksite/view.py`: added `from decksite.tournament import CompetitionFlag`; replaced `c.name LIKE '%%Penny Dreadful 500%%'` in `notice_html()` with `c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value}`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (environment had MariaDB available)\n\nFixes #12385",
+      "pr_title": "Replace LIKE name patterns with competition_flag_id for PD500 and Kick Off (#12385)",
+      "recorded_at": "2026-09-01T18:51:53Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12385,
   "triage": [
     {

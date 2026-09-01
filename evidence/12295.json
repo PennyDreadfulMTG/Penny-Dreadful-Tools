@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12295,
+  "triage": [
+    {
+      "batch_id": "t-12298-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "rotation_cards_api passes q to card_search_where which does card-name/attribute search only \u2014 no rotation-specific predicates",
+          "ref": "decksite/controllers/api.py:487",
+          "type": "code"
+        },
+        {
+          "detail": "The _rotation table has hits, hits_needed, status (Legal/Undecided/Not Legal) columns that are not exposed as search syntax",
+          "ref": "decksite/data/rotation.py:88",
+          "type": "code"
+        },
+        {
+          "detail": "card_search_where is the only search mechanism wired into the rotation endpoint; no rotation-specific keyword parsing exists",
+          "ref": "decksite/data/clauses.py:269",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12295,
+      "notes": "Implementation requires designing the keyword syntax (e.g. hits:>10, status:legal), adding a rotation-specific query preprocessor in clauses.py or a new module, and updating the frontend to surface the syntax; scope is well above the easy-fix threshold.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:54:15Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12364-1",
+      "branch": "sweep/12364-can-shared-repo-using-logging-not-print",
+      "files_changed": 1,
+      "head_sha": "f82a45141e268e211c6858d908db3f7953b349a7",
+      "issue": 12364,
+      "lines_changed": 14,
+      "lint": "passed",
+      "notes": "The `sys` import is intentionally kept \u2014 `sys.maxsize` is used as the default for `max_pull_requests` in `get_pull_requests()`. The triage hint incorrectly suggested removing `import sys`. There is a pre-existing typo 'Gihub' on line 155 (in `get_pull_requests`) that was not corrected to avoid drive-by changes.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`shared/repo.py` used bare `print()` calls (some to `sys.stderr`, some to stdout) instead of the project's `shared.logger` module. This meant these messages bypassed the structured logging system used everywhere else, making them invisible in production log aggregation and inconsistent with the rest of the codebase.\n\n## What changed\n\nIn `shared/repo.py`:\n- Added `logger` to the existing `from shared import configuration, dtutil` import.\n- Replaced all 6 `print()` calls with appropriate logger calls:\n  - `print(..., file=sys.stderr)` (issue body dump) \u2192 `logger.warning()`\n  - Two `'Not creating github issue'` prints \u2192 `logger.info()`\n  - `print(f'Problem creating issue: {e}', file=sys.stderr)` \u2192 `logger.error()`\n  - Two exception-handler prints in `get_pull_requests()` \u2192 `logger.error()`\n- `import sys` is retained because `sys.maxsize` is still used as a default parameter in `get_pull_requests()`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks).\n- Unit tests are env-blocked: the test suite imports `magic.database` at collection time, which requires a live MariaDB instance with the `cards` database populated. This bootstrap was not completed in this environment. No tests cover `shared/repo.py` directly (there is no `shared/repo_test.py`).\n\nFixes #12364",
+      "pr_title": "Replace print() calls with logger in shared/repo.py (#12364)",
+      "recorded_at": "2026-09-01T18:49:45Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed (lint only; unit tests are env-blocked \u2014 all tests import magic.database which requires a live MariaDB with the cards database, unavailable without the full bootstrap DB load)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12364,
   "triage": [
     {

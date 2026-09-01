@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12325,
+  "triage": [
+    {
+      "batch_id": "t-12343-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "if c.args[0] in [2002, 2003]: \u2014 uses args tuple index to read MySQL error code",
+          "ref": "shared/database.py:37",
+          "type": "code"
+        },
+        {
+          "detail": "five further e.args[0] comparisons for error codes 1050, 1051, 1062, 1146, 2006 \u2014 consistent pattern throughout",
+          "ref": "shared/database.py:55-83",
+          "type": "code"
+        },
+        {
+          "detail": "MySQLdb.Error exposes both .args[0] (the error code) and .errno (the same value); both are semantically equivalent and functionally identical for all the comparisons made here",
+          "ref": "MySQLdb.Error",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12325,
+      "notes": "The current code is correct and works reliably; this is a design/style question about which attribute is more idiomatic. Both .args[0] and .errno yield the same integer error code. No bug exists, just an open question about API preference.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

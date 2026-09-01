@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12484-1",
+      "branch": "sweep/12484-we-should-understand-the-spanish-questio",
+      "files_changed": 2,
+      "head_sha": "6cf78a049332a23a4db51a54f05e2ed45693842d",
+      "issue": 12484,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The fix only strips \u00bf from the left (leading characters), which is the correct behavior since \u00bf legitimately appears mid-string in Spanish text. The two-line change is self-contained and only affects the normalize() entry path.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nDeck names beginning with the Spanish inverted question mark (`\u00bf`) were not handled correctly. The `titlecase` library sees `\u00bf` as the first character and does not capitalize the following word properly, resulting in mangled deck names like `\u00bfred Deck Wins?` instead of the expected `Red Deck Wins?`.\n\n## What changed\n\nIn `decksite/deck_name.py`, added `name = name.lstrip('\u00bf')` immediately before the first `titlecase.titlecase(name)` call in `normalize()`. This strips any leading inverted question marks before titlecasing, so the rest of the pipeline processes the name correctly.\n\nAdded a corresponding parametrized test case `('\u00bfRed Deck Wins?', 'Red Deck Wins?', ['R'], 'Red Deck Wins', 1)` in `decksite/deck_name_test.py`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit decksite/deck_name_test.py` \u2014 846 passed, 1 skipped, 89 deselected\n\nFixes #12484",
+      "pr_title": "Strip leading \u00bf before titlecasing deck names (#12484)",
+      "recorded_at": "2026-09-01T18:46:59Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/deck_name_test.py",
+        "detail": "846 passed, 1 skipped, 89 deselected in 18.25s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12484,
   "triage": [
     {

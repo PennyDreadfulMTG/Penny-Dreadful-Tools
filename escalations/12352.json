@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:53:31Z",
+  "evidence_refs": [
+    "evidence/12352.json#triage[0]"
+  ],
+  "issue": 12352,
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "Fix is small in code terms (update 2 files + 1 migration file to DROP COLUMN number), but requires an ALTER TABLE on the season table. The issue body itself discusses the two alternatives and effectively concludes in favor of dropping 'number' in favor of 'id'."
+}

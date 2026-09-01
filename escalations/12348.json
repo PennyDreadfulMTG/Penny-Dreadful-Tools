@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T18:52:26Z",
+  "created_at": "2026-09-01T18:52:04Z",
+  "evidence_refs": [
+    "evidence/12348.json#triage[0]"
+  ],
+  "issue": 12348,
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "Implementation requires at minimum a new DB table for admin-flagged deck names and an admin UI endpoint; the issue also proposes user-flagging for mod review, which widens scope further."
+}

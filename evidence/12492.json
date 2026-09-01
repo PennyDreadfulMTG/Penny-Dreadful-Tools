@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12492-2",
+      "branch": "sweep/12492-admin-unlink-could-skip-loading-people-t",
+      "files_changed": 1,
+      "head_sha": "fa7d59a625c0389b0ec89a375efd016fbc054fdf",
+      "issue": 12492,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Only the unlink page is changed; the triage sketch also mentioned player_notes (line 206) and edit_aliases (line 51) as potential targets, but those pages serve a broader admin purpose and should show all people \u2014 touching them would be out of scope.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/admin/unlink/` page called `ps.load_people()` without any filter, loading **all** people from the database \u2014 including those who have no Discord account linked. The purpose of the unlink page is specifically to remove Discord links, so showing people who have no `discord_id` is misleading and wastes the dropdown space. Since `load_people` uses a `LEFT JOIN` to Discord accounts, people without a link are silently included but can never be unlinked.\n\n## What changed\n\nAdded `where='p.discord_id IS NOT NULL'` to the `ps.load_people()` call in `decksite/controllers/admin.py:223` (the `unlink()` controller). This is a 1-line change scoped entirely to the unlink page \u2014 other admin pages (`player_notes`, `ban`, `edit_aliases`) that legitimately need the full people list are left unchanged.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (full suite, with live MariaDB)\n\nFixes #12492",
+      "pr_title": "Fix admin/unlink to only load linked people (#12492)",
+      "recorded_at": "2026-09-01T18:47:21Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.24s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12492,
   "triage": [
     {

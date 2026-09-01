@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12352,
+  "triage": [
+    {
+      "batch_id": "t-12358-1",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "season table has both 'id INT PRIMARY KEY AUTO_INCREMENT' and 'number TINYINT NOT NULL UNIQUE'",
+          "ref": "decksite/sql/15.sql:1",
+          "type": "code"
+        },
+        {
+          "detail": "From season 8 onward: INSERT IGNORE INTO season (id, number, ...) explicitly sets id=number, making the columns always equal",
+          "ref": "decksite/sql/15.sql:9",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_legal_cards() uses 'SELECT number FROM season' \u2014 would need updating to 'SELECT id FROM season' after column drop",
+          "ref": "decksite/data/playability.py:122",
+          "type": "code"
+        },
+        {
+          "detail": "References season.number \u2014 second code location requiring update after migration",
+          "ref": "maintenance/insert_seasons.py:9",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12352,
+      "notes": "Fix is small in code terms (update 2 files + 1 migration file to DROP COLUMN number), but requires an ALTER TABLE on the season table. The issue body itself discusses the two alternatives and effectively concludes in favor of dropping 'number' in favor of 'id'.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

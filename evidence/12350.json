@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12350,
+  "triage": [
+    {
+      "batch_id": "t-12350-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "matchup_cards, _ = cs.load_cards() \u2014 no all_legal=True, so only cards that appear in _card_stats (played competitively) are returned",
+          "ref": "decksite/controllers/metagame.py:161",
+          "type": "code"
+        },
+        {
+          "detail": "all_legal=True switches from_clause to '_legal_cards LEFT JOIN _card_stats', including unplayed-but-legal cards",
+          "ref": "decksite/data/card.py:286-287",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_legal_cards() populates _legal_cards with every card in the current season's legal list, run at post-rotation",
+          "ref": "decksite/data/playability.py:121-148",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/metagame.py:161, change `cs.load_cards()` to `cs.load_cards(all_legal=True)`. This switches the underlying query to use `_legal_cards LEFT JOIN _card_stats`, which includes all currently legal cards even if they have zero competitive plays, exactly as other card-list endpoints do.",
+      "issue": 12350,
+      "notes": "The all_legal flag is already used by the /cards/ endpoint in the same way; this is just a missing parameter on the matchups card list.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:52:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12297,
+  "triage": [
+    {
+      "batch_id": "t-12298-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "achievement_person_id = int(args.get('personId', '')) \u2014 int('') raises ValueError if personId is absent",
+          "ref": "decksite/data/clauses.py:236",
+          "type": "code"
+        },
+        {
+          "detail": "season_id = int(args.get('seasonId', '')) \u2014 same ValueError risk if seasonId is absent",
+          "ref": "decksite/data/clauses.py:237",
+          "type": "code"
+        },
+        {
+          "detail": "load_deck_ids signature is (key: str, person_id: int | None, season_id: int | None) \u2014 already accepts None; guards on truthiness at lines 58 and 60",
+          "ref": "decksite/data/achievements.py:54",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/clauses.py lines 236-237, replace `int(args.get('personId', ''))` with `int(args.get('personId')) if args.get('personId') else None` and similarly for seasonId. No other files need changing; achievements.load_deck_ids already handles None correctly.",
+      "issue": 12297,
+      "notes": "No current callsite passes achievementKey without personId/seasonId, so the bug is latent; fix is purely defensive as the issue notes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:54:15Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

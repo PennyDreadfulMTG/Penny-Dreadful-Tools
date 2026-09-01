@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12348,
+  "triage": [
+    {
+      "batch_id": "t-12350-1",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "WHITELIST and PROFANITY_BLACKLIST are static Python lists in source; no DB-backed admin interface exists",
+          "ref": "decksite/deck_name.py:16-64",
+          "type": "code"
+        },
+        {
+          "detail": "Issue body itself says 'maybe our blacklist (and whitelist) could live in the db' \u2014 persistent per-deck flagging requires a new DB table",
+          "ref": "#12348",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12348,
+      "notes": "Implementation requires at minimum a new DB table for admin-flagged deck names and an admin UI endpoint; the issue also proposes user-flagging for mod review, which widens scope further.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:52:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

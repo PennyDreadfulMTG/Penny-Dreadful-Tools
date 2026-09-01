@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12358,
+  "triage": [
+    {
+      "batch_id": "t-12358-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_season_card_count() has INNER JOIN _legal_cards to exclude illegal cards \u2014 partial fix referencing #9121",
+          "ref": "decksite/data/playability.py:171",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_season_count() counts ALL decks with archetype_id \u2014 no exclusion for decks illegal in their own season; same gap in preaggregate_season_archetype_count() at line 154",
+          "ref": "decksite/data/playability.py:134",
+          "type": "code"
+        },
+        {
+          "detail": "Exclude cards that were not legal in the season from playability calculations \u2014 card-level fix only, not deck-level",
+          "ref": "17e640e9",
+          "type": "commit"
+        },
+        {
+          "detail": "No commit found addressing the deck-level exclusion requested in this issue",
+          "ref": "git log --oneline --grep=12358 -- decksite/data/playability.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12358,
+      "notes": "Card-level illegal exclusion is implemented (via #9121, commit 17e640e9). The remaining gap is excluding wholly-illegal decks from the _season_count and _season_archetype_count denominators used in playability calculations. Issue text itself notes this may be rare enough to skip ('let it lie').",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

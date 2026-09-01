@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:53:31Z",
+  "evidence_refs": [
+    "evidence/12353.json#triage[0]"
+  ],
+  "issue": 12353,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The behavior is technically correct (rank is NULL because there is no play data yet), but user-facing it makes newly-legal cards appear uninteresting on /rotation immediately post-rotation. The owner needs to decide the approach: special-case new card ranks, add them to /rotation/changes, or hide /rotation outside rotation window."
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12342,
+  "triage": [
+    {
+      "batch_id": "t-12343-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "WHEN playability = 0 THEN NULL / ELSE ROW_NUMBER() OVER (ORDER BY playability DESC) \u2014 issue (1) is fixed (NULL for zero playability), but ROW_NUMBER() still assigns distinct ranks to cards with identical playability, leaving issue (2) unresolved",
+          "ref": "decksite/data/query.py:66-68",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment 2024-04-28 says 'I fixed (1). Still need to fix (2).' \u2014 confirms (2) is open",
+          "ref": "#12342",
+          "type": "issue"
+        },
+        {
+          "detail": "No merged PR after 2024-04-28 targets this ROW_NUMBER/RANK fix in query.py",
+          "ref": "gh pr list --search 'rank playability' --state merged",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/data/query.py:67, change `ROW_NUMBER() OVER (ORDER BY playability DESC)` to `RANK() OVER (ORDER BY playability DESC)`. RANK() gives the same rank to ties and skips the subsequent numbers, which is the behavior described in the issue.",
+      "issue": 12342,
+      "notes": "Single-line change in one SQL helper. RANK() is available in MySQL 8+ which this project already uses (ROW_NUMBER is already used there). The CASE structure already handles the playability=0 \u2192 NULL case from fix (1).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12436-1",
+      "branch": "sweep/12436-change-should-to-must-in-tourney-rules-f",
+      "files_changed": 2,
+      "head_sha": "2c0daa3d34c7f8adcf2b8f4bff5bee8437e9863e",
+      "issue": 12436,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Two-word change in template copy; no logic affected. The surrounding sentence already uses 'must' for the Allow-Watchers rule, so the new wording is now consistent throughout both pages.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe league info and tournament rules pages both stated \"Matches **should** use 25 minute timers\", which implies the rule is a recommendation. The intended wording (consistent with the adjacent \"Matches **must** Allow Watchers\" rule) is mandatory.\n\n## What changed\n\n- `decksite/templates/leagueinfo.mustache` line 41: `should` \u2192 `must`\n- `decksite/templates/tournaments.mustache` line 49: `should` \u2192 `must`\n\nNo logic changes; template text only.\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed. These are static mustache templates with no associated unit tests; lint is the applicable validation gate.\n\nFixes #12436",
+      "pr_title": "Change \"should\" to \"must\" for 25-minute timer rule (#12436)",
+      "recorded_at": "2026-09-01T18:46:37Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed \u2014 template files are not covered by unit tests; lint is the applicable validator here.",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12436,
   "triage": [
     {

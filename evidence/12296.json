@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12296,
+  "triage": [
+    {
+      "batch_id": "t-12298-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "def lock[T](func: FuncType[T]) -> T: return func() \u2014 does no locking, merely calls the function and returns",
+          "ref": "shared/decorators.py:34",
+          "type": "code"
+        },
+        {
+          "detail": "Zero usages found anywhere in the codebase; the function is both unused and a no-op",
+          "ref": "grep -rn '@lock\\b|decorators\\.lock' --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Delete lines 34-35 of shared/decorators.py (the lock function definition). No callers exist, so no other files need updating.",
+      "issue": 12296,
+      "notes": "Two-line deletion with no callers; zero risk of breakage.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:54:15Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

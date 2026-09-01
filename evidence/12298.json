@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12298,
+  "triage": [
+    {
+      "batch_id": "t-12298-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "ranks_select() derives rank solely from _playability (PD play history); new cards with no PD history get NULL rank",
+          "ref": "decksite/data/query.py:61",
+          "type": "code"
+        },
+        {
+          "detail": "rotation table joins ranks_select() for the rank column; NEW cards are left with NULL rank",
+          "ref": "decksite/data/rotation.py:112",
+          "type": "code"
+        },
+        {
+          "detail": "edhrec_rank is present in Scryfall card schema but not stored in the DB or used in rotation ranking",
+          "ref": "magic/abc/card_description.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "Author labeled the issue as a question, explicitly listing multiple data sources (mtgtop8, CubeCobra, EDHREC/Scryfall) without committing to one",
+          "ref": "issue label: question",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12298,
+      "notes": "The external data source choice (mtgtop8 scrape, CubeCobra, EDHREC, or Scryfall's edhrec_rank) is the primary blocker; once decided, the implementation requires fetching/storing the external rank and modifying ranks_select() or the rotation preaggregation to use it as a fallback for NULL-rank cards.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:54:15Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

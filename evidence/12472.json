@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12472-1",
+      "branch": "sweep/12472-people-on-all-people-should-link-to-all",
+      "files_changed": 3,
+      "head_sha": "1c2dfc2525ed23dccb7dd87f38d687a450da44a1",
+      "issue": 12472,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "The fix is purely URL-generation logic with no DB or schema changes. `season_id == 0` is the established internal sentinel for 'all seasons' (see `decksite/__init__.py:get_season_id`). Admin views (ban, edit_aliases, etc.) that embed a `people` list always run under non-SEASONS routes so their `season_id()` never returns 0 \u2014 they are unaffected.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nOn `/seasons/all/people`, each person's row linked to `/people/{username}/` \u2014 the **current season** detail page \u2014 instead of `/seasons/all/people/{username}/`, the **all-time** detail page.\n\nThe root cause: `prepare_people()` in `decksite/prepare.py` unconditionally generated base `/people/` URLs with no awareness of which season context it was being called for.\n\n## What changed\n\n- **`decksite/prepare.py`**: Added `season_id: int | str | None = None` parameter to `prepare_people`. When `season_id == 0` (the internal representation of \"all seasons\", as returned by `get_season_id()` when the path segment is `all`), person URLs are generated as `/seasons/all/people/{username}/` or `/seasons/all/people/id/{id}/` instead of the bare `/people/` forms.\n- **`decksite/controllers/api.py`**: Passed the already-computed `season_id` to `prepare_people(people, season_id)` in `people_api()`. The `seasonId=0` query parameter sent by the JS client on the all-seasons page maps to `season_id=0` here.\n- **`decksite/view.py`**: Updated the `View.prepare_people()` method to pass `self.season_id()` to `prepare.prepare_people`, matching the existing pattern used by `prepare_archetypes`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped\n- Manual trace: on `/seasons/all/people`, the JS table sends `?seasonId=0` to `/api/people/`; `seasons.season_id(\"0\", None)` returns `0`; `prepare_people(people, 0)` now generates `/seasons/all/people/{username}/` URLs.\n\nFixes #12472",
+      "pr_title": "Fix /all/people person links to point to all-time detail page (#12472)",
+      "recorded_at": "2026-09-01T18:46:26Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.62s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12472,
   "triage": [
     {

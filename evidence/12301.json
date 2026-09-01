@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12301,
+  "triage": [
+    {
+      "batch_id": "t-12304-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No scrollIntoView calls found in hand-authored JS source; scroll behavior is library-driven",
+          "ref": "grep -rn 'scrollIntoView' shared_web/static/js/ (excluding dist/bundle.js)",
+          "type": "search"
+        },
+        {
+          "detail": "Pagination logic uses tablesorter; no bespoke scroll-on-page-change code",
+          "ref": "shared_web/static/js/pd.js",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12301,
+      "notes": "Issue is labeled '+ question' and the author explicitly solicits community input ('What does anybody else do?') \u2014 two competing UX tradeoffs are described with no preferred resolution.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

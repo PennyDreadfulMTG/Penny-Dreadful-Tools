@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:54:15Z",
+  "evidence_refs": [
+    "evidence/12294.json#triage[0]"
+  ],
+  "issue": 12294,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Without comments or additional context it is impossible to determine whether the issue is about a missing table in a DB snapshot, a deployment sequencing problem, or something else; the 'important + refactoring' label suggests the author knows the solution space but has not written it down."
+}

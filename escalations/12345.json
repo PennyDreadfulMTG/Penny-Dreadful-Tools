@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T18:52:26Z",
+  "created_at": "2026-09-01T18:52:04Z",
+  "evidence_refs": [
+    "evidence/12345.json#triage[0]"
+  ],
+  "issue": 12345,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The config flag always_show_rotation is already the workaround; the decision needed is whether to restore auto-hiding, redesign the page's messaging, or redirect to /rotation/changes after rotation completes."
+}

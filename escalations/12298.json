@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:54:15Z",
+  "evidence_refs": [
+    "evidence/12298.json#triage[0]"
+  ],
+  "issue": 12298,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The external data source choice (mtgtop8 scrape, CubeCobra, EDHREC, or Scryfall's edhrec_rank) is the primary blocker; once decided, the implementation requires fetching/storing the external rank and modifying ranks_select() or the rotation preaggregation to use it as a fallback for NULL-rank cards."
+}

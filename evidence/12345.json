@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12345,
+  "triage": [
+    {
+      "batch_id": "t-12350-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "in_rotation() returns True unconditionally when always_show_rotation config is set, keeping /rotation visible after rotation ends",
+          "ref": "magic/rotation.py:25-34",
+          "type": "code"
+        },
+        {
+          "detail": "When not in_rotation, prefix becomes 'Rotation is ' (not 'in progress') and a note says 'Data from the last rotation is shown', but the messaging is acknowledged as confusing",
+          "ref": "decksite/views/rotation.py:14-17",
+          "type": "code"
+        },
+        {
+          "detail": "Issue proposes three options: hide /rotation again, make /rotation/changes primary, or 'something more radical' \u2014 no owner decision",
+          "ref": "#12345",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12345,
+      "notes": "The config flag always_show_rotation is already the workaround; the decision needed is whether to restore auto-hiding, redesign the page's messaging, or redirect to /rotation/changes after rotation completes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:52:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12444-1",
+      "branch": "sweep/12444-manabase-should-check-the-legality-of-th",
+      "files_changed": 4,
+      "head_sha": "9572ace3472cd3f18147c739cb594c3472b1553e",
+      "issue": 12444,
+      "lines_changed": 57,
+      "lint": "passed",
+      "notes": "The fix is additive \u2014 `skip_size_checks=False` preserves all existing behaviour. The `check_only_card_legality` method mirrors `check_deck_legality` but skips size constraints, which is appropriate for the manabase solver where users submit only their spell cards (not a full 60-card list). No database migration or product decision required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/manabase` form called `parse_and_validate_decklist(check_legality=False)`, meaning it accepted cards that are not legal in Penny Dreadful. Users could enter banned/rotated cards and get a manabase recommendation for an illegal deck.\n\n## What changed\n\n- **`magic/legality.py`**: Added `skip_size_checks: bool = False` parameter to `legal_formats()`. When `True`, the <60-card and >15-sideboard size checks are skipped, but all card-level legality checks (banned, not legal, restricted, too many copies) still apply.\n- **`decksite/form.py`**: Added `check_only_card_legality()` method on `DecklistForm`. It calls `legal_formats(\u2026, skip_size_checks=True)` so it validates each card's Penny Dreadful legality and bug status without requiring a full 60-card deck.\n- **`decksite/manabase.py`**: `ManabaseForm.do_validation()` now calls `check_only_card_legality()` after parsing the decklist, so illegal or buggy cards are flagged to the user.\n- **`magic/legality_test.py`**: Added `test_legal_formats_skip_size_checks` covering the new parameter.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 846 passed, 1 skipped (full suite, including new test)\n\nFixes #12444",
+      "pr_title": "Check card legality in /manabase without requiring full deck size (#12444)",
+      "recorded_at": "2026-09-01T18:49:34Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/legality_test.py",
+        "detail": "846 passed, 1 skipped in 18.12s (full suite run)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12444,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12512-1",
+      "branch": "sweep/12512-add-an-explain-for-sideboarding-down-to",
+      "files_changed": 1,
+      "head_sha": "b9f2d84deca3ed5f84272e6a3f13044465d17c66",
+      "issue": 12512,
+      "lines_changed": 10,
+      "lint": "passed",
+      "notes": "The 'search our tournament/bug rules' alternative mentioned in the issue title is a separate, larger feature (not implemented here). The sideboard rule text is sourced verbatim from the existing tournaments.mustache template to stay authoritative.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\n`!explain sideboard` (and `/explain sideboard`) had no entry. Players asking about the PD tournament rule for sideboarding down to less than 60 cards had no quick Discord answer.\n\n## What changed\n\nAdded a `'sideboard'` key to the `explanations` dict in `discordbot/commands/explain.py` with the tournament rule text sourced directly from the tournaments page template (`decksite/templates/tournaments.mustache`): if a player starts a sideboarded game with less than 60 cards and either player notices before the end of turn 2, the game is restarted; games beyond turn 2 stand. Included a link to the Tournament Rules page. Also added `'sideboards'` as an explicit alias (the existing `rstrip('s')` logic already handles the plural, but the alias keeps it consistent with other alias entries).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit discordbot` \u2014 845 passed, 1 skipped\n\nFixes #12512",
+      "pr_title": "Add explain for sideboarding down to 59 cards (#12512)",
+      "recorded_at": "2026-09-01T18:46:04Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "845 passed, 1 skipped in 19.08s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12512,
   "triage": [
     {

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12356,
+  "triage": [
+    {
+      "batch_id": "t-12358-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "_legal_cards has PRIMARY KEY (season_id, name) \u2014 composite PK covers the INNER JOIN in preaggregate_season_card_count()",
+          "ref": "decksite/data/playability.py:165",
+          "type": "code"
+        },
+        {
+          "detail": "deck_cache.deck_id is UNIQUE (indexed) \u2014 season_join LEFT JOIN is covered",
+          "ref": "decksite/sql/10.sql:3",
+          "type": "code"
+        },
+        {
+          "detail": "deck_card has idx_card_deck_id_sideboard_n and idx_deck_id_card_n_sideboard covering both join directions",
+          "ref": "decksite/sql/24.sql:1",
+          "type": "code"
+        },
+        {
+          "detail": "No commit found addressing this issue after it was filed on 2024-04-27",
+          "ref": "git log --oneline --grep=12356",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12356,
+      "notes": "All obvious indexes already exist. Without running EXPLAIN on the live DB, it is not possible to determine which index (if any) would reduce the 40s/50s creation time for _new_season_card_count and _new_season_archetype_card_count. The slowness may be fundamental to data volume rather than a missing index.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

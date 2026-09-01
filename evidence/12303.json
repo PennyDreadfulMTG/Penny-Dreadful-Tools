@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12303,
+  "triage": [
+    {
+      "batch_id": "t-12304-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_deck_ids builds season_id filter inline (if season_id and int(season_id) > 0) rather than via query.season_query(), and appends the condition a second time to sql at lines 70-71 (harmless duplicate)",
+          "ref": "decksite/data/achievements.py:54-72",
+          "type": "code"
+        },
+        {
+          "detail": "season_query() is the standard helper used elsewhere; returns 'TRUE' for None/all/0 and 'season_id = N' otherwise",
+          "ref": "decksite/data/query.py:50-56",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12303,
+      "notes": "The issue is labeled '+ question' and explicitly asks an architectural question ('at the api layer rather than the data layer?'). Code works correctly despite the non-standard pattern and duplicate condition; the decision on where season filtering belongs is an owner call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:42Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

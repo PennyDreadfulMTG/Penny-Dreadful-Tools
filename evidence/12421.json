@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12421-1",
+      "branch": "sweep/12421-we-have-code-that-tries-to-call-bluebone",
+      "files_changed": 2,
+      "head_sha": "5a44a59ff0ff398deb3faa6afd8d8f000650a1b4",
+      "issue": 12421,
+      "lines_changed": 5,
+      "lint": "passed",
+      "notes": "The function had no callers \u2014 this is a pure dead-code removal. The `mci_image()` and `gatherer_image()` functions also remain in the file but are not called from `download_image_async`; they may be similarly stale but were not touched as they were not part of this issue.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `bluebones_image()` function in `magic/image_fetcher.py` built URLs for `http://magic.bluebones.net/proxies/index2.php` \u2014 a service that now returns HTTP 500 for all requests. The function was never called from any live code path (Scryfall handles all image fetching), but it still existed as dead, misleading code. A comment in `discordbot/unit_test.py` also referenced bluebones as a reason for using Nalathni Dragon as a test case.\n\n## What changed\n\n- Deleted `bluebones_image()` (3 lines) from `magic/image_fetcher.py`.\n- Updated the outdated comment in `discordbot/unit_test.py` to accurately reflect that Scryfall is now the sole image source.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit discordbot` \u2014 845 passed, 1 skipped, 89 deselected\n\nFixes #12421",
+      "pr_title": "Remove dead bluebones_image() that always 500s (#12421)",
+      "recorded_at": "2026-09-01T18:49:56Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.19s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12421,
   "triage": [
     {

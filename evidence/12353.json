@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12353,
+  "triage": [
+    {
+      "batch_id": "t-12358-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "ranks_select() returns NULL for any card with playability=0 \u2014 new legal cards have playability=0 immediately after rotation, so rank=NULL",
+          "ref": "decksite/data/query.py:61",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_playability() uses _season_card_count LEFT JOIN \u2014 a card with no plays in any season correctly gets playability=0 after rotation",
+          "ref": "decksite/data/playability.py:240",
+          "type": "code"
+        },
+        {
+          "detail": "Labels include '+ question' (unclear path forward); issue body itself says 'The fix here might well be...' with multiple tentative options",
+          "ref": "#12353",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12353,
+      "notes": "The behavior is technically correct (rank is NULL because there is no play data yet), but user-facing it makes newly-legal cards appear uninteresting on /rotation immediately post-rotation. The owner needs to decide the approach: special-case new card ranks, add them to /rotation/changes, or hide /rotation outside rotation window.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

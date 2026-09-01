@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12349,
+  "triage": [
+    {
+      "batch_id": "t-12350-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PROFANITY_WHITELIST and PROFANITY_BLACKLIST are static; better_profanity.censor() uses whole-word matching by default",
+          "ref": "decksite/deck_name.py:55-62",
+          "type": "code"
+        },
+        {
+          "detail": "bakert explicitly opposes substring matching citing 'Untitled Masterwork' (tit) and 'He Understood the Assignment' (ass); silasary suggests wontfix",
+          "ref": "#12349",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12349,
+      "notes": "Maintainers have informally expressed a wontfix preference in comments (Scunthorpe problem), but no formal product decision or close action has been taken. Owner should close as wontfix or record the accepted tradeoff.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:52:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12331,
+  "triage": [
+    {
+      "batch_id": "t-12343-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "playability DECIMAL(6,5) in _season_archetype_playability \u2014 5 decimal places, minimum non-zero value 0.00001",
+          "ref": "decksite/data/playability.py:295",
+          "type": "code"
+        },
+        {
+          "detail": "playability DECIMAL(6,5) in _archetype_playability",
+          "ref": "decksite/data/playability.py:426",
+          "type": "code"
+        },
+        {
+          "detail": "playability DECIMAL(6,5) in _season_playability",
+          "ref": "decksite/data/playability.py:468",
+          "type": "code"
+        },
+        {
+          "detail": "playability DECIMAL(6,5) in _playability \u2014 a card appearing 1 in 200,000 decks has playability 0.000005, which rounds to 0.00000 and is indistinguishable from never played",
+          "ref": "decksite/data/playability.py:490",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/playability.py change all four `DECIMAL(6,5)` column definitions (lines 295, 426, 468, 490) to `DECIMAL(10,9)`. This gives 9 decimal places, so the minimum non-zero value becomes 0.000000001, far below the 1-in-200,000 threshold (0.000005). These are preaggregate tables rebuilt on each run so no manual migration is needed.",
+      "issue": 12331,
+      "notes": "All four tables are created via CREATE TABLE IF NOT EXISTS _new{table} and then swapped in by the preaggregation framework, so the schema change takes effect automatically on the next preaggregate run. No historical data is lost or altered \u2014 only the precision of newly computed values changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

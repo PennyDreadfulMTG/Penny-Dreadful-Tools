@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12357,
+  "triage": [
+    {
+      "batch_id": "t-12358-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Seasonize decks, competitions, leaderboards \u2014 added @SEASONS.route to competition LIST and leaderboard pages",
+          "ref": "a4e9a324",
+          "type": "commit"
+        },
+        {
+          "detail": "@SEASONS.route('/competitions/') exists for the list page",
+          "ref": "decksite/controllers/competitions.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "@APP.route('/competitions/<competition_id>/') has NO @SEASONS.route \u2014 individual competition pages are not seasonized",
+          "ref": "decksite/controllers/competitions.py:21",
+          "type": "code"
+        },
+        {
+          "detail": "Competition view has no season_num attribute or season dropdown, unlike /cards",
+          "ref": "decksite/views/competition.py:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12357,
+      "notes": "Partial progress in a4e9a324 (list pages seasonized, links updated). Remaining gaps per issue comments: no season dropdown on individual competition/deck pages, no @SEASONS.route for /competitions/<id>/, and canonical URL redirect decision still outstanding.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

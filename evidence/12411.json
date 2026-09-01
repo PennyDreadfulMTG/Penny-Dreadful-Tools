@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12411-1",
+      "branch": "sweep/12411-get-more-specific-in-retry-after-calling",
+      "files_changed": 1,
+      "head_sha": "dab1f20b0a6fe7f18f1362a0b37e9487a3da22b3",
+      "issue": 12411,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "The outer catch is now `DatabaseNoSuchTableException` and the inner catch remains `DatabaseException` \u2014 this is intentional: if the retry function fails to fix the problem and we get a *different* DatabaseException on the second attempt, it should still be caught and logged before re-raising. No other callers or usages of `retry_after_calling` were changed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `retry_after_calling` decorator in `shared/decorators.py` caught the broad `DatabaseException` as its trigger to call the retry function and re-execute. This meant *any* database error \u2014 connection refused, permission denied, query syntax errors \u2014 would cause a spurious retry. The decorator is only meaningful for the case where a table is missing (i.e. `DatabaseNoSuchTableException`), because the retry function is expected to create/migrate the missing table.\n\n## What changed\n\n- `shared/decorators.py` line 10: added `DatabaseNoSuchTableException` to the import.\n- `shared/decorators.py` line 23: narrowed the outer `except DatabaseException` to `except DatabaseNoSuchTableException`, so only missing-table errors trigger the retry path. The inner catch on line 28 remains `DatabaseException` so any error on the second attempt (including the original `DatabaseNoSuchTableException` if the retry didn't fix it) is logged and re-raised correctly.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 **passed** (all checks passed on the touched file).\n- `uv run --frozen python dev.py unit shared` \u2014 **env-blocked**: no MariaDB available in the cloud sandbox, so tests requiring a live database connection fail at collection time with `DatabaseConnectionRefusedException`. No test file exists for `shared/decorators.py` specifically; the change is a straightforward exception narrowing with no logic branches to exercise beyond what the type system confirms.\n\nFixes #12411",
+      "pr_title": "Catch only DatabaseNoSuchTableException in retry_after_calling (#12411)",
+      "recorded_at": "2026-09-01T18:49:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit shared",
+        "detail": "Tests hit DatabaseConnectionRefusedException because no MariaDB is running in this environment (cards database unreachable). Database-free unit tests could not be isolated \u2014 no test file exists for shared/decorators.py. Lint passed cleanly.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 12411,
   "triage": [
     {

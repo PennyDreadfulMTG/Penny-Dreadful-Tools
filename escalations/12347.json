@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": "2026-09-01T18:52:26Z",
+  "created_at": "2026-09-01T18:52:04Z",
+  "evidence_refs": [
+    "evidence/12347.json#triage[0]"
+  ],
+  "issue": 12347,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "An owner must decide whether to suppress uncertain guesses (a UX tradeoff: fewer confusing labels vs. an empty archetype field), hold them for review (latency tradeoff), or pursue a hybrid. The confidence signal already exists in deck_cache.similarity."
+}

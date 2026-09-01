@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12343,
+  "triage": [
+    {
+      "batch_id": "t-12343-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "legal_cards = search.search(f'f:pd{season_id}') \u2014 still uses the search module to populate _legal_cards",
+          "ref": "decksite/data/playability.py:144",
+          "type": "code"
+        },
+        {
+          "detail": "search.search internally builds a card_legality WHERE clause anyway, so the dependency is unnecessary",
+          "ref": "find/search.py:319",
+          "type": "code"
+        },
+        {
+          "detail": "from find import search \u2014 import still present, confirming search is in use",
+          "ref": "decksite/data/playability.py:3",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/playability.py, replace `search.search(f'f:pd{season_id}')` and its exception handling with a direct SQL query: `SELECT name FROM card JOIN card_legality ON card.id = card_legality.card_id JOIN format ON format.id = card_legality.format_id WHERE format.name = 'Penny Dreadful {season_id}' AND card_legality.legality <> 'Banned'`. Remove the `from find import search` import. This eliminates the search module dependency and matches the issue's suggestion to write the card_legality clause directly.",
+      "issue": 12343,
+      "notes": "The issue title references 'decksite.data.rotation' but the actual search.search usage is in decksite/data/playability.py:144 \u2014 the preaggregate_legal_cards() function. The rotation module itself already uses decksite.data.clauses.card_search_where, not search.search.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:53:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

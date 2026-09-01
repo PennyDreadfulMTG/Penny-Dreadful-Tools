@@ -166,6 +166,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('32. UR_Twin', 'Izzet Twin', ['U', 'R'], 'Izzet Twin', 32),
     ('new version. does no thragtusk make me lose?', 'New Version Does No Thragtusk Make Me Lose?', [], None, 1),
     ('FDSe 1.0', 'FDSe v1', [], None, 1),
+    ('RealRhinos1.0', 'RealRhinos v1', [], None, 1),
     ('Weird Linessa 1.1', 'Weird Linessa v1.1', [], None, 1),
     ('Cloudy Enduring Ideal v1.1', 'Cloudy Enduring Ideal v1.1', [], None, 1),
     ('Cloudy Enduring Ideal V1.1', 'Cloudy Enduring Ideal v1.1', [], None, 1),

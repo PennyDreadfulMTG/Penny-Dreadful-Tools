@@ -299,6 +299,7 @@ def normalize_version(name: str) -> str:
         r'(\W?)[\[({]?(?:v|ver|version|rev|mk) ?(\d[\.\d]*)(?:[])}]|\b)',  # Explicitly marked as a version
         r'(\s)[\[({]?(\d[\.\d]*)[])}]?$',  # Number at end of name
         r'(\s)[\[({]?(\d\.\d[\.\d]*)(?:[])}]|\b)',  # Dotted number somewhere in name
+        r'()(?<![\d.v ])(\d\.\d[\.\d]*)$',  # Dotted number directly appended to name (e.g. RealRhinos1.0 -> RealRhinos v1)
     ]
     for pattern in patterns:
         version = re.search(pattern, name, re.IGNORECASE)

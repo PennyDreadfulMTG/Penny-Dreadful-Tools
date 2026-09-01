@@ -96,5 +96,39 @@ def test_call_requests_structured_json(monkeypatch: pytest.MonkeyPatch) -> None:
     response.raise_for_status.assert_called_once_with()
     _, kwargs = post.call_args
     assert kwargs['headers']['x-api-key'] == 'secret'
-    assert kwargs['json']['output_config']['format']['type'] == 'json_schema'
+    output_format = kwargs['json']['output_config']['format']
+    assert output_format['type'] == 'json_schema'
+    confidence_schema = output_format['schema']['properties']['confidence']
+    assert confidence_schema['type'] == 'integer'
+    assert 'minimum' not in confidence_schema
+    assert 'maximum' not in confidence_schema
     assert kwargs['json']['messages'] == [{'role': 'user', 'content': 'deck prompt'}]
+
+
+@pytest.mark.parametrize(('reported', 'stored'), [(-10, 0), (92, 92), (120, 100)])
+def test_classify_one_clamps_confidence(monkeypatch: pytest.MonkeyPatch, reported: int, stored: int) -> None:
+    assign = mock.Mock()
+    monkeypatch.setattr(archetype_classifier, '_shortlist', lambda _d, _meta: [(7, 'Aggro')])
+    monkeypatch.setattr(archetype_classifier, '_deck_prompt', lambda _d, _candidates, _meta, _new_cards: 'prompt')
+    monkeypatch.setattr(archetype_classifier, '_call', lambda _api_key, _model, _prompt: {
+        'archetype': 'Aggro',
+        'confidence': reported,
+        'possible_new_variant': False,
+        'variant_note': '',
+    })
+    monkeypatch.setattr(archetype_classifier.archetype, 'assign', assign)
+
+    archetype_classifier._classify_one('secret', 'model', Container(id=1), {}, set())
+
+    assign.assert_called_once_with(1, 7, None, False, stored)
+
+
+def test_call_logs_anthropic_error_response(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:
+    response = mock.Mock(status_code=400, text='{"type":"error","error":{"message":"bad schema"}}')
+    response.raise_for_status.side_effect = archetype_classifier.requests.HTTPError('400 Client Error')
+    monkeypatch.setattr(archetype_classifier.requests, 'post', mock.Mock(return_value=response))
+
+    with pytest.raises(archetype_classifier.requests.HTTPError):
+        archetype_classifier._call('secret', 'model', 'prompt')
+
+    assert 'bad schema' in caplog.text

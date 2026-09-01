@@ -181,6 +181,7 @@ class BackgroundTasks(Extension):
             embed.add_field(name='Pre-register now:', value='https://gatherling.com')
 
         if diff <= 14400:
+            embed.add_field(name='Game timer:', value='Set your MTGO game timer to 25 minutes (the default).')
             embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
             await self.tournament_reminders_channel.send(embed=embed)
 

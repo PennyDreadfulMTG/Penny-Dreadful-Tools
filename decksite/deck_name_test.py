@@ -344,6 +344,7 @@ def test_remove_pd() -> None:
     assert deck_name.remove_pd('[PD] Mono Black Control', 1) == 'Mono Black Control'
     assert deck_name.remove_pd('(Penny) Boros Soliders', 1) == 'Boros Soliders'
     assert deck_name.remove_pd('Metalworks pd bond and post', 1) == 'Metalworks  bond and post'  # The double space is dealt with elsewhere
+    assert deck_name.remove_pd("[PD '32] Izzet Twin (alt.)", 32) == 'Izzet Twin (alt.)'
 
 def test_normalize_version() -> None:
     assert deck_name.normalize_version('Mono Black Aristocrats (1)') == 'Mono Black Aristocrats v1'

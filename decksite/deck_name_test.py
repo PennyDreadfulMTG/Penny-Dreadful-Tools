@@ -243,7 +243,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('mono White heroic 25 8', 'Mono White Heroic v8', ['W'], None, 25),
     ('netdecking: day 1', 'Netdecking: Day 1', [], None, 14),
     ('life is ez 140', 'Life Is Ez 140', [], None, 16),
-    ('version 2', 'v2', ['U'], 'Mono Blue Aggro', 17),
+    ('version 2', 'Mono Blue Aggro v2', ['U'], 'Mono Blue Aggro', 17),
     ('probably tier 3', 'Probably Tier 3', [], None, 18),
     ('philadelphia 2011', 'Philadelphia 2011', [], None, 19),
     ('project 121', 'Project 121', [], None, 20),

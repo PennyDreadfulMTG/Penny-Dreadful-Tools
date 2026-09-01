@@ -108,9 +108,15 @@ def normalize(d: Deck) -> str:
         else:
             name = remove_profanity(name)
             name = normalize_version(name)
+            bare_version = re.match(r'^v\d[\.\d]*$', name, re.IGNORECASE)
+            if bare_version:
+                version_suffix = name
+                name = ''
             name = add_colors_if_no_deck_name(name, d.get('colors'))
             name = normalize_colors(name, d.get('colors'))
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
+            if bare_version:
+                name = f'{name} {version_suffix}'.strip()
             name = remove_mono_if_not_first_word(name)
         name = titlecase.titlecase(name)
         name = lowercase_version_marker(name)

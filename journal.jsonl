@@ -4925,3 +4925,5 @@
 {"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 4925, "ts": "2026-09-01T21:02:56Z"}
 {"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 4926, "ts": "2026-09-01T21:02:58Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 4926, "seq": 4927, "ts": "2026-09-01T21:02:58Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 4928, "ts": "2026-09-01T21:03:00Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4928, "seq": 4929, "ts": "2026-09-01T21:03:00Z"}

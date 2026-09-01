@@ -47,7 +47,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         },
     ),
     'doorprize': (
-        "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
+        "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8. Regular weekly PD tournaments have a door prize. The Kick Off and PD 500 do not.",
         {},
     ),
     'gamehistory': (
@@ -126,7 +126,7 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """
         Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
         This credit will appear when you trade with one of their bots on Magic Online.
-        One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
+        Regular weekly PD tournaments award a door prize to one randomly-selected player who completes the Swiss rounds but doesn't make Top 8. The Kick Off and PD 500 do not have a door prize.
         Prize delivery can take a week or two from the day of the tournament.
         """,
         {

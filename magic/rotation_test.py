@@ -94,7 +94,7 @@ async def test_rotation_hype_message_includes_next_confirmation_when_cards_are_u
     message = await rotation.rotation_hype_message(True)
 
     assert message is not None
-    assert '\nUndecided: 1.\nNext new cards confirmed in 4 runs time.\n' in message
+    assert '\nUndecided: 1.\nNext new cards confirmed in 4 hours.\nNext elimination in 65 hours.\n' in message
 
 
 @pytest.mark.skip('Because CloudFlare sometimes blocks API access from Github workflow this test is flakey')

@@ -160,7 +160,9 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     max_hits_in_undecided = max([c.hits for c in cs if c.status == 'Undecided'], default=0)
+    min_hits_in_undecided = min([c.hits for c in cs if c.status == 'Undecided'], default=threshold)
     soonest_new_card = threshold - max_hits_in_undecided
+    soonest_elimination = TOTAL_RUNS - runs + min_hits_in_undecided - threshold + 1
     s = f'Rotation run number {runs} completed.'
     if hype_command:
         s = f'{runs} rotation checks have completed.'
@@ -176,7 +178,8 @@ async def rotation_hype_message(hype_command: bool) -> str | None:
         s += f'\nEliminated: {newly_eliminated_s}.'
     s += f'\nUndecided: {num_undecided}.'
     if num_undecided > 0:
-        s += f'\nNext new cards confirmed in {soonest_new_card} runs time.'
+        s += f'\nNext new cards confirmed in {soonest_new_card} hours.'
+        s += f'\nNext elimination in {soonest_elimination} hours.'
     s += '\n'
     if runs_percent >= 50:
         s += f"<{fetcher.decksite_url('/rotation/')}>"

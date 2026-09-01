@@ -12,6 +12,7 @@ class ArchetypeSearch(View):
         self.archetypes_preordered = archetype.preorder(archetypes)
 
         self.has_search_results = len(search_results) > 0
+        self.search_result_count = len(search_results)
         self.search_results = search_results
         for d in self.search_results:
             prepare.prepare_deck(d)

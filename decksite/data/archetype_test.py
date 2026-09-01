@@ -1,5 +1,6 @@
 from decimal import Decimal
 from typing import Any
+from unittest import mock
 
 import pytest
 
@@ -31,3 +32,15 @@ def test_season_stats(monkeypatch: pytest.MonkeyPatch, tournament_only: bool, wh
     ]
     assert database.args == [42]
     assert f'AND {where}' in database.sql
+
+
+def test_assign_clears_cached_deck_after_committing(monkeypatch: pytest.MonkeyPatch) -> None:
+    database = mock.Mock()
+    clear = mock.Mock()
+    monkeypatch.setattr(archetype, 'db', lambda: database)
+    monkeypatch.setattr(archetype.redis, 'clear', clear)
+
+    archetype.assign(42, 7, None, False, 72)
+
+    database.commit.assert_called_once_with('assign_archetype')
+    clear.assert_called_once_with('decksite:deck:42')

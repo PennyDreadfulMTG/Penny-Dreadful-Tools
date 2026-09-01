@@ -23,7 +23,6 @@ from magic import image_fetcher, layout, oracle, seasons, tournaments
 from magic.colors import find_colors
 from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
-from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
 from shared_web import template
@@ -662,7 +661,6 @@ def card_api(card: str) -> Response:
 @fill_form('deck_id', 'archetype_id')
 def post_reassign(deck_id: int, archetype_id: int) -> Response:
     archs.assign(deck_id, archetype_id, auth.person_id())
-    redis.clear(f'decksite:deck:{deck_id}')
     return return_json({'success': True, 'deck_id': deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])

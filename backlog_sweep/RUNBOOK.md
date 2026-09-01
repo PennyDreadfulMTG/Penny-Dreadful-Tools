@@ -100,7 +100,8 @@ workspaces). `dispatcher.py status` prints a one-screen summary.
    ```
 3. Inspect before changing anything, then reconcile against live GitHub and
    Conductor. Recovery adopts running workers, expires dead leases, settles
-   half-executed mutations, and skips issues humans closed meanwhile:
+   half-executed mutations, skips issues humans closed meanwhile, and rebinds
+   escalation delivery to the current manager session:
 
    ```bash
    uv run --frozen python backlog_sweep/dispatcher.py status

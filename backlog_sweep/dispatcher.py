@@ -2529,6 +2529,9 @@ class Engine:
     # -- recover -----------------------------------------------------------
     def recover(self):
         out = ["# recover %s" % iso(utcnow())]
+        session_note = refresh_manager_session(self.store, dry_run=self.dry)
+        if session_note:
+            out.append(session_note)
         for rec in self._ready("closing"):
             n = rec["issue"]
             try:
@@ -2630,6 +2633,19 @@ class Engine:
 
 # ------------------------------------------------------------------------ verbs
 
+def refresh_manager_session(store, dry_run=False):
+    """Point escalation bundles at the manager running this recovery."""
+    session_id = os.environ.get("CONDUCTOR_SESSION_ID")
+    if not session_id or store.config.get("opus_session_id") == session_id:
+        return None
+    if dry_run:
+        return "WOULD update manager session to this recovery session"
+    store.config["opus_session_id"] = session_id
+    store.save_config()
+    store.journal("CONFIG_CHANGED", changes={"opus_session_id": "<this session>"})
+    return "manager session updated to this recovery session"
+
+
 def cmd_init(store, args):
     eng = Engine(store)
     cfg = store.config
@@ -2652,10 +2668,7 @@ def cmd_init(store, args):
         if rec["issue"] not in live and rec["status"] not in TERMINAL:
             store.journal("ISSUE_SKIPPED", issue=rec["issue"], reason="closed before triage")
             gone += 1
-    if store.config.get("opus_session_id") is None and os.environ.get("CONDUCTOR_SESSION_ID"):
-        store.config["opus_session_id"] = os.environ["CONDUCTOR_SESSION_ID"]
-        store.save_config()
-        store.journal("CONFIG_CHANGED", changes={"opus_session_id": "<this session>"})
+    refresh_manager_session(store)
     store.snapshot()
     return "queue: %d issues in universe (%d newly enqueued, %d newly closed -> skipped)" % (
         len(universe), added, gone)

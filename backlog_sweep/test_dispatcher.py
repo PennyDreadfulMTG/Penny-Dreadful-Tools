@@ -13,6 +13,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dispatcher as D  # noqa: E402
@@ -909,6 +910,40 @@ class TestPrBackpressure(unittest.TestCase):
                 ])
 
         self.assertEqual(D.GitHub(R(), "o/r").count_open_sweep_prs(), 2)
+
+
+class TestManagerSessionRecovery(unittest.TestCase):
+    class Store:
+        def __init__(self, session_id="old-session"):
+            self.config = {"opus_session_id": session_id}
+            self.saved = 0
+            self.events = []
+
+        def save_config(self):
+            self.saved += 1
+
+        def journal(self, event, **kw):
+            self.events.append((event, kw))
+
+    def test_recovery_rebinds_escalations_to_current_manager(self):
+        store = self.Store()
+        with mock.patch.dict(D.os.environ, {"CONDUCTOR_SESSION_ID": "new-session"}):
+            note = D.refresh_manager_session(store)
+        self.assertEqual(store.config["opus_session_id"], "new-session")
+        self.assertEqual(store.saved, 1)
+        self.assertEqual(store.events, [
+            ("CONFIG_CHANGED", {"changes": {"opus_session_id": "<this session>"}}),
+        ])
+        self.assertIn("manager session updated", note)
+
+    def test_dry_run_reports_without_changing_session(self):
+        store = self.Store()
+        with mock.patch.dict(D.os.environ, {"CONDUCTOR_SESSION_ID": "new-session"}):
+            note = D.refresh_manager_session(store, dry_run=True)
+        self.assertEqual(store.config["opus_session_id"], "old-session")
+        self.assertEqual(store.saved, 0)
+        self.assertEqual(store.events, [])
+        self.assertTrue(note.startswith("WOULD"))
 
 
 class TestMasterAdvanced(unittest.TestCase):

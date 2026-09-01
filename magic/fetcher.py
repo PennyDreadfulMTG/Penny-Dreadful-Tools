@@ -340,6 +340,8 @@ def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
         results[t] = results.get(t, []) + [possible]
     return results
 
+GEOGRAPHIC_TYPES = {'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'country', 'political'}
+
 def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
@@ -349,9 +351,10 @@ def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
     if 'error_message' in info:
         return info['error_message']
     try:
-        location = info['results'][0]['geometry']['location']
+        geographic_result = next((r for r in info['results'] if set(r.get('types', [])) & GEOGRAPHIC_TYPES), info['results'][0])
     except IndexError as e:
         raise TooFewItemsException(e) from e
+    location = geographic_result['geometry']['location']
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=fetch_tools.escape(str(location['lat'])), lng=fetch_tools.escape(str(location['lng'])), timestamp=fetch_tools.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
     timezone_info = fetch_tools.fetch_json(url)
     if 'error_message' in timezone_info:
@@ -362,7 +365,7 @@ def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
         timezone = dtutil.timezone(timezone_info['timeZoneId'])
     except KeyError as e:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}') from e
-    return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
+    return {current_time(timezone, twentyfour): [geographic_result['formatted_address']]}
 
 
 class WISDateType(TypedDict):

@@ -518,7 +518,7 @@ def test_subtype() -> None:
     do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%%warrior%%'))")
 
 def test_not() -> None:
-    do_test('t:creature -t:artifact t:legendary', "(type_line LIKE '%%creature%%') AND NOT (type_line LIKE '%%artifact%%') AND (type_line LIKE '%%legendary%%')")
+    do_test('t:creature -t:artifact t:legendary', "(type_line REGEXP '(^|[ —-])creature([ —-]|$)') AND NOT (type_line REGEXP '(^|[ —-])artifact([ —-]|$)') AND (type_line REGEXP '(^|[ —-])legendary([ —-]|$)')")
 
 def test_not_cmc() -> None:
     do_test('-cmc=2', 'NOT (cmc IS NOT NULL AND cmc = 2)')
@@ -584,13 +584,14 @@ def test_toughness() -> None:
     do_test('c:r tou>2', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (toughness IS NOT NULL AND toughness > 2)')
 
 def test_type() -> None:
-    do_test('t:"human wizard"', "(type_line LIKE '%%human wizard%%')")
+    do_test('t:"human wizard"', "(type_line REGEXP '(^|[ —-])human wizard([ —-]|$)')")
+    do_test('t:orc', "(type_line REGEXP '(^|[ —-])orc([ —-]|$)')")
 
 def test_power() -> None:
-    do_test('t:wizard pow<2', "(type_line LIKE '%%wizard%%') AND (power IS NOT NULL AND power < 2)")
+    do_test('t:wizard pow<2', "(type_line REGEXP '(^|[ —-])wizard([ —-]|$)') AND (power IS NOT NULL AND power < 2)")
 
 def test_mana_with_other() -> None:
-    do_test('t:creature mana=WW o:lifelink', "(type_line LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
+    do_test('t:creature mana=WW o:lifelink', "(type_line REGEXP '(^|[ —-])creature([ —-]|$)') AND (mana_cost = '{W}{W}') AND (REGEXP_REPLACE(oracle_text, '\\\\([^)]*\\\\)', '') LIKE '%%lifelink%%')")
 
 def test_mana_alone() -> None:
     do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")

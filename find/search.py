@@ -212,6 +212,9 @@ def text_where(column: str, term: Token, exclude_parenthetical: bool = False) ->
         operator = 'REGEXP'
         q = replace_scryfall_regex_extensions(q)
         escaped = sqlescape('(?m)' + q)
+    elif column == 'type_line':
+        operator = 'REGEXP'
+        escaped = sqlescape(f'(^|[ —-]){q}([ —-]|$)')
     else:
         operator = 'LIKE'
         escaped = sqllikeescape(q)

@@ -23,8 +23,8 @@ class Dreadrise(Extension):
         """Card search using Dreadrise."""
         await ctx.defer()
         card_data = await fetcher.dreadrise_search_cards(query, MAX_CARDS_SHOWN, 1)
-        if 'err' in card_data and card_data['err']:
-            await ctx.send('Search error: `{error}`'.format(error=card_data['reason']))
+        if not card_data.get('success', True):
+            await ctx.send('Search error: `{error}`'.format(error=card_data.get('reason', 'Unknown error')))
             return
 
         card_array = [x['name'] for x in card_data['sample']]

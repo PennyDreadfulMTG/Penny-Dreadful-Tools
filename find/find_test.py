@@ -337,6 +337,10 @@ def test_past_seasons() -> None:
     do_functional_test('(f:pds1 OR f:pds31) -f:pds5', ['Mother of Runes'], ['Necropotence'])
     do_functional_test('f:"penny dreadful all"', ['Mother of Runes', 'Necropotence'], ['Black Lotus'])
     do_functional_test('f:"pdsall"', ['Mother of Runes', 'Necropotence'], ['Black Lotus'])
+    do_functional_test('f>=pds5', ['Necropotence'], [])
+    do_functional_test('f<=pds1', ['Mother of Runes'], ['Necropotence'])
+    do_functional_test('f>pds1', ['Necropotence'], [])
+    do_functional_test('f<pds5', ['Mother of Runes'], ['Necropotence'])
 
 @pytest.mark.functional
 def test_oracle_and_fulloracle() -> None:

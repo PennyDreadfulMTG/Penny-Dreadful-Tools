@@ -187,7 +187,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
     if key.value() in ['edition', 'e', 'set', 's']:
         return set_where(term.value())
     if key.value() == 'format' or key.value() == 'f' or key.value() == 'legal':
-        return format_where(term.value())
+        return format_where(operator.value(), term.value())
     if key.value() == 'rarity' or key.value() == 'r':
         return rarity_where(operator.value(), term.value())
     if key.value() == 'mana' or key.value() == 'm':
@@ -307,9 +307,16 @@ def color_where(subtable: str, operator: str, term: str) -> str:
 def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
-def format_where(term: str) -> str:
+def format_where(operator: str, term: str) -> str:
     season_code = parse_season(term) if term.startswith('pd') or term.startswith('penny') else None
-    if season_code == seasons.ALL:
+    if operator in ['>=', '>', '<=', '<'] and season_code is not None and season_code != seasons.ALL:
+        target_num = seasons.season_num(season_code)
+        compare = {'>=': lambda n: n >= target_num, '>': lambda n: n > target_num, '<=': lambda n: n <= target_num, '<': lambda n: n < target_num}[operator]
+        format_ids = []
+        for i, code in enumerate(seasons.SEASONS, start=1):
+            if compare(i):
+                format_ids.extend(db().values('SELECT id FROM format WHERE name LIKE %s', [f'Penny Dreadful {code}%%']))
+    elif season_code == seasons.ALL:
         format_ids = db().values("SELECT id FROM format WHERE name LIKE 'Penny Dreadful%%'")
     else:
         t = f'Penny Dreadful {season_code}' if season_code else term

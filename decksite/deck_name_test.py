@@ -320,6 +320,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('🏴\u200d☠️', '🏴\u200d☠', ['U', 'R'], 'Pirates', 33),  # Pirate flag without force color
     ('👨\u200d👩\u200d👧\u200d👦', '👨\u200d👩\u200d👧\u200d👦', None, None, 1),  # Family
     ('👨\ufe0f\u200d💻\ufe0f', '👨\u200d💻', None, None, 1),  # Person at computer
+    ('o-o-p-s a-l-l', 'O-O-P-S A-L-L', [], None, 1),  # Single-letter-hyphenated pattern should be all-caps consistently (#11320)
 ]
 
 def test_replace_space_alternatives() -> None:

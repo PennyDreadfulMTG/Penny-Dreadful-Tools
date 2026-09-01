@@ -113,6 +113,7 @@ def normalize(d: Deck) -> str:
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
         name = titlecase.titlecase(name)
+        name = normalize_single_letter_hyphenated(name)
         name = lowercase_version_marker(name)
         name = ucase_roman_numerals(name)
         name = correct_case_of_color_names(name)
@@ -393,6 +394,11 @@ def correct_case_of_color_names(name: str) -> str:
         titlecase_k = titlecase.titlecase(k)
         name = name.replace(titlecase_k, k)
     return name
+
+def normalize_single_letter_hyphenated(name: str) -> str:
+    # Titlecase leaves patterns like "a-l-l" as "a-L-L" (small word "a" not capitalized,
+    # but letters after hyphens are). Normalize all such words to uppercase for consistency.
+    return re.sub(r'\b(?:[a-zA-Z]-)+[a-zA-Z]\b', lambda m: m.group().upper(), name)
 
 def enforce_max_len(name: str) -> str:
     return name if len(name) <= MAX_NAME_LEN else name[0:MAX_NAME_LEN] + '…'

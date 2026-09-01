@@ -28,7 +28,8 @@ class Matchups(View):
         self.hero_summary = summary_text(hero, archetypes, people)
         self.enemy_summary = summary_text(enemy, archetypes, people)
         self.season_summary = f'Season {season_id}' if season_id else 'All Time'
-        self.show_hero = True  # We should show both players in the list of matches, not just "opponent".
+        self.show_hero = not bool(hero.get('person_id'))  # Hide when hero person is already known from search criteria.
+        self.hide_opponent = bool(enemy.get('person_id'))  # Hide when opponent person is already known from search criteria.
         self.search_season_id = season_id
 
     def show_season_icon(self) -> bool:

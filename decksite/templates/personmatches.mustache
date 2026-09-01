@@ -5,7 +5,7 @@
             <tr>
                 {{#show_hero}}<th>Person</th>{{/show_hero}}
                 <th>Deck</th>
-                <th>Opponent</th>
+                {{^hide_opponent}}<th>Opponent</th>{{/hide_opponent}}
                 <th>Opponent's Deck</th>
                 <th class="n">Result</th>
                 <th>Competition</th>
@@ -18,7 +18,7 @@
                 <tr data-href="{{log_url}}" class="clickable">
                     {{#show_hero}}<td><a href="{{person_url}}">{{person}}</a></td>{{/show_hero}}
                     <td><a href="{{deck_url}}">{{deck_name}}</a></td>
-                    <td><a href="{{opponent_url}}">{{opponent}}</a></td>
+                    {{^hide_opponent}}<td><a href="{{opponent_url}}">{{opponent}}</a></td>{{/hide_opponent}}
                     <td>
                         {{#opponent_deck_url}}
                             <a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a>

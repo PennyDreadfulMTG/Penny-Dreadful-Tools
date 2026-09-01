@@ -94,26 +94,28 @@ def cache_rotation() -> None:
             status VARCHAR(20) NOT NULL
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            rr.name,
-            COUNT(*) AS hits,
-            ROUND(COUNT(*) / @runs_completed * 100) AS percent,
-            GREATEST(0, @hits_required - COUNT(*)) AS hits_needed,
-            IF(@runs_remaining = 0, 0, ROUND((GREATEST(0, @hits_required - COUNT(*)) / @runs_remaining) * 100)) AS percent_needed,
+            lc.name,
+            COALESCE(COUNT(rr.name), 0) AS hits,
+            ROUND(COALESCE(COUNT(rr.name), 0) / @runs_completed * 100) AS percent,
+            GREATEST(0, @hits_required - COALESCE(COUNT(rr.name), 0)) AS hits_needed,
+            IF(@runs_remaining = 0, 0, ROUND((GREATEST(0, @hits_required - COALESCE(COUNT(rr.name), 0)) / @runs_remaining) * 100)) AS percent_needed,
             p.rank,
-            SUM(IF(number = @runs_completed, 1, 0)) AS hit_in_last_run,
+            COALESCE(SUM(IF(rr.number = @runs_completed, 1, 0)), 0) AS hit_in_last_run,
             CASE
-                WHEN COUNT(*) >= @hits_required THEN 'Legal'
-                WHEN COUNT(*) + @total_runs - @runs_completed >= @hits_required THEN 'Undecided'
+                WHEN COALESCE(COUNT(rr.name), 0) >= @hits_required THEN 'Legal'
+                WHEN COALESCE(COUNT(rr.name), 0) + @total_runs - @runs_completed >= @hits_required THEN 'Undecided'
                 ELSE 'Not Legal'
             END AS status
         FROM
-            rotation_runs AS rr
+            _legal_cards AS lc
         LEFT JOIN
-            ({query.ranks_select()}) AS p ON rr.name = p.name
+            rotation_runs AS rr ON lc.name = rr.name AND rr.season_id = @next_season_id
+        LEFT JOIN
+            ({query.ranks_select()}) AS p ON lc.name = p.name
         WHERE
-            rr.season_id = @next_season_id
+            lc.season_id = {seasons.current_season_num()}
         GROUP BY
-            name
+            lc.name
     """
     where, msg = decksite.data.clauses.card_search_where('-f:pdall')
     if msg:

@@ -19,7 +19,6 @@ from decksite.views.archetype_search import ArchetypeSearch
 from magic import oracle
 from magic.models import Deck
 from shared import dtutil
-from shared import redis_wrapper as redis
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 from shared_web.decorators import fill_form
 from shared_web.menu import Menu, MenuItem
@@ -92,7 +91,6 @@ def post_archetypes() -> wrappers.Response:
             archetype_id = archetype_ids.pop(0)
             if archetype_id:
                 archs.assign(int(deck_id), int(archetype_id), auth.person_id())
-                redis.clear(f'decksite:deck:{deck_id}')
     elif request.form.get('q') is not None and request.form.get('notq') is not None:
         q = cast(str, request.form.get('q'))
         notq = cast(str, request.form.get('notq'))

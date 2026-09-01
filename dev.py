@@ -257,10 +257,7 @@ def push() -> None:
 
 def do_pull_request(argv: list[str]) -> None:
     print('>>>> Pull request')
-    try:
-        subprocess.check_call(['hub', 'pull-request', *argv])
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        subprocess.check_call(['gh', 'pr', 'create'])
+    subprocess.check_call(['gh', 'pr', 'create', *argv])
 
 @cli.command()
 @click.argument('argv', nargs=-1)

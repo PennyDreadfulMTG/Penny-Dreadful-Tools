@@ -141,11 +141,28 @@ blockquote {
     margin-bottom: 1rem;
 }
 
-.notice p {
+.notice {
     background: var(--tertiary-background);
+    margin-left: calc(-1 * var(--spacing-page-with-marginalia));
+    margin-right: calc(-1 * var(--spacing-page-with-marginalia));
+}
+
+.notice p {
     display: block;
     font-size: var(--large-font-size);
-    padding: 1em;
+    padding: 1em var(--spacing-page-with-marginalia);
+}
+
+@media only screen and (max-width: 900px) {
+    .notice {
+        margin-left: -1rem;
+        margin-right: -1rem;
+    }
+
+    .notice p {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }
 
 .notice a {

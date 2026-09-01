@@ -124,3 +124,5 @@ pyrightconfig.json
 # Zed
 .zed/
 /.venv
+
+backlog_sweep/state/

@@ -83,12 +83,8 @@ def validate_card_names(raw_names: str) -> tuple[list[str], list[str]]:
 def post_archetypes() -> wrappers.Response:
     search_results: list[Deck] = []
     if request.form.get('deck_id') is not None:
-        archetype_ids = request.form.getlist('archetype_id')
-        # Adjust archetype_ids if we're assigning multiple decks to the same archetype.
-        if len(archetype_ids) == 1 and len(request.form.getlist('deck_id')) > 1:
-            archetype_ids = archetype_ids * len(request.form.getlist('deck_id'))
         for deck_id in request.form.getlist('deck_id'):
-            archetype_id = archetype_ids.pop(0)
+            archetype_id = request.form.get(f'{deck_id}_archetype_id')
             if archetype_id:
                 archs.assign(int(deck_id), int(archetype_id), auth.person_id())
     elif request.form.get('q') is not None and request.form.get('notq') is not None:

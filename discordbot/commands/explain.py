@@ -75,6 +75,15 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
             'Current League': fetcher.decksite_url('/league/current/'),
         },
     ),
+    'modmail': (
+        """
+        To contact the moderators privately, use the ModMail bot. Send a direct message to the ModMail bot to open a thread with the mod team.
+        Please include your MTGO username and a clear subject so mods can help you promptly.
+        """,
+        {
+            'ModMail Guide': 'https://github.com/kyb3r/modmail/wiki/Using-Modmail',
+        },
+    ),
     'netdecking': (
         """
         Netdecking is both allowed and encouraged. Most deck creators are happy when others play their decks.

@@ -78,7 +78,7 @@ const renderItem = (grid, archetype) => (
             )}
         </div>
         <div className="row key-cards">
-            {archetype.keyCards && archetype.keyCards.shift() && archetype.keyCards.map((card) => (
+            {archetype.keyCards && archetype.keyCards.length > 1 && archetype.keyCards.slice(1).map((card) => (
                 <div className="card" data-name={card.name} style={{background: `url(${card.url}) center top / cover no-repeat`}} key={card.name}></div>
             ))}
         </div>

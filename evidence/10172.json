@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 10172,
+  "triage": [
+    {
+      "batch_id": "t-10198-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "card search checks `'err' in card_data` but dreadrise_search_json returns {'success': False, 'reason': '...'} on error \u2014 no 'err' key, so the error is silently swallowed",
+          "ref": "discordbot/commands/dreadrise.py:26",
+          "type": "code"
+        },
+        {
+          "detail": "dreadrise_search_json catches FetchException/JSONDecodeError/InvalidDataException and returns {'success': False, 'reason': 'The request failed.'} \u2014 no 'err' key",
+          "ref": "magic/fetcher.py:285-287",
+          "type": "code"
+        },
+        {
+          "detail": "deck search correctly checks `if not data['success']` \u2014 card search should use the same pattern",
+          "ref": "discordbot/commands/dreadrise.py:49",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/dreadrise.py line 26, change `if 'err' in card_data and card_data['err']:` to `if not card_data.get('success', True):` and update line 27 to use `card_data.get('reason', 'Unknown error')`. This makes the card search error handling consistent with deck/matchup search.",
+      "issue": 10172,
+      "notes": "The same inconsistency means if the second dreadrise_search_cards call (line 33) also errors, it will KeyError on 'sample'. The fix should also guard that call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

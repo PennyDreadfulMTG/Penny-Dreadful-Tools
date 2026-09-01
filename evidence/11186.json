@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11186,
+  "triage": [
+    {
+      "batch_id": "t-11186-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_decks_by_cards exists in the data layer with multi-card AND logic",
+          "ref": "decksite/data/deck.py:511",
+          "type": "code"
+        },
+        {
+          "detail": "contains_cards_clause builds the SQL for multi-card filtering",
+          "ref": "decksite/data/deck.py:522",
+          "type": "code"
+        },
+        {
+          "detail": "load_decks_by_cards is only wired to admin archetype-research endpoint, not any public route",
+          "ref": "decksite/controllers/admin.py:101",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11186,
+      "notes": "The backend data-layer logic already exists; what is missing is a public route, API endpoint, and/or UI form. The feature also needs a product decision on where to surface it (new page vs. extending the existing decks search), so needs-work rather than easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:24:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

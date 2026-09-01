@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 11223,
+  "triage": [
+    {
+      "batch_id": "t-11229-3",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Mar 19 2025 'Add the major tournaments to the site menu' \u2014 added kickoff, pd500, super_saturday to the Competitions submenu",
+          "ref": "ca7cf6b8",
+          "type": "commit"
+        },
+        {
+          "detail": "Menu now includes MenuItem('Season Kick Off', endpoint='kickoff'), MenuItem('Penny Dreadful 500', endpoint='pd500'), MenuItem('Super Saturday', endpoint='super_saturday')",
+          "ref": "decksite/__init__.py:76-78",
+          "type": "code"
+        },
+        {
+          "detail": "Tournament info page links to both kickoff_url and pd500_url",
+          "ref": "decksite/templates/tournaments.mustache:6-7",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11223,
+      "notes": "Both the menu and the tournament info page now link to the special events. Issue can be closed.",
+      "proposed_comment": "Fixed in March 2025: the Season Kick Off and Penny Dreadful 500 are now listed in the Competitions submenu (commit ca7cf6b8), and the /tournaments/ info page links to both special events.",
+      "recorded_at": "2026-09-01T23:28:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11223-1",
+      "final_comment": "Fixed: the Season Kick Off and Penny Dreadful 500 are now listed in the Competitions submenu (commit ca7cf6b8, March 2025), and the /tournaments/ info page has linked to both special events since May 2024 (commit fc6157da).",
+      "issue": 11223,
+      "own_evidence": [
+        {
+          "detail": "Season Kick Off, Penny Dreadful 500, and Super Saturday MenuItems confirmed present in current master under the Competitions submenu",
+          "ref": "decksite/__init__.py:76-78",
+          "type": "code"
+        },
+        {
+          "detail": "Both kickoff_url and pd500_url anchor links confirmed in current template; kickoff link added in fc6157da (May 2024), pd500 link predates the issue",
+          "ref": "decksite/templates/tournaments.mustache:6-7",
+          "type": "code"
+        },
+        {
+          "detail": "Commit verified: adds three MenuItem entries to decksite/__init__.py; commit message matches 'Add the major tournaments to the site menu'",
+          "ref": "ca7cf6b8",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:33:01Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11213,
+  "triage": [
+    {
+      "batch_id": "t-11216-3",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "E713 cleaned up ('not in' membership tests)",
+          "ref": "fa304d74",
+          "type": "commit"
+        },
+        {
+          "detail": "Complete move from flake8 to ruff; W503/W504 no longer applicable (ruff handles line continuation via its formatter)",
+          "ref": "0426a536",
+          "type": "commit"
+        },
+        {
+          "detail": "Current ruff ignore list still contains E302 and E402; E302 has ~1368 violations per issue comment",
+          "ref": "pyproject.toml:113-115",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comment: 'We have 1368 violations of E302 and I don't even know if it's nice, really'",
+          "ref": "#11213",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11213,
+      "notes": "E713/W503/W504 were handled and ruff migration is complete; the only remaining open question is whether to enforce E302 (two blank lines between top-level definitions), which bakert expressed uncertainty about \u2014 this needs an explicit owner decision before any code change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:22:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

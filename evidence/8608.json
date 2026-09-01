@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8608-1",
+      "branch": "sweep/8608-alllow-order-or-sort-param-in-searches-t",
+      "files_changed": 4,
+      "head_sha": "2058bfe460a2e882fb25d5561c596d4bf323f132",
+      "issue": 8608,
+      "lines_changed": 68,
+      "lint": "passed",
+      "notes": "The `order:`/`sort:` directive only affects the `/api/cards2` endpoint (the decksite card-search page); the standalone `search.search()` function used by rules/playability still returns a plain set and is unaffected. Sort options are limited to decksite stats columns (name, numDecks, record, winPercent, tournamentWins, tournamentTop8s, perfectRuns); card-level properties like cmc/power/toughness are not available in the stats SQL and would require a separate implementation.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nSearching with `order:name` or `sort:numDecks` in the card search query raised `InvalidCriterionException` because those keys were unrecognized.\n\n## What changed\n\n- **`find/tokens.py`**: Added `order` and `sort` to the `Key.values` list so the tokenizer recognizes them.\n- **`find/search.py`**: \n  - `parse_criterion` now handles `order`/`sort` keys by returning `(1 = 1)` (a WHERE no-op), validated against an `ORDER_BY_MAP`.\n  - New `ORDER_BY_MAP` dict maps accepted values (`name`, `numDecks`, `decks`, `record`, `wins`, `winPercent`, `tournamentWins`, `tournamentTop8s`, `perfectRuns`) to `(sortBy, sortOrder)` tuples.\n  - New `order_from_query(query)` function extracts the sort directive from a query string.\n- **`decksite/controllers/api.py`**: The `cards2_api` endpoint now checks the search query `q` for an `order:`/`sort:` directive and uses it as the fallback sort when no `sortBy` URL param is provided.\n- **`find/find_test.py`**: 7 new unit tests covering WHERE no-op behavior, `order_from_query` extraction, and invalid value rejection.\n\n## Examples\n\n- `c:w order:name` \u2014 white cards sorted by name A\u2013Z\n- `t:creature sort:numDecks` \u2014 creatures sorted by deck count (highest first)\n- `order:bogus` \u2014 raises `InvalidValueException` with helpful message\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit find decksite/data/clauses_test.py` \u2014 855 passed, 1 skipped (68 new lines, 7 new tests all green)\n\nFixes #8608",
+      "pr_title": "Support order: and sort: params in card search queries (#8608)",
+      "recorded_at": "2026-09-01T23:25:55Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find decksite/data/clauses_test.py",
+        "detail": "855 passed, 1 skipped in 19.64s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8608,
   "triage": [
     {

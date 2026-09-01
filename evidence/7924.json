@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7924-1",
+      "branch": "sweep/7924-homepage-is-not-showing-latest-tournamen",
+      "files_changed": 1,
+      "head_sha": "8d7da75fc8e270f3285459fc8eb4d10a8e10afad",
+      "issue": 7924,
+      "lines_changed": 23,
+      "lint": "passed",
+      "notes": "The fix adds one extra DB query per homepage load (the tournament top-8 lookup). This is lightweight \u2014 it returns at most 8 rows using an indexed subquery on competition.end_date. The deduplication ensures no deck appears twice in the deck tables even when the tournament is recent enough to also appear in the 500-deck window.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`latest_decks()` in `decksite/data/deck.py` fetches at most 500 decks ordered by `active_date DESC`. When a tournament is held but many league games occur afterwards, the tournament's decks fall outside the LIMIT 500 window. The `Home.setup_decks()` view iterates through this list looking for the first Gatherling deck to populate the \"Latest Tournament Top 8\" section \u2014 if none appears, the section is omitted entirely.\n\nThis was confirmed by the issue author: competition_id 3349 (PD Sundays 18.01) was the most recent tournament but was not showing on the homepage.\n\n## What changed\n\nAdded `_latest_tournament_top8()` in `decksite/data/deck.py` that queries for the most recent completed Gatherling competition's top-8 decks (finish <= 8) using a subquery on competition end_date. `latest_decks()` now prepends these tournament decks (deduplicated against the regular 500) so they always appear at the head of the list passed to the Home view.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (18s)\n- Diff is 23 added lines in one file, all serving #7924\n\nFixes #7924",
+      "pr_title": "Always show latest tournament top 8 on homepage (#7924)",
+      "recorded_at": "2026-09-01T23:19:53Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 18.10s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7924,
   "triage": [
     {

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7631,
+  "triage": [
+    {
+      "batch_id": "t-7656-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No favorite/bookmark deck infrastructure exists in the codebase",
+          "ref": "grep -rn 'favorite\\|favourite\\|fav.*deck\\|bookmark' decksite/ returned zero matches",
+          "type": "search"
+        },
+        {
+          "detail": "bakert: 'Theory: if you really like a deck you will play it. Then it'll be on your player page for all time. So this feature may not be that useful.' \u2014 indicates product skepticism",
+          "ref": "#7631",
+          "type": "issue"
+        },
+        {
+          "detail": "silasary: 'This comes back to the idea of a \"Register in League with this deck\" button' \u2014 competing design direction raised",
+          "ref": "#7631",
+          "type": "issue"
+        },
+        {
+          "detail": "Issue labeled both + feature and + question, confirming open design uncertainty",
+          "ref": "#7631",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7631,
+      "notes": "Owner judgment needed on whether this is better served by a favorites list, a league-registration-from-deck button, or neither. The feature would also require a new DB table, OAuth-gated writes, and UI changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:30:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

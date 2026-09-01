@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11166,
+  "triage": [
+    {
+      "batch_id": "t-11168-3",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "get_locale() reads ?locale= from querystring and stores it in session \u2014 the original reported behavior is still present",
+          "ref": "shared_web/localization.py:11-14",
+          "type": "code"
+        },
+        {
+          "detail": "Don't show language switcher to logged out users \u2014 reduces attack surface but does not fix locale persistence via querystring",
+          "ref": "21869ad9",
+          "type": "commit"
+        },
+        {
+          "detail": "Comment from bakert: translations broken since server migration, path forward may be to scrap i18n entirely rather than fix querystring persistence",
+          "ref": "#11166",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11166,
+      "notes": "Two possible resolutions: (a) remove the session write from get_locale() so querystring locale is ephemeral, or (b) remove i18n entirely. The owner comment strongly hints at (b). Either path is owner-decision territory.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7729-1",
+      "branch": "sweep/7729-x-id-urls-should-probably-301-to-the-van",
+      "files_changed": 2,
+      "head_sha": "bc3650bb5e1bd90194039b7b33f70101cf88c9a9",
+      "issue": 7729,
+      "lines_changed": 22,
+      "lint": "passed",
+      "notes": "The fix covers all three person sub-pages (main, achievements, matches) for consistency, not just the main one as hinted in triage. Persons without an mtgo_username continue to work via ID URLs as noted in the issue's own comment. The archetype redirect preserves deck_type (tournament/league) from the original URL.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`/people/id/{person_id}/`, `/people/id/{person_id}/achievements/`, `/people/id/{person_id}/matches/`, and `/archetypes/{numeric_id}/` all served content directly without redirecting to the canonical vanity URL. This meant search engines and clients could index/cache the ID-based URLs instead of the human-readable ones, and the site had to load extra data even when a vanity URL was available.\n\n## What changed\n\n- **`decksite/controllers/people.py`**: Added `request` to imports. In `person()`, `person_achievements()`, and `person_matches()`, after loading the person by `person_id`, if `p.mtgo_username is not None`, issue a 301 redirect to the equivalent vanity (`mtgo_username`) URL using `request.endpoint` so it works for both the main app and season-prefixed blueprints. Users without an MTGO username (Goldfish/Tapped Out only) continue to be served via the ID URL as noted in the issue comments.\n- **`decksite/controllers/metagame.py`**: In `archetype()`, after loading the archetype, if `archetype_id.isdigit()`, issue a 301 redirect to the name-based URL (spaces replaced with `+` to match existing URL conventions), preserving `deck_type`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed on all touched files\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (pre-existing skip), 0 failures\n\nFixes #7729",
+      "pr_title": "301 redirect /x/{id} URLs to vanity URLs for person and archetype (#7729)",
+      "recorded_at": "2026-09-01T23:22:44Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 18.88s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7729,
   "triage": [
     {

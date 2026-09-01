@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 10105,
+  "triage": [
+    {
+      "batch_id": "t-10198-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "parse() on an empty Expression (e.g. from `()`) produces an empty string `''`; `s[:-5]` of empty string is `''` in Python, so no exception is raised",
+          "ref": "find/search.py:123-157",
+          "type": "code"
+        },
+        {
+          "detail": "card_search_where wraps q in parens \u2192 `(())` is passed to search.search(), producing WHERE clause `(())` which is a MySQL syntax error",
+          "ref": "decksite/data/clauses.py:269-277",
+          "type": "code"
+        },
+        {
+          "detail": "Only catches InvalidSearchException \u2014 a DB OperationalError from `(())` propagates as a 500, which the client shows as 'Unable to load'",
+          "ref": "decksite/data/clauses.py:276",
+          "type": "code"
+        },
+        {
+          "detail": "2021 fix 'Don't error out for mismatching parens in card search' \u2014 addressed mismatch but not empty-parens case; issue comment confirms 'slightly better, only slightly'",
+          "ref": "1249d759",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": "In find/search.py, at the end of parse(), before returning, add: `result = s[:-len(' AND ')].replace('    ', ' ').strip(); if not result: raise InvalidSearchException('Empty search expression'); return result`. This turns the silent empty-SQL path into a caught InvalidSearchException that card_search_where already handles by returning ('FALSE', error_str). About 3 lines in find/search.py.",
+      "issue": 10105,
+      "notes": "The same empty-expression bug would occur for `( )` (space only in parens). The fix handles any expression that parses to an empty WHERE clause.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

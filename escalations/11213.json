@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:22:55Z",
+  "evidence_refs": [
+    "evidence/11213.json#triage[0]"
+  ],
+  "issue": 11213,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "E713/W503/W504 were handled and ruff migration is complete; the only remaining open question is whether to enforce E302 (two blank lines between top-level definitions), which bakert expressed uncertainty about \u2014 this needs an explicit owner decision before any code change."
+}

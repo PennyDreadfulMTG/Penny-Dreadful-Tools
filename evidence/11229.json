@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11229,
+  "triage": [
+    {
+      "batch_id": "t-11229-3",
+      "class": "cannot-reproduce",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_card() uses SELECT DISTINCT card, deck_id FROM deck_card, preventing main/side double counting; comment explicitly references prior fix #5493",
+          "ref": "decksite/data/card.py:86",
+          "type": "code"
+        },
+        {
+          "detail": "2019 fix 'Prevent double-counting of cards in both main and board in card stats' for the same preaggregate path",
+          "ref": "02a8e6fc",
+          "type": "commit"
+        },
+        {
+          "detail": "season_join() is LEFT JOIN deck_cache (UNIQUE on deck_id), 1:1; nwdl_join() groups by deck id, 1:1 \u2014 no join can create additional rows per card+deck pair",
+          "ref": "decksite/data/query.py:58-59",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11229,
+      "notes": "The preaggregate has had the DISTINCT fix since 2019 and all joins are 1:1. Commit f6cd810c (Oct 2024) separately fixed a surviving double-count on the per-competition cards page (load_competition_cards), which is a different code path from the main /cards/ listing; that path was still broken when this issue was filed in May 2023 and could explain the report if the reporter was looking at a competition page.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

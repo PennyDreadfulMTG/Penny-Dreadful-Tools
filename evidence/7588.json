@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7588,
+  "triage": [
+    {
+      "batch_id": "t-7656-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "deck_card table has column n (copy count) \u2014 the raw data for average copies already exists",
+          "ref": "decksite/sql/1.sql:47-55",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_card_archetype builds _card_archetype_stats but does not aggregate SUM(n) or total_archetype_decks \u2014 so avg_copies and pct_of_decks are not computed",
+          "ref": "decksite/data/card.py:97-144",
+          "type": "code"
+        },
+        {
+          "detail": "cardtable.jsx shows Card, # Decks, Record, Win %, tournament stats \u2014 no avg copies or % of decks column",
+          "ref": "shared_web/static/js/cardtable.jsx:1-82",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate() drops and recreates the table each run, so adding columns to the schema requires no migration",
+          "ref": "decksite/data/preaggregation.py:6-18",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `decksite/data/card.py:preaggregate_card_archetype`, add `total_n INT NOT NULL` column and `SUM(dc.n) AS total_n` to the SELECT. In `load_cards()` when archetype_id is set, add a JOIN to the existing archetype aggregation to fetch total archetype decks, then expose `avg_copies = total_n / num_decks` and `pct_of_decks = num_decks / total_archetype_decks` via the `/api/cards2/` endpoint in `decksite/controllers/api.py`. Update `shared_web/static/js/cardtable.jsx` to render these two columns conditionally when `archetypeId` prop is non-empty.",
+      "issue": 7588,
+      "notes": "Purely additive: no schema migration, no change to existing data, no data retention implications. Columns are computed aggregates from existing deck_card.n data.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:30:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

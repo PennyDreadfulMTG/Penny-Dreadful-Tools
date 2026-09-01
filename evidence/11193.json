@@ -1,0 +1,73 @@
+{
+  "fix": [],
+  "issue": 11193,
+  "triage": [
+    {
+      "batch_id": "t-11206-3",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Consolidate matches handling into View \u2014 explicitly states 'display matches on /matchups/ as that code was already there and only need a little tweak to get working'",
+          "ref": "9ddc93d2",
+          "type": "commit"
+        },
+        {
+          "detail": "{{#show_matches}}{{> personmatches}}{{/show_matches}} \u2014 individual matches are rendered",
+          "ref": "decksite/templates/matchups.mustache:52-54",
+          "type": "code"
+        },
+        {
+          "detail": "Shows Person, Deck, Opponent, Opponent's Deck, Result, Competition, Date \u2014 the home/away deck with result that the issue requested",
+          "ref": "decksite/templates/personmatches.mustache:1-35",
+          "type": "code"
+        },
+        {
+          "detail": "self.matches = results.matches; self.show_matches = len(self.matches) > 0 \u2014 matches are loaded and exposed to template",
+          "ref": "decksite/views/matchups.py:26-27",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11193,
+      "notes": "The 'card was/wasn't played' annotation mentioned as a stretch goal in the issue is still unimplemented, but it was framed as 'you could even' \u2014 the primary request is fully addressed.",
+      "proposed_comment": "The core request \u2014 showing individual matches with both decks and the result on /matchups/ \u2014 was implemented in commit 9ddc93d2 (May 2023). The /matchups/ page now shows a full match list via the personmatches partial with home deck, opponent, opponent's deck, and game result. The 'spy in the log to mark if a card was played' stretch goal was not implemented.",
+      "recorded_at": "2026-09-01T23:26:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11193-1",
+      "final_comment": "The core request \u2014 showing individual matches with both decks and the result on /matchups/ \u2014 was implemented in commit 9ddc93d2 (May 2023), which both switched the template to the richer personmatches partial (showing deck, opponent, opponent's deck, and game result) and enabled display by changing show_matches from hard-coded False to conditional on results being present. The optional stretch goal of inspecting MTGO logs to flag whether a queried card was actually played was not implemented.",
+      "issue": 11193,
+      "own_evidence": [
+        {
+          "detail": "independently verified: {{#show_matches}}{{> personmatches}}{{/show_matches}} is present; commit 9ddc93d2 switched from the bare matchestable partial to the richer personmatches partial",
+          "ref": "decksite/templates/matchups.mustache:52-54",
+          "type": "code"
+        },
+        {
+          "detail": "independently verified: table includes Deck, Opponent, Opponent's Deck, and Result (game_wins-game_losses) columns \u2014 the exact view the issue requested",
+          "ref": "decksite/templates/personmatches.mustache:1-35",
+          "type": "code"
+        },
+        {
+          "detail": "independently verified: self.show_matches = len(self.matches) > 0 \u2014 the commit changed this from the hard-coded False that suppressed the match list; matches are now displayed when results exist",
+          "ref": "decksite/views/matchups.py:26-27",
+          "type": "code"
+        },
+        {
+          "detail": "issue state is OPEN with 0 comments; no recent human activity; the card-played spy stretch goal was never implemented but was framed as optional",
+          "ref": "gh issue view 11193",
+          "type": "issue"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:31:11Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

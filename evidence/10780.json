@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 10780,
+  "triage": [
+    {
+      "batch_id": "t-11082-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Search results are still rendered server-side with Mustache \u2014 a static <table> with {{#search_results}} iteration, no React component",
+          "ref": "decksite/templates/archetypesearch.mustache:1-62",
+          "type": "code"
+        },
+        {
+          "detail": "ArchetypeSearch view class exists and populates search_results for Mustache rendering \u2014 no JSON/React path",
+          "ref": "decksite/views/archetype_search.py:8-22",
+          "type": "code"
+        },
+        {
+          "detail": "The React table pattern (Table, renderRecord, createRoot) exists and is used for other pages, showing the intended target shape",
+          "ref": "shared_web/static/js/decktable.jsx",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 10780,
+      "notes": "Reactifying requires: new JSX component with checkbox support for bulk reassignment (the main complexity), a JSON API endpoint for search results, webpack bundle entry, and replacing the Mustache table. More than ~150 lines across multiple files.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

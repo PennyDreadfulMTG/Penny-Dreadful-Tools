@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11150,
+  "triage": [
+    {
+      "batch_id": "t-11168-3",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "is_kick_off_week(start) returns True only if kick_off_date falls within [start, start+7days]; static analysis does not reveal a code path that would announce kick off as 'today' when it is a full week away",
+          "ref": "magic/tournaments.py:141-143",
+          "type": "code"
+        },
+        {
+          "detail": "kick_off_date() = last_rotation + timedelta(days=8, hours=10, minutes=30); rrule uses byhour=13,byminute=30 \u2014 there is a 3-hour gap between computed kick_off_date time and actual rrule time, but this only affects is_kick_off_week boundary calculations",
+          "ref": "magic/tournaments.py:136-139",
+          "type": "code"
+        },
+        {
+          "detail": "No fixing commit found after issue date; a27da37d is about achievement naming, not scheduling",
+          "ref": "git log --oneline --after=2023-04-01 --grep='kick.off'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11150,
+      "notes": "The static code path for is_kick_off_week does not obviously reproduce 'announced as today when it is next week'; root cause may be timezone/edge-case or a one-time data issue. Needs runtime reproduction to confirm.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

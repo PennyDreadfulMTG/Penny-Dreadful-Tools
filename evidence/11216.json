@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-11216-1",
+      "branch": "sweep/11216-add-explain-scryfall",
+      "files_changed": 1,
+      "head_sha": "e54fda876e21ba6029b323162a2008db736fdbf9",
+      "issue": 11216,
+      "lines_changed": 10,
+      "lint": "passed",
+      "notes": "Purely additive change \u2014 one new dict entry, no existing code paths modified. The `'deckbuilding'` entry already mentions Scryfall and `f:pd`; the new `'scryfall'` entry gives users a direct target when they type `!explain scryfall`.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe `!explain` bot command had no entry for `scryfall`, so users asking about it got the \"I can explain any of these things\" fallback list instead of useful information.\n\n## What changed\n\nAdded a `'scryfall'` key to the `explanations` dict in `discordbot/commands/explain.py` with a short description of Scryfall and two links:\n- `Scryfall`: https://scryfall.com/\n- `Penny Dreadful Legal Cards`: https://scryfall.com/search?q=f%3Apd (pre-filtered to `f:pd`)\n\nThe entry is placed alphabetically between `rotation` and `spectating`. It also automatically surfaces in autocomplete since `keys` is built from `sorted(explanations.keys())`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit discordbot` \u2014 848 passed, 1 skipped (functional tests skipped per existing marker)\n- Manual import check confirmed `'scryfall' in keys` is `True` and both link URLs are present\n\nFixes #11216",
+      "pr_title": "Add `!explain scryfall` entry (#11216)",
+      "recorded_at": "2026-09-01T23:28:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "848 passed, 1 skipped in 18.76s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 11216,
+  "triage": [
+    {
+      "batch_id": "t-11216-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "explanations dict has no 'scryfall' key; only reference to Scryfall is a URL inside the 'deckbuilding' entry at line 36",
+          "ref": "discordbot/commands/explain.py:12-213",
+          "type": "code"
+        },
+        {
+          "detail": "single match at line 36 (URL only, inside 'deckbuilding'), no dedicated 'scryfall' explanation entry",
+          "ref": "grep -n 'scryfall' discordbot/commands/explain.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add a 'scryfall' key to the `explanations` dict in `discordbot/commands/explain.py` (alongside 'deckbuilding', 'decklists', etc.) with a short description of Scryfall and links to https://scryfall.com/ and the PD-filtered search (f:pd). Approximately 10 lines, no other files need changing.",
+      "issue": 11216,
+      "notes": "The bot's !explain autocomplete will pick it up automatically once the key is added.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:22:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11201,
+  "triage": [
+    {
+      "batch_id": "t-11206-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Still has <input type='checkbox' class='toggle-illegal' name='toggle_illegal'> with no id attribute, making the label's for='toggle_illegal' inoperative",
+          "ref": "decksite/templates/bugs.mustache:4",
+          "type": "code"
+        },
+        {
+          "detail": ".toggle-illegal { margin-left: 0; } \u2014 minimal styling, checkbox is visually bare",
+          "ref": "shared_web/static/css/pd.css:2020",
+          "type": "code"
+        },
+        {
+          "detail": "$('.toggle-illegal').on('change', PD.toggleIllegalCards) \u2014 JS uses change event on the checkbox",
+          "ref": "shared_web/static/js/pd.js:27",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In bugs.mustache, add id='toggle_illegal' to the checkbox so the label association works. In pd.css, style .toggle-illegal as a visually distinct toggle (e.g. hidden checkbox with a styled <label> acting as a toggle button using ::before/::after). The JS already uses the 'change' event on the checkbox class so no JS changes needed if keeping it as a visually-styled checkbox. ~20 lines of CSS.",
+      "issue": 11201,
+      "notes": "The functionality (JS toggle) is already correct; this is purely a cosmetic/accessibility fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:26:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

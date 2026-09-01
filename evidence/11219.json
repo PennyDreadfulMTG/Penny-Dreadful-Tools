@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11219,
+  "triage": [
+    {
+      "batch_id": "t-11229-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Template has Archetype Tree, Decks, Cards, history chart, and Matchups sections \u2014 no People section",
+          "ref": "decksite/templates/archetype.mustache:1-25",
+          "type": "code"
+        },
+        {
+          "detail": "archetype() controller loads archetypes, matchups, seasons_active, and season_stats \u2014 does not load people data",
+          "ref": "decksite/controllers/metagame.py:130-139",
+          "type": "code"
+        },
+        {
+          "detail": "_arch_person_stats preaggregate exists with archetype_id, person_id, season_id, wins, losses, draws, num_decks \u2014 the data is ready to query",
+          "ref": "decksite/data/archetype.py:253",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Add a load_people_for_archetype(archetype_id, season_id, tournament_only) function in decksite/data/archetype.py (or decksite/data/person.py) that queries _arch_person_stats joined with the person table, ~20 lines. 2) Call it in decksite/controllers/metagame.py archetype() and pass the result to the view. 3) Accept it in Archetype.__init__ (decksite/views/archetype.py) and set self.people. 4) Add a People section to decksite/templates/archetype.mustache using the existing livedecktable pattern adapted for people.",
+      "issue": 11219,
+      "notes": "The issue comment suggests extending the same feature to the card detail page; that would be a separate change of similar scope. The preaggregate already tracks per-person per-archetype stats so no schema or data migration is needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

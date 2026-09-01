@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11168,
+  "triage": [
+    {
+      "batch_id": "t-11168-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_disjoint_archetype_person() called unconditionally in preaggregate()",
+          "ref": "decksite/data/archetype.py:197",
+          "type": "code"
+        },
+        {
+          "detail": "load_disjoint_archetypes uses _arch_disjoint_person_stats only when person_id is provided",
+          "ref": "decksite/data/archetype.py:580-582",
+          "type": "code"
+        },
+        {
+          "detail": "Only one call site: decksite/controllers/api.py:448, which never passes person_id",
+          "ref": "grep -rn 'load_disjoint_archetypes' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "preaggregate_matchups_person() also called unconditionally; _matchup_ps_stats is only queried when person_id passed to load_matchups",
+          "ref": "decksite/data/archetype.py:199",
+          "type": "code"
+        },
+        {
+          "detail": "Only one call site: decksite/controllers/metagame.py:135, which never passes person_id \u2014 both tables are computed but never read",
+          "ref": "grep -rn 'load_matchups' --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/data/archetype.py: (1) remove the call to preaggregate_disjoint_archetype_person() at line 197 and delete the function (lines 350-408); (2) remove the person_id branch in load_disjoint_archetypes (lines 582-583) that selects _arch_disjoint_person_stats; (3) remove the call to preaggregate_matchups_person() at line 199 and delete the function (lines 445-499); (4) remove the person_id branch in load_matchups (lines 446-448) that selects _matchup_ps_stats. These are derived cache tables with no callers, not primary data, so removal has no retention impact.",
+      "issue": 11168,
+      "notes": "Baker's comment also asks about _matchup_ps_stats; same fix applies. Both tables are derivable from primary data so no historical data is lost.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

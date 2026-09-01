@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11196,
+  "triage": [
+    {
+      "batch_id": "t-11206-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "symbols font is already woff2: url('/static/fonts/symbols.woff2') format('woff2') \u2014 partially done",
+          "ref": "shared_web/static/css/pd.css:283",
+          "type": "code"
+        },
+        {
+          "detail": "heading-caps @font-face still uses data:application/font-woff inline base64 \u2014 not yet converted",
+          "ref": "shared_web/static/css/pd.css:188",
+          "type": "code"
+        },
+        {
+          "detail": "main-text (normal, italic, bold variants) @font-face still uses data:application/font-woff inline base64",
+          "ref": "shared_web/static/css/pd.css:196",
+          "type": "code"
+        },
+        {
+          "detail": "from fontTools.ttLib.woff2 import compress \u2014 woff2 generation tooling is available but only used for symbols font",
+          "ref": "maintenance/fonts.py:13",
+          "type": "code"
+        },
+        {
+          "detail": "Source TTF for main-text exists in fonts/sources \u2014 conversion to woff2 is feasible",
+          "ref": "shared_web/static/fonts/sources/main-text.ttf",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11196,
+      "notes": "The symbols font is already woff2; the remaining inline woff blobs (heading-caps, main-text in 3 variants) need to be extracted, compressed to woff2 via fontTools, re-base64-encoded, and the CSS updated. The source TTFs exist and the tooling is in-tree, but the multi-step process and the large inline CSS blobs make this more than a single small change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:26:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

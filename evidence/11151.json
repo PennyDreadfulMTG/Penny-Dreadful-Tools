@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11151,
+  "triage": [
+    {
+      "batch_id": "t-11168-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "result_json assigned inside try inside for _ in range(3) loop; if all 3 FetchException attempts fail, result_json is never set, then result_json.keys() on line 236 raises UnboundLocalError",
+          "ref": "magic/fetcher.py:232-236",
+          "type": "code"
+        },
+        {
+          "detail": "No commit found that fixes this variable-before-assignment pattern \u2014 bug is still present in current master",
+          "ref": "git log --oneline -S result_json -- magic/fetcher.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In magic/fetcher.py: before the `for _ in range(3)` loop (around line 231), add `result_json = None`. After the loop, add `if result_json is None: return False, [], []` (with an optional print/log noting Scryfall was unreachable). This handles total downtime gracefully instead of raising UnboundLocalError.",
+      "issue": 11151,
+      "notes": "Affects only the /scry command and any other caller of fetcher.search_scryfall when Scryfall is completely unreachable for 3 consecutive requests.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

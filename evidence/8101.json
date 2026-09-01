@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-8101-1",
+      "branch": "sweep/8101-consider-exact-date-in-title-attr-of-dis",
+      "files_changed": 12,
+      "head_sha": "c046a5c22190ace0ef9d744aeb9a3806e7d57ff0",
+      "issue": 8101,
+      "lines_changed": 22,
+      "lint": "passed",
+      "notes": "The `display_date_title` attribute will render as an empty string in templates where it hasn't been set (Mustache silently omits missing keys), so templates that render a `display_date` without a corresponding Python-side `display_date_title` will simply show no tooltip rather than erroring. The `data/person.py:328` path that also sets `n.display_date` for player notes was left unchanged since `views/player_notes.py` overwrites it anyway.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nRelative date strings like \"3 days ago\" or \"2 weeks ago\" appeared throughout the site (deck pages, match tables, competitions, news, player notes) with no way for users to see the exact underlying datetime on hover.\n\n## What changed\n\n- **`shared/dtutil.py`**: Added `exact_date(dt)` function returning the datetime formatted as `'%Y-%m-%d %H:%M %Z'` in the WotC (Pacific) timezone.\n- **`decksite/prepare.py`**: Set `display_date_title` alongside `display_date` for both decks (`d.active_date`) and matches (`m.date`).\n- **`decksite/view.py`**: Set `display_date_title` for competitions (`c.start_date`).\n- **`decksite/data/news.py`**: Set `display_date_title` for news items (`item.date`).\n- **`decksite/views/player_notes.py`**: Set `display_date_title` for player notes (`n.created_date`).\n- **7 Mustache templates** (`deckmatches.mustache`, `personmatches.mustache`, `deckrow.mustache`, `competitions.mustache`, `news.mustache`, `playernotes.mustache`, `subtitle.mustache`): Wrapped or annotated the `{{display_date}}` output with a `title=\"{{display_date_title}}\"` attribute so browsers show the exact date on hover.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected (MariaDB bootstrapped in the cloud environment per sweep instructions)\n\nFixes #8101",
+      "pr_title": "Add exact date tooltips to display dates (#8101)",
+      "recorded_at": "2026-09-01T23:19:31Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.33s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 8101,
   "triage": [
     {

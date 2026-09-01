@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7681,
+  "triage": [
+    {
+      "batch_id": "t-10068-3",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "send_scryfall_two_names() returns True for 'flip' layout, so the cardfeed reports flip cards as 'Erayo, Soratami Ascendant // Erayo's Essence' with legal=false (banned)",
+          "ref": "decksite/controllers/api.py:842",
+          "type": "code"
+        },
+        {
+          "detail": "May 2022: expanded cardfeed to include flip layout in combined-name format, which may help PDBot resolve back-face names",
+          "ref": "6206b81f",
+          "type": "commit"
+        },
+        {
+          "detail": "PDBot is a separate application at pdbot.pennydreadfulmagic.com; its source code is not in this repo",
+          "ref": "logsite/importing.py:32",
+          "type": "behavior"
+        },
+        {
+          "detail": "No code in this repo checks flip-side legality during game observation; that logic lives in PDBot",
+          "ref": "grep -rn 'Erayo\\|flip.*legal\\|legal.*flip' logsite/ discordbot/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7681,
+      "notes": "Cannot determine current PDBot behavior from this repo alone. The cardfeed improvement (6206b81f) may have partially addressed the issue by exposing combined flip-card names, but whether PDBot was updated to use this is unknown. Since Erayo is banned, any 'not legal' report is factually correct; the issue may be about misleading messaging using the back-face name rather than the front-face name.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:12Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

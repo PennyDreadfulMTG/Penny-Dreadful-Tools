@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:33:12Z",
+  "evidence_refs": [
+    "evidence/7681.json#triage[0]"
+  ],
+  "issue": 7681,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Cannot determine current PDBot behavior from this repo alone. The cardfeed improvement (6206b81f) may have partially addressed the issue by exposing combined flip-card names, but whether PDBot was updated to use this is unknown. Since Erayo is banned, any 'not legal' report is factually correct; the issue may be about misleading messaging using the back-face name rather than the front-face name."
+}

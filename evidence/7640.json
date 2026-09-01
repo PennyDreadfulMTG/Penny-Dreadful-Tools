@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7640,
+  "triage": [
+    {
+      "batch_id": "t-7656-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "doorprize endpoint exists but only records a winner \u2014 no outbound announcement or Discord notification",
+          "ref": "decksite/controllers/api.py:628-635",
+          "type": "code"
+        },
+        {
+          "detail": "Background task infrastructure exists (announce_reboot_complete pattern) but no prize-credit announcement handler exists",
+          "ref": "discordbot/background.py:34-43",
+          "type": "code"
+        },
+        {
+          "detail": "No Cardhoarder API integration for detecting when prizes are actually credited",
+          "ref": "grep -rn 'cardhoarder.*announce\\|credit.*announce' returned zero matches",
+          "type": "search"
+        },
+        {
+          "detail": "Only comment: 'This will require doing something sane about the door prize' \u2014 implies door prize needs different treatment from top-8 prizes",
+          "ref": "#7640",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7640,
+      "notes": "Decision needed: what external trigger signals prize credits (Cardhoarder has no known webhook in this codebase)? How to treat door prizes vs top-8 prizes differently? Whether to pin vs just post the announcement?",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:30:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

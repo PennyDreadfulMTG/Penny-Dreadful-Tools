@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7881-1",
+      "branch": "sweep/7881-consider-including-0-hit-cards-that-were",
+      "files_changed": 1,
+      "head_sha": "68e8c28eba7a63581cfd81b5fd91f153faced2f5",
+      "issue": 7881,
+      "lines_changed": 26,
+      "lint": "passed",
+      "notes": "The fix is purely additive: cards that previously appeared in _rotation still appear with the same data; newly included 0-hit cards get hits=0, percent=0, status='Undecided' (or 'Not Legal' once runs_remaining falls too low). load_rotation_summary() was left unchanged because after this fix COUNT(*) FROM _rotation already reflects all currently-legal cards. No schema changes required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`cache_rotation()` in `decksite/data/rotation.py` built `_rotation` by querying `FROM rotation_runs AS rr WHERE rr.season_id = @next_season_id`. This means only cards that had appeared in at least one rotation-run file were included. Cards that are legal in the current season but have not yet shown up in any rotation run (0 hits) were silently excluded from `/rotation`.\n\n## What changed\n\nThe `FROM` clause in the `CREATE TABLE \u2026 AS SELECT` inside `cache_rotation()` now starts from `_legal_cards AS lc` and does a `LEFT JOIN rotation_runs AS rr ON lc.name = rr.name AND rr.season_id = @next_season_id`, filtered by `lc.season_id = {seasons.current_season_num()}`. All `COUNT(*)`/`SUM()` expressions that previously counted rows from `rotation_runs` are replaced with `COALESCE(COUNT(rr.name), 0)` / `COALESCE(SUM(IF(rr.number = \u2026, 1, 0)), 0)` to handle the NULLs produced by the outer join. The `GROUP BY name` is qualified to `GROUP BY lc.name`. The ranks join is also updated to key on `lc.name`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (no touched-file errors)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped in 18.47 s on a live MariaDB instance\n\nFixes #7881",
+      "pr_title": "Include 0-hit currently-legal cards in /rotation (#7881)",
+      "recorded_at": "2026-09-01T23:20:26Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.47s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7881,
   "triage": [
     {

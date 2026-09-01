@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11194,
+  "triage": [
+    {
+      "batch_id": "t-11206-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Comment reads 'IFNULL so we still count byes as wins' \u2014 intent is clear",
+          "ref": "decksite/data/deck.py:662",
+          "type": "code"
+        },
+        {
+          "detail": "nwdl_join() uses INNER JOIN deck_match AS odm \u2014 bye rows have no odm entry so they are silently dropped, making the IFNULL dead code",
+          "ref": "decksite/data/deck.py:667-668",
+          "type": "code"
+        },
+        {
+          "detail": "competition.py already correctly uses LEFT JOIN for odm \u2014 shows the right pattern",
+          "ref": "decksite/data/competition.py:175",
+          "type": "code"
+        },
+        {
+          "detail": "match.py uses LEFT JOIN for odm \u2014 correct",
+          "ref": "decksite/data/match.py:97",
+          "type": "code"
+        },
+        {
+          "detail": "person.py uses INNER JOIN for odm with IFNULL \u2014 same bug pattern, needs audit",
+          "ref": "decksite/data/person.py:193",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/deck.py:668, change 'INNER JOIN deck_match AS odm' to 'LEFT JOIN deck_match AS odm' in nwdl_join(). Also audit decksite/data/person.py:193 and decksite/data/achievements.py:449,470,513 which use INNER JOIN for odm \u2014 determine whether each should handle byes or whether the INNER JOIN is intentional (e.g., archetype.py matchup queries where both sides need archetypes are intentional). Core fix is 1 line; audit adds a few more.",
+      "issue": 11194,
+      "notes": "Fixing nwdl_join() will cause byes to count as wins in all card/archetype aggregation stats across the site \u2014 a visible change to reported win rates. The code comment confirms this is the intended behavior, but the visual impact is significant.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:26:06Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

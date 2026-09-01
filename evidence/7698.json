@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7698,
+  "triage": [
+    {
+      "batch_id": "t-10068-3",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "sort_options for cards includes numDecks, winPercent, quality \u2014 no min_decks HAVING clause present in any of these paths",
+          "ref": "decksite/data/clauses.py:64",
+          "type": "code"
+        },
+        {
+          "detail": "Only occurrence of min_decks (hardcoded=20) is in home page latest-decks logic, unrelated to list sorting",
+          "ref": "decksite/views/home.py:35",
+          "type": "code"
+        },
+        {
+          "detail": "No HAVING clause filtering on num_decks exists in any list query",
+          "ref": "grep -rn 'min_decks\\|HAVING.*num_decks' decksite/data/clauses.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7698,
+      "notes": "The owner needs to decide: (1) is N user-configurable (URL param / slider) or hardcoded? (2) what is the default value of N? (3) does it apply only when sorting by win% / quality, or always? These UX choices determine the implementation approach and scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:12Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

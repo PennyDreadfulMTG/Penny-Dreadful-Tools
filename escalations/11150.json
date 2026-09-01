@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:28:04Z",
+  "evidence_refs": [
+    "evidence/11150.json#triage[0]"
+  ],
+  "issue": 11150,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The static code path for is_kick_off_week does not obviously reproduce 'announced as today when it is next week'; root cause may be timezone/edge-case or a one-time data issue. Needs runtime reproduction to confirm."
+}

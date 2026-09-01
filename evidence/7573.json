@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7573,
+  "triage": [
+    {
+      "batch_id": "t-7656-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "spectating explanation mentions !record but only in passing; no dedicated PDBot MTGO commands reference page exists",
+          "ref": "discordbot/commands/explain.py:167-173",
+          "type": "code"
+        },
+        {
+          "detail": "retire explanation mentions !retire on MTGO; no !notleague entry exists anywhere in explain.py",
+          "ref": "discordbot/commands/explain.py:152-157",
+          "type": "code"
+        },
+        {
+          "detail": "Log shows PDBot saying '!notleague' command exists but its behavior and full command list are undocumented in the bot",
+          "ref": "logsite/tests/198379247.txt:13",
+          "type": "code"
+        },
+        {
+          "detail": "!notleague is handled entirely by the external PDBot system, not this repo \u2014 behavior question cannot be answered from this codebase",
+          "ref": "grep -rn 'notleague' in all .py files returned zero matches",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7573,
+      "notes": "The first question (are PDBot commands documented?) has a partial answer \u2014 they are scattered across explain.py but no canonical list exists. The second question (Test vs League discrimination) requires PDBot system knowledge outside this repo. Both parts are informational rather than clearly requesting a code change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:30:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

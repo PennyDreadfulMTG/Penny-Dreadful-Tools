@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 10068,
+  "triage": [
+    {
+      "batch_id": "t-10068-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "integer constants FNM=1, SAT=2, APAC=3, SUN=4, MON=5, THU=6 \u2014 new series needs a new constant here",
+          "ref": "magic/tournaments.py:17",
+          "type": "code"
+        },
+        {
+          "detail": "get_all_next_tournament_dates builds rrule tuples per series \u2014 new series needs a new rrule line and a return-list entry here",
+          "ref": "magic/tournaments.py:86",
+          "type": "code"
+        },
+        {
+          "detail": "all_series_info() returns a list of Container dicts with hosts, display_time, sponsor, etc. \u2014 new series needs a third separate entry here",
+          "ref": "magic/tournaments.py:297",
+          "type": "code"
+        },
+        {
+          "detail": "Adding a tournament series currently requires touching three disjoint places: constants, get_all_next_tournament_dates, and all_series_info, matching the issue description",
+          "ref": "magic/tournaments.py overall",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "Define a single SERIES_DATA list of dicts/dataclasses in magic/tournaments.py that contains all per-series fields (weekday, hour, minute, timezone, series_name, hosts, display_time, sponsor_name, ID). Derive both get_all_next_tournament_dates and all_series_info from iteration over SERIES_DATA, eliminating the three-point editing requirement. Affects magic/tournaments.py wholesale (~300 lines of restructuring) with moderate risk to tournament scheduling; thorough testing via magic/tournaments_test.py is needed.",
+      "issue": 10068,
+      "notes": "The comment on the issue mentions making this data-not-code (e.g. a config file or DB table), which would be an even larger scope change. The minimum viable improvement is the single-source-of-truth refactor within the Python file.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:12Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 10771,
+  "triage": [
+    {
+      "batch_id": "t-11082-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Sort queue loads 'NOT d.reviewed' decks with no admin check and no active-run exclusion \u2014 all demimods see full player/deck info for active league runs",
+          "ref": "decksite/views/edit_archetypes.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "@auth.demimod_required on edit_archetypes \u2014 route is accessible to non-admin sorters",
+          "ref": "decksite/controllers/admin.py:63",
+          "type": "code"
+        },
+        {
+          "detail": "exclude_active_league_runs() clause already exists and is applied for non-admin users in decks_where(), but is not applied to the sort queue deck load",
+          "ref": "decksite/data/clauses.py:198-210",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/views/edit_archetypes.py, import auth and check auth.is_admin() (or session.get('admin')). When not admin, pass the exclude_active_league_runs(viewer_id) clause into the deck.load_decks() call at line 14 so active league runs are excluded from the sort queue for non-admin sorters. Alternatively, mask d.person and d.name for active runs if excluding is not desired.",
+      "issue": 10771,
+      "notes": "The issue comment struck through 'Also hide active runs on /people/person' noting it was already true \u2014 that's a separate code path. The sort queue itself (edit_archetypes.py) has no such protection. Product call needed on exclude vs. anonymize, but the code change is small either way.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

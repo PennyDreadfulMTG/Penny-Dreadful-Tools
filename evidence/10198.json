@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 10198,
+  "triage": [
+    {
+      "batch_id": "t-10198-3",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "report() accepts a ReportForm that has no field for the MTGO lobby comment; the comment is never received or checked server-side",
+          "ref": "decksite/league.py:211-259",
+          "type": "code"
+        },
+        {
+          "detail": "PDBot is identified only by api_token; no lobby-comment field exists in the form or in ReportForm.__init__",
+          "ref": "decksite/league.py:216",
+          "type": "code"
+        },
+        {
+          "detail": "Zero hits \u2014 the decksite has no awareness of the MTGO lobby comment at report time",
+          "ref": "grep -rn 'pd practice|matchComment|lobby' decksite/ --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 10198,
+      "notes": "The fix requires PDBot (separate repo) to pass the MTGO match lobby comment when auto-reporting, AND the decksite /report/ endpoint to reject submissions where the comment contains 'pd practice'. Two-sided change across codebases; the decksite side alone is not sufficient.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:34Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

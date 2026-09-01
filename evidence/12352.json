@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12352-1",
+      "branch": "sweep/12352-season-table-doesn-t-need-an-id-and-a-nu",
+      "files_changed": 4,
+      "head_sha": "ebf78b43",
+      "issue": 12352,
+      "lines_changed": 9,
+      "lint": "passed",
+      "notes": "The migration is a simple DROP COLUMN with no data loss since id == number for all existing rows. The insert_seasons.py INSERT now explicitly sets id (overriding AUTO_INCREMENT), which MariaDB/MySQL allows when the id is named in the column list \u2014 same behaviour as the old number column but now the sole identifier.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `season` table had both an `id` (AUTO_INCREMENT PK) and a `number` column that were always identical \u2014 seasons are inserted in order and `season_id` FKs in other tables (e.g. `deck_cache`) were always set equal to the season number. Keeping both columns is redundant and misleading.\n\n## What changed\n\n- **`decksite/sql/77.sql`** \u2014 migration that drops the `number` column from `season`.\n- **`decksite/data/playability.py`** \u2014 `SELECT number FROM season` \u2192 `SELECT id FROM season`.\n- **`decksite/league.py`** \u2014 `WHERE number = \u2026` \u2192 `WHERE id = \u2026` in `random_legal_deck`.\n- **`maintenance/insert_seasons.py`** \u2014 updated both the existence check (`SELECT number` \u2192 `SELECT id`) and the INSERT statement (`INSERT INTO season (\\`number\\`, \u2026)` \u2192 `INSERT INTO season (id, \u2026)`).\n\nHistorical migration files (15.sql, 61.sql) are left untouched \u2014 they ran long ago against the old schema and don't need to be replayed.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (functional test explicitly skipped by the suite)\n\nFixes #12352",
+      "pr_title": "Remove redundant `number` column from season table (#12352)",
+      "recorded_at": "2026-09-01T23:30:49Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit maintenance",
+        "detail": "848 passed, 1 skipped in 18.68s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12352,
   "triage": [
     {

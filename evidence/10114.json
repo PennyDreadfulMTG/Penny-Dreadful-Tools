@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 10114,
+  "triage": [
+    {
+      "batch_id": "t-10198-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Preaggregation uses `(SELECT DISTINCT card, deck_id FROM deck_card)` \u2014 the `n` (copies) column is deliberately stripped, so avg copies is not computed",
+          "ref": "decksite/data/card.py:86",
+          "type": "code"
+        },
+        {
+          "detail": "load_cards SELECT has no avg_copies column; the data doesn't reach the API",
+          "ref": "decksite/data/card.py:293-303",
+          "type": "code"
+        },
+        {
+          "detail": "Header row has # Decks, Record, Win %, tournament wins, 5-0s \u2014 no avg copies column",
+          "ref": "shared_web/static/js/cardtable.jsx:8",
+          "type": "code"
+        },
+        {
+          "detail": "deck_card table has `n INTEGER NOT NULL` per row \u2014 the raw data exists, just not aggregated",
+          "ref": "decksite/sql/1.sql:47-55",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/card.py: change `(SELECT DISTINCT card, deck_id FROM deck_card)` to `(SELECT card, deck_id, n FROM deck_card WHERE NOT sideboard)` in preaggregate_card and preaggregate_card_archetype; add `avg_copies FLOAT` column to those preaggregation table schemas; add `AVG(avg_copies)` in load_cards SELECT. In decksite/controllers/api.py: no change needed (camelized automatically). In shared_web/static/js/cardtable.jsx: add 'Avg Copies' th and td rendering card.avgCopies. ~4 files, ~30 lines total, no DB migration (preaggregation tables are recreated).",
+      "issue": 10114,
+      "notes": "The comment filter (WHERE NOT sideboard) must be added because the existing DISTINCT was avoiding double-counting between maindeck and sideboard rows; without DISTINCT the sideboard filter serves the same purpose.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

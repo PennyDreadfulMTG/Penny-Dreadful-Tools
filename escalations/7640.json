@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:30:27Z",
+  "evidence_refs": [
+    "evidence/7640.json#triage[0]"
+  ],
+  "issue": 7640,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Decision needed: what external trigger signals prize credits (Cardhoarder has no known webhook in this codebase)? How to treat door prizes vs top-8 prizes differently? Whether to pin vs just post the announcement?"
+}

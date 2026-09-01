@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11082,
+  "triage": [
+    {
+      "batch_id": "t-11082-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bannercss() still dynamically generates CSS at runtime by iterating seasons.SEASONS, returning it as a Flask Response \u2014 separate HTTP call on every page load",
+          "ref": "decksite/controllers/banners.py:33-41",
+          "type": "code"
+        },
+        {
+          "detail": "<link rel=\"stylesheet\" href=\"/banner/banner.css\"> is present in every page header, confirming the separate request is still made",
+          "ref": "decksite/templates/header.mustache:8",
+          "type": "code"
+        },
+        {
+          "detail": "No season-N::before background-image rules present \u2014 banner CSS is not in the main stylesheet",
+          "ref": "shared_web/static/css/pd.css",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add 101 static CSS rules (header.season-0::before through header.season-100::before with background-image: url('/banner/N.png')) to shared_web/static/css/pd.css; remove the <link> tag from decksite/templates/header.mustache:8; optionally remove or keep the bannercss() route in decksite/controllers/banners.py for backwards-compat. No build tooling change is needed \u2014 pd.css is already served and gzipped.",
+      "issue": 11082,
+      "notes": "silasary suggested SCSS @for as an alternative; the static-CSS approach avoids adding a preprocessor. The route bannercss() generates only 30-40 rules today; extending to 100 is forward-safe and tiny when gzipped.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

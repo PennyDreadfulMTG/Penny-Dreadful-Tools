@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 10512,
+  "triage": [
+    {
+      "batch_id": "t-11082-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prime_cache() updates legal_formats in deck_cache but is only called on deck creation/update \u2014 no periodic refresh exists",
+          "ref": "decksite/data/deck.py:392-413",
+          "type": "code"
+        },
+        {
+          "detail": "Daily reprime_cache task runs preaggregate functions but does NOT call prime_cache() per deck \u2014 legal_formats in deck_cache can become arbitrarily stale",
+          "ref": "maintenance/reprime_cache.py:16-25",
+          "type": "code"
+        },
+        {
+          "detail": "deck_cache schema has no cached_date column \u2014 bakert's proposed tracking mechanism was never implemented",
+          "ref": "decksite/sql/10.sql:1-8",
+          "type": "code"
+        },
+        {
+          "detail": "bakert confirmed in comments: 949aaad removed per-deck repriming in 2020 due to 30-minute runtime; explored 1/50th batch (3513 decks, ~few seconds) and proposed cached_date column approach",
+          "ref": "#10512",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 10512,
+      "notes": "Root cause is clear and confirmed by code. Fix requires design decisions: batch size per day, whether to add a cached_date column (schema migration) for LRU ordering, and whether to fold it into rotation or run as a separate daily task. Per-deck prime_cache has cumulative performance risk at scale.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:16Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

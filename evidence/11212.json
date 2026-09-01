@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11212,
+  "triage": [
+    {
+      "batch_id": "t-11216-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "card_search_where() returns tuple (sql_where, message) where message is only populated on error (InvalidSearchException); success path always returns empty string for message",
+          "ref": "decksite/data/clauses.py:269-278",
+          "type": "code"
+        },
+        {
+          "detail": "find/ package has no expression-to-human-readable-text renderer; building one would require traversing the parsed Expression/Token AST and producing natural-language output for every key/operator/term combination",
+          "ref": "find/search.py:1-540",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11212,
+      "notes": "This is a meaningful feature: a human-readable search description would require a new AST walker covering all ~20 key types and their operators, plus the boolean connectors \u2014 likely 200+ lines of new code and tests.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:22:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

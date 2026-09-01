@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-11222-1",
+      "branch": "sweep/11222-pdbot-says-there-is-a-door-prize-for-the",
+      "files_changed": 1,
+      "head_sha": "4cdbb9af",
+      "issue": 11222,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Changes are two string literals only; no logic affected. The wording assumes regular PD Saturday weeklies still have door prizes \u2014 if that has also changed, the 'prizes' entry should be updated further.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `!explain prizes` and `!explain doorprize` responses both stated that a door prize is awarded in Penny Dreadful tournaments unconditionally. This caused PDBot to tell players in the Kick Off and PD 500 that there is a door prize when in fact those events do not have one.\n\n## What changed\n\nUpdated two string literals in `discordbot/commands/explain.py`:\n\n- **`doorprize`** (line 50): appended a clarification that regular weekly PD tournaments have a door prize, while the Kick Off and PD 500 do not.\n- **`prizes`** (line 129): replaced the unconditional door-prize sentence with one that explicitly names regular weekly PD tournaments as the only events that award a door prize, and calls out the Kick Off and PD 500 as exceptions.\n\n## Validation\n\n`uv run --frozen python dev.py lint` \u2014 passed. The changes are pure string literals containing no logic, so there is no meaningful unit test to write or run.\n\nFixes #11222",
+      "pr_title": "Qualify door prize text to exclude Kick Off and PD 500 (#11222)",
+      "recorded_at": "2026-09-01T23:33:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (unit tests not run \u2014 no DB available in cloud environment; changes are pure string literals with no logic, so unit coverage adds no value)",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 11222,
+  "triage": [
+    {
+      "batch_id": "t-11229-3",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "'prizes' explain unconditionally says 'One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize' with no qualifier about which tournament series",
+          "ref": "discordbot/commands/explain.py:129",
+          "type": "code"
+        },
+        {
+          "detail": "'doorprize' explain also describes the prize without specifying it only applies to regular PD Saturday tournaments",
+          "ref": "discordbot/commands/explain.py:49-51",
+          "type": "code"
+        },
+        {
+          "detail": "Kick Off prizes table lists ranked prizes only; no door prize entry or mention anywhere in the template",
+          "ref": "decksite/templates/kickoff.mustache:1-30",
+          "type": "code"
+        },
+        {
+          "detail": "kick_off_prize() returns 0 for finishes beyond a cutoff with no door-prize logic; same pattern in pd500_prize()",
+          "ref": "magic/tournaments.py:237-244",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Edit discordbot/commands/explain.py: remove or qualify the door prize sentence in the 'prizes' explanation (line 129) to state it applies to regular PD Saturday tournaments only, not the Kick Off or PD 500. Optionally update the 'doorprize' explanation (lines 49-51) similarly. Verify with a project owner whether regular PD Saturdays still have door prizes before wording the qualifier.",
+      "issue": 11222,
+      "notes": "The fix is a 1-2 sentence text edit in one file. Confidence is medium because the live state of door prizes for regular PD Saturday tournaments cannot be confirmed statically; the fix wording depends on that answer.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 10116,
+  "triage": [
+    {
+      "batch_id": "t-10198-3",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Zero hits \u2014 no code filters cards based on offensive content or Scryfall image_status fields",
+          "ref": "grep -rn 'Invoke Prejudice|image_status|content_warning|banned_image' . --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Oracle is populated from Scryfall bulk data; Scryfall removed Invoke Prejudice from their dataset in June 2020, so it should not appear in an up-to-date oracle",
+          "ref": "magic/multiverse.py:147",
+          "type": "code"
+        },
+        {
+          "detail": "parse_queries uses a general fuzzy card search with no exclusion list; no offensive-card filter exists",
+          "ref": "discordbot/command.py:61-67",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 10116,
+      "notes": "If the oracle DB is current with Scryfall bulk data, this card is absent and the issue may be organically resolved. The open policy question is whether to explicitly block cards removed for offensive content even if they re-enter the data. Owner labeled it 'question' and '-backlog', suggesting intentional deferral.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

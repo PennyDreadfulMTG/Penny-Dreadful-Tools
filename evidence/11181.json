@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11181,
+  "triage": [
+    {
+      "batch_id": "t-11186-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_disjoint_archetypes uses _arch_disjoint_person_stats table when person_id is provided, so preaggregate_disjoint_archetype_person is in active use",
+          "ref": "decksite/data/archetype.py:582",
+          "type": "code"
+        },
+        {
+          "detail": "load_matchups uses _matchup_ps_stats table when person_id is provided, so preaggregate_matchups_person is in active use",
+          "ref": "decksite/data/archetype.py:498",
+          "type": "code"
+        },
+        {
+          "detail": "both functions are called unconditionally in the top-level preaggregate() function",
+          "ref": "decksite/data/archetype.py:197",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11181,
+      "notes": "Neither function can be disabled \u2014 both tables are queried in production code paths. The remaining open action is to benchmark actual run times and consider optimizations (e.g. ORDER BY NULL per #11176, or index changes), which requires a production database environment.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:24:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

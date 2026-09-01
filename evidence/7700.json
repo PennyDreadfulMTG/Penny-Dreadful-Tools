@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7700,
+  "triage": [
+    {
+      "batch_id": "t-10068-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No results \u2014 no 'best player with this card' feature exists anywhere in decksite views, data, or templates",
+          "ref": "grep -rn 'best_player\\|best.*player.*card\\|player.*card.*win' decksite/",
+          "type": "search"
+        },
+        {
+          "detail": "wilson_lower_bound_sql() exists and is used for archetype/card ranking but not for per-player-per-card statistics",
+          "ref": "decksite/data/clauses.py:304",
+          "type": "code"
+        },
+        {
+          "detail": "Card detail view exists but shows no per-player win-rate breakdown",
+          "ref": "decksite/views/card.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "load_cards queries aggregate across all players; no player-level breakdown for a specific card",
+          "ref": "decksite/data/card.py:15",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7700,
+      "notes": "Requires a new SQL query joining card plays, decks, and person win records grouped by player for a specific card; a minimum-decks threshold (Wilson score was suggested in comments); a new section on the card detail page; and template work. More than 150 lines and involves non-trivial design decisions about display placement and threshold selection.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:33:12Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11170,
+  "triage": [
+    {
+      "batch_id": "t-11186-3",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "face_properties() lists power, toughness, loyalty but not defense \u2014 no defense column in the face table",
+          "ref": "magic/card.py:100",
+          "type": "code"
+        },
+        {
+          "detail": "Scryfall card loading captures power/toughness/loyalty but has no result['defense'] assignment",
+          "ref": "magic/multiverse.py:427",
+          "type": "code"
+        },
+        {
+          "detail": "search handles power, toughness, loyalty criteria but has no defense handler \u2014 searching by defense is not supported",
+          "ref": "find/search.py:175",
+          "type": "code"
+        },
+        {
+          "detail": "zero hits \u2014 defense is absent from the entire card model, data loading, and search layers",
+          "ref": "grep -rn defense magic/ find/ --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11170,
+      "notes": "Adding defense requires: (1) new column in the face table (ALTER TABLE migration), (2) adding defense to face_properties() in magic/card.py, (3) loading it from Scryfall in multiverse.py, (4) adding a search criterion in find/search.py similar to loyalty. The schema change makes this migration-required.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:24:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

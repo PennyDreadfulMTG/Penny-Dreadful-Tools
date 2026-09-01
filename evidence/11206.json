@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11206,
+  "triage": [
+    {
+      "batch_id": "t-11206-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_card_person() builds _card_person_stats table with per-person wins/losses/draws/num_decks per card \u2014 data infrastructure already exists",
+          "ref": "decksite/data/card.py:146",
+          "type": "code"
+        },
+        {
+          "detail": "card.mustache shows stats and a deck table but has no section for top players by play count or win rate",
+          "ref": "decksite/templates/card.mustache:1-23",
+          "type": "code"
+        },
+        {
+          "detail": "Card view does not load or expose person stats to the template",
+          "ref": "decksite/views/card.py:1-39",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a function in decksite/data/card.py to query _card_person_stats for a given card name, returning top N players by num_decks and win_percent (joining to person table for name). Load this in decksite/views/card.py and attach to the view. Add a new mustache section in decksite/templates/card.mustache showing a small table of top players (played most) and top players (highest win %). All within ~60 lines, no schema changes needed.",
+      "issue": 11206,
+      "notes": "The preaggregate infrastructure already supports this; it is purely a read-side feature addition with no schema or data changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:26:06Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

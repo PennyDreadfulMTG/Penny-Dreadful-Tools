@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11165,
+  "triage": [
+    {
+      "batch_id": "t-11168-3",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "sync_achievements() fetches person data and assigns trophy roles; Redis key expires after 4 hours (ex=14400)",
+          "ref": "discordbot/bot.py:174-215",
+          "type": "code"
+        },
+        {
+          "detail": "sync_achievements() triggered only on presence changes to 'online' or 'dnd'",
+          "ref": "discordbot/bot.py:169-172",
+          "type": "code"
+        },
+        {
+          "detail": "No commits found after issue date that fix role assignment logic; a27da37d adds kickoff achievements but does not touch sync_achievements",
+          "ref": "git log --oneline --after=2023-04-01 --grep=achievement",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11165,
+      "notes": "Static analysis shows the sync logic is structurally plausible but relies on Redis state and the fetcher API returning achievements data. Root cause cannot be confirmed without runtime access or API logs; needs live investigation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:04Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

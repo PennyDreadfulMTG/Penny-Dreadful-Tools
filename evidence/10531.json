@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 10531,
+  "triage": [
+    {
+      "batch_id": "t-11082-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "uniqify_cards() deduplicates by card.canonicalize(c.name) only, so [[Vindicate|G07]] and [[Vindicate|J13]] collapse to one entry \u2014 preferred_printing is set on the card but ignored by the dedup key",
+          "ref": "discordbot/command.py:211-217",
+          "type": "code"
+        },
+        {
+          "detail": "copy_with_mode() stores preferred_printing on the Card object \u2014 the information is present but unused during dedup",
+          "ref": "discordbot/command.py:85",
+          "type": "code"
+        },
+        {
+          "detail": "post_cards() calls uniqify_cards(cards) before rendering \u2014 all duplicates removed here",
+          "ref": "discordbot/command.py:293",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/command.py:214-216, change the deduplication key from card.canonicalize(c.name) to card.canonicalize(c.name) + '|' + (c.get('preferred_printing') or '') \u2014 this lets multiple explicit set-code printings of the same card appear while still deduplicating unqualified duplicate mentions of the same card.",
+      "issue": 10531,
+      "notes": "One-line change. Edge case: if the same printing is mentioned twice it will still deduplicate correctly (same key). Existing tests in discordbot/command_test.py should be checked and a case added for multiple printings.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:28:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

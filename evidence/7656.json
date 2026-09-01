@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7656,
+  "triage": [
+    {
+      "batch_id": "t-7656-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Uses data-sortInitialOrder attribute which feeds jQuery tablesorter \u2014 a client-side, in-page-only sort",
+          "ref": "logsite/templates/people.mustache:5",
+          "type": "code"
+        },
+        {
+          "detail": "Server-side query uses .paginate() with order_by=name only; no sort parameter accepted from the request",
+          "ref": "logsite/views/people.py:21",
+          "type": "code"
+        },
+        {
+          "detail": "Decksite uses React-based live tables (data-* driven) that support server-side sort across the full dataset \u2014 no equivalent exists in logsite",
+          "ref": "decksite/templates/livedecktable.mustache:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment: 'The solution here is to use a React component like we use in DeckTable and CardTable' and later 'It's not of any great practical value to convert all the logsite tables to react components. Backlogging this.'",
+          "ref": "#7656",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7656,
+      "notes": "Bakert made a deliberate product call to backlog this; the engineering effort (converting logsite tables to React with server-side sort params) is substantial relative to its practical value since most logsite use cases are single-person recent matches.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:30:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

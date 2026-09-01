@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11184,
+  "triage": [
+    {
+      "batch_id": "t-11186-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current bundle is 337 KiB (337226 bytes), larger than the 260 KiB reported in the issue and 38% over webpack's 244 KiB recommended limit",
+          "ref": "shared_web/static/dist/bundle.js",
+          "type": "code"
+        },
+        {
+          "detail": "webpack config has no performance key; warnings are still emitted on every build",
+          "ref": "decksite/webpack.config.js",
+          "type": "code"
+        },
+        {
+          "detail": "only dependency bumps since the issue was filed; no config change to address bundle size or performance warnings",
+          "ref": "git log --after=2023-05-08 -- decksite/webpack.config.js package.json",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11184,
+      "notes": "Bundle has grown from 260 KB to 337 KB since the issue was filed. A real fix requires bundle analysis and likely webpack code-splitting (lazy imports) across the JSX entry points; simply silencing the warning with performance: {hints: false} would hide an increasing trend.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:24:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

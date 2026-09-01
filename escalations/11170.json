@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:24:31Z",
+  "evidence_refs": [
+    "evidence/11170.json#triage[0]"
+  ],
+  "issue": 11170,
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "Adding defense requires: (1) new column in the face table (ALTER TABLE migration), (2) adding defense to face_properties() in magic/card.py, (3) loading it from Scryfall in multiverse.py, (4) adding a search criterion in find/search.py similar to loyalty. The schema change makes this migration-required."
+}

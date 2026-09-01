@@ -1,0 +1,68 @@
+{
+  "fix": [],
+  "issue": 11220,
+  "triage": [
+    {
+      "batch_id": "t-11229-3",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "May 13 2024 'Restrict season picker to relevant seasons for achievements and archetypes' \u2014 wires seasons_active into the archetype view's legal_seasons",
+          "ref": "8fa73f4d",
+          "type": "commit"
+        },
+        {
+          "detail": "self.legal_seasons = seasons_active (list of season IDs where archetype has recorded stats)",
+          "ref": "decksite/views/archetype.py:90",
+          "type": "code"
+        },
+        {
+          "detail": "season_chooser() disables any season not in self.legal_seasons, giving users a visual indicator of which seasons are relevant",
+          "ref": "decksite/view.py:129",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11220,
+      "notes": "The issue comment asking whether this also applies to the card detail page is addressed by the same mechanism \u2014 card.py already computed legal_seasons from PD legality history and the season chooser uses that identically.",
+      "proposed_comment": "Fixed in May 2024 (commit 8fa73f4d): the season chooser on archetype pages now disables seasons where the archetype has no recorded data, directly indicating which seasons are worth looking at.",
+      "recorded_at": "2026-09-01T23:28:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11223-1",
+      "final_comment": "Fixed in May 2024 (commit 8fa73f4d): the season chooser on archetype pages now disables seasons where the archetype has no recorded data, directly indicating which seasons are worth looking at.",
+      "issue": 11220,
+      "own_evidence": [
+        {
+          "detail": "self.legal_seasons = seasons_active confirmed in current master; seasons_active is fetched from _arch_stats and contains only season IDs with recorded data",
+          "ref": "decksite/views/archetype.py:90",
+          "type": "code"
+        },
+        {
+          "detail": "legal_seasons defaults to None so non-archetype views are unaffected",
+          "ref": "decksite/view.py:49",
+          "type": "code"
+        },
+        {
+          "detail": "season_chooser() sets disabled=True for any season not in legal_seasons; seasonchooser.mustache renders disabled seasons as non-clickable divs, giving clear visual indication of which seasons are worth viewing",
+          "ref": "decksite/view.py:129",
+          "type": "code"
+        },
+        {
+          "detail": "Commit verified: adds seasons_active() query to data/archetype.py, passes result to Archetype view, and stores it as legal_seasons",
+          "ref": "8fa73f4d",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:33:01Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

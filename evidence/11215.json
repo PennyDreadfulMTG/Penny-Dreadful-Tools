@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-11215-1",
+      "branch": "sweep/11215-is-commander-gives-you-a-list-of-command",
+      "files_changed": 2,
+      "head_sha": "a823aa636efa8897de5490670461d0806e92ecd3",
+      "issue": 11215,
+      "lines_changed": 9,
+      "lint": "passed",
+      "notes": "Only `is` and `not` keys tokenize with `>` as a separate operator; `has>value` is lexed as a single string and falls through to a name-text search, so it was never broken in the same way. The fix is confined to two guard checks in parse_criterion.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nSearches like `is>commander` were silently succeeding \u2014 `parse_criterion` in `find/search.py` passed the term straight to `is_subquery()` without checking the operator. Because `is_subquery('commander')` returns a valid SQL subquery, the search returned all commander-legal cards instead of raising an error.\n\n## What changed\n\n- `find/search.py` (`parse_criterion`): added an operator check before calling `is_subquery` for both the `is`/`has` branch and the `not` branch. Any operator other than `:` now raises `InvalidSearchException`.\n- `find/find_test.py`: added `test_is_requires_colon_operator` covering `is>commander`, `is>=commander`, `is<commander`, and `not>commander`.\n\nNote: `has>vanilla` tokenizes as a single text token (not a key/operator/term triplet), so it never reached this code path and was not included in the test.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit find` \u2014 61 passed, 48 deselected\n\nFixes #11215",
+      "pr_title": "Raise error for non-colon operators with `is:`/`has:`/`not:` (#11215)",
+      "recorded_at": "2026-09-01T23:30:05Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit find",
+        "detail": "61 passed, 48 deselected in 0.49s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 11215,
+  "triage": [
+    {
+      "batch_id": "t-11216-3",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "parse_criterion() for key 'is'/'has' ignores operator.value() entirely and calls is_subquery(term.value()); so is>commander silently returns results instead of raising InvalidSearchException",
+          "ref": "find/search.py:195-196",
+          "type": "code"
+        },
+        {
+          "detail": "InvalidSearchException exists and is used elsewhere (e.g. line 468) for invalid is: values; same pattern can be applied to invalid operators",
+          "ref": "find/search.py:537-540",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `find/search.py` inside `parse_criterion`, before the `return is_subquery(term.value())` on line 196, add `if operator.value() != ':': raise InvalidSearchException('\\`is:\\` and \\`has:\\` only support the \\`:\\` operator')`. Same for the `not` key on line 198 if desired. No other files need changing.",
+      "issue": 11215,
+      "notes": "The issue title says to generalize to all operators that only take ':'; supertype/subtype/format/edition keys have similar behavior and could be fixed in the same pass for ~5 extra lines.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:22:55Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

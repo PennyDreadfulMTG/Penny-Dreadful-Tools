@@ -30,6 +30,50 @@
       "proposed_comment": "Dark mode was implemented in PR #12694 (merged May 2024). The site now has a toggle in the navigation and full `html.dark-mode` CSS coverage. This issue can be closed.",
       "recorded_at": "2026-09-01T22:56:17Z",
       "risk": "low"
+    },
+    {
+      "batch_id": "t-10068-3",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Merged PR titled 'Dark mode' added dark mode CSS with html.dark-mode selectors throughout pd.css",
+          "ref": "#12694",
+          "type": "pr"
+        },
+        {
+          "detail": "Merged PR 'Dark mode js' added darkmode.mustache with prefersDarkMode/setDarkMode JS using localStorage and prefers-color-scheme media query",
+          "ref": "#12695",
+          "type": "pr"
+        },
+        {
+          "detail": "html.dark-mode rules present covering background, text, and component colors",
+          "ref": "shared_web/static/css/pd.css:635",
+          "type": "code"
+        },
+        {
+          "detail": "Inline script sets dark mode on page load from localStorage or OS preference",
+          "ref": "decksite/templates/darkmode.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "PD.initDarkModeToggle wires the toggle button to flip localStorage and call setDarkMode()",
+          "ref": "shared_web/static/js/pd.js:209",
+          "type": "code"
+        },
+        {
+          "detail": "dark-mode-toggle-container li with toggle icon present in site menu",
+          "ref": "decksite/templates/menu.mustache:25",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7738,
+      "notes": "Logsite (pdbot.pennydreadfulmagic.com stats) does not have dark mode \u2014 the issue comment mentioned sharing it with logsite, but the main request for pdm is done. The implementation uses localStorage rather than a cookie.",
+      "proposed_comment": "Dark mode was implemented via PRs #12694 and #12695 (merged May 2024). It uses CSS custom properties with an html.dark-mode class, localStorage preference storage, and respects the OS prefers-color-scheme setting. A toggle is present in the site menu. Logsite does not have dark mode, but the primary pdm/decksite request is complete.",
+      "recorded_at": "2026-09-01T23:33:12Z",
+      "risk": "low"
     }
   ],
   "verify": [

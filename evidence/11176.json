@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 11176,
+  "triage": [
+    {
+      "batch_id": "t-11186-3",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "original ORDER BY NULL fix applied only to preaggregate_card_person in card.py",
+          "ref": "ac66ae9",
+          "type": "commit"
+        },
+        {
+          "detail": "preaggregate_season_card_count has ORDER BY NULL; preaggregate_season_archetype_card_count also has it at line 283",
+          "ref": "decksite/data/playability.py:238",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_card_count GROUP BY block has no ORDER BY NULL in current master",
+          "ref": "decksite/data/playability.py:356",
+          "type": "code"
+        },
+        {
+          "detail": "preaggregate_archetypes, preaggregate_archetype_person, preaggregate_disjoint_*, preaggregate_matchups, preaggregate_matchups_person all end with HAVING clause and no ORDER BY NULL",
+          "ref": "decksite/data/archetype.py:249",
+          "type": "code"
+        },
+        {
+          "detail": "comments show adding ORDER BY NULL to playability.preaggregate_season_card_count made it go from 1s to 13:48 \u2014 optimization is not universally beneficial",
+          "ref": "#11176",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11176,
+      "notes": "Partial progress was made; several playability/card queries already have ORDER BY NULL. The archetype preaggregation functions do not. The mixed benchmark results (13x regression for some playability queries) mean this cannot be mechanically applied everywhere \u2014 each query needs timing on production-scale data before the change is committed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:24:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

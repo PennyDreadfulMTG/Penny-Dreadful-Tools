@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:33:12Z",
+  "evidence_refs": [
+    "evidence/7698.json#triage[0]"
+  ],
+  "issue": 7698,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The owner needs to decide: (1) is N user-configurable (URL param / slider) or hardcoded? (2) what is the default value of N? (3) does it apply only when sorting by win% / quality, or always? These UX choices determine the implementation approach and scope."
+}

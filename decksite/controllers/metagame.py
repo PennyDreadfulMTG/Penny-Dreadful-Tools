@@ -9,7 +9,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import deck as ds
-from decksite.data import match
+from decksite.data import match, playability
 from decksite.data import matchup as mus
 from decksite.data import person as ps
 from decksite.data import season as ss
@@ -81,6 +81,7 @@ def card(name: str, deck_type: str | None = None) -> str | wrappers.Response:
         submitted_name = decode_card_name(name)
         canonical_name = parse_card_name(name)
         c = cs.load_card(canonical_name, tournament_only=tournament_only, season_id=get_season_id())
+        c.rank = playability.rank().get(c.name)
         alternate_name = oracle.matching_official_alternate_name(c, submitted_name)
         if not is_canonical_url_name(submitted_name, canonical_name) and alternate_name is None:
             assert request.endpoint is not None

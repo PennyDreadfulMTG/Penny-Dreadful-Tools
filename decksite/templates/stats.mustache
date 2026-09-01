@@ -18,6 +18,7 @@
                     </th>
                 {{/tournament_only}}
                 {{#elo}}<th class="n">Elo</th>{{/elo}}
+                {{#rank}}<th class="n">Rank</th>{{/rank}}
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,7 @@
                 <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
                 <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
                 {{#elo}}<td class="n">{{elo}}</th>{{/elo}}
+                {{#rank}}<td class="n">#{{rank}}</td>{{/rank}}
             </tr>
         </tbody>
     </table>

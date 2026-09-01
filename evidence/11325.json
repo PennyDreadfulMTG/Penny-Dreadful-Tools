@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11325,
+  "triage": [
+    {
+      "batch_id": "t-11348-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "`stripped = s.replace('{', '').replace('}', '')` \u2014 so `mana.parse('{')` strips the brace, gets empty string, returns `[]` without raising InvalidManaCostException",
+          "ref": "magic/mana.py:23",
+          "type": "code"
+        },
+        {
+          "detail": "When `mana.parse('{')` returns `[]`, symbols is `[]`, Counter is empty, `' AND '.join(...)` over empty items yields `clause = ''`, and `return f'({clause})'` produces `()` \u2014 invalid SQL syntax causing a database error",
+          "ref": "find/search.py:332-338",
+          "type": "code"
+        },
+        {
+          "detail": "No commit fixes empty-symbols case; only bf1fb7f3 fixed invalid operator, not empty symbol list",
+          "ref": "git log --oneline -S'mana_where' -- find/search.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In `find/search.py` inside `mana_where()`, after line 333 (`symbols = [f'{{{symbol}}}' for symbol in symbols]`), add: `if not symbols: raise InvalidTokenException(f'mana expects a valid mana symbol, got {term!r}')`. This raises a user-facing parse error instead of passing `()` to the database. Only `find/search.py` needs changing.",
+      "issue": 11325,
+      "notes": "The root cause is that `mana.parse` strips `{`/`}` before parsing, so a bare `{` becomes an empty string and returns `[]` silently. The downstream `Counter([]).items()` is empty, yielding an invalid SQL `()` clause.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

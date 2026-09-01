@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11677,
+  "triage": [
+    {
+      "batch_id": "t-11695-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "key 't' or 'type' calls text_where('type_line', term); t:orc produces (type_line LIKE '%%orc%%') which matches 'Sorcery' because 'orc' is a substring of 'sorcery'",
+          "ref": "find/search.py:173-174",
+          "type": "code"
+        },
+        {
+          "detail": "text_where() uses LIKE with sqllikeescape(q) for non-regex terms; no word-boundary logic exists for type_line column",
+          "ref": "find/search.py:203-222",
+          "type": "code"
+        },
+        {
+          "detail": "Existing test: t:creature generates (type_line LIKE '%%creature%%') \u2014 confirms current substring behavior; this test would need updating with any fix",
+          "ref": "find/find_test.py:521",
+          "type": "code"
+        },
+        {
+          "detail": "Special-case for 'pw' \u2192 'planeswalker' exists in text_where but no other type-specific handling exists",
+          "ref": "find/find_test.py:205",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In find/search.py:text_where(), add a branch for type_line non-regex searches that uses REGEXP with word-boundary anchors instead of LIKE, e.g. `(type_line REGEXP '(^|[ \\\\-\u2014])orc([ \\\\-\u2014]|$)')`. The type_line separator can be either ASCII ' - ' or em-dash ' \u2014 '; the regex must handle both. Update the affected tests in find/find_test.py to expect REGEXP output instead of LIKE.",
+      "issue": 11677,
+      "notes": "Changing LIKE to REGEXP for type_line searches may have a small performance impact (full-table scans lose LIKE prefix optimization), but type searches already scan the cache table. The find_test.py tests will need updating since they assert exact SQL output.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:52:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

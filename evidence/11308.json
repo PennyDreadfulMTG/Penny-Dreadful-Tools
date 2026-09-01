@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11308-1",
+      "branch": "sweep/11308-which-side-is-person-and-which-is-oppone",
+      "files_changed": 1,
+      "head_sha": "25dc305cc45ccfef9b7cc4941628f7ab2c12cb7c",
+      "issue": 11308,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The fix is a single-line WHERE clause extension. No schema changes needed. The `load_matches` function already uses `d` as the hero alias, so constraining `d.id` to the hero deck IDs is sufficient to make the side assignment deterministic.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen viewing `/matchups/` after searching for a specific archetype, person, or card, the match display was non-deterministic about which side was the \"person\" (hero) deck and which was the opponent. In `decksite/data/matchup.py`, `match.load_matches` was called with only `m.id IN (...)` as the WHERE clause. Inside `load_matches`, the SQL joins `deck_match AS dm` on the match, then joins `deck AS d` \u2014 so either participant could be selected as `d` (the left/person side) vs `od` (the opponent), depending on the order of rows returned from `deck_match`.\n\n## What changed\n\nIn `decksite/data/matchup.py` line 80, the WHERE clause passed to `match.load_matches` was extended to additionally constrain `d.id IN (hero_deck_ids)`. This ensures the hero deck is always selected as `d` (the person/left side) and the opponent is always `od`, making the display deterministic.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n- There are no unit tests specifically for the `matchup` module (it requires a live database), but the change is minimal (1 line) and logically correct: adding a filter that constrains which deck is the \"d\" alias in the SQL query.\n\nFixes #11308",
+      "pr_title": "Ensure hero deck is always on person side in matchup match display (#11308)",
+      "recorded_at": "2026-09-01T19:57:47Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.92s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11308,
   "triage": [
     {

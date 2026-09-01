@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 11405,
+  "triage": [
+    {
+      "batch_id": "t-11411-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Sanitize deck export filenames \u2014 changed file_name() regex from stripping only colons to stripping all non-[0-9a-z-] characters after anyascii conversion, guaranteeing ASCII-only output in the Content-Disposition filename",
+          "ref": "48e99b21",
+          "type": "commit"
+        },
+        {
+          "detail": "Earlier partial fix: added anyascii() to file_name() to transliterate non-ASCII to ASCII before stripping",
+          "ref": "2a51b7ae",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: re.sub('[^0-9a-z-]', '', anyascii(safe_name), flags=re.IGNORECASE) \u2014 produces only [0-9a-zA-Z-] characters, always Latin1-safe in HTTP headers",
+          "ref": "decksite/deck_name.py:127",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11405,
+      "notes": "The earlier fix (2a51b7ae / PR #13501) only stripped colons; commit 48e99b21 completed the fix by stripping all non-[0-9a-z-] characters.",
+      "proposed_comment": "This was fixed by commit 48e99b21 (Aug 2026), which changed `file_name()` to strip all non-alphanumeric/hyphen characters (via `re.sub('[^0-9a-z-]', '', anyascii(safe_name))`) after an earlier partial fix (commit 2a51b7ae) added `anyascii` transliteration. The export filename is now guaranteed to be ASCII-safe.",
+      "recorded_at": "2026-09-01T19:51:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11683-1",
+      "final_comment": "Fixed by commit 48e99b21, which tightened the file_name() regex from stripping only colons to stripping all characters not in [0-9a-z-] after anyascii transliteration (building on the earlier partial fix in 2a51b7ae). The export filename is now guaranteed to be ASCII-safe and valid in HTTP headers.",
+      "issue": 11405,
+      "own_evidence": [
+        {
+          "detail": "Current file_name() runs re.sub('[^0-9a-z-]', '', anyascii(safe_name)), stripping all non-ASCII and non-alphanumeric-hyphen characters, guaranteeing a latin1-safe Content-Disposition filename.",
+          "ref": "decksite/deck_name.py:127",
+          "type": "code"
+        },
+        {
+          "detail": "Diff shows the prior regex re.sub(':', '', ...) only stripped colons; the new regex strips all characters outside [0-9a-z-], closing the remaining encoding gap.",
+          "ref": "48e99b21",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:22Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

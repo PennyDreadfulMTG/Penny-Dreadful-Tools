@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11411,
+  "triage": [
+    {
+      "batch_id": "t-11411-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "base GROUP_CONCAT query uses ELSE '' \u2014 when position=1 face has NULL loyalty (non-planeswalkers in multi-face layouts), GROUP_CONCAT collects '' from position\u22652 faces and returns '' instead of NULL",
+          "ref": "magic/card.py:99",
+          "type": "code"
+        },
+        {
+          "detail": "math_where checks column IS NOT NULL, which passes for '' (empty string), then '' < 3 evaluates to TRUE in MariaDB, causing false positives for adventure/flip/meld/modal_dfc/split/transform cards",
+          "ref": "find/search.py:247",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comments confirm the root cause is the ELSE '' in the GROUP_CONCAT query at card.py base query",
+          "ref": "#11411",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": "In magic/card.py:99, change `ELSE '' END` to `ELSE NULL END` in the base GROUP_CONCAT query. Since GROUP_CONCAT ignores NULLs, this makes cards where position=1 has a NULL value (loyalty, power, toughness) return NULL rather than '' \u2014 matching the IS NOT NULL check in math_where. No other fields are affected because name, mana_cost, cmc, type_line, oracle_text, hand, life each have their own overriding queries.",
+      "issue": 11411,
+      "notes": "The fix also corrects the same bug for power and toughness on non-creature multi-face cards. No code outside the query checks loyalty == '' (confirmed by grep).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

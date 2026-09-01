@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11410,
+  "triage": [
+    {
+      "batch_id": "t-11411-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "When subtable == 'color_identity' and operator is ':', operator is changed to '<=' before processing, so unknown color letters like 'x' end up only in the colors set",
+          "ref": "find/search.py:270",
+          "type": "code"
+        },
+        {
+          "detail": "With operator '<=', excluded = all_colors - colors. Since 'x' is not in all_colors {'w','u','b','r','g'}, it is silently dropped with no error raised",
+          "ref": "find/search.py:284",
+          "type": "code"
+        },
+        {
+          "detail": "With operator ':' (color subtable), required = colors including 'x'; subtable_where then calls value_lookup('color','x') which raises InvalidValueException at line 379 \u2014 the helpful feedback path",
+          "ref": "find/search.py:286",
+          "type": "code"
+        },
+        {
+          "detail": "No pre-validation of individual color letters in color_where before operator branching; c: raises on lookup, ci: silently ignores",
+          "ref": "grep find/search.py for 'valid.*color\\|InvalidValue.*color'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In find/search.py color_where(), after building the colors set from the term (around line 265), add validation: iterate each letter in colors and raise InvalidValueException if it is not in {'w','u','b','r','g','m','c'}. This runs before the operator branch so it fires for both c: and ci: regardless of how the operator is later rewritten.",
+      "issue": 11410,
+      "notes": "The fix should happen before the operator rewrite on line 270 so validation applies to all operators uniformly. Care needed not to reject 'c' (colorless) or 'm' (multicolor) which are valid pseudo-colors.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

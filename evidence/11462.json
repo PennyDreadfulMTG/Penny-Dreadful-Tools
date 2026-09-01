@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11462,
+  "triage": [
+    {
+      "batch_id": "t-11566-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Sets `self.tournament_only = self.hide_source = tournament_only` but never sets `self.hide_perfect_runs`",
+          "ref": "decksite/views/archetype.py:88",
+          "type": "code"
+        },
+        {
+          "detail": "The plural Archetypes view correctly sets `self.tournament_only = self.hide_source = self.hide_perfect_runs = tournament_only`; the singular Archetype view omits hide_perfect_runs",
+          "ref": "decksite/views/archetypes.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "5\u20130s column is guarded by `{{^is_matchups}}{{^hide_perfect_runs}}` \u2014 it renders whenever hide_perfect_runs is falsy, which it always is on the tournament-only single-archetype page",
+          "ref": "decksite/templates/archetypetree.mustache:19",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Change `decksite/views/archetype.py:88` from `self.tournament_only = self.hide_source = tournament_only` to `self.tournament_only = self.hide_source = self.hide_perfect_runs = tournament_only`, matching the pattern already used in `decksite/views/archetypes.py:14`. One-line change, no template or JS changes needed.",
+      "issue": 11462,
+      "notes": "The livedecktable (decktable.jsx) has no 5-0s column; the bug is only in archetypetree.mustache rendered via the archetype tree section of the single-archetype view.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

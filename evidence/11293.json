@@ -32,5 +32,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-11293-1",
+      "final_comment": "Fixed in commit 5d143779 (PR #11297): replaced load-all-decks-then-slice-10 with recent_decks_for_person() (decksite/data/deck.py:25), which issues a targeted SQL query with LIMIT 10. The fix was later refactored into DecklistForm in decksite/form.py:32, reducing signup load time from ~2s to 81ms per the commit message.",
+      "issue": 11293,
+      "own_evidence": [
+        {
+          "detail": "recent_decks_for_person uses LIMIT 10 in the SQL query via the load_decks helper, replacing the old pattern of loading all decks then slicing",
+          "ref": "decksite/data/deck.py:25-27",
+          "type": "code"
+        },
+        {
+          "detail": "DecklistForm.__init__ now calls deck.recent_decks_for_person(person_id) \u2014 fix was refactored from league.py into the DecklistForm base class but the efficient query is present",
+          "ref": "decksite/form.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "Commit exists, changes decksite/league.py and decksite/data/deck.py, commit message reports 2s to 81ms improvement",
+          "ref": "5d143779",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:10Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

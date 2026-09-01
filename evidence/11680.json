@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11680,
+  "triage": [
+    {
+      "batch_id": "t-11695-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "elif name and d.get('archetype_name') and name == d.get('archetype_name', '').lower() \u2014 compares titlecased name ('White Jund') to lowercase archetype name ('white jund'); these are never equal so the skip-normalization branch never fires",
+          "ref": "decksite/deck_name.py:106",
+          "type": "code"
+        },
+        {
+          "detail": "When the archetype check fails, normalize_colors() runs; it finds 'White' (W) and 'Jund' (BRG) as color words, combines to WBRG, canonicalizes to 'BRGW' (no proper 4-color name), replaces 'White' with 'BRGW' and removes 'Jund' \u2014 resulting in just 'BRGW'",
+          "ref": "decksite/deck_name.py:108-114",
+          "type": "code"
+        },
+        {
+          "detail": "COLOR_COMBINATIONS has 'BRGW': ['B','R','G','W'] \u2014 confirms 4-color WBRG combination has no proper name, so name_from_colors returns 'BRGW'",
+          "ref": "magic/colors.py:30-31",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/deck_name.py:106, change `name == d.get('archetype_name', '').lower()` to `name.lower() == d.get('archetype_name', '').lower()`. This makes the skip-normalization check case-insensitive so decks whose names exactly match their archetype (e.g. 'White Jund' with archetype 'White Jund') correctly bypass color normalization. Add a test case in deck_name_test.py.",
+      "issue": 11680,
+      "notes": "The intent of the existing check is clear \u2014 skip normalization when name matches archetype \u2014 but a case mismatch makes it a no-op. The one-character fix aligns behavior with intent. Existing tests in deck_name_test.py provide coverage to guard against regressions.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:52:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

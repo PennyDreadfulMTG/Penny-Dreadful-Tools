@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 11328,
+  "triage": [
+    {
+      "batch_id": "t-11348-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit message: 'Also I updated the \"and over 10,000 more\" to use the actual number of legal cards.' Changed template from hardcoded `10,000` to `{{num_cards_thousands}}`",
+          "ref": "377b1659",
+          "type": "commit"
+        },
+        {
+          "detail": "`self.num_cards_thousands = str(len(oracle.legal_cards()) // 1000) + ',000'` \u2014 dynamically computed at render time",
+          "ref": "decksite/views/about.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "Template now reads `over {{num_cards_thousands}} more` \u2014 dynamic, not hardcoded",
+          "ref": "decksite/templates/about.mustache:6",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11328,
+      "notes": null,
+      "proposed_comment": "Fixed in commit 377b1659: the hardcoded '10,000' in `about.mustache` was replaced with `{{num_cards_thousands}}`, computed dynamically from `oracle.legal_cards()` in the view.",
+      "recorded_at": "2026-09-01T19:51:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11328-1",
+      "final_comment": "Fixed in commit 377b1659: the hardcoded '10,000' in about.mustache was replaced with {{num_cards_thousands}}, which is computed dynamically from oracle.legal_cards() in decksite/views/about.py:16.",
+      "issue": 11328,
+      "own_evidence": [
+        {
+          "detail": "self.num_cards_thousands = str(len(oracle.legal_cards()) // 1000) + ',000' \u2014 value is computed dynamically at request time, not hardcoded",
+          "ref": "decksite/views/about.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "Template reads 'over {{num_cards_thousands}} more' \u2014 the mustache variable replaces the former hardcoded '10,000'",
+          "ref": "decksite/templates/about.mustache:6",
+          "type": "code"
+        },
+        {
+          "detail": "Commit exists; message explicitly states 'I updated the and over 10,000 more to use the actual number of legal cards'",
+          "ref": "377b16591b33f3afad3a3d7b5bd55e44f36bc435",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:58:00Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

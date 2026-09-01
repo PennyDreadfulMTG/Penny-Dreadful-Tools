@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11443,
+  "triage": [
+    {
+      "batch_id": "t-11566-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalized_analyzer uses SubstitutionFilter(r\"[\\s/,_'-]\", '') \u2014 strips spaces/hyphens/etc but not '&'; 'Minsc & Boo' normalizes to 'minsc&boo', while query 'Minsc and Boo' normalizes to 'minscandboo' \u2014 no prefix match",
+          "ref": "magic/whoosh_constants.py:9",
+          "type": "code"
+        },
+        {
+          "detail": "anyascii('Minsc & Boo, Timeless Heroes') == 'Minsc & Boo, Timeless Heroes' (& is ASCII), so no extra alias is generated; fuzzy distance between 'minscandboo' and 'minsc&boo' exceeds DIST=2 threshold",
+          "ref": "magic/whoosh_write.py:40-48",
+          "type": "code"
+        },
+        {
+          "detail": "No alias for Minsc & Boo exists in card_aliases.tsv",
+          "ref": "grep -i 'minsc' card_aliases.tsv",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add a line to `card_aliases.tsv`: `Minsc and Boo, Timeless Heroes\\tMinsc & Boo, Timeless Heroes`. The alias gets indexed with normalized form 'minscandboo,timelessheroes', making the query 'Minsc and Boo' (normalized: 'minscandboo') a valid prefix match. A more general fix would also update `magic/whoosh_constants.py:9` to add '&' to the SubstitutionFilter and add a 'and'\u2192'' substitution, but the alias is sufficient for this specific card.",
+      "issue": 11443,
+      "notes": "There may be other cards with '&' in their names; a general normalizer fix in whoosh_constants.py would be cleaner long-term but the alias is a safe one-line fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

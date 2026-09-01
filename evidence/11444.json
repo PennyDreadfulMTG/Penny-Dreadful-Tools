@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 11444,
+  "triage": [
+    {
+      "batch_id": "t-11566-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit titled '\u00c9omer => Eomer' added anyascii to whoosh_write.py; commit message explicitly says 'Fixes #11686', a related closed issue describing the same accent/search problem",
+          "ref": "cc69e319",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: `asciiname = anyascii(card.name); if asciiname != card.name: names.append(asciiname)` \u2014 this indexes an ASCII-folded alias for every card whose name contains non-ASCII chars, so 'Eomer' is indexed as a searchable alias for the \u00c9omer card",
+          "ref": "magic/whoosh_write.py:43-44",
+          "type": "code"
+        },
+        {
+          "detail": "Closed issue 'Eomer should find \u00c9omer cards in bot search and elsewhere' \u2014 same root cause, resolved by cc69e319",
+          "ref": "#11686",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11444,
+      "notes": "Issue was never explicitly linked to the fixing commit; safe to close.",
+      "proposed_comment": "This was fixed by commit cc69e319 ('\u00c9omer => Eomer'), which added anyascii-based ASCII folding to the whoosh index. Searching 'Eomer' now finds \u00c9omer cards because the ASCII variant is indexed as a searchable alias. The related issue #11686 was closed at the same time.",
+      "recorded_at": "2026-09-01T19:51:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11683-1",
+      "final_comment": "Fixed by commit cc69e319, which added anyascii-based ASCII folding to the whoosh index so that searching 'Eomer' finds \u00c9omer cards via the indexed ASCII alias. The identical issue #11686 was auto-closed by that commit in 2023; this issue is a duplicate that was not directly referenced at the time.",
+      "issue": 11444,
+      "own_evidence": [
+        {
+          "detail": "Commit cc69e319 added anyascii(card.name) as an indexed alias; current code confirms the ASCII variant is appended to the names list and indexed.",
+          "ref": "magic/whoosh_write.py:43-45",
+          "type": "code"
+        },
+        {
+          "detail": "Issue #11686 ('Eomer should find \u00c9omer cards') is the same bug, was auto-closed by the commit via 'Fixes #11686'; #11444 is a duplicate that was never directly referenced in the commit.",
+          "ref": "github issue #11686 state: CLOSED",
+          "type": "issue"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:22Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11667-1",
+      "branch": "sweep/11667-pipenv-run-python3-dev-py-unit-parser-te",
+      "files_changed": 1,
+      "head_sha": "c7ab4b85e4c98ffa93c84d23af65a0dd8ca3cac6",
+      "issue": 11667,
+      "lines_changed": 5,
+      "lint": "passed",
+      "notes": "The fix is minimal: 4 lines changed, only in dev.py. No edge cases: running `dev.py unit` with no arguments still works (argv_list is empty so the guard is skipped). The error message includes the list of unmatched filters to help debugging.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen `dev.py unit <filter>` (or `dev.py test <filter>`) was called with a filter that matched no test files, the `runtests()` function would silently pass an empty file list to pytest, which then ran the entire test suite instead of failing with a useful error.\n\n## What changed\n\nIn `dev.py:runtests()`, `list(argv)` is now stored in `argv_list` before the loop so it can be inspected afterward. After the loop that resolves file globs via `find_files()`, if `argv_list` was non-empty but `args` is still empty (nothing matched), the command now exits immediately with a clear message: `No test files found matching: [...]`.\n\nOnly `dev.py` was changed; 4 lines added, 1 refactored.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit parser_test` \u2014 now exits with `No test files found matching: ['parser_test']` (correct; was previously running all tests)\n- `uv run --frozen python dev.py unit analysis_test` \u2014 1 test collected and passed, confirming valid filters still work\n\nFixes #11667",
+      "pr_title": "Exit with error when no test files match the given filter (#11667)",
+      "recorded_at": "2026-09-01T19:50:53Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit analysis_test",
+        "detail": "1 passed in 4.28s; also confirmed 'uv run --frozen python dev.py unit parser_test' exits with 'No test files found matching: [\"parser_test\"]' as expected",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11667,
   "triage": [
     {

@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 11348,
+  "triage": [
+    {
+      "batch_id": "t-11348-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Teach the system that Oathbreaker is singleton \u2014 added Oathbreaker to the set discarded when max card count > 1",
+          "ref": "94671d9b",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code: `for fmt in {'Commander', 'Duel', 'Oathbreaker'}:` discards Oathbreaker for non-singleton decks",
+          "ref": "magic/legality.py:57",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11348,
+      "notes": "Commit message notes that further Oathbreaker-specific deck structure rules (Oathbreaker planeswalker slot, Signature Spell slot) are still not validated, but the original complaint about non-singleton decks being shown as Oathbreaker-legal is resolved.",
+      "proposed_comment": "This was fixed in commit 94671d9b ('Teach the system that Oathbreaker is singleton'), which added `Oathbreaker` to the set of formats discarded when a deck is not singleton. The commit message acknowledges additional Oathbreaker structure rules are still unenforced but the core singleton violation is now caught.",
+      "recorded_at": "2026-09-01T19:51:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11683-1",
+      "final_comment": "Fixed in commit 94671d9b, which added Oathbreaker to the set of formats discarded when a deck has more than one copy of any card. The commit message notes that additional Oathbreaker structure rules (e.g. planeswalker/signature spell requirements) are still unenforced, but the core singleton violation is now caught.",
+      "issue": 11348,
+      "own_evidence": [
+        {
+          "detail": "Current code iterates {'Commander', 'Duel', 'Oathbreaker'} and discards any format where max card count > 1, confirming Oathbreaker is subject to the singleton check.",
+          "ref": "magic/legality.py:57",
+          "type": "code"
+        },
+        {
+          "detail": "Diff shows Oathbreaker was explicitly added to the formats discarded for non-singleton decks; the commit message acknowledges other Oathbreaker rules remain unenforced.",
+          "ref": "94671d9b",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:22Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

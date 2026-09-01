@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11695,
+  "triage": [
+    {
+      "batch_id": "t-11695-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize_colors() finds 'Monou' as a color word (regex matches 'mono' prefix + 'u' suffix at end of word), and 'Simic' as another color word; their canonical color is Simic (GU); 'Monou' is found first so it is replaced by 'Simic' at its location (end of string), then the original 'Simic' at the start is removed via replace('Simic','',1)",
+          "ref": "decksite/deck_name.py:180-213",
+          "type": "code"
+        },
+        {
+          "detail": "is_true_match('Monou') returns True because 'Monou' contains non-WUBRG chars; standardize_color_string strips 'mono' leaving 'u' which maps to Blue, so Monou+Simic=Simic canonical color",
+          "ref": "decksite/deck_name.py:140-155",
+          "type": "code"
+        },
+        {
+          "detail": "normalize() calls normalize_colors on any name not matching an abbreviation, whitelist, or archetype name \u2014 no special handling for descriptive sentences",
+          "ref": "decksite/deck_name.py:84-117",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11695,
+      "notes": "Root cause: regex_pattern for '[WUBRG]+' matches 'Monou' because 'mono' is an optional prefix in the pattern and 'u' is the final character; is_true_match passes because the word has non-WUBRG chars. Any fix must either restrict mono-prefixed color matching to whole-word-only tokens or skip color normalization when multiple color words appear in sentence-like context \u2014 both require rethinking the normalization algorithm.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:52:08Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

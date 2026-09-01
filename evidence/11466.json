@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11466,
+  "triage": [
+    {
+      "batch_id": "t-11566-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "is_tournament_channel() checks only the single integer config key tournament_channel_id; there is no throwback channel ID anywhere in the config or code",
+          "ref": "discordbot/commands/explain.py:306-310",
+          "type": "code"
+        },
+        {
+          "detail": "tournament_channel_id defaults to '334220558159970304'; no throwback_channel_id key exists",
+          "ref": "shared/configuration.py:130",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a `throwback_channel_id` key (or a list-typed `tournament_channel_ids`) to `shared/configuration.py`, populate it with the Discord throwback channel's ID, then update `is_tournament_channel()` in `discordbot/commands/explain.py:306-310` to return True for any channel in that set. The code change is ~5 lines; the channel ID must be supplied by the team.",
+      "issue": 11466,
+      "notes": "The throwback channel Discord ID is not present anywhere in the codebase; someone on the team must provide it before the code change can be wired up.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

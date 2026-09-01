@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 11685,
+  "triage": [
+    {
+      "batch_id": "t-11695-1",
+      "class": "cannot-reproduce",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "subtypes() is defined here but never called from any production code path \u2014 grep confirms the only callers are multiverse_test.py",
+          "ref": "magic/multiverse.py:625-628",
+          "type": "code"
+        },
+        {
+          "detail": "insert_cards_async() inserts card, card_color, card_color_identity, card_produced_mana, printing, card_flavor_name, face, card_legality \u2014 card_subtype and card_supertype are NOT inserted; the tables exist (database.py:62-64) but are never populated",
+          "ref": "magic/multiverse.py:195-211",
+          "type": "code"
+        },
+        {
+          "detail": "Tests for subtypes() explicitly expect space-split: subtypes('Creature - Elder Dragon') == ['Elder', 'Dragon']; no test covers multi-word subtypes like 'Time Lord'",
+          "ref": "magic/multiverse_test.py:30-34",
+          "type": "code"
+        },
+        {
+          "detail": "Confirms function is dead code in production; Doctor Who cards released Oct 2023 produced no reported breakage in 3 years",
+          "ref": "grep -rn 'multiverse.subtypes' across non-test .py files returns nothing",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11685,
+      "notes": "The subtypes() function would return ['Time', 'Lord'] instead of ['Time Lord'] if called, but it is never called in production. The t:time lord search uses LIKE '%%time lord%%' on type_line which works correctly. The sub: search queries the empty card_subtype table and returns nothing, but that is a pre-existing issue unrelated to Doctor Who.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:52:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

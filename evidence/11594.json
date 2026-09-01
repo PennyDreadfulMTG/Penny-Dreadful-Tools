@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11594-1",
+      "branch": "sweep/11594-the-date-of-rotation-and-the-pd-500-shou",
+      "files_changed": 2,
+      "head_sha": "aebcccae9178572e91317423ada330a5f54c5f13",
+      "issue": 11594,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The fix is strictly additive \u2014 a new boolean flag and a Mustache conditional block. The PD 500 date is already suppressed (not shown) when the next set is unannounced, so no change was needed there. The `'???'` sentinel is also used in the existing `seasons.message()` function for the same purpose, confirming this is the correct detection pattern.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen the next Magic set had not been officially announced, the home page displayed a season end date derived from an estimated rotation (code `'???'`) as if it were a firm date. This could mislead users into thinking the rotation date was confirmed.\n\n## What changed\n\n- `decksite/views/home.py` (`setup_rotation`): Added `self.season_end_is_estimated = seasons.next_rotation_ex().code == '???'` to expose the estimation flag to the template.\n- `decksite/templates/home.mustache`: Changed the season end sentence to use Mustache conditional blocks \u2014 rendering \"ends (expected) {{season_end_display}}\" when the flag is truthy, and the original \"ends {{season_end_display}}\" otherwise.\n\nThe PD 500 date is already handled elsewhere: `tournaments.pd500_date()` returns epoch (1970) when the next set is unannounced, so `pd500_date` is never set on the view and the PD 500 sentence is not rendered at all when the rotation is unknown.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen python dev.py unit magic` \u2014 845 passed, 1 skipped in 19.72s\n\nFixes #11594",
+      "pr_title": "Show rotation end date as \"expected\" when next set is unannounced (#11594)",
+      "recorded_at": "2026-09-01T19:56:57Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic",
+        "detail": "845 passed, 1 skipped, 89 deselected in 19.72s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11594,
   "triage": [
     {

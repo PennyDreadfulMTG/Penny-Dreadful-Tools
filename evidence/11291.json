@@ -32,5 +32,37 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-11293-1",
+      "final_comment": null,
+      "issue": 11291,
+      "own_evidence": [
+        {
+          "detail": "No {{#has_decks}} guard present; the <section> and livedecktable are unconditionally rendered",
+          "ref": "decksite/templates/card.mustache:18-21",
+          "type": "code"
+        },
+        {
+          "detail": "When objects array is empty, table.jsx still renders the full table structure (thead with column headers, empty tbody, and pagination showing 0-0 of 0) \u2014 there is no hide-if-empty or no-results message logic",
+          "ref": "shared_web/static/js/table.jsx:56-95",
+          "type": "code"
+        },
+        {
+          "detail": "preRender() only returns loading:true when objects.length===0 AND !loadedOnce; once data loads with 0 results it returns loading:false and objects:[], resulting in the empty table being rendered",
+          "ref": "shared_web/static/js/datamanager.jsx:88-91",
+          "type": "code"
+        },
+        {
+          "detail": "Issue is still OPEN; bakert's comment acknowledges commit 202b102 was made as a workaround but did not close the issue",
+          "ref": "issue #11291 comments",
+          "type": "github"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:10Z",
+      "refutation_reason": "Commit 202b102 fixes the primary regression (deck table hidden for all cards due to has_decks always being False) by switching to client-side loading. However, it does not address the secondary concern the issue body raised: a 'better empty view' for cards with no decks. Cards with no PD decks still display the 'Decks containing [name]' section heading and an empty table with '0-0 of 0' pagination. The proposed closure comment overstates this by claiming livedecktable 'handles the empty-deck case'. The issue remains OPEN on GitHub and the author's own comment on it did not mark it resolved.",
+      "verdict": "UNCERTAIN"
+    }
+  ]
 }

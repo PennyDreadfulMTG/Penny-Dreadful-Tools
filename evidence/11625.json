@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11625-1",
+      "branch": "sweep/11625-sometimes-people-or-at-least-one-person",
+      "files_changed": 1,
+      "head_sha": "56747dd65a6a7f2255241f7c01fc001a31052e75",
+      "issue": 11625,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The fix catches the broad `OAuth2Error` base class rather than the narrower `MismatchingStateError`, which also covers other OAuth errors like `InsecureTransportError` or `InvalidGrantError` that would otherwise surface as 500s \u2014 this is intentional and consistent with the existing `request.values.get('error')` guard above. No schema or data migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a user attempted to log in via Discord OAuth2 (observed on Brave browser), the `/authenticate/callback/` endpoint could raise `oauthlib.oauth2.rfc6749.errors.MismatchingStateError` if the CSRF state token in the OAuth response didn't match the one stored in the session. This happened when the browser's session cookie wasn't preserved across the OAuth redirect (e.g., due to privacy/anti-tracking features). The error bubbled up as an unhandled 500 Internal Server Error, giving the user no useful feedback and triggering a spurious GitHub issue report.\n\n## What changed\n\nIn `shared_web/flask_app.py`, the call to `oauth.setup_session(request.url)` inside `authenticate_callback` is now wrapped in a `try/except OAuth2Error` block. On any OAuth2 error (including `MismatchingStateError`), the user is redirected to the `/unauthorized/` page with a human-readable message: `CSRF state mismatch \u2014 please try logging in again`. This turns a confusing 500 into a clear, actionable error message and stops the false 500-error GitHub reports.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit shared_web` \u2014 845 passed, 1 skipped, 89 deselected; includes the existing `shared_web/flask_app_test.py` suite (9 tests)\n\nFixes #11625",
+      "pr_title": "Handle OAuth2 state mismatch gracefully in login callback (#11625)",
+      "recorded_at": "2026-09-01T19:54:36Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit shared_web",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.25s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11625,
   "triage": [
     {

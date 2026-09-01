@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-11566-1",
+      "branch": "sweep/11566-https-logs-pennydreadfulmagic-com-match",
+      "files_changed": 2,
+      "head_sha": "fd07493985d8d15720b5fd2a313b0fe16e49933b",
+      "issue": 11566,
+      "lines_changed": 7,
+      "lint": "passed",
+      "notes": "The selector `.game pre` is scoped exclusively to the game log partial; it will not affect any other `<pre>` elements on the site. `white-space: pre-wrap` is preferred over `overflow-x: auto` here because it avoids a secondary scrollbar within the page and keeps the log fully visible without requiring the user to scroll right.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe game log view at `/match/<id>/` renders the PDBot game log inside a `<pre>` element. Because `<pre>` preserves whitespace and does not wrap by default, long lines caused a horizontal scrollbar across the page.\n\n## What changed\n\n- `logsite/templates/game_view.mustache`: Added `class=\"game\"` to the `<section>` element so the log container has a targetable CSS class.\n- `shared_web/static/css/pd.css`: Added `.game pre { white-space: pre-wrap; overflow-wrap: break-word; }` at the end of the file. This preserves newlines and indentation (important for log readability) while wrapping long lines instead of extending the page horizontally.\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed. The fix is pure CSS/template with no Python logic, so no unit tests cover it directly; visual inspection of the template change confirms the selector is correctly scoped to game log sections only.\n\nFixes #11566",
+      "pr_title": "Fix horizontal scroll on game log view (#11566)",
+      "recorded_at": "2026-09-01T19:57:35Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 11566,
+  "triage": [
+    {
+      "batch_id": "t-11566-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "<pre>{{sanitized_log}}</pre> renders game logs in a <pre> element with no overflow rule, causing horizontal scroll on wide log lines",
+          "ref": "logsite/templates/game_view.mustache:3",
+          "type": "code"
+        },
+        {
+          "detail": "No CSS rule for <pre> element overflow/wrapping exists in the sole CSS file; the only white-space:pre-wrap at line 783 is scoped to a link ::after pseudo-element, not <pre>",
+          "ref": "grep -n '^pre' shared_web/static/css/pd.css",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add a CSS rule in `shared_web/static/css/pd.css` scoped to logsite game views, e.g. `.game pre { overflow-x: auto; }` (or `white-space: pre-wrap` to wrap instead of scroll). The template is `logsite/templates/game_view.mustache:3`; no Python changes needed.",
+      "issue": 11566,
+      "notes": "The fix must be scoped carefully so it does not apply global `pre` styling that might affect other pages.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

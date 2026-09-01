@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 11683,
+  "triage": [
+    {
+      "batch_id": "t-11695-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Handle missing archetype when creating rules \u2014 changed admin.py, added test in admin_test.py, updated editrules template",
+          "ref": "e12441a3",
+          "type": "commit"
+        },
+        {
+          "detail": "post_rules() now checks if request.form.get('archetype_id') is truthy; missing archetype_id falls into else branch returning edit_rules(['Please select an archetype.']) \u2014 no 500",
+          "ref": "decksite/controllers/admin.py:131-142",
+          "type": "code"
+        },
+        {
+          "detail": "test_post_rules_requires_archetype verifies 'Please select an archetype.' appears in response and archetype select has class='error' when archetype_id is empty string",
+          "ref": "decksite/controllers/admin_test.py:77-88",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11683,
+      "notes": null,
+      "proposed_comment": "This was fixed in commit e12441a3: posting to /admin/rules/ without an archetype_id now returns a 200 with a user-friendly error message (\"Please select an archetype.\") rather than a 500. A test covers the behavior.",
+      "recorded_at": "2026-09-01T19:52:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11683-1",
+      "final_comment": "Fixed in commit e12441a3: posting to /admin/rules/ without selecting an archetype now returns a user-friendly error page containing 'Please select an archetype.' instead of raising an InvalidArgumentException (500). A regression test at admin_test.py:77 covers this behavior.",
+      "issue": 11683,
+      "own_evidence": [
+        {
+          "detail": "Checked the diff of e12441a3: the previous code raised InvalidArgumentException (causing 500); now returns edit_rules(['Please select an archetype.']) when archetype_id is absent.",
+          "ref": "decksite/controllers/admin.py:134-139",
+          "type": "code"
+        },
+        {
+          "detail": "Test verifies 'Please select an archetype.' appears in the response when posting without archetype_id.",
+          "ref": "decksite/controllers/admin_test.py:77-84",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:22Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

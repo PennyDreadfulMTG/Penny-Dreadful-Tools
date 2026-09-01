@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11645-1",
+      "branch": "sweep/11645-time-est-gives-me-jamaica-and-not-new-yo",
+      "files_changed": 2,
+      "head_sha": "45d9b07dc1accb39314bc20a78e454fd1463ae22",
+      "issue": 11645,
+      "lines_changed": 36,
+      "lint": "passed",
+      "notes": "The alias approach is additive \u2014 it only appends the canonical zone when it isn't already in the current-abbreviation matches, so no existing results are removed. MST/HST (Arizona, Hawaii \u2014 no DST) will always appear via the normal match path anyway, so CANONICAL_TZ_ALIASES for those is a harmless belt-and-suspenders addition.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`/time EST` showed Jamaica (America/Jamaica) but not New York because `times_from_timezone_code` matched timezones by their *current* abbreviation. America/New_York uses `EDT` in summer, so it only appeared when EST was the current abbreviation \u2014 Jamaica uses EST year-round with no DST, so it always matched.\n\n## What changed\n\nAdded `CANONICAL_TZ_ALIASES` dict in `magic/fetcher.py` mapping common US abbreviations (`EST`, `EDT`, `CST`, `CDT`, `MST`, `MDT`, `PST`, `PDT`, `AKST`, `AKDT`, `HST`) to their canonical IANA timezone. `times_from_timezone_code()` now appends the canonical zone for any recognized alias before the match loop, so `EST` always includes `America/New_York` in results alongside any other current matches.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen pytest magic/fetcher_test.py -v` \u2014 13 passed (4 pre-existing, 9 new regression tests covering all major US aliases and the specific EST\u2192New York case)\n\nFixes #11645",
+      "pr_title": "Always include canonical US timezone when looking up abbreviation (#11645)",
+      "recorded_at": "2026-09-01T19:52:22Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest magic/fetcher_test.py -v",
+        "detail": "13 passed (4 pre-existing + 9 new) in 0.29s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 11645,
   "triage": [
     {

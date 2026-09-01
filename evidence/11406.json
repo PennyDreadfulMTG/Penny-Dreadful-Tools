@@ -1,0 +1,58 @@
+{
+  "fix": [],
+  "issue": 11406,
+  "triage": [
+    {
+      "batch_id": "t-11411-1",
+      "class": "obsolete",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Remove old chart image generation in favor of Chart.js \u2014 deleted decksite/charts/chart.py and the /charts/cmc/ route from main.py",
+          "ref": "2450e6b3",
+          "type": "commit"
+        },
+        {
+          "detail": "The charts directory now contains only an empty __init__.py; the chart.py PNG generation module is gone",
+          "ref": "decksite/charts/__init__.py",
+          "type": "code"
+        },
+        {
+          "detail": "CMC chart is now built as a Chart.js data structure (mv_chart dict) rendered client-side via canvas; no PNG is generated or served",
+          "ref": "decksite/views/deck.py:47",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11406,
+      "notes": "The deck page now renders the mana-value chart entirely client-side via Chart.js; no server PNG route exists.",
+      "proposed_comment": "The `/charts/cmc/*.png` endpoint and all server-side PNG chart generation were removed in commit 2450e6b3 and replaced with a Chart.js canvas chart. This issue no longer applies.",
+      "recorded_at": "2026-09-01T19:51:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-11683-1",
+      "final_comment": "The /charts/cmc/*.png endpoint and all server-side PNG chart generation were removed in commit 2450e6b3 and replaced with a client-side Chart.js canvas chart. This issue no longer applies.",
+      "issue": 11406,
+      "own_evidence": [
+        {
+          "detail": "The charts/ directory now contains only an empty __init__.py; chart.py was deleted in commit 2450e6b3 and no PNG-generating route exists in the codebase.",
+          "ref": "decksite/charts/",
+          "type": "code"
+        },
+        {
+          "detail": "Commit removed decksite/charts/chart.py entirely and updated deck.mustache to use Chart.js canvas instead of a PNG img tag.",
+          "ref": "2450e6b3",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T19:57:22Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

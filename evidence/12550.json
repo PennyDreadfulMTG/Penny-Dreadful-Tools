@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12550-1",
+      "branch": "sweep/12550-deck-search",
+      "files_changed": 3,
+      "head_sha": "1cf20fba2aa305fa1fc23fc9a74aae0d2582b702",
+      "issue": 12550,
+      "lines_changed": 66,
+      "lint": "passed",
+      "notes": "This adds backend API support only; a dedicated deck search UI page (where a user could fill in a form with card names and win-rate threshold) is a follow-up product/design decision. The `card_where()` function (used by the card detail page) is unchanged \u2014 `cards_where()` is the new multi-card variant called only from `decks_where()`. Card names with commas (e.g. 'Tasigur, the Golden Fang') are handled correctly because each name is passed as a separate `cardName` param, not comma-split.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/api/decks/` endpoint only supported filtering by a single `cardName` parameter, making it impossible to search for decks containing multiple specific cards (e.g., both Hive Mind and Lake of the Dead). There was also no way to filter decks by win rate \u2014 this existed for archetypes and cards but not for individual deck listings.\n\n## What changed\n\n- **`decksite/data/clauses.py`**: Added `cards_where(names: list[str]) -> str` which generates a SQL clause requiring a deck to contain all named cards (uses `HAVING COUNT(DISTINCT card) = N`). Updated `decks_where()` to use `getlist('cardName')` when the args object supports it (i.e. Werkzeug's MultiDict from `request.args`), enabling `?cardName=Hive+Mind&cardName=Lake+of+the+Dead` queries. Added `minWinRate` parameter support (float 0\u2013100) that filters by `cache.wins / NULLIF(cache.wins + cache.losses, 0) * 100 >= N`.\n\n- **`decksite/controllers/api.py`**: Updated the `/api/decks/` docstring to document both new parameters.\n\n- **`decksite/data/clauses_test.py`**: Added 7 tests covering single/multi-card `cards_where()`, unknown card rejection, valid `minWinRate`, non-numeric `minWinRate`, and out-of-range `minWinRate`.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen pytest decksite/data/clauses_test.py -v` \u2014 11 passed (all 4 pre-existing tests plus 7 new ones)\n\nFixes #12550",
+      "pr_title": "Support multi-card deck search and win-rate filtering (#12550)",
+      "recorded_at": "2026-09-01T19:51:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest decksite/data/clauses_test.py -v",
+        "detail": "11 passed (4 pre-existing + 7 new)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12550,
   "triage": [
     {

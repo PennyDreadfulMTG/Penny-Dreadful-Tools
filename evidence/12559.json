@@ -32,5 +32,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Closing because the header no longer has the reported drop shadow. The mobile navigation drawer is a separate element and its elevation is intentional.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-01T19:50:44Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

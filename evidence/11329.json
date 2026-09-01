@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 11329,
+  "triage": [
+    {
+      "batch_id": "t-11348-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/api/decks/updated/ and /matchups/ routes still exist and load full deck sets",
+          "ref": "decksite/controllers/api.py:152",
+          "type": "code"
+        },
+        {
+          "detail": "No single commits found that address the full list of slow endpoints in the issue",
+          "ref": "git log --grep='perf\\|matchup\\|slow' -- decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11329,
+      "notes": "This is a meta-tracking issue listing ~20 slow endpoints. /matchups/ has the most reports (60+). Each endpoint needs independent profiling and SQL/query optimization; no single fix covers all of them.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:07Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

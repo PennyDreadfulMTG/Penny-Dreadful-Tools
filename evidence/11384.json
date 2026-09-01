@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 11384,
+  "triage": [
+    {
+      "batch_id": "t-11411-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue is about a Discord server-level Reddit\u2192Discord webhook integration (configured in Server Settings > Integrations > Webhooks), not about any code in this repository",
+          "ref": "gh issue view 11384 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "No code in the repo manages Discord's native Reddit webhook integration; the codebase has its own Discord webhooks for league/bugs notifications but not the Reddit integration",
+          "ref": "grep -rn 'webhook\\|reddit' decksite/ discordbot/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "bakert comments the webhook can probably be reinstated and will spam once then stop \u2014 the decision is a Discord admin action, not a code change",
+          "ref": "#11384",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 11384,
+      "notes": "Resolving this requires a Discord server admin to re-add the Reddit webhook in Discord Server Settings > Integrations > Webhooks; there is no code change needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T19:51:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

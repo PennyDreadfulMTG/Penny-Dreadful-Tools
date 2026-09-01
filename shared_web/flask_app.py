@@ -8,6 +8,7 @@ from flask.helpers import make_response
 from flask_babel import Babel
 from flask_restx import Api
 from github.GithubException import GithubException
+from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from werkzeug import exceptions, wrappers
 
 from shared import configuration, logger, repo, sentry
@@ -130,7 +131,10 @@ class PDFlask(Flask):
     def authenticate_callback(self) -> wrappers.Response:
         if request.values.get('error'):
             return redirect(url_for('unauthorized', error=request.values['error']))
-        oauth.setup_session(request.url)
+        try:
+            oauth.setup_session(request.url)
+        except OAuth2Error:
+            return redirect(url_for('unauthorized', error='CSRF state mismatch — please try logging in again'))
         target = session.pop('target', None)
         url = self.redirect_target(target) or url_for('home')
         return redirect(url)

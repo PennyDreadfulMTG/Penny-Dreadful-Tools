@@ -493,6 +493,40 @@ def preaggregate_matchups_person() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
+def load_people(archetype_id: int, season_id: int | None = None, tournament_only: bool = False) -> list[Container]:
+    person_query = query.person_query()
+    deck_type_where = "AND ars.deck_type = 'tournament'" if tournament_only else ''
+    sql = f"""
+        SELECT
+            p.id,
+            {person_query} AS name,
+            p.mtgo_username,
+            SUM(ars.num_decks) AS num_decks,
+            SUM(ars.wins) AS wins,
+            SUM(ars.losses) AS losses,
+            SUM(ars.draws) AS draws,
+            IFNULL(ROUND((SUM(ars.wins) / NULLIF(SUM(ars.wins + ars.losses), 0)) * 100, 1), '') AS win_percent
+        FROM
+            _arch_person_stats AS ars
+        INNER JOIN
+            person AS p ON ars.person_id = p.id
+        WHERE
+            ars.archetype_id = {sqlescape(archetype_id)}
+            {deck_type_where}
+            AND ({query.season_query(season_id)})
+        GROUP BY
+            p.id
+        HAVING
+            SUM(ars.wins + ars.losses) > 0
+        ORDER BY
+            SUM(ars.wins) / NULLIF(SUM(ars.wins + ars.losses), 0) DESC,
+            SUM(ars.wins) DESC,
+            {person_query}
+        LIMIT 10
+    """
+    return [Container(r) for r in db().select(sql)]
+
+@retry_after_calling(preaggregate)
 def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Container]:
     if person_id:
         table = '_matchup_ps_stats'

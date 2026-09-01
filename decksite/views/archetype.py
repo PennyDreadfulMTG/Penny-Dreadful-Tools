@@ -64,7 +64,7 @@ def history_chart(season_stats: list[archs.SeasonStats]) -> dict[str, str]:
 
 
 class Archetype(View):
-    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], season_stats: list[archs.SeasonStats], tournament_only: bool = False) -> None:
+    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], season_stats: list[archs.SeasonStats], people: list[Container], tournament_only: bool = False) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
@@ -94,6 +94,9 @@ class Archetype(View):
         self.has_cards = True
         if self.season_id() == 0:
             self.history_chart = history_chart(season_stats)
+        self.people = people
+        prepare.prepare_people(people)
+        self.show_top_players = len(people) > 0
 
     def og_title(self) -> str:
         return self.archetype.name

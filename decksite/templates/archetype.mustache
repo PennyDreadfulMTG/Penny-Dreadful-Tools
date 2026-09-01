@@ -18,6 +18,31 @@
         <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
     </section>
 {{/history_chart}}
+{{#show_top_players}}
+    <section>
+        <h2>Top Players</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th class="n">Decks</th>
+                    <th class="n">Record</th>
+                    <th class="n">Win %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#people}}
+                    <tr>
+                        <td><a href="{{url}}">{{name}}</a></td>
+                        <td class="n">{{num_decks}}</td>
+                        <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+                        <td class="n">{{win_percent}}</td>
+                    </tr>
+                {{/people}}
+            </tbody>
+        </table>
+    </section>
+{{/show_top_players}}
 {{#show_record}}
     <section>
         <h2>Matchups</h2>

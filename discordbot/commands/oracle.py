@@ -6,7 +6,7 @@ from magic.models import Card
 
 
 class Oracle(Extension):
-    @slash_command()
+    @slash_command(description='Oracle text of a card.')
     @slash_card_option()
     async def oracle(self, ctx: MtgContext, card: Card) -> None:
         """Oracle text of a card."""

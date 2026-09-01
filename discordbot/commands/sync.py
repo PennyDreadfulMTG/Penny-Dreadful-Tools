@@ -5,7 +5,7 @@ from shared import configuration, redis_wrapper
 
 
 class Sync(Extension):
-    @slash_command('sync', scopes=[configuration.pd_server_id.value])
+    @slash_command('sync', description='Sync your achievements.', scopes=[configuration.pd_server_id.value])
     async def sync(self, ctx: MtgInteractionContext) -> None:
         """Sync your achievements"""
         key = f'discordbot:achievements:players:{ctx.author.id}'

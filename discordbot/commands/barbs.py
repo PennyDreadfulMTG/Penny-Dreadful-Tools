@@ -4,7 +4,7 @@ from discordbot.command import MtgMessageContext
 
 
 class Barbs(Extension):
-    @slash_command()
+    @slash_command(description="Volvary's advice for when to board in Aura Barbs.")
     async def barbs(self, ctx: MtgMessageContext) -> None:
         """Volvary's advice for when to board in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."

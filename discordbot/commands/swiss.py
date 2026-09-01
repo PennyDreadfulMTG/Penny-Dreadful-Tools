@@ -12,7 +12,7 @@ class Swiss(Extension):
         self.bot = bot
         super().__init__()
 
-    @slash_command()
+    @slash_command(description='Display the record needed to reach the elimination rounds.')
     @slash_option(
         name='num_players',
         description='number of players in the event',

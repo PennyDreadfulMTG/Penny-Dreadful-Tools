@@ -1,13 +1,12 @@
 # type ignore
 
 from flask import url_for
-from sqlalchemy import column, text
+from sqlalchemy import bindparam, text
 
 from logsite.view import View
 from shared import redis_wrapper as redis
 
 from .. import APP, db
-from ..data import match
 
 
 @APP.route('/people/')
@@ -29,6 +28,7 @@ class People(View):
             self.prev_url = url_for('.people', page=people_query.prev_num)
 
     def prepare(self) -> None:
+        uncached = []
         for p in self.people:
             key = f'logsite:people:{p.id}'
             data = redis.get_container(key, ex=3600)
@@ -36,21 +36,40 @@ class People(View):
                 p.fav_format = data.fav_format
                 p.num_matches = data.num_matches
             else:
-                p.num_matches = match.get_recent_matches_by_player(p.name).count()
-                stmt = text("""
-                    SELECT f.name, COUNT(*) AS num_matches
-                    FROM match_players AS mp
-                    INNER JOIN `match` AS m ON mp.match_id = m.id
-                    INNER JOIN format AS f ON m.format_id = f.id
-                    WHERE mp.user_id = :pid
-                    GROUP BY f.id;
-                """)
-                p.formats = db.DB.session.query(column('name'), column('num_matches')).from_statement(stmt).params(pid=p.id).all()
-                if p.formats:
-                    p.fav_format = f'{p.formats[0][0]} ({p.formats[0][1]} matches)'
-                else:
-                    p.fav_format = '⸺'
-                redis.store(key, {'fav_format': p.fav_format, 'num_matches': p.num_matches}, ex=3600)
+                uncached.append(p)
+
+        if not uncached:
+            return
+
+        user_ids = [p.id for p in uncached]
+
+        count_stmt = text("""
+            SELECT mp.user_id, COUNT(*) AS num_matches
+            FROM match_players AS mp
+            WHERE mp.user_id IN :user_ids
+            GROUP BY mp.user_id
+        """).bindparams(bindparam('user_ids', expanding=True))
+        counts = {row[0]: row[1] for row in db.DB.session.execute(count_stmt, {'user_ids': user_ids})}
+
+        format_stmt = text("""
+            SELECT mp.user_id, f.name, COUNT(*) AS num_matches
+            FROM match_players AS mp
+            INNER JOIN `match` AS m ON mp.match_id = m.id
+            INNER JOIN format AS f ON m.format_id = f.id
+            WHERE mp.user_id IN :user_ids
+            GROUP BY mp.user_id, f.id
+            ORDER BY mp.user_id, COUNT(*) DESC
+        """).bindparams(bindparam('user_ids', expanding=True))
+        formats: dict[int, str] = {}
+        for row in db.DB.session.execute(format_stmt, {'user_ids': user_ids}):
+            uid, fname, fcount = row[0], row[1], row[2]
+            if uid not in formats:
+                formats[uid] = f'{fname} ({fcount} matches)'
+
+        for p in uncached:
+            p.num_matches = counts.get(p.id, 0)
+            p.fav_format = formats.get(p.id, '⸺')
+            redis.store(f'logsite:people:{p.id}', {'fav_format': p.fav_format, 'num_matches': p.num_matches}, ex=3600)
 
     def page_title(self) -> str:
         return 'People'

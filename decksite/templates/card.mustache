@@ -16,6 +16,32 @@
     {{> stats}}
 {{/played_competitively}}
 {{> legal}}
+{{#show_top_players_by_decks}}
+<section>
+    <h2>Most Played By</h2>
+    <table>
+        <thead><tr><th>Player</th><th>Decks</th><th>Win %</th></tr></thead>
+        <tbody>
+            {{#top_players_by_decks}}
+            <tr><td><a href="{{person_url}}" class="person">{{name}}</a></td><td>{{num_decks}}</td><td>{{win_percent}}</td></tr>
+            {{/top_players_by_decks}}
+        </tbody>
+    </table>
+</section>
+{{/show_top_players_by_decks}}
+{{#show_top_players_by_win}}
+<section>
+    <h2>Highest Win Rate</h2>
+    <table>
+        <thead><tr><th>Player</th><th>Win %</th><th>Decks</th></tr></thead>
+        <tbody>
+            {{#top_players_by_win}}
+            <tr><td><a href="{{person_url}}" class="person">{{name}}</a></td><td>{{win_percent}}</td><td>{{num_decks}}</td></tr>
+            {{/top_players_by_win}}
+        </tbody>
+    </table>
+</section>
+{{/show_top_players_by_win}}
 <section>
     <h2>Decks containing {{name}}</h2>
     {{> livedecktable}}

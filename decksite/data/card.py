@@ -332,6 +332,32 @@ def load_card(name: str, tournament_only: bool = False, season_id: int | None = 
     c.win_percent = ''
     return c
 
+@retry_after_calling(preaggregate_card_person)
+def load_card_person_stats(card_name: str, season_id: int | None = None, n: int = 5) -> tuple[list[Container], list[Container]]:
+    season_clause = query.season_query(season_id, 'cs.season_id')
+    person_name = query.person_query('p')
+    base_sql = f"""
+        SELECT
+            p.id AS person_id,
+            {person_name} AS name,
+            p.mtgo_username,
+            SUM(cs.num_decks) AS num_decks,
+            SUM(cs.wins) AS wins,
+            SUM(cs.losses) AS losses,
+            IFNULL(ROUND((SUM(cs.wins) / NULLIF(SUM(cs.wins + cs.losses), 0)) * 100, 1), '') AS win_percent
+        FROM
+            _card_person_stats AS cs
+        INNER JOIN
+            person AS p ON p.id = cs.person_id
+        WHERE
+            cs.name = %s AND ({season_clause})
+        GROUP BY
+            cs.person_id
+    """
+    top_by_decks = [Container(r) for r in db().select(base_sql + f' ORDER BY num_decks DESC, win_percent DESC LIMIT {n}', [card_name])]
+    top_by_win = [Container(r) for r in db().select(base_sql + f' HAVING SUM(cs.wins + cs.losses) > 0 ORDER BY win_percent DESC, num_decks DESC LIMIT {n}', [card_name])]
+    return top_by_decks, top_by_win
+
 @retry_after_calling(preaggregate_unique)
 def unique_cards_played(person_id: int) -> list[str]:
     sql = """

@@ -43,9 +43,10 @@ def test_official_alternate_name_renders_the_card_page_without_redirect(monkeypa
         lambda name: 'Origin of Spider-Man' if name == 'A Most Helpful Weaver' else name,
     )
     monkeypatch.setattr(metagame.cs, 'load_card', lambda *_args, **_kwargs: card)
+    monkeypatch.setattr(metagame.cs, 'load_card_person_stats', lambda *_args, **_kwargs: ([], []))
 
     class FakeCardView:
-        def __init__(self, loaded_card: Card, _tournament_only: bool, alternate_name: str | None) -> None:
+        def __init__(self, loaded_card: Card, _tournament_only: bool, alternate_name: str | None, *_args: object, **_kwargs: object) -> None:
             assert loaded_card is card
             assert alternate_name == 'A Most Helpful Weaver'
 
@@ -62,9 +63,10 @@ def test_official_alternate_name_renders_the_card_page_without_redirect(monkeypa
 def test_canonical_card_pages_do_not_redirect(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metagame.oracle, 'valid_name', lambda name: name)
     monkeypatch.setattr(metagame.cs, 'load_card', lambda *_args, **_kwargs: Card({'name': 'Origin of Spider-Man'}))
+    monkeypatch.setattr(metagame.cs, 'load_card_person_stats', lambda *_args, **_kwargs: ([], []))
 
     class FakeCardView:
-        def __init__(self, _card: object, _tournament_only: bool, alternate_name: str | None) -> None:
+        def __init__(self, _card: object, _tournament_only: bool, alternate_name: str | None, *_args: object, **_kwargs: object) -> None:
             assert alternate_name is None
 
         def page(self) -> str:
@@ -100,9 +102,10 @@ def test_split_cards_do_not_redirect_when_the_proxy_has_merged_the_slashes(monke
         lambda name: 'Bedeck // Bedazzle' if name in ('Bedeck / Bedazzle', 'Bedeck // Bedazzle') else name,
     )
     monkeypatch.setattr(metagame.cs, 'load_card', lambda *_args, **_kwargs: Card({'name': 'Bedeck // Bedazzle'}))
+    monkeypatch.setattr(metagame.cs, 'load_card_person_stats', lambda *_args, **_kwargs: ([], []))
 
     class FakeCardView:
-        def __init__(self, _card: object, _tournament_only: bool, alternate_name: str | None) -> None:
+        def __init__(self, _card: object, _tournament_only: bool, alternate_name: str | None, *_args: object, **_kwargs: object) -> None:
             assert alternate_name is None
 
         def page(self) -> str:

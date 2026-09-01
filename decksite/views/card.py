@@ -6,10 +6,11 @@ from decksite.deck_type import DeckType
 from decksite.view import View
 from magic import oracle, seasons
 from magic.models import Card as CardContainer
+from shared.container import Container
 
 
 class Card(View):
-    def __init__(self, card: CardContainer, tournament_only: bool = False, alternate_name: str | None = None) -> None:
+    def __init__(self, card: CardContainer, tournament_only: bool = False, alternate_name: str | None = None, top_players_by_decks: list[Container] | None = None, top_players_by_win: list[Container] | None = None) -> None:
         super().__init__()
         self.legal_formats = ([x for x, y in card.legalities.items() if y == 'Legal'] + [x + ' (restricted)' for x, y in card.legalities.items() if y == 'Restricted'])
         self.legal_seasons = sorted(seasons.SEASONS.index(fmt.replace('Penny Dreadful ', '')) + 1 for fmt, v in card.legalities.items() if 'Penny Dreadful' in fmt and v != 'Banned')
@@ -30,6 +31,10 @@ class Card(View):
         self.toggle_results_url = url_for('.card', name=self.display_name, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.card = card
         self.cards = [self.card]
+        self.top_players_by_decks = top_players_by_decks or []
+        self.top_players_by_win = top_players_by_win or []
+        self.show_top_players_by_decks = bool(self.top_players_by_decks)
+        self.show_top_players_by_win = bool(self.top_players_by_win)
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.card, attr)

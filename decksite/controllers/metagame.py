@@ -85,7 +85,10 @@ def card(name: str, deck_type: str | None = None) -> str | wrappers.Response:
         if not is_canonical_url_name(submitted_name, canonical_name) and alternate_name is None:
             assert request.endpoint is not None
             return redirect(url_for(request.endpoint, name=canonical_name, deck_type=deck_type))
-        view = Card(c, tournament_only, alternate_name)
+        top_by_decks, top_by_win = cs.load_card_person_stats(canonical_name, season_id=get_season_id())
+        for player in top_by_decks + top_by_win:
+            player.person_url = url_for('person', mtgo_username=player.mtgo_username) if player.mtgo_username else url_for('person', person_id=player.person_id)
+        view = Card(c, tournament_only, alternate_name, top_by_decks, top_by_win)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e

@@ -88,7 +88,9 @@ OUTPUT_SCHEMA = {
     'type': 'object',
     'properties': {
         'archetype': {'type': 'string'},
-        'confidence': {'type': 'integer', 'minimum': 0, 'maximum': 100},
+        # Anthropic structured outputs do not support the JSON Schema minimum/maximum
+        # keywords when schemas are sent directly rather than through an SDK.
+        'confidence': {'type': 'integer', 'description': 'An integer from 0 to 100 inclusive.'},
         'possible_new_variant': {'type': 'boolean'},
         'variant_note': {'type': 'string'},
     },
@@ -132,7 +134,7 @@ def _classify_one(api_key: str, model: str, d: Deck, meta: Metadata, new_cards: 
         logger.info('archetype_classifier: deck %s -> no candidate (%r, new_variant=%s)', d.id, chosen, data.get('possible_new_variant'))
         return
     archetype_id = name_to_id[chosen.lower()]
-    confidence = int(data.get('confidence') or 0)
+    confidence = max(0, min(100, int(data.get('confidence') or 0)))
     archetype.assign(d.id, archetype_id, None, False, confidence)
 
 
@@ -207,7 +209,12 @@ def _call(api_key: str, model: str, prompt: str) -> dict[str, Any] | None:
         },
         timeout=120,
     )
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.HTTPError:
+        # requests' default exception omits Anthropic's useful JSON error message.
+        logger.error('archetype_classifier: Anthropic API error response: %s', response.text[:2000])
+        raise
     result = response.json()
     if result.get('stop_reason') == 'refusal':
         return None

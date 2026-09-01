@@ -366,9 +366,13 @@ def matches_api() -> Response:
     Grab a slice of results from a 0-indexed resultset of matches.
     Input:
         {
+            'archetypeId': <int?>,
             'competitionId': <int?>,
+            'competitionSeriesId': <int?>,
+            'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,
+            'personId': <int?>,
             'q': <str>,
             'sortBy': <str>,
             'sortOrder': <'ASC'|'DESC'>,
@@ -393,6 +397,20 @@ def matches_api() -> Response:
         season_id = None
     except ValueError:
         season_id = seasons.season_id(str(request.args.get('seasonId')), None)
+    if request.args.get('personId'):
+        where += f' AND d.person_id = {int(request.args.get("personId", ""))}'
+    if request.args.get('archetypeId'):
+        where += f' AND {clauses.archetype_where(int(request.args.get("archetypeId", "")))}'
+    deck_type = request.args.get('deckType')
+    if deck_type == 'league':
+        where += " AND ct.name = 'League'"
+    elif deck_type == 'tournament':
+        where += " AND ct.name = 'Gatherling'"
+    try:
+        competition_series_id = int(request.args.get('competitionSeriesId', ''))
+        where += f' AND cs.id = {competition_series_id}'
+    except ValueError:
+        pass
     entries, total = match.load_matches(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
     prepare_matches(entries)
     r = {'page': page, 'total': total, 'objects': entries}

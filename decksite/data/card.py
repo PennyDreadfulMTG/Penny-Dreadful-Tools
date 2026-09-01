@@ -58,6 +58,7 @@ def preaggregate_card() -> None:
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             num_decks INT NOT NULL,
+            avg_copies FLOAT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
@@ -72,6 +73,7 @@ def preaggregate_card() -> None:
             card AS name,
             season.season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            AVG(dc.n) AS avg_copies,
             IFNULL(SUM(dsum.wins), 0) AS wins,
             IFNULL(SUM(dsum.losses), 0) AS losses,
             IFNULL(SUM(dsum.draws), 0) AS draws,
@@ -82,8 +84,7 @@ def preaggregate_card() -> None:
         FROM
             deck AS d
         INNER JOIN
-            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
-            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
+            (SELECT card, deck_id, n FROM deck_card WHERE NOT sideboard) AS dc ON d.id = dc.deck_id
         {query.competition_join()}
         {query.season_join()}
         {deck.nwdl_join()}
@@ -101,6 +102,7 @@ def preaggregate_card_archetype() -> None:
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             archetype_id INT NOT NULL,
+            avg_copies FLOAT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
@@ -118,6 +120,7 @@ def preaggregate_card_archetype() -> None:
             season.season_id,
             d.archetype_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            AVG(dc.n) AS avg_copies,
             IFNULL(SUM(dsum.wins), 0) AS wins,
             IFNULL(SUM(dsum.losses), 0) AS losses,
             IFNULL(SUM(dsum.draws), 0) AS draws,
@@ -128,8 +131,7 @@ def preaggregate_card_archetype() -> None:
         FROM
             deck AS d
         INNER JOIN
-            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
-            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
+            (SELECT card, deck_id, n FROM deck_card WHERE NOT sideboard) AS dc ON d.id = dc.deck_id
         {query.competition_join()}
         {query.season_join()}
         {deck.nwdl_join()}
@@ -150,6 +152,7 @@ def preaggregate_card_person() -> None:
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             person_id INT NOT NULL,
+            avg_copies FLOAT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
@@ -167,6 +170,7 @@ def preaggregate_card_person() -> None:
             season.season_id,
             d.person_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            AVG(dc.n) AS avg_copies,
             IFNULL(SUM(dsum.wins), 0) AS wins,
             IFNULL(SUM(dsum.losses), 0) AS losses,
             IFNULL(SUM(dsum.draws), 0) AS draws,
@@ -177,8 +181,7 @@ def preaggregate_card_person() -> None:
         FROM
             deck AS d
         INNER JOIN
-            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
-            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
+            (SELECT card, deck_id, n FROM deck_card WHERE NOT sideboard) AS dc ON d.id = dc.deck_id
         {query.competition_join()}
         {query.season_join()}
         {deck.nwdl_join()}
@@ -292,6 +295,7 @@ def load_cards(
         SELECT
             cs.name,
             SUM(IFNULL(num_decks, 0)) AS num_decks,
+            ROUND(SUM(IFNULL(num_decks, 0) * IFNULL(avg_copies, 0)) / NULLIF(SUM(IFNULL(num_decks, 0)), 0), 2) AS avg_copies,
             SUM(IFNULL(wins, 0)) AS wins,
             SUM(IFNULL(losses, 0)) AS losses,
             SUM(IFNULL(draws, 0)) AS draws,

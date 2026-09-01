@@ -6,6 +6,7 @@ const renderHeaderRow = (table) => (
     <tr>
         <th className="name" onClick={table.sort.bind(table, "name", "ASC")}>Card</th>
         <th className="n num-decks" onClick={table.sort.bind(table, "numDecks", "DESC")}># Decks</th>
+        <th className="n avg-copies" onClick={table.sort.bind(table, "avgCopies", "DESC")}><abbr title="Average number of maindeck copies">Avg</abbr></th>
         <th className="n card-record" onClick={table.sort.bind(table, "record", "DESC")}>Record</th>
         <th className="n win-percent" onClick={table.sort.bind(table, "winPercent", "DESC")}>Win %</th>
         { table.props.leagueOnly
@@ -31,6 +32,7 @@ const renderRow = (table, card) => (
     <tr key={card.name} className="clickable">
         <td className="name">{renderCard(card)}</td>
         <td className="n">{card.numDecks}</td>
+        <td className="n">{card.avgCopies}</td>
         <td className="n">{renderRecord(card)}</td>
         <td className="n">{renderWinPercent(card)}</td>
         { table.props.leagueOnly

@@ -164,6 +164,10 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """,
         {},
     ),
+    'sorting': (
+        'New archetypes are created when a deck sees significant play, including being adopted by players other than its original creator. Join #archetype-sorting if you want to help or discuss.',
+        {},
+    ),
     'spectating': (
         """
         Spectating tournament and league matches is allowed and encouraged.
@@ -220,6 +224,8 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
 }
 keys = sorted(explanations.keys())
 
+explanations['archetype-sorting'] = explanations['sorting']
+explanations['archetypes'] = explanations['sorting']
 explanations['drop'] = explanations['retire']
 explanations['legality'] = explanations['rotation']
 explanations['spectate'] = explanations['spectating']

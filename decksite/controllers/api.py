@@ -446,7 +446,7 @@ def archetypes2_api() -> Response:
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     results, total = archs.load_disjoint_archetypes(where=where, order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
-    archetype_key_cards = playability.key_cards_long(season_id)
+    archetype_key_cards = playability.key_cards_long(season_id, [r.id for r in results])
     cards = oracle.cards_by_name()
     prepare_archetypes_for_api(results, archetype_key_cards, cards, tournament_only, season_id)
     # Remove infinite loops from the results

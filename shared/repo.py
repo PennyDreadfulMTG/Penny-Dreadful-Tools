@@ -140,8 +140,8 @@ def get_pull_requests(start_date: datetime.datetime,
             updated_at = pull.updated_at
             if merged_at is None or updated_at is None:
                 continue
-            merged_dt = dtutil.UTC_TZ.localize(merged_at)
-            updated_dt = dtutil.UTC_TZ.localize(updated_at)
+            merged_dt = merged_at if merged_at.tzinfo is not None else dtutil.UTC_TZ.localize(merged_at)
+            updated_dt = updated_at if updated_at.tzinfo is not None else dtutil.UTC_TZ.localize(updated_at)
             if merged_dt > end_date:
                 continue
             if updated_dt < start_date:

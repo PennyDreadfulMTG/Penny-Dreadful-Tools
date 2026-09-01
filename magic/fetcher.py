@@ -329,8 +329,27 @@ def subreddit() -> Container:
 def time(q: str, twentyfour: bool) -> dict[str, list[str]]:
     return times_from_timezone_code(q, twentyfour) if len(q) <= 4 else times_from_location(q, twentyfour)
 
+# Maps common US timezone abbreviations to their canonical IANA timezone so that
+# e.g. /time EST always includes America/New_York even when it is currently on EDT.
+CANONICAL_TZ_ALIASES: dict[str, str] = {
+    'EST': 'America/New_York',
+    'EDT': 'America/New_York',
+    'CST': 'America/Chicago',
+    'CDT': 'America/Chicago',
+    'MST': 'America/Denver',
+    'MDT': 'America/Denver',
+    'PST': 'America/Los_Angeles',
+    'PDT': 'America/Los_Angeles',
+    'AKST': 'America/Anchorage',
+    'AKDT': 'America/Anchorage',
+    'HST': 'Pacific/Honolulu',
+}
+
 def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
+    canonical = CANONICAL_TZ_ALIASES.get(q.upper())
+    if canonical and canonical not in possibles:
+        possibles.append(canonical)
     if not possibles:
         raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
     results: dict[str, list[str]] = {}

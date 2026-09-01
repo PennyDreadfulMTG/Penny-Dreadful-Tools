@@ -1,8 +1,6 @@
 import datetime
 from collections.abc import Sequence
 
-from flask import g, url_for
-
 from decksite.data import deck, elo, query
 from decksite.database import db
 from magic import seasons
@@ -122,8 +120,6 @@ def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) ->
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
         m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
-        if g:  # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8435
-            m.competition_url = url_for('competition', competition_id=m.competition_id)
         if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'
 

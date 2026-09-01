@@ -218,6 +218,7 @@ class View(BaseView):
         self.prepare_leaderboards()
         self.prepare_legal_formats()
         self.prepare_matches()
+        self.prepare_news()
 
     def prepare_decks(self) -> None:
         self.prepare_active_runs(self)
@@ -250,6 +251,9 @@ class View(BaseView):
 
     def prepare_matches(self) -> None:
         prepare.prepare_matches(getattr(self, 'matches', []), self.has_rounds())
+
+    def prepare_news(self) -> None:
+        prepare.prepare_news(getattr(self, 'news', []))
 
     def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])

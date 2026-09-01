@@ -172,10 +172,17 @@ def prepare_matches(ms: Sequence[Container], show_rounds: bool = False) -> None:
         else:
             m.opponent_deck_name = '-'
             m.opponent_deck_url = False
+        if m.get('competition_id'):
+            m.competition_url = url_for('competition', competition_id=m.competition_id)
         if m.get('mtgo_id'):
             m.log_url = fetcher.logsite_url('/match/{id}/'.format(id=m.get('mtgo_id')))
         if show_rounds:
             m.display_round = display_round(m)
+
+def prepare_news(ns: Sequence[Container]) -> None:
+    for n in ns:
+        if n.get('deck_id'):
+            n.url = url_for('deck', deck_id=n.deck_id)
 
 def prepare_archetypes(archetypes: list[Archetype], current_id: int | None, tournament_only: bool, season_id: int | str | None) -> None:
     for a in archetypes:

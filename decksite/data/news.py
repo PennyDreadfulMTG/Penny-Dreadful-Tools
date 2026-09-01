@@ -2,7 +2,6 @@ import datetime
 import sys
 
 import github
-from flask import url_for
 
 from magic import fetcher, seasons
 from magic.models import Deck
@@ -36,14 +35,14 @@ def all_news(ds: list[Deck], start_date: datetime.datetime | None = None, end_da
 
 def tournament_winners(ds: list[Deck], max_items: int = sys.maxsize) -> list[Container]:
     winners = [d for d in ds if d.finish == 1][0:max_items]
-    return [Container({'date': d.active_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id), 'type': 'tournament-winner'}) for d in winners]
+    return [Container({'date': d.active_date, 'title': tournament_winner_headline(d), 'deck_id': d.id, 'type': 'tournament-winner'}) for d in winners]
 
 def tournament_winner_headline(d: Deck) -> str:
     return f'{d.person} won {d.competition_name} with {d.name}'
 
 def perfect_league_runs(ds: list[Deck], max_items: int = sys.maxsize) -> list[Container]:
     perfect_runs = [d for d in ds if d.competition_type_name == 'League' and d.wins >= 5 and d.losses == 0][0:max_items]
-    return [Container({'date': d.active_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id), 'type': 'perfect-league-run'}) for d in perfect_runs]
+    return [Container({'date': d.active_date, 'title': perfect_league_run_headline(d), 'deck_id': d.id, 'type': 'perfect-league-run'}) for d in perfect_runs]
 
 def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'

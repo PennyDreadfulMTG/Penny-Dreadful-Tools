@@ -96,6 +96,7 @@ class Home(View):
     def setup_rotation(self) -> None:
         self.season_start_display = dtutil.display_date(seasons.last_rotation())
         self.season_end_display = dtutil.display_date(seasons.next_rotation())
+        self.season_end_is_estimated = seasons.next_rotation_ex().code == '???'
         self.scryfall_url = 'https://scryfall.com/search?q=f%3Apd'
         self.legal_cards_url = 'http://pdmtgo.com/legal_cards.txt'
         self.in_rotation = rotation.in_rotation()

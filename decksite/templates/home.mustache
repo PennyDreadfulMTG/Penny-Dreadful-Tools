@@ -44,7 +44,12 @@
 {{/has_news}}
 <section class="rotation">
     <h2>Season {{season_id}}</h2>
+    {{#season_end_is_estimated}}
+    <p>Season {{season_id}} began {{season_start_display}} and ends (expected) {{season_end_display}}.</p>
+    {{/season_end_is_estimated}}
+    {{^season_end_is_estimated}}
     <p>Season {{season_id}} began {{season_start_display}} and ends {{season_end_display}}.</p>
+    {{/season_end_is_estimated}}
     <ul>
         <li><a href="{{scryfall_url}}">{{_ Legal cards (scryfall)}}</a></li>
         <li><a href="{{legal_cards_url}}">{{_ Legal cards (text)}}</a></li>

@@ -292,7 +292,7 @@ def preaggregate_season_archetype_playability() -> None:
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             archetype_id INT NOT NULL,
-            playability DECIMAL(6,5) NOT NULL,
+            playability DECIMAL(10,9) NOT NULL,
             PRIMARY KEY (name, season_id, archetype_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -423,7 +423,7 @@ def preaggregate_archetype_playability() -> None:
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             archetype_id INT NOT NULL,
-            playability DECIMAL(6,5) NOT NULL,
+            playability DECIMAL(10,9) NOT NULL,
             PRIMARY KEY (name, archetype_id),
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX idx_archetype_id_playability_name (archetype_id, playability, name)
@@ -465,7 +465,7 @@ def preaggregate_season_playability() -> None:
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
-            playability DECIMAL(6,5) NOT NULL,
+            playability DECIMAL(10,9) NOT NULL,
             PRIMARY KEY (name, season_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
@@ -487,7 +487,7 @@ def preaggregate_playability() -> None:
     sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
-            playability DECIMAL(6,5) NOT NULL,
+            playability DECIMAL(10,9) NOT NULL,
             PRIMARY KEY (name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT

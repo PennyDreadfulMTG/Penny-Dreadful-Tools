@@ -132,10 +132,11 @@ def archetype(archetype_id: str, deck_type: str | None = None) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '))
     all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
+    all_archetypes_for_tree = archs.load_archetypes()
     archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
     seasons_active = archs.seasons_active(a.id)
     season_stats = archs.season_stats(a.id, tournament_only=tournament_only)
-    view = Archetype(a, all_archetypes, archetype_matchups, seasons_active, season_stats, tournament_only=tournament_only)
+    view = Archetype(a, all_archetypes, archetype_matchups, seasons_active, season_stats, tournament_only=tournament_only, all_archetypes_for_tree=all_archetypes_for_tree)
     return view.page()
 
 

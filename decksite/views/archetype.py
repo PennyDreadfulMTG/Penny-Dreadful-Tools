@@ -64,16 +64,20 @@ def history_chart(season_stats: list[archs.SeasonStats]) -> dict[str, str]:
 
 
 class Archetype(View):
-    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], season_stats: list[archs.SeasonStats], tournament_only: bool = False) -> None:
+    def __init__(self, archetype: archs.Archetype, archetypes: list[archs.Archetype], matchups: list[Container], seasons_active: list[int], season_stats: list[archs.SeasonStats], tournament_only: bool = False, all_archetypes_for_tree: list[archs.Archetype] | None = None) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
         self.archetype = archetype
         self.archetypes = []
+        tree_archetypes = all_archetypes_for_tree if all_archetypes_for_tree is not None else archetypes
+        for a in tree_archetypes:
+            if a.id == archetype.id:
+                self.archetypes = list(a.ancestors) + [a] + list(a.descendants)
+                break
         for a in archetypes:
             if a.id == archetype.id:
                 self.archetype = a
-                self.archetypes = list(a.ancestors) + [a] + list(a.descendants)
                 break
         self.matchups: Matchups = {
             'is_matchups': True,

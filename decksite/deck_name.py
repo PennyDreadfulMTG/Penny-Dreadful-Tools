@@ -204,9 +204,14 @@ def normalize_colors(name: str, colors: list[str]) -> str:
     return re.sub(' +', ' ', name.strip())
 
 # Don't let things like 'BRRR' and 'UWU' match [WUBRG]+ searches.
+# Also reject title-case words like 'Bug' or 'Rug': U is the only vowel in WUBRG, so
+# a title-case word with U in a non-first position is an English word, not a color abbreviation.
+# All-uppercase 'BUG' and abbreviations like 'Rbg' (no U after the first letter) are still accepted.
 def is_true_match(color_word: str) -> bool:
     if not re.search('^[WUBRG]+$', color_word, flags=re.IGNORECASE):
         return True
+    if color_word != color_word.upper() and color_word != color_word.lower() and 'U' in color_word.upper()[1:]:
+        return False
     return len(set(color_word)) == len(color_word)
 
 def canonicalize_colors(colors: list[str]) -> set[str]:

@@ -298,6 +298,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('Meme deck for #general', 'Meme Deck for #general', [], None, 32),
     ('black and green', 'Black and Green', [], None, 32),
     ('Fix the gargadon bug me angy', 'Fix the Gargadon Bug Me Angy', [], None, 32),
+    ('Unplayable Garbage Feat a Bug', 'Unplayable Garbage Feat a Bug', ['U', 'B', 'G'], None, 1),
     ('The World Is So Black And White Nowadays', 'The World Is So Black and White Nowadays', [], None, 32),
     ('red and black jank', 'Red and Black Jank', [], None, 32),
     ('blue man group', 'Blue Man Group', ['U'], None, 32),

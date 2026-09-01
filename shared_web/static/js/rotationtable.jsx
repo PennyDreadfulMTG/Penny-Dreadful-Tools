@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 
 const renderHeaderRow = (table) => (
     <tr>
-        <th className="hit-in-last-run" onClick={table.sort.bind(table, "hitInLastRun", "DESC")}>⇅</th>
+        <th className="hit-in-last-run" onClick={table.sort.bind(table, "hitInLastRun", "ASC")}>⇅</th>
         <th className="name" onClick={table.sort.bind(table, "name", "ASC")}>Card</th>
         <th className="n hits" onClick={table.sort.bind(table, "hits", "DESC")}>Hits</th>
         <th className="n hits-needed" onClick={table.sort.bind(table, "hitsNeeded", "ASC")}>Needed</th>

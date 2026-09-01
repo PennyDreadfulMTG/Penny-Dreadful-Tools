@@ -15,10 +15,11 @@ from interactions.models import DM, TYPE_MESSAGEABLE_CHANNEL, AutocompleteContex
 
 from discordbot import emoji
 from discordbot.shared import channel_id, guild_id
-from magic import card, card_price, database, fetcher, image_fetcher, oracle, whoosh_write
+from magic import card, card_price, database, fetcher, image_fetcher, oracle, rotation, seasons, whoosh_write
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
+from shared import redis_wrapper as redis
 from shared.lazy import lazy_property
 from shared.settings import with_config_file
 
@@ -291,6 +292,8 @@ class MtgMixin:
         if str(channel_id(self)) in not_pd or str(guild_id(self)) in not_pd:  # This needs to be migrated
             legality_format = 'Unknown'
         cards = uniqify_cards(cards)
+        if rotation.in_rotation():
+            cards = sorted(cards, key=lambda c: (not c.legal_in(seasons.current_season_name()), not redis.sismember('decksite:rotation:summary:legal', c.name), c.name))
         if len(cards) > MAX_CARDS_SHOWN:
             cards = cards[:DEFAULT_CARDS_SHOWN]
         if len(cards) == 1:

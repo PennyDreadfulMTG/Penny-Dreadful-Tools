@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Any
 
 from flask import url_for
@@ -28,6 +29,7 @@ class Card(View):
                 card.preferred_printing = str(printing.set_code)
                 card.preferred_printing_system_id = str(printing.system_id)
         self.toggle_results_url = url_for('.card', name=self.display_name, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
+        self.scryfall_url = f'https://scryfall.com/search?q=%21%22{urllib.parse.quote(self.display_name)}%22'
         self.card = card
         self.cards = [self.card]
 

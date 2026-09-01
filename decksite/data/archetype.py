@@ -584,6 +584,7 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
         table = '_arch_disjoint_stats'
         base_where = 'TRUE'
         group_by = 'a.id'
+    rank_where = "deck_type = 'tournament'" if tournament_only else 'TRUE'
     if tournament_only:
         base_where = f"({base_where}) AND deck_type = 'tournament'"
     where = f'({where}) AND ({base_where})'
@@ -601,6 +602,21 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
                 archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
             WHERE
                 ({base_where}) AND ({season_query})
+        ),
+        season_ranks AS (
+            SELECT
+                a.id AS archetype_id,
+                RANK() OVER (ORDER BY {clauses.wilson_lower_bound_sql()} DESC) AS quality_rank
+            FROM
+                archetype AS a
+            LEFT JOIN
+                _arch_disjoint_stats AS ars ON a.id = ars.archetype_id
+            LEFT JOIN
+                archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+            WHERE
+                ({rank_where}) AND ({season_query})
+            GROUP BY
+                a.id, aca.ancestor
         )
         SELECT
             a.id,
@@ -618,7 +634,8 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
             COUNT(*) OVER () AS total,
             SUM(wins + losses + draws) / tc.total_matches AS meta_share,
-            {clauses.wilson_lower_bound_sql()} AS quality_score
+            {clauses.wilson_lower_bound_sql()} AS quality_score,
+            sr.quality_rank
         FROM
             archetype AS a
         LEFT JOIN
@@ -627,6 +644,8 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
              archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
         LEFT JOIN
             total_count AS tc ON TRUE
+        LEFT JOIN
+            season_ranks AS sr ON a.id = sr.archetype_id
         WHERE
             ({where}) AND ({season_query})
         GROUP BY

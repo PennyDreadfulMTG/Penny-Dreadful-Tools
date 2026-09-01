@@ -161,6 +161,7 @@ def make_final_list() -> None:
         setcode = seasons.last_rotation_ex().mtgo_code
     else:
         setcode = seasons.next_rotation_ex().mtgo_code
+    assert setcode is not None, 'Could not determine rotation set code'
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
@@ -200,6 +201,7 @@ def do_push() -> None:
     else:
         setcode = seasons.next_rotation_ex().mtgo_code
         rottype = 'rotation'
+    assert setcode is not None, 'Could not determine rotation set code'
 
     files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']
     for fn in files:

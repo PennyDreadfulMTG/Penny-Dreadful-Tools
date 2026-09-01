@@ -1372,8 +1372,8 @@ Force a consistent size of each column in react tables otherwise things "jump" a
 }
 
 .live .num-decks {
-    min-width: 4em;
-    max-width: 4em;
+    min-width: 5em;
+    max-width: 5em;
 }
 
 /* We use the name 'card-record' for this rule not 'record' because Deck Table already has a .record.

@@ -3732,3 +3732,9 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 .tpd-skin-dark a:hover {
     color: #c0c0c0;
 }
+
+/* Prevent horizontal scroll on game log output */
+.game pre {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}

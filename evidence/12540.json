@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12540-1",
+      "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
+      "files_changed": 1,
+      "head_sha": "6acab3ddd51df8ff368fd1401445952c78da23d5",
+      "issue": 12540,
+      "lines_changed": 17,
+      "lint": "passed",
+      "notes": "Pure JS refactor \u2014 moves object construction from per-call to module load time. No behaviour change; the formatter options and post-processing replace() chain are unchanged. No Python unit tests cover this JS file.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`PD.formatPercentage` in `shared_web/static/js/pd.js` constructed a new `Intl.NumberFormat` object on every call. The MDN docs note that constructing these formatters repeatedly is inefficient \u2014 the object should be reused.\n\n## What changed\n\nExtracted the `Intl.NumberFormat` construction to a module-level constant `PD_PERCENTAGE_FORMATTER` (3 lines added before `PD.formatPercentage`). The function body is replaced with a single `PD_PERCENTAGE_FORMATTER.format(value)` call; the existing `.replace()` chain is unchanged.\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed. This is a pure JS refactor with no logic change \u2014 the formatter options, the `.replace()` chain, and the output are all identical to before.\n\nFixes #12540",
+      "pr_title": "Cache Intl.NumberFormat instance in formatPercentage (#12540)",
+      "recorded_at": "2026-09-01T18:16:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed \u2014 JS-only change, no Python unit tests applicable",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12540,
   "triage": [
     {

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12513,
+  "triage": [
+    {
+      "batch_id": "t-12521-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Fix a lot of what is broken about the Discord bot (2024-05-12) \u2014 moved all commands to slash commands using Extension subclasses; whois.py and tournament.py both updated to remove broken prefixed_command usage",
+          "ref": "63417c08",
+          "type": "commit"
+        },
+        {
+          "detail": "Whois class extends Extension with @slash_command decorators; no prefixed_commands dependency",
+          "ref": "discordbot/commands/whois.py:11",
+          "type": "code"
+        },
+        {
+          "detail": "Tournament class extends Extension with @slash_command(); setup(bot) function present",
+          "ref": "discordbot/commands/tournament.py:9",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12513,
+      "notes": "Issue filed 2024-05-11; fix landed the next day. The root cause was that the prefixed_commands extension API had changed in the interactions upgrade; the fix moved all commands to pure slash commands.",
+      "proposed_comment": "Fixed in commit 63417c08 (2024-05-12): both /whois and /tournament were migrated to proper slash commands using interactions-py's Extension pattern, resolving the breakage from the interactions lib upgrade.",
+      "recorded_at": "2026-09-01T18:28:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

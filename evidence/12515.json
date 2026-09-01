@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12515,
+  "triage": [
+    {
+      "batch_id": "t-12521-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Put seasons in the right order in /matchups \u2014 removed the manual reordering hack that moved All Time to the front; now uses all_seasons() directly since all_seasons() already returns reversed order with All Time first",
+          "ref": "ff624237",
+          "type": "commit"
+        },
+        {
+          "detail": "self.seasons now built directly from self.all_seasons() which returns [All Time, Season N, ..., Season 1]",
+          "ref": "decksite/views/matchups.py:23",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12515,
+      "notes": "Issue filed 2024-05-11; fix landed 2024-06-11. Commit message confirms the prior code was doing a manual splice to move 'All Time' to front, which broke when all_seasons() itself was updated to put All Time first.",
+      "proposed_comment": "Fixed in commit ff624237 (2024-06-11): the season dropdown on /matchups/ now correctly uses the standard all_seasons() order (All Time first, then newest to oldest).",
+      "recorded_at": "2026-09-01T18:28:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

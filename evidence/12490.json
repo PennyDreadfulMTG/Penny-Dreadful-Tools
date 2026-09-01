@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12490,
+  "triage": [
+    {
+      "batch_id": "t-12493-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_people returns tuple[Sequence[Person], int]; most callers discard the int with _, _",
+          "ref": "decksite/data/person.py:97",
+          "type": "code"
+        },
+        {
+          "detail": "matchup_people, _ = ps.load_people(...) then list(matchup_people) \u2014 the Sequence return forces an explicit cast",
+          "ref": "decksite/controllers/metagame.py:158-159",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's two comments enumerate the sub-decisions: Sequence vs list return type, and extracting a helper to strip 'total' from result objects",
+          "ref": "#12490",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12490,
+      "notes": "Resolving this requires deciding between two API shapes (split load_decks/load_decks_with_total vs. always-return-total) and standardising Sequence vs list across several functions; owner judgment needed before any code change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:26:48Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

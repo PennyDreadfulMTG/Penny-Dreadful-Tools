@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12493,
+  "triage": [
+    {
+      "batch_id": "t-12493-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "redis path still present: if not redis.enabled() falls through to full redis cache logic with get_container calls",
+          "ref": "decksite/data/deck.py:39-77",
+          "type": "code"
+        },
+        {
+          "detail": "redis is optional and disabled when not configured \u2014 so the redis path is live only in production",
+          "ref": "shared/redis_wrapper.py:11-24",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12493,
+      "notes": "Issue is explicitly framed as a question ('Do we need the redis stuff\u2026?') requiring a production performance investigation before any code change. Redis code in load_decks is still present and active; no code has attempted to remove it.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:26:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

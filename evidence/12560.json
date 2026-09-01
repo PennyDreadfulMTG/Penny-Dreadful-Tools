@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12560-2",
+      "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
+      "files_changed": 1,
+      "head_sha": "f6599a79aba04138324c5621c6048e7cdf8a6006",
+      "issue": 12560,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single CSS property swap on the hover rule; the highlight color (soft tangerine) is already used for the active state so this creates a visually consistent hover\u2192active flow. No functional code touched.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `shared_web/static/css/pd.css` line 1093\u20131095, the `.menu .item:hover .icon` and `.submenu .item:hover` selectors used `background-color: var(--tertiary-background)` (a dark gray / light-gray depending on theme). This looked ugly \u2014 especially in dark mode \u2014 as the hover highlight was an unrelated gray color.\n\n## What changed\n\nChanged the hover `background-color` from `var(--tertiary-background)` to `var(--highlight)` (soft tangerine orange), matching the color already used for the active/current menu item (`.menu .current .icon` / `.submenu .current`). Now hovering over a menu item shows the same highlight color as the selected state, giving a consistent and intentional visual affordance.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` passed.\n- Visual inspection of the diff: exactly one line changed in one file, replacing `--tertiary-background` with `--highlight`.\n- No unit tests exist for CSS; this is a pure visual change.\n\nFixes #12560",
+      "pr_title": "Use highlight color for mobile menu hover state (#12560)",
+      "recorded_at": "2026-09-01T18:21:59Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "CSS-only change; no unit tests cover CSS. Lint (which includes CSS linting via stylelint if configured) passed cleanly.",
+        "result": "not-applicable"
+      }
+    }
+  ],
   "issue": 12560,
   "triage": [
     {

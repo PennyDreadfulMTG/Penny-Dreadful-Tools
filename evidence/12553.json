@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12553-1",
+      "branch": "sweep/12553-add-a-description-to-every-bot-command",
+      "files_changed": 47,
+      "head_sha": "ed5a9b2e7364b1ae14cc1dd59f5937cd09f101fe",
+      "issue": 12553,
+      "lines_changed": 70,
+      "lint": "passed",
+      "notes": "Descriptions are sourced from existing docstrings so they match developer intent. The `whois` command uses a group-level description alongside its existing `sub_cmd_description`; no behavioral change. No drive-by changes were made.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nEvery `@slash_command()` decorator in `discordbot/commands/` was missing the `description=` parameter. Discord requires a description for each slash command to display in the UI. Without it, commands showed the default placeholder `'No Description Set'`.\n\nTwo files already had descriptions (`dreadrise.py` and `explain.py`); all others were missing them.\n\n## What changed\n\n- Added `description='...'` to 49 `@slash_command()` calls across 46 command files, using text derived from each method's docstring.\n- Added `test_all_slash_commands_have_descriptions` to `discordbot/command_test.py` that imports every command module, finds all `SlashCommand` class attributes, and asserts none have the default `'No Description Set'` value.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all files)\n- `uv run --frozen python dev.py unit discordbot` \u2014 846 passed, 1 skipped (the new test is included and passes)\n\nFixes #12553",
+      "pr_title": "Add description to every bot slash command (#12553)",
+      "recorded_at": "2026-09-01T18:28:43Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "846 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12553,
   "triage": [
     {

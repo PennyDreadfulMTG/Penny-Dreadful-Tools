@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12546-1",
+      "branch": "sweep/12546-read-base-chars-from-pd-css-instead-of-h",
+      "files_changed": 2,
+      "head_sha": "a7a56969bb073de7ad09f3457aa24a2d77a14898",
+      "issue": 12546,
+      "lines_changed": 16,
+      "lint": "passed",
+      "notes": "The pd.css comment had a wrong U+2059 annotation for \ud83c\udfc5 (should be U+1F3C5); this was fixed as a prerequisite for the regex-based extraction to be correct. The 'first U+XXXX per line' approach is needed because two existing entries mention alternate code points in their inline comments (U+2014 and U+2022), which would otherwise be spuriously included.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`find_base_graphemes()` in `maintenance/fonts.py` returned a hardcoded string of 33 Unicode characters. Whenever a new symbol was added to the site, it had to be added in two places: the `pd.css` comment block (as a `U+XXXX` annotation) **and** the hardcoded Python string \u2014 an easy sync error to make.\n\nAdditionally, `pd.css` contained a wrong code-point annotation: `\ud83c\udfc5` (SPORTS MEDAL) was listed as `U+2059` (FIVE DOT PUNCTUATION) instead of the correct `U+1F3C5`. Two characters present in the hardcoded set \u2014 `\u2728` (U+2728) and `\u2715` (U+2715) \u2014 were also absent from the `pd.css` comment entirely.\n\n## What changed\n\n**`shared_web/static/css/pd.css`**\n- Fixed `\ud83c\udfc5` annotation from `U+2059` \u2192 `U+1F3C5` (SPORTS MEDAL)\n- Added `\u2728 U+2728 SPARKLES` and `\u2715 U+2715 MULTIPLICATION X` entries to the comment block\n- Updated the note to reflect that `fonts.py` now reads from this file automatically\n\n**`maintenance/fonts.py`**\n- Replaced the hardcoded `find_base_graphemes()` with logic that opens `shared_web/static/css/pd.css`, slices the section between `\"The characters included in our subsetted fonts are:\"` and the closing `*/`, then extracts the first `U+XXXX` code point per line (skipping secondary code points mentioned in inline comments like `could use U+2014`) and converts them via `chr(int(cp, 16))`.\n\nThe new function produces an identical 33-character set to the old hardcoded one.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n- Manual verification: the new function was tested inline to confirm it returns exactly the same set as the original hardcoded string\n\nFixes #12546",
+      "pr_title": "Read base_chars from pd.css instead of hardcoding (#12546)",
+      "recorded_at": "2026-09-01T18:24:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.58s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12546,
   "triage": [
     {

@@ -19,6 +19,26 @@
         "detail": "1 passed in 0.15s; full suite env-blocked by database init in conftest.py timing out at 120s even after MariaDB was started \u2014 the specific dev_test was the only relevant test and it passed",
         "result": "passed"
       }
+    },
+    {
+      "batch_id": "u-12584-1",
+      "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
+      "files_changed": 2,
+      "head_sha": "f96509137bf06cc1d84bdee9b8e26c8da557df82",
+      "issue": 12584,
+      "lines_changed": 12,
+      "lint": "passed",
+      "notes": "eslint v9 removed the `compact` formatter from core; the PR's `--format compact` flag caused exit code 2 (fatal error). Fix installs `eslint-formatter-compact@^9.0.1` as a devDependency, restoring the exact behavior the PR intended. `uv run --frozen python dev.py lint` and `uv run --frozen python dev.py jslint` both pass.",
+      "outcome": "pushed",
+      "pr_body": null,
+      "pr_title": null,
+      "recorded_at": "2026-09-01T18:19:51Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "unit tests require DB; lint and jslint both passed",
+        "result": "not-applicable"
+      }
     }
   ],
   "issue": 12584,

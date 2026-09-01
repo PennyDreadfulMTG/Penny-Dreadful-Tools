@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12461,
+  "triage": [
+    {
+      "batch_id": "t-12464-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Test confirms 'librarians' + colors ['U'] \u2192 'Mono Blue Librarians'; the mapping is name/color-based, not card-content-based",
+          "ref": "decksite/deck_name_test.py:286",
+          "type": "code"
+        },
+        {
+          "detail": "Academy Loremaster does not appear anywhere in deck classification or archetype assignment code \u2014 no card-requirement system exists",
+          "ref": "grep -rn 'Academy Loremaster' penny-dreadful-tools/",
+          "type": "search"
+        },
+        {
+          "detail": "add_archetype_if_just_colors only checks color combinations; no card-content validation is performed",
+          "ref": "decksite/deck_name.py:245-254",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12461,
+      "notes": "Decision needed: (a) add a card-requirement field to archetypes so classification can be validated against maindeck contents, or (b) treat this as a one-time admin reclassification of the affected decks. Option (a) is a meaningful schema and feature addition; option (b) requires no code.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:28:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

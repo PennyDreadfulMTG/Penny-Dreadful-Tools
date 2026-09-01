@@ -19,6 +19,26 @@
         "detail": "845 passed, 1 skipped in 15.64s",
         "result": "passed"
       }
+    },
+    {
+      "batch_id": "u-12600-1",
+      "branch": "sweep/12600-win-percent-should-never-be-a-string",
+      "files_changed": 1,
+      "head_sha": "cf9df71a5851c83297ecb1cb732aa6ffe2111724",
+      "issue": 12600,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "eslint's eqeqeq rule rejected `!= null` (abstract equality); changed to `!== null` (strict equality) in metagamegrid.jsx line 45. Full jslint suite now passes. The null-guard logic is semantically identical since winPercent is either a number or null (never undefined after the PR's changes).",
+      "outcome": "pushed",
+      "pr_body": null,
+      "pr_title": null,
+      "recorded_at": "2026-09-01T18:19:07Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "env-blocked: no database set up; jslint was the only failing check",
+        "result": "not-applicable"
+      }
     }
   ],
   "issue": 12600,

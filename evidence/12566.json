@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12566-2",
+      "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
+      "files_changed": 1,
+      "head_sha": "f4021b69892f35db8d7989c8d2aaca5149f42977",
+      "issue": 12566,
+      "lines_changed": 19,
+      "lint": "passed",
+      "notes": "Pure refactor \u2014 no logic change, only deduplication. The helper is private (prefixed `_`) following Python convention. Unit tests were env-blocked due to missing database in the cloud sandbox, but lint passed and the diff is a straightforward extraction with no behavior change.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`key_cards()` and `key_cards_long()` in `decksite/data/playability.py` contained identical `if season_id: ... else: ...` blocks to select the appropriate table (`_season_archetype_playability` vs `_archetype_playability`) and corresponding `WHERE` clause fragment. Any future change to this logic would need to be applied in two places.\n\n## What changed\n\nExtracted the duplicated block into a private helper `_season_table_and_where(season_id: int) -> tuple[str, str]`. Both `key_cards()` and `key_cards_long()` now call this helper and unpack the returned `(table, where)` tuple. No behavior change.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit code 0)\n- Unit tests require a live MariaDB database which was not available in the cloud sandbox environment; tests were env-blocked. The change is a pure refactor with no logic change, only moving identical code into a shared helper.\n\nFixes #12566",
+      "pr_title": "Extract _season_table_and_where to unify key_cards and key_cards_long (#12566)",
+      "recorded_at": "2026-09-01T18:19:29Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite",
+        "detail": "Unit tests require a running MariaDB instance (DatabaseConnectionRefusedException). Database initialization was not completed in the available time. Lint passed cleanly with exit code 0.",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 12566,
   "triage": [
     {

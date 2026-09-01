@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:26:48Z",
+  "evidence_refs": [
+    "evidence/12490.json#triage[0]"
+  ],
+  "issue": 12490,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Resolving this requires deciding between two API shapes (split load_decks/load_decks_with_total vs. always-return-total) and standardising Sequence vs list across several functions; owner judgment needed before any code change."
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12534-1",
+      "branch": "sweep/12534-include-rank-within-season-by-quality-on",
+      "files_changed": 2,
+      "head_sha": "16fe6123160d3b4d56407862569a6472f9d7c9b3",
+      "issue": 12534,
+      "lines_changed": 24,
+      "lint": "passed",
+      "notes": "The `season_ranks` CTE always uses `_arch_disjoint_stats` (global data) so the displayed rank reflects the archetype's position in the overall meta, even when viewing a person-specific or tournament-only filtered grid \u2014 which is the expected UX. The rank badge has no CSS beyond the class name; the repo's existing stylesheet may need a `.quality-rank` rule for visual polish, but it renders fine unstyled.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe metagame grid tiles showed quality score (Wilson lower bound) for each archetype, but no indication of an archetype's rank among all archetypes in the season. When a user searched/filtered the grid, there was no way to know if the visible archetypes were the top-ranked or mid-pack in the overall meta.\n\n## What changed\n\n**`decksite/data/archetype.py`** \u2014 Added a `season_ranks` CTE inside `load_disjoint_archetypes` that computes `RANK() OVER (ORDER BY quality_score DESC)` for **all archetypes in the season** using the global `_arch_disjoint_stats` table (not filtered by the caller-supplied `where` parameter). This CTE respects the `tournament_only` flag but ignores any search/filter applied by the viewer. The rank is then LEFT JOIN-ed into the main SELECT as `quality_rank`, making it available on every returned archetype object.\n\n**`shared_web/static/js/metagamegrid.jsx`** \u2014 Added a `#{archetype.qualityRank}` badge (rendered as `<span class=\"quality-rank\">`) inside the existing quality cell, visible whenever `qualityRank` is present. The `quality_rank` snake_case field is automatically camelized to `qualityRank` by the existing `return_camelized_json` \u2192 `humps.camelize` pipeline in the API \u2014 no API changes were needed.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (no DB-dependent archetype tests exist; SQL correctness validated by inspection)\n\nFixes #12534",
+      "pr_title": "Show quality rank within season on metagame tiles regardless of filter (#12534)",
+      "recorded_at": "2026-09-01T18:22:33Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 17.96s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12534,
   "triage": [
     {

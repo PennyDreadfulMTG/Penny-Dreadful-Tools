@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12554-1",
+      "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
+      "files_changed": 2,
+      "head_sha": "1f50ec8fc480f34c0bc92433372e0ca7385c27ae",
+      "issue": 12554,
+      "lines_changed": 9,
+      "lint": "passed",
+      "notes": "The fix is additive (optional parameter with None default) so no existing callers break. The empty-list early-return guards against invalid SQL when a page has no results. No schema or data migration required.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`/api/archetypes2` called `playability.key_cards_long(season_id)` which fetched key cards for **every archetype** in the season, even though only the archetypes on the current page (typically ~20) were needed. This was wasteful: each page load scanned all archetypes in the precomputed playability table.\n\n## What changed\n\n- `decksite/data/playability.py`: Added an optional `archetype_ids: list[int] | None = None` parameter to `key_cards_long()`. When provided (and non-empty), appends `AND p.archetype_id IN (<ids>)` to the WHERE clause, limiting the query to only the requested archetypes. An empty list returns `{}` immediately to avoid invalid `IN ()` SQL.\n- `decksite/controllers/api.py`: Passes `[r.id for r in results]` as `archetype_ids` so only the current page's archetypes are fetched.\n\nThe parameter defaults to `None` so all existing callers (e.g. the `/api/key_cards` route) are unaffected.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped\n\nFixes #12554",
+      "pr_title": "Scope key_cards_long to current page's archetypes in /api/archetypes2 (#12554)",
+      "recorded_at": "2026-09-01T18:19:18Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.91s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12554,
   "triage": [
     {

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12521,
+  "triage": [
+    {
+      "batch_id": "t-12521-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "flask-babel is already at version 4.0.0 in uv.lock \u2014 the upgrade itself is done",
+          "ref": "uv.lock:577",
+          "type": "code"
+        },
+        {
+          "detail": "DeprecationWarning suppression for flask_babel locked_cached_property still present with link to this issue; needs removal now that 4.0.0 is installed",
+          "ref": "pytest.ini:13-14",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Remove lines 13-14 from pytest.ini (the `# https://github.com/.../issues/12521` comment and the `ignore:.*'locked_cached_property' is deprecated.*:DeprecationWarning:flask_babel` filter). The flask-babel upgrade to 4.0.0 was already done as part of the Pipenv\u2192uv migration; only the cleanup remains.",
+      "issue": 12521,
+      "notes": "The upgrade to 4.0.0 happened in commit 1f40fb5c (Pipenv\u2192uv migration) but nobody removed the pytest.ini suppression. One-liner fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:28:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

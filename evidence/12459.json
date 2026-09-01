@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12459,
+  "triage": [
+    {
+      "batch_id": "t-12464-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "File contains 19 named card artworks; no S33-specific entry; the admin/banners/ route checks this file to determine which cards have hi-res crops",
+          "ref": "hq_artcrops.json",
+          "type": "code"
+        },
+        {
+          "detail": "hq_artcrops() reads the JSON file; adding S33 artwork requires manually finding the image URL and adding an entry",
+          "ref": "magic/fetcher.py:158-164",
+          "type": "code"
+        },
+        {
+          "detail": "Confirmed: no API exists for hi-res artwork; process is fully manual (search artofmtg/Mothership/artist site, add to hq_artcrops.json)",
+          "ref": "silasary comment on issue #12459",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12459,
+      "notes": "Two separate tasks: (1) manually source S33 hi-res art and add to hq_artcrops.json (content, not code); (2) the 'long-term solution' is an open-ended feature request to automate art sourcing \u2014 scope is undefined.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:28:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

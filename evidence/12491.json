@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12491,
+  "triage": [
+    {
+      "batch_id": "t-12493-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "menu shows 'Rotation Tracking' only if next_rotation()-now() < 7 days; after rotation this is many months so the link disappears",
+          "ref": "decksite/__init__.py:41-42",
+          "type": "code"
+        },
+        {
+          "detail": "rotation view still shows data after rotation with note 'Data from the last rotation is shown', confirming the page works post-rotation",
+          "ref": "decksite/views/rotation.py:17",
+          "type": "code"
+        },
+        {
+          "detail": "in_rotation() uses the same 7-day forward-looking window; no post-rotation window is checked anywhere",
+          "ref": "magic/rotation.py:25-34",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/__init__.py:41, extend the condition to also show the link within 7 days after the last rotation: `if (seasons.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (dtutil.now() - seasons.last_rotation()) < datetime.timedelta(7):`. Only decksite/__init__.py needs changing.",
+      "issue": 12491,
+      "notes": "The issue also floats merging /rotation and /rotation/changes pages; that is a separate product decision and not needed to fix the menu disappearing bug.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:26:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12516,
+  "triage": [
+    {
+      "batch_id": "t-12521-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Link netdecking explanation to metagame \u2014 changed URL from /archetypes/ to /metagame/ and removed 'All Decklists' link",
+          "ref": "bf3ff9cc",
+          "type": "commit"
+        },
+        {
+          "detail": "netdecking entry now reads 'Metagame': fetcher.decksite_url('/metagame/') \u2014 matches the requested change",
+          "ref": "discordbot/commands/explain.py:78",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12516,
+      "notes": null,
+      "proposed_comment": "This was fixed in commit bf3ff9cc (merged 2026-08-21): the netdecking explain command now links to `/metagame/` instead of `/archetypes/`.",
+      "recorded_at": "2026-09-01T18:28:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12492,
+  "triage": [
+    {
+      "batch_id": "t-12493-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "unlink() calls ps.load_people() with no discord_id filter, loading all persons in the DB",
+          "ref": "decksite/controllers/admin.py:223",
+          "type": "code"
+        },
+        {
+          "detail": "load_people() accepts a `where` parameter; adding p.discord_id IS NOT NULL would restrict to linked people only",
+          "ref": "decksite/data/person.py:94-142",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/admin.py:223, change the load_people call to pass where='p.discord_id IS NOT NULL' so only linked people are loaded. The same change applies at admin.py:206 (player_notes) and admin.py:51 if they also only need linked people, but the unlink page is the primary fix target.",
+      "issue": 12492,
+      "notes": "The typeahead UX improvement mentioned in the issue body is a separate, larger feature and not part of the minimal fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:26:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

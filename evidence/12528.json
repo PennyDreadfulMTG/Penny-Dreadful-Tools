@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12528-1",
+      "branch": "sweep/12528-adopt-box-sizing-border-box-globally-and",
+      "files_changed": 1,
+      "head_sha": "dc4ff3eb393ebb91295d650c0ff7508144a5502c",
+      "issue": 12528,
+      "lines_changed": 22,
+      "lint": "passed",
+      "notes": "The `box-sizing: border-box !important` on `.tpd-content` (tpd tooltip plugin, line ~3271) was intentionally kept \u2014 it overrides the `box-sizing: inherit` rule that would otherwise give `.tpd-content` the `content-box` value inherited from `.tpd-tooltip`. No visual regression risk for the rest of the site since we are only replacing implicit-default overrides with the same value set globally.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`shared_web/static/css/pd.css` had 13 individual `box-sizing: border-box` declarations scattered across different selectors, plus one `box-sizing: border-box !important` inside the tpd tooltip plugin section. Each was added ad-hoc with a comment explaining why that particular element needed border-box sizing.\n\n## What changed\n\nAdded a single global rule `*, *::before, *::after { box-sizing: border-box; }` after the CSS reset section (before the Typography section) and removed the 13 now-redundant individual `box-sizing: border-box` declarations. The following were intentionally preserved:\n- `.tpd-tooltip { box-sizing: content-box; }` \u2014 the tpd tooltip plugin requires content-box on its container (the comment in the file explains this is a fix for CSS frameworks)\n- `.tpd-tooltip [class^=\"tpd-\"] { box-sizing: inherit; }` \u2014 inherits content-box from its parent\n- `.tpd-content { box-sizing: border-box !important; }` \u2014 still needed to override the `inherit` rule above for this specific child element\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit shared_web` \u2014 845 passed, 1 skipped in 18.33s\n- Visual inspection of the diff: every removed line was a plain `box-sizing: border-box` that is now covered by the global rule; no behaviour-changing removals\n\nFixes #12528",
+      "pr_title": "Adopt box-sizing: border-box globally and remove individual declarations (#12528)",
+      "recorded_at": "2026-09-01T18:24:54Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit shared_web",
+        "detail": "845 passed, 1 skipped, 89 deselected in 18.33s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12528,
   "triage": [
     {

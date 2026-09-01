@@ -19,6 +19,26 @@
         "detail": "845 passed, 1 skipped in 18.13s",
         "result": "passed"
       }
+    },
+    {
+      "batch_id": "u-12579-1",
+      "branch": "sweep/12579-sort-should-be-sticky-on-metagame",
+      "files_changed": 1,
+      "head_sha": "de5ff5baab1a5b195a17d98cd5adef9df82bda54",
+      "issue": 12579,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The two empty catch blocks in grid.jsx used `catch (e)` but never referenced `e`, triggering ESLint's no-unused-vars rule. Changed both to optional catch binding (`catch { }`, valid since ES2019/ecmaVersion: latest) which drops the unused parameter entirely. No behavioral change.",
+      "outcome": "pushed",
+      "pr_body": null,
+      "pr_title": null,
+      "recorded_at": "2026-09-01T18:24:20Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped",
+        "result": "passed"
+      }
     }
   ],
   "issue": 12579,

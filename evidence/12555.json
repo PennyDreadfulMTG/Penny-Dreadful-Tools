@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12555-1",
+      "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
+      "files_changed": 1,
+      "head_sha": "2f3095020c5bf25a2e6f2206e6d450e8941d1d8f",
+      "issue": 12555,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Change is two tooltip strings in a JSX file \u2014 no logic, no data model, no backend changes. The Wilson lower bound description matches how qualityScore is computed elsewhere in the codebase (confirmed by the existing comment on line 12 referencing mouseover titles).",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe \"Quality\" sort on `/metagame` and the quality score badge both had a bare `title=\"Quality\"` tooltip (or just the label text for the `<select>` option), giving users no explanation of what \"Quality\" means.\n\n## What changed\n\nIn `shared_web/static/js/metagamegrid.jsx`:\n- Line 55: updated the `<span title>` on the quality score badge from `\"Quality\"` to `\"Quality: statistical confidence in win %, accounting for sample size (Wilson lower bound)\"`.\n- Line 93: added the same `title` attribute to the `<option value=\"quality\">` element in the sort `<select>`, so hovering over the dropdown option also shows the explanation.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 **passed** (all checks passed).\n- No unit tests exist for this JSX rendering; the change is purely tooltip text with no logic change.\n\nFixes #12555",
+      "pr_title": "Explain Quality sort via descriptive tooltip on /metagame (#12555)",
+      "recorded_at": "2026-09-01T18:17:04Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (lint only; unit tests not run as the change is purely UI tooltip text with no logic)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12555,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12571-2",
+      "branch": "sweep/12571-the-ordering-of-losing-qfs-is-not-stable",
+      "files_changed": 1,
+      "head_sha": "f789a8f8dfe9fcdb431a868d11693e494c6aef12",
+      "issue": 12571,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Two identical one-line changes in the same file. Adding the primary key as a sort tiebreaker is a purely additive, safe change with no semantic impact on callers that supply their own `order_by`. No schema or data migration needed.",
+      "outcome": "pushed",
+      "pr_body": "## Problem\n\nThe competition detail page shows losing decks (those with a `finish` value) in an unstable order. When multiple decks share the same `active_date` and `finish` value (e.g. several decks that all lost in the same round), MySQL/MariaDB does not guarantee a consistent tie-breaking order, so the ordering could vary between page loads or database restarts.\n\n## Fix\n\nAppended `, d.id` to the default `ORDER BY` clause in two places in `decksite/data/deck.py`:\n\n- `load_decks_query` (line 88) \u2014 used for the lightweight deck list query\n- `load_decks_heavy` (line 159) \u2014 used for the heavy deck list query with win/loss counts\n\nBoth defaulted to `active_date DESC, d.finish IS NULL, d.finish`. Adding `d.id` as a final tiebreaker makes the sort fully deterministic since `d.id` is a unique primary key.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (All checks passed)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected in 17.90s\n\nFixes #12571",
+      "pr_title": "Make deck ordering deterministic by appending d.id to ORDER BY (#12571)",
+      "recorded_at": "2026-09-01T18:25:06Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 17.90s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12571,
   "triage": [
     {

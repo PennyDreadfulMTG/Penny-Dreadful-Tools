@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12564-1",
+      "branch": "sweep/12564-it-would-be-nice-to-avoid-overriding-sor",
+      "files_changed": 5,
+      "head_sha": "84339460399dfa9c2d2e2914568c7b1a3d930231",
+      "issue": 12564,
+      "lines_changed": 99,
+      "lint": "passed",
+      "notes": "The metagamegrid.jsx sort-order select was changed from calling sort() (which would trigger the toggle logic) to calling setState() directly, preserving the user's explicit choice. Table column headers always pass explicit sort orders and are unaffected by the datamanager.jsx default-parameter change. The 'defaults' dicts in clauses.py exactly match the explicit sortOrder values the existing table-header onClick bindings have always used, so server-side behaviour is unchanged for all existing callers.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`archetype_order_by()` in `decksite/data/clauses.py` already supported an `'AUTO'` sort order (resolving it to the column's natural default direction), but all the other `*_order_by()` functions (`decks_order_by`, `cards_order_by`, `people_order_by`, `head_to_head_order_by`, `leaderboard_order_by`, `matches_order_by`, `rotation_order_by`) did not \u2014 they would hit the `assert sort_order in ['ASC', 'DESC']` guard and fail if passed `'AUTO'`.\n\nOn the frontend, `grid.jsx` overrode `DataManager.sort()` solely to change the default `sortOrder` parameter from `'ASC'` to `'AUTO'` and to remove the toggle logic \u2014 duplicating what should be shared behavior. The sort-order `<select>` in `metagamegrid.jsx` was calling `grid.sort(sortBy, e.target.value)` to set an explicit sort direction, but the toggle logic in `DataManager.sort()` would override the explicit value when the same sort column remained selected.\n\n## What changed\n\n- **`decksite/data/clauses.py`**: Added a `defaults` dict and `if sort_order == 'AUTO': sort_order = defaults[sort_by]` resolution (before the `assert`) in all six remaining `*_order_by()` functions, matching the pattern already used in `archetype_order_by()`. Default directions are derived from the explicit values the table-header `onClick` handlers have always passed.\n- **`shared_web/static/js/datamanager.jsx`**: Changed `sort()` default parameter from `'ASC'` to `'AUTO'`.\n- **`shared_web/static/js/grid.jsx`**: Removed the four-line `sort()` override \u2014 `Grid` now inherits `DataManager.sort()` directly.\n- **`shared_web/static/js/metagamegrid.jsx`**: Changed the sort-order `<select>` onChange from `grid.sort(sortBy, e.target.value)` to `grid.setState({ sortOrder: e.target.value, page: 0 })`, bypassing the toggle so the user's explicit dropdown selection is always honoured.\n- **`decksite/data/clauses_test.py`**: Added `test_order_by_auto()` covering AUTO resolution for all eight `*_order_by()` functions.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python -m pytest -x -m 'not functional and not perf'` \u2014 846 passed, 1 skipped, 89 deselected\n\nFixes #12564",
+      "pr_title": "Add AUTO sort order resolution to all order_by functions, remove grid.jsx override (#12564)",
+      "recorded_at": "2026-09-01T18:24:31Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest -x -m 'not functional and not perf'",
+        "detail": "846 passed, 1 skipped, 89 deselected in 18.51s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12564,
   "triage": [
     {

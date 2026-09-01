@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12557-1",
+      "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
+      "files_changed": 2,
+      "head_sha": "ecb4a6e800c89126e5e5a26038e984120167403a",
+      "issue": 12557,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The fix is backward-compatible: naive datetimes (old PyGithub behaviour) still go through `localize()` as before; only already-aware datetimes skip it. No other callers of `get_pull_requests` appear to be affected. The unit test suite has no direct test for this code path (it requires live GitHub credentials), so the fix is validated by lint + full unit suite passing.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nPyGithub updated to return timezone-aware `datetime` objects for `pull.merged_at` and `pull.updated_at`. The existing code unconditionally called `dtutil.UTC_TZ.localize()` (a pytz method) on these values, which raises `ValueError: Not naive datetime (tzinfo is already set)` when the datetime already carries timezone info. This caused `get_pull_requests()` to throw, so no PRs were fetched and the news feed appeared empty.\n\n## What changed\n\n- `shared/repo.py` lines 143\u2013144: guard each `localize()` call with `if merged_at.tzinfo is not None` so already-aware datetimes are used directly.\n- `decksite/data/news.py` line 65: same guard applied to the `merged_at` datetime used when building the merges list.\n\nNo schema changes, no new dependencies.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed on both touched files.\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (functional test intentionally excluded by marker) on a live MariaDB instance in the CI environment.\n\nFixes #12557",
+      "pr_title": "Guard against already-tz-aware datetimes from PyGithub (#12557)",
+      "recorded_at": "2026-09-01T18:19:40Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 18.10s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12557,
   "triage": [
     {

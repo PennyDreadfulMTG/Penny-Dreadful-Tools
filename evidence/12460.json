@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12460,
+  "triage": [
+    {
+      "batch_id": "t-12464-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Link styling uses a complex set of selectors with text-decoration: none on hover/focus, affecting a.force-link-style, calendar links, intro details, and li links differently",
+          "ref": "shared_web/static/css/pd.css:742-750",
+          "type": "code"
+        },
+        {
+          "detail": "text-decoration: none set globally; varied per-context overrides make the link style context-dependent and inconsistent",
+          "ref": "shared_web/static/css/pd.css:57",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12460,
+      "notes": "This requires a product/design decision on what the canonical link style should be, then broad visual regression testing across many page types. Likely >150 CSS selector changes and manual QA.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:28:31Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12514,
+  "triage": [
+    {
+      "batch_id": "t-12521-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SUM(num_decks) AS num_decks with no IFNULL; LEFT JOIN means archetypes with no rows in _arch_stats produce NULL, rendered as 'None' in the template",
+          "ref": "decksite/data/archetype.py:549",
+          "type": "code"
+        },
+        {
+          "detail": "{{num_decks}} rendered directly with no null guard",
+          "ref": "decksite/templates/archetypetree.mustache:29",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/archetype.py change line 549 from `SUM(num_decks) AS num_decks` to `IFNULL(SUM(num_decks), 0) AS num_decks` in load_archetypes. Also apply the same fix at line 610 inside load_disjoint_archetypes. Optionally add a HAVING clause to exclude zero-deck archetypes from display \u2014 but bakert's own comment flags that as a product call, so the IFNULL fix alone closes the reported bug.",
+      "issue": 12514,
+      "notes": "Reporter's comment notes the archetype was 'emptied' of decks but not deleted; the IFNULL fix shows 0 instead of None. Whether to filter 0-deck archetypes entirely is a separate product decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:28:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

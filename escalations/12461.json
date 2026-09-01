@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:28:31Z",
+  "evidence_refs": [
+    "evidence/12461.json#triage[0]"
+  ],
+  "issue": 12461,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Decision needed: (a) add a card-requirement field to archetypes so classification can be validated against maindeck contents, or (b) treat this as a one-time admin reclassification of the affected decks. Option (a) is a meaningful schema and feature addition; option (b) requires no code."
+}

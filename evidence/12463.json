@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12463,
+  "triage": [
+    {
+      "batch_id": "t-12464-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Uses data=\"{{list}}\" \u2014 'data' alone is not a valid HTML5 attribute; valid form is data-* (e.g. data-list)",
+          "ref": "decksite/templates/recentdecks.mustache:7",
+          "type": "code"
+        },
+        {
+          "detail": "Reads the attribute with .attr(\"data\") \u2014 works via jQuery's arbitrary-attr support but relies on the invalid attribute name",
+          "ref": "shared_web/static/js/pd.js:439",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/recentdecks.mustache line 7: change data=\"{{list}}\" to data-list=\"{{list}}\". In shared_web/static/js/pd.js line 439: change .attr(\"data\") to .attr(\"data-list\") (or .data(\"list\") which reads the same HTML5 data attribute). Two-file change, ~2 lines total.",
+      "issue": 12463,
+      "notes": "The existing code works in practice because jQuery .attr() reads arbitrary attributes, but it is invalid HTML and will cause validation failures. The rename is fully backward-compatible at runtime.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:28:31Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12485,
+  "triage": [
+    {
+      "batch_id": "t-12493-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "p.decks_url = url_for('person_decks_api', person=person, season_id=season_id) \u2014 season_id is an extra kwarg not in the route",
+          "ref": "decksite/controllers/api.py:579",
+          "type": "code"
+        },
+        {
+          "detail": "route is '/api/person/<person>/decks' with no season_id path segment, so Flask serialises season_id as ?season_id=N query string",
+          "ref": "decksite/controllers/api.py:584-585",
+          "type": "code"
+        },
+        {
+          "detail": "person_api always passes the current season_id to url_for, embedding it in the decks_url even when caller did not request a season",
+          "ref": "api.py:574-579",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "Add a seasonised route '@APP.route(\"/api/person/<person>/decks/<int:season_id>\")' for person_decks_api so that url_for generates a clean path URL; or omit season_id from the url_for call at api.py:579 (callers can append it themselves). Only decksite/controllers/api.py needs changing.",
+      "issue": 12485,
+      "notes": "The querystring is not functionally broken (Flask and fill_args handle it correctly), but it's surprising in an API response and the issue author flagged it as such.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:26:48Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

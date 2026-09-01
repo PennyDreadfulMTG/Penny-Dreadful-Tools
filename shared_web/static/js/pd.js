@@ -436,7 +436,7 @@ PD.getUrlParam = function(name) {
 
 PD.initSignupDeckChooser = function() {
     $("#signup_recent_decks").on("change", function() {
-        var data = JSON.parse($("option:selected", this).attr("data"));
+        var data = JSON.parse($("option:selected", this).attr("data-list"));
         $("#name").val(data.name);
         var textarea = $("#decklist");
         var buffer = data.main.join("\n") + "\n";

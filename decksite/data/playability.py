@@ -429,33 +429,38 @@ def preaggregate_archetype_playability() -> None:
             INDEX idx_archetype_id_playability_name (archetype_id, playability, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
-            acc.name,
-            acc.archetype_id,
+            sacc.name,
+            sacc.archetype_id,
             (
-                -- num decks playing this card in this archetype
-                acc.num_decks_maindeck
+                -- num decks playing this card in this archetype (only seasons where card is legal)
+                SUM(sacc.num_decks_maindeck)
                     /
-                -- num decks in this archetype
-                ac.num_decks
+                -- num decks in this archetype (only seasons where card is legal)
+                SUM(sac.num_decks)
             )
                 *
             (
                 1.0
                     -
                 (
-                    -- num decks playing this card
-                    cc.num_decks_maindeck
+                    -- num decks playing this card (only seasons where card is legal)
+                    SUM(scc.num_decks_maindeck)
                         /
-                    -- num decks
-                    (SELECT COUNT(*) FROM deck WHERE archetype_id IS NOT NULL)
+                    -- num decks (only seasons where card is legal)
+                    SUM(sc.num_decks)
                 )
             ) AS playability
         FROM
-            _archetype_card_count AS acc
+            _season_archetype_card_count AS sacc
         INNER JOIN
-            _archetype_count AS ac ON ac.archetype_id = acc.archetype_id
+            _season_archetype_count AS sac ON sac.archetype_id = sacc.archetype_id AND sac.season_id = sacc.season_id
         INNER JOIN
-            _card_count AS cc ON cc.name = acc.name
+            _season_card_count AS scc ON scc.name = sacc.name AND scc.season_id = sacc.season_id
+        INNER JOIN
+            _season_count AS sc ON sc.season_id = sacc.season_id
+        GROUP BY
+            sacc.name,
+            sacc.archetype_id
     """
     preaggregation.preaggregate(table, sql)
 

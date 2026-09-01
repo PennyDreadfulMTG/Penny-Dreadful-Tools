@@ -48,7 +48,7 @@ class Person(View):
                     'scales': {
                         'x': {
                             'display': False,
-                            'max': round(max(colors.values(), default=0) * 1.3),
+                            'max': round(max(colors.values(), default=0) * 1.1),
                         },
                         'y': {
                             'grid': {

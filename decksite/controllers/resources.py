@@ -16,8 +16,8 @@ from magic import rotation as rot
 @cached()
 @APP.route('/rotation/')
 def rotation() -> str:
-    runs, num_cards = rtn.load_rotation_summary()
-    view = Rotation(rot.in_rotation(), runs, num_cards)
+    runs, num_cards, in_this_check, eliminated_this_check = rtn.load_rotation_summary()
+    view = Rotation(rot.in_rotation(), runs, num_cards, in_this_check, eliminated_this_check)
     return view.page()
 
 

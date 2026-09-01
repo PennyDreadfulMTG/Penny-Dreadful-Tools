@@ -41,14 +41,33 @@ def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') 
         c.update(cards[c.name])
     return cs, 0 if not rs else rs[0]['total']
 
-def load_rotation_summary() -> tuple[int, int]:
-    sql = 'SELECT MAX(hits) AS runs, COUNT(*) AS num_cards FROM _rotation'
+def load_rotation_summary() -> tuple[int, int, int, int]:
+    sql = 'SELECT MAX(hits) AS runs, COUNT(*) AS num_cards, SUM(hit_in_last_run) AS in_this_check FROM _rotation'
     try:
         row = db().select(sql)[0]
     except DatabaseException as e:
         logger.error('Unable to get rotation information', e)
-        return 0, 0
-    return int(row['runs'] or 0), int(row['num_cards'] or 0)
+        return 0, 0, 0, 0
+    runs = int(row['runs'] or 0)
+    num_cards = int(row['num_cards'] or 0)
+    in_this_check = int(row['in_this_check'] or 0)
+    eliminated_this_check = 0
+    if runs > 0:
+        try:
+            total_runs = rotation.TOTAL_RUNS
+            eliminated_sql = f"""
+                SELECT COUNT(*) AS eliminated_this_check
+                FROM _rotation
+                WHERE status = 'Not Legal'
+                AND hit_in_last_run = 0
+                AND hits_needed <= {total_runs} - {runs} + 1
+                AND hits_needed > 0
+            """
+            row2 = db().select(eliminated_sql)[0]
+            eliminated_this_check = int(row2['eliminated_this_check'] or 0)
+        except DatabaseException as e:
+            logger.error('Unable to get eliminated_this_check count', e)
+    return runs, num_cards, in_this_check, eliminated_this_check
 
 # To trigger manually without having to be in a python shell, hit /api/rotation/clear_cache in a browser.
 # If you have edited the existing Run_xxx.txt files you will need to run this in an interpreter with hard=True.

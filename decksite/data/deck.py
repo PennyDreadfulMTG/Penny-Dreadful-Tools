@@ -520,16 +520,22 @@ def load_decks_by_cards(names: list[str], not_names: list[str]) -> list[Deck]:
     return ds
 
 def contains_cards_clause(names: list[str], negate: bool = False) -> str:
-    negation = ' NOT' if negate else ''
-    operator = '>=' if negate else '='
-    n = 1 if negate else len(names)
-    return """d.id {negation} IN (
-            SELECT deck_id
-            FROM deck_card
-            WHERE card IN ({names})
-            GROUP BY deck_id
-            HAVING COUNT(DISTINCT card) {operator} {n})
-        """.format(negation=negation, names=', '.join(map(sqlescape, names)), operator=operator, n=n)
+    if negate:
+        return """d.id NOT IN (
+                SELECT deck_id
+                FROM deck_card
+                WHERE card IN ({names})
+                GROUP BY deck_id
+                HAVING COUNT(DISTINCT card) >= 1)
+            """.format(names=', '.join(map(sqlescape, names)))
+    return ' AND '.join(
+        f"""d.id IN (
+                SELECT deck_id
+                FROM deck_card
+                WHERE card = {sqlescape(name)})
+            """
+        for name in names
+    )
 
 def load_cards(decks: list[Deck]) -> None:
     if len(decks) == 0:

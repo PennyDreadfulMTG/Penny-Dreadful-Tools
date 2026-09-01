@@ -10,6 +10,27 @@ from magic.models import Card, CardRef, Deck
 from shared.container import Container
 
 
+def test_contains_cards_clause_single_non_negated() -> None:
+    sql = deck.contains_cards_clause(['Lightning Bolt'])
+    assert "card = 'Lightning Bolt'" in sql
+    assert 'NOT IN' not in sql
+    assert 'GROUP BY' not in sql
+
+def test_contains_cards_clause_multi_non_negated() -> None:
+    sql = deck.contains_cards_clause(['Lightning Bolt', 'Counterspell', 'Dark Ritual'])
+    assert sql.count('d.id IN') == 3
+    assert "card = 'Lightning Bolt'" in sql
+    assert "card = 'Counterspell'" in sql
+    assert "card = 'Dark Ritual'" in sql
+    assert 'GROUP BY' not in sql
+    assert 'NOT IN' not in sql
+
+def test_contains_cards_clause_negated() -> None:
+    sql = deck.contains_cards_clause(['Lightning Bolt', 'Counterspell'], negate=True)
+    assert 'NOT IN' in sql
+    assert 'GROUP BY' in sql
+    assert "HAVING COUNT(DISTINCT card) >= 1" in sql
+
 def test_maybe_regenerate_symbols_font_for_unusual_character() -> None:
     with (
         mock.patch.object(deck, 'db') as db,

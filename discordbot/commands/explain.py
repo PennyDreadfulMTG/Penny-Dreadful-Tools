@@ -304,10 +304,8 @@ class ExplainCog(Extension):
         await self.explain.callback(ctx, ctx.content_parameters)
 
 def is_tournament_channel(channel: TYPE_MESSAGEABLE_CHANNEL) -> bool:
-    tournament_channel_id = configuration.get_int('tournament_channel_id')
-    if not tournament_channel_id:
-        return False
-    return channel.id == tournament_channel_id
+    channel_ids = [configuration.get_int('tournament_channel_id'), configuration.get_int('throwback_channel_id')]
+    return channel.id in [cid for cid in channel_ids if cid]
 
 def promo_explanation() -> tuple[str, dict[str, str]]:
     explanation = 'Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies.'

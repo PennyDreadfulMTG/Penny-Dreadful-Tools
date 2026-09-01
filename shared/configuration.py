@@ -127,6 +127,7 @@ DEFAULTS: dict[str, Any] = {
     'slow_bot_start': 30,
     'to_password': '',
     'to_username': '',
+    'throwback_channel_id': '0',
     'tournament_channel_id': '334220558159970304',
     'tournament_reminders_channel_id': '207281932214599682',
     'typeahead_data_path': 'shared_web/static/dist/typeahead.json',

@@ -58,14 +58,6 @@ export class Table extends DataManager {
                         {this.props.renderHeaderRow(this)}
                     </thead>
                     <tbody>
-                        { this.props.activeRunsText && this.state.page === 0
-                            ? <tr>
-                                <td className="marginalia"><span className="active" title="Active in the current league">⊕</span></td>
-                                <td></td>
-                                <td>{this.props.activeRunsText}</td>
-                            </tr>
-                            : null
-                        }
                         {rows}
                     </tbody>
                 </table>
@@ -80,6 +72,10 @@ export class Table extends DataManager {
             <div className="pagination">
                 <span className="pages section">
                     {start}-{end} of {total}
+                    { this.props.activeRunsText && this.state.page === 0
+                        ? <span> (<span className="active" title="Active in the current league">⊕</span> {this.props.activeRunsText})</span>
+                        : null
+                    }
                 </span>
                 <span className="links section">
                     { this.state.page > 0

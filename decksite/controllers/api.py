@@ -441,7 +441,7 @@ def archetypes2_api() -> Response:
 
     """
     q = request.args.get('q', '').lower()
-    where = clauses.text_where('a.name', q) if q else 'TRUE'
+    where = clauses.text_where('a.name', q) if q else "a.name NOT IN ('Unclassified', 'Commander')"
     order_by = clauses.archetype_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args, DEFAULT_GRID_PAGE_SIZE)
     tournament_only = request.args.get('deckType') == 'tournament'

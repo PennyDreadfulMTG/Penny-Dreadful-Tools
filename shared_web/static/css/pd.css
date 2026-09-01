@@ -2018,7 +2018,29 @@ p.bug-desc {
 }
 
 .toggle-illegal {
-    margin-left: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 0;
+}
+
+.toggle-illegal + label {
+    background: var(--background);
+    border: 0.05rem solid var(--light-border);
+    border-radius: var(--button-rounded-corners);
+    color: var(--deemphasized-text);
+    cursor: pointer;
+    display: inline-block;
+    font-size: var(--table-font-size);
+    padding: 0.422em 1em;
+    user-select: none;
+}
+
+.toggle-illegal:checked + label {
+    background: var(--highlight);
+    border-color: var(--highlight-border);
+    color: var(--text);
 }
 
 tr.wide td.github {

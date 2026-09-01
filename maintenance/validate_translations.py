@@ -1,8 +1,10 @@
 import os
 import re
 
+from babel.core import UnknownLocaleError
 from babel.messages import pofile
-from babel.messages.catalog import Catalog, Message
+from babel.messages.catalog import Catalog, Message, TranslationError
+from babel.messages.pofile import PoFileError
 
 from shared.pd_exception import InvalidDataException
 
@@ -11,11 +13,18 @@ def ad_hoc() -> None:
     for directory, _, files in os.walk(os.path.join('shared_web', 'translations')):
         for path in [os.path.join(directory, f) for f in files if os.path.splitext(f)[1] == '.po']:
             print(path)
-            validate_pofile(path)
+            try:
+                validate_pofile(path)
+            except Exception as e:
+                print(f'error: {path}: {e!r}')
 
 def validate_pofile(path: str) -> None:
     with open(path, mode='rb+') as f:
-        catalog = pofile.read_po(f)
+        try:
+            catalog = pofile.read_po(f)
+        except (PoFileError, TranslationError, UnknownLocaleError) as e:
+            print(f'error: {path}: {e!r}')
+            return
         messages = list(catalog)
         for message in messages:
             if message.id and message.string:

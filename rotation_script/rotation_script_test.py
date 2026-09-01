@@ -1,12 +1,27 @@
+import datetime
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
 from rotation_script import rotation_script
-from shared import configuration
+from shared import configuration, dtutil
 from shared.pd_exception import InvalidDataException
 
+
+def test_is_run_due_returns_true_when_no_files() -> None:
+    assert rotation_script._is_run_due([]) is True
+
+def test_is_run_due_returns_false_when_last_run_recent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    recent_ts = (dtutil.now() - datetime.timedelta(seconds=60)).timestamp()
+    monkeypatch.setattr(rotation_script.os.path, 'getmtime', lambda _path: recent_ts)
+    assert rotation_script._is_run_due(['Run_001.txt']) is False
+    assert 'skipping' in capsys.readouterr().out
+
+def test_is_run_due_returns_true_when_last_run_old(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    old_ts = (dtutil.now() - datetime.timedelta(seconds=3600)).timestamp()
+    monkeypatch.setattr(rotation_script.os.path, 'getmtime', lambda _path: old_ts)
+    assert rotation_script._is_run_due(['Run_001.txt']) is True
 
 def test_canonical_legal_name_uses_imported_aliases(monkeypatch: pytest.MonkeyPatch) -> None:
     names = {

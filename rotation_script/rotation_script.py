@@ -25,6 +25,16 @@ TIME_SINCE_SUPPLEMENTAL_ROTATION = dtutil.now() - seasons.last_supplemental()
 TIME_UNTIL_ROTATION = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION)
 TIME_SINCE_ROTATION = min(TIME_SINCE_FULL_ROTATION, TIME_SINCE_SUPPLEMENTAL_ROTATION)
 BANNED_CARDS = ['Cleanse', 'Crusade']  # These cards are banned, even in Freeform
+RUN_INTERVAL_SECONDS = 3300  # 55 minutes — script may be called every 5 min, only runs hourly
+
+def _is_run_due(files: list[str]) -> bool:
+    if not files:
+        return True
+    elapsed = dtutil.now().timestamp() - os.path.getmtime(files[-1])
+    if elapsed < RUN_INTERVAL_SECONDS:
+        print(f'Run not due, skipping (last run {elapsed:.0f}s ago)')
+        return False
+    return True
 
 @decorators.interprocess_locked('.rotation.lock')
 @sentry.monitor('rotation_script')
@@ -46,6 +56,9 @@ def run() -> None:
     if n == 0 and TIME_UNTIL_ROTATION > datetime.timedelta(7):
         print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')
         print(f'ETA: {dtutil.display_time(int(time_until.total_seconds()))}')
+        return
+
+    if not _is_run_due(files):
         return
 
     oracle.init()

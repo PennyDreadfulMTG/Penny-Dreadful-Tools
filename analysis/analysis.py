@@ -76,7 +76,7 @@ def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
             SUM(losses) AS losses,
             SUM(draws) AS draws,
             SUM(wins - losses) AS record,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS win_percent
         FROM
             _played_card_person_stats
         WHERE

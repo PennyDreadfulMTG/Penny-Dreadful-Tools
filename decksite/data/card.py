@@ -20,7 +20,7 @@ def load_competition_cards(competition_id: int, order_by: str, limit: str) -> tu
             SUM(CASE WHEN dsum.wins >= 5 AND dsum.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-            IFNULL(ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1), '') AS win_percent,
+            ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1) AS win_percent,
             COUNT(*) OVER () AS total
         FROM
             deck AS d
@@ -299,7 +299,7 @@ def load_cards(
             SUM(IFNULL(perfect_runs, 0)) AS perfect_runs,
             SUM(IFNULL(tournament_wins, 0)) AS tournament_wins,
             SUM(IFNULL(tournament_top8s, 0)) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS win_percent,
             COUNT(*) OVER () AS total
         FROM
             {from_clause}
@@ -329,7 +329,7 @@ def load_card(name: str, tournament_only: bool = False, season_id: int | None = 
     c = Card(oracle.load_card(name), True)  # New Card, don't store these values in CARDS_BY_NAME copy
     c.num_decks = c.wins = c.losses = c.draws = c.record = c.tournament_wins = c.tournament_top8s = 0
     c.played_competitively = False
-    c.win_percent = ''
+    c.win_percent = None
     return c
 
 @retry_after_calling(preaggregate_unique)

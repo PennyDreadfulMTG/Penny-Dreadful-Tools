@@ -1,6 +1,7 @@
 from decksite.data import preaggregation, query
 from decksite.database import db
-from find import search
+from magic import seasons
+from magic.database import db as magic_db
 from shared import logger
 from shared.container import Container
 from shared.database import sqlescape
@@ -140,10 +141,17 @@ def preaggregate_legal_cards() -> None:
         return
     for season_id in missing:
         logger.info(f'Adding season {season_id} to _legal_cards')
-        try:
-            legal_cards = search.search(f'f:pd{season_id}')
-        except search.InvalidValueException as e:
-            logger.error(f'Not able to find the legal cards for season {season_id} so skipping', e)
+        season_code = seasons.season_code(season_id)
+        legal_cards = magic_db().values("""
+            SELECT c.name
+            FROM card AS c
+            JOIN card_legality AS cl ON cl.card_id = c.id
+            JOIN format AS fo ON fo.id = cl.format_id
+            WHERE fo.name = %s
+            AND cl.legality <> 'Banned'
+        """, [f'Penny Dreadful {season_code}'])
+        if not legal_cards:
+            logger.error(f'Not able to find the legal cards for season {season_id} so skipping')
             continue
         sql = 'INSERT INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in legal_cards)
         db().execute(sql)

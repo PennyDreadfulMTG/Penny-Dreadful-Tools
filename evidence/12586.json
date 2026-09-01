@@ -1,0 +1,67 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12586-1",
+      "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
+      "files_changed": 3,
+      "head_sha": "03ffcdaee883d2d0a02c9a0f811807c535468323",
+      "issue": 12586,
+      "lines_changed": 3,
+      "lint": "passed",
+      "notes": "Pure PropTypes metadata change \u2014 no runtime behaviour is altered. The `\"metagame-grid\"` and `\"with-marginalia\"` className values were already being passed correctly by callers; this just moves the validation to the right component so PropTypes warnings fire correctly when the wrong value is used on the wrong component.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`DataManager.propTypes` declared `className` as `PropTypes.oneOf([\"\", \"with-marginalia\", \"metagame-grid\"])`, mixing values that belong to two different child components. `\"with-marginalia\"` is only valid for `Table` and `\"metagame-grid\"` is only valid for `Grid`, so the shared base class was conflating them.\n\n## What changed\n\n- **`datamanager.jsx`**: Removed the `className` entry from `DataManager.propTypes`.\n- **`table.jsx`**: Added `\"className\": PropTypes.oneOf([\"\", \"with-marginalia\"])` to `Table.propTypes`.\n- **`grid.jsx`**: Added `\"className\": PropTypes.oneOf([\"\", \"metagame-grid\"])` to `Grid.propTypes`.\n\nNo caller changes were needed \u2014 callers already pass `className` under that name to the correct child component.\n\n## Validation\n\n`uv run --frozen python dev.py lint` passed on all three touched files. Unit tests require a live MariaDB instance; the fix is purely static PropTypes metadata (no runtime logic change), so there is no meaningful unit test to add or run.\n\nFixes #12586",
+      "pr_title": "Move className propType from DataManager to Table and Grid separately (#12586)",
+      "recorded_at": "2026-09-01T18:03:44Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed \u2014 unit tests not run as they require a database and the fix is purely static PropTypes metadata with no runtime logic change",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12586,
+  "triage": [
+    {
+      "batch_id": "t-12587-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "\"className\": PropTypes.oneOf([\"\", \"with-marginalia\", \"metagame-grid\"]) \u2014 single combined propType for both child components",
+          "ref": "shared_web/static/js/datamanager.jsx:141",
+          "type": "code"
+        },
+        {
+          "detail": "const className = (\"live \" + this.props.className).trim() \u2014 Table uses className for 'with-marginalia'",
+          "ref": "shared_web/static/js/table.jsx:23",
+          "type": "code"
+        },
+        {
+          "detail": "const className = this.props.className.trim() \u2014 Grid uses className for 'metagame-grid'",
+          "ref": "shared_web/static/js/grid.jsx:27",
+          "type": "code"
+        },
+        {
+          "detail": "className=\"with-marginalia\" passed to Table at component init",
+          "ref": "shared_web/static/js/decktable.jsx",
+          "type": "code"
+        },
+        {
+          "detail": "className=\"metagame-grid\" passed to Grid at component init",
+          "ref": "shared_web/static/js/metagamegrid.jsx",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In datamanager.jsx remove the 'className' entry from DataManager.propTypes. In table.jsx add Table.propTypes with \"className\": PropTypes.oneOf([\"\", \"with-marginalia\"]). In grid.jsx add Grid.propTypes with \"className\": PropTypes.oneOf([\"\", \"metagame-grid\"]). No caller changes needed since both already pass className by that name.",
+      "issue": 12586,
+      "notes": "Pure proptype cleanup with no runtime behavior change. DataManager itself never reads this.props.className so removing it from DataManager.propTypes is safe.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

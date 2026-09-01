@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12570,
+  "triage": [
+    {
+      "batch_id": "t-12572-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "metagame template only supports season-wide or tournament-only scope via data-season-id and data-tournament-only attributes; no person or competition scope",
+          "ref": "decksite/templates/metagame.mustache:1-6",
+          "type": "code"
+        },
+        {
+          "detail": "metagame controller has no person_id or competition_id parameters",
+          "ref": "decksite/controllers/metagame.py:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "Grid is hardcoded to endpoint /api/archetypes2/ accepting only seasonId and tournamentOnly \u2014 no per-person or per-competition filtering",
+          "ref": "shared_web/static/js/metagamegrid.jsx:111-128",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12570,
+      "notes": "Would require new or extended API endpoints for per-person and per-competition archetype stats, new URL routes, frontend controls to switch scope, and new or extended data queries. Well above the easy-fix threshold.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:59:02Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

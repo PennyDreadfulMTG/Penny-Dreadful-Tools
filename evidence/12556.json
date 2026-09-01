@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12556,
+  "triage": [
+    {
+      "batch_id": "t-12556-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "show_seasons=True and SEASONS.route at metagame.py:34-35 mean per-season navigation already exists, so that sub-request is partially addressed",
+          "ref": "decksite/views/metagame.py:10",
+          "type": "code"
+        },
+        {
+          "detail": "archetypes2_api has no trending logic, no macro-archetype % aggregation, and no macro archetype symbol \u2014 three distinct feature gaps remain",
+          "ref": "decksite/controllers/api.py:440-462",
+          "type": "code"
+        },
+        {
+          "detail": "No trending or macro-archetype percentage code exists in the site",
+          "ref": "grep -rn 'macro\\|trending' decksite/ (no hits in non-pycache files)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12556,
+      "notes": "Season-slice navigation already exists via SEASONS.route. Remaining requests (macro archetype symbol, trending indicator, macro-archetype %) each require data aggregation work and likely front-end design decisions.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:05Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

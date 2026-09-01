@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:58:28Z",
+  "evidence_refs": [
+    "evidence/12548.json#triage[0]"
+  ],
+  "issue": 12548,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The issue includes a screenshot (not viewable here) and no text description beyond the image. Without a running Safari browser I cannot confirm what the broken margin behavior looks like or whether it still exists; the CSS has not changed visibly to address it."
+}

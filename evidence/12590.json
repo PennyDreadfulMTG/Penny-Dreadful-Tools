@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12590-1",
+      "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
+      "files_changed": 2,
+      "head_sha": "0f1e4775036f1035aa8c5664de35baf7abb399b6",
+      "issue": 12590,
+      "lines_changed": 42,
+      "lint": "passed",
+      "notes": "The two new optional parameters default to None so all other callers (view.py, archetype view) are unaffected. The net line count is neutral (21 added, 21 removed) \u2014 purely a location change with no logic alteration.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `/api/archetypes2` controller (`archetypes2_api`) contained a per-archetype loop that computed `key_cards`, `num_matches`, and `colors_safe` inline before delegating to `prepare_archetypes`. This business logic belonged in the prepare layer alongside the rest of the archetype decoration, not in the controller.\n\n## What changed\n\n- **`decksite/prepare.py`**: Extended `prepare_archetype` and `prepare_archetypes` with two optional parameters, `archetype_key_cards: dict | None = None` and `cards: dict | None = None`. When both are provided, `prepare_archetype` now computes `key_cards`, `num_matches`, and `colors_safe` for the archetype. Moved `is_uninteresting` helper here from `api.py`. Added the required `image_fetcher` and `find_colors` imports.\n- **`decksite/controllers/api.py`**: Removed the 8-line per-archetype loop; the controller now precomputes `archetype_key_cards` and `cards` once and passes them directly to `prepare_archetypes`. Removed now-unused imports (`image_fetcher`, `find_colors`, `Card`, `colors_html`) and the `is_uninteresting` local function.\n\nAll existing callers of `prepare_archetypes` / `prepare_archetype` that don't pass the new optional params are unaffected (the params default to `None`).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (no errors)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (environmental skip unrelated to this change)\n\nFixes #12590",
+      "pr_title": "Move key_cards decoration from archetypes2 API controller into prepare_archetype (#12590)",
+      "recorded_at": "2026-09-01T18:06:25Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12590,
+  "triage": [
+    {
+      "batch_id": "t-12592-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "key_cards computation, color derivation, and num_matches calculation are all inlined in archetypes2_api() rather than in prepare_archetype",
+          "ref": "decksite/controllers/api.py:450-459",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_archetype currently only sets current, show_record, url, depth \u2014 does not touch key_cards or colors",
+          "ref": "decksite/prepare.py:184-191",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/prepare.py, extend prepare_archetype (or add a new prepare_archetype_cards helper) to accept archetype_key_cards and cards dicts, then move lines 450-459 of decksite/controllers/api.py into that function. The api.py caller would precompute the two dicts once and pass them in, eliminating the per-archetype key_cards logic from the controller.",
+      "issue": 12590,
+      "notes": "Pure refactor \u2014 no behavior change intended. is_uninteresting() and find_colors() are already importable from their current modules so no new dependencies needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12572,
+  "triage": [
+    {
+      "batch_id": "t-12572-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current code renders '#{n(archetype.numDecks)}' \u2014 the # prefix makes small counts look like rankings (e.g., '#2')",
+          "ref": "shared_web/static/js/metagamegrid.jsx:31",
+          "type": "code"
+        },
+        {
+          "detail": "no commit references this issue; the # symbol is still present in master",
+          "ref": "git log --oneline --all --grep=12572",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/metagamegrid.jsx:31, replace '#' with an unambiguous symbol that reads as 'count of decks' rather than 'rank' \u2014 the rest of the file uses Unicode for all stats (\u2694 for matches, \u2460 for wins, \u2467 for top-8, \ud83c\udfc6 for 5-0s), so pick a deck-count icon (e.g., \ud83c\udccf) in the same style. One-line JS change, then rebuild the bundle.",
+      "issue": 12572,
+      "notes": "The choice of replacement icon is minor but should be consistent with the rest of the file's icon vocabulary. Bundle rebuild required after the JS change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:59:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

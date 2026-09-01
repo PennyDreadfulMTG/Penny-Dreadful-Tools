@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12593,
+  "triage": [
+    {
+      "batch_id": "t-12598-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Comment explicitly labels z-index:3 on .badge-holder a hack; the badge appears before <a class=item> in the DOM so it needs elevation to be clickable",
+          "ref": "shared_web/static/css/pd.css:1613-1619",
+          "type": "code"
+        },
+        {
+          "detail": "{{#badge}}<div class=badge-holder>...</div>{{/badge}} appears before <a class=item> in the li, causing the z-index stacking problem",
+          "ref": "decksite/templates/menu.mustache:5-13",
+          "type": "code"
+        },
+        {
+          "detail": ".badge-holder has position:relative so .badge (position:absolute) anchors to it; z-index:3 lifts it above the following item link",
+          "ref": "shared_web/static/css/pd.css:2665-2670",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/menu.mustache, move the {{#badge}}\u2026{{/badge}} block to after the <a class=\"item\"> element. In shared_web/static/css/pd.css, add position:relative to the <li> (or the enclosing element), remove position:relative from .badge-holder, and remove the z-index:3 hack \u2014 the badge will then position absolutely relative to the li and paint above the item link naturally by DOM order.",
+      "issue": 12593,
+      "notes": "Confidence medium because the badge positioning interacts with the dropdown submenu logic (css comment on pd.css:2664 warns menu items need static positioning for dropdowns); visual regression testing is advisable before merging.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

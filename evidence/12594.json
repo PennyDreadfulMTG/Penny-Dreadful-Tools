@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12594,
+  "triage": [
+    {
+      "batch_id": "t-12598-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Every sort onClick uses table.sort.bind(table, ...) \u2014 10+ bind calls in this file alone",
+          "ref": "shared_web/static/js/decktable.jsx:7-33",
+          "type": "code"
+        },
+        {
+          "detail": "onChange={queryChanged.bind(this)} and movePage.bind usages inside the class render method",
+          "ref": "shared_web/static/js/table.jsx:31",
+          "type": "code"
+        },
+        {
+          "detail": "bind appears in decktable.jsx, cardtable.jsx, persontable.jsx, headtoheadtable.jsx, matchtable.jsx, rotationtable.jsx, leaderboardtable.jsx, table.jsx, grid.jsx \u2014 well over 150 call sites total",
+          "ref": "grep -rn \\.bind\\\\b shared_web/static/js/*.jsx",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12594,
+      "notes": "The mechanical change per site is trivial (bind \u2192 arrow function), but there are 9+ files and 50+ call sites, easily exceeding 150 lines. Converting class components fully to function components with hooks would be the idiomatic modern React fix but is a much larger refactor.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

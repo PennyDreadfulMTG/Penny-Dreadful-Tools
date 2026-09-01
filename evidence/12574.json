@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12574,
+  "triage": [
+    {
+      "batch_id": "t-12577-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Comment still references Perfect Fourth (1.333) scale and http://www.modularscale.com \u2014 the conceptual basis is unchanged",
+          "ref": "shared_web/static/css/pd.css:66",
+          "type": "code"
+        },
+        {
+          "detail": "--x-large-font-size: 1.777rem and many values like 0.563em, 0.422em, 2.369rem are still present throughout the file as pixel-fractional scale products",
+          "ref": "shared_web/static/css/pd.css:79",
+          "type": "code"
+        },
+        {
+          "detail": "calc(Xrem / 20) pattern is partially adopted (e.g. calc(8rem/20)), but 1.333-scale values remain intermixed throughout",
+          "ref": "shared_web/static/css/pd.css",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12574,
+      "notes": "This is a large-scale CSS refactoring with design judgment required at each value (what whole-pixel replacement makes sense for each context). Issue comments from the owner indicate ongoing partial progress but the bulk remains. Well over 150 lines to touch.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

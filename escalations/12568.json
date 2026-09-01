@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:59:02Z",
+  "evidence_refs": [
+    "evidence/12568.json#triage[0]"
+  ],
+  "issue": 12568,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Issue body is 'Top decks or movers-and-shakers or something' \u2014 the owner needs to specify which metagame signal to surface (top archetypes by quality? biggest week-over-week movers?) and the display format before implementation can begin."
+}

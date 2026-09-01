@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12603,
+  "triage": [
+    {
+      "batch_id": "t-12603-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Command body is a single 'Temporarily disabled' send; all real logic is commented out",
+          "ref": "discordbot/commands/configure.py:22-23",
+          "type": "code"
+        },
+        {
+          "detail": "Configure disabled here during slash-command migration; old code used ctx.author.guild_permissions.MANAGE_CHANNELS (MANAGE_CHANNELS check) which is now replaced by @check(is_owner()), an entirely different permission model that only allows the bot owner",
+          "ref": "63417c08",
+          "type": "commit"
+        },
+        {
+          "detail": "Commented-out code accesses ctx.author.guild_permissions, ctx.channel.guild.id \u2014 need to verify these still work with current interactions library before uncommenting",
+          "ref": "discordbot/commands/configure.py:30-33",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12603,
+      "notes": "The re-enable is non-trivial: the permissions model was deliberately changed from guild MANAGE_CHANNELS to is_owner() during the migration. Restoring server-manager configurability requires deciding which check to use and verifying the interactions-library API for guild_permissions is still valid.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:05Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

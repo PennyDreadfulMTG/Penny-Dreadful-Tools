@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12564,
+  "triage": [
+    {
+      "batch_id": "t-12567-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Grid.sort() overrides DataManager.sort() only to change the default sortOrder from 'ASC' to 'AUTO'",
+          "ref": "shared_web/static/js/grid.jsx:16-18",
+          "type": "code"
+        },
+        {
+          "detail": "DataManager.sort() uses sortOrder='ASC' as default; Grid overrides this because the metagame API already handles AUTO",
+          "ref": "shared_web/static/js/datamanager.jsx:124-128",
+          "type": "code"
+        },
+        {
+          "detail": "archetype_order_by() already resolves 'AUTO' to the per-field default_order; other *_order_by() functions do not (they assert ASC|DESC only)",
+          "ref": "decksite/data/clauses.py:193-194",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/clauses.py, add AUTO resolution to decks_order_by(), cards_order_by(), people_order_by(), head_to_head_order_by(), leaderboard_order_by(), matches_order_by(), and rotation_order_by() following the same pattern as archetype_order_by() (lines 183-194): define a sort_options dict with (col, default_order), resolve AUTO before the assert. In shared_web/static/js/datamanager.jsx change sort() default to 'AUTO'. Then remove the overriding sort() method from shared_web/static/js/grid.jsx.",
+      "issue": 12564,
+      "notes": "Pattern already proven in archetype_order_by(). Each sort field needs its natural default direction defined, which is straightforward from the existing sort_options dicts.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:57:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

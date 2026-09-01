@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12606,
+  "triage": [
+    {
+      "batch_id": "t-12614-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Merged 2024-11-29, title: 'Skip all playtest cards in cards db, now that Scryfall have given us a way'",
+          "ref": "#13378",
+          "type": "pr"
+        },
+        {
+          "detail": "Skip all playtest cards in cards db",
+          "ref": "c9feea8f",
+          "type": "commit"
+        },
+        {
+          "detail": "`if 'playtest' in p.get('promo_types', []): continue` \u2014 playtest card 'Pick Your Poison' is excluded entirely from the oracle database, so its mana cost can never appear",
+          "ref": "magic/multiverse.py:253",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12606,
+      "notes": "Issue was filed 2024-05-16; fix landed 2024-11-29. Issue remains open despite being resolved.",
+      "proposed_comment": "This was fixed in November 2024 by PR #13378 (commit c9feea8f), which excludes all cards with `promo_types` containing 'playtest' from the oracle database. The playtest 'Pick Your Poison' card no longer exists in our card data, so only the real card's mana cost and image are shown.",
+      "recorded_at": "2026-09-01T18:05:51Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

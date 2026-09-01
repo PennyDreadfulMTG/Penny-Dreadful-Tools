@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12565,
+  "triage": [
+    {
+      "batch_id": "t-12567-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "td.contains-mana-bar has fixed width: 3rem with no responsive override at 640px breakpoint where other table cells shrink",
+          "ref": "shared_web/static/css/pd.css:1756-1758",
+          "type": "code"
+        },
+        {
+          "detail": "At max-width 640px, main th/td get max-width: 7em and tighter padding, but the mana bar cell and bar itself have no matching adjustment",
+          "ref": "shared_web/static/css/pd.css:1199-1203",
+          "type": "code"
+        },
+        {
+          "detail": "Author stated 'in my recent alterations to mana-bar and table spacing I didn't spend too long on non-Desktop view' \u2014 exact visual defect unspecified, requires running site to diagnose",
+          "ref": "#12565",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12565,
+      "notes": "The open-ended 'figure out' title and absence of a specified defect means someone needs to visually audit the site at 640px and below before writing CSS. The fix will likely be a narrow-view media query for td.contains-mana-bar and .mana-bar in pd.css.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:57:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

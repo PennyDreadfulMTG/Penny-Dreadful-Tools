@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12587,
+  "triage": [
+    {
+      "batch_id": "t-12587-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "is_uninteresting() hard-codes land exclusion via type_line and oracle_text substring checks \u2014 the hack the issue describes",
+          "ref": "decksite/controllers/api.py:843-847",
+          "type": "code"
+        },
+        {
+          "detail": "result.key_cards = [c for c in kcs if not is_uninteresting(c)][0:5] \u2014 call site",
+          "ref": "decksite/controllers/api.py:454",
+          "type": "code"
+        },
+        {
+          "detail": "from find import search \u2014 search already imported in decksite data layer, proving it is used there",
+          "ref": "decksite/data/clauses.py:7",
+          "type": "code"
+        },
+        {
+          "detail": "from find import search; legal_cards = search.search(f'f:pd{season_id}') at line 144 \u2014 search already called directly in decksite",
+          "ref": "decksite/data/playability.py:3",
+          "type": "code"
+        },
+        {
+          "detail": "COMPANIONS = search.search('is:companion') \u2014 further precedent for search in decksite",
+          "ref": "decksite/data/rule.py:13",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12587,
+      "notes": "The decision needed is: should decksite call search.search() for card filtering in archetypes2 (already done in playability/clauses/rule), or use a different card-property interface? The author is 'semireluctant' to spread search calls and wants a policy before changing is_uninteresting. Once the policy is settled, replacing is_uninteresting with a search expression or direct Card property access is a small, isolated change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

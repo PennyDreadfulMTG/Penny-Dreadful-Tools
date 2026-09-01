@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12538,
+  "triage": [
+    {
+      "batch_id": "t-12539-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "class Archetype(Container, NodeMixin): pass \u2014 class is currently in decksite.data, not magic.models",
+          "ref": "decksite/data/archetype.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "17+ files import Archetype from decksite.data.archetype; all would need updating",
+          "ref": "grep -rn 'from decksite.data.archetype import Archetype' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "magic/models contains card.py, cardref.py, competition.py, deck.py, printing.py \u2014 no archetype.py exists",
+          "ref": "magic/models/",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12538,
+      "notes": "The Archetype class body is just 'pass'; all logic is in module-level functions in decksite/data/archetype.py. Moving the class is mechanically straightforward but touches 17+ import sites; those functions would then import from magic.models.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:39Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

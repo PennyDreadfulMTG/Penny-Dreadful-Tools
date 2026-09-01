@@ -1,0 +1,73 @@
+{
+  "fix": [],
+  "issue": 12547,
+  "triage": [
+    {
+      "batch_id": "t-12551-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Restore Discord card disambiguation \u2014 removes DISAMBIGUATION_EMOJIS, disambiguation_reactions(), and the add_reaction number-emoji calls for ambiguous names",
+          "ref": "c96ec47f",
+          "type": "commit"
+        },
+        {
+          "detail": "ambiguous slash-command matches now use interactive Button components; user picks via button click, no emoji reactions sent",
+          "ref": "discordbot/commands/__init__.py:47-61",
+          "type": "code"
+        },
+        {
+          "detail": "ambiguous prefix-command case now sends text 'Please use the slash command and choose one of its suggestions.' \u2014 no reaction emojis added",
+          "ref": "discordbot/command.py:119-121",
+          "type": "code"
+        },
+        {
+          "detail": "on_message_reaction_add only handles \u274e to delete bot messages; no number-emoji handler remains",
+          "ref": "discordbot/bot.py:216-234",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12547,
+      "notes": "The fix chose 'stop sending them' for prefix commands and 'fix properly with buttons' for slash commands, exactly the two options the issue proposed.",
+      "proposed_comment": "This was fixed in commit c96ec47f by removing the number-emoji reaction approach entirely: slash commands now present interactive button choices, and prefix commands direct the user to the slash command. No reaction emojis are sent for ambiguous names anymore.",
+      "recorded_at": "2026-09-01T17:58:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12547-1",
+      "final_comment": "Fixed in commit c96ec47f: the broken number-emoji reaction approach has been removed entirely. Slash commands now present interactive button choices (users click a button to select the intended card), and prefix commands direct the user to the slash command. No number-emoji reactions are sent for ambiguous names anymore.",
+      "issue": 12547,
+      "own_evidence": [
+        {
+          "detail": "Independently checked: slash command path now sends Button components and uses wait_for_component \u2014 no number-emoji reactions anywhere in this path",
+          "ref": "discordbot/commands/__init__.py:47-62",
+          "type": "code"
+        },
+        {
+          "detail": "Independently checked: prefix command path now sends a plain message directing users to the slash command; disambiguation_reactions() and all DISAMBIGUATION_* constants are gone from this file",
+          "ref": "discordbot/command.py:119-121",
+          "type": "code"
+        },
+        {
+          "detail": "Only remaining add_reaction calls are for \u274e (message dismissal) and debug reload signals \u2014 no number-emoji disambiguation reactions remain anywhere in the codebase",
+          "ref": "grep -rn 'add_reaction|disambiguation' discordbot/",
+          "type": "grep"
+        },
+        {
+          "detail": "Commit title 'Restore Discord card disambiguation' matches the fix; diff confirms removal of DISAMBIGUATION_EMOJIS_BY_NUMBER, DISAMBIGUATION_NUMBERS_BY_EMOJI, disambiguation(), and disambiguation_reactions()",
+          "ref": "c96ec47f",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:03:08Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

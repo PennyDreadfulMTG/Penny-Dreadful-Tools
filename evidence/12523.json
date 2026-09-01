@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12523,
+  "triage": [
+    {
+      "batch_id": "t-12534-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": ".metagame-grid .key-card has display:flex and negative side margins; the .card child uses display:block with width:100% and a ::before pseudo-element for aspect ratio",
+          "ref": "shared_web/static/css/pd.css:2952-2958",
+          "type": "code"
+        },
+        {
+          "detail": "key-card div wraps a single .card div whose image is a CSS background; the flex may be needed to propagate width correctly given the negative margins",
+          "ref": "shared_web/static/js/metagamegrid.jsx:18-23",
+          "type": "code"
+        },
+        {
+          "detail": "The aspect-ratio hack uses ::before with margin-top:64%; this technique is sensitive to display mode of the parent",
+          "ref": "shared_web/static/css/pd.css:2972-2977",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12523,
+      "notes": "The issue is a self-assigned investigation: bakert already observed that removing display:flex breaks the image even with display:block as replacement. Root-cause analysis requires running the page in a browser devtools. Likely the fix is either a comment explaining the necessity or a CSS refactor that makes the layout more explicit (e.g. use explicit height/aspect-ratio instead of the ::before hack).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

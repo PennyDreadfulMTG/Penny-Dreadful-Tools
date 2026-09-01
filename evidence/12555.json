@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12555,
+  "triage": [
+    {
+      "batch_id": "t-12556-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "tooltip text is literally 'Quality' \u2014 no explanation of what the metric means",
+          "ref": "shared_web/static/js/metagamegrid.jsx:55",
+          "type": "code"
+        },
+        {
+          "detail": "quality sort is Wilson lower bound of win %; this definition is not surfaced to the user anywhere",
+          "ref": "decksite/data/clauses.py:186",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/metagamegrid.jsx:55, change title=\"Quality\" to a descriptive string such as \"Quality: statistical confidence in win %, accounting for sample size (Wilson lower bound)\". Optionally add matching tooltip text to the 'Quality' option in the sort <select> at line 93.",
+      "issue": 12555,
+      "notes": "Pure UI-copy change in one JSX file; no logic or data changes required.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

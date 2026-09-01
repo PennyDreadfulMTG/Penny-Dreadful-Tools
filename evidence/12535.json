@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12535,
+  "triage": [
+    {
+      "batch_id": "t-12539-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "DataManager holds ~25 PropTypes including Table-specific ones like activeRunsText, hidePerson, hideSource, hideTop8, showArchetype, showSeasonIcon, showOmw",
+          "ref": "shared_web/static/js/datamanager.jsx:132",
+          "type": "code"
+        },
+        {
+          "detail": "Table.propTypes only declares renderHeaderRow and renderRow \u2014 the Table-specific DataManager props are not on Table",
+          "ref": "shared_web/static/js/table.jsx:123",
+          "type": "code"
+        },
+        {
+          "detail": "Grid.propTypes only declares renderSort; Grid uses renderItem, className, showSearch, searchPrompt \u2014 not the deck-table-specific props in DataManager",
+          "ref": "shared_web/static/js/grid.jsx:86",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12535,
+      "notes": "The issue's 'Think about' framing signals a design discussion rather than an actionable defect; it asks the team to decide whether to redistribute PropTypes. No functional bug is present.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

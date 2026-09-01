@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12528,
+  "triage": [
+    {
+      "batch_id": "t-12534-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "First of 14+ individual box-sizing: border-box declarations; comments explain layout intent case by case",
+          "ref": "shared_web/static/css/pd.css:434",
+          "type": "code"
+        },
+        {
+          "detail": "Tooltip section uses content-box override already, so it would be unaffected by a global reset",
+          "ref": "shared_web/static/css/pd.css:3245-3253",
+          "type": "code"
+        },
+        {
+          "detail": "16 box-sizing occurrences total; ~14 are border-box candidates for removal after global reset",
+          "ref": "grep -c 'box-sizing' shared_web/static/css/pd.css \u2192 16",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add `*, *::before, *::after { box-sizing: border-box; }` near the top of shared_web/static/css/pd.css, then remove the 14 individual `box-sizing: border-box` declarations (keeping the `.tpd-tooltip { box-sizing: content-box }` override at line 3248 intact). Requires a visual pass over the site to check for regressions.",
+      "issue": 12528,
+      "notes": "The tooltip third-party section at lines 3245-3253 already has a content-box override and a box-sizing: inherit cascade; those lines must be kept. The rest is mechanical removal.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

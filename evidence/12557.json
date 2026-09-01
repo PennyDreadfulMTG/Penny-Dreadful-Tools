@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12557,
+  "triage": [
+    {
+      "batch_id": "t-12562-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "dtutil.UTC_TZ.localize(merged_at) \u2014 raises ValueError if merged_at is already timezone-aware",
+          "ref": "shared/repo.py:143",
+          "type": "code"
+        },
+        {
+          "detail": "dtutil.UTC_TZ.localize(updated_at) \u2014 same issue for updated_at",
+          "ref": "shared/repo.py:144",
+          "type": "code"
+        },
+        {
+          "detail": "PyGitHub 2.x uses datetime.fromisoformat() which on Python 3.11+ returns timezone-aware datetime objects (confirmed: tzinfo=datetime.timezone.utc)",
+          "ref": "PyGitHub==2.10.0 _datetime_from_github_isoformat",
+          "type": "behavior"
+        },
+        {
+          "detail": "Confirmed raises ValueError: Not naive datetime (tzinfo is already set) \u2014 not caught by the RequestException/GithubException handlers in get_pull_requests or the ConnectionError/BadCredentialsException handlers in code_merges",
+          "ref": "pytz.UTC.localize(aware_dt)",
+          "type": "behavior"
+        },
+        {
+          "detail": "dtutil.UTC_TZ.localize(merged_at) \u2014 same ValueError risk on the result from get_pull_requests if that function ever returns aware datetimes directly",
+          "ref": "decksite/data/news.py:65",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `shared/repo.py:143-144`, replace `dtutil.UTC_TZ.localize(merged_at)` and `dtutil.UTC_TZ.localize(updated_at)` with `merged_at if merged_at.tzinfo is not None else dtutil.UTC_TZ.localize(merged_at)` (and same for updated_at). Apply the same guard to `decksite/data/news.py:65`. This is ~4 lines changed across 2 files with no schema changes.",
+      "issue": 12557,
+      "notes": "The maintenance homepage cache refresh crashes silently (unhandled ValueError), so the Redis cache for PR news is never populated and the homepage shows no code-release items. The root cause is Python 3.11+ datetime.fromisoformat() returning timezone-aware datetimes that pytz.localize() rejects.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

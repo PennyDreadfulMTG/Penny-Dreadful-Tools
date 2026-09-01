@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12539,
+  "triage": [
+    {
+      "batch_id": "t-12539-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bot.load_extension() requires each module to export a setup(bot) function",
+          "ref": "discordbot/commands/__init__.py:22",
+          "type": "code"
+        },
+        {
+          "detail": "48 of 51 command files contain the identical 1-line setup boilerplate",
+          "ref": "grep -l 'def setup' discordbot/commands/*.py",
+          "type": "search"
+        },
+        {
+          "detail": "representative example: 'def setup(bot: Client) -> None: Art(bot)' at the bottom of every command file",
+          "ref": "discordbot/commands/art.py:28",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12539,
+      "notes": "A scaleless_load fallback exists in __init__.py that avoids needing setup(), but it is only an exception handler, not the primary path. Eliminating setup() site-wide requires changing the extension-loading strategy for all 48 command modules.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:39Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

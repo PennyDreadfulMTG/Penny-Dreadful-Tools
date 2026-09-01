@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:58:50Z",
+  "evidence_refs": [
+    "evidence/12587.json#triage[0]"
+  ],
+  "issue": 12587,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The decision needed is: should decksite call search.search() for card filtering in archetypes2 (already done in playability/clauses/rule), or use a different card-property interface? The author is 'semireluctant' to spread search calls and wants a policy before changing is_uninteresting. Once the policy is settled, replacing is_uninteresting with a search expression or direct Card property access "
+}

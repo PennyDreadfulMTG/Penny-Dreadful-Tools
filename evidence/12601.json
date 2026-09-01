@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12601,
+  "triage": [
+    {
+      "batch_id": "t-12603-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Only {{#played_competitively}}{{> stats}}{{/played_competitively}} \u2014 no message or banner when card is illegal in the selected season",
+          "ref": "decksite/templates/card.mustache:15-17",
+          "type": "code"
+        },
+        {
+          "detail": "legal_seasons is computed and available in the view, but not surfaced in the template as an 'off-track' indicator",
+          "ref": "decksite/views/card.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "The deck table section ('Decks containing \u2026') is always rendered even when there are zero decks because the card is illegal; issue asks to suppress or explain this",
+          "ref": "decksite/templates/card.mustache:19-22",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12601,
+      "notes": "Needs UX decisions: what message/banner to display, how prominently to show it, and whether to conditionally suppress the deck table vs show an empty-state explanation. More than a simple template edit.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

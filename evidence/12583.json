@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12583-1",
+      "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
+      "files_changed": 1,
+      "head_sha": "23725fb7da68ad395e1c973f0dc9d201f823f2cf",
+      "issue": 12583,
+      "lines_changed": 5,
+      "lint": "passed",
+      "notes": "The fix is a pure CSS addition scoped tightly to `.metagame-grid a:hover .stacked-bar-highlight`. It does not affect any other hover context. The existing `a:hover .stacked-bar-highlight` rule (with its 1s transition) still applies everywhere else.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen hovering over a metagame grid tile, the `.stacked-bar-highlight` element (the meta share bar) became invisible. The tile's hover background transitions to `var(--highlight)` over 1 second (`main a:hover` rule), and `.stacked-bar-highlight` also uses `var(--highlight)` as its background color. Although `a:hover .stacked-bar-highlight` was already supposed to switch the bar to `var(--highlight-border)`, it too has `transition-duration: 1s`, so during the transition both the tile background and the bar are the same color \u2014 the bar disappears.\n\n## What changed\n\nAdded a scoped override in `pd.css` under `.metagame-grid a:hover .stacked-bar-highlight` that sets `transition-duration: 0s`. This makes the bar immediately switch to `var(--highlight-border)` on hover, keeping it visually distinct from the tile's `var(--highlight)` hover background. Only 5 lines added, single file touched.\n\n## Validation\n\n`uv run --frozen python dev.py lint` \u2014 passed. CSS changes have no unit test coverage in this repo; the fix was verified by code inspection: the two conflicting colors (`--highlight` for both tile background and bar) are resolved by immediately switching the bar to the darker `--highlight-border` on hover.\n\nFixes #12583",
+      "pr_title": "Fix meta share bar disappearing on metagame grid tile hover (#12583)",
+      "recorded_at": "2026-09-01T18:06:36Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (CSS is not covered by the unit test suite; no unit tests exist for CSS rules)",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12583,
+  "triage": [
+    {
+      "batch_id": "t-12587-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": ".stacked-bar-highlight { background-color: var(--highlight); } \u2014 bar is soft-tangerine (light orange)",
+          "ref": "shared_web/static/css/pd.css:1741-1742",
+          "type": "code"
+        },
+        {
+          "detail": "main a:hover { background-color: var(--highlight); } \u2014 hovering the tile <a> sets tile background to same soft-tangerine, making bar invisible",
+          "ref": "shared_web/static/css/pd.css:750-751",
+          "type": "code"
+        },
+        {
+          "detail": "a:hover .stacked-bar-highlight { background-color: var(--highlight-border); transition-duration: 1s; } \u2014 bar eventually changes to darker orange but 1s transition means it's invisible for that full second",
+          "ref": "shared_web/static/css/pd.css:1745-1748",
+          "type": "code"
+        },
+        {
+          "detail": "--soft-tangerine: oklch(88.33% 0.069 65.31); --soft-tangerine-darker: oklch(80% 0.12 65.31); \u2014 bar and tile background are the same color before transition completes",
+          "ref": "shared_web/static/css/pd.css:568-569",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In pd.css, add a rule scoped to metagame-grid context: `.metagame-grid a:hover .stacked-bar-highlight { background-color: var(--highlight-border); transition-duration: 0s; }` to immediately switch the bar to the darker color on hover, making it distinct from the tile's --highlight background. Alternatively, give metagame-grid tiles a different hover background color via `.metagame-grid a:hover { background-color: <other-color>; }`. Touch only pd.css.",
+      "issue": 12583,
+      "notes": "The issue suggests broadening the color palette; the simplest fix reuses the existing --highlight-border with zero transition delay so the bar is immediately visible on hover. A more elaborate fix would introduce a new palette color.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

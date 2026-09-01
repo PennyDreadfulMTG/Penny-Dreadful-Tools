@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 12582,
+  "triage": [
+    {
+      "batch_id": "t-12582-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Align news item icons more neatly: moved icons from li:before to li a:before and added display:flex + align-items:center to .news li a",
+          "ref": "d52af9dd",
+          "type": "commit"
+        },
+        {
+          "detail": "Yet more fiddling with news story icons: further refined icon width and centering",
+          "ref": "cd3513ae",
+          "type": "commit"
+        },
+        {
+          "detail": ".news li a { display: flex; align-items: center; } vertically centers icon against text midline as requested",
+          "ref": "shared_web/static/css/pd.css:2497",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12582,
+      "notes": "Both fixing commits are 12 days after the issue was filed (May 15 \u2192 May 27, 2024); issue was never closed.",
+      "proposed_comment": "Fixed in d52af9dd (May 27 2024) by switching icons to flex items inside `a` with `align-items: center`, so they align to the center of the text rather than the baseline. Further polished in cd3513ae. Current CSS at `shared_web/static/css/pd.css:2497` reflects the fix.",
+      "recorded_at": "2026-09-01T18:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12582-1",
+      "final_comment": "Fixed in d52af9dd (May 27 2024) by making .news li a a flex container with align-items:center. The emoji icons are injected via ::before pseudo-elements which become flex items in that container (see shared_web/static/css/pd.css:2523-2545), so they align to the center of the text rather than the baseline. Further polished in cd3513ae.",
+      "issue": 12582,
+      "own_evidence": [
+        {
+          "detail": "Independently read: .news li a has display:flex + align-items:center; the ::before pseudo-elements (emoji icons) are declared with flex:0 0 auto inside that same flex container, so they participate in flexbox alignment and are vertically centered with the text, not baseline-aligned.",
+          "ref": "shared_web/static/css/pd.css:2497-2528",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:06:03Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

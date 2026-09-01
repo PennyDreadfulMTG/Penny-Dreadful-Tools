@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:56:16Z",
+  "evidence_refs": [
+    "evidence/12588.json#triage[0]"
+  ],
+  "issue": 12588,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The owner needs to decide what threshold counts as 'low' play count and which rows to hide, collapse, or replace with a 'Not enough data' message. Several options exist (hide rows with 0 values, show a placeholder, merge rows) and the right choice is a product call."
+}

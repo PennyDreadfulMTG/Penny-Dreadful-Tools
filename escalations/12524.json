@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:05:40Z",
+  "evidence_refs": [
+    "evidence/12524.json#triage[0]"
+  ],
+  "issue": 12524,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The issue explicitly says it is both slow AND 'not interesting', meaning the owner must decide whether to redirect /seasons/all/decks/ to a more useful page (e.g. /metagame/), add a notice/redirect, or invest in query optimisation. Both the UX direction and the performance budget are open questions."
+}

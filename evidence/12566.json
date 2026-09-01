@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12566,
+  "triage": [
+    {
+      "batch_id": "t-12567-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "key_cards() contains table/where selection for season_id that is duplicated verbatim in key_cards_long()",
+          "ref": "decksite/data/playability.py:30-58",
+          "type": "code"
+        },
+        {
+          "detail": "key_cards_long() repeats the same if/else table and where selection; only differs in the WHERE threshold and the aggregation strategy",
+          "ref": "decksite/data/playability.py:62-78",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/playability.py, extract the table/where selection logic (the `if season_id: table = ...; where = ...` block) into a private helper `_season_table_and_where(season_id)`. Both key_cards() and key_cards_long() call the helper and use the returned (table, where) tuple. No behavior change.",
+      "issue": 12566,
+      "notes": "Pure refactor, no query changes. The two functions stay separate because their SQL aggregation differs (MAX subquery vs threshold filter).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:57:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

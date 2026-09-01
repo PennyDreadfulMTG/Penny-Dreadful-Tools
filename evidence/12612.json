@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12612,
+  "triage": [
+    {
+      "batch_id": "t-12614-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Standalone send() calls escape_underscores(content) before channel.send()",
+          "ref": "discordbot/command.py:165-167",
+          "type": "code"
+        },
+        {
+          "detail": "MtgMixin.single_card_text calls `await self.send(message)` \u2014 the Discord library method, which does NOT call escape_underscores",
+          "ref": "discordbot/command.py:281",
+          "type": "code"
+        },
+        {
+          "detail": "post_cards does use the standalone send/send_image_with_retry functions (which escape), but single_card_text does not",
+          "ref": "discordbot/command.py:318-320",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/command.py line 281, change `await self.send(message)` to `await self.send(escape_underscores(message))`. The function is already imported at module scope. Optionally also apply it at line 259/263 in MtgMixin.send_image_with_retry.",
+      "issue": 12612,
+      "notes": "The standalone send() path (used by legacy prefix-command helpers and post_cards) already escapes underscores. Only the MtgMixin.single_card_text path (slash commands) is unprotected. One-line fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:51Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

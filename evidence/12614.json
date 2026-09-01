@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12614,
+  "triage": [
+    {
+      "batch_id": "t-12614-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Added LIMIT 20 as a band-aid; commit message says 'no pagination here, you have to refresh the page to see the next 20 decks. And it's still kinda slow.'",
+          "ref": "f3efd083",
+          "type": "commit"
+        },
+        {
+          "detail": "LIMIT 20 is in place but no pagination and no React; page still uses editarchetypes.mustache",
+          "ref": "decksite/views/edit_archetypes.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "Page is still a plain mustache template; no React components or API-driven queue",
+          "ref": "decksite/templates/editarchetypes.mustache:1",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12614,
+      "notes": "The slowness was partially mitigated by LIMIT 20 (f3efd083) but the requested reactification with proper pagination is still outstanding. Reactifying requires new React components, an API endpoint for the queue, and UX decisions on how pagination should work \u2014 well over 150 lines and involves product judgment.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:51Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

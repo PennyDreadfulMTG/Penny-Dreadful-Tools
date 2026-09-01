@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12540,
+  "triage": [
+    {
+      "batch_id": "t-12546-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PD.formatPercentage creates a new Intl.NumberFormat(...) object on every invocation rather than reusing a cached instance \u2014 MDN explicitly warns this pattern is inefficient for repeated calls",
+          "ref": "shared_web/static/js/pd.js:513-529",
+          "type": "code"
+        },
+        {
+          "detail": "Format tick marks for percentages in a sane fashion \u2014 introduced PD.formatPercentage using Intl.NumberFormat but still constructs a new instance per call",
+          "ref": "6d4583a2",
+          "type": "commit"
+        },
+        {
+          "detail": "formatPercentage is used as a Chart.js tick callback and tooltip formatter, meaning it is called once per data point per render \u2014 potentially dozens of times per chart",
+          "ref": "shared_web/static/js/pd.js:609-621",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/pd.js, extract the Intl.NumberFormat construction to a module-level constant: const PD_PERCENTAGE_FORMATTER = new Intl.NumberFormat(undefined, { style: 'percent', minimumSignificantDigits: 2, maximumSignificantDigits: 2 }); then replace the new Intl.NumberFormat(...) inside formatPercentage with PD_PERCENTAGE_FORMATTER.format(value) \u2014 keeping the existing .replace() chain unchanged. 3-line net change.",
+      "issue": 12540,
+      "notes": "The issue author noted 'It probably doesn't matter for the number of times we're going to do it' \u2014 this is a minor performance cleanup, not a correctness bug. Confidence is medium because commit 6d4583a2 may have been intended as the response to this issue even though it left the per-call construction in place.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:01:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12537,
+  "triage": [
+    {
+      "batch_id": "t-12539-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "cursor: help applies only to .active, .stars, .last-run \u2014 no general [title]:not(a) rule exists anywhere in the file",
+          "ref": "shared_web/static/css/pd.css:3234",
+          "type": "code"
+        },
+        {
+          "detail": "zero results \u2014 no attribute selector on title is present in current CSS",
+          "ref": "grep -n '\\[title\\]' shared_web/static/css/pd.css",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add `[title]:not(a) { cursor: help; }` to `shared_web/static/css/pd.css` near the existing cursor rules (around line 3234). Verify that existing higher-specificity `cursor: pointer` rules on interactive elements still win where needed.",
+      "issue": 12537,
+      "notes": "The change is a single CSS attribute selector rule. Risk is that any interactive non-link element that has a title attribute and a lower-specificity cursor:pointer rule could have its cursor overridden; manual spot-check of sortable table headers and similar widgets is recommended after the change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:39Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

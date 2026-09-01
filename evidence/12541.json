@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12541,
+  "triage": [
+    {
+      "batch_id": "t-12546-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Table.render() has a <div className='table-header'> containing search form, error message, message, and page-size selector",
+          "ref": "shared_web/static/js/table.jsx:24-53",
+          "type": "code"
+        },
+        {
+          "detail": "Grid.render() has a <div className='grid-header'> containing search form, sort options, error message, and message \u2014 error/message JSX is identical to table.jsx but page-size vs sort controls differ",
+          "ref": "shared_web/static/js/grid.jsx:26-47",
+          "type": "code"
+        },
+        {
+          "detail": "DataManager base class has no render() method; it provides preRender() and preRenderPagination() helpers but leaves full rendering to subclasses",
+          "ref": "shared_web/static/js/datamanager.jsx:17",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12541,
+      "notes": "The error/message display JSX and search form are duplicated verbatim between table.jsx and grid.jsx; those could be extracted to a DataManager.renderHeader() method. The page-size selector (Table only) and sort controls (Grid only) are different and would stay in subclasses. Whether the partial extraction is worth the added complexity is the judgment call the issue is asking about.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:01:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

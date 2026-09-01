@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12559,
+  "triage": [
+    {
+      "batch_id": "t-12562-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "nav.showing gets z-index:4 and box-shadow: var(--elevation-4) \u2014 this is the mobile drawer shadow",
+          "ref": "shared_web/static/css/pd.css:1628",
+          "type": "code"
+        },
+        {
+          "detail": "status-bar has z-index:2 and box-shadow: var(--elevation-2); at narrow widths it is position:absolute top:0, which could cast downward onto header content",
+          "ref": "shared_web/static/css/pd.css:1602",
+          "type": "code"
+        },
+        {
+          "detail": "No direct box-shadow on the header element itself \u2014 shadow must come from an overlapping positioned element",
+          "ref": "grep 'box.shadow.*header\\|header.*box.shadow' pd.css",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12559,
+      "notes": "Cannot confirm or deny whether the shadow is still present without a live browser. The most likely source is the status-bar's elevation-2 shadow casting downward onto header content at narrow widths. Static analysis is insufficient to verify current state.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

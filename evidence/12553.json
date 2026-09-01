@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12553,
+  "triage": [
+    {
+      "batch_id": "t-12556-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "51 slash_command decorators exist across the commands directory",
+          "ref": "grep -rn '@slash_command' discordbot/commands/*.py | grep -v _test.py | wc -l => 51",
+          "type": "search"
+        },
+        {
+          "detail": "Only 2 have a top-level description: dreadrise.py:16 and whois.py:11 (subcommand only); the remaining ~49 have no description parameter",
+          "ref": "grep -rn 'slash_command.*description=' discordbot/commands/*.py | grep -v _test.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add description='...' to each @slash_command() call in all files under discordbot/commands/ (~49 one-line edits across ~40 files). Add a test in discordbot/command_test.py that imports each command module, iterates over registered InteractionCommands, and asserts description is non-empty.",
+      "issue": 12553,
+      "notes": "Changes are purely additive string metadata; Discord surfaces these in the slash command picker. Writing good descriptions requires reading each command but is mechanical.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12599-2",
+      "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
+      "files_changed": 1,
+      "head_sha": "4dd57311998563500ee280d52a8f3c2396db03f0",
+      "issue": 12599,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "Single one-word CSS change (`auto-fit` \u2192 `auto-fill`). No logic, templates, or Python touched. The visual fix is that sparse result sets keep tile widths bounded at their natural grid column size instead of stretching to fill the row.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe `.metagame-grid` CSS rule used `repeat(auto-fit, minmax(11rem, 1fr))`. The `auto-fit` keyword collapses empty grid tracks, causing the remaining tiles to stretch and fill the entire container width. When a search on `/metagame` returns only a few results, the tiles become excessively wide.\n\n## What changed\n\nChanged `auto-fit` to `auto-fill` in `shared_web/static/css/pd.css` (line 2855). With `auto-fill`, empty tracks are preserved rather than collapsed, so tiles stay at most `1fr` of a row that could hold `floor(container / 11rem)` columns \u2014 they no longer stretch beyond their natural size.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` passed with no errors.\n- The change is a single CSS keyword with no server-side logic, so no unit tests exist for it; the behaviour is verifiable by loading `/metagame` with a search that returns a small number of results and confirming the tiles remain narrow.\n\nFixes #12599",
+      "pr_title": "Fix metagame grid tiles stretching wide with few results (#12599)",
+      "recorded_at": "2026-09-01T18:06:48Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed! (CSS is not covered by unit tests; the change is a one-word CSS keyword swap with no logic to unit-test)",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12599,
+  "triage": [
+    {
+      "batch_id": "t-12603-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": ".metagame-grid uses repeat(auto-fit, minmax(11rem, 1fr)); auto-fit collapses empty tracks so a single search result stretches to full container width",
+          "ref": "shared_web/static/css/pd.css:2852-2856",
+          "type": "code"
+        },
+        {
+          "detail": "Screenshot in issue body shows a single very wide tile when few search results are returned",
+          "ref": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/assets/1541/174e65ea-e1fc-4dc3-a8ad-bcc0f6843dc3",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css:2855 change repeat(auto-fit, ...) to repeat(auto-fill, minmax(11rem, 1fr)). auto-fill keeps empty tracks so tiles do not stretch beyond 1fr of the minimum column count. Alternatively add max-width: 11rem (or similar) to .metagame-grid .archetype at line 2867.",
+      "issue": 12599,
+      "notes": "auto-fill vs auto-fit is a one-line CSS change with no JS or Python involvement. auto-fill may leave visible blank grid space at the end of a row when results are sparse, which is the intended behavior per the issue.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

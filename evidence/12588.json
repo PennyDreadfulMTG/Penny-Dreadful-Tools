@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12588,
+  "triage": [
+    {
+      "batch_id": "t-12592-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "win% and record are rendered unconditionally; with 0 wins and 0 losses this produces '0% 0-0' in a fixed-height row that looks sparse",
+          "ref": "shared_web/static/js/metagamegrid.jsx:42-59",
+          "type": "code"
+        },
+        {
+          "detail": "tournament wins/top8s/perfect-runs row is also always shown regardless of play count",
+          "ref": "shared_web/static/js/metagamegrid.jsx:61-79",
+          "type": "code"
+        },
+        {
+          "detail": "related issue also concerns tile layout adaptation \u2014 both require coordinated design decisions",
+          "ref": "#12592",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12588,
+      "notes": "The owner needs to decide what threshold counts as 'low' play count and which rows to hide, collapse, or replace with a 'Not enough data' message. Several options exist (hide rows with 0 values, show a placeholder, merge rows) and the right choice is a product call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

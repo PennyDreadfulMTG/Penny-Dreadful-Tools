@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12550,
+  "triage": [
+    {
+      "batch_id": "t-12551-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "deck-by-card search exists only at /admin/archetypes/ behind @auth.demimod_required; calls ds.load_decks_by_cards()",
+          "ref": "decksite/controllers/admin.py:82-116",
+          "type": "code"
+        },
+        {
+          "detail": "load_decks_by_cards(names, not_names) implements card-name filtering but no win-rate parameter",
+          "ref": "decksite/data/deck.py:511",
+          "type": "code"
+        },
+        {
+          "detail": "no public-facing deck-search route or win-rate filter found anywhere in the codebase",
+          "ref": "grep -rn 'win_rate.*deck.*search\\|deck.*search.*win_rate'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12550,
+      "notes": "Requires decisions on: whether to expose deck search publicly or only to logged-in users, what the UI looks like (search bar vs. faceted filters), and whether win-rate filter is a WHERE clause or post-filter; scope is larger than easy-fix even ignoring the product questions.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:28Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

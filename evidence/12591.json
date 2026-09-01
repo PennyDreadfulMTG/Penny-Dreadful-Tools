@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12591,
+  "triage": [
+    {
+      "batch_id": "t-12592-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "VERY_HIGH_CONFIDENCE = 0.99 is the current confidence level",
+          "ref": "decksite/data/clauses.py:297",
+          "type": "code"
+        },
+        {
+          "detail": "wilson_lower_bound_sql uses VERY_HIGH_CONFIDENCE as its default, called for quality sort",
+          "ref": "decksite/data/clauses.py:304",
+          "type": "code"
+        },
+        {
+          "detail": "PR that introduced Wilson sorting, confidence level has been at 0.99 since then",
+          "ref": "#9580",
+          "type": "pr"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12591,
+      "notes": "This is an open statistical methodology question. Higher confidence values (e.g. 0.99999) widen the interval and penalize low-n archetypes more aggressively; whether that is desirable requires empirical judgment by the owner.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

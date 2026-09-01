@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12578,
+  "triage": [
+    {
+      "batch_id": "t-12582-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "archetype_order_by() sort_options has 7 keys; missing qualityOptimistic (50% CI), qualityStrict (99.999% CI), and potential (Wilson upper bound)",
+          "ref": "decksite/data/clauses.py:186",
+          "type": "code"
+        },
+        {
+          "detail": "wilson_lower_bound_sql() already supports arbitrary confidence_level; adding upper bound and new confidence levels is trivial",
+          "ref": "decksite/data/clauses.py:304",
+          "type": "code"
+        },
+        {
+          "detail": "renderSort select has 7 <option> elements; no optimistic/strict/potential options exist",
+          "ref": "shared_web/static/js/metagamegrid.jsx:92",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `decksite/data/clauses.py`: add `wilson_upper_bound_sql()` (mirror of lower bound with `+` instead of `-`, ~5 lines), then add three entries to `sort_options` in `archetype_order_by()`: `qualityOptimistic` (lower bound at 0.5 confidence), `qualityStrict` (lower bound at 0.99999 confidence), `potential` (upper bound at default confidence). In `shared_web/static/js/metagamegrid.jsx`: add three matching `<option>` elements. ~15 lines total, no schema/data changes.",
+      "issue": 12578,
+      "notes": "Confidence is medium because the intended confidence levels (50%, 99.999%) and the label wording are stated in the issue but the author should confirm the UX labels before merging.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

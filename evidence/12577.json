@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12577,
+  "triage": [
+    {
+      "batch_id": "t-12577-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "pagination CSS uses var(--table-font-size); no metagame-specific override exists",
+          "ref": "shared_web/static/css/pd.css:1476",
+          "type": "code"
+        },
+        {
+          "detail": "Issue text asks 'Should' the pagination be bigger \u2014 framed as a design decision, no concrete bug or regression cited",
+          "ref": "gh issue view 12577",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12577,
+      "notes": "This is an open design question filed by the owner. No code change is appropriate until a decision is made on whether metagame pagination warrants a larger font-size override.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

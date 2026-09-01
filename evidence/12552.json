@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12552,
+  "triage": [
+    {
+      "batch_id": "t-12556-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The bot already has a custom emoji system that looks up guild custom emojis by name and replaces {W}, {U}, {B}, {R}, {G} etc. symbols at runtime",
+          "ref": "discordbot/emoji.py:1-50",
+          "type": "code"
+        },
+        {
+          "detail": "manamoji is not referenced anywhere in the codebase; the linked repo https://github.com/scryfall/manamoji-discord provides ready-made Discord emoji assets",
+          "ref": "grep -rn 'manamoji' discordbot/ (no hits)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12552,
+      "notes": "Decision needed: (1) whether current guild-custom-emoji approach already works for mana symbols in the PD Discord server, and (2) if not, whether to use the manamoji bot/server, upload the assets as guild emojis, or use Discord's application-level emoji feature. Different answers lead to different implementation approaches.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12596,
+  "triage": [
+    {
+      "batch_id": "t-12598-1",
+      "class": "question",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prepare_archetypes and prepare_archetype thread current_id through to set a.current = a.id == current_id",
+          "ref": "decksite/prepare.py:180-191",
+          "type": "code"
+        },
+        {
+          "detail": "{{#current}} current{{/current}} is the only consumer of a.current \u2014 adds CSS class to highlight the active archetype row",
+          "ref": "decksite/templates/archetypetree.mustache:26",
+          "type": "code"
+        },
+        {
+          "detail": "Caller passes getattr(self, 'archetype', {}).get('id', None) as current_id; api.py and archetype.py both pass None",
+          "ref": "decksite/view.py:241",
+          "type": "code"
+        },
+        {
+          "detail": "archetypes2_api always passes None for current_id, so current is always False in the API path",
+          "ref": "decksite/controllers/api.py:460",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12596,
+      "notes": "The issue asks whether the complexity is worth it and hints the matchup usage may be wrong. This is a design discussion \u2014 the owner needs to decide whether to keep the row-highlighting feature, remove it, or move the logic client-side. No clear defect.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

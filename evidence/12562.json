@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12562,
+  "triage": [
+    {
+      "batch_id": "t-12562-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "find_colors is currently defined here; it depends on magic.mana and magic.models.Card",
+          "ref": "magic/colors.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "oracle.py focuses on DB loading (load_cards, load_card etc.); find_colors is about attribute logic, not DB queries \u2014 the correct module is genuinely unclear",
+          "ref": "magic/oracle.py:57",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12562,
+      "notes": "Bakert is musing about module placement with no definitive answer ('maybe oracle'). This is a design discussion, not an actionable defect. No code change can be made without an owner decision on which module should own card-attribute logic.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

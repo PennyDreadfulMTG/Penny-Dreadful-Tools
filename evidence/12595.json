@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12595-1",
+      "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
+      "files_changed": 1,
+      "head_sha": "b623bc89818d94edaca8290808ff9a7c75c4eac6",
+      "issue": 12595,
+      "lines_changed": 1,
+      "lint": "passed",
+      "notes": "The change is a pure performance fix \u2014 identical data, one fewer oracle call per archetype per request. No behaviour change. The `oracle` import is still needed for three other call sites in the same file and was not removed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nIn `decksite/controllers/api.py`, the `archetypes2_api()` function loop over archetypes already built the key-card list (`kcs`) from the in-memory `cards` dict returned by `oracle.cards_by_name()` (line 453). However, on line 456 the code called `oracle.load_cards(archetype_key_cards.get(result.id, []))` again with the same card names to compute colors \u2014 a redundant database/cache round-trip for every archetype on every API request.\n\n## What changed\n\nLine 456: replaced `oracle.load_cards(archetype_key_cards.get(result.id, []))` with `kcs`, which already holds the identical Card list assembled from the in-memory dict two lines above. The `oracle` import is retained because it is still used on lines 237, 451, and 657.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped (17.99s)\n\nFixes #12595",
+      "pr_title": "Avoid redundant oracle.load_cards call in archetypes2 API (#12595)",
+      "recorded_at": "2026-09-01T18:05:27Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped in 17.99s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12595,
+  "triage": [
+    {
+      "batch_id": "t-12598-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "cards = oracle.cards_by_name() loads all cards into an in-memory dict before the loop",
+          "ref": "decksite/controllers/api.py:453",
+          "type": "code"
+        },
+        {
+          "detail": "kcs = [cards[name] for name in archetype_key_cards.get(result.id, [])] already materialises the key cards for each archetype from that dict",
+          "ref": "decksite/controllers/api.py:454",
+          "type": "code"
+        },
+        {
+          "detail": "find_colors(oracle.load_cards(archetype_key_cards.get(result.id, []))) re-runs a SQL query every loop iteration for the same names already in kcs",
+          "ref": "decksite/controllers/api.py:456",
+          "type": "code"
+        },
+        {
+          "detail": "oracle.load_cards(names) executes multiverse.cached_base_query and db().select \u2014 a real DB round-trip \u2014 confirming the redundancy",
+          "ref": "magic/oracle.py:57-76",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/controllers/api.py:456, replace `oracle.load_cards(archetype_key_cards.get(result.id, []))` with `kcs` (which is the same Card list already assembled from the in-memory dict on line 454). Also remove the now-unused `oracle` import if nothing else in the file uses it. Change is 1-2 lines.",
+      "issue": 12595,
+      "notes": "CARDS_BY_NAME (returned by cards_by_name()) is populated by calling load_cards() with no args, so it contains the same Card objects that load_cards(names) would return. Semantically equivalent, no SQL round-trip.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

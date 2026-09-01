@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12524,
+  "triage": [
+    {
+      "batch_id": "t-12534-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "season_query() returns 'TRUE' for season_id='all', so the decks query runs with no season filter \u2014 scans all historical rows",
+          "ref": "decksite/data/query.py:51-54",
+          "type": "code"
+        },
+        {
+          "detail": "decks_api passes season_id='all' straight to load_decks with no early exit or redirect",
+          "ref": "decksite/controllers/api.py:140-150",
+          "type": "code"
+        },
+        {
+          "detail": "The /decks/ route exists for all season IDs including 'all'; no special handling or redirect",
+          "ref": "decksite/controllers/metagame.py:22-30",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12524,
+      "notes": "The issue explicitly says it is both slow AND 'not interesting', meaning the owner must decide whether to redirect /seasons/all/decks/ to a more useful page (e.g. /metagame/), add a notice/redirect, or invest in query optimisation. Both the UX direction and the performance budget are open questions.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

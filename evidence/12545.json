@@ -1,0 +1,53 @@
+{
+  "fix": [],
+  "issue": 12545,
+  "triage": [
+    {
+      "batch_id": "t-12546-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Reenable downtimes command now that modo-bugs is scraping it successfully again \u2014 removed the 'Temporarily disabled' message and restored the actual fetch call",
+          "ref": "b0e981e1",
+          "type": "commit"
+        },
+        {
+          "detail": "Keep Discord network commands responsive \u2014 updated to use async fetch_tools.fetch_async with ctx.defer(), current state of the file",
+          "ref": "13611b7a",
+          "type": "commit"
+        },
+        {
+          "detail": "Current code has @slash_command(), await ctx.defer(), and await ctx.send(await fetch_tools.fetch_async('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')) \u2014 fully functional",
+          "ref": "discordbot/commands/downtimes.py:8-12",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12545,
+      "notes": "The test in discordbot/commands/network_io_test.py:26-34 also covers the async fetch path, providing ongoing regression protection.",
+      "proposed_comment": "This was re-enabled in commit b0e981e1 once modo-bugs began scraping downtimes successfully again. The command was subsequently updated to use async fetching in commit 13611b7a and is now fully functional.",
+      "recorded_at": "2026-09-01T18:01:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-12582-1",
+      "final_comment": "Re-enabled in commit b0e981e1 once modo-bugs began scraping downtimes successfully again. Commit 13611b7a subsequently updated the command to use async fetching (fetch_tools.fetch_async) for responsiveness. The command is now fully functional.",
+      "issue": 12545,
+      "own_evidence": [
+        {
+          "detail": "Independently read: the downtimes slash_command is fully enabled, calls ctx.defer() then await fetch_tools.fetch_async('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt') \u2014 no disabled/commented-out path remains.",
+          "ref": "discordbot/commands/downtimes.py:8-12",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T18:06:03Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12573,
+  "triage": [
+    {
+      "batch_id": "t-12577-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "ruff hook only runs --select I (import sort only); no mypy hook present; neither flake8 nor full ruff linting is enforced at commit time",
+          "ref": ".pre-commit-config.yaml",
+          "type": "code"
+        },
+        {
+          "detail": "do_check() runs mypy + full ruff lint + jslint but is never called from pre-commit \u2014 only from manual 'check'/'full-check' subcommands",
+          "ref": "dev.py:331",
+          "type": "code"
+        },
+        {
+          "detail": "pre-push hook runs './dev.py' with no subcommand, which is a click CLI that prints help and exits 0 \u2014 effectively a no-op for enforcement",
+          "ref": ".git/hooks/pre-push",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In .pre-commit-config.yaml: (1) add a second ruff hook (or modify the existing one) without --select I to run full linting on commit; (2) add a mypy hook using repo: local with language: system pointing to dev.py mypy (or using the official mirrors-mypy pre-commit hook with additional_dependencies matching requirements). ~15-25 lines in .pre-commit-config.yaml only.",
+      "issue": 12573,
+      "notes": "Adding mypy to pre-commit may require specifying additional_dependencies to satisfy third-party stubs; the project's existing mypy configuration in dev.py (do_mypy) shows what flags to use. Should be tested locally before merging to avoid blocking all commits.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

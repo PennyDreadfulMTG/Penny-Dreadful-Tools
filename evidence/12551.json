@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12551,
+  "triage": [
+    {
+      "batch_id": "t-12551-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "current code creates Card({'name': c['name'], 'url': image_fetcher.scryfall_image(c, 'art_crop')}) \u2014 strips key_cards to just name+url before sending",
+          "ref": "decksite/controllers/api.py:458",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_card_urls already sets c.img_url = url_for_image(...) \u2014 a site-relative URL, not a Scryfall art_crop URL",
+          "ref": "decksite/prepare.py:60",
+          "type": "code"
+        },
+        {
+          "detail": "Author frames this as 'maybe it would be better' \u2014 a design question, not an actionable bug or feature requirement",
+          "ref": "issue body",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12551,
+      "notes": "The issue is open-ended: the author is asking whether the API should send full card objects (including image_url) or keep the current minimal name+art_crop approach. No concrete decision is stated; this is a design discussion item.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

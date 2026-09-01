@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12580,
+  "triage": [
+    {
+      "batch_id": "t-12582-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "title() returns a plain string with no emoji/symbol stripping",
+          "ref": "decksite/view.py:139",
+          "type": "code"
+        },
+        {
+          "detail": "<title>{{title}}</title> \u2014 Mustache HTML-escapes but does not strip emoji",
+          "ref": "decksite/templates/header.mustache:4",
+          "type": "code"
+        },
+        {
+          "detail": "og_title() returns self.deck.name which can contain emoji (e.g. Stop That \u270b)",
+          "ref": "decksite/views/deck.py:67",
+          "type": "code"
+        },
+        {
+          "detail": "og_title() and og_description() similarly return raw strings with no stripping",
+          "ref": "decksite/views/archetype.py:98",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a `strip_unsafe_chars(s: str) -> str` utility in `decksite/view.py` that removes characters whose Unicode category starts with 'S' (Symbol) or 'So' (Other Symbol) \u2014 this strips emoji while preserving CJK, Greek, Cyrillic, etc. Call it in `View.title()` before returning, and optionally wrap the base-class `og_title()`/`og_description()` (or document that subclasses should call it). Total ~20 lines across `decksite/view.py`.",
+      "issue": 12580,
+      "notes": "The issue author explicitly approved the simple Unicode-category-based approach as a first pass; the font-aware approach is a possible later refinement.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

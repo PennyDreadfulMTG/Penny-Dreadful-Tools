@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12560,
+  "triage": [
+    {
+      "batch_id": "t-12562-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": ".menu .item:hover .icon selector uses background-color: var(--tertiary-background) which maps to the dark status-bar/mobile-menu background color",
+          "ref": "shared_web/static/css/pd.css:1089",
+          "type": "code"
+        },
+        {
+          "detail": "Same rule confirmed: '.menu .item:hover .icon, .submenu .item:hover { background-color: var(--tertiary-background); }' \u2014 no subsequent rule overrides this for the menu case",
+          "ref": "shared_web/static/css/pd.css:1093",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `shared_web/static/css/pd.css:1093`, change the `.menu .item:hover .icon` selector's `background-color` from `var(--tertiary-background)` to `var(--highlight)` (already used for `.menu .current .icon` on line ~1095) or a lighter alternative. Single CSS property change; test in both light and dark modes.",
+      "issue": 12560,
+      "notes": "The exact replacement color ('highlight maybe or something') requires minor taste judgment but the direction is clear and the scope is one CSS rule.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

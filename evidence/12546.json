@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12546,
+  "triage": [
+    {
+      "batch_id": "t-12546-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "find_base_graphemes() returns a hardcoded set literal '\u2460\u2461\u2462\u2463\u2464\u2465\u2466\u2467\u246f\u24c9\u21c5\u2295\u2e3a\u25aa\ud83d\udc1e\ud83d\udeab\ud83c\udfc6\ud83d\udcf0\ud83d\udcbb\u25be\u25b3\ud83d\udec8\u2705\u2610\u2611\u2694\ud83c\udfc5\u2630\ud83c\udfe0\u263c\ud83c\udf19\u2728\u2715'",
+          "ref": "maintenance/fonts.py:203-204",
+          "type": "code"
+        },
+        {
+          "detail": "pd.css already lists every base character in a comment block using U+XXXX notation (e.g. '\u2460 U+2460 CIRCLED DIGIT ONE'), making it parseable",
+          "ref": "shared_web/static/css/pd.css:240-272",
+          "type": "code"
+        },
+        {
+          "detail": "Comment explicitly warns 'anything added here needs to be added to base_chars in the fonts maintenance task' \u2014 confirming the sync burden the issue wants to eliminate",
+          "ref": "shared_web/static/css/pd.css:273",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In maintenance/fonts.py, replace find_base_graphemes() with logic that reads shared_web/static/css/pd.css, extracts all 'U+XXXX' tokens from the comment block (lines ~240-272), and converts them to characters via chr(int('XXXX', 16)). The pd.css comment already lists characters one per line with their U+XXXX code point; a simple regex like r'U\\+([0-9A-F]{4,5})' would extract them all. Note that \u2728 (U+2728) and \u2715 (U+2715) are in the current hardcoded set but absent from the pd.css comment, so those must be added to pd.css first.",
+      "issue": 12546,
+      "notes": "The maintenance script is the only consumer of find_base_graphemes(); a regression would only affect the woff2 font generation task, not the live site directly. The pd.css comment is the single source of truth that developers already maintain, so this closes the sync gap.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:01:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

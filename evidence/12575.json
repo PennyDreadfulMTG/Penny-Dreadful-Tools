@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12575,
+  "triage": [
+    {
+      "batch_id": "t-12577-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Table JSX hardcodes the 'live ' class prefix for all live-updating tables, coupling the live/updating semantics to the table-specific CSS namespace",
+          "ref": "shared_web/static/js/table.jsx:23",
+          "type": "code"
+        },
+        {
+          "detail": "Dozens of .live .column-name rules are table-specific; the issue notes .live was removed from metagamegrid to avoid conflicts, leaving .grid-header as a parallel namespace",
+          "ref": "shared_web/static/css/pd.css",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12575,
+      "notes": "Requires coordinated rename/split of the .live CSS namespace across pd.css (dozens of selectors), table.jsx, and potentially other JSX/HTML templates. Non-trivial scope, and incorrect refactoring could break live-updating table styling.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

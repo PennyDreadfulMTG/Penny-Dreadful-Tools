@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12563,
+  "triage": [
+    {
+      "batch_id": "t-12567-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)) \u2014 auto-fit determines column count dynamically, producing partial final rows when archetype count isn't divisible by that count",
+          "ref": "shared_web/static/css/pd.css:2855",
+          "type": "code"
+        },
+        {
+          "detail": "Issue author suggests 'disallow 5 and 7 tile wide in css somehow' \u2014 CSS media queries with specific column counts (e.g. 2, 3, 4, 6) would prevent non-factor-of-24 widths",
+          "ref": "#12563",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css, replace the single auto-fit rule (pd.css:2855) with a series of @media breakpoints that set explicit grid-template-columns values \u2014 e.g. repeat(2, 1fr) below ~500px, repeat(3, 1fr) below ~700px, repeat(4, 1fr) below ~1000px, repeat(6, 1fr) otherwise \u2014 choosing counts that are factors of 24. This removes the ragged-end risk at the cost of tiles growing slightly wider than 11rem at some viewport widths.",
+      "issue": 12563,
+      "notes": "The exact breakpoints need visual tuning. The fix is CSS-only and self-contained. Confidence is medium rather than high because the ideal column widths depend on visual inspection at each viewport width.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:57:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

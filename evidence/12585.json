@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 12585,
+  "triage": [
+    {
+      "batch_id": "t-12587-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "width: `${100 - archetype.metaShare}%` \u2014 if metaShare is a 0-1 decimal (e.g. 0.25), this yields 99.75% instead of the correct 75%, causing total flex widths to exceed 100%",
+          "ref": "shared_web/static/js/metagamegrid.jsx:25",
+          "type": "code"
+        },
+        {
+          "detail": "bar width: `${archetype.metaShare * 100}%` \u2014 bar itself is correct but remainder div formula is wrong",
+          "ref": "shared_web/static/js/metagamegrid.jsx:24",
+          "type": "code"
+        },
+        {
+          "detail": "meta_share computed as SUM(wins+losses+draws)/total_matches \u2014 a 0-1 fraction confirmed",
+          "ref": "decksite/data/archetype.py:99",
+          "type": "code"
+        },
+        {
+          "detail": "'meta_share': float(row['meta_share']) \u2014 stored as float, confirms 0-1 range",
+          "ref": "decksite/data/archetype.py:112",
+          "type": "code"
+        },
+        {
+          "detail": "marginLeft: \"8px\" on remainder div takes additional space beyond the 100% total, compounding the layout error",
+          "ref": "shared_web/static/js/metagamegrid.jsx:25",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In metagamegrid.jsx line 25, change `width: \\`${100 - archetype.metaShare}%\\`` to `width: \\`${(1 - archetype.metaShare) * 100}%\\``. To handle the 8px margin without overflow, either add `gap: '8px'` to the parent flex-row div and remove the inline marginLeft, or use `width: \\`calc(${(1 - archetype.metaShare) * 100}% - 8px)\\``. Touch only metagamegrid.jsx.",
+      "issue": 12585,
+      "notes": "The chart.js comment in the issue is a musing from the owner but fixing the math and margin is a valid, self-contained fix. The chart.js path would be a separate larger effort.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

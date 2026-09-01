@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:58:28Z",
+  "evidence_refs": [
+    "evidence/12550.json#triage[0]"
+  ],
+  "issue": 12550,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Requires decisions on: whether to expose deck search publicly or only to logged-in users, what the UI looks like (search bar vs. faceted filters), and whether win-rate filter is a WHERE clause or post-filter; scope is larger than easy-fix even ignoring the product questions."
+}

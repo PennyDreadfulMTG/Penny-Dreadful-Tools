@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12567,
+  "triage": [
+    {
+      "batch_id": "t-12567-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "season_chooser() only marks seasons disabled when not in legal_seasons; no 'played but not legal' or 'legal but not played' distinction exists",
+          "ref": "decksite/view.py:126-131",
+          "type": "code"
+        },
+        {
+          "detail": "card view sets legal_seasons from card.legalities but never sets a 'played_seasons' set for the chooser",
+          "ref": "decksite/views/card.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "Issue comment: 'Tournaments-only is a wrinkle here' \u2014 product judgment required on how tournament-only mode interacts with 'was-legal-not-played' deemphasis",
+          "ref": "#12567",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12567,
+      "notes": "Requires: (1) new data fetch for which seasons had decks with this card, (2) a new 'deemphasized but clickable' state in season_chooser separate from 'disabled', (3) product decision on tournaments-only mode. Scope is larger than easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:57:54Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

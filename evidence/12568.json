@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12568,
+  "triage": [
+    {
+      "batch_id": "t-12572-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "home template contains deck tables, top cards, tournaments, news, season info, and community stats \u2014 no metagame or archetype section",
+          "ref": "decksite/templates/home.mustache:1-66",
+          "type": "code"
+        },
+        {
+          "detail": "home() fetches latest_decks, top cards, and community stats only; no archetype data is fetched or passed to the view",
+          "ref": "decksite/main.py:31",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12568,
+      "notes": "Issue body is 'Top decks or movers-and-shakers or something' \u2014 the owner needs to specify which metagame signal to surface (top archetypes by quality? biggest week-over-week movers?) and the display format before implementation can begin.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:59:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

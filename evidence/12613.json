@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12613,
+  "triage": [
+    {
+      "batch_id": "t-12614-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)) \u2014 at 16px base, 11rem = 176px",
+          "ref": "shared_web/static/css/pd.css:2855",
+          "type": "code"
+        },
+        {
+          "detail": "Viewport is correctly set to width=device-width, so CSS pixels match device-independent pixels",
+          "ref": "decksite/templates/header.mustache:26",
+          "type": "code"
+        },
+        {
+          "detail": "On iPhone 15 (390px): main padding is 1rem each side = 32px, content = 358px. Two tiles: 2\u00d7176px + 6.75px gap = 358.75px > 358px \u2014 exactly one tile fits.",
+          "ref": "CSS math",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css:2855 change `minmax(11rem, 1fr)` to `minmax(9rem, 1fr)`. At 9rem (144px), two tiles + gap = 294.75px which comfortably fits in 358px. No template or Python changes needed.",
+      "issue": 12613,
+      "notes": "Pure CSS change with no functional impact beyond tile width. Reducing to 9rem would show 2 tiles on a 390px iPhone and 2\u20133 tiles on wider devices; further reduction to 8rem might be too narrow depending on content.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:51Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12598,
+  "triage": [
+    {
+      "batch_id": "t-12598-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "const className = (\"live \" + this.props.className).trim() \u2014 when className is undefined produces \"live undefined\"",
+          "ref": "shared_web/static/js/table.jsx:23",
+          "type": "code"
+        },
+        {
+          "detail": "className PropType is PropTypes.oneOf([\"\",...]) without .isRequired, confirming it is optional and can be undefined",
+          "ref": "shared_web/static/js/datamanager.jsx:141",
+          "type": "code"
+        },
+        {
+          "detail": "Table instantiation has no hardcoded className and no data-class-name in templates, so className is undefined at runtime",
+          "ref": "shared_web/static/js/cardtable.jsx:70-78",
+          "type": "code"
+        },
+        {
+          "detail": "No template sets data-class-name, so dataset spread never supplies className; tables without a hardcoded className prop receive undefined",
+          "ref": "grep -rn data-class-name decksite/templates/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/table.jsx:23, change `(\"live \" + this.props.className).trim()` to `(\"live \" + (this.props.className ?? \"\")).trim()`. This is a one-line fix that handles the undefined case without changing any other behaviour.",
+      "issue": 12598,
+      "notes": "The issue title says decktable specifically, but decktable.jsx hardcodes className=\"with-marginalia\" so it is protected; the bug triggers for cardtable, matchtable, persontable, and any other Table consumer that does not pass className. Fix is in table.jsx only.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:17Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

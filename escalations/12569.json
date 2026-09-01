@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:59:02Z",
+  "evidence_refs": [
+    "evidence/12569.json#triage[0]"
+  ],
+  "issue": 12569,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Decision needed on the redesign approach: normalize bars relative to the max meta share so the leading archetype is full-width, or redesign the card layout to make both meta share and win rate legible at a glance. Owner's stated goal ('flick my eye down the page') implies a relative/normalized approach, but the exact design is unspecified."
+}

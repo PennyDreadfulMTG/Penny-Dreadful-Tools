@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12534,
+  "triage": [
+    {
+      "batch_id": "t-12534-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_disjoint_archetypes SQL computes quality_score but no rank; ORDER BY changes the display position with no stable rank number",
+          "ref": "decksite/data/archetype.py:592-638",
+          "type": "code"
+        },
+        {
+          "detail": "archetypes2_api passes quality_score through to JSON but no quality_rank field",
+          "ref": "decksite/controllers/api.py:449-465",
+          "type": "code"
+        },
+        {
+          "detail": "JSX renders qualityScore (\u2605XX) but has no rank display; sorting/filtering reorders tiles with no absolute rank shown",
+          "ref": "shared_web/static/js/metagamegrid.jsx:46-52",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/data/archetype.py:load_disjoint_archetypes, add a CTE (before the WHERE filter) that computes RANK() OVER (ORDER BY quality_score DESC) for all archetypes in the season, then LEFT JOIN it back in the main SELECT. Expose `quality_rank` through the API in api.py. In metagamegrid.jsx:renderItem, display the rank as a small badge (e.g. `#{archetype.qualityRank}`) in the tile.",
+      "issue": 12534,
+      "notes": "The rank CTE must run over the unfiltered season data (not the WHERE-filtered set) so the rank stays stable regardless of search/sort. The issue's first comment also discusses a commented-out tier system and a visual stripe feature that was cut; these are separate and not part of the rank request.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

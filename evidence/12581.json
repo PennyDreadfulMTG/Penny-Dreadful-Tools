@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12581,
+  "triage": [
+    {
+      "batch_id": "t-12582-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "--table-font-size: 0.75rem (15px at 20px base) as intended",
+          "ref": "shared_web/static/css/pd.css:83",
+          "type": "code"
+        },
+        {
+          "detail": "--table-line-height: 1 as intended",
+          "ref": "shared_web/static/css/pd.css:77",
+          "type": "code"
+        },
+        {
+          "detail": "main th, main td apply line-height:var(--table-line-height) and padding:calc(5rem/20); no change found since issue filed that resolves the 18.5px vs 15px discrepancy",
+          "ref": "shared_web/static/css/pd.css:1189",
+          "type": "code"
+        },
+        {
+          "detail": "No commit found that explicitly addresses the reported pixel-value discrepancy",
+          "ref": "git log --since=2024-05-15 -S'table.*font|line-height|18.5' -- shared_web/static/css/pd.css",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12581,
+      "notes": "Discrepancy between intended (15px text, minimal padding) and actual (18.5px, 25px padding) cannot be confirmed or denied without a live browser \u2014 font bounding boxes extend beyond nominal font-size. Requires measurement in browser DevTools and deliberate CSS adjustment.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

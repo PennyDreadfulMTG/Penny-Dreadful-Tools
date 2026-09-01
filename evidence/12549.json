@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12549,
+  "triage": [
+    {
+      "batch_id": "t-12551-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "colors_html() builds and returns a raw HTML string containing <div class=\"mana-bar\"> and nested <span> elements",
+          "ref": "decksite/prepare.py:244-250",
+          "type": "code"
+        },
+        {
+          "detail": "d.colors_safe = colors_html(d.colors, d.colored_symbols) \u2014 HTML string stored on deck objects",
+          "ref": "decksite/prepare.py:98",
+          "type": "code"
+        },
+        {
+          "detail": "result.colors_safe = colors_html(colors, colored_symbols) \u2014 same HTML emitted in the archetypes2 JSON API response",
+          "ref": "decksite/controllers/api.py:457",
+          "type": "code"
+        },
+        {
+          "detail": "mana-bar uses a fixed calc(18rem / 20) height, confirming the fixed-height complaint is still present",
+          "ref": "shared_web/static/css/pd.css:1738",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12549,
+      "notes": "Two related sub-problems: (1) API sends HTML blobs instead of data (colors + fractions), breaking API consumers; (2) the mana-bar component has a hardcoded 18px height. Fixing either requires changes across prepare.py, api.py, templates, and CSS \u2014 well beyond easy-fix scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:28Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

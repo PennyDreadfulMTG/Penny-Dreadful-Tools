@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12589,
+  "triage": [
+    {
+      "batch_id": "t-12592-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "archetype.keyCards.shift() mutates the keyCards array in-place during render, removing the first element from the object stored in React state",
+          "ref": "shared_web/static/js/metagamegrid.jsx:81",
+          "type": "code"
+        },
+        {
+          "detail": "archetype.keyCards[0] is used earlier in the same render for the main hero card image; after .shift() runs, subsequent renders see a different [0] element, causing the visible image to change",
+          "ref": "shared_web/static/js/metagamegrid.jsx:20",
+          "type": "code"
+        },
+        {
+          "detail": "componentDidUpdate calls load() on sort change without clearing objects; old (now mutated) objects are rendered while the network request is in flight, producing the flash",
+          "ref": "shared_web/static/js/datamanager.jsx:39-48",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/js/metagamegrid.jsx line 81, replace `archetype.keyCards.shift()` with a non-mutating check: `archetype.keyCards.length > 1` as the guard, and `archetype.keyCards.slice(1).map(...)` to render the remaining cards. This prevents mutation of the state object and eliminates the inter-render drift in keyCards[0].",
+      "issue": 12589,
+      "notes": "One-line fix. The mutation bug means every sort/reload re-render shows progressively shorter key-card arrays as .shift() has already consumed elements. The fix also incidentally corrects this accumulating data-loss on repeated renders.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

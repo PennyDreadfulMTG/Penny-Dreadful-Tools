@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12571,
+  "triage": [
+    {
+      "batch_id": "t-12572-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "default order_by is 'active_date DESC, d.finish IS NULL, d.finish' \u2014 no unique tiebreaker, so rows with identical finish are ordered arbitrarily by the DB",
+          "ref": "decksite/data/deck.py:88",
+          "type": "code"
+        },
+        {
+          "detail": "competition.load_decks calls deck.load_decks(where) without specifying order_by, falling through to the non-stable default",
+          "ref": "decksite/data/competition.py:100",
+          "type": "code"
+        },
+        {
+          "detail": "no commit references this issue; the non-stable sort is still present in master",
+          "ref": "git log --oneline --all --grep=12571",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In decksite/data/deck.py, append ', d.id' to the default order_by string at line 88 (and the identical default at line 159): change 'active_date DESC, d.finish IS NULL, d.finish' to 'active_date DESC, d.finish IS NULL, d.finish, d.id'. The primary key is always unique so the sort becomes fully deterministic. Two one-line changes.",
+      "issue": 12571,
+      "notes": "Issue explicitly notes the real answer (swiss tiebreakers) is not scraped; using d.id gives a stable but arbitrary ordering among tied finishers, which is sufficient to stop page flicker.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:59:02Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

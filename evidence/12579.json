@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12579,
+  "triage": [
+    {
+      "batch_id": "t-12582-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Grid.sort() only calls setState({sortBy, sortOrder}); no localStorage or cookie write",
+          "ref": "shared_web/static/js/grid.jsx:16",
+          "type": "code"
+        },
+        {
+          "detail": "Initial sortBy/sortOrder come purely from props.initialSortBy/initialSortOrder; nothing reads persisted state",
+          "ref": "shared_web/static/js/datamanager.jsx:22",
+          "type": "code"
+        },
+        {
+          "detail": "initialSortBy='quality' is hard-coded; page reload always resets sort to quality/AUTO",
+          "ref": "shared_web/static/js/metagamegrid.jsx:117",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In `shared_web/static/js/grid.jsx`: (1) override `sort()` to also write `{sortBy, sortOrder}` to `localStorage` under a fixed key (e.g. `'metagame-sort'`), and (2) in the constructor read from localStorage to override the prop-supplied initial values. In `metagamegrid.jsx` pass the localStorage-read values as `initialSortBy`/`initialSortOrder`. ~15 lines total across those two files.",
+      "issue": 12579,
+      "notes": "Season switch and tournament-only toggle both cause a full page reload, so localStorage is the right persistence layer. No backend changes needed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:52Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

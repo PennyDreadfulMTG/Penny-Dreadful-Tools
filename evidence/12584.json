@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12584,
+  "triage": [
+    {
+      "batch_id": "t-12587-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "do_jslint() calls eslint with no format or verbosity flags, producing default stylish output (~many lines per violation across all .js/.jsx files)",
+          "ref": "dev.py:270-277",
+          "type": "code"
+        },
+        {
+          "detail": "eslint supports --quiet (errors only), -f compact (one line per issue), and --max-warnings <n> \u2014 none currently passed",
+          "ref": "node_modules/.bin/eslint --help",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In dev.py do_jslint() (line ~273), append '--format', 'compact' to cmd before the file list. compact format emits one line per problem ('file:line:col: message [rule]') instead of multi-line stylish blocks, dramatically reducing output while preserving all issue info. Alternatively add '--max-warnings', '0' to hard-fail on warnings without changing output format.",
+      "issue": 12584,
+      "notes": "Single-line change in dev.py. The eslint config (eslint.config.mjs) does not need modification.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

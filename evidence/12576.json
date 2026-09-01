@@ -1,0 +1,52 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-12576-1",
+      "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
+      "files_changed": 1,
+      "head_sha": "7aff2633690316e90299c9295110bc4dd55cedc1",
+      "issue": 12576,
+      "lines_changed": 4,
+      "lint": "passed",
+      "notes": "Change is 4 lines of CSS only \u2014 one new variable, one usage replacement, one new application. The `header .search` element groups with `header h1` in the existing padding rule (`header h1, header .search`), confirming it also renders over the banner image and benefits from the same shadow.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe legibility drop shadow (`0.05rem 0.05rem 8px black`) applied to `header h1` was hardcoded inline with no way to reuse it on other elements that also appear over the site's banner image. There was no standard variable for this pattern.\n\n## What changed\n\nIn `shared_web/static/css/pd.css`:\n1. Added `--legibility-text-shadow: 0.05rem 0.05rem 8px black` to the `:root` color block (near `--text-over-images`), with a comment explaining it is always dark even in dark mode because it overlays an image.\n2. Replaced the hardcoded inline value on `header h1` with `var(--legibility-text-shadow)`.\n3. Applied `text-shadow: var(--legibility-text-shadow)` to `header .search`, which also sits over the banner image alongside `header h1`.\n\n## Validation\n\n`uv run --frozen python dev.py lint` \u2014 passed. Unit tests were not run (no database available in this environment), but the change is pure CSS with no logic paths to test.\n\nFixes #12576",
+      "pr_title": "Add --legibility-text-shadow CSS variable for text over images (#12576)",
+      "recorded_at": "2026-09-01T18:01:28Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed!",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 12576,
+  "triage": [
+    {
+      "batch_id": "t-12577-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "text-shadow: 0.05rem 0.05rem 8px black exists inline on site heading with a comment 'over an image', but no CSS variable or standard",
+          "ref": "shared_web/static/css/pd.css:693",
+          "type": "code"
+        },
+        {
+          "detail": "search bar CSS (.search) has no text-shadow applied despite potentially appearing over images",
+          "ref": "shared_web/static/css/pd.css:2328",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/static/css/pd.css: (1) add a CSS variable --legibility-text-shadow in a :root block (using the existing value 0.05rem 0.05rem 8px black from line 693), (2) replace the inline value at line 693 with the variable, (3) apply the variable to header .search and any other elements identified as appearing over images. ~10-15 lines changed.",
+      "issue": 12576,
+      "notes": "The existing shadow value on the heading is the implicit standard per the issue ('The site heading has something already'). Confidence is medium rather than high because the exact set of elements to apply it to requires owner confirmation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:28Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

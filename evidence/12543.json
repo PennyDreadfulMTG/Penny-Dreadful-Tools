@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12543,
+  "triage": [
+    {
+      "batch_id": "t-12546-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "get_font_paths() returns hardcoded local paths with no existence check or download logic",
+          "ref": "maintenance/fonts.py:143-165",
+          "type": "code"
+        },
+        {
+          "detail": "Update fonts maintenance task to generate an actual woff2 file \u2014 added all font TTFs to git via LFS in March 2025; commit message notes that git lfs pull is required to get actual binaries instead of pointer files",
+          "ref": "07b63480",
+          "type": "commit"
+        },
+        {
+          "detail": "All 10 font files are now git-tracked (via LFS): NotoEmoji, NotoSansHistorical, NotoSansJP, NotoSansLiving, NotoSansSC, NotoSansSymbols, NotoSansSymbols2, Segoe UI Symbol, Symbola, main-text",
+          "ref": "shared_web/static/fonts/sources/",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12543,
+      "notes": "The problem landscape changed when fonts were committed via LFS (07b63480, March 2025). The 'not found' failure now occurs when git-lfs is not installed or git lfs pull hasn't been run, not when the repo is missing the fonts entirely. The fix should detect LFS pointer files (< 300 bytes containing 'git-lfs') and emit a clear error suggesting 'git lfs pull', rather than trying to download fonts from upstream sources \u2014 though auto-downloading Noto/Symbola from known URLs is also feasible if desired. Segoe UI Symbol cannot be freely downloaded programmatically.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:01:03Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

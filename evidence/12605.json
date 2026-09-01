@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12605,
+  "triage": [
+    {
+      "batch_id": "t-12614-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Commit message: 'Determine a deck's colors in a more sophisticated way \u2014 This will prevent Kellan, Daring Traveler giving a bunch of WW decks a green stripe in their mana bar'",
+          "ref": "0f1ac991",
+          "type": "commit"
+        },
+        {
+          "detail": "`colors_in_every_cost = set.intersection(*card_colors)` \u2014 for Kellen ({W}{U} creature side, {1}{G} adventure side), intersection is empty set, so no colors contributed",
+          "ref": "magic/colors.py:59",
+          "type": "code"
+        },
+        {
+          "detail": "mana_cost_query() stores adventure cards with pipe-separated costs (GROUP_CONCAT\u2026SEPARATOR '|'), so both faces' costs are correctly available for the intersection calculation",
+          "ref": "magic/card.py:282-292",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12605,
+      "notes": "Issue filed 2024-05-16; fix landed 8 days later on 2024-05-24. The commit message explicitly names 'Kellan, Daring Traveler' (same card, slightly different spelling). Issue remains open despite being resolved.",
+      "proposed_comment": "This was fixed by commit 0f1ac991 (2024-05-24), which changed deck color determination to use the intersection of colors across all mana costs rather than the union. For adventure cards like Kellen with {W}{U} (creature) and {1}{G} (adventure), the intersection is empty, so no green stripe appears.",
+      "recorded_at": "2026-09-01T18:05:51Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12554,
+  "triage": [
+    {
+      "batch_id": "t-12556-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "archetype_key_cards = playability.key_cards_long(season_id) fetches ALL archetypes for the season before pagination; only results from the current page are then used",
+          "ref": "decksite/controllers/api.py:450",
+          "type": "code"
+        },
+        {
+          "detail": "key_cards_long queries the full _season_archetype_playability table with no archetype_id filter; returns a dict keyed by every archetype_id in the season",
+          "ref": "decksite/data/playability.py:62-83",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add an optional archetype_ids: list[int] | None = None parameter to key_cards_long() in decksite/data/playability.py; when provided, append AND p.archetype_id IN (<ids>) to the WHERE clause. In decksite/controllers/api.py:450, pass [r.id for r in results] as the new argument so only the current page's archetypes are fetched.",
+      "issue": 12554,
+      "notes": "Author's own comment says the query is likely fast already; the fix is a correctness/hygiene improvement but the performance win may be modest.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:56:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T18:00:40Z",
+  "evidence_refs": [
+    "evidence/12559.json#triage[0]"
+  ],
+  "issue": 12559,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Cannot confirm or deny whether the shadow is still present without a live browser. The most likely source is the status-bar's elevation-2 shadow casting downward onto header content at narrow widths. Static analysis is insufficient to verify current state."
+}

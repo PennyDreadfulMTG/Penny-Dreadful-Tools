@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-12670-1",
+      "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
+      "files_changed": 1,
+      "head_sha": "c83a3266b8863d052896773200f1029a108eaec1",
+      "issue": 12670,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "Only pd.css touched; 2 CSS value changes + 3 documentation lines. The z-index: 4 on the expanding nav (line 890) is kept as-is because at narrow widths it must exceed the scrim at z-index: 3 \u2014 reducing it there would allow the scrim to paint over the expanded nav.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe desktop hover/touch submenu used `z-index: 5` (lines 868 and 935 in `pd.css`), which is the level reserved for third-party card/text tooltips. The expanding nav used `z-index: 4` at both narrow and wide breakpoints but was only documented at level 4 for the narrow-view hamburger drawer. Neither element appeared in the z-index hierarchy comment block, making the stacking model incomplete.\n\n## What changed\n\n- `z-index: 5` \u2192 `z-index: 3` on `nav li:hover > .item + .submenu` (hover state)\n- `z-index: 5` \u2192 `z-index: 3` on `nav li.submenu-open > .item + .submenu` (touch/click state)\n- Updated the z-index comment block: level 3 (previously \"nothing yet\") now documents the desktop hover/touch submenu; level 4 now also documents the expanding nav at both narrow and wide breakpoints\n\nz-index: 3 is sufficient for the submenu: at medium widths (901\u20131600 px) where the nav creates no stacking context, z-index: 3 floats the submenu above main content (z-index: auto) and the season picker (level 1) and language switcher (level 2). At narrow/wide breakpoints the expanding nav already creates a stacking context at z-index: 4, so the submenu's z-index: 3 is local within that context and correctly appears above other nav children.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- `uv run --frozen python dev.py unit` \u2014 845 passed, 1 skipped, 89 deselected\n\nFixes #12670",
+      "pr_title": "Move menu hover submenu from z-index 5 to 3 (#12670)",
+      "recorded_at": "2026-09-01T18:01:15Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "845 passed, 1 skipped, 89 deselected in 17.94s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 12670,
   "triage": [
     {

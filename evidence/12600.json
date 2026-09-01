@@ -1,0 +1,61 @@
+{
+  "fix": [],
+  "issue": 12600,
+  "triage": [
+    {
+      "batch_id": "t-12603-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "IFNULL(ROUND(...), '') AS win_percent \u2014 returns '' on divide-by-zero instead of NULL",
+          "ref": "decksite/data/card.py:23",
+          "type": "code"
+        },
+        {
+          "detail": "Same IFNULL-to-empty-string pattern",
+          "ref": "decksite/data/card.py:302",
+          "type": "code"
+        },
+        {
+          "detail": "c.win_percent = '' hardcoded on fake placeholder card",
+          "ref": "decksite/data/card.py:332",
+          "type": "code"
+        },
+        {
+          "detail": "Same IFNULL pattern (also lines 513, 557, 618)",
+          "ref": "decksite/data/archetype.py:56",
+          "type": "code"
+        },
+        {
+          "detail": "Same IFNULL pattern (also line 228)",
+          "ref": "decksite/data/person.py:120",
+          "type": "code"
+        },
+        {
+          "detail": "Same IFNULL pattern",
+          "ref": "analysis/analysis.py:79",
+          "type": "code"
+        },
+        {
+          "detail": "win_percent property is typed -> str and returns '' when no matches; should be float | None",
+          "ref": "decksite/data/matchup.py:26-27",
+          "type": "code"
+        },
+        {
+          "detail": "{{win_percent}} \u2014 Mustache renders None/NULL as empty string, so templates require no change",
+          "ref": "decksite/templates/stats.mustache:27",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) In decksite/data/card.py, decksite/data/archetype.py, decksite/data/person.py, analysis/analysis.py: strip the outer IFNULL(..., '') wrapper leaving ROUND((SUM(wins)/NULLIF(SUM(wins+losses),0))*100,1) \u2014 9 SQL edits. 2) In decksite/data/card.py:332 change c.win_percent = '' to c.win_percent = None. 3) In decksite/data/matchup.py:26-27 change return type to float | None and return None instead of ''. 4) Check shared_web/static/js/metagamegrid.jsx:44-45 \u2014 n(archetype.winPercent) coerces null to 0, so add a null-guard like archetype.winPercent != null ? n(archetype.winPercent)+'%' : '\u2014'.",
+      "issue": 12600,
+      "notes": "The JSX null-guard is the one spot that could silently display '0.0%' instead of '\u2014' if missed; everything else is mechanical. Mustache templates are safe with None.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

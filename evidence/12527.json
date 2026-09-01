@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 12527,
+  "triage": [
+    {
+      "batch_id": "t-12534-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalized_analyzer strips [\\s/,_'-] but not double-quote; card '\"Name Sticker\" Goblin' indexes as '\"namesticker\"goblin' while search 'Name Sticker Goblin' normalizes to 'namestickergoblin' \u2014 edit distance 4 exceeds DIST=2",
+          "ref": "magic/whoosh_constants.py:9",
+          "type": "code"
+        },
+        {
+          "detail": "DIST = 2; fuzzy matching won't bridge the 4-character gap caused by the two unstripped ASCII quote chars",
+          "ref": "magic/whoosh_search.py:84",
+          "type": "code"
+        },
+        {
+          "detail": "Added repair_name mapping in price_grabber/parser.py for Cardhoarder name\u2192official name; fixes price storage but does not fix whoosh search",
+          "ref": "2328d703",
+          "type": "commit"
+        },
+        {
+          "detail": "repair_name maps 'Name Sticker Goblin' \u2192 '\"Name Sticker\" Goblin'; price side is already handled",
+          "ref": "price_grabber/parser.py:47-48",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In magic/whoosh_constants.py line 9, change SubstitutionFilter pattern from r'[\\s/,_\\'-]' to r'[\\s/,_\\'\"\\u201c\\u201d-]' (adding ASCII double-quote and curly quotes) so that card names like '\"Name Sticker\" Goblin', 'Kongming, \"Sleeping Dragon\"', and 'Pang Tong, \"Young Phoenix\"' index without their quote characters. Also add a whoosh_search_test entry to prevent regression.",
+      "issue": 12527,
+      "notes": "Kongming and Pang Tong have the same class of name; the fix covers all cards with ASCII double-quotes in their names. The price storage path was already fixed in commit 2328d703 and does not need changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:05:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

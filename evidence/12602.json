@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 12602,
+  "triage": [
+    {
+      "batch_id": "t-12603-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "renderItem already returns <a className='archetype'> wrapping multiple <div> elements; the file matches the issue description ('returns an a ... div inside an a is valid html5')",
+          "ref": "shared_web/static/js/metagamegrid.jsx:13-85",
+          "type": "code"
+        },
+        {
+          "detail": ".metagame-grid a has no display:block; tiles are grid items so display is block-ified by the grid context automatically",
+          "ref": "shared_web/static/css/pd.css:2859-2863",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12602,
+      "notes": "The issue body acknowledges the current structure is valid HTML5 and frames the question as a design preference. No concrete bug is described; this is a discussion prompt from the author about whether to restructure the JSX.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:05Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

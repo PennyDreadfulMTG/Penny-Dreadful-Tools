@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T17:56:05Z",
+  "evidence_refs": [
+    "evidence/12552.json#triage[0]"
+  ],
+  "issue": 12552,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Decision needed: (1) whether current guild-custom-emoji approach already works for mana symbols in the PD Discord server, and (2) if not, whether to use the manamoji bot/server, upload the assets as guild emojis, or use Discord's application-level emoji feature. Different answers lead to different implementation approaches."
+}

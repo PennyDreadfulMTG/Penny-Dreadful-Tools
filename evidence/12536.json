@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12536,
+  "triage": [
+    {
+      "batch_id": "t-12539-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Comment explicitly names https://pennydreadfulmagic.com/decks/10989/ (the issue's example) and documents that excluding everything in main-text 'makes the last two decks above only nonprinting chars for some reason'",
+          "ref": "maintenance/fonts.py:69",
+          "type": "code"
+        },
+        {
+          "detail": "remaining_graphemes excludes graphemes containing ASCII alpha/digit/apostrophe to avoid overwriting main-text's common chars \u2014 but combining marks on non-ASCII base chars may still land in the symbol subset",
+          "ref": "maintenance/fonts.py:75",
+          "type": "code"
+        },
+        {
+          "detail": "Existing workaround is acknowledged as incomplete ('Would be nice to exclude everything in main-text but...')",
+          "ref": "maintenance/fonts.py:68",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12536,
+      "notes": "The code has a targeted workaround for the specific deck but the comment acknowledges it is not a full solution. The issue itself notes 'fonts are complicated'; resolving fully may require merging the symbol and main-text fonts or a different subsetting strategy.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T17:58:39Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 12558,
+  "triage": [
+    {
+      "batch_id": "t-12562-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "has_buttons() checks show_tournament_toggle among other flags",
+          "ref": "decksite/view.py:76",
+          "type": "code"
+        },
+        {
+          "detail": "Every view that sets tournament_only also always sets show_tournament_toggle=True and toggle_results_url together \u2014 the pattern is consistent but verbose",
+          "ref": "decksite/views/archetypes.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "template gates the toggle button on show_tournament_toggle and uses toggle_results_url \u2014 both fields always set together",
+          "ref": "decksite/templates/buttons.mustache:2",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 12558,
+      "notes": "The three attributes are always set together but the refactoring approach (e.g. computing toggle_results_url centrally in View.prepare() from tournament_only, removing show_tournament_toggle) requires an owner to decide the right abstraction boundary.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T18:00:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:40Z",
+    "note": "Production / and /rotation/ now reference the identical versioned pd.css asset, indicating the old-machine stale-code routing problem has gone away; verify current routing before closure.",
+    "verb": "retry-verify"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:30:01Z",
+  "evidence_refs": [
+    "evidence/11735.json#triage[0]"
+  ],
+  "issue": 11735,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "This is a deployment/infrastructure routing issue; the code-level /rotation route is correct. Related issues were closed April 2024, which may mean the multi-machine setup was decommissioned, but this cannot be verified from the repository alone."
+}

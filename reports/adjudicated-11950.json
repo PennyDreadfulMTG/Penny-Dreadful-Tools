@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:40Z",
+    "note": "Live Scryfall exact-name search now returns only the real MKM Red Herring, and current import code excludes promo_types=playtest; verify the bot path before closure.",
+    "verb": "retry-verify"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:28:10Z",
+  "evidence_refs": [
+    "evidence/11950.json#triage[0]"
+  ],
+  "issue": 11950,
+  "kind": "class-escalate",
+  "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "Confidence is medium rather than high because verifying that Scryfall marks the Red Herring test card with promo_types=['playtest'] requires a live Scryfall API call that cannot be done in this static analysis. The commit message 'now that Scryfall have given us a way' strongly implies this is the case."
+}

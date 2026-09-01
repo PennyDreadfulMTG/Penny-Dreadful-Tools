@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:39Z",
+    "note": "The primary regression was fixed, but a card with zero decks still renders an empty table and 0-0 of 0 pagination. Implement a useful no-results state for live deck tables without restoring the broken server-side has_decks guard.",
+    "verb": "queue-fix"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:57:10Z",
+  "evidence_refs": [
+    "evidence/11291.json#verify[0]"
+  ],
+  "issue": 11291,
+  "kind": "verifier-uncertain",
+  "question": "Verifier returned UNCERTAIN \u2014 drop the closure, re-triage, or override?",
+  "summary": "Commit 202b102 fixes the primary regression (deck table hidden for all cards due to has_decks always being False) by switching to client-side loading. However, it does not address the secondary concern the issue body raised: a 'better empty view' for cards with no decks. Cards with no PD decks still display the 'Decks containing [name]' section heading and an empty table with '0-0 of 0' pagination"
+}

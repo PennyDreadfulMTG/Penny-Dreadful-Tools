@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:27Z",
+    "note": "Choose the deck-name rule that distinguishes separator hyphens from legitimate compound-name hyphens before changing sanitization.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:18:07Z",
+  "evidence_refs": [
+    "evidence/12140.json#triage[0]"
+  ],
+  "issue": 12140,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Decision needed: when should a hyphen be treated as a word separator (and removed/replaced by a space) vs. a legitimate part of a compound name? The answer determines whether to touch remove_extraneous_hyphens or add a new step."
+}

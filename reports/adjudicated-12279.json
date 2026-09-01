@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:28Z",
+    "note": "Choose which rotation sort/filter controls should be first-class UI and whether administrators need different defaults from public users.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:01:30Z",
+  "evidence_refs": [
+    "evidence/12279.json#triage[0]"
+  ],
+  "issue": 12279,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The owner explicitly left this open for product decisions. Decisions needed: which sort behaviors to expose as radio buttons/checkboxes, whether admin vs non-admin gets different defaults, whether to support hits>32 type filter syntax in UI."
+}

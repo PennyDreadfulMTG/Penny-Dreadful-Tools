@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:28Z",
+    "note": "Choose the intended PD rotation time of day and timezone before changing the rotation offset/date interpretation.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:13:16Z",
+  "evidence_refs": [
+    "evidence/12223.json#triage[0]"
+  ],
+  "issue": 12223,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Title explicitly says 'think about' \u2014 this is a discussion item. The decision required: what time of day should PD rotation fire, and should a fractional timedelta be added in rotation_offset() or should WIS dates be re-interpreted? An owner must weigh player-timezone fairness vs. complexity."
+}

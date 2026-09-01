@@ -32,5 +32,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Closing as completed. The TappedOut and MTGGoldfish linking paths involved in the report were removed, and the current Discord linking flow handles already-linked and already-existing accounts without returning a 500.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-01T21:03:14Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

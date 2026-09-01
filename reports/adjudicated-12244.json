@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:39Z",
+    "note": "The cited earlier commit predates this report and does not fully distinguish never-before-legal cards from rank-1 previously legal cards; its fetch-failure path skips sorting. Fix and test rotation hype ordering so never-before-legal cards come first, then heavily played returning cards, with a deterministic safe fallback.",
+    "verb": "queue-fix"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:07:38Z",
+  "evidence_refs": [
+    "evidence/12244.json#verify[0]"
+  ],
+  "issue": 12244,
+  "kind": "verifier-uncertain",
+  "question": "Verifier returned UNCERTAIN \u2014 drop the closure, re-triage, or override?",
+  "summary": "Issue #12244 was filed 4 days after commit 20a87a97, specifically reporting that the 84th run (which occurred after the fix) still showed Footbottom Feast. The commit itself references 'Fixes #9165', not this issue. The code's fallback behavior (no sort if cardfeed fails) and the ranking scheme (never-before-legal gets rank 1, same as most popular previously-legal cards) leave open the possibility"
+}

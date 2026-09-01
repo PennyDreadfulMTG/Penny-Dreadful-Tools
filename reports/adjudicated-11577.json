@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:25Z",
+    "note": "Confirm whether deck 216544 still has the bad sideboard data, then authorize the existing Gatherling substitution maintenance path against the live database.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:48:57Z",
+  "evidence_refs": [
+    "evidence/11577.json#triage[0]"
+  ],
+  "issue": 11577,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "This is a DB data correction request (deck 216544 has 4 Islands in sb instead of 4 Life of Toshiro Umezawa). The maintenance/gatherling_substitutions.py script handles this type of fix. Cannot verify whether the correction has already been applied without DB access."
+}

@@ -4927,3 +4927,91 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 4926, "seq": 4927, "ts": "2026-09-01T21:02:58Z"}
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 4928, "ts": "2026-09-01T21:03:00Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 4928, "seq": 4929, "ts": "2026-09-01T21:03:00Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 4930, "ts": "2026-09-01T21:03:02Z"}
+{"event": "ADJUDICATED", "issue": 11232, "note": "The reported TappedOut linking path was removed and the current linking flow guards already-linked accounts.", "seq": 4931, "status": "closing", "ts": "2026-09-01T21:03:14Z", "verb": "close-completed"}
+{"event": "MUTATION_PLANNED", "issue": 11232, "kind": "close", "reason": "completed", "seq": 4932, "ts": "2026-09-01T21:03:14Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 11232, "reason": "completed", "seq": 4933, "ts": "2026-09-01T21:03:16Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4933, "seq": 4934, "ts": "2026-09-01T21:03:16Z"}
+{"event": "ADJUDICATED", "issue": 11709, "note": "The report concerned a prior rotation; the card is now correctly illegal and no persistent defect remains.", "seq": 4935, "status": "closing", "ts": "2026-09-01T21:03:16Z", "verb": "close-not-planned"}
+{"event": "MUTATION_PLANNED", "issue": 11709, "kind": "close", "reason": "not planned", "seq": 4936, "ts": "2026-09-01T21:03:16Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 11709, "reason": "not_planned", "seq": 4937, "ts": "2026-09-01T21:03:20Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4937, "seq": 4938, "ts": "2026-09-01T21:03:20Z"}
+{"event": "ADJUDICATED", "issue": 12235, "note": "Owner feedback says permanently incomplete log-derived achievements would be annoying and misleading.", "seq": 4939, "status": "closing", "ts": "2026-09-01T21:03:20Z", "verb": "close-not-planned"}
+{"event": "MUTATION_PLANNED", "issue": 12235, "kind": "close", "reason": "not planned", "seq": 4940, "ts": "2026-09-01T21:03:20Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 12235, "reason": "not_planned", "seq": 4941, "ts": "2026-09-01T21:03:22Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4941, "seq": 4942, "ts": "2026-09-01T21:03:22Z"}
+{"event": "ADJUDICATED", "issue": 11291, "note": "The primary regression was fixed, but a card with zero decks still renders an empty table and 0-0 of 0 pagination. Implement a useful no-results state for live deck tables without restoring the broken server-side has_decks guard.", "seq": 4943, "status": "fix_pending", "ts": "2026-09-01T21:03:39Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4943, "seq": 4944, "ts": "2026-09-01T21:03:39Z"}
+{"event": "ADJUDICATED", "issue": 12244, "note": "The cited earlier commit predates this report and does not fully distinguish never-before-legal cards from rank-1 previously legal cards; its fetch-failure path skips sorting. Fix and test rotation hype ordering so never-before-legal cards come first, then heavily played returning cards, with a deterministic safe fallback.", "seq": 4945, "status": "fix_pending", "ts": "2026-09-01T21:03:39Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4945, "seq": 4946, "ts": "2026-09-01T21:03:39Z"}
+{"event": "ADJUDICATED", "issue": 12284, "note": "Implement the issue owner's stated minimum: /rotation should include every card that was legal in the immediately preceding season, including cards with zero hits in the current rotation data. Reuse existing legal-card history where possible and add focused tests.", "seq": 4947, "status": "fix_pending", "ts": "2026-09-01T21:03:39Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4947, "seq": 4948, "ts": "2026-09-01T21:03:40Z"}
+{"event": "ADJUDICATED", "issue": 11712, "note": "The automatic non-Latin font regeneration in commit 0388ca74 appears to satisfy the underlying need; verify before closure.", "seq": 4949, "status": "verify_pending", "ts": "2026-09-01T21:03:40Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4949, "seq": 4950, "ts": "2026-09-01T21:03:40Z"}
+{"event": "ADJUDICATED", "issue": 11735, "note": "Production / and /rotation/ now reference the identical versioned pd.css asset, indicating the old-machine stale-code routing problem has gone away; verify current routing before closure.", "seq": 4951, "status": "verify_pending", "ts": "2026-09-01T21:03:40Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4951, "seq": 4952, "ts": "2026-09-01T21:03:40Z"}
+{"event": "ADJUDICATED", "issue": 11950, "note": "Live Scryfall exact-name search now returns only the real MKM Red Herring, and current import code excludes promo_types=playtest; verify the bot path before closure.", "seq": 4953, "status": "verify_pending", "ts": "2026-09-01T21:03:40Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4953, "seq": 4954, "ts": "2026-09-01T21:03:40Z"}
+{"event": "ADJUDICATED", "issue": 12191, "note": "Current production API cookies explicitly return Path=/ and all current set_cookie calls rely on Werkzeug's Path=/ default; verify representative session and application cookies before closure.", "seq": 4955, "status": "verify_pending", "ts": "2026-09-01T21:03:40Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4955, "seq": 4956, "ts": "2026-09-01T21:03:40Z"}
+{"event": "ADJUDICATED", "issue": 11300, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4957, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4957, "seq": 4958, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 11325, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4959, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4959, "seq": 4960, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 11631, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4961, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4961, "seq": 4962, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 11680, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4963, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4963, "seq": 4964, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 12141, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4965, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4965, "seq": 4966, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 12228, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4967, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4967, "seq": 4968, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 12243, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4969, "status": "reported", "ts": "2026-09-01T21:03:48Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4969, "seq": 4970, "ts": "2026-09-01T21:03:48Z"}
+{"event": "ADJUDICATED", "issue": 12271, "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.", "seq": 4971, "status": "reported", "ts": "2026-09-01T21:03:49Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4971, "seq": 4972, "ts": "2026-09-01T21:03:49Z"}
+{"event": "ADJUDICATED", "issue": 11246, "note": "Choose how the banner should measure season-relative playability (ratio, difference, or another baseline), including cards with no historical data.", "seq": 4973, "status": "deferred_human", "ts": "2026-09-01T21:04:25Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4973, "seq": 4974, "ts": "2026-09-01T21:04:25Z"}
+{"event": "ADJUDICATED", "issue": 11577, "note": "Confirm whether deck 216544 still has the bad sideboard data, then authorize the existing Gatherling substitution maintenance path against the live database.", "seq": 4975, "status": "deferred_human", "ts": "2026-09-01T21:04:25Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4975, "seq": 4976, "ts": "2026-09-01T21:04:25Z"}
+{"event": "ADJUDICATED", "issue": 11578, "note": "Inspect competition 4330 in the live database and choose between a one-off finalist correction and adding a defensive warning for incomplete Gatherling finalist data.", "seq": 4977, "status": "deferred_human", "ts": "2026-09-01T21:04:25Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4977, "seq": 4978, "ts": "2026-09-01T21:04:25Z"}
+{"event": "ADJUDICATED", "issue": 11614, "note": "Settle the bug-policy wording: whether an unavoidable known game-breaking trigger always penalizes the card owner, and how the avoidable exception should be stated.", "seq": 4979, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4979, "seq": 4980, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11656, "note": "The door-prize selector is in the separate PDBot service; identify its source/access and confirm how post-round drops should affect eligibility.", "seq": 4981, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4981, "seq": 4982, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11721, "note": "Friendly Discord error messages are implemented; decide whether automatic GitHub ticket creation is still desired or whether the issue should close without that potentially noisy behavior.", "seq": 4983, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4983, "seq": 4984, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11744, "note": "Inspect the two live deck records/import sources and decide whether 75-card mains are evidence of a parser error; Magic itself does not impose a 60-card maximum.", "seq": 4985, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4985, "seq": 4986, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11827, "note": "Retrieve the raw source decklist for deck 233082/232812 from the live database so the missing-basics and sideboard parsing failure can be reproduced.", "seq": 4987, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4987, "seq": 4988, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11858, "note": "Confirm whether the single-faced Everflowing Well image is Deckbox's external mouseover or our own rendering, then choose whether to accept it or change tooltip handling/provider.", "seq": 4989, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4989, "seq": 4990, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11940, "note": "Choose how long and how prominently Kick Off/PD500 results stay on the homepage: winner banner, all Top 8 decks, or another treatment.", "seq": 4991, "status": "deferred_human", "ts": "2026-09-01T21:04:26Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4991, "seq": 4992, "ts": "2026-09-01T21:04:26Z"}
+{"event": "ADJUDICATED", "issue": 11951, "note": "The bot-side playtest-card collision is fixed; decide whether to contact Deckbox about its Red Herring mouseover or replace/augment the external tooltip.", "seq": 4993, "status": "deferred_human", "ts": "2026-09-01T21:04:27Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4993, "seq": 4994, "ts": "2026-09-01T21:04:27Z"}
+{"event": "ADJUDICATED", "issue": 11980, "note": "Choose a sideboard-aware interestingness rule for rotation changes, especially companion-heavy cards such as Yorion.", "seq": 4995, "status": "deferred_human", "ts": "2026-09-01T21:04:27Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4995, "seq": 4996, "ts": "2026-09-01T21:04:27Z"}
+{"event": "ADJUDICATED", "issue": 12115, "note": "Reproduce the intermittent stale-CSS load with affected browser/CDN details or server logs so query-string caching, service worker, and proxy causes can be distinguished.", "seq": 4997, "status": "deferred_human", "ts": "2026-09-01T21:04:27Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4997, "seq": 4998, "ts": "2026-09-01T21:04:27Z"}
+{"event": "ADJUDICATED", "issue": 12133, "note": "Tournament announcement player counts are generated by the separate PDBot service; identify its source/access and define whether late joiners count at announcement time or tournament start.", "seq": 4999, "status": "deferred_human", "ts": "2026-09-01T21:04:27Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 4999, "seq": 5000, "ts": "2026-09-01T21:04:27Z"}
+{"event": "ADJUDICATED", "issue": 12140, "note": "Choose the deck-name rule that distinguishes separator hyphens from legitimate compound-name hyphens before changing sanitization.", "seq": 5001, "status": "deferred_human", "ts": "2026-09-01T21:04:27Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5001, "seq": 5002, "ts": "2026-09-01T21:04:27Z"}
+{"event": "ADJUDICATED", "issue": 12206, "note": "Recheck Anduril legality/name handling in the live PDBot service and identify that service's source; static code here cannot distinguish stale data from Unicode/DFC handling.", "seq": 5003, "status": "deferred_human", "ts": "2026-09-01T21:04:27Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5003, "seq": 5004, "ts": "2026-09-01T21:04:27Z"}
+{"event": "ADJUDICATED", "issue": 12207, "note": "Inspect deck 239489 and the legality/color data present when it was normalized to decide whether this is a one-off stale-data problem or a sanitizer defect.", "seq": 5005, "status": "deferred_human", "ts": "2026-09-01T21:04:28Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5005, "seq": 5006, "ts": "2026-09-01T21:04:28Z"}
+{"event": "ADJUDICATED", "issue": 12223, "note": "Choose the intended PD rotation time of day and timezone before changing the rotation offset/date interpretation.", "seq": 5007, "status": "deferred_human", "ts": "2026-09-01T21:04:28Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5007, "seq": 5008, "ts": "2026-09-01T21:04:28Z"}
+{"event": "ADJUDICATED", "issue": 12247, "note": "Provide the authoritative retired Tournament Organizer list and decide whether the achievement remains hardcoded or becomes season-aware data.", "seq": 5009, "status": "deferred_human", "ts": "2026-09-01T21:04:28Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5009, "seq": 5010, "ts": "2026-09-01T21:04:28Z"}
+{"event": "ADJUDICATED", "issue": 12272, "note": "Run one live MySQL overflow-warning test with the deployed mysqlclient/server combination before closing, or choose to add an explicit warning-count check.", "seq": 5011, "status": "deferred_human", "ts": "2026-09-01T21:04:28Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5011, "seq": 5012, "ts": "2026-09-01T21:04:28Z"}
+{"event": "ADJUDICATED", "issue": 12273, "note": "Audit production for negative values and choose the table/column scope before introducing broad UNSIGNED schema migrations.", "seq": 5013, "status": "deferred_human", "ts": "2026-09-01T21:04:28Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5013, "seq": 5014, "ts": "2026-09-01T21:04:28Z"}
+{"event": "ADJUDICATED", "issue": 12279, "note": "Choose which rotation sort/filter controls should be first-class UI and whether administrators need different defaults from public users.", "seq": 5015, "status": "deferred_human", "ts": "2026-09-01T21:04:28Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5015, "seq": 5016, "ts": "2026-09-01T21:04:28Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 5016, "seq": 5017, "ts": "2026-09-01T21:07:10Z"}

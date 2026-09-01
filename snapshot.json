@@ -5,7 +5,7 @@
     "workspaces_created": 297
   },
   "daily": {
-    "closures": 37,
+    "closures": 40,
     "day": "2026-09-01",
     "prs": 25
   },
@@ -1579,12 +1579,16 @@
     },
     "11232": {
       "class": "already-fixed",
-      "closure": null,
-      "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?"
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T21:03:16Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "opus-adjudication"
       },
+      "confidence": "medium",
+      "escalation": null,
       "evidence_file": "evidence/11232.json",
       "history": [
         {
@@ -1605,6 +1609,16 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T20:14:09Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-09-01T21:03:14Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T21:03:16Z"
         }
       ],
       "issue": 11232,
@@ -1613,14 +1627,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The reported TappedOut linking path was removed and the current linking flow guards already-linked accounts.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "closed",
       "title": "We should not 500 on the /link/ screen even if you already exist/are already linked/anything",
       "verdict": null
     },
@@ -1889,10 +1903,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11246.json",
       "history": [
         {
@@ -1913,6 +1924,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T20:12:31Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:25Z"
         }
       ],
       "issue": 11246,
@@ -1921,14 +1937,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose how the banner should measure season-relative playability (ratio, difference, or another baseline), including cards with no historical data.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "The banner seems to use straight playability but should really use \"playability in this season relative to other seasons\"",
       "verdict": null
     },
@@ -2443,10 +2459,7 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "verifier-uncertain",
-        "question": "Verifier returned UNCERTAIN \u2014 drop the closure, re-triage, or override?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11291.json",
       "history": [
         {
@@ -2477,6 +2490,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:57:10Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T21:03:39Z"
         }
       ],
       "issue": 11291,
@@ -2486,14 +2504,14 @@
         "\u2020 ui"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The primary regression was fixed, but a card with zero decks still renders an empty table and 0-0 of 0 pagination. Implement a useful no-results state for live deck tables without restoring the broken server-side has_decks guard.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_pending",
       "title": "We used to wrap the decktable on the card detail page in a has_decks if - but now we show it even when there's no decks",
       "verdict": "UNCERTAIN"
     },
@@ -2687,10 +2705,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11300.json",
       "history": [
         {
@@ -2739,6 +2754,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T20:39:42Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 11300,
@@ -2748,14 +2768,14 @@
         "* api"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "legalIcons is kind of a wild thing to be sending over the wire with every cards api response",
       "verdict": null
     },
@@ -3171,10 +3191,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11325.json",
       "history": [
         {
@@ -3223,6 +3240,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T20:43:31Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 11325,
@@ -3231,14 +3253,14 @@
         "* search"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "A card search of `ci:g mana:{` causes a db error",
       "verdict": null
     },
@@ -4163,10 +4185,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11577.json",
       "history": [
         {
@@ -4187,6 +4206,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:48:57Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:25Z"
         }
       ],
       "issue": 11577,
@@ -4195,14 +4219,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Confirm whether deck 216544 still has the bad sideboard data, then authorize the existing Gatherling substitution maintenance path against the live database.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "https://gatherling.com/deck.php?mode=view&id=120952 has a card substitution that we need to do manually in the db",
       "verdict": null
     },
@@ -4210,10 +4234,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11578.json",
       "history": [
         {
@@ -4234,6 +4255,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:48:57Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:25Z"
         }
       ],
       "issue": 11578,
@@ -4242,14 +4268,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Inspect competition 4330 in the live database and choose between a one-off finalist correction and adding a defensive warning for incomplete Gatherling finalist data.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Something is very wrong with https://pennydreadfulmagic.com/competitions/4330/",
       "verdict": null
     },
@@ -4446,10 +4472,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11614.json",
       "history": [
         {
@@ -4470,6 +4493,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:48:30Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11614,
@@ -4478,14 +4506,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Settle the bug-policy wording: whether an unavoidable known game-breaking trigger always penalizes the card owner, and how the avoidable exception should be stated.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Update the bug rules to explain that if a known game-breaking bug is triggered for any reason the card's owner gets a game loss for that game and the match should be remade with games conceded until the record is correct",
       "verdict": null
     },
@@ -4740,10 +4768,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11631.json",
       "history": [
         {
@@ -4792,6 +4817,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T20:06:55Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 11631,
@@ -4800,14 +4830,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "\u00c9omer of the Riddermark sorts last at /rotation/speculation \u2013 that's not my expectation",
       "verdict": null
     },
@@ -4987,10 +5017,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11656.json",
       "history": [
         {
@@ -5011,6 +5038,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:43:39Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11656,
@@ -5019,14 +5051,14 @@
         "* modo bot"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The door-prize selector is in the separate PDBot service; identify its source/access and confirm how post-round drops should affect eligibility.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "PDBot does not account for people who drop after the last round and would have otherwise made top 8 when giving out the door prize",
       "verdict": null
     },
@@ -5220,10 +5252,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11680.json",
       "history": [
         {
@@ -5272,6 +5301,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T20:19:48Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 11680,
@@ -5280,14 +5314,14 @@
         "* deck names"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "White jund gets automatically renamed into brgw if it's not the entire deck name, despite there being a deck archetype with the same name https://pennydreadfulmagic.com/decks/224930/",
       "verdict": null
     },
@@ -5523,12 +5557,16 @@
     },
     "11709": {
       "class": "obsolete",
-      "closure": null,
-      "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Closure candidate obsolete at medium confidence \u2014 verify anyway, report-only, or drop?"
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T21:03:20Z",
+        "external": false,
+        "reason": "not_planned",
+        "verified_by_batch": "opus-adjudication"
       },
+      "confidence": "medium",
+      "escalation": null,
       "evidence_file": "evidence/11709.json",
       "history": [
         {
@@ -5549,6 +5587,16 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:41:47Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-09-01T21:03:16Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T21:03:20Z"
         }
       ],
       "issue": 11709,
@@ -5557,14 +5605,14 @@
         "* modo bot"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The report concerned a prior rotation; the card is now correctly illegal and no persistent defect remains.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "closed",
       "title": "[Grishnakh, brash instigator] got caught with \"not legal\" by pdbot",
       "verdict": null
     },
@@ -5572,10 +5620,7 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11712.json",
       "history": [
         {
@@ -5596,6 +5641,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:41:47Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "verify_pending",
+          "ts": "2026-09-01T21:03:40Z"
         }
       ],
       "issue": 11712,
@@ -5604,14 +5654,14 @@
         "* deck names"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The automatic non-Latin font regeneration in commit 0388ca74 appears to satisfy the underlying need; verify before closure.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "verify_pending",
       "title": "When you cache a deck name, scan all other decknames for the non-latin characters in it and log a bug if there's a new character we haven't seen before",
       "verdict": null
     },
@@ -5763,10 +5813,7 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "verifier-refuted",
-        "question": "Verifier returned REFUTED \u2014 drop the closure, re-triage, or override?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11721.json",
       "history": [
         {
@@ -5797,6 +5844,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:35:44Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11721,
@@ -5805,14 +5857,14 @@
         "* discord bot"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Friendly Discord error messages are implemented; decide whether automatic GitHub ticket creation is still desired or whether the issue should close without that potentially noisy behavior.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Discord bot should say something like \"Oops I can't do that right now\" and log a github ticket rather than gobbing out at stack trace into Discord",
       "verdict": "REFUTED"
     },
@@ -5820,10 +5872,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11735.json",
       "history": [
         {
@@ -5844,6 +5893,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:30:01Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "verify_pending",
+          "ts": "2026-09-01T21:03:40Z"
         }
       ],
       "issue": 11735,
@@ -5853,14 +5907,14 @@
         "* rotation"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Production / and /rotation/ now reference the identical versioned pd.css asset, indicating the old-machine stale-code routing problem has gone away; verify current routing before closure.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "verify_pending",
       "title": "/rotation is served from the old machine's version of decksite which means (among other things) that it has outdated interestingness and outdated css",
       "verdict": null
     },
@@ -5925,10 +5979,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11744.json",
       "history": [
         {
@@ -5949,6 +6000,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:30:01Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11744,
@@ -5957,14 +6013,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Inspect the two live deck records/import sources and decide whether 75-card mains are evidence of a parser error; Magic itself does not impose a 60-card maximum.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "At least two decks by berluspooky36 have 75 cards in the main and no sideboard somehow",
       "verdict": null
     },
@@ -6086,10 +6142,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11827.json",
       "history": [
         {
@@ -6110,6 +6163,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11827,
@@ -6118,14 +6176,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Retrieve the raw source decklist for deck 233082/232812 from the live database so the missing-basics and sideboard parsing failure can be reproduced.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "https://pennydreadfulmagic.com/decks/233082/ is missing basics and has the sb in the main",
       "verdict": null
     },
@@ -6133,10 +6191,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11858.json",
       "history": [
         {
@@ -6157,6 +6212,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:36:37Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11858,
@@ -6166,14 +6226,14 @@
         "\u2020 ui"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Confirm whether the single-faced Everflowing Well image is Deckbox's external mouseover or our own rendering, then choose whether to accept it or change tooltip handling/provider.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "The Everflowing Well only displays a single side on mouseover but it is a DFC",
       "verdict": null
     },
@@ -6353,10 +6413,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11940.json",
       "history": [
         {
@@ -6377,6 +6434,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:28:10Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:26Z"
         }
       ],
       "issue": 11940,
@@ -6385,14 +6447,14 @@
         "+ feature"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose how long and how prominently Kick Off/PD500 results stay on the homepage: winner banner, all Top 8 decks, or another treatment.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Showcase the results of the 500 (and kick off) a bit more prominently/for longer",
       "verdict": null
     },
@@ -6457,10 +6519,7 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/11950.json",
       "history": [
         {
@@ -6481,6 +6540,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:28:10Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "verify_pending",
+          "ts": "2026-09-01T21:03:40Z"
         }
       ],
       "issue": 11950,
@@ -6489,14 +6553,14 @@
         "* discord bot"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Live Scryfall exact-name search now returns only the real MKM Red Herring, and current import code excludes promo_types=playtest; verify the bot path before closure.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "verify_pending",
       "title": "The test card Red Herring \"beats\" the real Red Herring when searched on the bot",
       "verdict": null
     },
@@ -6504,10 +6568,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11951.json",
       "history": [
         {
@@ -6528,6 +6589,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:28:10Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:27Z"
         }
       ],
       "issue": 11951,
@@ -6537,14 +6603,14 @@
         "\u2020 ui"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The bot-side playtest-card collision is fixed; decide whether to contact Deckbox about its Red Herring mouseover or replace/augment the external tooltip.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Red Herring is showing the test card on mouseover not the MKM card \u2013 can we do anything about this? Let deckbox.org know?",
       "verdict": null
     },
@@ -6758,10 +6824,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/11980.json",
       "history": [
         {
@@ -6782,6 +6845,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:27:09Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:27Z"
         }
       ],
       "issue": 11980,
@@ -6790,14 +6858,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose a sideboard-aware interestingness rule for rotation changes, especially companion-heavy cards such as Yorion.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Yorion is not marked as \"interesting\" in /rotation/changes because it's mostly played in sideboards - can we do better?",
       "verdict": null
     },
@@ -7206,10 +7274,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12115.json",
       "history": [
         {
@@ -7230,6 +7295,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:21:46Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:27Z"
         }
       ],
       "issue": 12115,
@@ -7240,14 +7310,14 @@
         "- important"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Reproduce the intermittent stale-CSS load with affected browser/CDN details or server logs so query-string caching, service worker, and proxy causes can be distinguished.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Why does the site fail to load the CSS until you ctrl-shift refresh somewhat regularly for some folks?",
       "verdict": null
     },
@@ -7255,10 +7325,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12133.json",
       "history": [
         {
@@ -7279,6 +7346,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:21:46Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:27Z"
         }
       ],
       "issue": 12133,
@@ -7287,14 +7359,14 @@
         "* modo bot"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Tournament announcement player counts are generated by the separate PDBot service; identify its source/access and define whether late joiners count at announcement time or tournament start.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "When pdbot does tournament announcments of how many players are in the tournament it will count anyone who has late joined after the start but before the announcement which can lead to slightly confusing announcement",
       "verdict": null
     },
@@ -7390,10 +7462,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12140.json",
       "history": [
         {
@@ -7414,6 +7483,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:18:07Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:27Z"
         }
       ],
       "issue": 12140,
@@ -7423,14 +7497,14 @@
         "* deck names"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose the deck-name rule that distinguishes separator hyphens from legitimate compound-name hyphens before changing sanitization.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "deck_name doesn't do very much with hyphens because hyphens can really be part of words, but they are also all over the place in a bad way",
       "verdict": null
     },
@@ -7438,10 +7512,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12141.json",
       "history": [
         {
@@ -7490,6 +7561,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:41:08Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 12141,
@@ -7498,14 +7574,14 @@
         "* deck names"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "[PD2] Big Blue sanitizes to `2] Big Blue` if the deck's season_id because of the limits of regex",
       "verdict": null
     },
@@ -7819,10 +7895,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12191.json",
       "history": [
         {
@@ -7843,6 +7916,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:24:00Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "verify_pending",
+          "ts": "2026-09-01T21:03:40Z"
         }
       ],
       "issue": 12191,
@@ -7851,14 +7929,14 @@
         "* monolith"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Current production API cookies explicitly return Path=/ and all current set_cookie calls rely on Werkzeug's Path=/ default; verify representative session and application cookies before closure.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "verify_pending",
       "title": "We seem to set cookies for paths other than /",
       "verdict": null
     },
@@ -7911,10 +7989,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "low",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12206.json",
       "history": [
         {
@@ -7935,6 +8010,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:22:00Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:27Z"
         }
       ],
       "issue": 12206,
@@ -7943,14 +8023,14 @@
         "* modo bot"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Recheck Anduril legality/name handling in the live PDBot service and identify that service's source; static code here cannot distinguish stale data from Unicode/DFC handling.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "PDBot doesn't know that And\u00faril, Flame of the West is legal",
       "verdict": null
     },
@@ -7958,10 +8038,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12207.json",
       "history": [
         {
@@ -7982,6 +8059,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:22:00Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:28Z"
         }
       ],
       "issue": 12207,
@@ -7990,14 +8072,14 @@
         "* deck names"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Inspect deck 239489 and the legality/color data present when it was normalized to decide whether this is a one-off stale-data problem or a sanitizer defect.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Why has deck 239489 been renamed Gruul Aggro by the sanitizer when it has Lightning Helix in it?",
       "verdict": null
     },
@@ -8280,10 +8362,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12223.json",
       "history": [
         {
@@ -8304,6 +8383,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:13:16Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:28Z"
         }
       ],
       "issue": 12223,
@@ -8314,14 +8398,14 @@
         "- important"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose the intended PD rotation time of day and timezone before changing the rotation offset/date interpretation.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Think about moving rotation time away from midnight pacific",
       "verdict": null
     },
@@ -8430,10 +8514,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12228.json",
       "history": [
         {
@@ -8482,6 +8563,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:39:37Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 12228,
@@ -8490,14 +8576,14 @@
         "* search"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "rage should match ajani, sleeper agent in our search code but does not because we resepct spaces in a way scryfall do not",
       "verdict": null
     },
@@ -8738,12 +8824,16 @@
     },
     "12235": {
       "class": "needs-product-decision",
-      "closure": null,
-      "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-01T21:03:22Z",
+        "external": false,
+        "reason": "not_planned",
+        "verified_by_batch": "opus-adjudication"
       },
+      "confidence": "high",
+      "escalation": null,
       "evidence_file": "evidence/12235.json",
       "history": [
         {
@@ -8764,6 +8854,16 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:12:49Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-09-01T21:03:20Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-01T21:03:22Z"
         }
       ],
       "issue": 12235,
@@ -8773,14 +8873,14 @@
         "* achievements"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Owner feedback says permanently incomplete log-derived achievements would be annoying and misleading.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "closed",
       "title": "We could have ridiculous achivements if we scanned the logs like \"memory lapsed three turns in a row\" but they would not be complete because logs are not complete",
       "verdict": null
     },
@@ -8860,10 +8960,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12243.json",
       "history": [
         {
@@ -8912,6 +9009,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:36:09Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:48Z"
         }
       ],
       "issue": 12243,
@@ -8920,14 +9022,14 @@
         "* decks"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "There are 83 retired decks that played 5 matches",
       "verdict": null
     },
@@ -8935,10 +9037,7 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "verifier-uncertain",
-        "question": "Verifier returned UNCERTAIN \u2014 drop the closure, re-triage, or override?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12244.json",
       "history": [
         {
@@ -8969,6 +9068,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:07:38Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T21:03:39Z"
         }
       ],
       "issue": 12244,
@@ -8979,14 +9083,14 @@
         "- important"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "The cited earlier commit predates this report and does not fully distinguish never-before-legal cards from rank-1 previously legal cards; its fetch-failure path skips sorting. Fix and test rotation hype ordering so never-before-legal cards come first, then heavily played returning cards, with a deterministic safe fallback.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_pending",
       "title": "Hype message for 84th run included \"Footbottom Feast\" which has been legal before and even played a few times",
       "verdict": "UNCERTAIN"
     },
@@ -9039,10 +9143,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12247.json",
       "history": [
         {
@@ -9063,6 +9164,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:00:16Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:28Z"
         }
       ],
       "issue": 12247,
@@ -9071,14 +9177,14 @@
         "* achievements"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Provide the authoritative retired Tournament Organizer list and decide whether the achievement remains hardcoded or becomes season-aware data.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Tournament Organizer achievement is messily implemented and inaccurate",
       "verdict": null
     },
@@ -9391,10 +9497,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "attempts-exhausted",
-        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12271.json",
       "history": [
         {
@@ -9443,6 +9546,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:28:05Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "reported",
+          "ts": "2026-09-01T21:03:49Z"
         }
       ],
       "issue": 12271,
@@ -9451,14 +9559,14 @@
         "* deck names"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
       "pr": null,
       "stage_attempts": {
         "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "reported",
       "title": "Odd sanitization when season is treated like a year",
       "verdict": null
     },
@@ -9466,10 +9574,7 @@
       "class": "already-fixed",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12272.json",
       "history": [
         {
@@ -9490,6 +9595,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:58:40Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:28Z"
         }
       ],
       "issue": 12272,
@@ -9498,14 +9608,14 @@
         "* monolith"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Run one live MySQL overflow-warning test with the deployed mysqlclient/server combination before closing, or choose to add an explicit warning-count check.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "Integer overflow in the db should be an error",
       "verdict": null
     },
@@ -9513,10 +9623,7 @@
       "class": "migration-required",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged migration-required \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12273.json",
       "history": [
         {
@@ -9537,6 +9644,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T18:58:40Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:28Z"
         }
       ],
       "issue": 12273,
@@ -9545,14 +9657,14 @@
         "* monolith"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Audit production for negative values and choose the table/column scope before introducing broad UNSIGNED schema migrations.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "A lot of our ints should be UNSIGNED in the db because they are not meant to hold negative numbers",
       "verdict": null
     },
@@ -9782,10 +9894,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12279.json",
       "history": [
         {
@@ -9806,6 +9915,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:01:30Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-01T21:04:28Z"
         }
       ],
       "issue": 12279,
@@ -9816,14 +9930,14 @@
         "* rotation"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Choose which rotation sort/filter controls should be first-class UI and whether administrators need different defaults from public users.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "How should the various column headings on /rotation sort the data?",
       "verdict": null
     },
@@ -9979,10 +10093,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/12284.json",
       "history": [
         {
@@ -10003,6 +10114,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T19:00:52Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-01T21:03:39Z"
         }
       ],
       "issue": 12284,
@@ -10012,14 +10128,14 @@
         "* rotation"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Implement the issue owner's stated minimum: /rotation should include every card that was legal in the immediately preceding season, including cards with zero hits in the current rotation data. Reuse existing legal-card history where possible and add focused tests.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_pending",
       "title": "Consider showing every magic card ever printed (or maybe released on MTGO) in /rotation",
       "verdict": null
     },
@@ -31860,9 +31976,9 @@
   },
   "last_bundle_at": "2026-09-01T20:57:52Z",
   "last_master_sha": "aa185ccd5da24d326ad51ee2e723b82986b3d9f7",
-  "last_mirror_at": "2026-09-01T21:03:00Z",
-  "last_seq": 4929,
-  "last_snapshot_at": "2026-09-01T21:03:00Z",
+  "last_mirror_at": "2026-09-01T21:03:02Z",
+  "last_seq": 5017,
+  "last_snapshot_at": "2026-09-01T21:07:10Z",
   "pause_level": 1,
   "pause_seconds": 1842,
   "pause_until": "2026-09-01T21:09:30Z",

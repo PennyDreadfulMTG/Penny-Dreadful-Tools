@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:26Z",
+    "note": "Settle the bug-policy wording: whether an unavoidable known game-breaking trigger always penalizes the card owner, and how the avoidable exception should be stated.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:48:30Z",
+  "evidence_refs": [
+    "evidence/11614.json#triage[0]"
+  ],
+  "issue": 11614,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The desired text addition is small (1\u20132 sentences in bugpolicy.mustache), but the exact wording of 'for any reason' must reconcile with the existing 'only the card's controller can receive a penalty' rule, and the commenter's 'avoidable' exception needs explicit owner decision before text can be finalized."
+}

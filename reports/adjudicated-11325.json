@@ -1,0 +1,14 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:48Z",
+    "note": "Two fix workers exhausted the campaign retry budget with malformed output. Preserve the issue and evidence in the report, but do not spend another automatic worker on it in this sweep.",
+    "verb": "report-only"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T20:43:31Z",
+  "evidence_refs": [],
+  "issue": 11325,
+  "kind": "attempts-exhausted",
+  "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
+  "summary": "malformed output after nudge"
+}

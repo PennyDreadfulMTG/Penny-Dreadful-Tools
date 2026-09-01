@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:28Z",
+    "note": "Run one live MySQL overflow-warning test with the deployed mysqlclient/server combination before closing, or choose to add an explicit warning-count check.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T18:58:40Z",
+  "evidence_refs": [
+    "evidence/12272.json#triage[0]"
+  ],
+  "issue": 12272,
+  "kind": "class-escalate",
+  "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "Confidence is medium rather than high because we cannot run a live test to confirm warning 1264 propagates as MySQLdb.Warning in the deployed MySQLdb version; if it does not (e.g., warnings are fetched differently in newer MySQLdb), the issue would revert to open. Worth a quick manual test before closing."
+}

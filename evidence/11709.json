@@ -27,5 +27,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Closing as no longer applicable. Grishnakh, Brash Instigator is not currently legal in Penny Dreadful, and the original report concerned legality during an earlier rotation; no persistent code defect remains to address.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-01T21:03:16Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:26Z",
+    "note": "Confirm whether the single-faced Everflowing Well image is Deckbox's external mouseover or our own rendering, then choose whether to accept it or change tooltip handling/provider.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:36:37Z",
+  "evidence_refs": [
+    "evidence/11858.json#triage[0]"
+  ],
+  "issue": 11858,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Need to confirm whether the bug is on the deckbox.org hover tooltip (third-party, hard to fix) or on the site's own card page image (fixable by adding the card's layout to prepare.py:26). Requires DB access to check the card's layout field."
+}

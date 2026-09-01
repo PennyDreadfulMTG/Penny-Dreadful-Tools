@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:39Z",
+    "note": "Implement the issue owner's stated minimum: /rotation should include every card that was legal in the immediately preceding season, including cards with zero hits in the current rotation data. Reuse existing legal-card history where possible and add focused tests.",
+    "verb": "queue-fix"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:00:52Z",
+  "evidence_refs": [
+    "evidence/12284.json#triage[0]"
+  ],
+  "issue": 12284,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Owner must decide between three approaches: all-MTGO cards, ever-PD-legal cards (f:pdall), or cards-legal-last-season. Each has different data volume and UI implications."
+}

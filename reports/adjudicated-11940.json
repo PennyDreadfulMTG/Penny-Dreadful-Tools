@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:26Z",
+    "note": "Choose how long and how prominently Kick Off/PD500 results stay on the homepage: winner banner, all Top 8 decks, or another treatment.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:28:10Z",
+  "evidence_refs": [
+    "evidence/11940.json#triage[0]"
+  ],
+  "issue": 11940,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Two distinct design options are described in the issue comment. Owner needs to decide: pin the 500/Kick Off results for a fixed duration, show a winner banner, or highlight all top-8 decks. Implementation is straightforward once the design is chosen, but the design requires judgment."
+}

@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:20Z",
+    "note": "The report concerned a prior rotation; the card is now correctly illegal and no persistent defect remains.",
+    "verb": "close-not-planned"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:41:47Z",
+  "evidence_refs": [
+    "evidence/11709.json#triage[0]"
+  ],
+  "issue": 11709,
+  "kind": "class-escalate",
+  "question": "Closure candidate obsolete at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "Cannot confirm exact season legality without a running database; classification based on the issue owner's own comment and the dynamic nature of PD format rotation."
+}

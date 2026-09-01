@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:26Z",
+    "note": "Inspect the two live deck records/import sources and decide whether 75-card mains are evidence of a parser error; Magic itself does not impose a 60-card maximum.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:30:01Z",
+  "evidence_refs": [
+    "evidence/11744.json#triage[0]"
+  ],
+  "issue": 11744,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "There is a clear validation gap (no max-60-main check in legality.py), but whether this caused the specific berluspooky36 decks or the decks arrived via a parsing/import edge case cannot be determined without database access to inspect the submitted decklists."
+}

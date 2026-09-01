@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:04:26Z",
+    "note": "Retrieve the raw source decklist for deck 233082/232812 from the live database so the missing-basics and sideboard parsing failure can be reproduced.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:36:37Z",
+  "evidence_refs": [
+    "evidence/11827.json#triage[0]"
+  ],
+  "issue": 11827,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The parsing bug likely still exists but is triggered by a specific decklist format for deck 233082. Without the raw decklist text from the database the exact failure mode cannot be identified."
+}

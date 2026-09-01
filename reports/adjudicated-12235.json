@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-01T21:03:22Z",
+    "note": "Owner feedback says permanently incomplete log-derived achievements would be annoying and misleading.",
+    "verb": "close-not-planned"
+  },
+  "bundled_at": "2026-09-01T20:57:52Z",
+  "created_at": "2026-09-01T19:12:49Z",
+  "evidence_refs": [
+    "evidence/12235.json#triage[0]"
+  ],
+  "issue": 12235,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The issue proposer (bakert) expressed explicit reservations about completeness in the only comment. The decision needed is whether incomplete/retroactively-unearnable achievements are acceptable design."
+}

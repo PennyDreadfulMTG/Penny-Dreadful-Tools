@@ -79,6 +79,8 @@ def before_request() -> wrappers.Response | None:
     simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt']
     if not any(request.path.startswith(prefix) for prefix in simple_paths):
         auth.check_perms()
+    else:
+        session.modified = False  # Don't touch the session cookie for static assets. See #7461.
     if not request.path.endswith('/'):
         return None  # Let flask do the redirect-routes-not-ending-in-slashes thing before we interfere with routing. Avoids #8277.
     if request.path.startswith('/seasons') and len(request.path) > len('/seasons/') and get_season_id() >= seasons.current_season_num():
@@ -89,9 +91,11 @@ def before_request() -> wrappers.Response | None:
     g.p = perf.start()
     return None
 
-# @APP.after_request
-# def after_request(response: Response) -> Response:
-#     return response
+@APP.after_request
+def after_request(response: Response) -> Response:
+    if request.path.startswith(APP.static_url_path):
+        response.headers.remove('Set-Cookie')
+    return response
 
 @APP.teardown_request
 def teardown_request(_: BaseException | None) -> None:

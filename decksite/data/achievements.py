@@ -8,6 +8,7 @@ import decksite
 from decksite.data import deck, preaggregation, query
 from decksite.data.models.person import Person
 from decksite.database import db
+from decksite.tournament import CompetitionFlag
 from magic import tournaments
 from magic.models import Deck
 from shared import logger
@@ -823,8 +824,8 @@ class PD500Top8(CountedAchievement):
     key = 'pd500_top8s'
     title = 'Penny Dreadful 500 Top 8'
     description_safe = 'Top 8 the Penny Dreadful 500.'
-    sql = "COUNT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Penny Dreadful 500%%' THEN d.id ELSE NULL END)"
-    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Penny Dreadful 500%%' THEN d.id ELSE NULL END)"
+    sql = f"COUNT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value} THEN d.id ELSE NULL END)"
+    detail_sql = f"GROUP_CONCAT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value} THEN d.id ELSE NULL END)"
     flags = ['hide_person', 'hide_source']
 
     def leaderboard_heading(self) -> str:
@@ -837,8 +838,8 @@ class PD500Winner(CountedAchievement):
     key = 'pd500_wins'
     title = 'Penny Dreadful 500 Winner'
     description_safe = 'Win the Penny Dreadful 500.'
-    sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Penny Dreadful 500%%' THEN d.id ELSE NULL END)"
-    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Penny Dreadful 500%%' THEN d.id ELSE NULL END)"
+    sql = f"COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value} THEN d.id ELSE NULL END)"
+    detail_sql = f"GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value} THEN d.id ELSE NULL END)"
     flags = ['hide_person', 'hide_source']
 
     def leaderboard_heading(self) -> str:
@@ -851,8 +852,8 @@ class KickoffTop8(CountedAchievement):
     key = 'kickoff_top8s'
     title = 'Season Kick Off Top 8'
     description_safe = 'Top 8 the Season Kick Off.'
-    sql = "COUNT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Kick off%%' THEN d.id ELSE NULL END)"
-    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Kick off%%' THEN d.id ELSE NULL END)"
+    sql = f"COUNT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.KICK_OFF.value} THEN d.id ELSE NULL END)"
+    detail_sql = f"GROUP_CONCAT(DISTINCT CASE WHEN d.finish <= 8 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.KICK_OFF.value} THEN d.id ELSE NULL END)"
     flags = ['hide_person', 'hide_source']
 
     def leaderboard_heading(self) -> str:
@@ -865,8 +866,8 @@ class KickoffWinner(CountedAchievement):
     key = 'kickoff_wins'
     title = 'Season Kick Off Winner'
     description_safe = 'Win the Season Kick Off.'
-    sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Kick off%%' THEN d.id ELSE NULL END)"
-    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND cf.name LIKE '%%Kick off%%' THEN d.id ELSE NULL END)"
+    sql = f"COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.KICK_OFF.value} THEN d.id ELSE NULL END)"
+    detail_sql = f"GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.KICK_OFF.value} THEN d.id ELSE NULL END)"
     flags = ['hide_person', 'hide_source']
 
     def leaderboard_heading(self) -> str:

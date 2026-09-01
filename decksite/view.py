@@ -11,6 +11,7 @@ from decksite import APP, auth, get_season_id, prepare
 from decksite.data import competition
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.deck_type import DeckType
+from decksite.tournament import CompetitionFlag
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
 from shared import dtutil, logger
@@ -151,7 +152,7 @@ class View(BaseView):
     def notice_html(self) -> str:
         now = dtutil.now(dtutil.GATHERLING_TZ)
         if now > tournaments.pd500_date():
-            cs = competition.load_competitions("ct.name = 'Gatherling' AND c.name LIKE '%%Penny Dreadful 500%%'", season_id=seasons.current_season_num(), should_load_decks=True)
+            cs = competition.load_competitions(f"ct.name = 'Gatherling' AND c.competition_flag_id = {CompetitionFlag.PENNY_DREADFUL_500.value}", season_id=seasons.current_season_num(), should_load_decks=True)
             if len(cs) != 1 or not cs[0].decks or cs[0].decks[0].finish != 1:
                 logger.warning('Wanted to display the PD500 winner but could not because of unexpected data')
                 return ''

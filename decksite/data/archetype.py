@@ -7,6 +7,7 @@ from anytree.iterators import PreOrderIter
 from decksite.data import clauses, deck, preaggregation, query
 from decksite.database import db
 from magic.models import Competition
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
@@ -132,6 +133,7 @@ def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: boo
     if not reviewed and similarity is not None:
         db().execute('UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
     db().commit('assign_archetype')
+    redis.clear(f'decksite:deck:{deck_id}')
 
 def move(archetype_id: int, parent_id: int) -> None:
     db().begin('move_archetype')

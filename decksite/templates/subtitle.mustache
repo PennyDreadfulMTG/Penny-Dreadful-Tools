@@ -1,14 +1,24 @@
+{{#season_num}}
+    <div class="subtitle">Season {{season_num}}</div>
+{{/season_num}}
 {{#competition_ends}}
     <div class="subtitle">
         Ends {{competition_ends}}
     </div>
 {{/competition_ends}}
 {{^competition_ends}}
-    {{#date}}
-        <div class="subtitle">
-            {{date}}
-        </div>
-    {{/date}}
+    {{#league_only}}
+        {{#date}}
+            <div class="subtitle">{{date}} – {{end_date}}</div>
+        {{/date}}
+    {{/league_only}}
+    {{^league_only}}
+        {{#date}}
+            <div class="subtitle">
+                {{date}}
+            </div>
+        {{/date}}
+    {{/league_only}}
 {{/competition_ends}}
 {{#is_deck_page}}
     <div class="subtitle">

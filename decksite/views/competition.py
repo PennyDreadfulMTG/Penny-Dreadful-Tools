@@ -20,7 +20,9 @@ class Competition(View):
             self.show_omw = True
             self.hide_top8 = True
             self.has_leaderboard = True
+        self.season_num = competition.season_id
         self.date = dtutil.display_date(competition.start_date)
+        self.end_date = dtutil.display_date(competition.end_date)
         self.archetypes = archetypes
         self.show_archetype_tree = len(self.archetypes) > 0
         self.hide_perfect_runs = self.tournament_only = competition.type != 'League'

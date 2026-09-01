@@ -1649,3 +1649,8 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1648, "seq": 1649, "ts": "2026-09-01T17:45:43Z"}
 {"changes": {"opus_session_id": "<this session>"}, "event": "CONFIG_CHANGED", "seq": 1650, "ts": "2026-09-01T17:46:08Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 1650, "seq": 1651, "ts": "2026-09-01T17:46:16Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 1652, "ts": "2026-09-01T17:46:18Z"}
+{"event": "MASTER_ADVANCED", "seq": 1653, "sha": "adf64b9851e225beca4796126b19e19d88010366", "ts": "2026-09-01T17:46:43Z"}
+{"event": "PR_MERGED", "issue": 12664, "merged_at": "2026-09-01T15:49:30Z", "pr": 14967, "seq": 1654, "ts": "2026-09-01T17:46:49Z"}
+{"event": "PR_MERGED", "issue": 12647, "merged_at": "2026-08-31T19:00:12Z", "pr": 14968, "seq": 1655, "ts": "2026-09-01T17:46:49Z"}
+{"event": "PR_MERGED", "issue": 12621, "merged_at": "2026-08-31T21:24:58Z", "pr": 14969, "seq": 1656, "ts": "2026-09-01T17:46:49Z"}

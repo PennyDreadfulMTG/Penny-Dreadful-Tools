@@ -16,7 +16,8 @@ class EditRules(View):
                  rules: list[Container],
                  archetypes: list[Archetype],
                  excluded_archetype_info: list[Container],
-                 errors: list[str] | None = None) -> None:
+                 errors: list[str] | None = None,
+                 preselect_archetype_id: int | None = None) -> None:
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total
@@ -25,6 +26,10 @@ class EditRules(View):
         self.overlooked_decks = overlooked_decks[0:10]
         self.rules = rules
         self.archetypes = archetypes
+        if preselect_archetype_id is not None:
+            for a in self.archetypes:
+                if a.id == preselect_archetype_id:
+                    a.selected = True
         archetypes_with_rules = {rule.archetype_id for rule in rules}
         self.leaf_nodes_with_no_rule = ', '.join(archetype.name for archetype in archetypes if not archetype.children and archetype.id not in archetypes_with_rules)
         self.rules.sort(key=lambda c: c.archetype_name)

@@ -123,7 +123,8 @@ def edit_rules(errors: list[str] | None = None) -> wrappers.Response:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
     archetypes = archs.load_archetypes(order_by='a.name')
-    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info(), errors)
+    preselect_archetype_id = request.args.get('archetype_id', type=int)
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info(), errors, preselect_archetype_id)
     return view.response()
 
 @APP.route('/admin/rules/', methods=['POST'])

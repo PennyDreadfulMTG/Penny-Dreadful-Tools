@@ -32,7 +32,10 @@ class EditArchetypes(View):
             if d.get('rule_archetype_id') == 0:
                 d.rule_archetype_url = url_for('edit_rules')
             d.show_add_rule_prompt = d.similarity == '100%' and not d.get('rule_archetype_name')
-        self.edit_rules_url = url_for('edit_rules')
+            if d.show_add_rule_prompt and d.get('archetype_id'):
+                d.edit_rules_url = url_for('edit_rules', archetype_id=d.archetype_id)
+            else:
+                d.edit_rules_url = url_for('edit_rules')
         self.query = q
         self.notquery = notq
         self.query_errors = query_errors or []

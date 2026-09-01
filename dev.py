@@ -136,8 +136,11 @@ def find_files(needle: str = '', file_extension: str = '', exclude: list[str] | 
 
 def runtests(argv: Iterable[str], m: str) -> None:
     args = []
-    for arg in list(argv):
+    argv_list = list(argv)
+    for arg in argv_list:
         args.extend(find_files(arg, 'py'))
+    if argv_list and not args:
+        sys.exit(f'No test files found matching: {argv_list}')
     args.extend(['-x'])
     if m:
         args.extend(['-m', m])

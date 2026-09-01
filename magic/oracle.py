@@ -1,4 +1,5 @@
 import logging
+import unicodedata
 from collections.abc import Iterable, Sequence
 
 from magic import card, layout, mana, multiverse, seasons, whoosh_write
@@ -221,7 +222,7 @@ def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
 
     rs = db().select(multiverse.cached_base_query(where=where))
     out = [Card(r) for r in rs]
-    return sorted(out, key=lambda card: card['name'])
+    return sorted(out, key=lambda card: unicodedata.normalize('NFKD', card['name']).casefold())
 
 def if_todays_prices(out: bool = True) -> list[Card]:
     current_format = multiverse.get_format_id(f'Penny Dreadful {seasons.current_season_code()}')
@@ -243,7 +244,7 @@ def if_todays_prices(out: bool = True) -> list[Card]:
 
     rs = db().select(multiverse.cached_base_query(where=where))
     cards = [Card(r) for r in rs]
-    return sorted(cards, key=lambda card: card['name'])
+    return sorted(cards, key=lambda card: unicodedata.normalize('NFKD', card['name']).casefold())
 
 async def add_cards_and_update_async(printings: list[CardDescription]) -> None:
     if not printings:

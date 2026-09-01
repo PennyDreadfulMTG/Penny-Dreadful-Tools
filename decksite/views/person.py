@@ -7,6 +7,7 @@ import titlecase
 from flask import url_for
 
 from decksite import prepare
+from decksite.data import deck as ds
 from decksite.data import person as ps
 from decksite.data.achievements import Achievement
 from decksite.data.archetype import Archetype
@@ -22,18 +23,14 @@ class Person(View):
         self.all_archetypes = all_archetypes
         self.person = person
         self.people = [person]
-        self.decks = person.decks
-        self.has_decks = len(person.decks) > 0
+        self.has_decks = bool(person.get('num_decks'))
         self.archetypes = archetypes
         self.hide_person = True
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('.achievements')
         self.person_achievements_url = url_for('.person_achievements', person_id=person.id)
-        colors: dict[str, int] = {}
-        for d in self.decks:
-            for c in d.colors:
-                colors[c] = colors.get(c, 0) + 1
+        colors = ds.person_color_counts(person.id, season_id)
         self.charts = [
             {
                 'title': 'Colors Played',

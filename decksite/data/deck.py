@@ -26,6 +26,20 @@ def recent_decks_for_person(person_id: int) -> list[Deck]:
     ds, _ = load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
     return ds
 
+def person_color_counts(person_id: int, season_id: int | None) -> dict[str, int]:
+    season_filter = query.season_query(season_id, 'dc.season_id')
+    sql = f"""
+        SELECT dc.colors
+        FROM deck AS d
+        JOIN deck_cache AS dc ON d.id = dc.deck_id
+        WHERE d.person_id = {sqlescape(person_id)} AND ({season_filter})
+    """
+    colors: dict[str, int] = {}
+    for row in db().select(sql):
+        for c in json.loads(row['colors'] or '[]'):
+            colors[c] = colors.get(c, 0) + 1
+    return colors
+
 def load_deck(deck_id: int) -> Deck:
     ds, _ = load_decks(f'd.id = {sqlescape(deck_id)}')
     return guarantee.exactly_one(ds)

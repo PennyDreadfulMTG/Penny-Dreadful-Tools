@@ -1,3 +1,4 @@
+import functools
 import sys
 from typing import Any, TypedDict, cast
 
@@ -148,6 +149,7 @@ class View(BaseView):
         return f'{self.page_title()}{season} – pennydreadfulmagic.com'
 
     # Site-wide notice in a banner at the top of every page, for very important things only!
+    @functools.cached_property
     def notice_html(self) -> str:
         now = dtutil.now(dtutil.GATHERLING_TZ)
         if now > tournaments.pd500_date():

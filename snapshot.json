@@ -4615,7 +4615,10 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": null,
+      "escalation": {
+        "kind": "attempts-exhausted",
+        "question": "fix stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?"
+      },
       "evidence_file": "evidence/11680.json",
       "history": [
         {
@@ -4655,6 +4658,15 @@
           "event": "LEASE_GRANTED",
           "status": "fix_leased",
           "ts": "2026-09-01T20:01:54Z"
+        },
+        {
+          "event": "LEASE_EXPIRED",
+          "ts": "2026-09-01T20:19:48Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-01T20:19:48Z"
         }
       ],
       "issue": 11680,
@@ -4662,23 +4674,15 @@
         "+ question",
         "* deck names"
       ],
-      "lease": {
-        "attempt": 2,
-        "batch_id": "f-11680-2",
-        "expires_at": "2026-09-01T21:31:54Z",
-        "granted_at": "2026-09-01T20:01:54Z",
-        "kind": "fix",
-        "session_id": "b0995c8e-93af-449a-bc4e-ae6ea123aab4",
-        "workspace_id": "477feea1-c261-49b3-9ac8-5a4658db0e09"
-      },
+      "lease": null,
       "notes": null,
       "pr": null,
       "stage_attempts": {
-        "fix": 1,
+        "fix": 2,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_leased",
+      "status": "escalated",
       "title": "White jund gets automatically renamed into brgw if it's not the entire deck name, despite there being a deck archetype with the same name https://pennydreadfulmagic.com/decks/224930/",
       "verdict": null
     },
@@ -15778,7 +15782,7 @@
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
         "ci": {
-          "checked_at": "2026-09-01T20:16:12Z",
+          "checked_at": "2026-09-01T20:32:03Z",
           "failed": [],
           "state": "green"
         },
@@ -16472,7 +16476,7 @@
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-01T20:16:10Z",
+          "checked_at": "2026-09-01T20:32:01Z",
           "failed": [],
           "state": "green"
         },
@@ -16546,7 +16550,7 @@
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-01T20:16:08Z",
+          "checked_at": "2026-09-01T20:31:59Z",
           "failed": [],
           "state": "green"
         },
@@ -16663,7 +16667,7 @@
         "adopted": false,
         "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
         "ci": {
-          "checked_at": "2026-09-01T20:16:07Z",
+          "checked_at": "2026-09-01T20:31:58Z",
           "failed": [],
           "state": "green"
         },
@@ -16859,7 +16863,7 @@
         "adopted": false,
         "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
         "ci": {
-          "checked_at": "2026-09-01T20:16:06Z",
+          "checked_at": "2026-09-01T20:31:57Z",
           "failed": [],
           "state": "green"
         },
@@ -16976,7 +16980,7 @@
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-01T20:16:04Z",
+          "checked_at": "2026-09-01T20:31:55Z",
           "failed": [],
           "state": "green"
         },
@@ -17163,7 +17167,7 @@
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-01T20:16:02Z",
+          "checked_at": "2026-09-01T20:31:54Z",
           "failed": [],
           "state": "green"
         },
@@ -17507,7 +17511,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-01T20:16:01Z",
+          "checked_at": "2026-09-01T20:31:52Z",
           "failed": [],
           "state": "green"
         },
@@ -17581,7 +17585,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-01T20:15:59Z",
+          "checked_at": "2026-09-01T20:31:51Z",
           "failed": [],
           "state": "green"
         },
@@ -17743,7 +17747,7 @@
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-01T20:15:58Z",
+          "checked_at": "2026-09-01T20:31:50Z",
           "failed": [],
           "state": "green"
         },
@@ -17860,7 +17864,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-01T20:15:57Z",
+          "checked_at": "2026-09-01T20:31:48Z",
           "failed": [],
           "state": "green"
         },
@@ -18043,7 +18047,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-01T20:15:56Z",
+          "checked_at": "2026-09-01T20:31:47Z",
           "failed": [],
           "state": "green"
         },
@@ -18230,7 +18234,7 @@
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
         "ci": {
-          "checked_at": "2026-09-01T20:15:55Z",
+          "checked_at": "2026-09-01T20:31:45Z",
           "failed": [],
           "state": "green"
         },
@@ -18346,7 +18350,7 @@
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-01T20:15:53Z",
+          "checked_at": "2026-09-01T20:31:44Z",
           "failed": [],
           "state": "green"
         },
@@ -18434,7 +18438,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-01T20:15:52Z",
+          "checked_at": "2026-09-01T20:31:42Z",
           "failed": [],
           "state": "green"
         },
@@ -18508,7 +18512,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-01T20:15:51Z",
+          "checked_at": "2026-09-01T20:31:41Z",
           "failed": [],
           "state": "green"
         },
@@ -18773,7 +18777,7 @@
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-01T20:15:50Z",
+          "checked_at": "2026-09-01T20:31:40Z",
           "failed": [],
           "state": "green"
         },
@@ -19032,7 +19036,7 @@
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-01T20:15:48Z",
+          "checked_at": "2026-09-01T20:31:39Z",
           "failed": [],
           "state": "green"
         },
@@ -19163,7 +19167,7 @@
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-01T20:15:47Z",
+          "checked_at": "2026-09-01T20:31:37Z",
           "failed": [],
           "state": "green"
         },
@@ -19251,7 +19255,7 @@
         "adopted": false,
         "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
         "ci": {
-          "checked_at": "2026-09-01T20:15:46Z",
+          "checked_at": "2026-09-01T20:31:36Z",
           "failed": [],
           "state": "green"
         },
@@ -19367,7 +19371,7 @@
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-01T20:15:45Z",
+          "checked_at": "2026-09-01T20:31:34Z",
           "failed": [],
           "state": "green"
         },
@@ -19710,7 +19714,7 @@
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-01T20:15:43Z",
+          "checked_at": "2026-09-01T20:31:33Z",
           "failed": [],
           "state": "green"
         },
@@ -19784,7 +19788,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-01T20:15:42Z",
+          "checked_at": "2026-09-01T20:31:32Z",
           "failed": [],
           "state": "green"
         },
@@ -20948,7 +20952,7 @@
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-01T20:15:39Z",
+          "checked_at": "2026-09-01T20:31:28Z",
           "failed": [],
           "state": "green"
         },
@@ -31251,9 +31255,9 @@
   },
   "last_bundle_at": "2026-09-01T18:57:14Z",
   "last_master_sha": "60eb16f10363ee2c9b01cdcb957d332adce697e3",
-  "last_mirror_at": "2026-09-01T19:59:40Z",
-  "last_seq": 4520,
-  "last_snapshot_at": "2026-09-01T20:16:13Z",
+  "last_mirror_at": "2026-09-01T20:16:15Z",
+  "last_seq": 4600,
+  "last_snapshot_at": "2026-09-01T20:32:04Z",
   "pause_level": 1,
   "pause_seconds": 0,
   "pause_until": "2026-09-01T20:35:52Z",
@@ -32795,7 +32799,7 @@
       "kind": "fix",
       "last_transcript_at": "2026-09-01T20:13:56.839Z",
       "session_id": "b0995c8e-93af-449a-bc4e-ae6ea123aab4",
-      "state": "running",
+      "state": "archived",
       "workspace_id": "477feea1-c261-49b3-9ac8-5a4658db0e09"
     },
     "482b3e22-1dfc-415c-9915-cc3036fabedf": {

@@ -24,7 +24,7 @@ def load_achievements(p: Person | None, season_id: int | None, with_detail: bool
         desc = Container({'title': a.title, 'description_safe': a.description_safe})
         desc.summary = a.load_summary(season_id=season_id)
         desc.legend = a.display(p) if p else ''
-        if with_detail:
+        if with_detail and desc.legend:
             desc.detail = a.detail(p, season_id=season_id)
         else:
             desc.percent = a.percent(season_id=season_id)

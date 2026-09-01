@@ -79,9 +79,6 @@ class Deck(View):
         description = f'{archetype_s} deck by {self.person}'
         return description
 
-    def oembed_url(self) -> str:
-        return url_for('deck_embed', deck_id=self.deck.id, _external=True)
-
     def authenticate_url(self) -> str:
         return url_for('authenticate', target=self.og_url())
 
@@ -143,5 +140,3 @@ class Deck(View):
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
         return f'https://cardhoarder.com/decks/upload?deck={fetch_tools.escape(deck_s)}'
 
-class DeckEmbed(Deck):
-    pass

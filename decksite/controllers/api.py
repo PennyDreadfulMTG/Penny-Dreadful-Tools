@@ -17,7 +17,6 @@ from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
-from decksite.views import DeckEmbed
 from magic import database as magic_database
 from magic import image_fetcher, layout, oracle, seasons, tournaments
 from magic.colors import find_colors
@@ -26,7 +25,6 @@ from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
-from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 from shared_web.menu import MenuItem
@@ -751,22 +749,6 @@ def key_cards(season_num: int) -> Response:
 def person_notes(person_id: int) -> Response:
     return return_json({'notes': ps.load_notes(person_id)})
 
-@APP.route('/decks/<int:deck_id>/oembed')
-def deck_embed(deck_id: int) -> Response:
-    # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
-    d = deck.load_deck(deck_id)
-    view = DeckEmbed(d, [], None, None, [])
-    width = 1200
-    height = 500
-    embed = {
-        'type': 'rich',
-        'version': '1.0',
-        'title': view.page_title(),
-        'width': width,
-        'height': height,
-        'html': template.render(view),
-    }
-    return return_json(embed)
 
 @APP.route('/api/test_500')
 @APP.route('/api/test_500/')

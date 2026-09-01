@@ -37,7 +37,7 @@ class SmokeTester:
                 rule_path = rule.rule
                 assert '//' not in rule_path
                 # Endpoints like "favicon.ico" and "robots.txt" should not have a trailing slash. Endpoints that serve files should not have a trailing slash. In some cases this makes them not work and in call cases it is ugly.
-                if '.' in rule_path or ':filename>' in rule_path or 'favicon' in rule_path or rule_path.endswith('/oembed') or rule_path == '/export/<match_id>':
+                if '.' in rule_path or ':filename>' in rule_path or 'favicon' in rule_path or rule_path == '/export/<match_id>':
                     assert not rule_path.endswith('/')
                 # API endpoints should have routes both with and without a trailing slash. This is partly for historical reasons and partly just so API clients can't "get it wrong" and experience unexpected redirects or 404s.
                 elif rule_path.startswith('/api/') and rule_path != '/api/':  # /api/ itself is docs, not an API endpoint, and should have the same behavior as "normal" routes

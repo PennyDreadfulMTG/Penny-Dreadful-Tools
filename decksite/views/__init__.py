@@ -14,7 +14,7 @@ from .community_guidelines import CommunityGuidelines
 from .competition import Competition
 from .competitions import Competitions
 from .contact_us import ContactUs
-from .deck import Deck, DeckEmbed
+from .deck import Deck
 from .deck_check import DeckCheck
 from .decks import Decks
 from .edit_aliases import EditAliases
@@ -54,4 +54,4 @@ from .tournament_leaderboards import TournamentLeaderboards
 from .tournaments import Tournaments
 from .unlink import Unlink
 
-__all__ = ['About', 'AboutPdm', 'Achievements', 'Admin', 'AdminRetire', 'Archetype', 'Archetypes', 'Ban', 'Banners', 'Bugs', 'Card', 'Cards', 'CommunityGuidelines', 'Competition', 'Competitions', 'ContactUs', 'Deck', 'DeckEmbed', 'DeckCheck', 'Decks', 'EditAliases', 'EditArchetypes', 'EditLeague', 'EditMatches', 'EditRules', 'Faqs', 'Home', 'KickOff', 'LeagueForm', 'LeagueInfo', 'LinkAccounts', 'Manabase', 'Matchups', 'Metagame', 'PD500', 'People', 'Person', 'PersonAchievements', 'PersonMatches', 'PlayerNotes', 'Prizes', 'Report', 'Resources', 'Retire', 'Rotation', 'RotationChanges', 'RotationChecklist', 'RotationSpeculation', 'Seasons', 'SignUp', 'Sorters', 'SuperSaturday', 'TournamentHosting', 'TournamentLeaderboards', 'Tournaments', 'Unlink']
+__all__ = ['About', 'AboutPdm', 'Achievements', 'Admin', 'AdminRetire', 'Archetype', 'Archetypes', 'Ban', 'Banners', 'Bugs', 'Card', 'Cards', 'CommunityGuidelines', 'Competition', 'Competitions', 'ContactUs', 'Deck', 'DeckCheck', 'Decks', 'EditAliases', 'EditArchetypes', 'EditLeague', 'EditMatches', 'EditRules', 'Faqs', 'Home', 'KickOff', 'LeagueForm', 'LeagueInfo', 'LinkAccounts', 'Manabase', 'Matchups', 'Metagame', 'PD500', 'People', 'Person', 'PersonAchievements', 'PersonMatches', 'PlayerNotes', 'Prizes', 'Report', 'Resources', 'Retire', 'Rotation', 'RotationChanges', 'RotationChecklist', 'RotationSpeculation', 'Seasons', 'SignUp', 'Sorters', 'SuperSaturday', 'TournamentHosting', 'TournamentLeaderboards', 'Tournaments', 'Unlink']

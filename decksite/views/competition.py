@@ -27,6 +27,12 @@ class Competition(View):
         self.league_only = self.hide_tournament_results = competition.type == 'League'
         self.hide_cardhoarder = tournaments.is_super_saturday(self.competition)
 
+    def og_title(self) -> str:
+        return self.competition.name
+
+    def og_description(self) -> str:
+        return f'Penny Dreadful {self.competition.type}: {self.competition.name}'
+
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)
 

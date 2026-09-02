@@ -31,6 +31,12 @@ class Card(View):
         self.card = card
         self.cards = [self.card]
 
+    def og_title(self) -> str:
+        return str(self.display_name)
+
+    def og_description(self) -> str:
+        return f'{self.display_name} in Penny Dreadful'
+
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.card, attr)
 

@@ -15,5 +15,11 @@ class Tournaments(View):
         self.kickoff_url = url_for('kickoff')
         self.pd500_url = url_for('pd500')
 
+    def og_title(self) -> str:
+        return 'Cardhoarder Tournaments'
+
+    def og_description(self) -> str:
+        return 'Penny Dreadful tournaments hosted by Cardhoarder, with prizes and standings.'
+
     def page_title(self) -> str:
         return 'Cardhoarder Tournaments'

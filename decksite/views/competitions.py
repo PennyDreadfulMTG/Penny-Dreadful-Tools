@@ -8,5 +8,11 @@ class Competitions(View):
         self.competitions = competitions
         self.show_seasons = True
 
+    def og_title(self) -> str:
+        return 'Competitions'
+
+    def og_description(self) -> str:
+        return 'Penny Dreadful league and tournament results.'
+
     def page_title(self) -> str:
         return 'Competitions'

@@ -81,6 +81,12 @@ class Person(View):
         self.legal_seasons = list(seasons_active)
         self.setup_active_seasons(seasons_active)
 
+    def og_title(self) -> str:
+        return self.person.name
+
+    def og_description(self) -> str:
+        return f'{self.person.name} on Penny Dreadful'
+
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.person, attr)
 

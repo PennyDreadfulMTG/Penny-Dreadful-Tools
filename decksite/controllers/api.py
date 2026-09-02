@@ -452,7 +452,7 @@ def archetypes2_api() -> Response:
         kcs = [cards[name] for name in archetype_key_cards.get(result.id, [])]
         result.key_cards = [c for c in kcs if not is_uninteresting(c)][0:5]
         result.num_matches = (result.wins or 0) + (result.losses or 0) + (result.draws or 0)
-        colors, colored_symbols = find_colors(oracle.load_cards(archetype_key_cards.get(result.id, [])))
+        colors, colored_symbols = find_colors(kcs)
         result.colors_safe = colors_html(colors, colored_symbols)
         kcs = [Card({'name': c['name'], 'url': image_fetcher.scryfall_image(c, 'art_crop')}) for c in result.key_cards]
         result.key_cards = kcs

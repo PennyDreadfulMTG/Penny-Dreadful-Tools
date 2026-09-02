@@ -122,15 +122,15 @@ def archetypes(deck_type: str | None = None) -> str:
     view = Archetypes(all_archetypes, tournament_only=tournament_only)
     return view.page()
 
-@APP.route('/archetypes/<archetype_id>/')
-@APP.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
-@SEASONS.route('/archetypes/<archetype_id>/')
-@SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
+@APP.route('/archetypes/<path:archetype_id>/')
+@APP.route('/archetypes/<path:archetype_id>/<any(tournament,league):deck_type>/')
+@SEASONS.route('/archetypes/<path:archetype_id>/')
+@SEASONS.route('/archetypes/<path:archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
 def archetype(archetype_id: str, deck_type: str | None = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '))
+    a = archs.load_archetype(merge_slashes(archetype_id.replace('+', ' ')))
     all_archetypes = archs.load_archetypes(season_id=season_id, tournament_only=tournament_only)
     archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
     seasons_active = archs.seasons_active(a.id)

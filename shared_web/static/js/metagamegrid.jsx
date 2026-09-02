@@ -89,7 +89,7 @@ const renderSort = (grid) => (
     <React.Fragment>
         {"Sorted by "}
         <form className="inline">
-            <select onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
+            <select value={grid.state.sortBy} onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
                 <option value="quality">Quality</option>
                 <option value="metaShare">Meta Share</option>
                 <option value="winPercent">Win %</option>
@@ -99,7 +99,7 @@ const renderSort = (grid) => (
                 <option value="name">Name</option>
             </select>
             {" : "}
-            <select onChange={(e) => { grid.sort(grid.state.sortBy, e.target.value); }}>
+            <select value={grid.state.sortOrder} onChange={(e) => { grid.sort(grid.state.sortBy, e.target.value); }}>
                 <option value="AUTO">Auto</option>
                 <option value="ASC">Asc</option>
                 <option value="DESC">Desc</option>

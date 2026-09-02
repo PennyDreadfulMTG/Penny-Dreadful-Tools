@@ -510,19 +510,12 @@ PD.initPersonNotes = function() {
     }
 };
 
+// Passing undefined as locale means "use browser locale" – https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat
+// eslint-disable-next-line no-undefined
+const PD_PERCENTAGE_FORMATTER = new Intl.NumberFormat(undefined, { style: "percent", minimumSignificantDigits: 2, maximumSignificantDigits: 2 });
+
 PD.formatPercentage = function (value) {
-    return new Intl.NumberFormat(
-        // Passing undefined here means "use browser locale" – https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat
-        // eslint-disable-next-line no-undefined
-        undefined,
-        // Choose the options that get us closest to our desired style – a percentage that tells you enough to be useful but no unnecessary decimal places or trailing zeroes.
-        {
-            style: "percent", // Treat decimals as percentages, multiplying by 100 and adding a % sign.
-            minimumSignificantDigits: 2,
-            maximumSignificantDigits: 2
-        }
-    )
-        .format(value)
+    return PD_PERCENTAGE_FORMATTER.format(value)
         // \D here is the locale-agnostic decimals separator.
         .replace(/(\D[0-9]*?)0+%$/, "$1%") // Get rid of trailing zeroes after the decimal separator.
         .replace(/\D%/, "%") // Clean up the scenario where we got rid of everything after the decimal separator and now have something like "4.%.

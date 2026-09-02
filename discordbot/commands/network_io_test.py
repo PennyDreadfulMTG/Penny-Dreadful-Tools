@@ -7,6 +7,7 @@ import pytest
 
 from discordbot.commands import art, downtimes, modobug, mos_league, randomcard, randomdeck, resources, rhinos, rulings, scry, status, welcome, whois
 from discordbot.commands import time as time_command
+from shared.fetch_tools import FetchException
 
 
 @pytest.mark.asyncio
@@ -58,6 +59,21 @@ async def test_resources_moves_sitemap_fetch_off_event_loop(monkeypatch: pytest.
     await resources.Resources.resources.callback(SimpleNamespace(), ctx, 'cards bolt')
 
     to_thread.assert_awaited_once_with(resources.site_resources, 'cards bolt')
+
+
+@pytest.mark.asyncio
+async def test_resources_handles_site_down_gracefully(monkeypatch: pytest.MonkeyPatch) -> None:
+    ctx = SimpleNamespace(author=SimpleNamespace(mention='<@123>'), send=AsyncMock())
+    to_thread = AsyncMock(side_effect=FetchException('Connection refused'))
+    monkeypatch.setattr(resources.asyncio, 'to_thread', to_thread)
+    monkeypatch.setattr(resources, 'resources_resources', Mock(return_value={}))
+    monkeypatch.setattr(resources.fetcher, 'decksite_url', Mock(return_value='https://pennydreadful.com/resources/'))
+
+    await resources.Resources.resources.callback(SimpleNamespace(), ctx, 'pdm')
+
+    sent = ctx.send.call_args[0][0]
+    assert 'down' in sent.lower()
+    assert 'https://pennydreadful.com/resources/' in sent
 
 
 @pytest.mark.asyncio

@@ -18,11 +18,17 @@ class Resources(Extension):
         results = {}
         if resource is None:
             resource = ''
+        site_down = False
         if len(resource) > 0:
             results.update(resources_resources(resource))
-            results.update(await asyncio.to_thread(site_resources, resource))
+            try:
+                results.update(await asyncio.to_thread(site_resources, resource))
+            except fetch_tools.FetchException:
+                site_down = True
         s = ''
-        if len(results) == 0:
+        if site_down:
+            s = 'The PD website appears to be down. Try <{url}> directly.'.format(url=fetcher.decksite_url('/resources/'))
+        elif len(results) == 0:
             s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))
         elif len(results) > 10:
             s = f'{ctx.author.mention}: Too many results, please be more specific.'

@@ -109,7 +109,12 @@ def post_archetypes() -> wrappers.Response:
         archs.move(int(request.form.getlist('archetype_id')[0]), int(request.form.getlist('archetype_id')[1]))
     elif request.form.get('parent') is not None:
         if len(request.form.get('name', '')) > 0:
-            archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
+            archetype_id = archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
+            include = request.form.get('include', '')
+            exclude = request.form.get('exclude', '')
+            if include or exclude:
+                rule_id = rs.add_rule(archetype_id)
+                rs.update_cards_raw(rule_id, include, exclude)
     else:
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/archetypes: {request.form}')
     if search_results:

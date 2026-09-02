@@ -116,7 +116,7 @@ def season_stats(archetype_id: int, tournament_only: bool = False) -> list[Seaso
         for row in db().select(sql, [archetype_id])
     ]
 
-def add(name: str, parent: int, description: str) -> None:
+def add(name: str, parent: int, description: str) -> int:
     archetype_id = db().insert('INSERT INTO archetype (name, description) VALUES (%s, %s)', [name, description])
     ancestors = db().select('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
@@ -124,6 +124,7 @@ def add(name: str, parent: int, description: str) -> None:
         sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
     sql += f'({archetype_id}, {archetype_id}, 0)'
     db().execute(sql)
+    return archetype_id
 
 def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: bool = True, similarity: int | None = None) -> None:
     db().begin('assign_archetype')

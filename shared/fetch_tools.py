@@ -175,6 +175,7 @@ async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
     try:
         async with aiohttp.ClientSession() as aios:
             response = await aios.get(url)
+            response.raise_for_status()
             with open(path, 'wb') as fout:
                 while True:
                     chunk = await response.content.read(1024)

@@ -2,8 +2,9 @@ import gzip
 import io
 import json
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
+import aiohttp
 import pytest
 import requests
 from PIL import Image
@@ -43,6 +44,25 @@ def test_store_image_rejects_http_error(tmp_path: Path) -> None:
 
     with patch.object(fetch_tools.requests, 'get', return_value=response), pytest.raises(fetch_tools.FetchException, match='Could not download'):
         fetch_tools.store_image('https://example.com/card.jpg', str(destination))
+
+    assert not destination.exists()
+
+
+@pytest.mark.asyncio
+async def test_store_async_raises_on_4xx(tmp_path: Path) -> None:
+    destination = tmp_path / 'card.jpg'
+    mock_response = Mock()
+    mock_response.raise_for_status.side_effect = aiohttp.ClientResponseError(
+        request_info=Mock(), history=(), status=404, message='Not Found',
+    )
+    mock_session = AsyncMock()
+    mock_session.get.return_value = mock_response
+    mock_cls = Mock()
+    mock_cls.return_value.__aenter__ = AsyncMock(return_value=mock_session)
+    mock_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+    with patch('aiohttp.ClientSession', mock_cls), pytest.raises(fetch_tools.FetchException):
+        await fetch_tools.store_async('https://example.com/missing.jpg', str(destination))
 
     assert not destination.exists()
 

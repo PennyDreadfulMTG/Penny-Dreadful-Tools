@@ -138,7 +138,6 @@ DataManager.propTypes = {
     "archetypeId": PropTypes.string,
     "baseQuery": PropTypes.string,
     "cardName": PropTypes.string,
-    "className": PropTypes.oneOf(["", "with-marginalia", "metagame-grid"]),
     "competitionId": PropTypes.string,
     "competitionFlagId": PropTypes.string,
     "competitionSeriesId": PropTypes.string,

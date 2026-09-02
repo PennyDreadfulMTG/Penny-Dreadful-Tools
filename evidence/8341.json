@@ -32,5 +32,19 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "opus-adjudication",
+      "final_comment": "Closing as completed by the current `/metagame` design. The page limits the displayed archetypes to a useful ranked set rather than rendering the entire long tail, which addresses the original problem of very low-volume archetypes overwhelming the useful results.",
+      "own_evidence": [
+        {
+          "detail": "manager independently confirmed",
+          "ref": "opus",
+          "type": "manual"
+        }
+      ],
+      "recorded_at": "2026-09-02T19:52:25Z",
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

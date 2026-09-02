@@ -8660,3 +8660,134 @@
 {"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8660, "ts": "2026-09-02T01:56:30Z"}
 {"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8661, "ts": "2026-09-02T01:56:31Z"}
 {"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8662, "ts": "2026-09-02T01:56:33Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8663, "ts": "2026-09-02T01:56:35Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8664, "ts": "2026-09-02T01:57:43Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8665, "ts": "2026-09-02T01:57:45Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8666, "ts": "2026-09-02T01:57:46Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8667, "ts": "2026-09-02T01:57:47Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8668, "ts": "2026-09-02T01:57:49Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8669, "ts": "2026-09-02T01:57:51Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8670, "ts": "2026-09-02T01:57:52Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8671, "ts": "2026-09-02T01:59:01Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8672, "ts": "2026-09-02T01:59:03Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8673, "ts": "2026-09-02T01:59:05Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8674, "ts": "2026-09-02T01:59:06Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8675, "ts": "2026-09-02T01:59:07Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8676, "ts": "2026-09-02T01:59:09Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8677, "ts": "2026-09-02T01:59:10Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8678, "ts": "2026-09-02T01:59:12Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8679, "ts": "2026-09-02T01:59:13Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8679, "seq": 8680, "ts": "2026-09-02T01:59:13Z"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8681, "ts": "2026-09-02T02:00:21Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8682, "ts": "2026-09-02T02:00:24Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8683, "ts": "2026-09-02T02:01:33Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8684, "ts": "2026-09-02T02:01:34Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8685, "ts": "2026-09-02T02:01:35Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8686, "ts": "2026-09-02T02:01:36Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8687, "ts": "2026-09-02T02:01:37Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8688, "ts": "2026-09-02T02:01:39Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8689, "ts": "2026-09-02T02:02:49Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8690, "ts": "2026-09-02T02:02:50Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8691, "ts": "2026-09-02T02:02:51Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8692, "ts": "2026-09-02T02:02:53Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8693, "ts": "2026-09-02T02:02:54Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8694, "ts": "2026-09-02T02:02:55Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8695, "ts": "2026-09-02T02:02:57Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8696, "ts": "2026-09-02T02:04:06Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8697, "ts": "2026-09-02T02:04:08Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8698, "ts": "2026-09-02T02:04:09Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8699, "ts": "2026-09-02T02:04:10Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8700, "ts": "2026-09-02T02:04:12Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8701, "ts": "2026-09-02T02:04:13Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8702, "ts": "2026-09-02T02:04:14Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8703, "ts": "2026-09-02T02:04:16Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8704, "ts": "2026-09-02T02:04:17Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8704, "seq": 8705, "ts": "2026-09-02T02:04:17Z"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8706, "ts": "2026-09-02T02:05:24Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8707, "ts": "2026-09-02T02:05:28Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8708, "ts": "2026-09-02T02:06:38Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8709, "ts": "2026-09-02T02:06:40Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8710, "ts": "2026-09-02T02:06:41Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8711, "ts": "2026-09-02T02:06:42Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8712, "ts": "2026-09-02T02:06:44Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8713, "ts": "2026-09-02T02:06:46Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8714, "ts": "2026-09-02T02:07:54Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8715, "ts": "2026-09-02T02:07:55Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8716, "ts": "2026-09-02T02:07:56Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8717, "ts": "2026-09-02T02:07:57Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8718, "ts": "2026-09-02T02:07:58Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8719, "ts": "2026-09-02T02:07:59Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8720, "ts": "2026-09-02T02:08:01Z"}
+{"event": "ADJUDICATED", "issue": 11150, "note": "Confirmed current bug: get_all_next_tournament_dates labels the generated Saturday using is_kick_off_week(start), whose seven-day window can contain next week's Kick Off while the generated occurrence is still this week's ordinary PD Saturday (notably the three-hour boundary created by kick_off_date vs the 13:30 recurrence). Fix by matching the special-event name to the generated Saturday occurrence/date, with a boundary regression test. Keep any PR draft until explicit approval.", "seq": 8721, "status": "fix_pending", "ts": "2026-09-02T19:15:05Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8721, "seq": 8722, "ts": "2026-09-02T19:15:05Z"}
+{"event": "ESCALATED", "issue": 11150, "kind": "manual-finding", "question": "Confirmed reproducible boundary bug; approved for fix by bakert.", "seq": 8723, "ts": "2026-09-02T19:15:55Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8723, "seq": 8724, "ts": "2026-09-02T19:15:55Z"}
+{"event": "ADJUDICATED", "issue": 11150, "note": "Confirmed current bug: get_all_next_tournament_dates labels the generated Saturday using is_kick_off_week(start), whose seven-day window can contain next week's Kick Off while the generated occurrence is still this week's ordinary PD Saturday (notably the three-hour boundary created by kick_off_date vs the 13:30 recurrence). Fix by matching the special-event name to the generated Saturday occurrence/date, with a boundary regression test. Keep any PR draft until explicit approval.", "seq": 8725, "status": "fix_pending", "ts": "2026-09-02T19:15:55Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8725, "seq": 8726, "ts": "2026-09-02T19:15:55Z"}
+{"event": "ESCALATED", "issue": 11165, "kind": "manual-adjudication", "question": "Bakert approved closure after current-code review.", "seq": 8727, "ts": "2026-09-02T19:23:02Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8727, "seq": 8728, "ts": "2026-09-02T19:23:02Z"}
+{"event": "ADJUDICATED", "issue": 11165, "note": "Bakert confirmed current behavior appears to work; /sync provides an explicit refresh and there is no current reproduction of the 2023 report.", "seq": 8729, "status": "closing", "ts": "2026-09-02T19:23:02Z", "verb": "close-completed"}
+{"event": "MUTATION_PLANNED", "issue": 11165, "kind": "close", "reason": "completed", "seq": 8730, "ts": "2026-09-02T19:23:02Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 11165, "reason": "completed", "seq": 8731, "ts": "2026-09-02T19:23:04Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8731, "seq": 8732, "ts": "2026-09-02T19:23:04Z"}
+{"branch": "sweep/10105-scryfall-search-on-the-pennydreadfulmagi", "draft": true, "event": "PR_OPENED", "head_sha": "3fc8c3e5d5550ddeede47cf700f9c7232870eda0", "issue": 10105, "number": 15106, "seq": 8733, "ts": "2026-09-02T19:34:07Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15106"}
+{"event": "PR_READIED_BY_HUMAN", "issue": 10105, "pr": 15106, "seq": 8734, "ts": "2026-09-02T19:34:07Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8734, "seq": 8735, "ts": "2026-09-02T19:34:07Z"}
+{"branch": "sweep/12593-find-a-solution-for-the-badge-of-archety", "event": "MUTATION_PLANNED", "issue": 12593, "kind": "pr", "seq": 8736, "ts": "2026-09-02T19:36:13Z"}
+{"branch": "sweep/12593-find-a-solution-for-the-badge-of-archety", "draft": true, "event": "PR_OPENED", "head_sha": "876efa11b24ac788d8d4644a27b97d5a50cccb61", "issue": 12593, "number": 15107, "seq": 8737, "ts": "2026-09-02T19:36:15Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15107"}
+{"event": "ESCALATED", "issue": 12579, "kind": "fix-validation", "question": "PR validation failed: branch sweep/12579-sort-should-be-sticky-on-metagame not on origin", "seq": 8738, "ts": "2026-09-02T19:36:15Z"}
+{"branch": "sweep/12571-the-ordering-of-losing-qfs-is-not-stable", "event": "MUTATION_PLANNED", "issue": 12571, "kind": "pr", "seq": 8739, "ts": "2026-09-02T19:36:16Z"}
+{"branch": "sweep/12571-the-ordering-of-losing-qfs-is-not-stable", "draft": true, "event": "PR_OPENED", "head_sha": "f789a8f8dfe9fcdb431a868d11693e494c6aef12", "issue": 12571, "number": 15108, "seq": 8740, "ts": "2026-09-02T19:36:19Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15108"}
+{"branch": "sweep/12568-expose-something-about-metagame-on-home", "event": "MUTATION_PLANNED", "issue": 12568, "kind": "pr", "seq": 8741, "ts": "2026-09-02T19:36:20Z"}
+{"branch": "sweep/12568-expose-something-about-metagame-on-home", "draft": true, "event": "PR_OPENED", "head_sha": "b0629864c4712f32555be02b638142202543e9b9", "issue": 12568, "number": 15109, "seq": 8742, "ts": "2026-09-02T19:36:22Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15109"}
+{"branch": "sweep/12564-it-would-be-nice-to-avoid-overriding-sor", "event": "MUTATION_PLANNED", "issue": 12564, "kind": "pr", "seq": 8743, "ts": "2026-09-02T19:36:23Z"}
+{"branch": "sweep/12564-it-would-be-nice-to-avoid-overriding-sor", "draft": true, "event": "PR_OPENED", "head_sha": "84339460399dfa9c2d2e2914568c7b1a3d930231", "issue": 12564, "number": 15110, "seq": 8744, "ts": "2026-09-02T19:36:25Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15110"}
+{"branch": "sweep/12553-add-a-description-to-every-bot-command", "event": "MUTATION_PLANNED", "issue": 12553, "kind": "pr", "seq": 8745, "ts": "2026-09-02T19:36:26Z"}
+{"branch": "sweep/12553-add-a-description-to-every-bot-command", "draft": true, "event": "PR_OPENED", "head_sha": "ed5a9b2e7364b1ae14cc1dd59f5937cd09f101fe", "issue": 12553, "number": 15111, "seq": 8746, "ts": "2026-09-02T19:36:28Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15111"}
+{"branch": "sweep/12550-deck-search", "event": "MUTATION_PLANNED", "issue": 12550, "kind": "pr", "seq": 8747, "ts": "2026-09-02T19:36:29Z"}
+{"branch": "sweep/12550-deck-search", "draft": true, "event": "PR_OPENED", "head_sha": "1cf20fba2aa305fa1fc23fc9a74aae0d2582b702", "issue": 12550, "number": 15112, "seq": 8748, "ts": "2026-09-02T19:36:31Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15112"}
+{"branch": "sweep/12546-read-base-chars-from-pd-css-instead-of-h", "event": "MUTATION_PLANNED", "issue": 12546, "kind": "pr", "seq": 8749, "ts": "2026-09-02T19:36:33Z"}
+{"branch": "sweep/12546-read-base-chars-from-pd-css-instead-of-h", "draft": true, "event": "PR_OPENED", "head_sha": "a7a56969bb073de7ad09f3457aa24a2d77a14898", "issue": 12546, "number": 15113, "seq": 8750, "ts": "2026-09-02T19:36:35Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15113"}
+{"branch": "sweep/12537-anything-with-a-title-attribute-that-isn", "event": "MUTATION_PLANNED", "issue": 12537, "kind": "pr", "seq": 8751, "ts": "2026-09-02T19:36:36Z"}
+{"branch": "sweep/12537-anything-with-a-title-attribute-that-isn", "draft": true, "event": "PR_OPENED", "head_sha": "2b5fd4b419d9176fc6fc045b91f74d6840c2e2ca", "issue": 12537, "number": 15114, "seq": 8752, "ts": "2026-09-02T19:36:39Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15114"}
+{"branch": "sweep/12534-include-rank-within-season-by-quality-on", "event": "MUTATION_PLANNED", "issue": 12534, "kind": "pr", "seq": 8753, "ts": "2026-09-02T19:36:40Z"}
+{"branch": "sweep/12534-include-rank-within-season-by-quality-on", "draft": true, "event": "PR_OPENED", "head_sha": "16fe6123160d3b4d56407862569a6472f9d7c9b3", "issue": 12534, "number": 15115, "seq": 8754, "ts": "2026-09-02T19:36:43Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15115"}
+{"branch": "sweep/12528-adopt-box-sizing-border-box-globally-and", "event": "MUTATION_PLANNED", "issue": 12528, "kind": "pr", "seq": 8755, "ts": "2026-09-02T19:36:44Z"}
+{"branch": "sweep/12528-adopt-box-sizing-border-box-globally-and", "draft": true, "event": "PR_OPENED", "head_sha": "dc4ff3eb393ebb91295d650c0ff7508144a5502c", "issue": 12528, "number": 15116, "seq": 8756, "ts": "2026-09-02T19:36:48Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15116"}
+{"branch": "sweep/12527-the-bot-thinks-that-name-sticker-goblin", "event": "MUTATION_PLANNED", "issue": 12527, "kind": "pr", "seq": 8757, "ts": "2026-09-02T19:36:49Z"}
+{"branch": "sweep/12527-the-bot-thinks-that-name-sticker-goblin", "draft": true, "event": "PR_OPENED", "head_sha": "4bdd3eedf60785003b4ac1cf3a5ddd461a78ceed", "issue": 12527, "number": 15117, "seq": 8758, "ts": "2026-09-02T19:36:53Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15117"}
+{"branch": "sweep/12524-seasons-all-decks-is-slow-to-load-the-fi", "event": "MUTATION_PLANNED", "issue": 12524, "kind": "pr", "seq": 8759, "ts": "2026-09-02T19:36:54Z"}
+{"branch": "sweep/12524-seasons-all-decks-is-slow-to-load-the-fi", "draft": true, "event": "PR_OPENED", "head_sha": "920b24ed201eca10c8418ac2c883a2a845750029", "issue": 12524, "number": 15118, "seq": 8760, "ts": "2026-09-02T19:36:57Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15118"}
+{"branch": "sweep/12521-we-are-pinned-to-flask-babel-2-0-0-but-l", "event": "MUTATION_PLANNED", "issue": 12521, "kind": "pr", "seq": 8761, "ts": "2026-09-02T19:36:58Z"}
+{"branch": "sweep/12521-we-are-pinned-to-flask-babel-2-0-0-but-l", "draft": true, "event": "PR_OPENED", "head_sha": "d6affbd8b76806fc215774c3189e8e45dfeabaed", "issue": 12521, "number": 15119, "seq": 8762, "ts": "2026-09-02T19:37:00Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15119"}
+{"branch": "sweep/12514-seasons-all-archetypes-lists-insidious-r", "event": "MUTATION_PLANNED", "issue": 12514, "kind": "pr", "seq": 8763, "ts": "2026-09-02T19:37:01Z"}
+{"branch": "sweep/12514-seasons-all-archetypes-lists-insidious-r", "draft": true, "event": "PR_OPENED", "head_sha": "ede187216755a8df61584ea9d2da617361c0e913", "issue": 12514, "number": 15120, "seq": 8764, "ts": "2026-09-02T19:37:03Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15120"}
+{"branch": "sweep/12512-add-an-explain-for-sideboarding-down-to", "event": "MUTATION_PLANNED", "issue": 12512, "kind": "pr", "seq": 8765, "ts": "2026-09-02T19:37:04Z"}
+{"branch": "sweep/12512-add-an-explain-for-sideboarding-down-to", "draft": true, "event": "PR_OPENED", "head_sha": "b9f2d84deca3ed5f84272e6a3f13044465d17c66", "issue": 12512, "number": 15121, "seq": 8766, "ts": "2026-09-02T19:37:06Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15121"}
+{"branch": "sweep/12509-numbers-at-seasons-all-cards-are-getting", "event": "MUTATION_PLANNED", "issue": 12509, "kind": "pr", "seq": 8767, "ts": "2026-09-02T19:37:07Z"}
+{"branch": "sweep/12509-numbers-at-seasons-all-cards-are-getting", "draft": true, "event": "PR_OPENED", "head_sha": "17ec038787c8cd00e79e364afb9be99566d8e3aa", "issue": 12509, "number": 15122, "seq": 8768, "ts": "2026-09-02T19:37:09Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15122"}
+{"branch": "sweep/12495-screw-it-we-ball-got-censored", "event": "MUTATION_PLANNED", "issue": 12495, "kind": "pr", "seq": 8769, "ts": "2026-09-02T19:37:10Z"}
+{"branch": "sweep/12495-screw-it-we-ball-got-censored", "draft": true, "event": "PR_OPENED", "head_sha": "52f15d6774df47fdd0fba3d6c3fcbfcf18663499", "issue": 12495, "number": 15123, "seq": 8770, "ts": "2026-09-02T19:37:12Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15123"}
+{"branch": "sweep/12494-leave-chance-midrange-doesn-t-work-in-ar", "event": "MUTATION_PLANNED", "issue": 12494, "kind": "pr", "seq": 8771, "ts": "2026-09-02T19:37:14Z"}
+{"branch": "sweep/12494-leave-chance-midrange-doesn-t-work-in-ar", "draft": true, "event": "PR_OPENED", "head_sha": "63826d7928106575d79b42c1b7c6ebccbd773726", "issue": 12494, "number": 15124, "seq": 8772, "ts": "2026-09-02T19:37:16Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15124"}
+{"branch": "sweep/12492-admin-unlink-could-skip-loading-people-t", "event": "MUTATION_PLANNED", "issue": 12492, "kind": "pr", "seq": 8773, "ts": "2026-09-02T19:37:17Z"}
+{"branch": "sweep/12492-admin-unlink-could-skip-loading-people-t", "draft": true, "event": "PR_OPENED", "head_sha": "fa7d59a625c0389b0ec89a375efd016fbc054fdf", "issue": 12492, "number": 15125, "seq": 8774, "ts": "2026-09-02T19:37:19Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15125"}
+{"branch": "sweep/12490-should-load-people-load-decks-etc-return", "event": "MUTATION_PLANNED", "issue": 12490, "kind": "pr", "seq": 8775, "ts": "2026-09-02T19:37:21Z"}
+{"branch": "sweep/12490-should-load-people-load-decks-etc-return", "draft": true, "event": "PR_OPENED", "head_sha": "0b6b0b203349edd1549c00a8d39c65868efb00b7", "issue": 12490, "number": 15126, "seq": 8776, "ts": "2026-09-02T19:37:23Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15126"}
+{"branch": "sweep/12484-we-should-understand-the-spanish-questio", "event": "MUTATION_PLANNED", "issue": 12484, "kind": "pr", "seq": 8777, "ts": "2026-09-02T19:37:24Z"}
+{"branch": "sweep/12484-we-should-understand-the-spanish-questio", "draft": true, "event": "PR_OPENED", "head_sha": "6cf78a049332a23a4db51a54f05e2ed45693842d", "issue": 12484, "number": 15127, "seq": 8778, "ts": "2026-09-02T19:37:26Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15127"}
+{"branch": "sweep/12472-people-on-all-people-should-link-to-all", "event": "MUTATION_PLANNED", "issue": 12472, "kind": "pr", "seq": 8779, "ts": "2026-09-02T19:37:27Z"}
+{"branch": "sweep/12472-people-on-all-people-should-link-to-all", "draft": true, "event": "PR_OPENED", "head_sha": "1c2dfc2525ed23dccb7dd87f38d687a450da44a1", "issue": 12472, "number": 15128, "seq": 8780, "ts": "2026-09-02T19:37:29Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15128"}
+{"branch": "sweep/12469-dev-py-has-bitrotted-a-little", "event": "MUTATION_PLANNED", "issue": 12469, "kind": "pr", "seq": 8781, "ts": "2026-09-02T19:37:30Z"}
+{"branch": "sweep/12469-dev-py-has-bitrotted-a-little", "draft": true, "event": "PR_OPENED", "head_sha": "4a71ed448a86399b7331714ba3d9a7514995d316", "issue": 12469, "number": 15129, "seq": 8782, "ts": "2026-09-02T19:37:32Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15129"}
+{"branch": "sweep/12467-don-t-use-inline-styles-in-manabase", "event": "MUTATION_PLANNED", "issue": 12467, "kind": "pr", "seq": 8783, "ts": "2026-09-02T19:37:33Z"}
+{"branch": "sweep/12467-don-t-use-inline-styles-in-manabase", "draft": true, "event": "PR_OPENED", "head_sha": "f510a772", "issue": 12467, "number": 15130, "seq": 8784, "ts": "2026-09-02T19:37:36Z", "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15130"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8784, "seq": 8785, "ts": "2026-09-02T19:37:36Z"}
+{"event": "ADJUDICATED", "issue": 8372, "note": "Approved product scope: generalize and reuse the existing archetype Meta Share By Season chart for card popularity rather than inventing a separate visualization. Preserve raw percentage data and per-page Chart.js autoscaling; cards use decks containing the card / all decks. Share styling, season handling, percentage tooltips, and clickable season bars, adding click-through to the archetype chart too. Archetypes may retain their additional win-rate tooltip. Keep any PR draft until explicit review approval.", "seq": 8786, "status": "fix_pending", "ts": "2026-09-02T19:41:42Z", "verb": "queue-fix"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8786, "seq": 8787, "ts": "2026-09-02T19:41:42Z"}
+{"event": "ADJUDICATED", "issue": 8341, "note": "Bakert confirmed the current /metagame page design has essentially solved the low-volume archetype display problem.", "seq": 8788, "status": "closing", "ts": "2026-09-02T19:52:25Z", "verb": "close-completed"}
+{"event": "MUTATION_PLANNED", "issue": 8341, "kind": "close", "reason": "completed", "seq": 8789, "ts": "2026-09-02T19:52:25Z"}
+{"comment_posted": true, "event": "CLOSE_EXECUTED", "issue": 8341, "reason": "completed", "seq": 8790, "ts": "2026-09-02T19:52:28Z", "verified_by_batch": "opus-adjudication"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8790, "seq": 8791, "ts": "2026-09-02T19:52:28Z"}
+{"event": "ADJUDICATED", "issue": 8075, "note": "Deferred by owner: translations subsystem is out of scope for the sweep; no fix to be queued. run.py generate/update/validate-translations issues left for the translations maintainer to decide.", "seq": 8792, "status": "deferred_human", "ts": "2026-09-02T20:53:23Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8792, "seq": 8793, "ts": "2026-09-02T20:53:23Z"}

@@ -1,5 +1,9 @@
 {
-  "adjudication": null,
+  "adjudication": {
+    "at": "2026-09-02T20:53:23Z",
+    "note": "Deferred by owner: translations subsystem is out of scope for the sweep; no fix to be queued. run.py generate/update/validate-translations issues left for the translations maintainer to decide.",
+    "verb": "defer-to-human"
+  },
   "bundled_at": "2026-09-02T01:02:52Z",
   "created_at": "2026-09-01T23:02:58Z",
   "evidence_refs": [

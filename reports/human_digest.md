@@ -186,3 +186,5 @@ Nothing is awaiting a decision from bakert.
 - #6887 — Sorting is done; decide whether color and win-rate per-column filtering is worth adding. (2026-09-02T01:08:14Z)
 
 - #7031 — Choose a timezone-city display policy: canonical city, bounded list, or a different output format. (2026-09-02T01:08:14Z)
+
+- #8075 — Deferred by owner: translations subsystem is out of scope for the sweep; no fix to be queued. run.py generate/update/validate-translations issues left for the translations maintainer to decide. (2026-09-02T20:53:23Z)

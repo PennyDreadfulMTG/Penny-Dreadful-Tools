@@ -5,8 +5,8 @@
     "workspaces_created": 502
   },
   "daily": {
-    "closures": 40,
-    "day": "2026-09-01",
+    "closures": 2,
+    "day": "2026-09-02",
     "prs": 25
   },
   "invariants": [
@@ -16,6 +16,13 @@
       "issue": 12729,
       "to": "verified",
       "ts": "2026-08-23T21:40:04Z"
+    },
+    {
+      "event": "ADJUDICATED",
+      "from": "pending",
+      "issue": 11150,
+      "to": "fix_pending",
+      "ts": "2026-09-02T19:15:05Z"
     }
   ],
   "issues": {
@@ -164,6 +171,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T23:39:47Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:34:07Z"
         }
       ],
       "issue": 10105,
@@ -174,15 +186,20 @@
       "lease": null,
       "notes": "Retry: both prior workers were blocked by the Claude subscription session limit, which reset at 22:50 UTC. This was infrastructure quota exhaustion, not a malformed triage result.",
       "pr": {
+        "adopted": false,
         "branch": "sweep/10105-scryfall-search-on-the-pennydreadfulmagi",
-        "head_sha": "3fc8c3e5d5550ddeede47cf700f9c7232870eda0"
+        "head_sha": "3fc8c3e5d5550ddeede47cf700f9c7232870eda0",
+        "number": 15106,
+        "opened_at": "2026-09-02T19:34:07Z",
+        "readied_by_human_at": "2026-09-02T19:34:07Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15106"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 2,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Scryfall search on the pennydreadfulmagic.com site breaks when typing \"()\"",
       "verdict": null
     },
@@ -1067,6 +1084,15 @@
           "event": "ADJUDICATED",
           "status": "pending",
           "ts": "2026-09-02T01:08:09Z"
+        },
+        {
+          "event": "INVARIANT_VIOLATION",
+          "ts": "2026-09-02T19:15:05Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-02T19:15:55Z"
         }
       ],
       "issue": 11150,
@@ -1075,14 +1101,14 @@
         "* discord bot"
       ],
       "lease": null,
-      "notes": "Re-investigate with executable boundary tests for is_kick_off_week across UTC/local timezone and week transitions; identify a reproducible defect or report it as historical/unreproducible.",
+      "notes": "Confirmed current bug: get_all_next_tournament_dates labels the generated Saturday using is_kick_off_week(start), whose seven-day window can contain next week's Kick Off while the generated occurrence is still this week's ordinary PD Saturday (notably the three-hour boundary created by kick_off_date vs the 13:30 recurrence). Fix by matching the special-event name to the generated Saturday occurrence/date, with a boundary regression test. Keep any PR draft until explicit approval.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 2,
         "verify": 0
       },
-      "status": "pending",
+      "status": "fix_pending",
       "title": "Bot announced that the \"Season Kick Off\" was today's tournament when it is next week. Gatherling is correct",
       "verdict": null
     },
@@ -1192,7 +1218,14 @@
     },
     "11165": {
       "class": "unclear",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-02T19:23:04Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "opus-adjudication"
+      },
       "confidence": "low",
       "escalation": null,
       "evidence_file": "evidence/11165.json",
@@ -1253,6 +1286,21 @@
           "event": "ADJUDICATED",
           "status": "reported",
           "ts": "2026-09-02T01:08:09Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-02T19:23:02Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-09-02T19:23:02Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-02T19:23:04Z"
         }
       ],
       "issue": 11165,
@@ -1261,14 +1309,14 @@
         "* modo bot"
       ],
       "lease": null,
-      "notes": "Leave open: this is a live Redis/fetcher/Discord integration investigation, not a product decision, and static sweep workers cannot establish the runtime cause.",
+      "notes": "Bakert confirmed current behavior appears to work; /sync provides an explicit refresh and there is no current reproduction of the 2023 report.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 2,
         "verify": 0
       },
-      "status": "reported",
+      "status": "closed",
       "title": "Discord server roles corresponding to achievements don't seem to be assigned any more, at least in some cases. Example - Spice_Weasel doesn't have any.",
       "verdict": null
     },
@@ -16413,6 +16461,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:43:01Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:36Z"
         }
       ],
       "issue": 12467,
@@ -16424,15 +16477,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12467-don-t-use-inline-styles-in-manabase",
-        "head_sha": "f510a772"
+        "head_sha": "f510a772",
+        "number": 15130,
+        "opened_at": "2026-09-02T19:37:36Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15130"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Don't use inline styles in /manabase",
       "verdict": null
     },
@@ -16515,6 +16572,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:40:18Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:32Z"
         }
       ],
       "issue": 12469,
@@ -16525,15 +16587,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12469-dev-py-has-bitrotted-a-little",
-        "head_sha": "4a71ed448a86399b7331714ba3d9a7514995d316"
+        "head_sha": "4a71ed448a86399b7331714ba3d9a7514995d316",
+        "number": 15129,
+        "opened_at": "2026-09-02T19:37:32Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15129"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "dev.py has bitrotted a little",
       "verdict": null
     },
@@ -16657,6 +16723,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:46:26Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:29Z"
         }
       ],
       "issue": 12472,
@@ -16667,15 +16738,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12472-people-on-all-people-should-link-to-all",
-        "head_sha": "1c2dfc2525ed23dccb7dd87f38d687a450da44a1"
+        "head_sha": "1c2dfc2525ed23dccb7dd87f38d687a450da44a1",
+        "number": 15128,
+        "opened_at": "2026-09-02T19:37:29Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15128"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "people on /all/people should link to all time detail page not current season detail page",
       "verdict": null
     },
@@ -16801,6 +16876,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:46:59Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:26Z"
         }
       ],
       "issue": 12484,
@@ -16811,15 +16891,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12484-we-should-understand-the-spanish-questio",
-        "head_sha": "6cf78a049332a23a4db51a54f05e2ed45693842d"
+        "head_sha": "6cf78a049332a23a4db51a54f05e2ed45693842d",
+        "number": 15127,
+        "opened_at": "2026-09-02T19:37:26Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15127"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "We should understand the Spanish question mark",
       "verdict": null
     },
@@ -16958,6 +17042,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T23:08:53Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:23Z"
         }
       ],
       "issue": 12490,
@@ -16967,15 +17056,19 @@
       "lease": null,
       "notes": "Refactor load_decks, load_people, and analogous loaders so the ordinary API returns list[T] only and does not calculate COUNT(*) OVER(). Add explicit *_with_total entry points for paginated callers that need a total. Standardize concrete collection return types on list[T], and factor repeated row-to-object/total extraction into an appropriate helper. Migrate callers carefully and add focused tests showing ordinary loaders omit total-count work while paginated loaders preserve totals. Any resulting PR must remain draft.",
       "pr": {
+        "adopted": false,
         "branch": "sweep/12490-should-load-people-load-decks-etc-return",
-        "head_sha": "0b6b0b203349edd1549c00a8d39c65868efb00b7"
+        "head_sha": "0b6b0b203349edd1549c00a8d39c65868efb00b7",
+        "number": 15126,
+        "opened_at": "2026-09-02T19:37:23Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15126"
       },
       "stage_attempts": {
         "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Should load_people, load_decks, etc. return total or not",
       "verdict": null
     },
@@ -17126,6 +17219,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:47:21Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:19Z"
         }
       ],
       "issue": 12492,
@@ -17135,15 +17233,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12492-admin-unlink-could-skip-loading-people-t",
-        "head_sha": "fa7d59a625c0389b0ec89a375efd016fbc054fdf"
+        "head_sha": "fa7d59a625c0389b0ec89a375efd016fbc054fdf",
+        "number": 15125,
+        "opened_at": "2026-09-02T19:37:19Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15125"
       },
       "stage_attempts": {
         "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "admin/unlink could skip loading people that aren't linked",
       "verdict": null
     },
@@ -17225,6 +17327,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:43:23Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:16Z"
         }
       ],
       "issue": 12494,
@@ -17234,15 +17341,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12494-leave-chance-midrange-doesn-t-work-in-ar",
-        "head_sha": "63826d7928106575d79b42c1b7c6ebccbd773726"
+        "head_sha": "63826d7928106575d79b42c1b7c6ebccbd773726",
+        "number": 15124,
+        "opened_at": "2026-09-02T19:37:16Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15124"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "leave // chance midrange doesn't work in /archetypes URL because of the forward slashes",
       "verdict": null
     },
@@ -17281,6 +17392,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:43:12Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:12Z"
         }
       ],
       "issue": 12495,
@@ -17290,15 +17406,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12495-screw-it-we-ball-got-censored",
-        "head_sha": "52f15d6774df47fdd0fba3d6c3fcbfcf18663499"
+        "head_sha": "52f15d6774df47fdd0fba3d6c3fcbfcf18663499",
+        "number": 15123,
+        "opened_at": "2026-09-02T19:37:12Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15123"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "\"screw it we ball\" got censored",
       "verdict": null
     },
@@ -17673,6 +17793,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:40:40Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:09Z"
         }
       ],
       "issue": 12509,
@@ -17682,15 +17807,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12509-numbers-at-seasons-all-cards-are-getting",
-        "head_sha": "17ec038787c8cd00e79e364afb9be99566d8e3aa"
+        "head_sha": "17ec038787c8cd00e79e364afb9be99566d8e3aa",
+        "number": 15122,
+        "opened_at": "2026-09-02T19:37:09Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15122"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Numbers at /seasons/all/cards are getting pretty intense",
       "verdict": null
     },
@@ -17729,6 +17858,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:46:04Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:06Z"
         }
       ],
       "issue": 12512,
@@ -17738,15 +17872,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12512-add-an-explain-for-sideboarding-down-to",
-        "head_sha": "b9f2d84deca3ed5f84272e6a3f13044465d17c66"
+        "head_sha": "b9f2d84deca3ed5f84272e6a3f13044465d17c66",
+        "number": 15121,
+        "opened_at": "2026-09-02T19:37:06Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15121"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Add an explain for sideboarding down to 59 cards, or some command that lets you search our tournament/bug rules maybe",
       "verdict": null
     },
@@ -17855,6 +17993,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:35:07Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:03Z"
         }
       ],
       "issue": 12514,
@@ -17864,15 +18007,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12514-seasons-all-archetypes-lists-insidious-r",
-        "head_sha": "ede187216755a8df61584ea9d2da617361c0e913"
+        "head_sha": "ede187216755a8df61584ea9d2da617361c0e913",
+        "number": 15120,
+        "opened_at": "2026-09-02T19:37:03Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15120"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "/seasons/all/archetypes lists Insidious Roots with # decks of None",
       "verdict": null
     },
@@ -18051,6 +18198,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:35:53Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:37:00Z"
         }
       ],
       "issue": 12521,
@@ -18060,15 +18212,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12521-we-are-pinned-to-flask-babel-2-0-0-but-l",
-        "head_sha": "d6affbd8b76806fc215774c3189e8e45dfeabaed"
+        "head_sha": "d6affbd8b76806fc215774c3189e8e45dfeabaed",
+        "number": 15119,
+        "opened_at": "2026-09-02T19:37:00Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15119"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "We are pinned to flask-babel 2.0.0 but latest is 4.0.0",
       "verdict": null
     },
@@ -18160,6 +18316,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T19:27:23Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:57Z"
         }
       ],
       "issue": 12524,
@@ -18169,15 +18330,19 @@
       "lease": null,
       "notes": "Keep /seasons/all/decks/ and investigate speeding up its query. Profile with EXPLAIN ANALYZE; optimize the all-seasons pagination/count/sort path and add justified indexes if useful. If it cannot be made acceptably fast without disproportionate complexity, replace it with a cheaper useful experience instead. Preserve /decks/ as the recent/current-season deck browser.",
       "pr": {
+        "adopted": false,
         "branch": "sweep/12524-seasons-all-decks-is-slow-to-load-the-fi",
-        "head_sha": "920b24ed201eca10c8418ac2c883a2a845750029"
+        "head_sha": "920b24ed201eca10c8418ac2c883a2a845750029",
+        "number": 15118,
+        "opened_at": "2026-09-02T19:36:57Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15118"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "/seasons/all/decks/ is slow to load the first page and not interesting",
       "verdict": null
     },
@@ -18216,6 +18381,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:34:12Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:53Z"
         }
       ],
       "issue": 12527,
@@ -18225,15 +18395,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12527-the-bot-thinks-that-name-sticker-goblin",
-        "head_sha": "4bdd3eedf60785003b4ac1cf3a5ddd461a78ceed"
+        "head_sha": "4bdd3eedf60785003b4ac1cf3a5ddd461a78ceed",
+        "number": 15117,
+        "opened_at": "2026-09-02T19:36:53Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15117"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "The bot thinks that \"Name Sticker\" Goblin is not avialable online, but it is",
       "verdict": null
     },
@@ -18272,6 +18446,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:24:54Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:48Z"
         }
       ],
       "issue": 12528,
@@ -18281,15 +18460,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12528-adopt-box-sizing-border-box-globally-and",
-        "head_sha": "dc4ff3eb393ebb91295d650c0ff7508144a5502c"
+        "head_sha": "dc4ff3eb393ebb91295d650c0ff7508144a5502c",
+        "number": 15116,
+        "opened_at": "2026-09-02T19:36:48Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15116"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Adopt box-sizing: border-box globally and remove individual declarations after checking for visual bugs",
       "verdict": null
     },
@@ -18328,6 +18511,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:22:33Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:43Z"
         }
       ],
       "issue": 12534,
@@ -18337,15 +18525,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12534-include-rank-within-season-by-quality-on",
-        "head_sha": "16fe6123160d3b4d56407862569a6472f9d7c9b3"
+        "head_sha": "16fe6123160d3b4d56407862569a6472f9d7c9b3",
+        "number": 15115,
+        "opened_at": "2026-09-02T19:36:43Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15115"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "include rank-within-season (by quality) on metagame tiles regardless of current sort/filter",
       "verdict": null
     },
@@ -18470,6 +18662,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:22:10Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:39Z"
         }
       ],
       "issue": 12537,
@@ -18479,15 +18676,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12537-anything-with-a-title-attribute-that-isn",
-        "head_sha": "2b5fd4b419d9176fc6fc045b91f74d6840c2e2ca"
+        "head_sha": "2b5fd4b419d9176fc6fc045b91f74d6840c2e2ca",
+        "number": 15114,
+        "opened_at": "2026-09-02T19:36:39Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15114"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Anything with a title attribute that isn't a link should have the help sign cursor not the I caret - like achievements on player detail",
       "verdict": null
     },
@@ -18633,7 +18834,7 @@
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
         "ci": {
-          "checked_at": "2026-09-02T01:54:05Z",
+          "checked_at": "2026-09-02T02:04:17Z",
           "failed": [],
           "state": "green"
         },
@@ -18842,6 +19043,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:24:42Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:35Z"
         }
       ],
       "issue": 12546,
@@ -18851,15 +19057,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12546-read-base-chars-from-pd-css-instead-of-h",
-        "head_sha": "a7a56969bb073de7ad09f3457aa24a2d77a14898"
+        "head_sha": "a7a56969bb073de7ad09f3457aa24a2d77a14898",
+        "number": 15113,
+        "opened_at": "2026-09-02T19:36:35Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15113"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Read base_chars from pd.css instead of hardcoding",
       "verdict": null
     },
@@ -19086,6 +19296,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T19:51:23Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:31Z"
         }
       ],
       "issue": 12550,
@@ -19095,15 +19310,19 @@
       "lease": null,
       "notes": "Build a public Scryfall-like deck query language into every full/paginated deck list, not the small homepage preview and not a separate /decksearch page. Queries automatically intersect the list's existing scope: /decks/ is current season, /seasons/all/decks/ is all history, and person/archetype/card/competition lists retain their own scopes. Make every meaningful displayed deck attribute searchable (name, pilot, colors, archetype, source, record/win rate, OMW, finish/Top 8, date, season), plus deck type and contents. Use is:tournament and is:league. Card syntax: card:\"Lightning Bolt\" for any count; card>=4:\"Lightning Bolt\" for total 75; main>=4:\"Lightning Bolt\" and side>=2:Pyroblast for zone counts. Support =, !=, <, <=, >, >= where meaningful; quotes only when needed. Keep the grammar extensible, validate syntax safely, and add focused parser/query tests.",
       "pr": {
+        "adopted": false,
         "branch": "sweep/12550-deck-search",
-        "head_sha": "1cf20fba2aa305fa1fc23fc9a74aae0d2582b702"
+        "head_sha": "1cf20fba2aa305fa1fc23fc9a74aae0d2582b702",
+        "number": 15112,
+        "opened_at": "2026-09-02T19:36:31Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15112"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Deck Search",
       "verdict": null
     },
@@ -19250,6 +19469,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:28:43Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:28Z"
         }
       ],
       "issue": 12553,
@@ -19259,15 +19483,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12553-add-a-description-to-every-bot-command",
-        "head_sha": "ed5a9b2e7364b1ae14cc1dd59f5937cd09f101fe"
+        "head_sha": "ed5a9b2e7364b1ae14cc1dd59f5937cd09f101fe",
+        "number": 15111,
+        "opened_at": "2026-09-02T19:36:28Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15111"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Add a description to every bot command",
       "verdict": null
     },
@@ -19327,7 +19555,7 @@
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-02T01:54:04Z",
+          "checked_at": "2026-09-02T02:04:16Z",
           "failed": [],
           "state": "green"
         },
@@ -19401,7 +19629,7 @@
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-02T01:54:03Z",
+          "checked_at": "2026-09-02T02:04:14Z",
           "failed": [],
           "state": "green"
         },
@@ -19518,7 +19746,7 @@
         "adopted": false,
         "branch": "sweep/12557-git-prs-no-longer-show-up-in-news",
         "ci": {
-          "checked_at": "2026-09-02T01:54:02Z",
+          "checked_at": "2026-09-02T02:04:13Z",
           "failed": [],
           "state": "green"
         },
@@ -19714,7 +19942,7 @@
         "adopted": false,
         "branch": "sweep/12560-hover-on-mobile-menu-over-the-main-optio",
         "ci": {
-          "checked_at": "2026-09-02T01:54:01Z",
+          "checked_at": "2026-09-02T02:04:12Z",
           "failed": [],
           "state": "green"
         },
@@ -19831,7 +20059,7 @@
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-02T01:54:00Z",
+          "checked_at": "2026-09-02T02:04:10Z",
           "failed": [],
           "state": "green"
         },
@@ -19884,6 +20112,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:24:31Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:25Z"
         }
       ],
       "issue": 12564,
@@ -19893,15 +20126,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12564-it-would-be-nice-to-avoid-overriding-sor",
-        "head_sha": "84339460399dfa9c2d2e2914568c7b1a3d930231"
+        "head_sha": "84339460399dfa9c2d2e2914568c7b1a3d930231",
+        "number": 15110,
+        "opened_at": "2026-09-02T19:36:25Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15110"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "it would be nice to avoid overriding sort in grid.jsx and have a shared implementtion in datamanager",
       "verdict": null
     },
@@ -20018,7 +20255,7 @@
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-02T01:53:58Z",
+          "checked_at": "2026-09-02T02:04:09Z",
           "failed": [],
           "state": "green"
         },
@@ -20124,6 +20361,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T20:09:59Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:22Z"
         }
       ],
       "issue": 12568,
@@ -20133,15 +20375,19 @@
       "lease": null,
       "notes": "Add a homepage Recent Metagame section without replacing the existing recent 5-0 or latest tournament Top 8 sections. Show the top 8 current-season archetypes ranked by the existing Quality metric, calculated using only results from the last 7 days. This is a short-window snapshot, not a movement/delta comparison. Show deck count alongside Quality as context and link the section through to the full /metagame/ page. Match the homepage's established eight-item rhythm. Add focused data/view tests and avoid duplicating the full metagame UI.",
       "pr": {
+        "adopted": false,
         "branch": "sweep/12568-expose-something-about-metagame-on-home",
-        "head_sha": "b0629864c4712f32555be02b638142202543e9b9"
+        "head_sha": "b0629864c4712f32555be02b638142202543e9b9",
+        "number": 15109,
+        "opened_at": "2026-09-02T19:36:22Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15109"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Expose something about metagame on home",
       "verdict": null
     },
@@ -20321,6 +20567,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:25:06Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:19Z"
         }
       ],
       "issue": 12571,
@@ -20330,15 +20581,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12571-the-ordering-of-losing-qfs-is-not-stable",
-        "head_sha": "f789a8f8dfe9fcdb431a868d11693e494c6aef12"
+        "head_sha": "f789a8f8dfe9fcdb431a868d11693e494c6aef12",
+        "number": 15108,
+        "opened_at": "2026-09-02T19:36:19Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15108"
       },
       "stage_attempts": {
         "fix": 1,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "The ordering of losing QFs is not stable on competition detail page",
       "verdict": null
     },
@@ -20398,7 +20653,7 @@
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-02T01:53:57Z",
+          "checked_at": "2026-09-02T02:04:08Z",
           "failed": [],
           "state": "green"
         },
@@ -20472,7 +20727,7 @@
         "adopted": false,
         "branch": "sweep/12573-pre-commit-can-pass-when-mypy-and-even-f",
         "ci": {
-          "checked_at": "2026-09-02T01:53:56Z",
+          "checked_at": "2026-09-02T02:04:06Z",
           "failed": [],
           "state": "green"
         },
@@ -20634,7 +20889,7 @@
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-02T01:52:47Z",
+          "checked_at": "2026-09-02T02:08:01Z",
           "failed": [],
           "state": "green"
         },
@@ -20751,7 +21006,7 @@
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-02T01:52:45Z",
+          "checked_at": "2026-09-02T02:07:59Z",
           "failed": [],
           "state": "green"
         },
@@ -20774,8 +21029,8 @@
       "closure": null,
       "confidence": "high",
       "escalation": {
-        "kind": "pr-ci-failed",
-        "question": "PR #15064 is red on jslint \u2014 dispatch one follow-up fixer to the same branch (queue-fixup), or abandon the PR (abandon-pr)?"
+        "kind": "fix-validation",
+        "question": "PR validation failed: branch sweep/12579-sort-should-be-sticky-on-metagame not on origin"
       },
       "evidence_file": "evidence/12579.json",
       "fixup": {
@@ -20846,6 +21101,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:24:20Z"
+        },
+        {
+          "event": "ESCALATED",
+          "status": "escalated",
+          "ts": "2026-09-02T19:36:15Z"
         }
       ],
       "issue": 12579,
@@ -20874,7 +21134,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "escalated",
       "title": "Sort should be sticky on /metagame",
       "verdict": null
     },
@@ -20934,7 +21194,7 @@
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-02T01:52:44Z",
+          "checked_at": "2026-09-02T02:07:58Z",
           "failed": [],
           "state": "green"
         },
@@ -21121,7 +21381,7 @@
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
         "ci": {
-          "checked_at": "2026-09-02T01:52:43Z",
+          "checked_at": "2026-09-02T02:07:57Z",
           "failed": [],
           "state": "green"
         },
@@ -21237,7 +21497,7 @@
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-02T01:52:41Z",
+          "checked_at": "2026-09-02T02:07:56Z",
           "failed": [],
           "state": "green"
         },
@@ -21325,7 +21585,7 @@
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-02T01:52:40Z",
+          "checked_at": "2026-09-02T02:07:55Z",
           "failed": [],
           "state": "green"
         },
@@ -21399,7 +21659,7 @@
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-02T01:52:39Z",
+          "checked_at": "2026-09-02T02:07:54Z",
           "failed": [],
           "state": "green"
         },
@@ -21700,7 +21960,7 @@
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-02T01:51:29Z",
+          "checked_at": "2026-09-02T02:06:46Z",
           "failed": [],
           "state": "green"
         },
@@ -21839,6 +22099,11 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-01T18:33:49Z"
+        },
+        {
+          "event": "PR_OPENED",
+          "status": "pr_open",
+          "ts": "2026-09-02T19:36:15Z"
         }
       ],
       "issue": 12593,
@@ -21848,15 +22113,19 @@
       "lease": null,
       "notes": null,
       "pr": {
+        "adopted": false,
         "branch": "sweep/12593-find-a-solution-for-the-badge-of-archety",
-        "head_sha": "876efa11b24ac788d8d4644a27b97d5a50cccb61"
+        "head_sha": "876efa11b24ac788d8d4644a27b97d5a50cccb61",
+        "number": 15107,
+        "opened_at": "2026-09-02T19:36:15Z",
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15107"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "pr_open",
       "title": "Find a solution for the \"badge\" of archetype to sort being clickable without needing to hack a higher z-index",
       "verdict": null
     },
@@ -21959,7 +22228,7 @@
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-02T01:51:28Z",
+          "checked_at": "2026-09-02T02:06:44Z",
           "failed": [],
           "state": "green"
         },
@@ -22090,7 +22359,7 @@
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-02T01:51:27Z",
+          "checked_at": "2026-09-02T02:06:42Z",
           "failed": [],
           "state": "green"
         },
@@ -22178,7 +22447,7 @@
         "adopted": false,
         "branch": "sweep/12599-search-on-metagame-gives-super-wide-tile",
         "ci": {
-          "checked_at": "2026-09-02T01:51:25Z",
+          "checked_at": "2026-09-02T02:06:41Z",
           "failed": [],
           "state": "green"
         },
@@ -22294,7 +22563,7 @@
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-02T01:51:24Z",
+          "checked_at": "2026-09-02T02:06:40Z",
           "failed": [],
           "state": "green"
         },
@@ -22637,7 +22906,7 @@
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-02T01:51:22Z",
+          "checked_at": "2026-09-02T02:06:38Z",
           "failed": [],
           "state": "green"
         },
@@ -22711,7 +22980,7 @@
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-02T01:49:07Z",
+          "checked_at": "2026-09-02T02:05:28Z",
           "failed": [],
           "state": "green"
         },
@@ -23875,7 +24144,7 @@
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-02T01:49:04Z",
+          "checked_at": "2026-09-02T02:05:24Z",
           "failed": [],
           "state": "green"
         },
@@ -36039,10 +36308,7 @@
       "class": "unclear",
       "closure": null,
       "confidence": "medium",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged unclear \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/8075.json",
       "history": [
         {
@@ -36063,6 +36329,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T23:02:58Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-02T20:53:23Z"
         }
       ],
       "issue": 8075,
@@ -36072,14 +36343,14 @@
         "\u2020 i18n"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Deferred by owner: translations subsystem is out of scope for the sweep; no fix to be queued. run.py generate/update/validate-translations issues left for the translations maintainer to decide.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "deferred_human",
       "title": "lots of errors in translation task",
       "verdict": null
     },
@@ -36956,12 +37227,16 @@
     },
     "8341": {
       "class": "needs-product-decision",
-      "closure": null,
-      "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-02T19:52:28Z",
+        "external": false,
+        "reason": "completed",
+        "verified_by_batch": "opus-adjudication"
       },
+      "confidence": "high",
+      "escalation": null,
       "evidence_file": "evidence/8341.json",
       "history": [
         {
@@ -36996,6 +37271,16 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T22:57:51Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-09-02T19:52:25Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-02T19:52:28Z"
         }
       ],
       "issue": 8341,
@@ -37004,14 +37289,14 @@
         "+ feature"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Bakert confirmed the current /metagame page design has essentially solved the low-volume archetype display problem.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 1,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "closed",
       "title": "Archetypes and maybe other things with num_decks should self-hide anything below n% of the total",
       "verdict": null
     },
@@ -37077,10 +37362,7 @@
       "class": "needs-product-decision",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "class-escalate",
-        "question": "Triaged needs-product-decision \u2014 needs a human/product call."
-      },
+      "escalation": null,
       "evidence_file": "evidence/8372.json",
       "history": [
         {
@@ -37115,6 +37397,11 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-01T22:57:51Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "fix_pending",
+          "ts": "2026-09-02T19:41:42Z"
         }
       ],
       "issue": 8372,
@@ -37123,14 +37410,14 @@
         "+ feature"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Approved product scope: generalize and reuse the existing archetype Meta Share By Season chart for card popularity rather than inventing a separate visualization. Preserve raw percentage data and per-page Chart.js autoscaling; cards use decks containing the card / all decks. Share styling, season handling, percentage tooltips, and clickable season bars, adding click-through to the archetype chart too. Archetypes may retain their additional win-rate tooltip. Keep any PR draft until explicit review approval.",
       "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 1,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "fix_pending",
       "title": "Feature - popularity of card over time as a proportion of decks/matches per-season (Dryad Militant much more popular in S19, etc.)",
       "verdict": null
     },
@@ -40578,9 +40865,9 @@
   },
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
-  "last_mirror_at": "2026-09-02T01:40:32Z",
-  "last_seq": 8654,
-  "last_snapshot_at": "2026-09-02T01:54:05Z",
+  "last_mirror_at": "2026-09-02T01:56:35Z",
+  "last_seq": 8793,
+  "last_snapshot_at": "2026-09-02T20:53:23Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

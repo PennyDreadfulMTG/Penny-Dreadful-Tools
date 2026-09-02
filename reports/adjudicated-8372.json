@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T19:41:42Z",
+    "note": "Approved product scope: generalize and reuse the existing archetype Meta Share By Season chart for card popularity rather than inventing a separate visualization. Preserve raw percentage data and per-page Chart.js autoscaling; cards use decks containing the card / all decks. Share styling, season handling, percentage tooltips, and clickable season bars, adding click-through to the archetype chart too. Archetypes may retain their additional win-rate tooltip. Keep any PR draft until explicit review approval.",
+    "verb": "queue-fix"
+  },
+  "bundled_at": "2026-09-01T22:58:20Z",
+  "created_at": "2026-09-01T22:57:51Z",
+  "evidence_refs": [
+    "evidence/8372.json#triage[0]"
+  ],
+  "issue": 8372,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The issue author explicitly says 'Not sure' about the key design question: whether to use logarithmic, percentile, or per-card-relative Y-axis scaling. That unresolved product decision must be answered before implementation begins."
+}

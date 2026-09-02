@@ -193,6 +193,9 @@ def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'name': ('name', 'ASC'),
         'metaShare': ('SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER ()', 'DESC'),
         'quality': (wilson_lower_bound_sql(), 'DESC'),
+        'qualityOptimistic': (wilson_lower_bound_sql(confidence_level=0.5), 'DESC'),
+        'qualityStrict': (wilson_lower_bound_sql(confidence_level=0.99999), 'DESC'),
+        'potential': (wilson_upper_bound_sql(), 'DESC'),
         'winPercent': (win_rate, 'DESC'),
         'tournamentWins': ('tournament_wins', 'DESC'),
         'tournamentTop8s': ('tournament_top8s', 'DESC'),
@@ -202,7 +205,8 @@ def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if sort_order == 'AUTO':
         sort_order = default_order
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
-    primary_order = order_by_nulls_last(col, sort_order) if sort_by == 'winPercent' else f'{col} {sort_order}'
+    nullable_sorts = {'quality', 'qualityOptimistic', 'qualityStrict', 'potential', 'winPercent'}
+    primary_order = order_by_nulls_last(col, sort_order) if sort_by in nullable_sorts else f'{col} {sort_order}'
     return f'{primary_order}, {wilson_lower_bound_sql()} DESC, num_decks DESC, {order_by_nulls_last(win_percent, "DESC")}, name ASC'
 
 def exclude_active_league_runs(except_person_id: int | None) -> str:
@@ -314,6 +318,10 @@ HIGH_CONFIDENCE = 0.95
 def wilson_lower_bound_sql(phat: str = 'SUM(wins) / SUM(wins + losses)', n: str = 'SUM(wins + losses)', confidence_level: float = VERY_HIGH_CONFIDENCE) -> str:
     z = z_value(confidence_level)
     return f'({phat} + {z} * {z} / (2 * {n}) - {z} * SQRT(({phat} * (1 - {phat}) + {z} * {z} / (4 * {n})) / {n})) / (1 + {z} * {z} / {n})'
+
+def wilson_upper_bound_sql(phat: str = 'SUM(wins) / SUM(wins + losses)', n: str = 'SUM(wins + losses)', confidence_level: float = VERY_HIGH_CONFIDENCE) -> str:
+    z = z_value(confidence_level)
+    return f'({phat} + {z} * {z} / (2 * {n}) + {z} * SQRT(({phat} * (1 - {phat}) + {z} * {z} / (4 * {n})) / {n})) / (1 + {z} * {z} / {n})'
 
 def z_value(confidence_level: float) -> float:
     return norm.ppf((1 + confidence_level) / 2)

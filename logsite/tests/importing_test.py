@@ -31,3 +31,11 @@ def test_import_switcheroo() -> None:
     with APP.app_context():
         local = import_log(198379247)
         assert local.has_unexpected_third_game
+
+@pytest.mark.functional
+def test_host_is_first_player_in_log() -> None:
+    # The host is the player who appears first in the log header (index 0).
+    # set(players) would destroy this ordering; dict.fromkeys preserves it.
+    with APP.app_context():
+        local = import_log(201109942)
+        assert local.host().name == 'subrosian_z'

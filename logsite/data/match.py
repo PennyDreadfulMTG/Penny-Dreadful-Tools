@@ -87,7 +87,7 @@ def create_match(match_id: int, format_name: str, comment: str, modules: list[st
     local = Match(id=match_id, format_id=format_id, comment=comment)
     modules = [db.get_or_insert_module(mod) for mod in modules]
     local.modules = modules
-    local.players = [db.get_or_insert_user(user) for user in set(players)]
+    local.players = [db.get_or_insert_user(user) for user in dict.fromkeys(players)]
     db.add(local)
     db.commit()
     return local

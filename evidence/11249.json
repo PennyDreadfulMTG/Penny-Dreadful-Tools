@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-11249-3",
+      "branch": "sweep/11249-deprecationwarning-pkg-resources-is-depr",
+      "files_changed": 1,
+      "head_sha": "37ed4252c08b4f7f001589c6964c3a80ca2a011d",
+      "issue": 11249,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "Change is a 2-line filterwarnings addition to pytest.ini. No project code uses pkg_resources; suppression is the correct response for third-party noise exactly as done for flask_restx and flask_babel. Unit test environment was unavailable (no DB), but lint passed and the change carries no execution risk.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nRunning tests emitted a noisy `DeprecationWarning: pkg_resources is deprecated as an API` warning originating entirely from third-party packages in `.venv` (pytest monkeypatch, babel, werkzeug). No project code uses `pkg_resources` directly.\n\n## What changed\n\nAdded one `filterwarnings` entry to `pytest.ini` to suppress the warning, exactly matching the existing pattern used for `flask_restx` and `flask_babel`:\n\n```ini\n    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/11249\n    ignore:.*pkg_resources is deprecated.*:DeprecationWarning\n```\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- Unit tests were env-blocked in this cloud workspace (conftest.py requires a live database connection on collection, which was unavailable); however the change is a 2-line config-only suppression with no code logic to test.\n\nFixes #11249",
+      "pr_title": "Suppress pkg_resources DeprecationWarning in pytest output (#11249)",
+      "recorded_at": "2026-09-02T01:06:46Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "lint passed; unit tests env-blocked because conftest.py requires a live MariaDB connection (DatabaseConnectionRefusedException on every test collection) \u2014 no project code touches pkg_resources, so the change is trivially correct and not testable beyond lint in this environment",
+        "result": "env-blocked"
+      }
+    }
+  ],
   "issue": 11249,
   "triage": [
     {

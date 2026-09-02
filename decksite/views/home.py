@@ -128,4 +128,21 @@ class Home(View):
                     },
                 ],
             },
+            {
+                'header': 'Unique Players',
+                'stats': [
+                    {
+                        'text': f"{matches_stats_display['num_players_this_week']} players this week",
+                    },
+                    {
+                        'text': f"{matches_stats_display['num_players_this_month']} players this month",
+                    },
+                    {
+                        'text': f"{matches_stats_display['num_players_this_season']} players this season",
+                    },
+                    {
+                        'text': f"{matches_stats_display['num_players_all_time']} players all time",
+                    },
+                ],
+            },
         ]

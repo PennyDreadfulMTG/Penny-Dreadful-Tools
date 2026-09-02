@@ -138,7 +138,22 @@ def stats() -> dict[str, int]:
         FROM
             `match`
     """
-    return db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0]
+    result = dict(db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0])
+    player_sql = """
+        SELECT
+            COUNT(DISTINCT CASE WHEN FROM_UNIXTIME(m.`date`) >= NOW() - INTERVAL 7 DAY THEN d.person_id ELSE NULL END) AS num_players_this_week,
+            COUNT(DISTINCT CASE WHEN FROM_UNIXTIME(m.`date`) >= NOW() - INTERVAL 30 DAY THEN d.person_id ELSE NULL END) AS num_players_this_month,
+            COUNT(DISTINCT CASE WHEN m.`date` >= %s THEN d.person_id ELSE NULL END) AS num_players_this_season,
+            COUNT(DISTINCT d.person_id) AS num_players_all_time
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm ON m.id = dm.match_id
+        INNER JOIN
+            deck AS d ON dm.deck_id = d.id
+    """
+    player_result = dict(db().select(player_sql, [dtutil.dt2ts(seasons.last_rotation())])[0])
+    return {**result, **player_result}
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin('update_match')

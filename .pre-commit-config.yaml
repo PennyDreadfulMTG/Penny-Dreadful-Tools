@@ -1,5 +1,10 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+ci:
+    # This system hook uses the developer's project environment. GitHub Actions
+    # runs mypy separately; pre-commit.ci does not provide uv.
+    skip: [mypy]
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -27,3 +32,17 @@ repos:
     hooks:
         -   id: ruff
             args: ["--select", "I", "--fix"]
+        -   id: ruff
+            name: ruff-lint
+            args: []
+            # WSGI entrypoints expose imported application objects to the server
+            # and are not scanned by the project's `dev.py lint` command.
+            exclude: wsgi$
+-   repo: local
+    hooks:
+    -   id: mypy
+        name: mypy
+        language: system
+        entry: uv run --frozen python dev.py mypy
+        types: [python]
+        pass_filenames: false

@@ -265,12 +265,14 @@ The characters included in our subsetted fonts are:
     ☐ U+2610 BALLOT BOX (uncheck all checkboxes in this table)
     ☑ U+2611 BALLOT BOX WITH CHECK (check all checkboxes in this table)
     ⚔ U+2694 CROSSED SWORDS (represents number of matches)
-    🏅 U+2059 SPORTS MEDAL (achievement earned)
+    🏅 U+1F3C5 SPORTS MEDAL (achievement earned)
     ☰ U+2630 TRIGRAM FOR HEAVEN (hamburger menu)
     ☼ U+263C WHITE SUN WITH RAYS (light mode toggle)
     🌙 U+1F319 CRESCENT MOON (dark mode toggle)
+    ✨ U+2728 SPARKLES (magic sparkle effect)
+    ✕ U+2715 MULTIPLICATION X (close/remove button)
 
-    (Please note: anything added here needs to be added to base_chars in the fonts maintenance task.)
+    (Please note: the fonts maintenance task reads these U+XXXX entries automatically; adding them here is sufficient.)
 
 as well as many, many characters used only in deck names.
 

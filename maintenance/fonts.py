@@ -201,7 +201,15 @@ def subset_font(font: TTFont, graphemes: set[str]) -> TTFont:
 
 
 def find_base_graphemes() -> set[str]:
-    return set('①②③④⑤⑥⑦⑧⑯Ⓣ⇅⊕⸺▪🐞🚫🏆📰💻▾△🛈✅☐☑⚔🏅☰🏠☼🌙✨✕')
+    css_path = os.path.join('shared_web', 'static', 'css', 'pd.css')
+    with open(css_path, encoding='utf-8') as f:
+        content = f.read()
+    start = content.index('The characters included in our subsetted fonts are:')
+    end = content.index('*/', start)
+    section = content[start:end]
+    # Take only the first U+XXXX per line to avoid picking up alternate code points mentioned in comments
+    code_points = (matches[0] for line in section.splitlines() for matches in [regex.findall(r'U\+([0-9A-F]{4,5})', line)] if matches)
+    return {chr(int(cp, 16)) for cp in code_points}
 
 def encode(font: TTFont) -> str:
     _, tmp_in = tempfile.mkstemp()

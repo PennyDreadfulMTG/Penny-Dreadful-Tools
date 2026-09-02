@@ -13,7 +13,7 @@ from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAG
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
-from shared import dtutil, logger
+from shared import dtutil, logger, text
 from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
@@ -145,7 +145,7 @@ class View(BaseView):
             season = ' - All Time'
         else:
             season = f' - Season {get_season_id()}'
-        return f'{self.page_title()}{season} – pennydreadfulmagic.com'
+        return text.replace_emoji_with_text(f'{self.page_title()}{season} – pennydreadfulmagic.com')
 
     # Site-wide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:

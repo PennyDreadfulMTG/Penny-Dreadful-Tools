@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:09Z",
+    "note": "Run the relevant current queries against MariaDB and inspect history for the old duplicate-CTE pattern; determine whether the reported database error can still occur.",
+    "verb": "retry-triage"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:05:01Z",
+  "evidence_refs": [
+    "evidence/6012.json#triage[0]"
+  ],
+  "issue": 6012,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Static analysis shows no obvious duplicate CTE names in current master, but without running the DB the MariaDB-specific behavior cannot be confirmed. The original 2019 code pattern may have been eliminated in the achievement refactoring; this issue may be obsolete but would need DB-level testing to close with confidence."
+}

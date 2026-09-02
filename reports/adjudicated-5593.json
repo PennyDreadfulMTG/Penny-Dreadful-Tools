@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:09Z",
+    "note": "Leave open: current code appears improved but the claimed Discord rendering defect cannot be established without a live bot/rendering reproduction.",
+    "verb": "report-only"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:12:23Z",
+  "evidence_refs": [
+    "evidence/5593.json#triage[0]"
+  ],
+  "issue": 5593,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Issue is from 2018; the discordbot has been significantly refactored (new library, new command structure). Current card display code has proper spaces around the mana block. Individual mana symbols within a cost (e.g. {1}{U}) still appear adjacent without inter-symbol spaces, but whether this causes visible 'hugging' in current Discord rendering cannot be determined without running the bot."
+}

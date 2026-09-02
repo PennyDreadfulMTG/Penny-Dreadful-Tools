@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:11Z",
+    "note": "The original four badge types exist; decide whether the later Streamer, Discord participant, and Discord moderator ideas belong in this issue.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:14:49Z",
+  "evidence_refs": [
+    "evidence/3171.json#triage[0]"
+  ],
+  "issue": 3171,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The original four badge types (tournament player, league player, 5-0 run, tournament organizer) are fully implemented. The issue remains open because the comment thread brainstormed additional badges \u2014 Streamer (link to stream), Discord participant, Discord mod \u2014 that require external data integration and owner decisions on scope and thresholds."
+}

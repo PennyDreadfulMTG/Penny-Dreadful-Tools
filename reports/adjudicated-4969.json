@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:12Z",
+    "note": "Approve the ban reason/date schema migration and corresponding admin and player-facing UI scope.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:12:01Z",
+  "evidence_refs": [
+    "evidence/4969.json#triage[0]"
+  ],
+  "issue": 4969,
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "Requires at minimum ALTER TABLE person ADD COLUMN ban_reason TEXT, ban_date DATETIME; also needs admin ban UI changes to capture reason, and the error message in league.py updated to surface the stored reason/date."
+}

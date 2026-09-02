@@ -136,3 +136,53 @@ Nothing is awaiting a decision from bakert.
 - #8608 — Decide whether order:/sort: search syntax adds value beyond sortable result-table columns. (2026-09-01T23:04:18Z)
 
 - #8667 — Choose whether and how to identify a best player per archetype: new per-archetype Elo or an existing win-rate heuristic, including sample threshold and time window. (2026-09-01T23:04:18Z)
+
+- #11166 — Choose whether locale query parameters should be ephemeral or whether site internationalization should be retired entirely. (2026-09-02T01:08:10Z)
+
+- #11170 — Adding battle defense search is clear but requires a face-table schema migration; approve the feature/migration before implementation. (2026-09-02T01:08:10Z)
+
+- #11213 — Decide whether Ruff should enforce E302; the other lint-rule work described by the issue is complete. (2026-09-02T01:08:10Z)
+
+- #1236 — Decide whether archetype/card Elo is still wanted or whether the matchup-grid direction supersedes it. (2026-09-02T01:08:10Z)
+
+- #3171 — The original four badge types exist; decide whether the later Streamer, Discord participant, and Discord moderator ideas belong in this issue. (2026-09-02T01:08:11Z)
+
+- #3987 — No actionable image scope exists; decide whether this feature is wanted and, if so, which pages and images. (2026-09-02T01:08:11Z)
+
+- #4448 — The old discussion presents multiple incompatible implementations; decide whether the feature is still wanted and which behavior to pursue. (2026-09-02T01:08:11Z)
+
+- #4459 — Choose between accepting the 24-hour active-run proxy and investing in decksite/logsite active-run integration. (2026-09-02T01:08:11Z)
+
+- #4515 — Choose whether Discord-generated links should suppress the intro box via query parameter or whether the current behavior is acceptable. (2026-09-02T01:08:11Z)
+
+- #4780 — Choose DB or code as the source of truth for series information before changing all_series_info(). (2026-09-02T01:08:11Z)
+
+- #4879 — Choose a mobile-safe Discord presentation for win rate and deck count. (2026-09-02T01:08:12Z)
+
+- #4969 — Approve the ban reason/date schema migration and corresponding admin and player-facing UI scope. (2026-09-02T01:08:12Z)
+
+- #5317 — Decide whether the cache-table naming cleanup is worth a deck_cache schema migration. (2026-09-02T01:08:12Z)
+
+- #5556 — Choose between building GitHub-to-player account linking and manually granting the achievement. (2026-09-02T01:08:12Z)
+
+- #5769 — Choose the user-visible/accessibility format for deck-name version markers. (2026-09-02T01:08:12Z)
+
+- #5869 — Approve storing inactivity losses with a game-table migration and exposing them in logsite. (2026-09-02T01:08:12Z)
+
+- #5926 — Decide which remaining per-printing Scryfall fields are worth storing and migrating after oracle_id was completed. (2026-09-02T01:08:13Z)
+
+- #6283 — Define the prize-email recipients, meaning of league top 8, and desired message template. (2026-09-02T01:08:13Z)
+
+- #6440 — Define who 'binary' is, the Discord role, attribution scope, and whether this is manual administration or automation. (2026-09-02T01:08:13Z)
+
+- #6628 — Decide whether the old named tournament-slot achievements still match the current schedule and are wanted. (2026-09-02T01:08:13Z)
+
+- #6678 — Define placement, inputs, threshold, and season scope for a who-beat-whom feature. (2026-09-02T01:08:13Z)
+
+- #6690 — Any expansion of deletion policy requires an explicit data-retention decision. (2026-09-02T01:08:13Z)
+
+- #6832 — Decide whether the PageSpeed benefit justifies critical-CSS/intro-box complexity. (2026-09-02T01:08:14Z)
+
+- #6887 — Sorting is done; decide whether color and win-rate per-column filtering is worth adding. (2026-09-02T01:08:14Z)
+
+- #7031 — Choose a timezone-city display policy: canonical city, bounded list, or a different output format. (2026-09-02T01:08:14Z)

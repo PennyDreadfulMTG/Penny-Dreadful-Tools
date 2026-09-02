@@ -8362,3 +8362,166 @@
 {"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8362, "ts": "2026-09-02T01:08:03Z"}
 {"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8363, "ts": "2026-09-02T01:08:04Z"}
 {"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8364, "ts": "2026-09-02T01:08:05Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8365, "ts": "2026-09-02T01:08:07Z"}
+{"event": "ADJUDICATED", "issue": 2928, "note": "Independently verify closure as not planned: the issue author explicitly said they do not want this feature and no implementation exists.", "seq": 8366, "status": "verify_pending", "ts": "2026-09-02T01:08:08Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8366, "seq": 8367, "ts": "2026-09-02T01:08:08Z"}
+{"event": "ADJUDICATED", "issue": 5443, "note": "Verify in a running browser that card hover images load on the current React card table and rotation table; close completed only if both reported cases work.", "seq": 8368, "status": "verify_pending", "ts": "2026-09-02T01:08:08Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8368, "seq": 8369, "ts": "2026-09-02T01:08:08Z"}
+{"event": "ADJUDICATED", "issue": 5677, "note": "Independently test the current Discord permission-error path and decide whether the original failure is fixed; distinguish the narrow trigger_typing/send permission edge case.", "seq": 8370, "status": "verify_pending", "ts": "2026-09-02T01:08:08Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8370, "seq": 8371, "ts": "2026-09-02T01:08:08Z"}
+{"event": "ADJUDICATED", "issue": 6023, "note": "Verify the current slash-command card-name autocomplete/fuzzy matching against the original behavior; account for the disabled configure command separately.", "seq": 8372, "status": "verify_pending", "ts": "2026-09-02T01:08:08Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8372, "seq": 8373, "ts": "2026-09-02T01:08:08Z"}
+{"event": "ADJUDICATED", "issue": 6433, "note": "Run the full normalization path with the exact input '13 - Izzet Swans' and close completed only if the numeric prefix is removed correctly.", "seq": 8374, "status": "verify_pending", "ts": "2026-09-02T01:08:08Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8374, "seq": 8375, "ts": "2026-09-02T01:08:08Z"}
+{"event": "ADJUDICATED", "issue": 6988, "note": "Exercise the Season 1 league-decks link and destination in a browser; verify the reported 404 is gone, treating the zero-count-link UX as a separate concern.", "seq": 8376, "status": "verify_pending", "ts": "2026-09-02T01:08:08Z", "verb": "retry-verify"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8376, "seq": 8377, "ts": "2026-09-02T01:08:08Z"}
+{"event": "ADJUDICATED", "issue": 11150, "note": "Re-investigate with executable boundary tests for is_kick_off_week across UTC/local timezone and week transitions; identify a reproducible defect or report it as historical/unreproducible.", "seq": 8378, "status": "pending", "ts": "2026-09-02T01:08:09Z", "verb": "retry-triage"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8378, "seq": 8379, "ts": "2026-09-02T01:08:09Z"}
+{"event": "ADJUDICATED", "issue": 6012, "note": "Run the relevant current queries against MariaDB and inspect history for the old duplicate-CTE pattern; determine whether the reported database error can still occur.", "seq": 8380, "status": "pending", "ts": "2026-09-02T01:08:09Z", "verb": "retry-triage"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8380, "seq": 8381, "ts": "2026-09-02T01:08:09Z"}
+{"event": "ADJUDICATED", "issue": 6963, "note": "Check current live Gatherling data and the present tournament schedule to establish whether PD Eternal still exists before recommending code or obsolete closure.", "seq": 8382, "status": "pending", "ts": "2026-09-02T01:08:09Z", "verb": "retry-triage"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8382, "seq": 8383, "ts": "2026-09-02T01:08:09Z"}
+{"event": "ADJUDICATED", "issue": 11165, "note": "Leave open: this is a live Redis/fetcher/Discord integration investigation, not a product decision, and static sweep workers cannot establish the runtime cause.", "seq": 8384, "status": "reported", "ts": "2026-09-02T01:08:09Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8384, "seq": 8385, "ts": "2026-09-02T01:08:09Z"}
+{"event": "ADJUDICATED", "issue": 5593, "note": "Leave open: current code appears improved but the claimed Discord rendering defect cannot be established without a live bot/rendering reproduction.", "seq": 8386, "status": "reported", "ts": "2026-09-02T01:08:09Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8386, "seq": 8387, "ts": "2026-09-02T01:08:09Z"}
+{"event": "ADJUDICATED", "issue": 6209, "note": "Leave open and remove from this sweep: labeled PDBot behavior belongs to the separate MTGO bot codebase.", "seq": 8388, "status": "reported", "ts": "2026-09-02T01:08:09Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8388, "seq": 8389, "ts": "2026-09-02T01:08:09Z"}
+{"event": "ADJUDICATED", "issue": 7071, "note": "Leave open: the historical bad data was cleaned manually and current evidence cannot distinguish the old scraper cause or demonstrate a present defect.", "seq": 8390, "status": "reported", "ts": "2026-09-02T01:08:10Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8390, "seq": 8391, "ts": "2026-09-02T01:08:10Z"}
+{"event": "ADJUDICATED", "issue": 7113, "note": "Leave open and remove from this sweep: the /link message is generated by the separate PDBot codebase.", "seq": 8392, "status": "reported", "ts": "2026-09-02T01:08:10Z", "verb": "report-only"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8392, "seq": 8393, "ts": "2026-09-02T01:08:10Z"}
+{"event": "ADJUDICATED", "issue": 11166, "note": "Choose whether locale query parameters should be ephemeral or whether site internationalization should be retired entirely.", "seq": 8394, "status": "deferred_human", "ts": "2026-09-02T01:08:10Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8394, "seq": 8395, "ts": "2026-09-02T01:08:10Z"}
+{"event": "ADJUDICATED", "issue": 11170, "note": "Adding battle defense search is clear but requires a face-table schema migration; approve the feature/migration before implementation.", "seq": 8396, "status": "deferred_human", "ts": "2026-09-02T01:08:10Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8396, "seq": 8397, "ts": "2026-09-02T01:08:10Z"}
+{"event": "ADJUDICATED", "issue": 11213, "note": "Decide whether Ruff should enforce E302; the other lint-rule work described by the issue is complete.", "seq": 8398, "status": "deferred_human", "ts": "2026-09-02T01:08:10Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8398, "seq": 8399, "ts": "2026-09-02T01:08:10Z"}
+{"event": "ADJUDICATED", "issue": 1236, "note": "Decide whether archetype/card Elo is still wanted or whether the matchup-grid direction supersedes it.", "seq": 8400, "status": "deferred_human", "ts": "2026-09-02T01:08:10Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8400, "seq": 8401, "ts": "2026-09-02T01:08:10Z"}
+{"event": "ADJUDICATED", "issue": 3171, "note": "The original four badge types exist; decide whether the later Streamer, Discord participant, and Discord moderator ideas belong in this issue.", "seq": 8402, "status": "deferred_human", "ts": "2026-09-02T01:08:11Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8402, "seq": 8403, "ts": "2026-09-02T01:08:11Z"}
+{"event": "ADJUDICATED", "issue": 3987, "note": "No actionable image scope exists; decide whether this feature is wanted and, if so, which pages and images.", "seq": 8404, "status": "deferred_human", "ts": "2026-09-02T01:08:11Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8404, "seq": 8405, "ts": "2026-09-02T01:08:11Z"}
+{"event": "ADJUDICATED", "issue": 4448, "note": "The old discussion presents multiple incompatible implementations; decide whether the feature is still wanted and which behavior to pursue.", "seq": 8406, "status": "deferred_human", "ts": "2026-09-02T01:08:11Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8406, "seq": 8407, "ts": "2026-09-02T01:08:11Z"}
+{"event": "ADJUDICATED", "issue": 4459, "note": "Choose between accepting the 24-hour active-run proxy and investing in decksite/logsite active-run integration.", "seq": 8408, "status": "deferred_human", "ts": "2026-09-02T01:08:11Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8408, "seq": 8409, "ts": "2026-09-02T01:08:11Z"}
+{"event": "ADJUDICATED", "issue": 4515, "note": "Choose whether Discord-generated links should suppress the intro box via query parameter or whether the current behavior is acceptable.", "seq": 8410, "status": "deferred_human", "ts": "2026-09-02T01:08:11Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8410, "seq": 8411, "ts": "2026-09-02T01:08:11Z"}
+{"event": "ADJUDICATED", "issue": 4780, "note": "Choose DB or code as the source of truth for series information before changing all_series_info().", "seq": 8412, "status": "deferred_human", "ts": "2026-09-02T01:08:11Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8412, "seq": 8413, "ts": "2026-09-02T01:08:11Z"}
+{"event": "ADJUDICATED", "issue": 4879, "note": "Choose a mobile-safe Discord presentation for win rate and deck count.", "seq": 8414, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8414, "seq": 8415, "ts": "2026-09-02T01:08:12Z"}
+{"event": "ADJUDICATED", "issue": 4969, "note": "Approve the ban reason/date schema migration and corresponding admin and player-facing UI scope.", "seq": 8416, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8416, "seq": 8417, "ts": "2026-09-02T01:08:12Z"}
+{"event": "ADJUDICATED", "issue": 5317, "note": "Decide whether the cache-table naming cleanup is worth a deck_cache schema migration.", "seq": 8418, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8418, "seq": 8419, "ts": "2026-09-02T01:08:12Z"}
+{"event": "ADJUDICATED", "issue": 5556, "note": "Choose between building GitHub-to-player account linking and manually granting the achievement.", "seq": 8420, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8420, "seq": 8421, "ts": "2026-09-02T01:08:12Z"}
+{"event": "ADJUDICATED", "issue": 5769, "note": "Choose the user-visible/accessibility format for deck-name version markers.", "seq": 8422, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8422, "seq": 8423, "ts": "2026-09-02T01:08:12Z"}
+{"event": "ADJUDICATED", "issue": 5869, "note": "Approve storing inactivity losses with a game-table migration and exposing them in logsite.", "seq": 8424, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8424, "seq": 8425, "ts": "2026-09-02T01:08:12Z"}
+{"event": "ADJUDICATED", "issue": 5926, "note": "Decide which remaining per-printing Scryfall fields are worth storing and migrating after oracle_id was completed.", "seq": 8426, "status": "deferred_human", "ts": "2026-09-02T01:08:12Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8426, "seq": 8427, "ts": "2026-09-02T01:08:13Z"}
+{"event": "ADJUDICATED", "issue": 6283, "note": "Define the prize-email recipients, meaning of league top 8, and desired message template.", "seq": 8428, "status": "deferred_human", "ts": "2026-09-02T01:08:13Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8428, "seq": 8429, "ts": "2026-09-02T01:08:13Z"}
+{"event": "ADJUDICATED", "issue": 6440, "note": "Define who 'binary' is, the Discord role, attribution scope, and whether this is manual administration or automation.", "seq": 8430, "status": "deferred_human", "ts": "2026-09-02T01:08:13Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8430, "seq": 8431, "ts": "2026-09-02T01:08:13Z"}
+{"event": "ADJUDICATED", "issue": 6628, "note": "Decide whether the old named tournament-slot achievements still match the current schedule and are wanted.", "seq": 8432, "status": "deferred_human", "ts": "2026-09-02T01:08:13Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8432, "seq": 8433, "ts": "2026-09-02T01:08:13Z"}
+{"event": "ADJUDICATED", "issue": 6678, "note": "Define placement, inputs, threshold, and season scope for a who-beat-whom feature.", "seq": 8434, "status": "deferred_human", "ts": "2026-09-02T01:08:13Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8434, "seq": 8435, "ts": "2026-09-02T01:08:13Z"}
+{"event": "ADJUDICATED", "issue": 6690, "note": "Any expansion of deletion policy requires an explicit data-retention decision.", "seq": 8436, "status": "deferred_human", "ts": "2026-09-02T01:08:13Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8436, "seq": 8437, "ts": "2026-09-02T01:08:13Z"}
+{"event": "ADJUDICATED", "issue": 6832, "note": "Decide whether the PageSpeed benefit justifies critical-CSS/intro-box complexity.", "seq": 8438, "status": "deferred_human", "ts": "2026-09-02T01:08:13Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8438, "seq": 8439, "ts": "2026-09-02T01:08:14Z"}
+{"event": "ADJUDICATED", "issue": 6887, "note": "Sorting is done; decide whether color and win-rate per-column filtering is worth adding.", "seq": 8440, "status": "deferred_human", "ts": "2026-09-02T01:08:14Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8440, "seq": 8441, "ts": "2026-09-02T01:08:14Z"}
+{"event": "ADJUDICATED", "issue": 7031, "note": "Choose a timezone-city display policy: canonical city, bounded list, or a different output format.", "seq": 8442, "status": "deferred_human", "ts": "2026-09-02T01:08:14Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8442, "seq": 8443, "ts": "2026-09-02T01:08:14Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8444, "ts": "2026-09-02T01:09:08Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8445, "ts": "2026-09-02T01:10:19Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8446, "ts": "2026-09-02T01:11:28Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8447, "ts": "2026-09-02T01:11:35Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8448, "ts": "2026-09-02T01:11:39Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8449, "ts": "2026-09-02T01:11:40Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8450, "ts": "2026-09-02T01:11:41Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8451, "ts": "2026-09-02T01:11:42Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8452, "ts": "2026-09-02T01:11:43Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8453, "ts": "2026-09-02T01:11:44Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8454, "ts": "2026-09-02T01:11:46Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8455, "ts": "2026-09-02T01:12:46Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8456, "ts": "2026-09-02T01:12:56Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8457, "ts": "2026-09-02T01:12:57Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8458, "ts": "2026-09-02T01:12:59Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8459, "ts": "2026-09-02T01:13:00Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8460, "ts": "2026-09-02T01:13:02Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8461, "ts": "2026-09-02T01:13:03Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8462, "ts": "2026-09-02T01:13:04Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8463, "ts": "2026-09-02T01:13:05Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8464, "ts": "2026-09-02T01:13:07Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8465, "ts": "2026-09-02T01:13:08Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8466, "ts": "2026-09-02T01:13:10Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8467, "ts": "2026-09-02T01:13:11Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8468, "ts": "2026-09-02T01:13:12Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8469, "ts": "2026-09-02T01:13:14Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8470, "ts": "2026-09-02T01:13:15Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8471, "ts": "2026-09-02T01:13:17Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8471, "seq": 8472, "ts": "2026-09-02T01:13:17Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8473, "ts": "2026-09-02T01:14:17Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8474, "ts": "2026-09-02T01:15:26Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8475, "ts": "2026-09-02T01:15:26Z", "verified_state": "deleted", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "LEASE_EXPIRED", "issue": 7361, "kind": "fix", "reason": "lease expired", "seq": 8476, "ts": "2026-09-02T01:15:26Z"}
+{"attempt": 1, "event": "RETRY_SCHEDULED", "issue": 7361, "kind": "fix", "seq": 8477, "status": "fix_pending", "ts": "2026-09-02T01:15:26Z"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8478, "ts": "2026-09-02T01:16:40Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8479, "ts": "2026-09-02T01:16:44Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8480, "ts": "2026-09-02T01:16:45Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8481, "ts": "2026-09-02T01:16:46Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8482, "ts": "2026-09-02T01:16:48Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8483, "ts": "2026-09-02T01:16:50Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8484, "ts": "2026-09-02T01:16:51Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8485, "ts": "2026-09-02T01:16:52Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8486, "ts": "2026-09-02T01:18:01Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8487, "ts": "2026-09-02T01:18:02Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8488, "ts": "2026-09-02T01:18:03Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8489, "ts": "2026-09-02T01:18:05Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8490, "ts": "2026-09-02T01:18:06Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8491, "ts": "2026-09-02T01:18:07Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8492, "ts": "2026-09-02T01:18:09Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8493, "ts": "2026-09-02T01:18:10Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8494, "ts": "2026-09-02T01:18:11Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8495, "ts": "2026-09-02T01:18:12Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8496, "ts": "2026-09-02T01:18:14Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8497, "ts": "2026-09-02T01:18:15Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8498, "ts": "2026-09-02T01:18:16Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8499, "ts": "2026-09-02T01:18:17Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8500, "ts": "2026-09-02T01:18:18Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8501, "ts": "2026-09-02T01:18:19Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8501, "seq": 8502, "ts": "2026-09-02T01:18:19Z"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8503, "ts": "2026-09-02T01:22:49Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8504, "ts": "2026-09-02T01:22:52Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8505, "ts": "2026-09-02T01:22:53Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8506, "ts": "2026-09-02T01:22:55Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8507, "ts": "2026-09-02T01:22:56Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8508, "ts": "2026-09-02T01:22:57Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8509, "ts": "2026-09-02T01:22:58Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8510, "ts": "2026-09-02T01:22:59Z"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8511, "ts": "2026-09-02T01:24:08Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8512, "ts": "2026-09-02T01:24:09Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8513, "ts": "2026-09-02T01:24:10Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8514, "ts": "2026-09-02T01:24:11Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8515, "ts": "2026-09-02T01:24:12Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8516, "ts": "2026-09-02T01:24:13Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8517, "ts": "2026-09-02T01:24:15Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8518, "ts": "2026-09-02T01:24:16Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8519, "ts": "2026-09-02T01:24:17Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8520, "ts": "2026-09-02T01:24:18Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8521, "ts": "2026-09-02T01:24:19Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8522, "ts": "2026-09-02T01:24:20Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8523, "ts": "2026-09-02T01:24:22Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8524, "ts": "2026-09-02T01:24:23Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8525, "ts": "2026-09-02T01:24:25Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8526, "ts": "2026-09-02T01:24:26Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8526, "seq": 8527, "ts": "2026-09-02T01:24:26Z"}

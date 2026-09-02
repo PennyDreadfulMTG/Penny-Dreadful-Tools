@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:14Z",
+    "note": "Sorting is done; decide whether color and win-rate per-column filtering is worth adding.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-01T23:48:19Z",
+  "evidence_refs": [
+    "evidence/6887.json#triage[0]"
+  ],
+  "issue": 6887,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Sorting (the simpler ask) is already implemented. The remaining request is color/winrate filtering, which the project owner explicitly said they are uncertain about. Decision needed: is per-column filtering on the league deck table worth implementing?"
+}

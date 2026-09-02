@@ -1,14 +1,16 @@
 {
   "adjudication": {
-    "at": "2026-09-01T23:02:00Z",
-    "note": "Retry: both prior workers were blocked by the Claude subscription session limit, which reset at 22:50 UTC. This was infrastructure quota exhaustion, not a malformed triage result.",
-    "verb": "retry-triage"
+    "at": "2026-09-02T01:08:10Z",
+    "note": "Adding battle defense search is clear but requires a face-table schema migration; approve the feature/migration before implementation.",
+    "verb": "defer-to-human"
   },
-  "bundled_at": "2026-09-01T22:58:20Z",
-  "created_at": "2026-09-01T21:14:38Z",
-  "evidence_refs": [],
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-01T23:24:31Z",
+  "evidence_refs": [
+    "evidence/11170.json#triage[0]"
+  ],
   "issue": 11170,
-  "kind": "attempts-exhausted",
-  "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
-  "summary": "malformed output after nudge"
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "Adding defense requires: (1) new column in the face table (ALTER TABLE migration), (2) adding defense to face_properties() in magic/card.py, (3) loading it from Scryfall in multiverse.py, (4) adding a search criterion in find/search.py similar to loyalty. The schema change makes this migration-required."
 }

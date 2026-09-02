@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:08Z",
+    "note": "Independently test the current Discord permission-error path and decide whether the original failure is fixed; distinguish the narrow trigger_typing/send permission edge case.",
+    "verb": "retry-verify"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:10:10Z",
+  "evidence_refs": [
+    "evidence/5677.json#triage[0]"
+  ],
+  "issue": 5677,
+  "kind": "class-escalate",
+  "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "Confidence is medium rather than high because there is no single fixing commit to cite \u2014 the fix came from a full library migration (discord.py \u2192 interactions.py) and incremental hardening. A narrow residual gap exists: if trigger_typing() succeeds but send() raises Forbidden (different permission sets), no user-facing error is shown; however this is an edge case the framework handles silently."
+}

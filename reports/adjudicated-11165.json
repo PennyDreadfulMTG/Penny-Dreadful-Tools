@@ -1,14 +1,16 @@
 {
   "adjudication": {
-    "at": "2026-09-01T23:02:00Z",
-    "note": "Retry: both prior workers were blocked by the Claude subscription session limit, which reset at 22:50 UTC. This was infrastructure quota exhaustion, not a malformed triage result.",
-    "verb": "retry-triage"
+    "at": "2026-09-02T01:08:09Z",
+    "note": "Leave open: this is a live Redis/fetcher/Discord integration investigation, not a product decision, and static sweep workers cannot establish the runtime cause.",
+    "verb": "report-only"
   },
-  "bundled_at": "2026-09-01T22:58:20Z",
-  "created_at": "2026-09-01T21:17:29Z",
-  "evidence_refs": [],
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-01T23:28:04Z",
+  "evidence_refs": [
+    "evidence/11165.json#triage[0]"
+  ],
   "issue": 11165,
-  "kind": "attempts-exhausted",
-  "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
-  "summary": "malformed output after nudge"
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "Static analysis shows the sync logic is structurally plausible but relies on Redis state and the fetcher API returning achievements data. Root cause cannot be confirmed without runtime access or API logs; needs live investigation."
 }

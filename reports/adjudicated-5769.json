@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:12Z",
+    "note": "Choose the user-visible/accessibility format for deck-name version markers.",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:07:58Z",
+  "evidence_refs": [
+    "evidence/5769.json#triage[0]"
+  ],
+  "issue": 5769,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The open decision: should version markers become invisible-to-text superscript HTML (accessibility tradeoff), stay as plain-text 'v3', or something else? The technical path (add name_safe in prepare.py, use {{{name_safe}}} in templates) is clear once the format is decided. Owner should sign off on which approach."
+}

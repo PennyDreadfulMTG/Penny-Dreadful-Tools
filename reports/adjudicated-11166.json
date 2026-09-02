@@ -1,14 +1,16 @@
 {
   "adjudication": {
-    "at": "2026-09-01T23:02:00Z",
-    "note": "Retry: both prior workers were blocked by the Claude subscription session limit, which reset at 22:50 UTC. This was infrastructure quota exhaustion, not a malformed triage result.",
-    "verb": "retry-triage"
+    "at": "2026-09-02T01:08:10Z",
+    "note": "Choose whether locale query parameters should be ephemeral or whether site internationalization should be retired entirely.",
+    "verb": "defer-to-human"
   },
-  "bundled_at": "2026-09-01T22:58:20Z",
-  "created_at": "2026-09-01T21:17:29Z",
-  "evidence_refs": [],
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-01T23:28:04Z",
+  "evidence_refs": [
+    "evidence/11166.json#triage[0]"
+  ],
   "issue": 11166,
-  "kind": "attempts-exhausted",
-  "question": "triage stage failed 2 times (malformed output after nudge) \u2014 retry, report-only, or drop?",
-  "summary": "malformed output after nudge"
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Two possible resolutions: (a) remove the session write from get_locale() so querystring locale is ephemeral, or (b) remove i18n entirely. The owner comment strongly hints at (b). Either path is owner-decision territory."
 }

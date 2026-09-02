@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:08Z",
+    "note": "Run the full normalization path with the exact input '13 - Izzet Swans' and close completed only if the numeric prefix is removed correctly.",
+    "verb": "retry-verify"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:05:34Z",
+  "evidence_refs": [
+    "evidence/6433.json#triage[0]"
+  ],
+  "issue": 6433,
+  "kind": "class-escalate",
+  "question": "Closure candidate already-fixed at medium confidence \u2014 verify anyway, report-only, or drop?",
+  "summary": "No test specifically for '13 - Izzet Swans' through the full normalize pipeline; confidence medium rather than high for this reason. The analogous '31 - Storm' test covers the same code path."
+}

@@ -1,0 +1,16 @@
+{
+  "adjudication": {
+    "at": "2026-09-02T01:08:11Z",
+    "note": "Choose DB or code as the source of truth for series information before changing all_series_info().",
+    "verb": "defer-to-human"
+  },
+  "bundled_at": "2026-09-02T01:02:52Z",
+  "created_at": "2026-09-02T00:10:21Z",
+  "evidence_refs": [
+    "evidence/4780.json#triage[0]"
+  ],
+  "issue": 4780,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The fix would make all_series_info() do a DB lookup rather than returning hardcoded strings, but the decision of which system is the source of truth (DB vs. code) requires an explicit owner call; the issue body itself says 'Think about this.'"
+}

@@ -320,6 +320,7 @@ TESTDATA: list[tuple[str, str, list[str] | None, str | None, int]] = [
     ('🏴\u200d☠️', '🏴\u200d☠', ['U', 'R'], 'Pirates', 33),  # Pirate flag without force color
     ('👨\u200d👩\u200d👧\u200d👦', '👨\u200d👩\u200d👧\u200d👦', None, None, 1),  # Family
     ('👨\ufe0f\u200d💻\ufe0f', '👨\u200d💻', None, None, 1),  # Person at computer
+    ('¿Red Deck Wins?', 'Red Deck Wins?', ['R'], 'Red Deck Wins', 1),
 ]
 
 def test_replace_space_alternatives() -> None:

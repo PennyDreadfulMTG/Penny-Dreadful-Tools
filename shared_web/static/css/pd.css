@@ -826,12 +826,12 @@ nav {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow-y: auto; /* Scroll here, not on .menu: a scroll container on .menu would clip the absolutely-positioned .submenu popover, whose containing block is a .menu > li. */
     position: relative;
 }
 
 .menu {
     flex: 1;
+    overflow-y: auto;
 }
 
 .submenu {
@@ -860,7 +860,7 @@ nav, .menu, .submenu {
     box-shadow: inset 1px 0 var(--border);
     font-size: 20px;
     left: calc(var(--main-menu-width) - 1px);
-    position: absolute;
+    position: fixed; /* Anchor to the viewport, not the .menu > li: the li is a containing block for the badge, but the submenu must always start at the top of the nav and escape .menu's scroll clipping. */
     top: 0;
 }
 
@@ -970,7 +970,8 @@ nav li.submenu-open > .item ~ .submenu {
     width: 100vw;
 }
 
-nav.showing:has(.current ~ .submenu) + .scrim.showing {
+nav.showing:has(.current ~ .submenu) + .scrim.showing,
+nav.showing:has(li.submenu-open > .item ~ .submenu) + .scrim.showing {
     left: var(--full-menu-width);
 }
 

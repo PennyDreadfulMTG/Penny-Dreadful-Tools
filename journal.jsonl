@@ -8791,3 +8791,4 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8790, "seq": 8791, "ts": "2026-09-02T19:52:28Z"}
 {"event": "ADJUDICATED", "issue": 8075, "note": "Deferred by owner: translations subsystem is out of scope for the sweep; no fix to be queued. run.py generate/update/validate-translations issues left for the translations maintainer to decide.", "seq": 8792, "status": "deferred_human", "ts": "2026-09-02T20:53:23Z", "verb": "defer-to-human"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8792, "seq": 8793, "ts": "2026-09-02T20:53:23Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8794, "ts": "2026-09-02T20:53:38Z"}

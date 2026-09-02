@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-5066-1",
+      "branch": "sweep/5066-add-opengraph-data-to-tournaments-and-ot",
+      "files_changed": 5,
+      "head_sha": "e343e0ab4fa8a19b7013fab142138347f3b48d3b",
+      "issue": 5066,
+      "lines_changed": 30,
+      "lint": "passed",
+      "notes": "No `og_url()` added since the template renders it as an empty string when absent and none of the affected views had an obvious canonical `url_for` import already in place; the other og fields (title/description/image via favicon) are enough for social previews. The existing deck detail page already had full og support including og_url via deck.py \u2014 that page is unchanged.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nSeveral high-traffic pages (`/tournaments/`, `/competitions/`, `/competitions/<id>/`, `/cards/<name>/`, and `/people/<id>/`) had no OpenGraph metadata. When shared on Discord or other social platforms, these links rendered with no title or description preview \u2014 just a bare URL.\n\n## What changed\n\nAdded `og_title()` and `og_description()` methods to five view classes, following the same pattern already established in `decksite/views/archetype.py`:\n\n- `decksite/views/tournaments.py`: title = `'Cardhoarder Tournaments'`, description = brief blurb\n- `decksite/views/competitions.py`: title = `'Competitions'`, description = brief blurb\n- `decksite/views/competition.py`: title = competition name, description = `'Penny Dreadful <type>: <name>'`\n- `decksite/views/card.py`: title = card display name, description = `'<name> in Penny Dreadful'`\n- `decksite/views/person.py`: title = person name, description = `'<name> on Penny Dreadful'`\n\nThe existing `header.mustache` template already conditionally renders `<meta property=\"og:*\">` tags when `og_title` is truthy \u2014 no template changes required.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit decksite/views/` \u2014 848 passed, 1 skipped (the skip is pre-existing and unrelated)\n\nFixes #5066",
+      "pr_title": "Add OpenGraph metadata to tournaments, competitions, card, and person pages (#5066)",
+      "recorded_at": "2026-09-02T00:20:58Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite/views/",
+        "detail": "848 passed, 1 skipped in 18.99s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 5066,
+  "triage": [
+    {
+      "batch_id": "t-5317-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "{{#og_title}} block renders og:title, og:url, og:image, og:description tags \u2014 mechanism already in place",
+          "ref": "decksite/templates/header.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "def og_title / def og_description implemented \u2014 shows the pattern",
+          "ref": "decksite/views/deck.py",
+          "type": "code"
+        },
+        {
+          "detail": "def og_title / def og_description implemented \u2014 only two views currently have it",
+          "ref": "decksite/views/archetype.py",
+          "type": "code"
+        },
+        {
+          "detail": "Only deck.py and archetype.py define og_title; tournaments.py, competitions.py, competition.py, card.py, person.py all have page_title() but no og_title()",
+          "ref": "grep -r 'def og_title' decksite/views/*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add `og_title()` and `og_description()` methods to these view classes: `decksite/views/tournaments.py` (title: 'Cardhoarder Tournaments', description: brief blurb), `decksite/views/competitions.py`, `decksite/views/competition.py` (use competition name/type), `decksite/views/card.py` (use card name + Penny Dreadful context), `decksite/views/person.py` (use person name). Each method is 1-3 lines following the pattern in archetype.py. No migration or schema change required.",
+      "issue": 5066,
+      "notes": "silasary confirmed in comments 'we just need to add the data for non-deck pages' \u2014 scope is well-understood and each view addition is ~3-5 lines. Total change well under 150 lines.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:46Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

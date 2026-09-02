@@ -1,0 +1,83 @@
+{
+  "fix": [],
+  "issue": 4004,
+  "triage": [
+    {
+      "batch_id": "t-4116-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Expose already calculated tournament wins, top 8s and 5-0s for people (people.mustache)",
+          "ref": "563c4b7",
+          "type": "commit"
+        },
+        {
+          "detail": "Suppress tournament wins etc. in matchups version of archetype tree (archetypetree.mustache + archetype.py)",
+          "ref": "e573df6",
+          "type": "commit"
+        },
+        {
+          "detail": "perfect_runs, tournament_wins, tournament_top8s computed for cards via preaggregation SQL",
+          "ref": "decksite/data/card.py:20-22",
+          "type": "code"
+        },
+        {
+          "detail": "p.elo selected in person queries; person has elo, tournament_wins, tournament_top8s, perfect_runs",
+          "ref": "decksite/data/person.py:81",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comment on #4004 says 'All of these now exist except Elo for non-people. That's covered by #1236.' \u2014 #1236 is open and tracks the remaining Elo-for-archetypes/cards work",
+          "ref": "#1236",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4004,
+      "notes": "The issue author's own comment explicitly confirms everything is done except Elo for non-people, which has been separated into #1236. Safe to close #4004.",
+      "proposed_comment": "All items in this issue are now resolved: tournament wins, top 8s, and 5-0s are shown for people (563c4b7) and cards (card.py preaggregation), and suppression in matchups was added in e573df6. The remaining Elo-for-non-people work is tracked in #1236. Closing this issue.",
+      "recorded_at": "2026-09-02T00:14:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-4004-1",
+      "final_comment": "The three concrete items in this issue are implemented: tournament wins, top 8s, and 5-0s are shown for people (563c4b7; person.py:117-119) and cards (card.py preaggregation), and suppression of those stats in matchups was added in e573df6. The Elo-for-archetypes/cards component was explicitly deferred to #1236 by the issue author in 2019 and remains tracked there.",
+      "issue": 4004,
+      "own_evidence": [
+        {
+          "detail": "independently checked: load_people query computes perfect_runs, tournament_wins, tournament_top8s for all people, confirming the 1st/top8/5-0 feature for people is live in current master",
+          "ref": "decksite/data/person.py:117-119",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: multiple preaggregation tables and the general card aggregation query include perfect_runs, tournament_wins, tournament_top8s \u2014 card stats are implemented",
+          "ref": "decksite/data/card.py:64-66,78-80,107-109,124-126,156-158,299-301",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: adjust_elo operates only on deck records tied to a person (mtgo_username logged); no Elo computation exists for archetypes or cards \u2014 Elo for non-people is not implemented",
+          "ref": "decksite/data/elo.py:25-39",
+          "type": "code"
+        },
+        {
+          "detail": "independently checked: issue #1236 is still OPEN; last comment April 2018 (reopened after discussion); Elo for archetypes/cards remains unimplemented and properly tracked there",
+          "ref": "#1236",
+          "type": "issue"
+        },
+        {
+          "detail": "last comment November 2019 by author (bakert) stating all items done except Elo for non-people; no human activity in the last 90 days",
+          "ref": "#4004 comments",
+          "type": "activity"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-02T00:19:17Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

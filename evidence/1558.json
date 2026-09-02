@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 1558,
+  "triage": [
+    {
+      "batch_id": "t-1587-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Added match count stats (today/week/month/season/all-time) to home page \u2014 player counts were NOT included",
+          "ref": "e5dfd551",
+          "type": "commit"
+        },
+        {
+          "detail": "stats() queries `match` table only; no JOIN to deck/deck_match/person means no player count is possible from this query",
+          "ref": "decksite/data/match.py:130-141",
+          "type": "code"
+        },
+        {
+          "detail": "setup_stats() builds community_stats with only match count entries; no player count entries",
+          "ref": "decksite/views/home.py:105-131",
+          "type": "code"
+        },
+        {
+          "detail": "Community Stats section renders community_stats list generically; adding a player-count group requires no template change",
+          "ref": "decksite/templates/home.mustache:1-10",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) In `decksite/data/match.py:stats()`, add a JOIN from `match` through `deck_match dm` to `deck d` and extend the SELECT with `COUNT(DISTINCT CASE WHEN FROM_UNIXTIME(m.date) >= NOW() - INTERVAL 7 DAY THEN d.person_id ELSE NULL END) AS num_players_this_week` (and similar for month/season/all-time). 2) In `decksite/views/home.py:setup_stats()`, add a second entry to `self.community_stats` with header 'Unique Players' and the four time-window player counts. No template changes needed.",
+      "issue": 1558,
+      "notes": "Read-only SQL query change plus display wiring. No schema, no data-retention changes. The existing community_stats template already supports multiple stat groups.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:15:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

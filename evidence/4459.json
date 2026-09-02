@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4459,
+  "triage": [
+    {
+      "batch_id": "t-4515-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Hide match logs for 24 hours from non-admins \u2014 adds timedelta(days=1) check in logsite/views/match_view.py:32",
+          "ref": "0d51ffd6",
+          "type": "commit"
+        },
+        {
+          "detail": "Current check: hide if start_time > now - 1 day AND not admin; shows 'The match log will be available one day after the match.'",
+          "ref": "logsite/views/match_view.py:32",
+          "type": "code"
+        },
+        {
+          "detail": "Owner explicitly noted '24 hours is imperfect but maybe ok?' and that /matchups/ on decksite still leaks league data; did not close",
+          "ref": "issue comment (bakert, latest)",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4459,
+      "notes": "The 24-hour window is a proxy for 'active run', but a league run can span multiple days, making older matches visible. Fully fixing requires logsite to know whether a run is still active, which needs decksite-logsite integration (noted in comments as the intended approach). Owner must decide: close as good-enough, or invest in the integration.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:38Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

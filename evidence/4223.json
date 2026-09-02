@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 4223,
+  "triage": [
+    {
+      "batch_id": "t-4248-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Owner explicitly said 'I think we've decided not to bother doing this. pdm generally ranks higher in searches than pdmtgo these days so maybe it just doesn't matter?'",
+          "ref": "gh issue view 4223 --comments (last comment, bakert)",
+          "type": "behavior"
+        },
+        {
+          "detail": "Code still uses pdmtgo.com for legal_cards_url, confirming no redirect was ever implemented, consistent with the decision to abandon the work",
+          "ref": "decksite/view.py:100",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4223,
+      "notes": "Owner decided not to pursue the pdmtgo redirect. Issue should be closed by the owner; nothing left to implement.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:11:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

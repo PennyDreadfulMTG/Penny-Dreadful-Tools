@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 3881,
+  "triage": [
+    {
+      "batch_id": "t-4116-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current singlecard is a bare anchor link with pd_legal indicator only \u2014 no bug indicator, no interestingness, no n-count, no alternate printed names",
+          "ref": "decksite/templates/singlecard.mustache:1",
+          "type": "code"
+        },
+        {
+          "detail": "entry.mustache is a full <li class='cardrow'> with card.bugs, interestingness, n-count, and decklist_alternate_printed_names \u2014 structurally different from singlecard",
+          "ref": "decksite/templates/entry.mustache:1-8",
+          "type": "code"
+        },
+        {
+          "detail": "prepare_card() does not add a 'bugs' attribute to cards, so singlecard contexts (home top_cards, bugs page rows) lack bug data \u2014 unifying templates would require data-layer changes",
+          "ref": "decksite/prepare.py:23-57",
+          "type": "code"
+        },
+        {
+          "detail": "singlecard is rendered inside {{#bugs}} context on the bugs page, meaning it receives bug-level not card-level data \u2014 different from entry.mustache's card context",
+          "ref": "decksite/templates/bugs.mustache:20",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 3881,
+      "notes": "The two templates serve structurally different HTML roles (singlecard = inline anchor, entry = <li> container) and receive different Mustache contexts. Rationalizing them requires aligning the data model as well as the templates; it is not a purely cosmetic change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

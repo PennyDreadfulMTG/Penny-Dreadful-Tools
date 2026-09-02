@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5869,
+  "triage": [
+    {
+      "batch_id": "t-5894-1",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Game SQLAlchemy model has columns: id, match_id, winner_id, log \u2014 no inactivity flag column exists",
+          "ref": "logsite/data/game.py:1-45",
+          "type": "code"
+        },
+        {
+          "detail": "import_log() iterates game lines and checks regexes for game header, switcheroo, gatherling events \u2014 no check for 'lost the game due to inactivity' text",
+          "ref": "logsite/importing.py:1-80",
+          "type": "code"
+        },
+        {
+          "detail": "__create_schema() uses create_all() which creates missing tables but does NOT add columns to existing tables \u2014 any new column requires an ALTER TABLE",
+          "ref": "logsite/__init__.py:31-34",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5869,
+      "notes": "Implementation requires: (1) ALTER TABLE game ADD COLUMN had_inactivity BOOLEAN, (2) detection in importing.py for the regex '@P lost the game due to inactivity', (3) display in logsite views/templates. Schema migration is the blocker.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:58Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

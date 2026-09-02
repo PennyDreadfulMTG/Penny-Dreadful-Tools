@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 5432,
+  "triage": [
+    {
+      "batch_id": "t-5503-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "only messages.pot exists \u2014 no Russian or other language .po files in current master",
+          "ref": "find shared_web/translations -name '*.po'",
+          "type": "search"
+        },
+        {
+          "detail": "font stack: symbols, heading-caps/main-text, then Lato, Helvetica, Arial \u2014 no Cyrillic-supporting custom font",
+          "ref": "shared_web/static/css/pd.css:183-185",
+          "type": "code"
+        },
+        {
+          "detail": "LANGUAGES is populated from babel.list_translations(); with no .po files, Russian is not an active locale",
+          "ref": "shared_web/localization.py:6-28",
+          "type": "code"
+        },
+        {
+          "detail": "comment 'The russian translation has multiple variations of plural' exists, suggesting Russian existed historically but no .po file is present now",
+          "ref": "maintenance/validate_translations.py:41",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5432,
+      "notes": "The GitHub label is '+ question' which matches this classification. bakert's comment explicitly poses the decision: 'Are we ok just letting these languages use whatever the default font on their system is?' Since no Russian translation currently exists in master, the issue is somewhat hypothetical, but the font decision is still pending if translations are re-added.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

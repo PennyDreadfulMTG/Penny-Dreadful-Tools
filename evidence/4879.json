@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 4879,
+  "triage": [
+    {
+      "batch_id": "t-4969-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR #6171 added a PDM card-page URL (<url>) to single_card_text_internal output for both price and non-price modes",
+          "ref": "9a5a5f5b",
+          "type": "commit"
+        },
+        {
+          "detail": "Reverted 9a5a5f5b the same day: 'Feedback was that the link takes up too much space, especially in mobile'",
+          "ref": "c58c34f9",
+          "type": "commit"
+        },
+        {
+          "detail": "Current single_card_text_internal builds text with name/mana/type/legality but no PDM link or decks/record/win% data",
+          "ref": "discordbot/command.py:176-192",
+          "type": "code"
+        },
+        {
+          "detail": "The !history command does append a PDM card URL, showing it is technically feasible \u2014 the rejection was UX-driven, not technical",
+          "ref": "discordbot/commands/history.py:28",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4879,
+      "notes": "The decision needed is: what format should win-rate/deck-count be presented in now that a raw URL was deemed too wide on mobile? Options include an embed field, a compact inline stat, or linking only when explicitly requested via a slash-command flag.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

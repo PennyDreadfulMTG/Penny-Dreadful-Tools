@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4448,
+  "triage": [
+    {
+      "batch_id": "t-4515-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The /discord/ route is a bare redirect to discord.gg \u2014 no widget, no JSON, no embed",
+          "ref": "decksite/main.py:44-45",
+          "type": "code"
+        },
+        {
+          "detail": "No discord widget implementation exists anywhere in decksite templates or views",
+          "ref": "grep -r 'widget' decksite/templates/ decksite/views/ (no matches)",
+          "type": "search"
+        },
+        {
+          "detail": "Three approaches discussed (native Discord iframe embed, react-discord-widget library, custom widget.json rendering) with no consensus reached",
+          "ref": "issue comments",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4448,
+      "notes": "Owner and contributor discussed three different implementation styles in comments without reaching a decision. The feature hasn't moved in years; owner needs to decide whether this is still wanted and which approach to take.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

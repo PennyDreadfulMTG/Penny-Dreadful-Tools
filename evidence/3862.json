@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 3862,
+  "triage": [
+    {
+      "batch_id": "t-4116-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No results \u2014 no Discord-role-based badge system exists in the codebase",
+          "ref": "grep -rn 'podcaster|role_id|discord.*badge' decksite/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Only badge in current system is archetypes_badge (admin-only navigation badge for edit_archetypes), not person/Discord-role badges",
+          "ref": "decksite/__init__.py:39",
+          "type": "code"
+        },
+        {
+          "detail": "Badge system exists only in navigation menu, not on person profile pages",
+          "ref": "decksite/templates/menu.mustache:5-9",
+          "type": "code"
+        },
+        {
+          "detail": "discord_id is stored on person but no role-based attributes (podcaster, streamer, etc.) are fetched or surfaced",
+          "ref": "decksite/data/person.py:80",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 3862,
+      "notes": "Implementing this requires: (1) Discord API integration to read guild member roles for a given discord_id, (2) mapping role IDs to badge types, (3) surfacing badges on person profile pages via new template/view changes, and (4) deciding which Discord roles warrant badges \u2014 a product judgment. Scope exceeds easy-fix threshold.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:27Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

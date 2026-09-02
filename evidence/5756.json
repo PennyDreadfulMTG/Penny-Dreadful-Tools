@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-5756-1",
+      "branch": "sweep/5756-create-helper-function-in-data-deck-py-t",
+      "files_changed": 2,
+      "head_sha": "be10e60daee679884bac4d3a9f003bae6f1c7b95",
+      "issue": 5756,
+      "lines_changed": 21,
+      "lint": "passed",
+      "notes": "The overlooked_decks change also removed a now-unnecessary explicit empty-list check (the helper handles it) and changed the list comprehension from str to int elements, both strictly correct. No schema changes, no behavioural change.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThree functions in `decksite/data/rule.py` (`mistagged_decks`, `doubled_decks`, `overlooked_decks`) each duplicated the same pattern of building a comma-separated id string and calling `deck.load_decks(where=f'd.id IN ({ids_list})')`, with no shared abstraction.\n\n## What changed\n\n- Added `load_decks_by_ids(ids: list[int]) -> list[Deck]` to `decksite/data/deck.py` (lines 33\u201338). It guards on an empty list (returning `[]`) and delegates to `load_decks` with an `IN` clause.\n- Replaced the three manual id-list constructions in `decksite/data/rule.py` with calls to the new helper, removing 10 lines and simplifying each call site.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks).\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (no failures or regressions).\n\nFixes #5756",
+      "pr_title": "Add load_decks_by_ids helper and use it in rule.py (#5756)",
+      "recorded_at": "2026-09-02T00:17:10Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 19.51s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 5756,
+  "triage": [
+    {
+      "batch_id": "t-5894-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Only load_deck(deck_id) for single deck exists; no load_decks_by_ids helper exists",
+          "ref": "decksite/data/deck.py:29-33",
+          "type": "code"
+        },
+        {
+          "detail": "mistagged_decks() manually builds ids_list and calls deck.load_decks(where=f'd.id IN ({ids_list})')",
+          "ref": "decksite/data/rule.py:114-115",
+          "type": "code"
+        },
+        {
+          "detail": "doubled_decks() repeats the same ids_list pattern with deck.load_decks",
+          "ref": "decksite/data/rule.py:141-142",
+          "type": "code"
+        },
+        {
+          "detail": "overlooked_decks() repeats the same ids_list pattern a third time \u2014 three identical constructions with no shared helper",
+          "ref": "decksite/data/rule.py:173-174",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add `def load_decks_by_ids(ids: list[int]) -> list[Deck]` to `decksite/data/deck.py` that guards on empty input and delegates to `load_decks(where=f'd.id IN ({ids_str})')`. Replace the three manual id-list constructions in `decksite/data/rule.py` (lines 114-115, 141-142, 173-174) with calls to the new helper. ~15 lines changed total, no schema change.",
+      "issue": 5756,
+      "notes": "The issue's comment thread discussed whether load_decks was sufficient \u2014 the current code settled on the IN-clause pattern but never created the helper. The extra data (rule_id, rule_archetype_id etc.) is attached to deck objects after load_decks returns, so the helper can stay a thin wrapper.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

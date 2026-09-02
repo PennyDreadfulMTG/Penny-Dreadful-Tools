@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4567,
+  "triage": [
+    {
+      "batch_id": "t-4794-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "# is_timeout = sa.Column(sa.Boolean) \u2014 field is commented out, showing the feature was considered but not implemented",
+          "ref": "logsite/data/match.py:27",
+          "type": "code"
+        },
+        {
+          "detail": "only REGEX_GAME_HEADER, REGEX_SWITCHEROO, REGEX_GATHERLING, REGEX_ROUND are parsed; no pattern for 'player has timed out'",
+          "ref": "logsite/importing.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "current help text tells users to report manually when opponent times out \u2014 confirms the auto-detection is not implemented",
+          "ref": "discordbot/commands/explain.py:104",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4567,
+      "notes": "Implementing this requires: determining the exact log message PDBot emits on timeout, adding a REGEX_TIMEOUT pattern in logsite/importing.py, setting match.is_timeout and awarding wins, and a schema migration to add the is_timeout column. The Discord message 199349148 (referenced in the issue) would provide the precise log text but is not accessible statically.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:21Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

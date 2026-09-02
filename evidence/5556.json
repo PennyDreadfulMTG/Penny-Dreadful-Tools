@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 5556,
+  "triage": [
+    {
+      "batch_id": "t-5676-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No GitHub PR achievement class exists in the current codebase; the 12+ achievement classes do not reference GitHub or pull requests",
+          "ref": "decksite/data/achievements.py:344-864",
+          "type": "code"
+        },
+        {
+          "detail": "silasary's comment: 'requires linking GitHub to person, or manually assigning achievement'; adambiltcliffe: 'not much gain in associating player with GitHub login just to avoid manually adding a single achievement'",
+          "ref": "#5556",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5556,
+      "notes": "Feature requires deciding: (a) whether to build GitHub-account-to-PD-person linking, or (b) manually grant achievement by hand. Discussion in issue shows disagreement on whether GitHub linking is worth it for this use case alone.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:23Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

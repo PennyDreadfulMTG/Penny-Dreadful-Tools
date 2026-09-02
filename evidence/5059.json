@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 5059,
+  "triage": [
+    {
+      "batch_id": "t-5317-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bakert commented 'This will eat more screen real estate which is already at a premium in that chart. Closing by choosing not to do it.' \u2014 explicit owner decision to decline",
+          "ref": "gh issue view 5059 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "Issue state is still OPEN despite the 'Closing' comment \u2014 was never actually closed on GitHub",
+          "ref": "gh issue view 5059",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5059,
+      "notes": "The owner explicitly chose not to implement this in the issue comments but never closed the issue. The appropriate action is to close it as 'won't fix' per bakert's stated decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:46Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

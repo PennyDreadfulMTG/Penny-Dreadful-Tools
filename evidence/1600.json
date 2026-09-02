@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 1600,
+  "triage": [
+    {
+      "batch_id": "t-3171-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "preaggregate_season_archetype_playability() exists \u2014 computes relative card frequency per archetype vs overall, exactly the data needed for 'high synergy cards'",
+          "ref": "decksite/data/playability.py:288",
+          "type": "code"
+        },
+        {
+          "detail": "archetype() controller does not load any synergy/new-card data; only loads archetype stats and matchups",
+          "ref": "decksite/controllers/metagame.py:130",
+          "type": "code"
+        },
+        {
+          "detail": "cards2 API accepts archetype_id but returns all cards sorted by frequency only \u2014 no high-synergy or new-card sections",
+          "ref": "decksite/controllers/api.py:184",
+          "type": "code"
+        },
+        {
+          "detail": "Author describes three distinct EDHREC-style sections wanted: 'new cards', 'high synergy cards', 'top cards', plus per-type subsections",
+          "ref": "gh issue view 1600 --comments",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1600,
+      "notes": "The underlying data for 'high synergy' already exists in _season_archetype_playability (archetype card frequency \u00f7 overall frequency). Implementing EDHREC-style sections requires: a new API endpoint (or query param) to return synergy-ranked cards, new UI sections on the archetype page, and design decisions on thresholds and which card types to show per section.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

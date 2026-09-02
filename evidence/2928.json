@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 2928,
+  "triage": [
+    {
+      "batch_id": "t-3171-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue #316 (closed) lists 'Visual view' as not yet done (no strikethrough)",
+          "ref": "#316",
+          "type": "issue"
+        },
+        {
+          "detail": "Author commented 'I'm unconvinced this is valuable so I'm going to kill it' \u2014 explicit abandonment signal, but issue left open",
+          "ref": "gh issue view 2928 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "No StackIt integration code found anywhere in the codebase",
+          "ref": "grep -rn 'stackit|StackIt' decksite/ --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 2928,
+      "notes": "The author explicitly stated in a comment that they do not want to implement this. The issue should either be closed as won't-fix or the decision revisited. No code has ever been written for this feature.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

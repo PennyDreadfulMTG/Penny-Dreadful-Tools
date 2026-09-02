@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 1587,
+  "triage": [
+    {
+      "batch_id": "t-1587-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Card view has no price method; 38-line file with no price or card_price reference",
+          "ref": "decksite/views/card.py:1-38",
+          "type": "code"
+        },
+        {
+          "detail": "Card template has no price display section",
+          "ref": "decksite/templates/card.mustache:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "card_price_string() exists and makes a live HTTP fetch via fetcher.card_price()",
+          "ref": "magic/card_price.py:1-40",
+          "type": "code"
+        },
+        {
+          "detail": "decksite already imports magic.card_price, resolving the original import concern",
+          "ref": "decksite/view.py:14",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1587,
+      "notes": "bakert's comment 'rethinking this' after an initial attempt (1706cc6e not found in current history \u2014 likely squashed/lost) suggests unresolved architectural concern. The live-HTTP-fetch in card_price_string() during page render needs a caching or async strategy before this can safely ship.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:15:00Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

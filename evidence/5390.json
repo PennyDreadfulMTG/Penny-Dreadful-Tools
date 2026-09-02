@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5390,
+  "triage": [
+    {
+      "batch_id": "t-5503-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "no league top-8 achievement class exists; PD500Top8 and KickoffTop8 exist only for Gatherling events",
+          "ref": "grep -n 'league.*top.8|league_top8|LeagueTop8' decksite/data/achievements.py",
+          "type": "search"
+        },
+        {
+          "detail": "LeaguePlayer is the only league-specific achievement; it counts entries, not standings",
+          "ref": "decksite/data/achievements.py:390-405",
+          "type": "code"
+        },
+        {
+          "detail": "league standings are never stored in the db, they're calculated anew any time anyone views the league \u2014 this is the core blocker",
+          "ref": "#5390 comment by adambiltcliffe",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5390,
+      "notes": "Requires either storing final league standings at league-close time (schema/data change, so needs-product-decision borderline) or constructing a complex SQL query that derives top-8 rank from existing win/loss records; the latter may be infeasible given how leagues work. The design decision is where to store or derive standings.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:16Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

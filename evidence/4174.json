@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 4174,
+  "triage": [
+    {
+      "batch_id": "t-4248-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "site_resources splits args into area+detail and looks for sitemap endpoints starting with /{area}/; requires explicit prefixes like 'person', 'cards', 'archetype' \u2014 bare terms like 'bakert99' or 'Necropotence' don't match",
+          "ref": "discordbot/commands/resources.py:37-55",
+          "type": "code"
+        },
+        {
+          "detail": "resources_resources does fuzzy match against static resources dict only (help pages, links), not against live card/person/archetype data",
+          "ref": "discordbot/commands/resources.py:58-78",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4174,
+      "notes": "Implementing the requested auto-detection (card vs person vs archetype from bare term) requires fetching all three name sets, fuzzy matching across them, and disambiguating conflicts \u2014 non-trivial scope with live API calls and UX decisions about tie-breaking.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:11:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

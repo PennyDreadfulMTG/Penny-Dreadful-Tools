@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5593,
+  "triage": [
+    {
+      "batch_id": "t-5676-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current single-card format is: '{card_name} {mana} \u2014 {type_line}{legal}' \u2014 spaces ARE present around the mana block",
+          "ref": "discordbot/command.py:183",
+          "type": "code"
+        },
+        {
+          "detail": "single_card_text builds: f'**{name}** {info_emoji} {text}' \u2014 space before text even when text starts with an emoji",
+          "ref": "discordbot/command.py:279-280",
+          "type": "code"
+        },
+        {
+          "detail": "replace_emoji replaces {W}{U} etc. with adjacent Discord emoji strings \u2014 no spaces are added between individual mana symbols within a cost",
+          "ref": "discordbot/emoji.py:35-51",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5593,
+      "notes": "Issue is from 2018; the discordbot has been significantly refactored (new library, new command structure). Current card display code has proper spaces around the mana block. Individual mana symbols within a cost (e.g. {1}{U}) still appear adjacent without inter-symbol spaces, but whether this causes visible 'hugging' in current Discord rendering cannot be determined without running the bot.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:23Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

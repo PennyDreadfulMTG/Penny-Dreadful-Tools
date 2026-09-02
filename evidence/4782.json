@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4782,
+  "triage": [
+    {
+      "batch_id": "t-4794-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "NoParaTagProcessor.run now typed as (root: etree.Element) -> None \u2014 the specific example from the issue body has been fixed",
+          "ref": "shared_web/template.py:103",
+          "type": "code"
+        },
+        {
+          "detail": "131 matches remain, confirming the broader Any-elimination effort is still incomplete",
+          "ref": "grep -rn ': Any\\b|-> Any\\b' . (excluding .venv, __pycache__) | wc -l",
+          "type": "search"
+        },
+        {
+          "detail": "from typing import Any still present; Game.to_dict returns dict[str, Any]",
+          "ref": "logsite/data/game.py:3",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4782,
+      "notes": "The motivating example was fixed, but the issue is a tracking item for an ongoing typing effort across the whole codebase; 131+ Any annotations remain.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

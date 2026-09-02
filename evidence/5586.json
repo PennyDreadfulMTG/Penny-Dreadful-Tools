@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-5586-1",
+      "branch": "sweep/5586-requests-ending-with-open-transactions",
+      "files_changed": 2,
+      "head_sha": "33072ca5610657d814df07174467c97a477e2abf",
+      "issue": 5586,
+      "lines_changed": 56,
+      "lint": "passed",
+      "notes": "The `replace_deck_cards` branch in `add_deck` (lines 323-330) has the same pattern \u2014 no rollback on error \u2014 and could produce a similar 'replace_deck_cards' open-transaction warning, but it does not appear in the reported logs so it was left untouched per the narrow-fix rule. A reviewer may want to apply the same pattern there.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen `add_deck` (in `decksite/data/deck.py`) or `insert_match` (in `decksite/data/match.py`) raised an unhandled exception mid-transaction, the database connection was returned to the pool with open transactions still tracked in `open_transactions`. When that connection was later closed, the app logged `Closed database connection with open transactions ['add_deck']`, `['add_deck', 'add_cards']`, or `['insert_match']`.\n\nRoot causes:\n- `add_deck`: the existing `except DatabaseException` block re-raised without calling `rollback` for non-Duplicate-Entry errors; also, exceptions from `load_deck()` or `prime_cache()` (called after the inner try/except but before `commit`) left the transaction open. Since `rollback()` clears all labels from `open_transactions`, a rollback of `add_deck` also resolves the nested `add_cards` label.\n- `insert_match`: had no exception handling at all \u2014 any failure between `begin` and `commit` left the transaction dangling.\n\n## What changed\n\n- **`decksite/data/deck.py` \u2014 `add_deck`**: Wrapped the entire block from `db().begin('add_deck')` through `db().commit('add_deck')` (including the `load_deck`/`prime_cache` calls) in an outer `try/except Exception` that calls `db().rollback('add_deck')` before re-raising. The inner `except DatabaseException` for Duplicate Entry handling is preserved unchanged inside.\n- **`decksite/data/match.py` \u2014 `insert_match`**: Wrapped the entire body (all statements between `begin` and `commit`) in `try/except Exception` that calls `db().rollback('insert_match')` before re-raising. Redis cache-clearing calls remain outside the transaction guard since they should run on success only.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected\n\nFixes #5586",
+      "pr_title": "Rollback open transactions on error in add_deck and insert_match (#5586)",
+      "recorded_at": "2026-09-02T00:21:10Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.49s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 5586,
+  "triage": [
+    {
+      "batch_id": "t-5676-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "add_deck() calls db().begin('add_deck') then calls load_deck() and prime_cache() outside any try/except; if either raises, the transaction is left open and later triggers the exception in close()",
+          "ref": "decksite/data/deck.py:376-388",
+          "type": "code"
+        },
+        {
+          "detail": "insert_match() wraps the body in no try/except at all \u2014 any failure in update_cache() or elo.adjust_elo() leaves 'insert_match' transaction open",
+          "ref": "decksite/data/match.py:24-37",
+          "type": "code"
+        },
+        {
+          "detail": "close() executes ROLLBACK then raises DatabaseException when open_transactions is non-empty \u2014 confirmed root of the logged error messages",
+          "ref": "shared/database.py:145-151",
+          "type": "code"
+        },
+        {
+          "detail": "Error logs show exactly ['add_deck'], ['add_deck', 'add_cards'], and ['insert_match'] \u2014 matching the transaction labels in the two functions",
+          "ref": "issue #5586 comments",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In decksite/data/deck.py: wrap the block from db().begin('add_deck') through db().commit('add_deck') in a try/except that calls db().rollback('add_deck') before re-raising any non-Duplicate-Entry exception; also protect load_deck() and prime_cache() calls with a finally-rollback. In decksite/data/match.py: wrap the entire insert_match body (lines 25-36) in try/except with db().rollback('insert_match') on any exception. ~25 lines changed across 2 files.",
+      "issue": 5586,
+      "notes": "The 'add_cards' nested transaction already does its own rollback correctly (deck.py:438-440). The outer 'add_deck' transaction is the one left dangling when load_deck/prime_cache fail. Both transaction blocks need a finally/rollback guard.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:23Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

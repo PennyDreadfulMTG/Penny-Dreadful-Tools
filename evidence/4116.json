@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 4116,
+  "triage": [
+    {
+      "batch_id": "t-4116-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "flask_babel/gettext imported; localization infrastructure is implemented",
+          "ref": "decksite/view.py:5-7",
+          "type": "code"
+        },
+        {
+          "detail": "messages.pot template exists (generated 2024-01-25) with extracted strings, but no .po files for any target language exist in the repo",
+          "ref": "shared_web/translations/messages.pot",
+          "type": "code"
+        },
+        {
+          "detail": "{{_ ...}} translation markers are used (~150 occurrences in templates), showing key extraction is partial/ongoing",
+          "ref": "decksite/templates/home.mustache:9",
+          "type": "code"
+        },
+        {
+          "detail": "Checklist shows items 1 and 2 done (localization system, language switching), item 3 'Add translation Keys (ongoing)' explicitly unchecked",
+          "ref": "#4116",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4116,
+      "notes": "The Flask-Babel infrastructure is fully wired (view.py, __init__.py, maintenance/generate_translations.py), and ~150 template strings are already wrapped in {{_ }}. However, no translated .po files exist for Spanish, Japanese, or any other language \u2014 the work remaining is (a) wrapping remaining strings and (b) providing actual translations.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

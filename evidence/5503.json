@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5503,
+  "triage": [
+    {
+      "batch_id": "t-5503-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "text built from raw user input is passed to create_issue() with no mention normalization",
+          "ref": "discordbot/commands/bug.py:17",
+          "type": "code"
+        },
+        {
+          "detail": "create_issue() also performs no Discord mention normalization before writing to GitHub",
+          "ref": "shared/repo.py:25-40",
+          "type": "code"
+        },
+        {
+          "detail": "no normalization code found anywhere in discordbot/",
+          "ref": "grep -rn 'normalize|mention.*resolve|re.*<@' discordbot/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/bug.py, add a helper function (e.g. normalize_mentions(text, ctx)) that uses regex to find <@user_id>, <@!user_id>, <#channel_id>, <@&role_id> patterns, resolves each via ctx.guild (get_member / get_channel / get_role by ID), and replaces with a readable string like @username or #channel-name, falling back to a plain ID string if lookup fails. Call it on title and body before building text at line 14.",
+      "issue": 5503,
+      "notes": "The interactions library exposes ctx.guild for member/channel resolution. If ctx.guild is None (DM context), skip normalization. bakert's comment suggests this should apply broadly to all user input passed to command handlers.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

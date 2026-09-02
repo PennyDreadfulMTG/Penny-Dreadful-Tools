@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1566,
+  "triage": [
+    {
+      "batch_id": "t-1587-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Header has og:url via {{og_url}} but no <link rel='canonical'> tag anywhere in the template",
+          "ref": "decksite/templates/header.mustache:13-20",
+          "type": "code"
+        },
+        {
+          "detail": "Only deck and archetype views implement og_url; most pages have no canonical URL at all",
+          "ref": "decksite/views/deck.py:67-73",
+          "type": "code"
+        },
+        {
+          "detail": "Only hit is the alternate-name card redirect in card.mustache:4, not a <link rel=canonical> head element",
+          "ref": "grep -rn 'canonical' decksite/templates/ decksite/view.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1566,
+      "notes": "Issue #1551 explicitly depends on this issue (bakert comment 'See #1566'). Scope includes URL design decisions (id vs. slug canonical), redirect logic, and adding canonical link tags across all page types.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:15:00Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

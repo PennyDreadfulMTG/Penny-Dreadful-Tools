@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4790,
+  "triage": [
+    {
+      "batch_id": "t-4794-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>') \u2014 the two-decorator pattern is by design",
+          "ref": "decksite/__init__.py:16",
+          "type": "code"
+        },
+        {
+          "detail": "212 route annotations; creating a combined decorator would touch all paired usages across controllers/",
+          "ref": "grep -rn '@APP.route|@SEASONS.route' decksite/ | wc -l",
+          "type": "search"
+        },
+        {
+          "detail": "the proposed combined decorator does not exist yet",
+          "ref": "grep -rn 'SEASON_AND_ROOT|season_and_root' . (no results)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4790,
+      "notes": "The refactoring is straightforward in concept but touches 100+ function definitions across multiple controller files; exceeds the 150-line easy-fix ceiling.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

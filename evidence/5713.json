@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5713,
+  "triage": [
+    {
+      "batch_id": "t-5713-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Single template contains Queue/classify, Move/Rename, Search by Card, Search for Conflicts, All Archetypes, and Add Archetype sections \u2014 all served from one route",
+          "ref": "decksite/templates/editarchetypes.mustache:1-100",
+          "type": "code"
+        },
+        {
+          "detail": "Single route /admin/archetypes/ drives EditArchetypes view handling all the above sections",
+          "ref": "decksite/controllers/admin.py:60-63",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment: 'I'd suggest this gets rolled into the bigger task of creating a rules system for archetype classification' \u2014 scope is larger than just a UI split",
+          "ref": "#5713",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5713,
+      "notes": "Splitting into three sub-pages (Classify Decks, Edit Tree, Search for Conflicts) would require ~3 new routes in admin.py, ~3 new view classes, and 3 split template files. Likely 200+ lines. bakert explicitly suggested folding this into the larger archetype rules system redesign rather than doing it standalone.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

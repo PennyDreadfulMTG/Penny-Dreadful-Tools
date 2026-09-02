@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5217,
+  "triage": [
+    {
+      "batch_id": "t-5317-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Last comment: 4G setting showed no statistically significant improvement over 512M for the specific slow query (2m13s vs 2m8s)",
+          "ref": "gh issue view 5217 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "8G caused MySQL to stop responding; rolled back to 4G; owner states machine has 16G RAM and 4G is current setting",
+          "ref": "gh issue view 5217 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "No code in this repo controls innodb_buffer_pool_size \u2014 this is a pure server configuration task",
+          "ref": "grep -r innodb_buffer_pool /home/vercel-sandbox/penny-dreadful-tools",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5217,
+      "notes": "This requires server admin access to set innodb_buffer_pool_size in my.cnf (not a runtime SET GLOBAL) so it persists across restarts. The empirical data collected shows 4G vs 512M made no significant difference for the specific long-running cache query, so further investigation of the slow query itself may be warranted rather than tuning the buffer pool.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:46Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

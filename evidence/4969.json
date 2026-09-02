@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 4969,
+  "triage": [
+    {
+      "batch_id": "t-4969-1",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Only column added is 'banned BOOLEAN NOT NULL DEFAULT 0'; no ban_reason or ban_date column exists anywhere in the schema",
+          "ref": "decksite/sql/27.sql:1",
+          "type": "code"
+        },
+        {
+          "detail": "Ban error message is generic: 'You are currently banned from Penny Dreadful. Visit the Discord to appeal'; no why/when data available",
+          "ref": "decksite/league.py:43",
+          "type": "code"
+        },
+        {
+          "detail": "ban() and unban() execute SET banned = TRUE/FALSE with no reason or timestamp recorded",
+          "ref": "decksite/data/person.py:402-406",
+          "type": "code"
+        },
+        {
+          "detail": "No migration has ever added ban reason or ban date columns",
+          "ref": "grep ban_reason ban_date -- decksite/sql/*.sql returned nothing",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4969,
+      "notes": "Requires at minimum ALTER TABLE person ADD COLUMN ban_reason TEXT, ban_date DATETIME; also needs admin ban UI changes to capture reason, and the error message in league.py updated to surface the stored reason/date.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

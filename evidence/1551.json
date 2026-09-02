@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 1551,
+  "triage": [
+    {
+      "batch_id": "t-1587-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "OG tags only render when og_title is present; most views do not set this",
+          "ref": "decksite/templates/header.mustache:13-20",
+          "type": "code"
+        },
+        {
+          "detail": "deck and archetype views implement og_title/og_url/og_description; card view does not",
+          "ref": "decksite/views/deck.py:67-73",
+          "type": "code"
+        },
+        {
+          "detail": "Card view has no og_title, og_url, or og_description methods; card pages produce no OG metadata",
+          "ref": "decksite/views/card.py:1-38",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment on #1551 explicitly flags 'need to decide about slugs' (issue #1566) as a blocker for the canonical URL part",
+          "ref": "#1566",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1551,
+      "notes": "Partially addressed for deck and archetype pages. Blocked on #1566 for canonical URL. Adding og_title/og_url/og_description to card.py and other high-traffic views would be straightforward but the canonical URL question must be settled first.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:15:00Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

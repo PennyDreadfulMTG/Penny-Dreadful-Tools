@@ -1,0 +1,56 @@
+{
+  "fix": [],
+  "issue": 5443,
+  "triage": [
+    {
+      "batch_id": "t-5503-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "reloadCards={true} is explicitly set, triggering Deckbox reload on every data update",
+          "ref": "shared_web/static/js/cardtable.jsx:76",
+          "type": "code"
+        },
+        {
+          "detail": "componentDidUpdate calls Deckbox.load() whenever reloadCards prop is true and Deckbox is defined",
+          "ref": "shared_web/static/js/datamanager.jsx:46-48",
+          "type": "code"
+        },
+        {
+          "detail": "Deckbox._.enable() registers document-level event delegation for card hover images on first mouseover",
+          "ref": "shared_web/static/js/pd.js:226-228",
+          "type": "code"
+        },
+        {
+          "detail": "tooltips.js is included on any view with has_cards=True",
+          "ref": "shared_web/base_view.py:59-62",
+          "type": "code"
+        },
+        {
+          "detail": "Cards view sets has_cards=True, so tooltips.js is served on /cards",
+          "ref": "decksite/views/cards.py:14",
+          "type": "code"
+        },
+        {
+          "detail": "renderCard renders anchor tags with class='card', which tooltips.js targets via data-tt",
+          "ref": "shared_web/static/js/table.jsx:112-119",
+          "type": "code"
+        },
+        {
+          "detail": "Only attempt to reload card tooltips if sane to do so \u2014 added reloadCards guard",
+          "ref": "605d525246fe3d5dbc3508db4ea2ed07b9bd0624",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5443,
+      "notes": "Confidence is medium rather than high because there is no running browser to verify. bakert's comment ('When/if we move to a react table for cards this will come back') was written before the React card table existed; the mechanism is now in place. rotationtable.jsx:39 also sets reloadCards={true}, addressing the rotation table case mentioned by bakert.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:16Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

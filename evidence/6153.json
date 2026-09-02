@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6153-1",
+      "branch": "sweep/6153-unrecognized-locales-cause-500s",
+      "files_changed": 1,
+      "head_sha": "d0016dd8c76932c28781a4d83a2777fd5b7d74e6",
+      "issue": 6153,
+      "lines_changed": 2,
+      "lint": "passed",
+      "notes": "The guard `if LANGUAGES and locale not in LANGUAGES` is intentional: LANGUAGES is populated lazily by init(), so an empty list means 'not yet initialised' \u2014 we don't reject in that case. Once init() runs (which happens at app startup), any unrecognised locale is safely dropped. No product decision about locale-switching UX was touched.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a user passed an unrecognized locale via the `?locale=` querystring (e.g. `?locale=na`), `check_sql_injection` in `shared_web/localization.py` only validated the value against a character-class regex (`^[a-zA-Z_]+$`). Any string of letters passed through, was stored in the session, and later when Flask-Babel called `Locale.parse()` on it, Babel raised `UnknownLocaleError`, which bubbled up as an unhandled 500.\n\n## What changed\n\nAdded a two-line guard in `check_sql_injection` (`shared_web/localization.py:25-26`): after the regex check, if `LANGUAGES` has been populated (i.e. `init()` has run) and the supplied locale is not in that list, the function returns `None` \u2014 same as for malformed input. The `if LANGUAGES and ...` guard avoids rejecting all locales before `init()` has had a chance to populate the list.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen pytest -x -q -m 'not functional and not perf'` (excluding DB-heavy modules) \u2014 220 passed, 48 deselected. Full suite requires a database; DB-dependent tests in `magic/` and `decksite/` were excluded due to the test environment not having the cards DB initialised, which is an environmental constraint unrelated to this change.\n\nFixes #6153",
+      "pr_title": "Reject unrecognized locales to prevent UnknownLocaleError 500s (#6153)",
+      "recorded_at": "2026-09-02T00:09:58Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest -x -q -m 'not functional and not perf' --ignore=magic --ignore=decksite --ignore=discordbot --ignore=logsite --ignore=maintenance",
+        "detail": "220 passed, 48 deselected in 5.72s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6153,
   "triage": [
     {

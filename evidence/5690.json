@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5690,
+  "triage": [
+    {
+      "batch_id": "t-5713-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue is labeled '+ question'; bakert's sole comment asks 'Goldfish only looks back so far (not the whole season) for this. Looks like it's two weeks. Is that what we want to do?' \u2014 explicit product question about data methodology",
+          "ref": "#5690",
+          "type": "issue"
+        },
+        {
+          "detail": "load_archetypes already computes meta_share per season via a SQL window calculation \u2014 data exists but on season-long basis, not rolling window",
+          "ref": "decksite/data/archetype.py:100",
+          "type": "code"
+        },
+        {
+          "detail": "archetypes.mustache/archetypetree template shows num_decks, record, win_percent, tournament stats \u2014 no meta_share column rendered",
+          "ref": "decksite/templates/archetypetree.mustache:1-40",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5690,
+      "notes": "The underlying data (meta_share) is already available in the Archetype model. The open question is whether to display season-long share or a rolling window (like Goldfish's ~2-week window). Owner must decide data methodology before implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

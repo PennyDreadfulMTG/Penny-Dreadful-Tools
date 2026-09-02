@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 5894,
+  "triage": [
+    {
+      "batch_id": "t-5894-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "100-card singleton detection treats entire deck as maindeck, but never identifies which card is the commander \u2014 sideboard is cleared rather than preserving the commander",
+          "ref": "magic/decklist.py:72-77",
+          "type": "code"
+        },
+        {
+          "detail": "insert_deck_card uses a boolean sideboard column; no commander-specific column or flag exists in the schema",
+          "ref": "decksite/data/deck.py:448-450",
+          "type": "code"
+        },
+        {
+          "detail": "No goldfish commander deck scraper exists anywhere in the codebase",
+          "ref": "grep -rn 'goldfish.*commander|commander.*goldfish' decksite/ (0 results)",
+          "type": "search"
+        },
+        {
+          "detail": "Confirms commanders appear as sideboard cards in the downloaded decklist, validating the bug report",
+          "ref": "#5894 comment by bakert",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5894,
+      "notes": "Two separate sub-problems: (1) scraping the commander identity from mtggoldfish commander deck URLs, and (2) either repurposing deck_card.sideboard or adding a new 'is_commander' column. The title itself offers both options but neither is small \u2014 any schema change is a migration and the scraping needs web-fetching logic.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:58Z",
+      "risk": "high"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,68 @@
+{
+  "fix": [],
+  "issue": 4948,
+  "triage": [
+    {
+      "batch_id": "t-4969-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Warn you on the sign up page if you are already signed up \u2014 added @fill_cookies('deck_id'), loads deck, passes it to SignUp view, shows signed_up_msg_safe",
+          "ref": "7928aa93",
+          "type": "commit"
+        },
+        {
+          "detail": "Refined to only show warning when d.is_in_current_run() (i.e., not after 5 matches played)",
+          "ref": "4c5c3913",
+          "type": "commit"
+        },
+        {
+          "detail": "if d and d.is_in_current_run(): sets signed_up_msg_safe with links to the active deck and the retire page",
+          "ref": "decksite/views/signup.py:13-16",
+          "type": "code"
+        },
+        {
+          "detail": "{{#signed_up_msg_safe}} renders the retire prompt as an error paragraph on the signup page",
+          "ref": "decksite/templates/signup.mustache:8-10",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4948,
+      "notes": "Detection relies on the deck_id cookie, so users visiting from a different browser without the cookie will not see the prompt. This edge case was apparently accepted as an acceptable limitation.",
+      "proposed_comment": "This was implemented in commits 7928aa93 and 4c5c3913. The signup page now shows a retire prompt ('You are already signed up to the league with [deck]. Do you want to Retire?') whenever the current browser's deck_id cookie points to a deck still in an active run.",
+      "recorded_at": "2026-09-02T00:12:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-5506-1",
+      "final_comment": "This was implemented in commits 7928aa93 and 4c5c3913. The signup page now shows a retire prompt ('You are already signed up to the league with [deck]. Do you want to Retire?') whenever the current browser's deck_id cookie points to a deck still in an active run.",
+      "issue": 4948,
+      "own_evidence": [
+        {
+          "detail": "Independently read: checks d.is_in_current_run() and sets signed_up_msg_safe with a deck link and retire link",
+          "ref": "decksite/views/signup.py:13-16",
+          "type": "code"
+        },
+        {
+          "detail": "Confirmed @fill_cookies('deck_id') decorator populates deck_id from browser cookie, then loads the deck and passes it to the SignUp view",
+          "ref": "decksite/controllers/league.py:28-36",
+          "type": "code"
+        },
+        {
+          "detail": "Confirmed template renders {{{signed_up_msg_safe}}} as an error-class paragraph when set",
+          "ref": "decksite/templates/signup.mustache:8-10",
+          "type": "code"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-02T00:17:21Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

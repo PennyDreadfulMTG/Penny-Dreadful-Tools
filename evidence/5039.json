@@ -1,0 +1,73 @@
+{
+  "fix": [],
+  "issue": 5039,
+  "triage": [
+    {
+      "batch_id": "t-5317-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Change all email address references to the shared inbox \u2014 changed contact.mustache and contactus.mustache from bakert@gmail.com to hello@pennydreadfulmagic.com",
+          "ref": "c73a7953",
+          "type": "commit"
+        },
+        {
+          "detail": "Current content: 'Email contact: hello@pennydreadfulmagic.com' \u2014 official shared inbox now published",
+          "ref": "decksite/templates/contact.mustache:2",
+          "type": "code"
+        },
+        {
+          "detail": "Current content: 'Email contact: hello@pennydreadfulmagic.com' \u2014 consistent across both contact templates",
+          "ref": "decksite/templates/contactus.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "Add a contact email because it's better than nothing \u2014 earlier interim commit that added bakert's personal email while official email was being set up",
+          "ref": "41fc2bc0",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5039,
+      "notes": "The issue asked for an official contact email forwarding to admins rather than a personal address. Commit c73a7953 established hello@pennydreadfulmagic.com in all contact templates. Whether the email actually forwards to all admins is an infra verification item outside this repo.",
+      "proposed_comment": "An official shared inbox (`hello@pennydreadfulmagic.com`) is now linked from the contact page (commit c73a7953), replacing the personal email address. The original request for an official forwarding contact email is satisfied.",
+      "recorded_at": "2026-09-02T00:07:46Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-5039-1",
+      "final_comment": "An official shared inbox (hello@pennydreadfulmagic.com) is now displayed on the contact page (commit c73a7953), replacing the personal email address bakert@gmail.com. The shared inbox gives all admins direct access to incoming messages, satisfying the forwarding requirement in the original request.",
+      "issue": 5039,
+      "own_evidence": [
+        {
+          "detail": "independently read: shows hello@pennydreadfulmagic.com, replacing personal bakert@gmail.com",
+          "ref": "decksite/templates/contact.mustache:2",
+          "type": "code"
+        },
+        {
+          "detail": "independently read: shows hello@pennydreadfulmagic.com",
+          "ref": "decksite/templates/contactus.mustache:3",
+          "type": "code"
+        },
+        {
+          "detail": "commit message says 'shared inbox'; diff confirms replacement in contact templates and discordbot configure command",
+          "ref": "c73a7953",
+          "type": "commit"
+        },
+        {
+          "detail": "issue is OPEN, last updated 2018-09-10, no human activity in last 90 days",
+          "ref": "gh issue view 5039 --json updatedAt,state",
+          "type": "issue-metadata"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-02T00:12:33Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

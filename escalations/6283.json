@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-02T00:08:09Z",
+  "evidence_refs": [
+    "evidence/6283.json#triage[0]"
+  ],
+  "issue": 6283,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Requires owner to define: what constitutes 'new player prizes', what 'league top 8' refers to (playoff top-8 vs. weekly league run finish), and what the complete email template should look like. The existing prize generation structure is a reasonable starting point once the format is decided."
+}

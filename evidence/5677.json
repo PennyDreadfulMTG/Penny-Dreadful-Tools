@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5677,
+  "triage": [
+    {
+      "batch_id": "t-5713-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "respond_to_card_names now wraps trigger_typing() in try/except Forbidden: return \u2014 bot silently exits if it cannot post in the channel, preventing the Forbidden crashes",
+          "ref": "discordbot/command.py:47-50",
+          "type": "code"
+        },
+        {
+          "detail": "Bot now uses interactions.py (not the old discord.py from the 2018 stack traces); the entire code path in the original stack traces (bot.py:48 on_message, command.py:880 send_image_with_retry with aiohttp payload bug) no longer exists",
+          "ref": "discordbot/bot.py:8",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's final comment: 'None of these are reproducible. They may just be temporary network conditions/the price of doing business. Backlogging this rather than closing it.'",
+          "ref": "#5677",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5677,
+      "notes": "Confidence is medium rather than high because there is no single fixing commit to cite \u2014 the fix came from a full library migration (discord.py \u2192 interactions.py) and incremental hardening. A narrow residual gap exists: if trigger_typing() succeeds but send() raises Forbidden (different permission sets), no user-facing error is shown; however this is an edge case the framework handles silently.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

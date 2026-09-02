@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 4248,
+  "triage": [
+    {
+      "batch_id": "t-4248-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "A Patreon exists and is linked from the bot (https://www.patreon.com/silasary/), so the core goal was achieved",
+          "ref": "discordbot/commands/patreon.py:6",
+          "type": "code"
+        },
+        {
+          "detail": "Issue body is entirely discussion questions about Patreon goals, tiers, tax implications, where money goes \u2014 not a code defect or actionable feature spec",
+          "ref": "gh issue view 4248 --comments",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4248,
+      "notes": "Patreon exists; remaining open questions are community/business decisions (tiers, commercialization, governance), not software changes. Owner should close if the organizational questions are settled.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:11:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

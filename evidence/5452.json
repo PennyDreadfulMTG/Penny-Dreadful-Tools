@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5452,
+  "triage": [
+    {
+      "batch_id": "t-5503-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "zero matches in decksite/ \u2014 the tables are completely absent from the codebase",
+          "ref": "grep -rn 'fastest_rising|fastest.rising|this_week' decksite/",
+          "type": "search"
+        },
+        {
+          "detail": "only 'this week' reference in home view is match count, not a cards table",
+          "ref": "decksite/views/home.py:118",
+          "type": "code"
+        },
+        {
+          "detail": "live card table has no date-windowed endpoint or 'fastest rising' sort option",
+          "ref": "shared_web/static/js/cardtable.jsx",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5452,
+      "notes": "Requires either a new preaggregation job (daily/weekly card stats table) or a proven-performant date-windowed query. bakert's comment acknowledges the challenge is knowing which approach is fast enough; this is a design decision before any code can be written.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:16Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

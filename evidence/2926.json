@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 2926,
+  "triage": [
+    {
+      "batch_id": "t-3171-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Deck view only has mv_chart (mana value curve); no color chart or card type chart",
+          "ref": "decksite/views/deck.py:47",
+          "type": "code"
+        },
+        {
+          "detail": "Closed issue #316 confirms 'Chart of colors used', 'Chart of colors produced', 'Chart of card types' still listed without strikethrough (not done)",
+          "ref": "#316",
+          "type": "issue"
+        },
+        {
+          "detail": "Person page already has a 'Colors Played' bar chart per player, showing the pattern exists but not per-deck",
+          "ref": "decksite/views/person.py:36",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 2926,
+      "notes": "The mana value chart already exists on the deck page. The requested color and card type charts are not implemented. 'Colors produced' (mana pips analysis) is more complex than 'colors used' and may require separate handling for split/adventure cards.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-6315-1",
+      "branch": "sweep/6315-pdm-doesn-t-handle-pdm-being-down-gracef",
+      "files_changed": 2,
+      "head_sha": "99eb5f174e249e30a174e2ae45710b49ed0b95e5",
+      "issue": 6315,
+      "lines_changed": 24,
+      "lint": "passed",
+      "notes": "The fix only catches FetchException from the sitemap call inside site_resources(). The resources_resources() function reads a local JSON file and won't throw. If redis is unavailable that would also surface as a different exception; the fix focuses narrowly on the HTTP fetch failure that occurs when the PD website is down.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen the PD website is down, `site_resources()` calls `fetcher.sitemap()` which raises a `FetchException`. This exception was uncaught in the `resources()` slash command handler, causing the bot to surface a generic \"failed to execute command\" error instead of a useful message.\n\n## What changed\n\n- `discordbot/commands/resources.py`: Wrapped the `await asyncio.to_thread(site_resources, resource)` call in a `try/except fetch_tools.FetchException` block. When the exception fires, a `site_down` flag is set and the user receives the message: \"The PD website appears to be down. Try &lt;url&gt; directly.\"\n- `discordbot/commands/network_io_test.py`: Added `test_resources_handles_site_down_gracefully` to verify that when `site_resources` raises `FetchException`, the bot sends a message containing \"down\" and the resources URL.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (no errors)\n- `uv run --frozen pytest discordbot/commands/network_io_test.py -v` \u2014 18 passed (including the new test)\n- Database was available in the test environment (mariadb118 already installed).\n\nFixes #6315",
+      "pr_title": "Handle PD website being down gracefully in !pdm command (#6315)",
+      "recorded_at": "2026-09-02T00:16:59Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest discordbot/commands/network_io_test.py -v",
+        "detail": "18 passed in 0.26s, including new test_resources_handles_site_down_gracefully",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 6315,
+  "triage": [
+    {
+      "batch_id": "t-6315-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "site_resources() calls fetcher.sitemap() with no FetchException handling; exception propagates up",
+          "ref": "discordbot/commands/resources.py:44",
+          "type": "code"
+        },
+        {
+          "detail": "global on_command_error handler catches the exception but sends only a generic 'Something went wrong. Error code...' message, not a user-friendly 'site is down' message",
+          "ref": "discordbot/bot.py:102-113",
+          "type": "code"
+        },
+        {
+          "detail": "sitemap() raises FetchException if the decksite returns non-2xx or null body",
+          "ref": "magic/fetcher.py:314-322",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In discordbot/commands/resources.py, wrap the `await asyncio.to_thread(site_resources, resource)` call in a try-except catching FetchException, and send a user-friendly message like 'The PD website appears to be down. Try <decksite_url> directly.' if it fires. Alternatively catch inside site_resources() itself and return an empty dict, then add a fallback message in resources() when results is empty after the exception.",
+      "issue": 6315,
+      "notes": "The original traceback in the issue is from an older code path (command.py) but the same vulnerability persists in the refactored resources.py. The user currently sees a generic error code instead of 'site is down'.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:08:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

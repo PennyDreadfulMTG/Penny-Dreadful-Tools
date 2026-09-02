@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 5317,
+  "triage": [
+    {
+      "batch_id": "t-5317-1",
+      "class": "migration-required",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "defines `table = '_card_stats'` and `table = '_card_person_stats'` \u2014 underscore-prefix convention",
+          "ref": "decksite/data/card.py",
+          "type": "code"
+        },
+        {
+          "detail": "CREATE TABLE deck_cache \u2014 no underscore prefix, inconsistent with _card_stats pattern",
+          "ref": "decksite/sql/10.sql",
+          "type": "code"
+        },
+        {
+          "detail": "DROP TABLE IF EXISTS _card_stats; DROP TABLE IF EXISTS _card_person_stats; \u2014 shows these are drop-recreate caches",
+          "ref": "decksite/sql/42.sql",
+          "type": "code"
+        },
+        {
+          "detail": "deck_cache referenced in achievements.py, card.py, match.py, playability.py, query.py, person.py, competition.py, archetype.py, deck.py \u2014 ~10 Python files",
+          "ref": "grep deck_cache decksite/data/*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5317,
+      "notes": "Renaming deck_cache requires an ALTER TABLE migration SQL file plus find-replace across ~10 Python files. _card_stats/_card_person_stats are drop-and-recreate so need no data migration, only code changes. Either direction of rename is viable, but the deck_cache rename path requires a DB schema migration, placing this outside easy-fix scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:46Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

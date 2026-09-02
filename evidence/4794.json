@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4794,
+  "triage": [
+    {
+      "batch_id": "t-4794-1",
+      "class": "needs-work",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "test_some_pages already covers /signup/ and /report/ \u2014 two of the three checklist items",
+          "ref": "decksite/smoke_test.py:15",
+          "type": "code"
+        },
+        {
+          "detail": "self.charts built in Person view but there is no /charts/ route; charts are JS-rendered within archetype/deck/person pages",
+          "ref": "decksite/views/person.py:37",
+          "type": "code"
+        },
+        {
+          "detail": "returned empty \u2014 no standalone chart route exists, so smoke-testing charts requires choosing pages that embed chart data (e.g. a specific /archetypes/<id>/ or /people/<name>/)",
+          "ref": "grep '@APP.route' decksite/controllers/ | grep 'chart'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4794,
+      "notes": "Reporting and signup are already smoke-tested. The remaining 'check charts work' item requires deciding which pages to probe (archetypes/<id>/, people/<name>/, deck/<id>/) and obtaining valid IDs from a test fixture or the dev DB; can't be done in one line.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

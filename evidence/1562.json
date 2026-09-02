@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1562,
+  "triage": [
+    {
+      "batch_id": "t-1587-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Bugged cards page exists but only shows a table of bug descriptions with GitHub and Bug Blog links",
+          "ref": "decksite/views/bugs.py:1-14",
+          "type": "code"
+        },
+        {
+          "detail": "Template shows card/bug/severity/links but has no community voting, upvoting, or WotC submission tools",
+          "ref": "decksite/templates/bugs.mustache:1-35",
+          "type": "code"
+        },
+        {
+          "detail": "No child issues or follow-up tasks found for the checklist silasary mentioned in comments",
+          "ref": "gh issue list --search 'bug reporting bugged cards' --state open",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1562,
+      "notes": "silasary promised a checklist in 2018 that never materialized. The core request \u2014 community organizing to increase WotC bug fix priority \u2014 requires product design decisions about voting, external submission mechanisms, and community coordination.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:15:00Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

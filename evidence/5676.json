@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5676,
+  "triage": [
+    {
+      "batch_id": "t-5676-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "HOURLY = True \u2014 classifier still runs only as an hourly batch job, not at deck-add time",
+          "ref": "maintenance/classify_archetypes.py:3",
+          "type": "code"
+        },
+        {
+          "detail": "add_deck() does not call archetype_classifier at all; no per-deck classification at submission time",
+          "ref": "decksite/data/deck.py:316-390",
+          "type": "code"
+        },
+        {
+          "detail": "run() loads ALL unclassified decks (up to 100), computes cross-deck similarity, then makes LLM API calls \u2014 not designed for single-deck invocation",
+          "ref": "decksite/data/archetype_classifier.py:148-165",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5676,
+      "notes": "The classifier has been upgraded to use Claude LLM (anthropic_api_key) since the issue was filed. Per-deck classification at add_deck time requires restructuring run() to accept a single deck_id, making the similarity and metadata loads per-deck-efficient, and running asynchronously to avoid blocking user responses \u2014 more than an easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:23Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

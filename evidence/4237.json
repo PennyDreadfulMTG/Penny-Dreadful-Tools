@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 4237,
+  "triage": [
+    {
+      "batch_id": "t-4248-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Only card-image tooltips (via deckbox.org) exist in current JS tooltip infrastructure; no player or archetype quick-view",
+          "ref": "shared_web/static/js/tooltips.js:1",
+          "type": "code"
+        },
+        {
+          "detail": "Zero matches \u2014 no player or archetype tooltip/popup implemented in current codebase",
+          "ref": "grep -rn 'person.*tooltip|archetype.*tooltip|quick.view' ./shared_web/static/js/pd.js ./decksite/templates/*.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4237,
+      "notes": "Feature is still unimplemented. Requires designing new API endpoints for player/archetype summary data and wiring up JS hover/popup UI, which is non-trivial (new JS, new templates, new API data).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:11:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

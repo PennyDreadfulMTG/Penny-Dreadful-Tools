@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5704,
+  "triage": [
+    {
+      "batch_id": "t-5713-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Season picker uses <input type=\"checkbox\" class=\"dd-input\"> \u2014 the pure-CSS checkbox-toggle pattern",
+          "ref": "decksite/templates/seasonchooser.mustache:3",
+          "type": "code"
+        },
+        {
+          "detail": ".dd-input, .dd-input + .dd-menu, .dd-input:checked + .dd-menu \u2014 CSS-only open/close, no JS",
+          "ref": "shared_web/static/css/pd.css:1929-1946",
+          "type": "code"
+        },
+        {
+          "detail": "Menu and language-switcher already use hoverIntent + slideDown/slideUp \u2014 JS precedent is set",
+          "ref": "shared_web/static/js/pd.js:75-98",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In decksite/templates/seasonchooser.mustache: remove the <input type=\"checkbox\" class=\"dd-input\"> element and add a click-target class/attribute. In shared_web/static/js/pd.js: add a click handler on the .dd-button that calls slideToggle on the adjacent .dd-menu. In shared_web/static/css/pd.css: remove or guard the .dd-input:checked + .dd-menu rule. Roughly 20-40 lines across three files.",
+      "issue": 5704,
+      "notes": "The dd-input pattern is used only in seasonchooser.mustache; archetypedropdown.mustache is a plain <select>. Change is self-contained to the season picker.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

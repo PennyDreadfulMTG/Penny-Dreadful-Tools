@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6283,
+  "triage": [
+    {
+      "batch_id": "t-6315-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "prizes view generates weekly email bodies from competition data but contains no league top-8 or new-player prize logic",
+          "ref": "decksite/views/prizes.py:1-50",
+          "type": "code"
+        },
+        {
+          "detail": "bakert's comment: 'Backlogging this. The shoemaker's children are the last to have new shoes.' \u2014 owner explicitly deferred it",
+          "ref": "#6283",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6283,
+      "notes": "Requires owner to define: what constitutes 'new player prizes', what 'league top 8' refers to (playoff top-8 vs. weekly league run finish), and what the complete email template should look like. The existing prize generation structure is a reasonable starting point once the format is decided.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:08:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

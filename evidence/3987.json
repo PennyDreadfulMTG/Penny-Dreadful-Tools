@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 3987,
+  "triage": [
+    {
+      "batch_id": "t-4116-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bakert (the issue author) commented 'I don't know that we need such a vague ticket open. It is true we could redesign the homepage or any page to be more engaging but we know that without a ticket.'",
+          "ref": "#3987",
+          "type": "issue"
+        },
+        {
+          "detail": "Home page has no images; news.mustache shows text-only; card.mustache has a card-image-block but that's card-specific",
+          "ref": "decksite/templates/home.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment notes 'Images increase page weight so there's an appeal versus speed trade off here' \u2014 scope and tradeoffs are unresolved",
+          "ref": "#3987",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 3987,
+      "notes": "The issue author themselves questioned whether this ticket is needed. The decision required is: which specific pages should get images, what images (card art vs. other), and whether the page-weight tradeoff is acceptable. No actionable scope is defined.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

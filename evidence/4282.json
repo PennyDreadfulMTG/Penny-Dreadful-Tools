@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 4282,
+  "triage": [
+    {
+      "batch_id": "t-4515-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Metagame endpoint only supports tournament/league toggle and season selection \u2014 no date-range or week/month parameter",
+          "ref": "decksite/controllers/metagame.py:12-19",
+          "type": "code"
+        },
+        {
+          "detail": "Metagame view has no date-range attributes; page_title returns only 'Metagame'",
+          "ref": "decksite/views/metagame.py:1-20",
+          "type": "code"
+        },
+        {
+          "detail": "num_matches_this_week / num_matches_this_month exist in player activity SQL but there is no equivalent date-filtered deck/archetype aggregation for metagame",
+          "ref": "decksite/data/match.py:134-135",
+          "type": "code"
+        },
+        {
+          "detail": "No date-window metagame queries exist anywhere",
+          "ref": "grep -r 'week\\|month\\|date_range' decksite/data/ --include='*.py' (only match.py:134-135, unrelated)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4282,
+      "notes": "Implementing time-bound metagame slices requires: new date-range SQL in the deck/archetype data layer, new route parameters, UI date-range controls, and potentially a new cache strategy \u2014 substantially more than 150 lines across multiple files.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:38Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

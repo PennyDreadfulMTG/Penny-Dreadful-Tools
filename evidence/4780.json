@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4780,
+  "triage": [
+    {
+      "batch_id": "t-4794-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "'sponsor_name': 'Cardhoarder' hardcoded for FNM; same on lines 319, 330, 341, 350 for each series",
+          "ref": "magic/tournaments.py:308",
+          "type": "code"
+        },
+        {
+          "detail": "sponsor table exists with INSERT for Cardhoarder (id=1); competition_series has a sponsor_id FK",
+          "ref": "decksite/sql/33.sql:7",
+          "type": "code"
+        },
+        {
+          "detail": "competition queries already JOIN sponsor and return sponsor_name from the DB \u2014 only all_series_info() is hardcoded",
+          "ref": "decksite/data/competition.py:60",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4780,
+      "notes": "The fix would make all_series_info() do a DB lookup rather than returning hardcoded strings, but the decision of which system is the source of truth (DB vs. code) requires an explicit owner call; the issue body itself says 'Think about this.'",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:21Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

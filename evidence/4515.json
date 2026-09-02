@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 4515,
+  "triage": [
+    {
+      "batch_id": "t-4515-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "hide_intro determined by cookie 'hide_intro', session, MTGO username, or Discord ID \u2014 all fail in Discord iOS in-app browser which does not persist cookies across sessions",
+          "ref": "decksite/controllers/api.py:705",
+          "type": "code"
+        },
+        {
+          "detail": "Also sets hide_intro after 10 'views' cookie increments \u2014 still cookie-based, same problem",
+          "ref": "decksite/controllers/api.py:722-728",
+          "type": "code"
+        },
+        {
+          "detail": "JS shows .intro-container if data.hide_intro is falsy \u2014 depends entirely on the server-side cookie check",
+          "ref": "shared_web/static/js/pd.js:488-489",
+          "type": "code"
+        },
+        {
+          "detail": "navigator.cookieEnabled is true in Discord iOS browser; $.cookie test also returns true; User-Agent is normal Safari; no viable client-side detection found",
+          "ref": "issue comments",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4515,
+      "notes": "Owner explored several approaches (navigator.cookieEnabled, JS cookie probe, UA detection) and all failed. The viable options are: (1) embed a hide_intro=1 query parameter in Discord bot links so the box never shows from bot-generated URLs, (2) accept the regression, or (3) server-side IP/fingerprint heuristics. All require an owner judgment call.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

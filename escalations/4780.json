@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-02T00:10:21Z",
+  "evidence_refs": [
+    "evidence/4780.json#triage[0]"
+  ],
+  "issue": 4780,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The fix would make all_series_info() do a DB lookup rather than returning hardcoded strings, but the decision of which system is the source of truth (DB vs. code) requires an explicit owner call; the issue body itself says 'Think about this.'"
+}

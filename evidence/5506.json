@@ -1,0 +1,63 @@
+{
+  "fix": [],
+  "issue": 5506,
+  "triage": [
+    {
+      "batch_id": "t-5676-1",
+      "class": "obsolete",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "\"Remove old chart image generation in favor of Chart.js\" \u2014 deleted decksite/charts/chart.py (76 lines) and removed the cmc_chart Flask route from decksite/main.py",
+          "ref": "2450e6b35",
+          "type": "commit"
+        },
+        {
+          "detail": "charts/ directory now contains only an empty __init__.py; chart.py, seaborn, and matplotlib are gone",
+          "ref": "decksite/charts/__init__.py",
+          "type": "code"
+        },
+        {
+          "detail": "No matches \u2014 the route and the seaborn/matplotlib image generation code no longer exist",
+          "ref": "grep -rn 'cmc_chart' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5506,
+      "notes": "The sporadic ValueError/KeyError from matplotlib was in chart.py which was deleted in May 2024. Charts are now rendered client-side via Chart.js (JavaScript), so server-side image generation errors are impossible.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:23Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-5506-1",
+      "final_comment": "The /charts/cmc/ endpoint and all matplotlib/seaborn chart generation code were removed in commit 2450e6b35 (May 2024) and replaced by client-side Chart.js rendering. The decksite/charts/chart.py file no longer exists and cmc_chart is not registered as a route, so this class of error cannot recur.",
+      "issue": 5506,
+      "own_evidence": [
+        {
+          "detail": "Directory contains only an empty __init__.py; chart.py no longer exists",
+          "ref": "decksite/charts/",
+          "type": "code"
+        },
+        {
+          "detail": "Returns no results \u2014 the route is not registered anywhere in current master",
+          "ref": "grep -rn 'cmc_chart' decksite/",
+          "type": "grep"
+        },
+        {
+          "detail": "Confirmed commit deleted chart.py (76 lines) and removed the @APP.route('/charts/cmc/<deck_id>-cmc.png') handler from decksite/main.py",
+          "ref": "2450e6b359d041ebf9f15547c8780152416cfb11",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-02T00:17:21Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

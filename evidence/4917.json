@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 4917,
+  "triage": [
+    {
+      "batch_id": "t-4969-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PersonMatches view only holds person and matches \u2014 no elo history attribute",
+          "ref": "decksite/views/person_matches.py:7-13",
+          "type": "code"
+        },
+        {
+          "detail": "Template shows a matches table with deck/opponent/result/date; no elo column or chart section",
+          "ref": "decksite/templates/personmatches.mustache:1-35",
+          "type": "code"
+        },
+        {
+          "detail": "ALTER TABLE person ADD COLUMN elo INT \u2014 elo is a single current value on person, not stored per-match",
+          "ref": "decksite/sql/29.sql:1",
+          "type": "code"
+        },
+        {
+          "detail": "adjust_elo() updates person.elo in-place with no historical snapshot; no elo_history table exists",
+          "ref": "decksite/data/elo.py:34-39",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4917,
+      "notes": "Elo history can either be reconstructed by replaying all matches in chronological order per-person (expensive but no migration) or stored by adding an elo_before/elo_after column to the match table (migration required). Either path also needs a chart added to personmatches.mustache.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

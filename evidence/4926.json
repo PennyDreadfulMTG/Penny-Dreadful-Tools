@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 4926,
+  "triage": [
+    {
+      "batch_id": "t-4969-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "The /decks/<int:deck_id>/ route has @auth.load_person but NO @cached() decorator; all surrounding routes (decks, metagame, cards, seasons) do use @cached()",
+          "ref": "decksite/controllers/metagame.py:42-44",
+          "type": "code"
+        },
+        {
+          "detail": "Last comment: 'While it would be great to cache based on a key of (url, locale, is_admin_or_owner) it's non-trivial and not the most pressing perf concern right now so backlogging'",
+          "ref": "Issue comments by bakert",
+          "type": "behavior"
+        },
+        {
+          "detail": "The cached() decorator uses key='view{id}{locale}' with no is_admin/is_owner dimension; extending it requires passing additional context into the cache key",
+          "ref": "decksite/cache.py:1-90",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 4926,
+      "notes": "The blocker is that the deck page shows different content to admin/owner (retire button, archetypes panel) vs public. Caching requires a two-variant key (public vs privileged), which is non-trivial to wire into the existing cache decorator.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:12:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

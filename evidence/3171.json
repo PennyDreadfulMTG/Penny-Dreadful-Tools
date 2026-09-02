@@ -1,0 +1,66 @@
+{
+  "fix": [],
+  "issue": 3171,
+  "triage": [
+    {
+      "batch_id": "t-3171-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Added badges for TournamentPlayer, LeaguePlayer, PerfectRun, TournamentWinner on player page",
+          "ref": "431f9b41",
+          "type": "commit"
+        },
+        {
+          "detail": "Added TournamentOrganizer achievement",
+          "ref": "4fedd925",
+          "type": "commit"
+        },
+        {
+          "detail": "TournamentOrganizer class present",
+          "ref": "decksite/data/achievements.py:316",
+          "type": "code"
+        },
+        {
+          "detail": "Player (multi-season) class present",
+          "ref": "decksite/data/achievements.py:344",
+          "type": "code"
+        },
+        {
+          "detail": "TournamentPlayer class present",
+          "ref": "decksite/data/achievements.py:359",
+          "type": "code"
+        },
+        {
+          "detail": "LeaguePlayer class present",
+          "ref": "decksite/data/achievements.py:390",
+          "type": "code"
+        },
+        {
+          "detail": "PerfectRun (5-0) class present",
+          "ref": "decksite/data/achievements.py:407",
+          "type": "code"
+        },
+        {
+          "detail": "displayed_achievements shown on person page via Achievement.all_achievements",
+          "ref": "decksite/views/person.py:30",
+          "type": "code"
+        },
+        {
+          "detail": "20+ achievement classes exist; no Streamer, Discord participant, or Discord mod classes found",
+          "ref": "grep -n 'class.*Achievement' decksite/data/achievements.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 3171,
+      "notes": "The original four badge types (tournament player, league player, 5-0 run, tournament organizer) are fully implemented. The issue remains open because the comment thread brainstormed additional badges \u2014 Streamer (link to stream), Discord participant, Discord mod \u2014 that require external data integration and owner decisions on scope and thresholds.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

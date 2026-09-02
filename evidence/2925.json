@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 2925,
+  "triage": [
+    {
+      "batch_id": "t-3171-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Remove obsolete remnants of similar deck feature (display side removed from deck page)",
+          "ref": "f509eb72",
+          "type": "commit"
+        },
+        {
+          "detail": "Remove obsolete similar decks plumbing from deck.py/deck_test.py",
+          "ref": "fb59eb93",
+          "type": "commit"
+        },
+        {
+          "detail": "Remove last unused similarity code (deckrow.mustache display removed)",
+          "ref": "826c3cc6",
+          "type": "commit"
+        },
+        {
+          "detail": "calculate_similar_decks() still exists for archetype classification use only; stores results in Redis but nothing reads them for display",
+          "ref": "decksite/data/deck.py:472",
+          "type": "code"
+        },
+        {
+          "detail": "deck() controller creates Deck view with no similar_decks loading \u2014 feature is absent from the deck page",
+          "ref": "decksite/controllers/metagame.py:44",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 2925,
+      "notes": "Similar decks display was deliberately removed in 2019. The issue asks to reinstate it with a '5 decks + show more' UI; the comment notes the React deck table makes this feasible now. Requires: load similar_decks in the deck controller, pass to Deck view, add a collapsible React deck table section.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

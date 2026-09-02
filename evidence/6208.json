@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6208,
+  "triage": [
+    {
+      "batch_id": "t-6315-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "create_match() assigns players via `set(players)` which is unordered; the host is always players[0] per host() at line 42, but set() makes that position non-deterministic",
+          "ref": "logsite/data/match.py:90",
+          "type": "code"
+        },
+        {
+          "detail": "import_header() passes players list in log-file order (host first per pdbot convention) to create_match(), but set() discards that ordering",
+          "ref": "logsite/importing.py:89",
+          "type": "code"
+        },
+        {
+          "detail": "host() returns self.players[0] unconditionally \u2014 correctness depends entirely on insertion order being preserved",
+          "ref": "logsite/data/match.py:42-43",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In logsite/data/match.py line 90, change `set(players)` to `dict.fromkeys(players)` (or a manual dedup loop) to preserve the log-file order while still deduplicating. This keeps the player who triggered pdbot (and appears first in the log header) as players[0], i.e. the host. One-line change; no schema migration needed.",
+      "issue": 6208,
+      "notes": "Historical records already in the database may have incorrect host assignments; the fix only affects future imports. Existing data correction would require a separate migration, but that is a separate decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:08:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5769,
+  "triage": [
+    {
+      "batch_id": "t-5894-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "normalize_version() already converts '(3)' \u2192 'v3' and 'V2' \u2192 'v2' at the text level; the normalization step runs in the prepare pipeline",
+          "ref": "decksite/deck_name.py:283-320",
+          "type": "code"
+        },
+        {
+          "detail": "prepare.py uses _safe suffix attributes (colors_safe, top8_safe, stars_safe) with raw HTML for Mustache triple-brace rendering \u2014 same pattern could apply to deck name version markers",
+          "ref": "decksite/prepare.py:98-218",
+          "type": "code"
+        },
+        {
+          "detail": "bakert said 'it obviously serves a purpose for them so I don't like stripping it' \u2014 expressing uncertainty about the right approach, even though the issue itself proposes gray superscript",
+          "ref": "#5769 comment by bakert",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5769,
+      "notes": "The open decision: should version markers become invisible-to-text superscript HTML (accessibility tradeoff), stay as plain-text 'v3', or something else? The technical path (add name_safe in prepare.py, use {{{name_safe}}} in templates) is clear once the format is decided. Owner should sign off on which approach.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:07:58Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

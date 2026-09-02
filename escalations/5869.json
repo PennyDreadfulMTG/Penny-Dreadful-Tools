@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-02T00:07:58Z",
+  "evidence_refs": [
+    "evidence/5869.json#triage[0]"
+  ],
+  "issue": 5869,
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "Implementation requires: (1) ALTER TABLE game ADD COLUMN had_inactivity BOOLEAN, (2) detection in importing.py for the regex '@P lost the game due to inactivity', (3) display in logsite views/templates. Schema migration is the blocker."
+}

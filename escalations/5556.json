@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-02T00:12:23Z",
+  "evidence_refs": [
+    "evidence/5556.json#triage[0]"
+  ],
+  "issue": 5556,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "Feature requires deciding: (a) whether to build GitHub-account-to-PD-person linking, or (b) manually grant achievement by hand. Discussion in issue shows disagreement on whether GitHub linking is worth it for this use case alone."
+}

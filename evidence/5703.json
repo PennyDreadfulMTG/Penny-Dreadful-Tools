@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-5703-1",
+      "branch": "sweep/5703-we-may-want-to-detect-4xx-responses-in-d",
+      "files_changed": 2,
+      "head_sha": "dc196674d705ee64c24b79f880427b7696b8fa9d",
+      "issue": 5703,
+      "lines_changed": 23,
+      "lint": "passed",
+      "notes": "The fix is a one-liner matching the existing pattern in store_image(). aiohttp.ClientResponseError is a subclass of aiohttp.ClientError so no changes to the except clause were needed. No other issues discovered.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`store_async` in `shared/fetch_tools.py` silently ignored HTTP 4xx/5xx error responses from Scryfall when downloading images. It would write the error response body to disk as though it were a valid image, while the synchronous `store_image` already called `response.raise_for_status()` to detect these failures.\n\n## What changed\n\nAdded `response.raise_for_status()` immediately after `response = await aios.get(url)` in `store_async` (line 178). `aiohttp.ClientResponseError` \u2014 raised by `raise_for_status()` on 4xx/5xx responses \u2014 is a subclass of `aiohttp.ClientError`, which is already caught by the existing `except` clause and converted to `FetchException`.\n\nAlso added `test_store_async_raises_on_4xx` to `shared/fetch_tools_test.py`, mirroring the existing `test_store_image_rejects_http_error` test for the sync path.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks passed)\n- `uv run --frozen pytest shared/fetch_tools_test.py -v` \u2014 6 passed, including the new async test\n\nFixes #5703",
+      "pr_title": "Raise FetchException on 4xx responses in store_async (#5703)",
+      "recorded_at": "2026-09-02T00:19:28Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest shared/fetch_tools_test.py -v",
+        "detail": "6 passed in 0.15s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 5703,
+  "triage": [
+    {
+      "batch_id": "t-5713-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "store_async does not call response.raise_for_status(); a Scryfall 4xx error body is silently written to the output file path",
+          "ref": "shared/fetch_tools.py:173-187",
+          "type": "code"
+        },
+        {
+          "detail": "Synchronous store_image() does call response.raise_for_status() \u2014 inconsistency confirms the omission in store_async is unintentional",
+          "ref": "shared/fetch_tools.py:146",
+          "type": "code"
+        },
+        {
+          "detail": "Exception handler catches aiohttp.ClientError which is the parent of aiohttp.ClientResponseError (raised by raise_for_status) \u2014 adding one line is safe and self-contained",
+          "ref": "shared/fetch_tools.py:186",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared/fetch_tools.py, add response.raise_for_status() on the line after response = await aios.get(url) in store_async (currently line 177). This mirrors the existing pattern in store_image(). aiohttp.ClientResponseError is a subclass of aiohttp.ClientError so the existing except clause will convert it to FetchException automatically.",
+      "issue": 5703,
+      "notes": "Without the fix, failed downloads leave small (<1000 byte) error-JSON files on disk; acceptable_file() already prevents them from being used, so behavior is self-healing but error diagnosis is harder and disk accumulates stale files.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:10:10Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

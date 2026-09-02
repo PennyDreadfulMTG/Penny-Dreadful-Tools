@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 4283,
+  "triage": [
+    {
+      "batch_id": "t-4515-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "_trailblazer_cards table (card, deck_id) already exists and is preaggregated",
+          "ref": "decksite/data/card.py:220-218",
+          "type": "code"
+        },
+        {
+          "detail": "_unique_cards table (card, person_id) already exists and is preaggregated",
+          "ref": "decksite/data/card.py:196-218",
+          "type": "code"
+        },
+        {
+          "detail": "Both card lists are shown with card detail links (href='{{url}}') and season icons \u2014 the 'link cards' and 'seasonize' checklist items are done",
+          "ref": "decksite/templates/person.mustache:56-81",
+          "type": "code"
+        },
+        {
+          "detail": "Pioneer achievement is the direct SQL pattern to follow: with_sql CTE + SUM(CASE WHEN deck in set THEN 1 END) \u2014 identical approach works for trailblazer (via deck_id join) and unique cards (via person_id match)",
+          "ref": "decksite/data/achievements.py:674-700",
+          "type": "code"
+        },
+        {
+          "detail": "Confirmed: no Trailblazer or Unique Cards achievements exist yet",
+          "ref": "grep trailblazer decksite/data/achievements.py (no matches)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": "Add two CountedAchievement subclasses to decksite/data/achievements.py (after line 700): (1) TrailblazerAchievement using a with_sql CTE selecting deck_ids from _trailblazer_cards joined to the person's decks, then counting distinct cards; (2) UniqueCardsAchievement using a with_sql CTE counting rows in _unique_cards WHERE person_id = p.id. Both follow the Pioneer pattern (lines 674-700) exactly. No schema changes needed.",
+      "issue": 4283,
+      "notes": "The remaining open checklist item 'Consider linking the decks/matches in question on achievement detail' is explicitly optional ('Consider') and is separate from the two achievements. Core feature (both card lists with links and season info) is fully implemented.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:14:38Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

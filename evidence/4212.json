@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-4212-1",
+      "branch": "sweep/4212-modo-bugs-script-should-flag-issues-with",
+      "files_changed": 1,
+      "head_sha": "74ecc32721009bdfccbe52cfa85122ebf999b8f9",
+      "issue": 4212,
+      "lines_changed": 18,
+      "lint": "passed",
+      "notes": "The two new GitHub labels ('Multiple Categories' and 'Title Too Long') must be created in the PennyDreadfulMTG/modo-bugs repo before the script runs; the code will error on `add_to_labels` if they don't exist. No existing tests cover this module, so none were added. Title length threshold of 100 characters matches the triage sketch.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe modo-bugs update script had no checks to flag issues that had been assigned more than one category label, or issues whose titles were excessively long. Both conditions indicate data quality problems that need manual attention.\n\n## What changed\n\nAdded two new functions in `modo_bugs/update.py`, following the same pattern as the existing `check_for_invalid_card_names`:\n\n- `check_for_multiple_categories(issue, categories)`: applies the `Multiple Categories` label when an issue has more than one category label, removes it otherwise.\n- `check_for_long_title(issue)`: applies the `Title Too Long` label when `len(issue.title) > 100`, removes it otherwise.\n\nBoth are called from `process_issue` immediately after the `categories` list is computed (line 116), so they run on every open issue during the sweep.\n\n**Note:** The `Multiple Categories` and `Title Too Long` labels must be created manually in the PennyDreadfulMTG/modo-bugs GitHub repository before this script runs, otherwise `add_to_labels` will raise an error.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks). No unit tests exist for this module, so none were added or broken.\n\nFixes #4212",
+      "pr_title": "Flag issues with multiple categories or overly long titles (#4212)",
+      "recorded_at": "2026-09-02T00:19:06Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed!",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 4212,
+  "triage": [
+    {
+      "batch_id": "t-4248-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "categories = [c for c in labels if c in CATEGORIES] collects all categories but the list is never checked for length > 1; no 'Multiple Categories' label is ever applied",
+          "ref": "modo_bugs/update.py:116",
+          "type": "code"
+        },
+        {
+          "detail": "Zero matches \u2014 neither multiple-category nor long-title checks exist in current code",
+          "ref": "grep -n 'Multiple|Too Long|long_title|title.*len' ./modo_bugs/update.py",
+          "type": "search"
+        },
+        {
+          "detail": "check_for_invalid_card_names is the agreed-upon pattern for the new checks (per issue comments)",
+          "ref": "modo_bugs/update.py:220",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In modo_bugs/update.py: (1) add check_for_multiple_categories(issue, categories) after line 116 \u2014 if len(categories) > 1 apply 'Multiple Categories' label, else remove it; (2) add check_for_long_title(issue) \u2014 if len(issue.title) > ~100 chars apply 'Title Too Long' label, else remove it; (3) call both from process_issue. Also create both labels in the GitHub modo-bugs repo. ~40 lines of new code, same pattern as check_for_invalid_card_names.",
+      "issue": 4212,
+      "notes": "Both checks are purely additive label management with no data-retention impact. No schema or data changes.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:11:49Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

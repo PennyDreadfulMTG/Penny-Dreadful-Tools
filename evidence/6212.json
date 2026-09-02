@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-6212-1",
+      "branch": "sweep/6212-matchups-links-when-pasted-into-discord",
+      "files_changed": 1,
+      "head_sha": "f433d50bb97c508c28f3e67500affa656e461dc4",
+      "issue": 6212,
+      "lines_changed": 15,
+      "lint": "passed",
+      "notes": "The `og_url` uses `request.url` rather than rebuilding via `url_for` because the matchups endpoint relies on arbitrary query-parameter combinations that would be complex to reconstruct; the raw request URL is the canonical, lossless representation. No template changes were needed \u2014 the existing `{{#og_title}}` Mustache block already handles conditional rendering when `og_title` is falsy.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen a `/matchups/` URL with search results was pasted into Discord, the link preview showed no title, description, or summary \u2014 just a bare URL. Discord reads `og:title`, `og:url`, and `og:description` meta tags from the page `<head>` to build its rich preview, but the `Matchups` view had no `og_title`, `og_description`, or `og_url` methods, so the template's `{{#og_title}}...{{/og_title}}` block was never rendered.\n\n## What changed\n\nAdded three methods to `decksite/views/matchups.py`:\n\n- `og_title()` \u2014 returns `'{hero_summary} vs {enemy_summary}'` when results exist, else `None` (suppresses the OG block on the empty form)\n- `og_description()` \u2014 returns `'{wins}-{losses} ({win_percent}%) \u2014 {season_summary}'` (e.g. `\"39-7 (84.8%) \u2014 All Time\"`)\n- `og_url()` \u2014 returns `request.url`, preserving the full query-string so Discord's preview link matches the shared URL\n\nAlso added the necessary `from flask import request` import.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (no failures)\n\nFixes #6212",
+      "pr_title": "Add OG meta tags to /matchups/ for Discord link previews (#6212)",
+      "recorded_at": "2026-09-02T00:17:32Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped in 19.17s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 6212,
+  "triage": [
+    {
+      "batch_id": "t-6315-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "OG meta tags are rendered only when og_title is truthy; the block is already in the template",
+          "ref": "decksite/templates/header.mustache:13-20",
+          "type": "code"
+        },
+        {
+          "detail": "Matchups.page_title() returns 'Matchups Calculator' but no og_title() or og_description() methods are defined, so OG tags are never emitted for /matchups/ URLs",
+          "ref": "decksite/views/matchups.py:37-38",
+          "type": "code"
+        },
+        {
+          "detail": "Archetype view shows the established pattern: define og_title(), og_url(), og_description() returning strings",
+          "ref": "decksite/views/archetype.py:98-105",
+          "type": "code"
+        },
+        {
+          "detail": "MatchupResults has wins, losses, win_percent attributes usable in og_description",
+          "ref": "decksite/data/matchup.py:15-27",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add to decksite/views/matchups.py: og_title() returning '{hero_summary} vs {enemy_summary}' when self.results is truthy (None otherwise to suppress OG tags on the empty form); og_description() returning '{results.wins}-{results.losses} ({results.win_percent}%) \u2014 {season_summary}'; and og_url() returning request.url or url_for('matchups', **request.args, _external=True). No template changes needed.",
+      "issue": 6212,
+      "notes": "bakert's comment already specified the desired format: 'bakert playing Gond Combo is 39-7 (78%)' so no product decision is needed. Under 20 lines of Python.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:08:09Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

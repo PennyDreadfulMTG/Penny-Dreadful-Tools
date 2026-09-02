@@ -1,0 +1,51 @@
+{
+  "fix": [],
+  "issue": 790,
+  "triage": [
+    {
+      "batch_id": "t-790-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Maintenance task explicitly disabled: 'This code forever tries to process logs with casts or plays. Needs work if it is to be re-enabled.'",
+          "ref": "maintenance/process_logs.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "BUG comment: 'This code will forever try to process logs that don't contain plays or casts. There are quite a lot of those.'",
+          "ref": "analysis/analysis.py:145",
+          "type": "code"
+        },
+        {
+          "detail": "played_cards_by_person() is defined but called from nowhere \u2014 no route, view, or template references it",
+          "ref": "analysis/analysis.py:70",
+          "type": "code"
+        },
+        {
+          "detail": "Only definition found; no callers in decksite views or controllers",
+          "ref": "grep -r played_cards_by_person /penny-dreadful-tools --include=*.py",
+          "type": "search"
+        },
+        {
+          "detail": "Merge of PR #6884 (loganalysis branch) \u2014 initial log analysis infrastructure added but UI never built",
+          "ref": "9ec43e99",
+          "type": "commit"
+        },
+        {
+          "detail": "Don't attempt to process game logs if there are none to process \u2014 prior attempt at stabilizing the pipeline",
+          "ref": "9e642f08",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 790,
+      "notes": "The data pipeline infrastructure was started (import, parsing, preaggregation) but has a known looping bug and is disabled; no UI (routes, views, templates) was ever built. Fixing requires: (1) resolving the infinite-reprocessing bug in process_logs, (2) wiring played_cards_by_person to a decksite route/view, (3) building templates for card stats, match pages, etc. Performance was also a concern (4+ minute queries noted in issue comments).",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:21:21Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

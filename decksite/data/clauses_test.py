@@ -101,6 +101,43 @@ def test_order_by_auto() -> None:
     assert 'DESC' in clauses.archetype_order_by('quality', 'AUTO')
     assert 'ASC' in clauses.archetype_order_by('name', 'AUTO')
 
+def test_cards_where_single(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(clauses.oracle, 'valid_name', lambda name: name)
+    result = clauses.cards_where(['Hive Mind'])
+    assert "deck_card WHERE card = 'Hive Mind'" in result
+
+def test_cards_where_multiple(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(clauses.oracle, 'valid_name', lambda name: name)
+    result = clauses.cards_where(['Hive Mind', 'Lake of the Dead'])
+    assert 'HAVING COUNT(DISTINCT card) = 2' in result
+    assert "'Hive Mind'" in result
+    assert "'Lake of the Dead'" in result
+
+def test_cards_where_rejects_unknown(monkeypatch: pytest.MonkeyPatch) -> None:
+    def invalid_name(_name: str) -> str:
+        raise clauses.InvalidDataException()
+
+    monkeypatch.setattr(clauses.oracle, 'valid_name', invalid_name)
+    assert clauses.cards_where(['Not a Card']) == 'FALSE'
+
+def test_decks_where_min_win_rate() -> None:
+    args: dict[str, str] = {'minWinRate': '50'}
+    result = clauses.decks_where(args, True, None)
+    assert 'cache.wins' in result
+    assert '50.0' in result
+
+def test_decks_where_min_win_rate_invalid() -> None:
+    from shared.pd_exception import InvalidArgumentException
+    args: dict[str, str] = {'minWinRate': 'abc'}
+    with pytest.raises(InvalidArgumentException):
+        clauses.decks_where(args, True, None)
+
+def test_decks_where_min_win_rate_out_of_range() -> None:
+    from shared.pd_exception import InvalidArgumentException
+    args: dict[str, str] = {'minWinRate': '150'}
+    with pytest.raises(InvalidArgumentException):
+        clauses.decks_where(args, True, None)
+
 def test_limit() -> None:
     args = {'page': '1', 'pageSize': '150'}
     assert clauses.pagination(args) == (1, 150, 'LIMIT 150, 150')

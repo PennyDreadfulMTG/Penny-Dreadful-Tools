@@ -874,3 +874,51 @@ class KickoffWinner(CountedAchievement):
 
     def localised_display(self, n: int) -> str:
         return ngettext('1 victory', '%(num)d victories', n)
+
+class TrailblazerAchievement(CountedAchievement):
+    key = 'trailblazer'
+    title = 'Trailblazer'
+    description_safe = 'Play a card in a competitive match before anyone else in the format.'
+    with_sql = """
+        trailblazer_person_counts AS
+        (
+            SELECT
+                d.person_id,
+                COUNT(DISTINCT tc.card) AS trailblazer_card_count
+            FROM
+                _trailblazer_cards AS tc
+            INNER JOIN
+                deck AS d ON tc.deck_id = d.id
+            GROUP BY
+                d.person_id
+        )"""
+    sql = 'COALESCE((SELECT trailblazer_card_count FROM trailblazer_person_counts WHERE person_id = p.id), 0)'
+
+    def leaderboard_heading(self) -> str:
+        return gettext('Cards')
+
+    def localised_display(self, n: int) -> str:
+        return ngettext('1 card played first', '%(num)d cards played first', n)
+
+class UniqueCardsAchievement(CountedAchievement):
+    key = 'unique_cards'
+    title = 'Unique Cards'
+    description_safe = 'Be the only player in the format to have played a card competitively.'
+    with_sql = """
+        unique_card_person_counts AS
+        (
+            SELECT
+                person_id,
+                COUNT(*) AS unique_card_count
+            FROM
+                _unique_cards
+            GROUP BY
+                person_id
+        )"""
+    sql = 'COALESCE((SELECT unique_card_count FROM unique_card_person_counts WHERE person_id = p.id), 0)'
+
+    def leaderboard_heading(self) -> str:
+        return gettext('Cards')
+
+    def localised_display(self, n: int) -> str:
+        return ngettext('1 unique card played', '%(num)d unique cards played', n)

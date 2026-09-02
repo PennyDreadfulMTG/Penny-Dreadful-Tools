@@ -93,6 +93,12 @@ def test_round_up_preceding_unit() -> None:
     results = [(1, 'hours'), (59, 'minutes'), (59, 'seconds')]
     dtutil.round_up_preceding_unit(results)
     assert results == [(2, 'hours'), (0, 'minutes'), (0, 'seconds')]
+    results = [(23, 'hours'), (59, 'minutes'), (59, 'seconds')]
+    dtutil.round_up_preceding_unit(results)
+    assert results == [(1, 'days'), (0, 'hours'), (0, 'minutes'), (0, 'seconds')]
+
+def test_display_time_boundary() -> None:
+    assert dtutil.display_time(60 * 60 - 1, granularity=1) == '1 hour'
 
 def test_display_time() -> None:
     assert dtutil.display_time(60 * 60 * 2 - 1 * 60) == '1 hour, 59 minutes'

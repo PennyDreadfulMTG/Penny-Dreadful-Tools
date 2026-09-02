@@ -83,6 +83,24 @@ def test_card_where_rejects_unknown_name(monkeypatch: pytest.MonkeyPatch) -> Non
     monkeypatch.setattr(clauses.oracle, 'valid_name', invalid_name)
     assert clauses.card_where('Definitely Not a Card') == 'FALSE'
 
+def test_order_by_auto() -> None:
+    assert 'ASC' in clauses.cards_order_by('name', 'AUTO')
+    assert 'DESC' in clauses.cards_order_by('numDecks', 'AUTO')
+    assert 'ASC' in clauses.people_order_by('name', 'AUTO')
+    assert 'DESC' in clauses.people_order_by('elo', 'AUTO')
+    assert 'ASC' in clauses.head_to_head_order_by('name', 'AUTO')
+    assert 'DESC' in clauses.head_to_head_order_by('numMatches', 'AUTO')
+    assert 'ASC' in clauses.leaderboard_order_by('name', 'AUTO')
+    assert 'DESC' in clauses.leaderboard_order_by('points', 'AUTO')
+    assert 'ASC' in clauses.matches_order_by('person', 'AUTO')
+    assert 'DESC' in clauses.matches_order_by('date', 'AUTO')
+    assert 'ASC' in clauses.rotation_order_by('name', 'AUTO')
+    assert 'DESC' in clauses.rotation_order_by('hits', 'AUTO')
+    assert 'ASC' in clauses.decks_order_by('name', 'AUTO', None)
+    assert 'DESC' in clauses.decks_order_by('date', 'AUTO', None)
+    assert 'DESC' in clauses.archetype_order_by('quality', 'AUTO')
+    assert 'ASC' in clauses.archetype_order_by('name', 'AUTO')
+
 def test_limit() -> None:
     args = {'page': '1', 'pageSize': '150'}
     assert clauses.pagination(args) == (1, 150, 'LIMIT 150, 150')

@@ -25,15 +25,15 @@ def preaggregate() -> None:
     preaggregate_season_playability()
     preaggregate_playability()
 
+def _season_table_and_where(season_id: int) -> tuple[str, str]:
+    if season_id:
+        return '_season_archetype_playability', f'p.season_id = {season_id}'
+    return '_archetype_playability', 'TRUE'
+
 # Map of archetype_id => cardname where cardname is the key card for that archetype for the supplied season, or all time if 0 supplied as season_id.
 @retry_after_calling(preaggregate)
 def key_cards(season_id: int) -> dict[int, str]:
-    if season_id:
-        table = '_season_archetype_playability'
-        where = f'p.season_id = {season_id}'
-    else:
-        table = '_archetype_playability'
-        where = 'TRUE'
+    table, where = _season_table_and_where(season_id)
     sql = f"""
         SELECT
             p.archetype_id,
@@ -60,12 +60,7 @@ def key_cards(season_id: int) -> dict[int, str]:
 
 @retry_after_calling(preaggregate)
 def key_cards_long(season_id: int) -> dict[int, list[str]]:
-    if season_id:
-        table = '_season_archetype_playability'
-        where = f'p.season_id = {season_id}'
-    else:
-        table = '_archetype_playability'
-        where = 'TRUE'
+    table, where = _season_table_and_where(season_id)
     where = f'({where}) AND p.playability > {USEFUL_PLAYABILITY_THRESHOLD}'
     sql = f"""
         SELECT

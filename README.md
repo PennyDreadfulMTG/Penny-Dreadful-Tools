@@ -92,7 +92,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Reset the token, use it to fill out `token` in `.env`
 - Optionally, add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
 - Optionally, take a look at shared/configuration.py and enter any required non-default information into `.env`
-- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
+- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's official CLI, gh: <https://cli.github.com/>
 
 ## Manual Development Environment Setup (Non-docker instructions)
 

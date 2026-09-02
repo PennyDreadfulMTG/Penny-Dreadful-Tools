@@ -86,8 +86,14 @@ async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]]) -> str
             return file_path
     return await download_scryfall_art_crop(c)
 
+def art_crop_filepath(c: Card) -> str:
+    return re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
+
+def art_crop_is_cached(c: Card) -> bool:
+    return fetch_tools.acceptable_file(art_crop_filepath(c))
+
 async def download_scryfall_art_crop(c: Card) -> str | None:
-    file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
+    file_path = art_crop_filepath(c)
     if not fetch_tools.acceptable_file(file_path):
         await download_scryfall_card_image(c, file_path, version='art_crop')
     if fetch_tools.acceptable_file(file_path):
@@ -135,16 +141,20 @@ def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.jpg') -
     return f'{directory}/{prefix}{filename}'
 
 
-def download_image(cards: list[Card]) -> str | None:
+def download_image(cards: list[Card], version: str = '') -> str | None:
     event_loop = None
     try:
         event_loop = asyncio.get_event_loop()
     except RuntimeError:
         event_loop = asyncio.new_event_loop()
         asyncio.set_event_loop(event_loop)
-    return event_loop.run_until_complete(download_image_async(cards))
+    return event_loop.run_until_complete(download_image_async(cards, version))
 
-async def download_image_async(cards: list[Card]) -> str | None:
+async def download_image_async(cards: list[Card], version: str = '') -> str | None:
+    if version == 'art_crop':
+        if len(cards) != 1:
+            return None  # There's no such thing as a composite art crop.
+        return await download_scryfall_art_crop(cards[0])
     filepath = determine_filepath(cards)
     if fetch_tools.acceptable_file(filepath):
         return filepath

@@ -54,7 +54,7 @@ def load_competition_archetypes(competition_id: int) -> list[Archetype]:
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type,
-            ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1) AS win_percent,
+            CAST(ROUND((SUM(dsum.wins) / NULLIF(SUM(dsum.wins + dsum.losses), 0)) * 100, 1) AS DOUBLE) AS win_percent,
             COUNT(*) OVER () AS total
         FROM
             archetype AS a
@@ -512,7 +512,7 @@ def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_i
             SUM(wins) AS wins,
             SUM(losses) AS losses,
             SUM(draws) AS draws,
-            ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS win_percent
+            CAST(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS DOUBLE) AS win_percent
         FROM
             {table} AS mps
         INNER JOIN
@@ -556,7 +556,7 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS win_percent,
+            CAST(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS DOUBLE) AS win_percent,
             COUNT(*) OVER () AS total
         FROM
             archetype AS a
@@ -617,7 +617,7 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS win_percent,
+            CAST(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS DOUBLE) AS win_percent,
             COUNT(*) OVER () AS total,
             SUM(wins + losses + draws) / tc.total_matches AS meta_share,
             {clauses.wilson_lower_bound_sql()} AS quality_score

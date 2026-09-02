@@ -865,7 +865,7 @@ nav, .menu, .submenu {
 nav li:hover > .item + .submenu {
     display: block;
     width: var(--submenu-width);
-    z-index: 5;
+    z-index: 3;
 }
 
 .submenu:hover {
@@ -932,7 +932,7 @@ nav li.submenu-open > .item + .submenu {
     opacity: 1;
     transition-delay: 0s;
     visibility: visible;
-    z-index: 5;
+    z-index: 3;
 }
 
 /* Once you get properly wide we just show the main menu and the submenu if there is one in the flow of the page. */
@@ -1560,12 +1560,14 @@ Copying from Material Design we have six levels from 0-5. (We currently only use
     Language switcher "submenu"
     Status bar (top or bottom)
 
-3 (6dp): nothing yet
+3 (6dp):
+    Desktop hover/touch submenu (active state: hovering or tapping a menu item that has a submenu)
 
 – Above here reserved for active states only, no object's resting state is at level 4 or 5.
 
 4 (8dp):
     Nav (in narrower views when shown over the page with scrim)
+    Nav (in narrower and wider views when expanded to show a hover/touch submenu)
 
 5 (12dp):
     Card hover tooltip

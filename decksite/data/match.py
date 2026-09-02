@@ -22,19 +22,23 @@ def insert_match(dt: datetime.datetime,
                  elimination: int | None = None,
                  mtgo_match_id: int | None = None) -> int:
     db().begin('insert_match')
-    match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
-    update_cache(left_id, left_games, right_games, dt=dt)
-    if right_id is not None:
-        update_cache(right_id, right_games, left_games, dt=dt)
-    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
-    db().execute(sql, [left_id, match_id, left_games])
-    if right_id is not None:  # Don't insert matches or adjust Elo for the bye.
-        db().execute(sql, [right_id, match_id, right_games])
-        if left_games != right_games:  # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
-            winner_id = left_id if left_games > right_games else right_id
-            loser_id = left_id if left_games < right_games else right_id
-            elo.adjust_elo(winner_id, loser_id)
-    db().commit('insert_match')
+    try:
+        match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
+        update_cache(left_id, left_games, right_games, dt=dt)
+        if right_id is not None:
+            update_cache(right_id, right_games, left_games, dt=dt)
+        sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
+        db().execute(sql, [left_id, match_id, left_games])
+        if right_id is not None:  # Don't insert matches or adjust Elo for the bye.
+            db().execute(sql, [right_id, match_id, right_games])
+            if left_games != right_games:  # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
+                winner_id = left_id if left_games > right_games else right_id
+                loser_id = left_id if left_games < right_games else right_id
+                elo.adjust_elo(winner_id, loser_id)
+        db().commit('insert_match')
+    except Exception:
+        db().rollback('insert_match')
+        raise
     redis.clear(f'decksite:deck:{left_id}')
     if right_id is not None:
         redis.clear(f'decksite:deck:{right_id}')

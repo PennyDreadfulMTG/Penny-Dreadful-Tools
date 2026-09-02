@@ -375,17 +375,21 @@ def add_deck(params: RawDeckDescription) -> Deck:
     ]
     db().begin('add_deck')
     try:
-        deck_id = db().insert(sql, values)
-        add_cards(deck_id, cards)
-    except DatabaseException as e:
-        if 'Duplicate entry' not in str(e):
-            raise
-        deck_id = get_deck_id(params['source'], params['identifier'])
-        if deck_id is None:
-            raise
-    d = load_deck(deck_id)
-    prime_cache(d)
-    db().commit('add_deck')
+        try:
+            deck_id = db().insert(sql, values)
+            add_cards(deck_id, cards)
+        except DatabaseException as e:
+            if 'Duplicate entry' not in str(e):
+                raise
+            deck_id = get_deck_id(params['source'], params['identifier'])
+            if deck_id is None:
+                raise
+        d = load_deck(deck_id)
+        prime_cache(d)
+        db().commit('add_deck')
+    except Exception:
+        db().rollback('add_deck')
+        raise
     maybe_regenerate_symbols_font(params['name'])
     return d
 

@@ -141,7 +141,7 @@ def test_classify_one_clamps_confidence(monkeypatch: pytest.MonkeyPatch, reporte
     assign.assert_called_once_with(1, 7, None, False, stored)
 
 
-def test_classify_one_logs_decision_context_and_unsupported_evidence(
+def test_classify_one_rejects_unsupported_evidence(
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
@@ -168,20 +168,24 @@ def test_classify_one_logs_decision_context_and_unsupported_evidence(
         },
     )
     monkeypatch.setattr(archetype_classifier.archetype, 'assign', assign)
+    monkeypatch.setattr(archetype_classifier.deck, 'similarity_score', lambda _d, _s: 0.72)
     caplog.set_level('INFO', logger=archetype_classifier.__name__)
+    similar = Container(id=2, reviewed=True, archetype_id=7)
     source = Container(
         id=1,
+        archetype_id=None,
         maindeck=[CardRef('Priest of Fell Rites', 4)],
         sideboard=[],
+        similar_decks=[similar],
     )
 
     archetype_classifier._classify_one('secret', 'model', source, {}, set())
 
-    assign.assert_called_once_with(1, 8, None, False, 96)
+    assign.assert_called_once_with(1, 7, None, False, 72)
     assert "candidates=['Rakdos Reanimator', 'Traditional Reanimator']" in caplog.text
     assert "plan='reanimate large creatures'" in caplog.text
     assert "colors=['White', 'Black', 'Red']" in caplog.text
-    assert "cited cards absent from submitted decklist: ['Card From Candidate Profile']" in caplog.text
+    assert "cited cards absent from submitted decklist: ['Card From Candidate Profile']; using nearest-deck fallback" in caplog.text
 
 
 def test_call_logs_anthropic_error_response(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:

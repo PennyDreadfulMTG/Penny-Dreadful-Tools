@@ -29,6 +29,21 @@ def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: 
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'marginalia': 'ASC',
+        'colors': 'ASC',
+        'name': 'ASC',
+        'person': 'ASC',
+        'archetype': 'ASC',
+        'sourceName': 'ASC',
+        'record': 'DESC',
+        'omw': 'DESC',
+        'top8': 'ASC',
+        'date': 'DESC',
+        'season': 'DESC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     marginalia_order_by = """
         (CASE WHEN d.finish = 1 THEN 1
@@ -62,6 +77,17 @@ def cards_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'name': 'ASC',
+        'numDecks': 'DESC',
+        'record': 'DESC',
+        'winPercent': 'DESC',
+        'tournamentWins': 'DESC',
+        'tournamentTop8s': 'DESC',
+        'perfectRuns': 'DESC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'name': 'name',
@@ -82,6 +108,18 @@ def people_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'elo': 'DESC',
+        'name': 'ASC',
+        'numDecks': 'DESC',
+        'record': 'DESC',
+        'winPercent': 'DESC',
+        'tournamentWins': 'DESC',
+        'tournamentTop8s': 'DESC',
+        'perfectRuns': 'DESC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'elo': 'elo',
@@ -103,6 +141,14 @@ def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'name': 'ASC',
+        'numMatches': 'DESC',
+        'record': 'DESC',
+        'winPercent': 'DESC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'name': 'opp_mtgo_username',
@@ -120,6 +166,14 @@ def leaderboard_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'name': 'ASC',
+        'numDecks': 'DESC',
+        'wins': 'DESC',
+        'points': 'DESC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'name': 'person',
@@ -136,6 +190,16 @@ def matches_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'date': 'DESC',
+        'person': 'ASC',
+        'deckName': 'ASC',
+        'mtgoId': 'ASC',
+        'opponent': 'ASC',
+        'opponentDeckName': 'ASC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'date': 'date',
@@ -154,6 +218,15 @@ def rotation_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    defaults = {
+        'hitInLastRun': 'DESC',
+        'name': 'ASC',
+        'hits': 'DESC',
+        'hitsNeeded': 'ASC',
+        'rank': 'ASC',
+    }
+    if sort_order == 'AUTO':
+        sort_order = defaults[sort_by]
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     order_by_rank = 'rank IS NULL ASC, rank ASC, name ASC'
     if sort_by == 'hitInLastRun':

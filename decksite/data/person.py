@@ -117,7 +117,7 @@ def load_people(where: str = 'TRUE',
             SUM(CASE WHEN dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-            IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
+            CAST(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1) AS DOUBLE) AS win_percent,
             SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions,
             COUNT(*) OVER () AS total
         FROM
@@ -225,7 +225,7 @@ def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_
             SUM(wins) AS wins,
             SUM(losses) AS losses,
             SUM(draws) AS draws,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            CAST(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1) AS DOUBLE) AS win_percent,
             COUNT(*) OVER () AS total
         FROM
             _head_to_head_stats AS hths

@@ -30,6 +30,13 @@ def load_deck(deck_id: int) -> Deck:
     ds, _ = load_decks(f'd.id = {sqlescape(deck_id)}')
     return guarantee.exactly_one(ds)
 
+def load_decks_by_ids(ids: list[int]) -> list[Deck]:
+    if not ids:
+        return []
+    ids_str = ', '.join(str(i) for i in ids)
+    ds, _ = load_decks(where=f'd.id IN ({ids_str})')
+    return ds
+
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: str | None = None,

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1366,
+  "triage": [
+    {
+      "batch_id": "t-1421-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Player page shows only a 'Matches List\u2026' link under Head to Head \u2014 no individual recent match rows are rendered on the page itself",
+          "ref": "decksite/templates/person.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "person_matches() endpoint loads all matches for the separate personmatches page; the main person() controller does not load match rows for the player page",
+          "ref": "decksite/controllers/people.py",
+          "type": "code"
+        },
+        {
+          "detail": "load_matches() already accepts a limit parameter; load_matches_by_person() just doesn't pass one, making it a small addition to support 'last N'",
+          "ref": "decksite/data/match.py:57",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Add an optional `limit` arg to `load_matches_by_person` in `decksite/data/match.py` (pass it through to `load_matches`). 2) In `decksite/controllers/people.py`, load the last ~10 matches and pass them to the `Person` view. 3) Add a 'Recent Matches' section to `decksite/templates/person.mustache` reusing the match row markup from `personmatches.mustache`, followed by a 'All Matches\u2026' link to `matches_url`.",
+      "issue": 1366,
+      "notes": "The separate full-list person matches page (personmatches.mustache) already exists. This adds a recent-matches summary to the main player page, which is the original ask.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:23:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

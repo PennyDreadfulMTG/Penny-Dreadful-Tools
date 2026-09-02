@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-5503-1",
+      "branch": "sweep/5503-bug-should-normalize-channel-and-mention",
+      "files_changed": 2,
+      "head_sha": "a56ab9b13ba4ec8174bf84b2d29ae380308cad0a",
+      "issue": 5503,
+      "lines_changed": 91,
+      "lint": "passed",
+      "notes": "The `get_member`/`get_channel`/`get_role` lookups are synchronous cache reads (no network I/O), so they're safe to call without await. The fix also covers `/gbug` (Gatherling bug reports) which had the same raw-mention problem. No discovered-but-untouched issues.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nWhen users invoked `/bug` or `/gbug` and included Discord mentions (`<@user_id>`, `<@!user_id>`, `<#channel_id>`, `<@&role_id>`) in the title or body, those raw snowflake IDs were forwarded verbatim to the GitHub issue. The resulting issues contained unreadable text like `<@123456789>` instead of `@silasary`.\n\n## What changed\n\nAdded a `normalize_mentions(text, guild)` helper in `discordbot/commands/bug.py` that uses a regex to find all Discord mention patterns and resolves each one via `guild.get_member` / `guild.get_channel` / `guild.get_role`, replacing with `@display_name`, `#channel-name`, or `@role-name`. Falls back to the bare numeric ID string if the guild lookup misses (e.g. DM context or unknown member). Applied to both `title` and `body` in both `/bug` and `/gbug` before the text is sent to `repo.create_issue`.\n\nAlso added `discordbot/commands/bug_test.py` with 10 unit tests covering user, user-with-bang, channel, role, unknown-member, unknown-channel, unknown-role, no-guild, multiple-mentions, and plain-text cases.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit` \u2014 858 passed, 1 skipped (full suite, including the 10 new tests)\n\nFixes #5503",
+      "pr_title": "Normalize Discord mention/channel IDs to readable names in /bug and /gbug (#5503)",
+      "recorded_at": "2026-09-02T00:23:38Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot/commands/bug_test.py",
+        "detail": "858 passed, 1 skipped (full suite including 10 new bug_test cases)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 5503,
   "triage": [
     {

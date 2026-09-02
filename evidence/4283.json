@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-4283-1",
+      "branch": "sweep/4283-consider-making-unique-cards-played-into",
+      "files_changed": 1,
+      "head_sha": "0efdd51b2f00fae0f194f6a23d5ddc06a7e0b4d2",
+      "issue": 4283,
+      "lines_changed": 48,
+      "lint": "passed",
+      "notes": "The achievements are all-time counts (not seasonized) because _trailblazer_cards and _unique_cards have no season column; the issue lists seasonizing as a future improvement. The _achievements table will need to be re-preaggregated in production to pick up the two new columns (standard operational procedure). No detail_sql provided so the achievement detail page won't link to specific decks \u2014 a further improvement noted in the issue.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nIssue #4283 requested two new achievements based on the existing `_trailblazer_cards` and `_unique_cards` preaggregation tables that were already being computed and displayed on player profile pages, but had no corresponding achievement entries.\n\n## What changed\n\nAdded two `CountedAchievement` subclasses to `decksite/data/achievements.py`:\n\n- **TrailblazerAchievement** (`key='trailblazer'`): Counts cards a player was the first to play competitively in the format. Uses a `with_sql` CTE (`trailblazer_person_counts`) that joins `_trailblazer_cards` to `deck` to produce per-person card counts, then a correlated scalar subquery selects that count for each player `p`.\n\n- **UniqueCardsAchievement** (`key='unique_cards'`): Counts cards a player is the *only* person ever to have played competitively. Uses a `with_sql` CTE (`unique_card_person_counts`) aggregating `_unique_cards` per person.\n\nBoth achievements are all-time counts (not per-season), consistent with the underlying preaggregate tables which have no season dimension. No schema changes or migration are needed; the `_achievements` table is automatically extended via the `preaggregate_query()` mechanism on the next preaggregate run.\n\n## Validation\n\n- `uv run --frozen python dev.py lint`: passed\n- `uv run --frozen python dev.py unit`: 848 passed, 1 skipped (no regressions)\n\nFixes #4283",
+      "pr_title": "Add Trailblazer and Unique Cards achievements (#4283)",
+      "recorded_at": "2026-09-02T00:24:57Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 4283,
   "triage": [
     {

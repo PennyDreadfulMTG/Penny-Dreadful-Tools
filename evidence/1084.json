@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 1084,
+  "triage": [
+    {
+      "batch_id": "t-1421-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Page renders only two sections: 'New This Season' and 'Rotated Out' \u2014 no additional sub-categories or annotations present",
+          "ref": "decksite/templates/rotationchanges.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "Newly-legal cards highlighted with .new CSS class (firstLegalThisSeason flag set in prepare.py) \u2014 covers 'first time ever legal' highlight",
+          "ref": "2a5bc07c",
+          "type": "commit"
+        },
+        {
+          "detail": "View builds only new_this_season and rotated_out queries; no data for 'only ever in one season', 'always legal until now', or set statistics",
+          "ref": "decksite/views/rotation_changes.py",
+          "type": "code"
+        },
+        {
+          "detail": "None of the remaining unchecked checklist items (one-season cards, always-legal-until-now annotation, set stats) are implemented",
+          "ref": "grep -rn 'returning|only.*one.*season|always.*legal|sets.*most' decksite/views/rotation_changes.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1084,
+      "notes": "Several checklist items from the issue comments remain unimplemented. Each would require new SQL queries and template sections. The scope is cumulative \u2014 multiple distinct features rather than one small fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:23:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

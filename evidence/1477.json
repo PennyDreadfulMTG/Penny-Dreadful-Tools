@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 1477,
+  "triage": [
+    {
+      "batch_id": "t-1514-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "no log.py or logs.py command file exists",
+          "ref": "ls discordbot/commands/",
+          "type": "search"
+        },
+        {
+          "detail": "/api/person/<person> endpoint returns list of Match objects for that MTGO username",
+          "ref": "logsite/api.py:37",
+          "type": "code"
+        },
+        {
+          "detail": "logsite_url() helper exists for constructing logsite API calls",
+          "ref": "magic/fetcher.py:114",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment proposes design: last 3 match URLs with time-ago and opponent name",
+          "ref": "#1477",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": "1) Add `async def person_matches_async(name: str)` to `magic/fetcher.py` calling `logsite_url('/api/person/<name>')`. 2) Create `discordbot/commands/logs.py` with a `/logs` slash command accepting a player name, fetching recent matches, and responding with up to 3 match URLs with time-ago and opponent name.",
+      "issue": 1477,
+      "notes": "Confidence medium because the logsite /api/person/<person> return format was not fully inspected; implementor should verify match URL and timestamp fields before coding the formatter.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:25:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

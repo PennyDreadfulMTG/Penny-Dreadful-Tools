@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 1476,
+  "triage": [
+    {
+      "batch_id": "t-1514-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "no timeout/mute command file exists in discordbot/commands/",
+          "ref": "grep -r 'timeout\\|mute' discordbot/commands/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "returns ['communication_disabled_until', 'mute', 'timeout'] \u2014 library supports Discord timeout API natively",
+          "ref": "uv run python3 -c \"from interactions.models import Member; print([m for m in dir(Member) if 'timeout' in m.lower()])\"",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "Create `discordbot/commands/moderation.py` with a `/timeout` slash command (admin/demimod permission check) accepting a `Member` and a duration in minutes; call `await member.timeout(datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=duration))` and confirm in channel.",
+      "issue": 1476,
+      "notes": "interactions.py Member.timeout() confirmed present in installed version. Recommend checking what permission decorators existing admin commands use (e.g. discordbot/commands/reboot.py) for consistency.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:25:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

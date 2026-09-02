@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-1558-1",
+      "branch": "sweep/1558-show-number-of-players-this-week-month-s",
+      "files_changed": 2,
+      "head_sha": "a8dc1c865313f4ca9c86c04666f8cacc52b5de98",
+      "issue": 1558,
+      "lines_changed": 34,
+      "lint": "passed",
+      "notes": "Player counts use a separate query to avoid double-counting matches (each match has two deck_match rows). Season boundary uses the same `seasons.last_rotation()` timestamp as the existing match-season stat. No schema changes needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe home page community stats section showed match counts (today/week/month/season/all time) but no information about how many unique players participated in league/tournament play over those time windows.\n\n## What changed\n\n**`decksite/data/match.py`** \u2014 `stats()` now runs a second SQL query that JOINs `match \u2192 deck_match \u2192 deck` and uses `COUNT(DISTINCT CASE WHEN ... THEN d.person_id END)` to compute unique player counts for the last 7 days, last 30 days, current season, and all time. The results are merged into the existing dict so callers see both match stats and player stats from the same function.\n\n**`decksite/views/home.py`** \u2014 `setup_stats()` adds a second entry to `self.community_stats` with header 'Unique Players' and the four new time-window player counts. The existing Mustache template already iterates `community_stats` so no template changes were needed.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (pre-existing skip), 89 deselected (functional/perf) in ~19s against a live local MariaDB instance\n\nFixes #1558",
+      "pr_title": "Show unique player counts by week/month/season/all time on home page (#1558)",
+      "recorded_at": "2026-09-02T00:23:16Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.92s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 1558,
   "triage": [
     {

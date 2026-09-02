@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-02T00:23:27Z",
+  "evidence_refs": [
+    "evidence/1236.json#triage[0]"
+  ],
+  "issue": 1236,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The player Elo portion is complete. The owner expressed preference for a matchup grid over archetype Elo; a decision is needed on whether to pursue archetype/card Elo at all or pivot to the matchup grid idea."
+}

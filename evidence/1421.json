@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1421,
+  "triage": [
+    {
+      "batch_id": "t-1421-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Match editing exists at /admin/matches/ via edit_matches/post_matches but is decorated @auth.admin_required \u2014 no player-facing score-correction route exists anywhere",
+          "ref": "decksite/controllers/admin.py:0",
+          "type": "code"
+        },
+        {
+          "detail": "No player-facing match correction endpoint or form found in the codebase",
+          "ref": "grep -r 'change.*score|correct.*result|edit.*result' decksite --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Discord OAuth exists; MTGO-Discord linking also exists, so the auth primitives are present but not wired to a score-correction flow",
+          "ref": "shared_web/oauth.py",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1421,
+      "notes": "Requires a new player-facing UI, Discord+MTGO link verification logic, and product decisions about constraints (which matches? how long after the fact?). Security surface is non-trivial \u2014 a player editing their own recorded results.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:23:27Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

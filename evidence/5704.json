@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-5704-1",
+      "branch": "sweep/5704-consider-replacing-hidden-checkbox-dropd",
+      "files_changed": 3,
+      "head_sha": "c5e513ebdf3637f44b0f80ed8ce24eb6a26e68a8",
+      "issue": 5704,
+      "lines_changed": 37,
+      "lint": "passed",
+      "notes": "The JS uses `.css('display','grid').hide().slideDown('fast')` on open so jQuery stores 'grid' as the pre-hide display value and restores it after the slide animation, preserving the 4-column grid layout throughout. Only the seasonchooser uses these CSS classes \u2014 no other templates were affected.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe season chooser dropdown used a hidden `<input type=\"checkbox\">` inside a `<label>` as a pure-CSS toggle (checking/unchecking the box on label click to show/hide the menu via the `:checked` sibling selector). This approach has no animation, uses semantically odd markup (`<div>` inside `<label>`), and was inconsistent with the rest of the UI (menu and achievements accordion both use jQuery slideToggle).\n\n## What changed\n\n- **`decksite/templates/seasonchooser.mustache`**: Removed the `<input type=\"checkbox\" class=\"dd-input\">` element and changed the wrapping `<label>` to a `<div>` (no longer needed for form association).\n- **`shared_web/static/css/pd.css`**: Removed the `.dd-input { display: none }`, `.dd-input + .dd-menu { display: none }`, and `.dd-input:checked + .dd-menu { display: grid }` rules. Added `display: none` directly to `.dropdown .dd-menu` for the initial hidden state.\n- **`shared_web/static/js/pd.js`**: Added `PD.initDropdown()` (called from `PD.init`) that attaches a click handler to `.dd-button` elements \u2014 clicking toggles the adjacent `.dd-menu` open/closed with jQuery `slideDown`/`slideUp(\"fast\")`, preserving `display: grid` for the 4-column layout. A document-level click handler closes open menus when clicking outside.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed (All checks passed).\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped in 19s. The changed files are a Mustache template, CSS, and JS; unit tests in `shared_web/template_test.py` passed.\n\nFixes #5704",
+      "pr_title": "Replace hidden-checkbox season chooser dropdown with JS slideToggle (#5704)",
+      "recorded_at": "2026-09-02T00:23:04Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 19.19s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 5704,
   "triage": [
     {

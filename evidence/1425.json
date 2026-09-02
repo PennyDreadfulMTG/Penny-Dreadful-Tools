@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1425,
+  "triage": [
+    {
+      "batch_id": "t-1514-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/metagame/tournament/ route exists and shows tournament-only archetype stats for current season",
+          "ref": "decksite/controllers/metagame.py:33",
+          "type": "code"
+        },
+        {
+          "detail": "/decks/tournament/ route exists and lists tournament decks",
+          "ref": "decksite/controllers/metagame.py:23",
+          "type": "code"
+        },
+        {
+          "detail": "no dedicated 'top tournament decks' landing page commit found",
+          "ref": "git log --grep='top tournament\\|tournament deck.*season' -- decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1425,
+      "notes": "Generic tournament metagame pages already exist at /metagame/tournament/ and /decks/tournament/; the issue is about a distinct 'pick a deck to play' UX with curated presentation. Scope and exact design need product input from owner before implementation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:25:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

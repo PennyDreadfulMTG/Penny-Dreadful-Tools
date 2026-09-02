@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 1236,
+  "triage": [
+    {
+      "batch_id": "t-1421-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Elo for players implemented \u2014 'More changes for Elo for players'; also commit d56f9985 'Elo for people'",
+          "ref": "40476d19",
+          "type": "commit"
+        },
+        {
+          "detail": "Player Elo fully implemented with adjust_elo(), displayed in stats.mustache",
+          "ref": "decksite/data/elo.py",
+          "type": "code"
+        },
+        {
+          "detail": "Elo column shown in the player record table conditionally on {{#elo}}",
+          "ref": "decksite/templates/stats.mustache:20",
+          "type": "code"
+        },
+        {
+          "detail": "No archetype Elo or card Elo code found; remaining issue items are unimplemented",
+          "ref": "grep -r 'elo.*archetype|archetype.*elo' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Issue comment from bakert: 'Elo for things other than players is a bit weird\u2026 I would rather see a matchup grid for archetypes than Elo' \u2014 explicit uncertainty about whether to build the remaining items",
+          "ref": "#1236",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1236,
+      "notes": "The player Elo portion is complete. The owner expressed preference for a matchup grid over archetype Elo; a decision is needed on whether to pursue archetype/card Elo at all or pivot to the matchup grid idea.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:23:27Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

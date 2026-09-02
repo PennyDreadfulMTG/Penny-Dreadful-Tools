@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 1269,
+  "triage": [
+    {
+      "batch_id": "t-1421-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No BigQuery client code found anywhere in the project (only a Pygments SQL lexer in .venv references the name)",
+          "ref": "find . -name '*.py' -exec grep -l 'bigquery|BigQuery' {} \\;",
+          "type": "search"
+        },
+        {
+          "detail": "Prices are still queried from the MySQL database; no alternative storage layer exists",
+          "ref": "decksite/data/person.py:81",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1269,
+      "notes": "This is a major infrastructure initiative: BigQuery project setup, data pipeline, schema migration, and potentially dual-write before cutover. The last comment notes prices remain the largest MySQL table.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:23:27Z",
+      "risk": "high"
+    }
+  ],
+  "verify": []
+}

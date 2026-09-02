@@ -8067,3 +8067,120 @@
 {"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8067, "ts": "2026-09-02T00:22:00Z"}
 {"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8068, "ts": "2026-09-02T00:22:02Z"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8068, "seq": 8069, "ts": "2026-09-02T00:22:02Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8070, "ts": "2026-09-02T00:22:04Z"}
+{"batch_id": "f-5704-1", "event": "RESULT_RECORDED", "head_sha": "c5e513ebdf3637f44b0f80ed8ce24eb6a26e68a8", "issue": 5704, "kind": "fix", "pr_branch": "sweep/5704-consider-replacing-hidden-checkbox-dropd", "seq": 8071, "status": "fix_pushed", "ts": "2026-09-02T00:23:04Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8072, "ts": "2026-09-02T00:23:16Z", "verified_state": "archived", "workspace_id": "07db222a-1d2e-45df-bb90-cddc17c6d14f"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8073, "ts": "2026-09-02T00:23:16Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-1558-1", "event": "RESULT_RECORDED", "head_sha": "a8dc1c865313f4ca9c86c04666f8cacc52b5de98", "issue": 1558, "kind": "fix", "pr_branch": "sweep/1558-show-number-of-players-this-week-month-s", "seq": 8074, "status": "fix_pushed", "ts": "2026-09-02T00:23:16Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8075, "ts": "2026-09-02T00:23:27Z", "verified_state": "archived", "workspace_id": "7273a26d-51d5-4c76-8b3b-33ee3319b32a"}
+{"batch_id": "t-1421-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1421, "kind": "triage", "seq": 8076, "status": "triaged", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1421, "kind": "triage", "seq": 8077, "status": "reported", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1366, "kind": "triage", "seq": 8078, "status": "triaged", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1366, "kind": "triage", "seq": 8079, "status": "fix_pending", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1269, "kind": "triage", "seq": 8080, "status": "triaged", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1269, "kind": "triage", "seq": 8081, "status": "reported", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "needs-product-decision", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1236, "kind": "triage", "seq": 8082, "status": "triaged", "ts": "2026-09-02T00:23:27Z"}
+{"event": "ESCALATED", "issue": 1236, "kind": "class-escalate", "question": "Triaged needs-product-decision \u2014 needs a human/product call.", "seq": 8083, "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1084, "kind": "triage", "seq": 8084, "status": "triaged", "ts": "2026-09-02T00:23:27Z"}
+{"batch_id": "t-1421-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1084, "kind": "triage", "seq": 8085, "status": "reported", "ts": "2026-09-02T00:23:27Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8086, "ts": "2026-09-02T00:23:38Z", "verified_state": "archived", "workspace_id": "b367f0eb-50e1-47be-b149-24cb4a86acb0"}
+{"batch_id": "f-5503-1", "event": "RESULT_RECORDED", "head_sha": "a56ab9b13ba4ec8174bf84b2d29ae380308cad0a", "issue": 5503, "kind": "fix", "pr_branch": "sweep/5503-bug-should-normalize-channel-and-mention", "seq": 8087, "status": "fix_pushed", "ts": "2026-09-02T00:23:39Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8088, "ts": "2026-09-02T00:23:49Z", "verified_state": "archived", "workspace_id": "f8d2347e-f704-423e-ba80-5fc68c612543"}
+{"batch_id": "f-4283-1", "event": "RESULT_RECORDED", "head_sha": "0efdd51b2f00fae0f194f6a23d5ddc06a7e0b4d2", "issue": 4283, "kind": "fix", "pr_branch": "sweep/4283-consider-making-unique-cards-played-into", "seq": 8089, "status": "fix_pushed", "ts": "2026-09-02T00:24:57Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8090, "ts": "2026-09-02T00:25:08Z", "verified_state": "archived", "workspace_id": "1a3e7914-9b5f-46f4-b9e7-211c18500240"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8091, "ts": "2026-09-02T00:25:08Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "t-1514-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1514, "kind": "triage", "seq": 8092, "status": "triaged", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1514, "kind": "triage", "seq": 8093, "status": "reported", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1479, "kind": "triage", "seq": 8094, "status": "triaged", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1479, "kind": "triage", "seq": 8095, "status": "fix_pending", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "easy-fix", "confidence": "medium", "event": "RESULT_RECORDED", "issue": 1477, "kind": "triage", "seq": 8096, "status": "triaged", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "easy-fix", "confidence": "medium", "event": "RESULT_RECORDED", "issue": 1477, "kind": "triage", "seq": 8097, "status": "fix_pending", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1476, "kind": "triage", "seq": 8098, "status": "triaged", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "easy-fix", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1476, "kind": "triage", "seq": 8099, "status": "fix_pending", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1425, "kind": "triage", "seq": 8100, "status": "triaged", "ts": "2026-09-02T00:25:08Z"}
+{"batch_id": "t-1514-1", "class": "needs-work", "confidence": "high", "event": "RESULT_RECORDED", "issue": 1425, "kind": "triage", "seq": 8101, "status": "reported", "ts": "2026-09-02T00:25:08Z"}
+{"event": "WORKSPACE_ARCHIVED", "seq": 8102, "ts": "2026-09-02T00:25:19Z", "verified_state": "archived", "workspace_id": "83a9341a-b429-40b6-94cf-61d1917527f3"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8103, "ts": "2026-09-02T00:25:27Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8104, "ts": "2026-09-02T00:25:31Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8105, "ts": "2026-09-02T00:25:32Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8106, "ts": "2026-09-02T00:25:33Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8107, "ts": "2026-09-02T00:25:35Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8108, "ts": "2026-09-02T00:25:37Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8109, "ts": "2026-09-02T00:25:38Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8110, "ts": "2026-09-02T00:25:39Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8111, "ts": "2026-09-02T00:26:40Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8112, "ts": "2026-09-02T00:26:49Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8113, "ts": "2026-09-02T00:26:51Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8114, "ts": "2026-09-02T00:26:52Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8115, "ts": "2026-09-02T00:26:53Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8116, "ts": "2026-09-02T00:26:55Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8117, "ts": "2026-09-02T00:26:56Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8118, "ts": "2026-09-02T00:26:58Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8119, "ts": "2026-09-02T00:26:59Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8120, "ts": "2026-09-02T00:27:00Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8121, "ts": "2026-09-02T00:27:02Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8122, "ts": "2026-09-02T00:27:03Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8123, "ts": "2026-09-02T00:27:05Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8124, "ts": "2026-09-02T00:27:07Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8125, "ts": "2026-09-02T00:27:08Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8126, "ts": "2026-09-02T00:27:09Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8127, "ts": "2026-09-02T00:27:11Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8127, "seq": 8128, "ts": "2026-09-02T00:27:11Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8129, "ts": "2026-09-02T00:28:11Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8130, "ts": "2026-09-02T00:29:21Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8131, "ts": "2026-09-02T00:30:29Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8132, "ts": "2026-09-02T00:30:36Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8133, "ts": "2026-09-02T00:30:40Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8134, "ts": "2026-09-02T00:30:42Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8135, "ts": "2026-09-02T00:30:44Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8136, "ts": "2026-09-02T00:30:45Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8137, "ts": "2026-09-02T00:30:47Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8138, "ts": "2026-09-02T00:30:48Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8139, "ts": "2026-09-02T00:30:49Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8140, "ts": "2026-09-02T00:31:49Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8141, "ts": "2026-09-02T00:31:59Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8142, "ts": "2026-09-02T00:32:01Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8143, "ts": "2026-09-02T00:32:02Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8144, "ts": "2026-09-02T00:32:03Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8145, "ts": "2026-09-02T00:32:04Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8146, "ts": "2026-09-02T00:32:05Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8147, "ts": "2026-09-02T00:32:07Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8148, "ts": "2026-09-02T00:32:08Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8149, "ts": "2026-09-02T00:32:09Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8150, "ts": "2026-09-02T00:32:11Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8151, "ts": "2026-09-02T00:32:13Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8152, "ts": "2026-09-02T00:32:14Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8153, "ts": "2026-09-02T00:32:15Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8154, "ts": "2026-09-02T00:32:16Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8155, "ts": "2026-09-02T00:32:18Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8156, "ts": "2026-09-02T00:32:19Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8156, "seq": 8157, "ts": "2026-09-02T00:32:19Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8158, "ts": "2026-09-02T00:33:19Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8159, "ts": "2026-09-02T00:34:28Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8160, "ts": "2026-09-02T00:35:35Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12670, "pr": 15052, "seq": 8161, "ts": "2026-09-02T00:35:41Z"}
+{"event": "CI_CHECKED", "issue": 12613, "pr": 15061, "seq": 8162, "ts": "2026-09-02T00:35:45Z"}
+{"event": "CI_CHECKED", "issue": 12612, "pr": 15068, "seq": 8163, "ts": "2026-09-02T00:35:46Z"}
+{"event": "CI_CHECKED", "issue": 12600, "pr": 15059, "seq": 8164, "ts": "2026-09-02T00:35:47Z"}
+{"event": "CI_CHECKED", "issue": 12599, "pr": 15055, "seq": 8165, "ts": "2026-09-02T00:35:48Z"}
+{"event": "CI_CHECKED", "issue": 12598, "pr": 15069, "seq": 8166, "ts": "2026-09-02T00:35:49Z"}
+{"event": "CI_CHECKED", "issue": 12595, "pr": 15056, "seq": 8167, "ts": "2026-09-02T00:35:50Z"}
+{"event": "CI_CHECKED", "issue": 12590, "pr": 15057, "seq": 8168, "ts": "2026-09-02T00:35:51Z"}
+{"batch_id": "f-7361-1", "event": "RESULT_MALFORMED", "seq": 8169, "ts": "2026-09-02T00:36:52Z", "workspace_id": "37f9b784-fb52-4dc2-af36-a8ea84e2b6f6"}
+{"event": "CI_CHECKED", "issue": 12586, "pr": 15054, "seq": 8170, "ts": "2026-09-02T00:37:01Z"}
+{"event": "CI_CHECKED", "issue": 12585, "pr": 15062, "seq": 8171, "ts": "2026-09-02T00:37:03Z"}
+{"event": "CI_CHECKED", "issue": 12584, "pr": 15060, "seq": 8172, "ts": "2026-09-02T00:37:05Z"}
+{"event": "CI_CHECKED", "issue": 12583, "pr": 15058, "seq": 8173, "ts": "2026-09-02T00:37:06Z"}
+{"event": "CI_CHECKED", "issue": 12580, "pr": 15063, "seq": 8174, "ts": "2026-09-02T00:37:07Z"}
+{"event": "CI_CHECKED", "issue": 12578, "pr": 15065, "seq": 8175, "ts": "2026-09-02T00:37:10Z"}
+{"event": "CI_CHECKED", "issue": 12576, "pr": 15053, "seq": 8176, "ts": "2026-09-02T00:37:11Z"}
+{"event": "CI_CHECKED", "issue": 12573, "pr": 15066, "seq": 8177, "ts": "2026-09-02T00:37:12Z"}
+{"event": "CI_CHECKED", "issue": 12572, "pr": 15067, "seq": 8178, "ts": "2026-09-02T00:37:14Z"}
+{"event": "CI_CHECKED", "issue": 12566, "pr": 15073, "seq": 8179, "ts": "2026-09-02T00:37:15Z"}
+{"event": "CI_CHECKED", "issue": 12563, "pr": 15070, "seq": 8180, "ts": "2026-09-02T00:37:16Z"}
+{"event": "CI_CHECKED", "issue": 12560, "pr": 15076, "seq": 8181, "ts": "2026-09-02T00:37:18Z"}
+{"event": "CI_CHECKED", "issue": 12557, "pr": 15074, "seq": 8182, "ts": "2026-09-02T00:37:19Z"}
+{"event": "CI_CHECKED", "issue": 12555, "pr": 15071, "seq": 8183, "ts": "2026-09-02T00:37:21Z"}
+{"event": "CI_CHECKED", "issue": 12554, "pr": 15075, "seq": 8184, "ts": "2026-09-02T00:37:23Z"}
+{"event": "CI_CHECKED", "issue": 12540, "pr": 15072, "seq": 8185, "ts": "2026-09-02T00:37:25Z"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8185, "seq": 8186, "ts": "2026-09-02T00:37:25Z"}

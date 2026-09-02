@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1479,
+  "triage": [
+    {
+      "batch_id": "t-1514-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "set_doorprize() writes to doorprize table but no read/query function exists",
+          "ref": "decksite/data/competition.py:204",
+          "type": "code"
+        },
+        {
+          "detail": "Prizes view never fetches or displays doorprize data",
+          "ref": "decksite/views/prizes.py:1",
+          "type": "code"
+        },
+        {
+          "detail": "Route /admin/prizes/ decorated with @auth.admin_required; no public equivalent exists",
+          "ref": "decksite/controllers/admin.py:187",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) Add `get_doorprizes(week_start, week_end)` to `decksite/data/competition.py` querying the existing `doorprize` table. 2) Update `decksite/views/prizes.py` `Prizes.__init__` to accept and expose doorprize winners per week. 3) Add a public route in `decksite/controllers/competitions.py` (no `admin_required`) pointing to the same Prizes view, and optionally redirect `/admin/prizes/` to it.",
+      "issue": 1479,
+      "notes": "No schema change needed \u2014 doorprize table and data pipeline already exist. The route move also removes admin restriction, which is the intended behaviour per the issue.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:25:08Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

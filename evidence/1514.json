@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 1514,
+  "triage": [
+    {
+      "batch_id": "t-1514-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "MenuItem dataclass has only name/endpoint/url/submenu/badge fields \u2014 no text-only, heading, or image types",
+          "ref": "shared_web/menu.py:33",
+          "type": "code"
+        },
+        {
+          "detail": "submenu renders exclusively as <a class=\"item\"> links; no template sections for text, headings, or images",
+          "ref": "decksite/templates/menu.mustache:9",
+          "type": "code"
+        },
+        {
+          "detail": "no fixing commit found",
+          "ref": "git log --grep='dropdown\\|mega' -- decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 1514,
+      "notes": "Needs product decisions on what content populates each dropdown (what gets headings? which entries get images?) plus new MenuItem types, template sections, and CSS \u2014 scope exceeds easy-fix. Owner should drive.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:25:08Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

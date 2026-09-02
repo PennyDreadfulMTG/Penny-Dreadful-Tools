@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5937,
+  "triage": [
+    {
+      "batch_id": "t-6020-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No maintenance or status-page template found in any of the 40+ mustache templates in decksite/templates/",
+          "ref": "find decksite/templates -name '*.mustache' | xargs grep -l maintenance",
+          "type": "search"
+        },
+        {
+          "detail": "No Flask error handler or maintenance route found; only references are to the maintenance task runner (api.py:643)",
+          "ref": "grep -rn 'maintenance|503|service_unavail' decksite --include=*.py",
+          "type": "search"
+        },
+        {
+          "detail": "simple_paths list handles static assets but no fallback/maintenance route exists",
+          "ref": "decksite/main.py:79",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5937,
+      "notes": "Silasary's comment requests an uptime robot status page link integration; feature requires both a web-server-level static fallback (Nginx/Apache config to serve a page when Flask is down) and a template, which spans infrastructure beyond just Python code.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

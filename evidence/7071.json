@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7071,
+  "triage": [
+    {
+      "batch_id": "t-7115-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "process_tournament() returns early if competition already exists \u2014 prevents re-scraping and duplicate match insertion for new tournaments",
+          "ref": "decksite/scrapers/gatherling.py:176",
+          "type": "code"
+        },
+        {
+          "detail": "New API-based gatherling scraper introduced March 2021; idempotency check added that blocks re-processing already-stored competitions",
+          "ref": "0bc12b5a",
+          "type": "commit"
+        },
+        {
+          "detail": "insert_matches() has no within-scrape dedup; if Gatherling API returns the same match twice in one response, it would be inserted twice",
+          "ref": "decksite/scrapers/gatherling.py:260",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7071,
+      "notes": "Data for deck 41350 was manually cleaned up by bakert. Root cause of 151 byes is uncertain (old HTML scraper bug vs. Gatherling API returning duplicates). New API-based scraper prevents re-scraping but has no within-tournament dedup. bakert's comment 'underlying issue with a deck that has only a bye' is speculative and unspecified.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

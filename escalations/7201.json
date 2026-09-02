@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:53:54Z",
+  "evidence_refs": [
+    "evidence/7201.json#triage[0]"
+  ],
+  "issue": 7201,
+  "kind": "class-escalate",
+  "question": "Triaged needs-product-decision \u2014 needs a human/product call.",
+  "summary": "The decision needed is: should sub-archetypes be filtered from the grid, shown with their parent label, or something else? Multiple reasonable approaches exist (roll up into parent totals, display as 'Parent > Child', hide rows below a threshold), each with different trade-offs for completeness vs. clarity."
+}

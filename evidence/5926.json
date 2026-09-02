@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 5926,
+  "triage": [
+    {
+      "batch_id": "t-6020-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "2024-05-02: Store Scryfall's oracle_id in cards db \u2014 one field from the issue list was added 5 years after filing",
+          "ref": "d338d3ee",
+          "type": "commit"
+        },
+        {
+          "detail": "highres_image, image_uris, lang, multiverse_ids, released_at (per printing), scryfall_uri are explicitly in the 'parts we don't [store]' section of the card description ABC",
+          "ref": "magic/abc/card_description.py:36-57",
+          "type": "code"
+        },
+        {
+          "detail": "card_values only stores id, oracle_id, layout per card; multiverse_ids, lang, highres_image, image_uris absent from INSERT",
+          "ref": "magic/multiverse.py:284",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 5926,
+      "notes": "oracle_id has since been stored (d338d3ee, May 2024); the remaining fields (multiverse_ids, lang, highres_image, image_uris, per-printing released_at/scryfall_uri) each need an owner decision on whether they're worth storing, followed by a schema migration for any that are chosen.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

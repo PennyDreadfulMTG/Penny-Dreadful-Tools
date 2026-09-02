@@ -27,5 +27,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-7164-1",
+      "final_comment": "Implemented in commit 5be92375 ('Preselect rule-matching archetypes.'). The archetype dropdown in /admin/archetypes/ is now automatically preselected when a rule matches a deck, which is exactly the 'really sure' case described here.",
+      "issue": 7164,
+      "own_evidence": [
+        {
+          "detail": "Independently verified: when rule_archetype_id is set, builds archetypes list with selected:True for the matching archetype",
+          "ref": "decksite/views/edit_archetypes.py:23-31",
+          "type": "code"
+        },
+        {
+          "detail": "Template renders selected='selected' when selected flag is truthy, confirming the dropdown preselection works end-to-end",
+          "ref": "decksite/templates/archetypedropdown.mustache:4",
+          "type": "code"
+        },
+        {
+          "detail": "Commit exists with message 'Preselect rule-matching archetypes.' modifying decksite/data/rule.py and decksite/views/edit_archetypes.py",
+          "ref": "5be92375",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:51:18Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

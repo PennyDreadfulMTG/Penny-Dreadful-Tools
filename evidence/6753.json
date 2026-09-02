@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6753-1",
+      "branch": "sweep/6753-refactor-replace-app-route-archetypes-ar",
+      "files_changed": 1,
+      "head_sha": "62feaf7cbab53f54d16f814be8dc3d79c501796c",
+      "issue": 6753,
+      "lines_changed": 8,
+      "lint": "passed",
+      "notes": "Pure refactor with no behavior change \u2014 Flask already handled None injection via Python default args, but using defaults= is the idiomatic Flask approach and makes the routing intent explicit. Only metagame.py changed, 6 insertions and 6 deletions.",
+      "outcome": "pushed",
+      "pr_body": "## What changed\n\nFlask's recommended pattern for optional URL parameters is to use `defaults=` on the base route rather than relying on a Python default argument value. Without `defaults=`, Flask has no way to inject `None` for the missing parameter when the base route (without the optional segment) is matched \u2014 it relies on the function's Python default, which works but is non-idiomatic and can cause subtle issues with Flask's URL building and blueprint interactions.\n\nThis refactor adds `defaults={'deck_type': None}` to the four base route decorators in `decksite/controllers/metagame.py` (the routes without a `deck_type` segment for both `archetypes` and `archetype` view functions, across both `APP` and `SEASONS` blueprints). The function signatures are updated from `deck_type: str | None = None` to `deck_type: str | None` since the default is now explicitly supplied by the decorator.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected\n\nFixes #6753",
+      "pr_title": "Use Flask defaults= for optional deck_type route param (#6753)",
+      "recorded_at": "2026-09-01T23:59:33Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.78s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6753,
   "triage": [
     {

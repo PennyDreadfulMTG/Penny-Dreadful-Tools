@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7031,
+  "triage": [
+    {
+      "batch_id": "t-7036-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "times_from_timezone_code returns ALL pytz.common_timezones matching the code, grouped by current time; for EST this is ~24 entries",
+          "ref": "magic/fetcher.py:332-341",
+          "type": "code"
+        },
+        {
+          "detail": "command joins all extracted city names with ', ' and sends a single message; no truncation",
+          "ref": "discordbot/commands/time.py:28-32",
+          "type": "code"
+        },
+        {
+          "detail": "bakert comment: 'difficult to programmatically account for it and get the right output \u2026 we definitely don't want to arbitrarily truncate. New York is the right output I suppose.' CET maps to 28 cities.",
+          "ref": "gh issue view 7031 --comments",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7031,
+      "notes": "The owner's comment shows genuine ambiguity: arbitrary truncation is unwanted, but listing 24+ cities is overkill. Needs a decision on whether to special-case timezone codes to a canonical city, limit the list to N cities, or change the output format entirely.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:43Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

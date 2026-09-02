@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6346,
+  "triage": [
+    {
+      "batch_id": "t-6433-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "expected(elo1, elo2) function computes win probability \u2014 the math needed for '% to beat X' exists",
+          "ref": "decksite/data/elo.py:22",
+          "type": "code"
+        },
+        {
+          "detail": "No existing implementation of '% to beat average/top player' on the person page or anywhere else",
+          "ref": "grep -rn 'beat.*average\\|vs_average\\|percent.*elo' decksite/ (empty)",
+          "type": "search"
+        },
+        {
+          "detail": "No properties for average_elo, top_elo, or win-probability-against-benchmark stats; new queries and view properties needed",
+          "ref": "decksite/views/person.py",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6346,
+      "notes": "The math is straightforward using the existing expected() function, but the feature needs product decisions: which season's Elo to use, what constitutes 'average' vs 'top', and how to display the stats in the UI.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6459,
+  "triage": [
+    {
+      "batch_id": "t-6607-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "set_locale() exists and stores locale on the person row \u2014 first checklist item done",
+          "ref": "decksite/data/person.py:364-365",
+          "type": "code"
+        },
+        {
+          "detail": "set_locale is called during auth flow, confirming the preference-storage path is live",
+          "ref": "decksite/auth.py:79",
+          "type": "code"
+        },
+        {
+          "detail": "PO/POT infrastructure exists only for web content; no PDBot message strings appear in any .po or .pot file",
+          "ref": "shared_web/translations/messages.pot:1",
+          "type": "code"
+        },
+        {
+          "detail": "No gettext calls found in discordbot/; PDBot strings are hardcoded, tasks 2-4 not started",
+          "ref": "grep -rn 'gettext\\|_()' discordbot/ --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6459,
+      "notes": "Checklist item 1 (store language preference) is verifiably done. Items 2-4 (extract strings to PO, expose editor endpoint, send multilingual messages) are substantial and require a new PDBot API surface; scope is well beyond easy-fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

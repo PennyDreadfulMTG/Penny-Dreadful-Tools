@@ -27,5 +27,27 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-7164-1",
+      "final_comment": "The /welcome command was added in commit 2f267103 and is live in discordbot/commands/welcome.py. It posts 'Welcome to the Fold' card art as requested.",
+      "issue": 7133,
+      "own_evidence": [
+        {
+          "detail": "Independently verified: /welcome slash command exists, fetches 'Welcome to the Fold' card via oracle.cards_by_name() and sends the card image",
+          "ref": "discordbot/commands/welcome.py:11-16",
+          "type": "code"
+        },
+        {
+          "detail": "Commit exists with message 'welcome and back-for-more commands', creating discordbot/commands/welcome.py with 26 lines",
+          "ref": "2f267103",
+          "type": "commit"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:51:18Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

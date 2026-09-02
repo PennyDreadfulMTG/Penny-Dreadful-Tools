@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6020,
+  "triage": [
+    {
+      "batch_id": "t-6020-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "card data query returns no per-player play-count stat; only COUNT(DISTINCT person_id) = 1 is referenced, not a top-player ranking",
+          "ref": "decksite/data/card.py:216",
+          "type": "code"
+        },
+        {
+          "detail": "template shows `played_competitively` flag only; no 'most played by' player field exists",
+          "ref": "decksite/templates/card.mustache:15-17",
+          "type": "code"
+        },
+        {
+          "detail": "Card view passes card object to template but exposes no per-player most-played stat",
+          "ref": "decksite/views/card.py:1-40",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6020,
+      "notes": "bakert's comment adds product ambiguity: 'Favorite card of X', 'Played most by Y this season/all time' \u2014 the display metric (games, decks, season vs. all-time) must be decided before implementation. Requires new SQL query on card+deck+person join, data model change, and template update.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

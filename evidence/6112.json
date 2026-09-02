@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6112,
+  "triage": [
+    {
+      "batch_id": "t-6112-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No sideboard-by-color analysis page, route, or view class exists in the codebase",
+          "ref": "grep -rn 'sideboard.*color\\|sideboard.*analysis\\|SideboardCards' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Only sideboard references are SQL comments about avoiding double-counting, not analysis features",
+          "ref": "decksite/data/card.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "Sideboard commits cover playability weighting and companion rules, not a color-breakdown analysis page",
+          "ref": "git log --oneline --grep='sideboard'",
+          "type": "search"
+        },
+        {
+          "detail": "Author's own comment expands scope to arbitrary cross-queries (player + card + opponent archetype), making this a large open-ended feature",
+          "ref": "#6112",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6112,
+      "notes": "Scope has grown well beyond the title \u2014 the author's comment reframes this as an arbitrary analytics query engine. A minimal sideboard-by-color page is feasible but may not satisfy the actual intent.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:04:50Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

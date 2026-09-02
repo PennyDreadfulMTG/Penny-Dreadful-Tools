@@ -1,0 +1,88 @@
+{
+  "fix": [],
+  "issue": 6976,
+  "triage": [
+    {
+      "batch_id": "t-7036-1",
+      "class": "already-fixed",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Allow admins to retire any deck \u2014 added /admin/retire/ route, AdminRetire view, and adminretire.mustache template (Feb 2020)",
+          "ref": "af6e6153",
+          "type": "commit"
+        },
+        {
+          "detail": "Make admin retire decks work properly \u2014 follow-up fix to the same feature",
+          "ref": "efdcc9d6",
+          "type": "commit"
+        },
+        {
+          "detail": "@APP.route('/admin/retire/') with @auth.admin_required; GET renders form, POST validates and calls lg.retire_deck(d)",
+          "ref": "decksite/controllers/admin.py:139-155",
+          "type": "code"
+        },
+        {
+          "detail": "AdminRetire view class exists and renders retire form with logout_url",
+          "ref": "decksite/views/admin_retire.py",
+          "type": "code"
+        },
+        {
+          "detail": "Template delegates to the retire partial; the admin retire page is fully functional",
+          "ref": "decksite/templates/adminretire.mustache",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6976,
+      "notes": "Feature is fully implemented and working. The admin retire page appears in the auto-generated admin menu via the admin_menu() function in admin.py.",
+      "proposed_comment": "This feature was implemented in commit `af6e6153` ('Allow admins to retire any deck', Feb 2020). The `/admin/retire/` endpoint exists in `decksite/controllers/admin.py:139\u2013155`, backed by the `AdminRetire` view and `adminretire.mustache` template. Safe to close.",
+      "recorded_at": "2026-09-01T23:53:43Z",
+      "risk": "low"
+    }
+  ],
+  "verify": [
+    {
+      "batch_id": "v-6976-1",
+      "final_comment": "This feature was implemented in commits af6e6153 and efdcc9d6 ('Allow admins to retire any deck' / 'Make admin retire decks work properly', Feb 2020). The /admin/retire/ endpoint exists in decksite/controllers/admin.py:139-155 with both GET and POST handlers requiring admin authentication, backed by the AdminRetire view and adminretire.mustache template that renders a deck-selection form. Safe to close.",
+      "issue": 6976,
+      "own_evidence": [
+        {
+          "detail": "GET and POST routes for /admin/retire/ both exist, both decorated with @auth.admin_required; POST calls lg.retire_deck(d) on the selected deck",
+          "ref": "decksite/controllers/admin.py:139-155",
+          "type": "code"
+        },
+        {
+          "detail": "AdminRetire view exists, extends LeagueForm which provides entry_options for deck selection",
+          "ref": "decksite/views/admin_retire.py",
+          "type": "code"
+        },
+        {
+          "detail": "retire.mustache (included by adminretire.mustache) contains a <select> for deck choice and a Retire submit button",
+          "ref": "decksite/templates/retire.mustache",
+          "type": "code"
+        },
+        {
+          "detail": "Commit message 'Allow admins to retire any deck', Feb 8 2020, adds all four cited files",
+          "ref": "af6e6153",
+          "type": "commit"
+        },
+        {
+          "detail": "Follow-up commit 'Make admin retire decks work properly', same day, fixes the implementation",
+          "ref": "efdcc9d6",
+          "type": "commit"
+        },
+        {
+          "detail": "Issue is OPEN with 0 comments and no recent human activity",
+          "ref": "gh issue view 6976",
+          "type": "issue"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:56:54Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
+}

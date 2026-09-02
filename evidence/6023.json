@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6023,
+  "triage": [
+    {
+      "batch_id": "t-6112-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "self.add_global_autocomplete(command.autocomplete_card) registers fuzzy card-name autocomplete for all slash commands",
+          "ref": "discordbot/bot.py:48",
+          "type": "code"
+        },
+        {
+          "detail": "autocomplete_card uses Whoosh SearchResult with fuzzy matching; returns up to 20 ranked fuzzy matches to Discord",
+          "ref": "discordbot/command.py:239",
+          "type": "code"
+        },
+        {
+          "detail": "FuzzyTerm from whoosh.query is used in search(); class SearchResult explicitly carries a fuzzy list",
+          "ref": "magic/whoosh_search.py:7",
+          "type": "code"
+        },
+        {
+          "detail": "All card-input commands use slash_card_option() which attaches the global autocomplete; old !pdm prefix commands no longer exist",
+          "ref": "find discordbot/commands -name '*.py' | xargs grep -l 'slash_card_option'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6023,
+      "notes": "Confidence is medium rather than high because the issue title mentions 'pdm cards' (an old prefix command whose exact behavior is not verifiable) and 'other options with known sets' (e.g. configure's scope param still has no choices/autocomplete, but that command is currently disabled).",
+      "proposed_comment": "Card-name inputs now use Discord slash-command autocomplete with Whoosh fuzzy matching (see `discordbot/command.py:239` and `bot.py:48`), which addresses the core request. The old `!pdm` prefix command style no longer exists.",
+      "recorded_at": "2026-09-02T00:04:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

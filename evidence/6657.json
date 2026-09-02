@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6657-1",
+      "branch": "sweep/6657-consider-showing-current-page-number-jum",
+      "files_changed": 1,
+      "head_sha": "0b451d99f9f74a19f19382dcad2e4965def34765",
+      "issue": 6657,
+      "lines_changed": 13,
+      "lint": "passed",
+      "notes": "Pure UI change in one JSX file, matching existing code style and class naming conventions. The \u21e4/\u21e5 Unicode arrows are the same style as the existing \u2190/\u2192. No Python, CSS, or test files needed changing.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe pagination controls in `shared_web/static/js/table.jsx` only showed the item range (e.g. \"1-20 of 150\") and prev/next arrows. There was no indication of current page number out of total pages, and no way to jump directly to the first or last page.\n\n## What changed\n\nIn `renderPagination()` in `table.jsx`:\n- Computed `numPages = Math.ceil(total / this.state.pageSize)` and `currentPage = this.state.page + 1`\n- Added a `Page N of M` display in a new `page-number section` span\n- Added a \u21e4 (first-page) link before the \u2190 arrow, active when `page > 0`, calling `this.movePage(0)`\n- Added a \u21e5 (last-page) link after the \u2192 arrow, active when `end < total`, calling `this.movePage(numPages - 1)`\n- Inactive states use the existing `inactive` class pattern for visual consistency\n\n## Validation\n\n`uv run --frozen python dev.py lint` \u2014 passed. This is a JSX-only UI change; the Python unit suite has no tests covering this component and no DB was configured in this environment. The change is confined to 13 inserted lines in one file.\n\nFixes #6657",
+      "pr_title": "Add page number display and first/last page navigation to pagination (#6657)",
+      "recorded_at": "2026-09-01T23:57:05Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py lint",
+        "detail": "All checks passed \u2014 unit tests not run as no DB was configured and this is a JSX-only UI change with no Python test coverage to update",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6657,
   "triage": [
     {

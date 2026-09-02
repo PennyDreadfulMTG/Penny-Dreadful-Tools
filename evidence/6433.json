@@ -1,0 +1,46 @@
+{
+  "fix": [],
+  "issue": 6433,
+  "triage": [
+    {
+      "batch_id": "t-6433-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "PR 'Make deck names smarter about seasons, version, and roman numerals' merged 2024-04-07 added remove_season(name, d.season_id) to normalize()",
+          "ref": "#12145",
+          "type": "pr"
+        },
+        {
+          "detail": "Introduces remove_season() and passes d.season_id to normalize(); the root cause bakert cited was that deck_name didn't know which season a deck was from",
+          "ref": "6f78f1ec",
+          "type": "commit"
+        },
+        {
+          "detail": "normalize() calls remove_season(name, d.season_id), which strips the season number from the deck name",
+          "ref": "decksite/deck_name.py:85",
+          "type": "code"
+        },
+        {
+          "detail": "remove_season() with season_id=13 matches '13' at word boundary and replaces it with ' ', leaving '- Izzet Swans'; remove_extraneous_hyphens() then yields 'Izzet Swans'",
+          "ref": "decksite/deck_name.py:210",
+          "type": "code"
+        },
+        {
+          "detail": "Test assert deck_name.remove_season('31 - Storm', 31) == '- Storm' confirms the analogous pattern works; full pipeline then strips the hyphen",
+          "ref": "decksite/deck_name_test.py:336",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6433,
+      "notes": "No test specifically for '13 - Izzet Swans' through the full normalize pipeline; confidence medium rather than high for this reason. The analogous '31 - Storm' test covers the same code path.",
+      "proposed_comment": "This was fixed in PR #12145 (commit 6f78f1ec, April 2024), which added `remove_season(name, d.season_id)` to `normalize()`. A deck named '13 - Izzet Swans' with season_id=13 now correctly normalizes to 'Izzet Swans' \u2014 the `remove_season` function strips the leading 13 and `remove_extraneous_hyphens` cleans up the remaining hyphen.",
+      "recorded_at": "2026-09-02T00:05:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

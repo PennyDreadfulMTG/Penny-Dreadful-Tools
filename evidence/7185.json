@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7185,
+  "triage": [
+    {
+      "batch_id": "t-7208-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Update active_date in cache when we insert a match \u2014 changed update_cache signature to accept active_date/dt and pass dtutil.dt2ts(dt) instead of keeping the old value",
+          "ref": "61521821",
+          "type": "commit"
+        },
+        {
+          "detail": "insert_match now calls update_cache(left_id, left_games, right_games, dt=dt) and update_cache(right_id, ..., dt=dt), so active_date is set to the match timestamp for every insert including admin inserts",
+          "ref": "decksite/data/match.py:26-28",
+          "type": "code"
+        },
+        {
+          "detail": "update_cache: active_date = dtutil.dt2ts(dt) if dt else 'active_date'; when dt is provided (all insert paths), the column is updated",
+          "ref": "decksite/data/match.py:163-181",
+          "type": "code"
+        },
+        {
+          "detail": "Admin 'add' action calls ms.insert_match(dtutil.now(), ...) which flows through the fixed path",
+          "ref": "decksite/controllers/admin.py:184",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7185,
+      "notes": "Commit 61521821 cites Fixes #6771 (not #7185), so the issue was likely filed as a separate report of the same underlying bug either concurrently or shortly after; the fix covers all insert_match callers including the admin path. The 160 historical records with wrong active_date would have been corrected by the nightly reprime_cache job. Issue can be closed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

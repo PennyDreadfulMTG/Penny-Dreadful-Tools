@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6408,
+  "triage": [
+    {
+      "batch_id": "t-6433-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Still uses Deckbox-derived JS with onmouseover/onmousemove; no mobile tap-to-preview behavior exists",
+          "ref": "shared_web/static/js/tooltips.js:1",
+          "type": "code"
+        },
+        {
+          "detail": "Issue is labeled '+ question' and the body itself is a question; bakert's comments explore CSS-hover vs JS approaches without committing to either",
+          "ref": "#6408",
+          "type": "issue"
+        },
+        {
+          "detail": "bakert's last comment 'deckbox feels better to me (faster, lighter) but Gatherling's implementation is ok. Maybe we switch to hover?' leaves the decision open",
+          "ref": "#6408",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6408,
+      "notes": "The mobile card-preview UX decision is genuinely open \u2014 CSS :hover vs JS tap-to-preview are meaningfully different tradeoffs. Needs an owner to pick a direction before any implementation can proceed.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:53:54Z",
+  "evidence_refs": [
+    "evidence/7208.json#triage[0]"
+  ],
+  "issue": 7208,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "The !stillbugged and !notbugged commands are processed by the PDBot MTGO bot (pdbot.pennydreadfulmagic.com), which is a separate codebase not in this repository. Cannot trace the card-name matching logic or the 'I couldn't find a bug for this card' error message. If the bug is in card-name normalization, the relevant code would be in the PDBot project."
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6886-1",
+      "branch": "sweep/6886-add-scryfall-link-to-card-details-page",
+      "files_changed": 2,
+      "head_sha": "dad267dbcadd6fa6682145c90249eb934a8d1ae1",
+      "issue": 6886,
+      "lines_changed": 3,
+      "lint": "passed",
+      "notes": "The Scryfall URL uses the exact-name search syntax (!\"card name\") which resolves to the card page directly when the name matches exactly. The link uses the display_name (respecting alternate printings), which is the correct name to search by.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe card details page had no external link to Scryfall, where all card data originates. Users had to navigate there manually.\n\n## What changed\n\n- `decksite/views/card.py`: Added `import urllib.parse` and set `self.scryfall_url` to a Scryfall exact-name search URL using `%21%22` (!\") quoting so it resolves directly to the card.\n- `decksite/templates/card.mustache`: Added `<a class=\"external\" href=\"{{scryfall_url}}\">View on Scryfall</a>` inside the `card-image-block` section, after the bug notices.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped\n\nFixes #6886",
+      "pr_title": "Add Scryfall link to card details page (#6886)",
+      "recorded_at": "2026-09-01T23:56:10Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 18.02s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6886,
   "triage": [
     {

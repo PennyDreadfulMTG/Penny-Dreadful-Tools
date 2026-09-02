@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-7206-1",
+      "branch": "sweep/7206-dtutil-round-up-preceeding-unit-has-a-ha",
+      "files_changed": 2,
+      "head_sha": "0064639f7655d605f1082dcdd0a1a1c80f675996",
+      "issue": 7206,
+      "lines_changed": 15,
+      "lint": "passed",
+      "notes": "The coincidental correctness for minutes (max_units==seconds_per_unit==60) masked the bug in existing tests. The fix is purely additive in behavior for the previously-passing paths. No other bugs found in this area.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`round_up_preceding_unit` in `shared/dtutil.py` had two bugs:\n\n1. **Wrong index on line 138**: `intervals[prev_unit][1]` retrieved `seconds_per_unit` (the second tuple element) instead of `max_units` (the first element, index `[0]`). By coincidence this worked for minutes (both `max_units` and `seconds_per_unit` are 60), but failed for hours: `24 < 3600` is always true, so the hour overflow was never detected and carry propagation stopped prematurely.\n\n2. **No else-clause for full overflow**: when every entry in `result` overflowed (e.g. 23 h 59 m 59 s \u2192 should become 1 day), the for-loop exhausted without `break` but there was no code to prepend the next-bigger unit. The function just returned zeros, causing `display_time(3599, granularity=1)` to produce `''` instead of `'1 hour'`.\n\n## What changed\n\n**`shared/dtutil.py`** (`round_up_preceding_unit`):\n- Changed `intervals[prev_unit][1]` \u2192 `intervals[prev_unit][0]` to compare against `max_units`.\n- Added `None` guard (weeks has `max_units=None` and must never overflow).\n- Added a `for/else` clause that looks up the unit immediately preceding `result[0]` in the ordered `intervals` dict and prepends `(1, preceding_unit)` when all entries overflowed.\n\n**`shared/dtutil_test.py`**:\n- Extended `test_round_up_preceding_unit` with the `[(23,'hours'),(59,'minutes'),(59,'seconds')]` case from the issue comments.\n- Added `test_display_time_boundary` asserting `display_time(60*60-1, granularity=1) == '1 hour'` (the concrete regression from the issue).\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- `uv run --frozen pytest shared/dtutil_test.py -v` \u2014 14/14 passed (includes both new tests).\n\nFixes #7206",
+      "pr_title": "Fix round_up_preceding_unit overflow check and missing preceding-unit prepend (#7206)",
+      "recorded_at": "2026-09-02T00:02:42Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest shared/dtutil_test.py -v",
+        "detail": "14 passed in 0.18s (all dtutil_test.py tests including both new ones)",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 7206,
+  "triage": [
+    {
+      "batch_id": "t-7208-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Comparison uses intervals[prev_unit][1] (seconds_per_unit) instead of intervals[prev_unit][0] (max_units); for 'hours' this is 3600 vs 24, so 24-hour overflow is never detected",
+          "ref": "shared/dtutil.py:138",
+          "type": "code"
+        },
+        {
+          "detail": "No logic to prepend a new unit when all entries in result overflow; loop simply exits leaving result as [(0,'minutes')] when called with [(59,'minutes')]",
+          "ref": "shared/dtutil.py:132-140",
+          "type": "code"
+        },
+        {
+          "detail": "Only tests non-overflowing case [(1,'hours'),...] \u2192 [(2,'hours'),...]; the reported failing case [(23,'hours'),(59,'minutes'),(59,'seconds')] and display_time(3599, granularity=1)=='1 hour' are absent",
+          "ref": "shared/dtutil_test.py:92-95",
+          "type": "code"
+        },
+        {
+          "detail": "display_time(60*60-1, granularity=1) returns empty string instead of '1 hour': round_up_preceding_unit([(59,'minutes')]) returns [(0,'minutes')] and the value-0 filter strips everything",
+          "ref": "shared/dtutil.py:103-122",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In shared/dtutil.py: (1) change line 138 from intervals[prev_unit][1] to intervals[prev_unit][0] so the overflow check compares against max_units; (2) after the for-loop, add an else-clause that looks up the preceding unit key in the ordered intervals dict and prepends (1, preceding_unit) to result when all entries have overflowed. In shared/dtutil_test.py: add the two test assertions from the issue comments ([(23,'hours'),(59,'minutes'),(59,'seconds')] case and display_time(3599, granularity=1)=='1 hour'). Total change roughly 20\u201330 lines.",
+      "issue": 7206,
+      "notes": "Comment in the issue references commit f685db9 as a prior partial fix, but that SHA does not exist in this repo's git history; the bug is still present in current master. The existing test_round_up_preceding_unit coincidentally passes because it uses (1,'hours') where the wrong index 3600 is still greater than 2.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

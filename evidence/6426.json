@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6426,
+  "triage": [
+    {
+      "batch_id": "t-6433-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "self.hosts is built only from tournaments.all_series_info() (current active series) plus a single hardcoded addition 'chaosblackdoom'; no historical data",
+          "ref": "decksite/data/achievements.py:TournamentOrganizer.__init__",
+          "type": "code"
+        },
+        {
+          "detail": "Returns only currently scheduled tournament series with their current host lists; no Gatherling query for past hosts",
+          "ref": "magic/tournaments.py:all_series_info",
+          "type": "code"
+        },
+        {
+          "detail": "Comment reads 'We can't give per-season stats for this because they don't exist' \u2014 historical per-season host tracking still absent",
+          "ref": "decksite/data/achievements.py:TournamentOrganizer.load_summary",
+          "type": "code"
+        },
+        {
+          "detail": "display() checks p.name in self.hosts with no season filter, so a new host gets the badge in all seasons and a retired host gets nothing",
+          "ref": "decksite/data/achievements.py:TournamentOrganizer.display",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6426,
+      "notes": "flac0 IS currently in the hosts list (FNM and Thursdays), so the first sub-request is accidentally satisfied. The remaining work \u2014 automatic historical tracking from Gatherling, per-season display \u2014 requires Gatherling API access and likely a new DB table for historical host records.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

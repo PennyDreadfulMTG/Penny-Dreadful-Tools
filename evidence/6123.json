@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6123,
+  "triage": [
+    {
+      "batch_id": "t-6153-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Views directory contains person.py, tournaments.py, tournament_leaderboards.py, tournament_hosting.py but no tournament_performance view exists",
+          "ref": "ls decksite/views/",
+          "type": "search"
+        },
+        {
+          "detail": "No route, controller, view, or template for a 'tournament performance' page exists in the codebase",
+          "ref": "grep -rn 'tournament_performance' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6123,
+      "notes": "Requires designing the data model for per-player tournament performance aggregation, a new controller route, a new view class, and a new template \u2014 comparable in scope to the existing person.py page.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:02:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7488-1",
+      "branch": "sweep/7488-make-the-rotation-system-notice-if-it-mi",
+      "files_changed": 2,
+      "head_sha": "8af7d710419388c815b9ac42aeaaa6b34157f93f",
+      "issue": 7488,
+      "lines_changed": 29,
+      "lint": "passed",
+      "notes": "No schema or data changes. The 3300s threshold (55 min) gives a 5-minute window for catchup runs. The external cron schedule change (hourly \u2192 every 5 min) must be done by whoever manages the production deployment \u2014 it is not tracked in this repo.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe rotation script was called on a fixed schedule (e.g. hourly). If it missed a scheduled run there was no recovery mechanism \u2014 the missed run was simply lost.\n\n## What changed\n\nAdded a `_is_run_due(files)` helper in `rotation_script/rotation_script.py` that checks the modification time of the most recently written run file. If fewer than 3300 seconds (55 minutes) have elapsed since the last run, the script prints a skip message and returns early without doing any work.\n\nThis makes the script safe to call frequently (e.g. every 5 minutes via cron). When the scheduler fires more often than once per hour, the script is a no-op until a full interval has elapsed \u2014 so a missed run will be caught on the next firing without duplicate runs being written.\n\nThree unit tests were added for `_is_run_due`: no-files case (always due), recent-file case (skip), and old-file case (proceed).\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit rotation_script` \u2014 8 tests passed (5 pre-existing + 3 new)\n\n## Reviewer notes\n\nThe external scheduler (cron/systemd timer) should be updated separately to invoke the script every 5 minutes instead of every hour; that configuration lives outside this repo. The 3300-second threshold is exposed as `RUN_INTERVAL_SECONDS` at module level for easy adjustment.\n\nFixes #7488",
+      "pr_title": "Make rotation script idempotent when called frequently (#7488)",
+      "recorded_at": "2026-09-01T23:56:21Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit rotation_script",
+        "detail": "8 passed in 0.31s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7488,
   "triage": [
     {

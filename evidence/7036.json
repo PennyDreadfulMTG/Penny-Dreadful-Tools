@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-7036-1",
+      "branch": "sweep/7036-lint-rule-that-checks-that-admin-require",
+      "files_changed": 5,
+      "head_sha": "40e9bf7c55c3ade08865c360c862e9e6f574981d",
+      "issue": 7036,
+      "lines_changed": 130,
+      "lint": "passed",
+      "notes": "The issue comment mentions possibly fixing auth.py so the decorators work regardless of position \u2014 that would require propagating permission_required through @wraps automatically. The lint approach is simpler and lower risk. One discovered-but-untouched note: api.py's /api routes are not covered by test_all_admin_routes_require_permission (which only checks /admin routes), so the existing violation on post_reassign was uncaught by tests.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`auth.admin_required` and `auth.demimod_required` set a `permission_required` attribute on their wrapper function. When another decorator without `functools.wraps` is applied outside them (between `@APP.route` and the auth decorator), that attribute is not propagated to what Flask sees, breaking the admin menu and the `test_all_admin_routes_require_permission` test. There was also one existing violation in `api.py` where `@auth.demimod_required` was above `@fill_form` on `post_reassign`.\n\n## What changed\n\n- **`lint_auth_ordering.py`** (new): AST-based checker that walks all tracked `.py` files and raises an error if `auth.admin_required` or `auth.demimod_required` is not the last (innermost) decorator on a function \u2014 i.e., there must be no decorator between it and the `def` line.\n- **`dev.py`**: `do_lint()` now runs `lint_auth_ordering.py` after ruff, so CI will catch any future violations.\n- **`decksite/controllers/api.py`**: Fixed the one existing violation \u2014 swapped `@auth.demimod_required` and `@fill_form('deck_id', 'archetype_id')` on `post_reassign` so the auth decorator is innermost.\n- **`dev_test.py`**: Added three unit tests for the checker (catches violation, passes when correct, ignores unrelated decorators).\n- **`pyproject.toml`**: Added `lint_auth_ordering.py` to the ruff T201 per-file ignore (the script uses `print` for error output, same pattern as `dev.py`).\n\n## Validation\n\n- `uv run --frozen python dev.py lint`: passed (ruff + auth-ordering checker both clean)\n- `uv run --frozen python dev.py unit dev_test`: 4 passed (including 3 new tests)\n- `uv run --frozen python dev.py unit admin_test`: 16 passed (existing admin tests unaffected)\n- Database was live for the test run (MariaDB 11.8 started from preinstalled package).\n\nFixes #7036",
+      "pr_title": "Add lint rule enforcing auth.admin_required/demimod_required as innermost decorator (#7036)",
+      "recorded_at": "2026-09-02T00:05:23Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit dev_test admin_test",
+        "detail": "4 passed in dev_test.py (including 3 new tests for lint_auth_ordering); 16 passed in admin_test.py",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 7036,
+  "triage": [
+    {
+      "batch_id": "t-7036-1",
+      "class": "easy-fix",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "ruff config uses only standard rule sets (E, F, I, T2, UP, W); no custom AST checker for decorator ordering exists",
+          "ref": "pyproject.toml",
+          "type": "code"
+        },
+        {
+          "detail": "fill_form wraps admin_required correctly (admin_required is innermost); convention is followed but not enforced",
+          "ref": "decksite/controllers/admin.py:54-57",
+          "type": "code"
+        },
+        {
+          "detail": "admin_required sets permission_required attribute via setattr after @wraps; if outer decorator does not copy __dict__ this attribute is lost",
+          "ref": "decksite/auth.py:31-41",
+          "type": "code"
+        },
+        {
+          "detail": "do_lint() only calls ruff check; no custom AST check for decorator ordering is wired in",
+          "ref": "dev.py:51-61",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "Add a short Python script (e.g., lint_auth_ordering.py) using the `ast` module that walks all .py files and raises an error if a function is decorated with `auth.admin_required` or `auth.demimod_required` and that decorator is not the last one before the function def; call it from `dev.py`'s `do_lint()`. Alternatively, investigate and fix `auth.py` so that the decorators work regardless of position (possibly by ensuring `permission_required` is set on the original function, not the wrapper). Touch: `dev.py`, new `lint_auth_ordering.py` (or inline in `dev.py`). ~60\u2013100 lines.",
+      "issue": 7036,
+      "notes": "All current usages in admin.py and api.py already follow the convention; the lint rule is prophylactic. The issue comment notes the root cause is unclear, so a simple lint rule enforcement is safer than a speculative auth.py fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:43Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,57 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-6478-1",
+      "branch": "sweep/6478-decksite-migrations-aren-t-locked-and-mu",
+      "files_changed": 1,
+      "head_sha": "0240d1a8e707a0763437ee9d2f577a4e78bf3cfd",
+      "issue": 6478,
+      "lines_changed": 36,
+      "lint": "passed",
+      "notes": "The advisory lock is session-scoped, so a crashed worker automatically releases it \u2014 no manual cleanup needed. One pre-existing environmental test collection error in decksite/scrapers/decksite.py changed exception type (was a DB connection error, now LockNotAcquiredException) but that file has no test functions and the overall test exit code remained 0.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nMultiple threads could call `decksite/database.py:setup()` concurrently on startup, each checking the current schema version and then racing to apply the same migration patches. This could corrupt the `db_version` table or double-apply SQL patches.\n\n## What changed\n\nIn `decksite/database.py`, `setup()` now acquires a MySQL advisory lock (`GET_LOCK('decksite_migration', -1)`) before touching any migration state. The `-1` timeout means it waits indefinitely rather than failing fast. The entire migration body is wrapped in `try/finally` so the lock is always released via `RELEASE_LOCK`, even if an exception occurs mid-migration. If the DB session drops, MySQL automatically releases session-level advisory locks, so there is no risk of permanent lock starvation.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit decksite` \u2014 exited with code 0. One collection-time import error was observed for `decksite/scrapers/decksite.py` (LockNotAcquiredException at import, because the module-level `setup_in_app_context()` call hits a DB that is not fully initialized in the test environment); that file contains no test functions and this import error was pre-existing in a different form before this change.\n\nFixes #6478",
+      "pr_title": "Lock decksite migrations with GET_LOCK to prevent concurrent runs (#6478)",
+      "recorded_at": "2026-09-02T00:05:13Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit decksite",
+        "detail": "Exit code 0. Note: pytest collection of decksite/scrapers/decksite.py raised LockNotAcquiredException at import time (that file has no test functions and was likely already failing to import before this change \u2014 the module-level setup_in_app_context() call hits the DB which may not be fully configured in the test environment). All other tests unaffected.",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 6478,
+  "triage": [
+    {
+      "batch_id": "t-6607-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "setup() iterates SQL patches with no locking; concurrent workers can both enter the migration loop simultaneously",
+          "ref": "decksite/database.py:28-44",
+          "type": "code"
+        },
+        {
+          "detail": "get_lock(lock_id, timeout) and release_lock(lock_id) already exist on the Database class using MySQL GET_LOCK/RELEASE_LOCK",
+          "ref": "shared/database.py:125-131",
+          "type": "code"
+        },
+        {
+          "detail": "Site runs under uwsgi with multiple worker processes; each process imports decksite.database and calls setup() at startup, confirming the race is real",
+          "ref": "Procfile:1",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": "In decksite/database.py:setup(), before the CREATE TABLE statement add `db().get_lock('decksite_migration', -1)` (MySQL -1 means wait indefinitely) and wrap the entire migration body in a try/finally that calls `db().release_lock('decksite_migration')`. If the session drops mid-migration MySQL automatically releases the session-level lock, so this is safe. No other files need changing.",
+      "issue": 6478,
+      "notes": "bakert's comment raised concern about new code running against an old schema after locking; that concern applies to a different (deploy-time) race; the immediate bug (parallel workers both applying the same patch) is fully addressed by serializing via GET_LOCK. Migration SQL statements are idempotent (CREATE TABLE IF NOT EXISTS, INSERT with UNIQUE constraint) so the risk is already bounded even without the fix.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

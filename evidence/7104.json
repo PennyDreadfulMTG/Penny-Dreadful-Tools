@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 7104,
+  "triage": [
+    {
+      "batch_id": "t-7115-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "is_in_current_run() returns True for any league deck with <5 matches, not retired, and in an active competition \u2014 so a formerly 5-0 deck with one match deleted becomes active again",
+          "ref": "magic/models/deck.py:28",
+          "type": "code"
+        },
+        {
+          "detail": "guarantee_at_most_one_or_retire() retires decks[0] and keeps decks[1]; but decks are sorted alphabetically (person+name), not by created_date, so the newer deck may be retired instead of the older one",
+          "ref": "decksite/controllers/api.py:731",
+          "type": "code"
+        },
+        {
+          "detail": "active_decks() sorts by 'person.ljust(100)+name' \u2014 no date-based ordering, so the 'wrong' deck can end up as decks[0] and be retired",
+          "ref": "decksite/league.py:175",
+          "type": "code"
+        },
+        {
+          "detail": "No 'finalized' or 'completed' column exists in deck table \u2014 the proper fix proposed in comments has not been implemented",
+          "ref": "grep -rn 'finalized' decksite/sql/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7104,
+      "notes": "A no-migration partial fix (sort active_decks by created_date and retire the oldest in guarantee_at_most_one_or_retire) is possible, but bakert's comments note it conflicts with the 'never-retired-a-deck' achievement. The proper fix (a 'finalized' column set when the fifth match is reported) requires a migration and a product decision.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:29Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

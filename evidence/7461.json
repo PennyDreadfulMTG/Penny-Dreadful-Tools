@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7461-1",
+      "branch": "sweep/7461-avoid-sending-cookie-with-static-assets",
+      "files_changed": 1,
+      "head_sha": "dc9dc35a760cce74b22a80cb42572c7a965389c1",
+      "issue": 7461,
+      "lines_changed": 10,
+      "lint": "passed",
+      "notes": "The after_request hook only strips Set-Cookie for paths under APP.static_url_path (/static/); the other simple_paths (/banner/, /favicon.ico, /robots.txt) get session.modified=False from before_request but not the header stripping \u2014 this matches the triage sketch and the existing code's split of what counts as 'static'. If the banner/favicon paths also need the header stripped, that is a trivial follow-on. No schema or data changes.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nFlask-Session was sending a `Set-Cookie` header with every response, including static asset responses (CSS, JS, images, etc.). This is wasteful and was the root cause of a prior incident where an `@lru_cache` on a static-file route caused users to see each other's sessions \u2014 because the session cookie was being attached to those responses at all.\n\n## What changed\n\n`decksite/main.py` \u2014 two additions:\n\n1. **`before_request`**: Added `session.modified = False` in the `else` branch of the existing `simple_paths` check. This tells Flask-Session not to persist or refresh the session for static asset requests, covering the common case where `SESSION_REFRESH_EACH_REQUEST` is the driver.\n\n2. **`after_request`**: Activated the previously-commented-out stub and added a `response.headers.remove('Set-Cookie')` guard for any path under `APP.static_url_path`. This belt-and-suspenders approach handles edge cases (e.g. a permanent session with `SESSION_REFRESH_EACH_REQUEST=True`) that `session.modified = False` alone would not cover, and is the approach recommended by the linked Stack Overflow answer in the issue comments.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (exit 0)\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped, 89 deselected\n\nFixes #7461",
+      "pr_title": "Avoid sending Set-Cookie header with static assets (#7461)",
+      "recorded_at": "2026-09-01T23:55:59Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 17.85s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7461,
   "triage": [
     {

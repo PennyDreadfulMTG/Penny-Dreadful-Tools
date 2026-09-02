@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6056,
+  "triage": [
+    {
+      "batch_id": "t-6112-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No matches \u2014 feature has not been implemented at all",
+          "ref": "grep -rn 'profile.*question\\|first.*pd.*deck\\|profile_question' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "No profile-questions view exists",
+          "ref": "find decksite/views -name '*profile*'",
+          "type": "search"
+        },
+        {
+          "detail": "Zero comments; labeled 'backlog' \u2014 no design or implementation work has started",
+          "ref": "#6056",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6056,
+      "notes": "Requires deciding which questions to surface, writing the SQL to answer them from existing deck/match data, and adding UI to the person profile page. Scope is open-ended.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:04:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7201,
+  "triage": [
+    {
+      "batch_id": "t-7208-1",
+      "class": "needs-product-decision",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "load_matchups returns all archetypes including sub-archetypes via a plain INNER JOIN on the archetype table; no parent-level filtering",
+          "ref": "decksite/data/archetype.py:496-531",
+          "type": "code"
+        },
+        {
+          "detail": "matchups dict is built from a copy of all archetypes passed in; sub-archetypes appear in the grid alongside top-level archetypes without any special treatment",
+          "ref": "decksite/views/archetype.py:78-87",
+          "type": "code"
+        },
+        {
+          "detail": "Archetypes have a .parent attribute available; filtering or annotating sub-archetypes is structurally feasible but the desired display behavior is unspecified",
+          "ref": "decksite/data/archetype.py:650",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7201,
+      "notes": "The decision needed is: should sub-archetypes be filtered from the grid, shown with their parent label, or something else? Multiple reasonable approaches exist (roll up into parent totals, display as 'Parent > Child', hide rows below a threshold), each with different trade-offs for completeness vs. clarity.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7115,
+  "triage": [
+    {
+      "batch_id": "t-7115-1",
+      "class": "migration-required",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "all_series_info() hardcodes hosts, display_time, and series_name for every tournament series \u2014 the data that the issue says should be in the database",
+          "ref": "magic/tournaments.py:297",
+          "type": "code"
+        },
+        {
+          "detail": "competition_series table exists with name/competition_type_id but has no hosts or display_time columns; moving that data here requires an ALTER TABLE migration",
+          "ref": "decksite/sql/28.sql:3",
+          "type": "code"
+        },
+        {
+          "detail": "Function name from issue title does not exist in current master; closest equivalent is all_series_info() at tournaments.py:297",
+          "ref": "grep -rn 'get_dt_and_series' /home/vercel-sandbox/penny-dreadful-tools --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7115,
+      "notes": "The issue references 'get_dt_and_series' which no longer exists under that name; the hardcoded tournament-series metadata lives in all_series_info() at magic/tournaments.py:297. Moving it to competition_series would require new columns (hosts, display_time) and a data-backfill migration.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:29Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

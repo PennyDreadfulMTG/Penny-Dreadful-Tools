@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6106,
+  "triage": [
+    {
+      "batch_id": "t-6112-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Flask is still the framework: 'from flask import Blueprint, g, request, url_for'",
+          "ref": "decksite/__init__.py:5",
+          "type": "code"
+        },
+        {
+          "detail": "Zero Quart imports anywhere in the codebase \u2014 the port was never started",
+          "ref": "grep -r 'from quart\\|import quart\\|Quart(' --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Labeled 'question'; comments discuss tradeoffs (ASGI perf vs Python version constraints on SUSE) without reaching a decision",
+          "ref": "#6106",
+          "type": "issue"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6106,
+      "notes": "Silasary's comment from 2020 noted SUSE Python version as a blocker; worth re-evaluating if infrastructure has changed, but this is a design discussion, not a bug.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:04:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

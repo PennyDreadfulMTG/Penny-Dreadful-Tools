@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6119,
+  "triage": [
+    {
+      "batch_id": "t-6153-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No win streak achievement or SQL exists anywhere in the codebase",
+          "ref": "grep -rn 'win.streak|win_streak|winstreak' penny-dreadful-tools/ --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "PerfectRun and FlawlessRun achievements track within-run wins, but there is no cross-competition consecutive-win tracking; implementing win streak requires defining scope (league? tournament? all?) and writing window-function SQL over ordered match results",
+          "ref": "decksite/data/achievements.py:407-420",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6119,
+      "notes": "Needs product clarification on what constitutes a 'win streak' (league runs, tournament rounds, all matches combined?) before SQL can be designed; tracking consecutive wins across different competitions requires non-trivial ordered aggregation.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:02:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

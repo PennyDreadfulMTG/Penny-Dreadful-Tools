@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 7195,
+  "triage": [
+    {
+      "batch_id": "t-7208-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "No existing champion/belt tracking code found anywhere in the codebase; feature is entirely unimplemented",
+          "ref": "grep -rn 'champion\\|belt\\|title.*holder' . --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "Current match insertion has no hook for belt-transfer logic; would require new DB table, trigger on match result, and handling of 'champion goes inactive' edge case",
+          "ref": "decksite/data/match.py:16-41",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7195,
+      "notes": "Requires at minimum: a new DB table for belt history, logic to transfer the belt on each sanctioned match loss, a definition of 'first sanctioned PD match', and policy for what happens when the champion stops playing. Scope is well beyond 150 lines and likely needs a schema migration.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:51:29Z",
+  "evidence_refs": [
+    "evidence/7113.json#triage[0]"
+  ],
+  "issue": 7113,
+  "kind": "class-escalate",
+  "question": "Triaged unclear \u2014 needs a human/product call.",
+  "summary": "PDBot (the MTGO bot) appears to live in a separate repository; the message containing the /link/ URL is not generated in this codebase. Cannot determine fix location without access to that repo."
+}

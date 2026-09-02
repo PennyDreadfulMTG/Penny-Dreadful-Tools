@@ -1,0 +1,62 @@
+{
+  "fix": [
+    {
+      "batch_id": "f-7063-1",
+      "branch": "sweep/7063-add-title-attribute-to-friendly-times-wi",
+      "files_changed": 8,
+      "head_sha": "825234c3996e1d3bfdce0d18183efdf4d11f1f8f",
+      "issue": 7063,
+      "lines_changed": 15,
+      "lint": "passed",
+      "notes": "The tooltip uses WOTC_TZ (America/Los_Angeles) as the default timezone, consistent with the existing display_date_with_date_and_year helper. No schema or data migration required. The change is purely additive \u2014 existing display_date values are unchanged.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nRelative date strings like \"3 days ago\" were displayed in deck rows, match tables, news items, and competition listings with no way to see the exact underlying timestamp without digging into the source.\n\n## What changed\n\n- **`shared/dtutil.py`**: Added `display_date_tooltip(dt, tz=WOTC_TZ)` which formats a datetime as `'YYYY-MM-DD HH:MM TZ'` (e.g. `'2020-04-05 13:00 PDT'`).\n- **`decksite/prepare.py`**: Set `display_date_title` alongside `display_date` for decks (line 104) and matches (line 159).\n- **`decksite/data/news.py`**: Set `display_date_title` for news items.\n- **`decksite/view.py`**: Set `display_date_title` for competitions.\n- **`decksite/templates/deckrow.mustache`**: Added `title=\"{{display_date_title}}\"` to the date `<td>`.\n- **`decksite/templates/deckmatches.mustache`**: Added `title=\"{{display_date_title}}\"` to the date `<td>`.\n- **`decksite/templates/news.mustache`**: Added `title=\"{{display_date_title}}\"` to the date `<span>`.\n- **`decksite/templates/competitions.mustache`**: Added `title=\"{{display_date_title}}\"` to the date `<td>`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python -m pytest shared/dtutil_test.py -v` \u2014 13 passed\n- Manual verification: `display_date_tooltip` on a UTC datetime produces e.g. `'2020-04-05 13:00 PDT'` (exactly what the issue requested)\n\nFixes #7063",
+      "pr_title": "Add title attribute with exact timestamp to friendly date displays (#7063)",
+      "recorded_at": "2026-09-01T23:59:45Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python -m pytest shared/dtutil_test.py -v",
+        "detail": "13 passed in 0.09s",
+        "result": "passed"
+      }
+    }
+  ],
+  "issue": 7063,
+  "triage": [
+    {
+      "batch_id": "t-7115-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "d.display_date = dtutil.display_date(d.active_date) sets a relative string like '3 days ago'; no title_date companion attribute is set",
+          "ref": "decksite/prepare.py:103",
+          "type": "code"
+        },
+        {
+          "detail": "<td data-text=\"{{date_sort}}\">{{display_date}}</td> \u2014 no title attribute present to show exact timestamp on hover",
+          "ref": "decksite/templates/deckrow.mustache:34",
+          "type": "code"
+        },
+        {
+          "detail": "<span class=\"date\">{{display_date}}</span> \u2014 similarly no title attribute",
+          "ref": "decksite/templates/news.mustache:5",
+          "type": "code"
+        },
+        {
+          "detail": "display_date() already returns relative strings; a companion function for exact ISO-style formatting would be ~3 lines",
+          "ref": "shared/dtutil.py:66",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) In shared/dtutil.py add a small helper (e.g. display_date_tooltip) returning a human-readable exact datetime like '2020-04-05 13:00 PDT'. 2) In decksite/prepare.py lines 103-104 and 159-160 set d.display_date_title alongside display_date. 3) Add title=\"{{display_date_title}}\" to date <td>/<span> elements in deckrow.mustache, deckmatches.mustache, news.mustache, and competitions.mustache. Total ~25 lines across 6 files.",
+      "issue": 7063,
+      "notes": "A related issue (#7060) was mentioned as reducing but not eliminating the desire for this feature. Change is purely presentational with no logic impact.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

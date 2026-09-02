@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6316,
+  "triage": [
+    {
+      "batch_id": "t-6433-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Per-season preaggregation of num_decks, num_people, num_matches, num_competitions etc. already exists in _season_stats table",
+          "ref": "decksite/data/season.py:preaggregate_season_stats",
+          "type": "code"
+        },
+        {
+          "detail": "Existing Past Seasons page surfaces this data but as a plain per-season list, not a trend chart or growth dashboard",
+          "ref": "decksite/views/seasons.py:Seasons.__init__",
+          "type": "code"
+        },
+        {
+          "detail": "No growth metrics dashboard or charting route exists; 'new players' metric (first-time players per season) is not computed anywhere",
+          "ref": "grep -rn 'growth\\|dashboard\\|new_player\\|chart' decksite/controllers/ (empty)",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6316,
+      "notes": "Most aggregate data is already collected; the main work is building a new page with chart visualizations (season-over-season trend lines), computing the 'new players' metric (persons first seen in each season), and deciding which metrics are most useful to highlight.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:34Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

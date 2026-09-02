@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6454,
+  "triage": [
+    {
+      "batch_id": "t-6607-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Ninja perf fix: removed rs.overlooked_decks() from edit_rules() \u2014 partial improvement only",
+          "ref": "cd7182a5",
+          "type": "commit"
+        },
+        {
+          "detail": "edit_rules() still calls num_classified_decks, num_decks, doubled_decks, mistagged_decks, load_all_rules, load_archetypes, excluded_archetype_info \u2014 all blocking on each GET",
+          "ref": "decksite/controllers/admin.py:122-126",
+          "type": "code"
+        },
+        {
+          "detail": "cache_all_rules() (triggered on cache miss) runs the expensive apply_rules_query INSERT against all decks; the issue's 5-second INSERT is still the underlying bottleneck",
+          "ref": "decksite/data/rule.py:59-76",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6454,
+      "notes": "bakert's comments in the issue identify the root cause (INSERT INTO _applied_rules with full-table scan taking 5s) and suggest a React async rewrite as the proper fix; that is a significant undertaking. The overlooked-decks removal was a workaround, not a resolution.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

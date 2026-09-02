@@ -1,0 +1,12 @@
+{
+  "adjudication": null,
+  "bundled_at": null,
+  "created_at": "2026-09-01T23:51:29Z",
+  "evidence_refs": [
+    "evidence/7115.json#triage[0]"
+  ],
+  "issue": 7115,
+  "kind": "class-escalate",
+  "question": "Triaged migration-required \u2014 needs a human/product call.",
+  "summary": "The issue references 'get_dt_and_series' which no longer exists under that name; the hardcoded tournament-series metadata lives in all_series_info() at magic/tournaments.py:297. Moving it to competition_series would require new columns (hosts, display_time) and a data-backfill migration."
+}

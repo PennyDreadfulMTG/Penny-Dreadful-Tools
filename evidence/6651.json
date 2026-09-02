@@ -27,5 +27,32 @@
       "risk": "low"
     }
   ],
-  "verify": []
+  "verify": [
+    {
+      "batch_id": "v-6651-1",
+      "final_comment": "Fixed in commit 1cde06d1: rather than adding an optional flag, load_people_stats was eliminated entirely by merging people and stats into a single efficient query using preaggregation. The function load_people_stats no longer exists in the codebase, and load_people (decksite/data/person.py:94) now runs in ~200ms. The underlying performance concern is fully resolved.",
+      "issue": 6651,
+      "own_evidence": [
+        {
+          "detail": "load_people is now a single unified query; load_people_stats does not exist anywhere in the codebase (grep confirms zero hits). Stats are always included but the query is fast via preaggregation.",
+          "ref": "decksite/data/person.py:94",
+          "type": "code"
+        },
+        {
+          "detail": "Commit from 2020-09-21 explicitly eliminated load_people_stats by merging it into load_people as one query, citing preaggregation making it ~200ms. The performance concern motivating the issue is resolved.",
+          "ref": "1cde06d1",
+          "type": "commit"
+        },
+        {
+          "detail": "Issue state is OPEN with no comments and last updated 2019-11-03; no human activity in the last 90 days.",
+          "ref": "gh issue view 6651",
+          "type": "issue_activity"
+        }
+      ],
+      "recent_human_activity": false,
+      "recorded_at": "2026-09-01T23:54:16Z",
+      "refutation_reason": null,
+      "verdict": "CONFIRMED"
+    }
+  ]
 }

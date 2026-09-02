@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6988,
+  "triage": [
+    {
+      "batch_id": "t-7036-1",
+      "class": "already-fixed",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "league_decks_url is generated as url_for('seasons.decks', season_id=num, deck_type=DeckType.LEAGUE.value) \u2192 /seasons/1/decks/league/; the old /seasons/1/league/ path is not generated anywhere in current templates or views",
+          "ref": "decksite/view.py:92",
+          "type": "code"
+        },
+        {
+          "detail": "@SEASONS.route('/decks/<any(tournament,league):deck_type>/') handles /seasons/1/decks/league/ \u2014 the route is valid and returns HTTP 200 (empty deck table for seasons with 0 league decks)",
+          "ref": "decksite/controllers/metagame.py:25",
+          "type": "code"
+        },
+        {
+          "detail": "search returns no results; no code generates the old 404-producing URL pattern /seasons/N/league/",
+          "ref": "grep -rn '/seasons/[0-9]*/league' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6988,
+      "notes": "No single fixing commit identified; the URL format and route were changed as part of broader metagame route reorganization. A minor UX question remains (showing '0 League Decks' as a link for Season 1/2) but that is separate from the reported 404.",
+      "proposed_comment": "The 404 is no longer reproducible: the seasons page now links to `/seasons/1/decks/league/` (via `url_for('seasons.decks', season_id=1, deck_type='league')`), which is handled by the `@SEASONS.route('/decks/<any(tournament,league):deck_type>/')` route in `metagame.py`. The route returns an empty deck table for seasons with no league decks rather than a 404. Safe to close.",
+      "recorded_at": "2026-09-01T23:53:43Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6776-1",
+      "branch": "sweep/6776-indicate-current-subsection-in-bottom-su",
+      "files_changed": 2,
+      "head_sha": "96003e3189b4f073cb6425cbcef5a8c90a876798",
+      "issue": 6776,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "Change is purely presentational \u2014 two template lines and one CSS rule. The `current` flag was already being populated by `Menu.set_current()` in `shared_web/menu.py`; only the templates needed updating. No discovered-but-untouched issues.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nThe footer navigation (the `<footer>` at the bottom of every page) did not visually indicate which section or subsection the user is currently viewing. The side-nav (`menu.mustache`) already applied a `current` CSS class to both top-level and submenu items using `{{#current}}current{{/current}}`, but `footer.mustache` did not use the `current` flag at all \u2014 even though `MenuItem.current` is already computed and available in the template context.\n\n## What changed\n\n- **`decksite/templates/footer.mustache`**: Added `{{#current}}current {{/current}}` to the top-level section anchor (`<a class=\"menuitem \u2026\">`) and converted the submenu anchor from a conditional `class` attribute to one that always renders with `{{#current}}current {{/current}}{{#is_external}}external{{/is_external}}`, matching the pattern used in `menu.mustache`.\n- **`shared_web/static/css/pd.css`**: Added `footer a.current { font-weight: bold; }` so the current item is visibly distinguished in the footer.\n\nNo logic changes were needed \u2014 `MenuItem.current` is already set correctly by `shared_web/menu.py`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed (all checks)\n- `uv run --frozen python dev.py unit shared_web` \u2014 848 passed, 1 skipped\n\nFixes #6776",
+      "pr_title": "Indicate current section/subsection in footer menu (#6776)",
+      "recorded_at": "2026-09-01T23:56:32Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit shared_web",
+        "detail": "848 passed, 1 skipped in 17.79s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6776,
   "triage": [
     {

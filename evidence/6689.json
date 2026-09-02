@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6689-1",
+      "branch": "sweep/6689-speed-up-deck-sort-by-getting-an-integer",
+      "files_changed": 2,
+      "head_sha": "a34b82e4",
+      "issue": 6689,
+      "lines_changed": 15,
+      "lint": "passed",
+      "notes": "The sort ordering is identical to before since DECK_SORT_KEYS is built by sorting cards via the original _deck_sort_str logic. The fallback value of 0 for unknown card names matches the previous behavior where unknown cards would sort to a position with an empty prefix. The test update was necessary because init() now calls _deck_sort_str on all cards in CARDS_BY_NAME, so mock cards need sortable attributes.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`deck_sort(c: Card) -> str` was called on every card comparison during deck display sorting (84k+ calls per page load per the profiling in #5481). Each call built a sort string via string concatenation (`type_prefix + x_flag + zero-padded_cmc + card_name`), making every comparison O(string length) instead of O(1).\n\n## What changed\n\n- Renamed the original string-building body to `_deck_sort_str(c: Card) -> str` (private helper)\n- Added module-level `DECK_SORT_KEYS: dict[str, int] = {}` \n- Extended `init()` to build `DECK_SORT_KEYS` once after `CARDS_BY_NAME` is populated: deduplicates cards by canonical name, sorts them via `_deck_sort_str`, then zip-maps to integer ranks\n- Changed `deck_sort(c: Card) -> int` to a single `DECK_SORT_KEYS.get(c.name, 0)` dict lookup\n- Updated `test_init_rebuilds_names_and_ignores_alias_collisions` to (a) include `type_line`/`mana_cost`/`cmc` on mock `Card` objects so `_deck_sort_str` can sort them, and (b) monkeypatch `DECK_SORT_KEYS` so `init(force=True)` with mock data doesn't pollute the module-level dict for subsequent tests\n\n## Validation\n\n- `uv run --frozen python dev.py lint`: passed\n- `uv run --frozen python dev.py unit magic/oracle_test.py`: 848 passed, 1 skipped \u2014 including `test_deck_sort_x_last` which verifies ordering is preserved\n\nFixes #6689",
+      "pr_title": "Speed up deck_sort by pre-computing integer sort keys (#6689)",
+      "recorded_at": "2026-09-02T00:04:38Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit magic/oracle_test.py",
+        "detail": "848 passed, 1 skipped in 15.88s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6689,
   "triage": [
     {

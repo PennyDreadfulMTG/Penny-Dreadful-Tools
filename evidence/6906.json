@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-6906-1",
+      "branch": "sweep/6906-competition-pages-should-indicate-what-s",
+      "files_changed": 2,
+      "head_sha": "4fe27887314bbad7acc4b845182c1fba641902a3",
+      "issue": 6906,
+      "lines_changed": 22,
+      "lint": "passed",
+      "notes": "The subtitle.mustache change uses Mustache falsy-block semantics so existing pages that do not set season_num or league_only are unaffected. The competition's season_id comes from the JOIN already present in load_competitions SQL, so no schema or data changes are needed.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\nCompetition detail pages showed only the start date with no indication of which season the competition belonged to. League competitions also gave no way to see when the league ended.\n\n## What changed\n\n- **`decksite/views/competition.py`**: Added `self.season_num = competition.season_id` (the season this competition belongs to, distinct from the request-scoped `View.season_id`) and `self.end_date = dtutil.display_date(competition.end_date)` (a formatted end-date string).\n- **`decksite/templates/subtitle.mustache`**: Added a `{{#season_num}}Season {{season_num}}{{/season_num}}` block at the top so competition pages show their season in the subtitle area. For league competitions, the date line now shows `start \u2013 end` instead of just `start`. Non-competition pages are unaffected because `season_num` and `league_only` are falsy there, and the template falls back to its original behaviour.\n\n## How it was validated\n\n- `uv run --frozen python dev.py lint` \u2014 all checks passed.\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (pre-existing functional skip), 89 deselected in 17.70s against a live MariaDB instance.\n\nFixes #6906",
+      "pr_title": "Show season number and date range on competition pages (#6906)",
+      "recorded_at": "2026-09-01T23:59:22Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped, 89 deselected in 17.70s",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 6906,
   "triage": [
     {

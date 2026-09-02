@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7165-1",
+      "branch": "sweep/7165-time-television-and-time-ninja-give-weir",
+      "files_changed": 2,
+      "head_sha": "7079bc472c69f85d9f6ff1f3580fa00234833593",
+      "issue": 7165,
+      "lines_changed": 61,
+      "lint": "passed",
+      "notes": "The fallback to results[0] is preserved when no geographic result is found, so behaviour is unchanged for queries that only return business results (graceful degradation). The GEOGRAPHIC_TYPES set covers the standard Google Geocoding API types for cities, states, countries and political areas; if additional types are needed they can be added to the constant.",
+      "outcome": "pushed",
+      "pr_body": "## What was wrong\n\n`!time television` and `!time ninja` (and similar queries that name businesses or concepts) returned the wrong time because Google's Geocoding API returned a business/establishment as `results[0]`. The code always used `results[0]` for both the coordinate lookup and the formatted address.\n\n## What changed\n\nIn `magic/fetcher.py`, `times_from_location` now selects the first result whose `types` list intersects with a set of geographic types (`locality`, `administrative_area_level_1`, `administrative_area_level_2`, `country`, `political`) before falling back to `results[0]`. The selected result is used consistently for both the geometry/location lookup and the `formatted_address` in the response.\n\nA module-level constant `GEOGRAPHIC_TYPES` holds the preferred types.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen pytest magic/fetcher_test.py -v` \u2014 6 passed (4 pre-existing + 2 new unit tests exercising the geographic preference and the fallback-to-first behavior)\n\nFixes #7165",
+      "pr_title": "Prefer geographic results when looking up time by location (#7165)",
+      "recorded_at": "2026-09-01T23:54:05Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen pytest magic/fetcher_test.py -v",
+        "detail": "6 passed in 0.10s (4 existing + 2 new tests for geographic preference and fallback)",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7165,
   "triage": [
     {

@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7327-1",
+      "branch": "sweep/7327-add-a-mtgbot-command-to-explain-the-cond",
+      "files_changed": 1,
+      "head_sha": "a68ada6b9731da44a2935d3f3e40195ca8ebcfb2",
+      "issue": 7327,
+      "lines_changed": 6,
+      "lint": "passed",
+      "notes": "The existing `archetype` entry (about how archetypes are reviewed) is preserved untouched; the new `sorting` entry addresses the distinct use-case of explaining *when* new archetypes are created. The `archetypes` alias is placed after the `keys` list is built so it does not appear in autocomplete, matching the pattern used by other aliases like `drop` and `legality`.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThere was no bot command to explain when new archetypes are created in Penny Dreadful, leaving moderators without a canned response when players asked why their deck isn't an archetype yet.\n\n## What changed\n\nAdded a `sorting` entry to the `explanations` dict in `discordbot/commands/explain.py` with concise text explaining that new archetypes are created when a deck sees significant play (including adoption beyond the original creator) and directing interested players to `#archetype-sorting`.\n\nAlso added two aliases so all three suggested command forms work:\n- `!explain sorting`\n- `!explain archetype-sorting`\n- `!explain archetypes`\n\nThe text was kept deliberately brief per bakert's guidance in the issue comments about Discord wall-of-text reactions.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed\n- `uv run --frozen python dev.py unit discordbot` \u2014 848 passed, 1 skipped (functional test marked skip by repo)\n\nFixes #7327",
+      "pr_title": "Add !explain sorting/archetypes/archetype-sorting command (#7327)",
+      "recorded_at": "2026-09-01T23:53:32Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit discordbot",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7327,
   "triage": [
     {

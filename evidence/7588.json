@@ -1,5 +1,26 @@
 {
-  "fix": [],
+  "fix": [
+    {
+      "batch_id": "f-7588-1",
+      "branch": "sweep/7588-feature-copy-the-2-8-in-85-of-decks-feat",
+      "files_changed": 2,
+      "head_sha": "cbe00045f7088057cce981b0f9ff4591af2ce842",
+      "issue": 7588,
+      "lines_changed": 35,
+      "lint": "passed",
+      "notes": "The `_card_archetype_stats` preaggregate table will be rebuilt on the next scheduled preaggregate run; until then the new columns return empty for `avg_copies`/`pct_of_decks`. The total-archetype-decks subquery counts all deck types even when `tournament_only` is active, so `pct_of_decks` is slightly imprecise for tournament-only views (rare on archetype pages). No schema migration needed \u2014 `preaggregation.preaggregate` performs a CREATE/RENAME atomic swap.",
+      "outcome": "pushed",
+      "pr_body": "## What was missing\n\nThe archetype detail page card table lacked the \"X copies in Y% of decks\" feature that dreadfish/goldfish show \u2014 making it hard to gauge a card's typical inclusion and adoption rate within an archetype.\n\n## What changed\n\n**`decksite/data/card.py`**\n- `preaggregate_card_archetype()`: added `total_n INT NOT NULL` column; changed the deduplication subquery from `SELECT DISTINCT card, deck_id` to `SELECT card, deck_id, SUM(n) AS n ... GROUP BY card, deck_id` so each card-per-deck row carries the actual copy count (main + sideboard); added `SUM(dc.n) AS total_n` to the SELECT.\n- `load_cards()`: when `archetype_id` is set, injects two extra computed columns into the query \u2014 `avg_copies` (total copies / num decks playing the card, 1 d.p.) and `pct_of_decks` (num decks playing the card / total archetype decks \u00d7 100, integer). Total archetype decks are derived via a scalar subquery on the `deck` / `deck_cache` tables so there is no dependency on the separately-managed `_season_archetype_count` playability table.\n\n**`shared_web/static/js/cardtable.jsx`**\n- Added \"Avg.\" and \"% of Decks\" header columns with tooltips and sort bindings, rendered conditionally when the `archetypeId` prop is non-empty (i.e. only on archetype detail pages).\n- Added corresponding data cells in `renderRow`.\n\n## Validation\n\n- `uv run --frozen python dev.py lint` \u2014 passed.\n- `uv run --frozen python dev.py unit` \u2014 848 passed, 1 skipped (pre-existing skip); no database required for the test suite, so the SQL changes were verified by lint only. The preaggregate SQL change is a safe semantic-preserving replacement (GROUP BY is equivalent to DISTINCT for the deduplication key, with n added).\n\nFixes #7588",
+      "pr_title": "Add avg copies and % of decks columns to archetype card table (#7588)",
+      "recorded_at": "2026-09-01T23:51:07Z",
+      "risk": "low",
+      "tests": {
+        "command": "uv run --frozen python dev.py unit",
+        "detail": "848 passed, 1 skipped",
+        "result": "passed"
+      }
+    }
+  ],
   "issue": 7588,
   "triage": [
     {

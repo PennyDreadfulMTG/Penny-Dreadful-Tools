@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6607,
+  "triage": [
+    {
+      "batch_id": "t-6607-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "POST /admin/archetypes/ is synchronous, no async save; multi-deck backend support exists but tree navigation does not",
+          "ref": "decksite/controllers/admin.py:56-110",
+          "type": "code"
+        },
+        {
+          "detail": "LLM-assisted archetype guessing added more recently, showing continued investment in the area, but the 3-feature UI redesign from the issue is not implemented",
+          "ref": "decksite/data/archetype_classifier.py:1-50",
+          "type": "code"
+        },
+        {
+          "detail": "No tree-navigation view exists; async save not present in any template or controller",
+          "ref": "decksite/views/edit_archetypes.py + decksite/views/sorters.py",
+          "type": "behavior"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6607,
+      "notes": "The multi-deck assignment backend exists (post_archetypes handles getlist('deck_id')), but async save and archetype tree navigation are unimplemented; an LLM-assisted classifier was added later showing continued investment but not closing this request.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:40Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

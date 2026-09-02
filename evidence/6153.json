@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6153,
+  "triage": [
+    {
+      "batch_id": "t-6153-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "check_sql_injection validates ^[a-zA-Z_]+$ regex but never checks if locale is in LANGUAGES; 'na' passes regex and is returned as a valid locale",
+          "ref": "shared_web/localization.py:20-25",
+          "type": "code"
+        },
+        {
+          "detail": "get_locale() still reads locale from querystring (request.args), so both checklist items remain open",
+          "ref": "shared_web/localization.py:11-14",
+          "type": "code"
+        },
+        {
+          "detail": "2018 fix improved SQL injection check (regex) but did not add LANGUAGES membership validation, leaving the UnknownLocaleError 500 unfixed",
+          "ref": "e13c07f1",
+          "type": "commit"
+        },
+        {
+          "detail": "LANGUAGES list is populated at init time from babel.list_translations() but is never consulted when accepting a locale from querystring",
+          "ref": "shared_web/localization.py:6",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "In shared_web/localization.py, add `if locale not in LANGUAGES: return None` inside check_sql_injection after the regex check (line 24). This prevents any unrecognized locale from being stored in session or returned, eliminating the UnknownLocaleError 500. Optionally raise BadRequestException for the abort(400) requirement. The separate item 'do not use querystring for locale' is a product decision about the locale-switching UX and should not be bundled here.",
+      "issue": 6153,
+      "notes": "The querystring-locale checkbox (item 1 in the issue) requires a product decision on how users switch language if not via querystring; that is out of scope for this easy-fix. The 500-error fix (item 2) is a 3-line change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:02:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

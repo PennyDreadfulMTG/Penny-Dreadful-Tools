@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7113,
+  "triage": [
+    {
+      "batch_id": "t-7115-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "/link/ route exists server-side, but no Python file in this repo constructs a message to pdbot that includes this URL",
+          "ref": "decksite/controllers/resources.py:100",
+          "type": "code"
+        },
+        {
+          "detail": "Zero results \u2014 URL not assembled in this repository",
+          "ref": "grep -rn 'pennydreadfulmagic.com/link' /home/vercel-sandbox/penny-dreadful-tools --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "pdbot is identified by api_token but communicates results only; no outgoing /link/ message is formed here",
+          "ref": "decksite/league.py:216",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7113,
+      "notes": "PDBot (the MTGO bot) appears to live in a separate repository; the message containing the /link/ URL is not generated in this codebase. Cannot determine fix location without access to that repo.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:29Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

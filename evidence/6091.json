@@ -1,0 +1,41 @@
+{
+  "fix": [],
+  "issue": 6091,
+  "triage": [
+    {
+      "batch_id": "t-6112-1",
+      "class": "easy-fix",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Added description field to new archetype form \u2014 only the description half of the issue was fixed",
+          "ref": "83da00c7",
+          "type": "commit"
+        },
+        {
+          "detail": "Add Archetype form has Parent, Name, Description but NO rule (include/exclude cards) fields",
+          "ref": "decksite/templates/editarchetypes.mustache:128",
+          "type": "code"
+        },
+        {
+          "detail": "add_rule(archetype_id) and update_cards_raw(rule_id, include, exclude) already exist and are used in edit_rules flow",
+          "ref": "decksite/data/rule.py:213",
+          "type": "code"
+        },
+        {
+          "detail": "post_archetypes() calls archs.add(..., description) but never calls rs.add_rule() afterwards",
+          "ref": "decksite/controllers/admin.py:112",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": "1) In editarchetypes.mustache's 'Add Archetype' section, add optional include/exclude textarea inputs (same fields as in editrules.mustache). 2) In admin.py post_archetypes(), after archs.add() succeeds, if include/exclude fields are non-empty, call rs.add_rule(archetype_id) then rs.update_cards_raw(rule_id, include, exclude). Touch: decksite/templates/editarchetypes.mustache and decksite/controllers/admin.py.",
+      "issue": 6091,
+      "notes": "Description half was fixed in 83da00c7; rule half remains. Pattern for rule creation already exists in the edit_rules handler \u2014 straightforward to duplicate in the new-archetype flow.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:04:50Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

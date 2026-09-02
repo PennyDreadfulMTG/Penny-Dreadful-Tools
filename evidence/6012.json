@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6012,
+  "triage": [
+    {
+      "batch_id": "t-6020-1",
+      "class": "unclear",
+      "confidence": "low",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Current code joins all with_sql values with ', ' \u2014 no deduplication, but static analysis shows unique CTE names: burning_vengeance_decks, crush_records, imitators, first_arch_league_runs, top_ns, first_arch_top_ns",
+          "ref": "decksite/data/achievements.py:81",
+          "type": "code"
+        },
+        {
+          "detail": "Refacor achievements \u2014 significant refactoring since 2019, likely changed how WITH clauses are assembled, but no commit explicitly addresses the duplicate-WITH-clause investigation",
+          "ref": "015e45093",
+          "type": "commit"
+        },
+        {
+          "detail": "Working person-achievements page \u2014 early achievements implementation that predates current property-based with_sql system",
+          "ref": "c297d405",
+          "type": "commit"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6012,
+      "notes": "Static analysis shows no obvious duplicate CTE names in current master, but without running the DB the MariaDB-specific behavior cannot be confirmed. The original 2019 code pattern may have been eliminated in the achievement refactoring; this issue may be obsolete but would need DB-level testing to close with confidence.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:01Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

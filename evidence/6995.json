@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 6995,
+  "triage": [
+    {
+      "batch_id": "t-7036-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "bakert comment: 'Turning on ONLY_FULL_GROUP_BY on local breaks a zillion queries including the nwdl join'; extensive thread shows dozens of queries need GROUP BY clauses extended",
+          "ref": "gh issue view 6995 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "load_decks and related helpers allow caller-supplied GROUP BY; many queries GROUP BY primary key only, which ONLY_FULL_GROUP_BY rejects",
+          "ref": "decksite/data/clauses.py",
+          "type": "code"
+        },
+        {
+          "detail": "GROUP BY appears in many SQL strings across decksite/data/; all would need audit and extension to be ONLY_FULL_GROUP_BY compliant",
+          "ref": "grep -rn 'GROUP BY' decksite/",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6995,
+      "notes": "Scope is very large: potentially hundreds of SQL clauses need GROUP BY columns added. The issue also has a dependency on CI/smoke-test enablement. Not suitable for a single isolated change.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:43Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -1,0 +1,36 @@
+{
+  "fix": [],
+  "issue": 7208,
+  "triage": [
+    {
+      "batch_id": "t-7208-1",
+      "class": "unclear",
+      "confidence": "medium",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Only occurrence is a footer string in discordbot/commands/modobug.py:43 telling users to use the MTGO command \u2014 no handler code found",
+          "ref": "grep -rn 'stillbugged|notbugged' . --include='*.py'",
+          "type": "search"
+        },
+        {
+          "detail": "PDBot is an external service at pdbot.pennydreadfulmagic.com; this repo imports its match logs but doesn't host its command logic",
+          "ref": "logsite/importing.py:31-35",
+          "type": "code"
+        },
+        {
+          "detail": "on_message_create handler only calls respond_to_card_names \u2014 no prefix command dispatch for !stillbugged exists in the Discord bot",
+          "ref": "discordbot/bot.py:117-129",
+          "type": "code"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 7208,
+      "notes": "The !stillbugged and !notbugged commands are processed by the PDBot MTGO bot (pdbot.pennydreadfulmagic.com), which is a separate codebase not in this repository. Cannot trace the card-name matching logic or the 'I couldn't find a bug for this card' error message. If the bug is in card-name normalization, the relevant code would be in the PDBot project.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:53:54Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

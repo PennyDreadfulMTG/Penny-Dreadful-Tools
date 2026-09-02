@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6016,
+  "triage": [
+    {
+      "batch_id": "t-6020-1",
+      "class": "needs-work",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Fixed the immediate bug (archetypes with 0 tournament decks shown) in decksite/views/archetypes.py; bakert explicitly noted the larger refactoring remains",
+          "ref": "bb2f73c8",
+          "type": "commit"
+        },
+        {
+          "detail": "85 references across 20 files: data/archetype.py, data/card.py, views/card.py, views/archetype.py, view.py, controllers/api.py, controllers/metagame.py, prepare.py, and templates",
+          "ref": "grep -rn tournament_only decksite --include=*.py --include=*.mustache",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6016,
+      "notes": "The bug bakert fixed in bb2f73c8 is resolved; what remains is a refactoring to remove the tournament_only bifurcation throughout data and view layers \u2014 85 references across 20 files, well beyond easy-fix scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:05:01Z",
+      "risk": "medium"
+    }
+  ],
+  "verify": []
+}

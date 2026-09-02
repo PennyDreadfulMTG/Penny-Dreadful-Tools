@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6440,
+  "triage": [
+    {
+      "batch_id": "t-6607-1",
+      "class": "needs-product-decision",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Reported on Discord by j_meka; no comments, no assignee, no description beyond the title; 'binary' is not identified anywhere in codebase or issue thread",
+          "ref": "gh issue view 6440",
+          "type": "behavior"
+        },
+        {
+          "detail": "No Discord user or role named 'binary' found in any code; no role-assignment logic for this purpose exists",
+          "ref": "grep -rn 'binary' discordbot/ --include=*.py",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6440,
+      "notes": "This requires the owner to decide: who is 'binary', what role to create, whether it should be a one-time manual Discord admin action or an automated bot feature, and what 'creating this whole thing' means in terms of attribution scope.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-01T23:51:40Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

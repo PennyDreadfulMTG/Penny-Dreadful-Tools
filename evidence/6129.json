@@ -1,0 +1,31 @@
+{
+  "fix": [],
+  "issue": 6129,
+  "triage": [
+    {
+      "batch_id": "t-6153-1",
+      "class": "question",
+      "confidence": "high",
+      "duplicate_of": null,
+      "evidence": [
+        {
+          "detail": "Issue is a creative/design task with comment thread debating branding (Penny Dreadful vs Penny Magic) and who creates the logo; no code changes are specified",
+          "ref": "gh issue view 6129 --comments",
+          "type": "behavior"
+        },
+        {
+          "detail": "No logo-related code exists; this is purely a design/creative asset request with no engineering component defined",
+          "ref": "grep -r 'logo' decksite/ --include='*.py'",
+          "type": "search"
+        }
+      ],
+      "fix_sketch": null,
+      "issue": 6129,
+      "notes": "Open since at least 2019; the comment thread has become a branding discussion (rename the format?). This needs an owner decision on whether to pursue a logo and what it should look like before any engineering work is relevant.",
+      "proposed_comment": null,
+      "recorded_at": "2026-09-02T00:02:53Z",
+      "risk": "low"
+    }
+  ],
+  "verify": []
+}

@@ -91,6 +91,9 @@ const renderSort = (grid) => (
         <form className="inline">
             <select value={grid.state.sortBy} onChange={(e) => { grid.sort(e.target.value, grid.state.sortOrder); }}>
                 <option value="quality">Quality</option>
+                <option value="qualityOptimistic">Quality (Optimistic)</option>
+                <option value="qualityStrict">Quality (Strict)</option>
+                <option value="potential">Potential</option>
                 <option value="metaShare">Meta Share</option>
                 <option value="winPercent">Win %</option>
                 <option value="tournamentWins">Tournament Wins</option>

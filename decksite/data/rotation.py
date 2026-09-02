@@ -10,7 +10,11 @@ from shared.pd_exception import DatabaseException, OperationalException
 
 # A decksite-level cache of rotation information, primarily to make /rotation much faster.
 
-def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> tuple[list[Card], int]:
+def load_rotation(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> list[Card]:
+    cs, _ = load_rotation_with_total(where, order_by, limit)
+    return cs
+
+def load_rotation_with_total(where: str = 'TRUE', order_by: str = 'hits', limit: str = '') -> tuple[list[Card], int]:
     sql = f"""
         SELECT
             name,

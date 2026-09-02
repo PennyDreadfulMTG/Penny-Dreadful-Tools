@@ -10,7 +10,7 @@ from shared.container import Container
 
 def test_run_does_no_expensive_work_for_an_empty_queue(monkeypatch: pytest.MonkeyPatch) -> None:
     calculate_similar_decks = mock.Mock()
-    monkeypatch.setattr(archetype_classifier.deck, 'load_decks', lambda *args, **kwargs: ([], 0))
+    monkeypatch.setattr(archetype_classifier.deck, 'load_decks', lambda *args, **kwargs: [])
     monkeypatch.setattr(archetype_classifier.deck, 'calculate_similar_decks', calculate_similar_decks)
 
     archetype_classifier.run()
@@ -26,7 +26,7 @@ def test_run_without_an_api_key_preserves_the_old_guesser(monkeypatch: pytest.Mo
     def calculate_similar_decks(decks: list[Container]) -> None:
         decks[0].similar_decks = [similar]
 
-    monkeypatch.setattr(archetype_classifier.deck, 'load_decks', lambda *args, **kwargs: ([source], 1))
+    monkeypatch.setattr(archetype_classifier.deck, 'load_decks', lambda *args, **kwargs: [source])
     monkeypatch.setattr(archetype_classifier.deck, 'calculate_similar_decks', calculate_similar_decks)
     monkeypatch.setattr(archetype_classifier.configuration, 'get_optional_str', lambda _key: None)
     monkeypatch.setattr(archetype_classifier.archetype, 'assign', assign)

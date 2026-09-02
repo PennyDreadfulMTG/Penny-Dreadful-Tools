@@ -29,7 +29,7 @@ def home() -> str:
     season_id = get_season_id()
     decks = ds.latest_decks(season_id=season_id)
     top_8_plus_basics = 'LIMIT 13'
-    cards, total = cs.load_cards(limit=top_8_plus_basics, season_id=season_id)
+    cards, total = cs.load_cards_with_total(limit=top_8_plus_basics, season_id=season_id)
     all_archetypes = archs.load_archetypes(order_by='num_decks DESC', season_id=season_id)
     view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats(), all_archetypes)
     return view.page()

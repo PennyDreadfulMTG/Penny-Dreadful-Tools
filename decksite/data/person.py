@@ -47,19 +47,19 @@ def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Pe
 def maybe_load_person_by_discord_id(discord_id: int | None) -> Person | None:
     if discord_id is None:
         return None
-    ps, _ = load_people(f'p.discord_id = {discord_id}')
+    ps = load_people(f'p.discord_id = {discord_id}')
     return guarantee.at_most_one(ps)
 
 def maybe_load_person_by_tappedout_name(username: str) -> Person | None:
-    ps, _ = load_people(f'p.tappedout_username = {sqlescape(username)}')
+    ps = load_people(f'p.tappedout_username = {sqlescape(username)}')
     return guarantee.at_most_one(ps)
 
 def maybe_load_person_by_mtggoldfish_name(username: str) -> Person | None:
-    ps, _ = load_people(f'p.mtggoldfish_username = {sqlescape(username)}')
+    ps = load_people(f'p.mtggoldfish_username = {sqlescape(username)}')
     return guarantee.at_most_one(ps)
 
 def load_person(where: str, season_id: int | None = None) -> Person:
-    people, _ = load_people(where, season_id=season_id)
+    people = load_people(where, season_id=season_id)
     if len(people) == 0:  # We didn't find an entry for that person with decks, what about without?
         person = load_person_statless(where, season_id)
     else:
@@ -94,7 +94,14 @@ def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> P
 def load_people(where: str = 'TRUE',
                 order_by: str = 'num_decks DESC, p.name',
                 limit: str = '',
-                season_id: str | int | None = None) -> tuple[Sequence[Person], int]:
+                season_id: str | int | None = None) -> list[Person]:
+    people, _ = load_people_with_total(where, order_by, limit, season_id)
+    return people
+
+def load_people_with_total(where: str = 'TRUE',
+                           order_by: str = 'num_decks DESC, p.name',
+                           limit: str = '',
+                           season_id: str | int | None = None) -> tuple[list[Person], int]:
     person_query = query.person_query()
     season_join = query.season_join() if season_id else ''
     season_query = query.season_query(season_id, 'season.season_id')

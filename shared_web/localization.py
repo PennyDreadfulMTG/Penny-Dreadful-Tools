@@ -22,6 +22,8 @@ def check_sql_injection(locale: str | None) -> str | None:
         return None
     if not VALID_LOCALE.match(locale):
         return None
+    if LANGUAGES and locale not in LANGUAGES:
+        return None
     return locale
 
 def init(babel: Babel) -> None:

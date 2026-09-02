@@ -183,5 +183,26 @@ def test_refresh_picks_up_an_index_rebuilt_by_another_process(monkeypatch: pytes
     assert searcher.search('Black Lo').get_best_match() == 'Black Lotus'
     assert searcher.search('Ancestral Re').get_best_match() == 'Ancestral Recall'
 
+def test_quoted_card_name_is_searchable(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(WhooshConstants, 'index_dir', str(tmp_path))
+    ix = create_in(tmp_path, whoosh_write.WhooshWriter().schema)
+    card = Card({
+        'id': 1,
+        'name': '"Name Sticker" Goblin',
+        'names': '"Name Sticker" Goblin',
+        'flavor_names': None,
+        'layout': 'normal',
+    })
+    whoosh_write.update_index(ix, [card])
+
+    searcher = WhooshSearcher()
+
+    result = searcher.search('"Name Sticker" Goblin')
+    assert result.get_best_match() == '"Name Sticker" Goblin'
+
+    result = searcher.search('Name Sticker Goblin')
+    assert result.get_best_match() == '"Name Sticker" Goblin'
+
+
 def indexable_card(card_id: int, name: str) -> Card:
     return Card({'id': card_id, 'name': name, 'names': name, 'flavor_names': None, 'layout': 'normal'})

@@ -18,7 +18,7 @@
     "triaged": 7,
     "verified": 19
   },
-  "heartbeat": "2026-09-02T00:35:51Z",
+  "heartbeat": "2026-09-02T00:51:13Z",
   "max_open_prs": 30,
   "open_escalations": 113,
   "open_sweep_prs": 25,
@@ -27,7 +27,7 @@
   "phase": "phase2",
   "pr_backpressure": false,
   "totals": {
-    "infra_failures": 12,
+    "infra_failures": 15,
     "nudges": 52,
     "workspaces_created": 502
   },

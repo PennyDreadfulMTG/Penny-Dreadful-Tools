@@ -8,7 +8,7 @@ from shared import redis_wrapper
 
 
 class Reboot(Extension):
-    @slash_command()
+    @slash_command(description='Restart the bot.')
     @check(is_owner())
     async def reboot(self, ctx: MtgContext) -> None:
         """Restart the bot."""

@@ -6,7 +6,7 @@ from magic import fetcher
 
 
 class PD500(Extension):
-    @slash_command()
+    @slash_command(description='Display a link to the PD 500 information page.')
     async def pd500(self, ctx: MtgContext) -> None:
         """Display a link to the PD 500 information page."""
         await ctx.send(fetcher.decksite_url('/tournaments/pd500/'))

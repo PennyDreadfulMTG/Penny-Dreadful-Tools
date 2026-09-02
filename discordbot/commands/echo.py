@@ -5,7 +5,7 @@ from discordbot.command import MtgContext
 
 
 class Echo(Extension):
-    @slash_command()
+    @slash_command(description='Repeat after me…')
     @slash_option('message', 'Thing to say', OptionType.STRING, True)
     async def echo(self, ctx: MtgContext, message: str) -> None:
         """Repeat after me…"""

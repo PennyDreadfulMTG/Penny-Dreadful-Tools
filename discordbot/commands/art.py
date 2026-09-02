@@ -10,7 +10,7 @@ from magic.models import Card
 
 
 class Art(Extension):
-    @slash_command()
+    @slash_command(description='Display the artwork of the requested card.')
     @command.slash_card_option()
     async def art(self, ctx: MtgInteractionContext, card: Card) -> None:
         """Display the artwork of the requested card."""

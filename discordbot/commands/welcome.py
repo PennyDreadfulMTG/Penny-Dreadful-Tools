@@ -7,7 +7,7 @@ from magic.models import Card
 
 
 class Welcome(Extension):
-    @slash_command()
+    @slash_command(description='Welcome a newcomer to PD.')
     async def welcome(self, ctx: MtgInteractionContext) -> None:
         """Welcome a newcomer to PD."""
         await ctx.defer()
@@ -15,7 +15,7 @@ class Welcome(Extension):
         card = oracle.cards_by_name()['Welcome to the Fold']
         await greeting(ctx, card, text)
 
-    @slash_command('back-for-more')
+    @slash_command('back-for-more', description='Greet someone returning to PD.')
     async def back_for_more(self, ctx: MtgInteractionContext) -> None:
         """Greet someone returning to PD."""
         await ctx.defer()

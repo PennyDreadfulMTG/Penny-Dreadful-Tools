@@ -14,7 +14,7 @@ TTL = 30 * 60
 class MosLeague(Extension):
     queues: defaultdict[int, list[TTLItem[int]]] = defaultdict(list)
 
-    @slash_command(scopes=[711238742270017547])
+    @slash_command(description='Manage the league queue.', scopes=[711238742270017547])
     async def queue(self, ctx: MtgContext) -> None:
         pass
 

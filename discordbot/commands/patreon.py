@@ -5,7 +5,7 @@ from discordbot.command import MtgContext
 
 
 class Patreon(Extension):
-    @slash_command('patreon')
+    @slash_command('patreon', description='Link to the PD Patreon.')
     async def patreon(self, ctx: MtgContext) -> None:
         """Link to the PD Patreon."""
         await ctx.send('<https://www.patreon.com/silasary/>')

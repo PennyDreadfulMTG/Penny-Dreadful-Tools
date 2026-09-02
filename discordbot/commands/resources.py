@@ -10,7 +10,7 @@ from shared import fetch_tools
 
 
 class Resources(Extension):
-    @slash_command()
+    @slash_command(description='Useful pages related to your query.')
     @slash_option('resource', 'Your query', OptionType.STRING)
     @auto_defer()
     async def resources(self, ctx: MtgInteractionContext, resource: str | None = None) -> None:

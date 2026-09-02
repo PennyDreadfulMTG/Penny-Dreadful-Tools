@@ -62,6 +62,9 @@ const renderItem = (grid, archetype) => (
                     <span title={sortExplanations.quality}>
                         <span className="quality-star">★</span>{Number(archetype.qualityScore * 100).toFixed(0)}
                     </span>
+                    {archetype.qualityRank && (
+                        <span title="Quality Rank in Season" className="quality-rank">#{archetype.qualityRank}</span>
+                    )}
                 </div>
             )}
         </div>

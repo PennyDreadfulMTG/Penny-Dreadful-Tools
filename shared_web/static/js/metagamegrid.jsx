@@ -20,9 +20,9 @@ const renderItem = (grid, archetype) => (
                 <div className="card" data-name={archetype.keyCards[0].name} style={{background: `url(${archetype.keyCards[0].url}) center top / cover no-repeat`}}></div>
             )}
         </div>
-        <div className="row flex-row">
+        <div className="row flex-row" style={{gap: "8px"}}>
             <div title="Meta Share" className="stacked-bar stacked-bar-highlight" style={{width: `${archetype.metaShare * 100}%`}}></div>
-            <div className="percentage-with-additional" style={{marginLeft: "8px", width: `${100 - archetype.metaShare}%`}}>
+            <div className="percentage-with-additional" style={{width: `${(1 - archetype.metaShare) * 100}%`}}>
                 <span title="Meta Share" className="percentage">
                     {n(archetype.metaShare * 100)}%
                 </span>

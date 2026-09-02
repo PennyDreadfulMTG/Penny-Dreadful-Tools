@@ -9,7 +9,7 @@ from shared import fetch_tools
 
 
 class History(Extension):
-    @slash_command()
+    @slash_command(description='Show the legality history of the specified card.')
     @command.slash_card_option()
     async def history(self, ctx: MtgContext, card: Card) -> None:
         """Show the legality history of the specified card and a link to its all time page."""

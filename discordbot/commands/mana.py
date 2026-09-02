@@ -8,7 +8,7 @@ from discordbot.command import MtgContext
 
 
 class Mana(Extension):
-    @slash_command('mana')
+    @slash_command('mana', description="Get Dr. Karsten's advice on colored mana sources required.")
     async def mana(self, ctx: MtgContext) -> None:
         """Get Dr. Karsten's advice on number of colored sources of mana required."""
         await ctx.send_image_with_retry(os.path.join(pathlib.Path(__file__).parent.absolute(), 'img/mana-frank.png'))

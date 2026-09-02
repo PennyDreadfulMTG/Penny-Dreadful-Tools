@@ -9,7 +9,7 @@ from shared import configuration
 
 
 class Google(Extension):
-    @slash_command('google')
+    @slash_command('google', description='Google search.')
     @slash_option('query', 'Search terms', OptionType.STRING, required=True)
     async def google(self, ctx: MtgContext, query: str) -> None:
         """Google search"""

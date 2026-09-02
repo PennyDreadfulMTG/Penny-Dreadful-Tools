@@ -12,7 +12,7 @@ from shared.fetch_tools import FetchException
 
 
 class Spoiler(Extension):
-    @slash_command()
+    @slash_command(description='Request a card from an upcoming set.')
     @slash_card_option()
     async def spoiler(self, ctx: MtgInteractionContext, card: str) -> None:
         """Request a card from an upcoming set."""

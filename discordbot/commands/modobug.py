@@ -19,7 +19,7 @@ class ModoBugs(Extension):
     """Commands for interacting with the modo-bugs repository."""
     blacklist: set[tuple[str, str]] = set()
 
-    @slash_command('modo-bug')
+    @slash_command('modo-bug', description='Our Magic Online Bug Tracker.')
     async def modobug(self, _ctx: MtgInteractionContext) -> None:
         """Our Magic Online Bug Tracker."""
 

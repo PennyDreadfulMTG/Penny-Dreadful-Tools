@@ -9,7 +9,7 @@ from shared import fetch_tools
 
 
 class Scry(Extension):
-    @slash_command()
+    @slash_command(description='Card search using Scryfall.')
     @slash_option('query', 'A scryfall query', OptionType.STRING, required=True)
     @auto_defer()
     async def scry(self, ctx: MtgContext, query: str) -> None:

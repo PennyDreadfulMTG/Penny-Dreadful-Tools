@@ -7,7 +7,7 @@ from magic.models import Card
 
 
 class Price(Extension):
-    @slash_command()
+    @slash_command(description='Price information for a card.')
     @slash_card_option()
     async def price(self, ctx: MtgContext, card: Card) -> None:
         """Price information for a card."""

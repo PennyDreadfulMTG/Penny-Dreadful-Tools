@@ -6,7 +6,7 @@ from magic import fetcher
 
 
 class SuperSaturday(Extension):
-    @slash_command()
+    @slash_command(description='Display a link to the Super Saturday information page.')
     async def supersaturday(self, ctx: MtgContext) -> None:
         """Display a link to the Super Saturday information page."""
         await ctx.send(fetcher.decksite_url('/tournaments/super-saturday/'))

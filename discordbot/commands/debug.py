@@ -12,7 +12,7 @@ from discordbot.command import MtgContext
 
 
 class PDDebug(Extension):
-    @slash_command()
+    @slash_command(description='Reload a bot extension.')
     @check(is_owner())
     async def regrow(self, ctx: MtgContext, module: str) -> None:
         try:
@@ -39,7 +39,7 @@ class PDDebug(Extension):
             return
         raise
 
-    @slash_command()
+    @slash_command(description='Enable the debug extension.')
     @check(is_owner())
     async def enable_debugger(self, ctx: MtgContext) -> None:
         self.bot.load_extension('interactions.ext.debug_extension')

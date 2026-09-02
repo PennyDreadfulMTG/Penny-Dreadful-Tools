@@ -6,7 +6,7 @@ from magic import fetcher, tournaments
 
 
 class Tournament(Extension):
-    @slash_command()
+    @slash_command(description='Information about the next tournament.')
     async def tournament(self, ctx: MtgContext) -> None:
         """Information about the next tournament."""
         t = tournaments.next_tournament_info()

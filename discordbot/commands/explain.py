@@ -217,6 +217,14 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
             'More Tournament Info': fetcher.decksite_url('/tournaments/'),
         },
     ),
+    'showchat': (
+        """
+        MTGO has a Show Chat panel that can appear during games. If you are not seeing the chat panel and want to enable it, or want to disable it, go to View > Show Chat in the MTGO menu bar during a game.
+        In the game lobby you can also find the chat toggle under the View menu.
+        If PDBot is not responding to commands in your match, make sure the chat panel is visible so you can see and interact with it.
+        """,
+        {},
+    ),
 }
 keys = sorted(explanations.keys())
 

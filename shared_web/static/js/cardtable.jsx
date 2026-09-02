@@ -30,7 +30,7 @@ const renderHeaderRow = (table) => (
 const renderRow = (table, card) => (
     <tr key={card.name} className="clickable">
         <td className="name">{renderCard(card)}</td>
-        <td className="n">{card.numDecks}</td>
+        <td className="n">{card.numDecks.toLocaleString()}</td>
         <td className="n">{renderRecord(card)}</td>
         <td className="n">{renderWinPercent(card)}</td>
         { table.props.leagueOnly

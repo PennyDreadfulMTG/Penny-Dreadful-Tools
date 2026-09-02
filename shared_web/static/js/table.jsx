@@ -98,7 +98,7 @@ export class Table extends DataManager {
 
 export const renderRecord = (object) => {
     if (object.showRecord && object.wins + object.losses + object.draws > 0) {
-        return object.wins + "–" + object.losses + (object.draws > 0 ? "–" + object.draws : "");
+        return object.wins.toLocaleString() + "–" + object.losses.toLocaleString() + (object.draws > 0 ? "–" + object.draws.toLocaleString() : "");
     }
     return "";
 };

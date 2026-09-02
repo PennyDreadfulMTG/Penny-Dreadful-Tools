@@ -81,6 +81,6 @@ def test_determine_league_name() -> None:
 def test_random_legal_deck(monkeypatch: pytest.MonkeyPatch, decks: list[Deck]) -> None:
     monkeypatch.setattr(league.seasons, 'current_season_num', lambda: 42)
     monkeypatch.setattr(league, 'active_competition_id_query', lambda: '1, 2')
-    monkeypatch.setattr(league.deck, 'load_decks', lambda **kwargs: (decks, len(decks)))
+    monkeypatch.setattr(league.deck, 'load_decks', lambda **kwargs: decks)
 
     assert league.random_legal_deck() is (decks[0] if decks else None)

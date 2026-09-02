@@ -146,7 +146,7 @@ OUTPUT_SCHEMA = {
 
 
 def run(limit: int = 100) -> None:
-    decks, _ = deck.load_decks('NOT reviewed AND d.archetype_id IS NULL', order_by='d.created_date DESC', limit=f'LIMIT {int(limit)}')
+    decks = deck.load_decks('NOT reviewed AND d.archetype_id IS NULL', order_by='d.created_date DESC', limit=f'LIMIT {int(limit)}')
     if not decks:
         return
     deck.calculate_similar_decks(decks)

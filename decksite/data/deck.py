@@ -19,23 +19,29 @@ from shared_web import fonts
 
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
-    ds, _ = load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
-    return ds
+    return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
 
 def recent_decks_for_person(person_id: int) -> list[Deck]:
-    ds, _ = load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
-    return ds
+    return load_decks(where=f'd.person_id = {sqlescape(person_id)}', order_by='active_date DESC', limit='LIMIT 10', season_id=seasons.current_season_num())
 
 def load_deck(deck_id: int) -> Deck:
-    ds, _ = load_decks(f'd.id = {sqlescape(deck_id)}')
-    return guarantee.exactly_one(ds)
+    return guarantee.exactly_one(load_decks(f'd.id = {sqlescape(deck_id)}'))
 
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: str | None = None,
                limit: str = '',
                season_id: str | int | None = None,
-               ) -> tuple[list[Deck], int]:
+               ) -> list[Deck]:
+    ds, _ = load_decks_with_total(where, having, order_by, limit, season_id)
+    return ds
+
+def load_decks_with_total(where: str = 'TRUE',
+                          having: str = 'TRUE',
+                          order_by: str | None = None,
+                          limit: str = '',
+                          season_id: str | int | None = None,
+                          ) -> tuple[list[Deck], int]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
     columns = """
@@ -477,7 +483,7 @@ def calculate_similar_decks(ds: list[Deck]) -> None:
             d.similar_decks = []
         return
     plays = playability.playability()
-    potentially_similar, _ = load_decks(f'd.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))')
+    potentially_similar = load_decks(f'd.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))')
     for d in ds:
         for psd in potentially_similar:
             psd.similarity_score = round(similarity_score(d, psd, plays) * 100)
@@ -516,8 +522,7 @@ def load_decks_by_cards(names: list[str], not_names: list[str]) -> list[Deck]:
         sql += ' AND '
     if not_names:
         sql += contains_cards_clause(not_names, True)
-    ds, _ = load_decks(sql)
-    return ds
+    return load_decks(sql)
 
 def contains_cards_clause(names: list[str], negate: bool = False) -> str:
     negation = ' NOT' if negate else ''
@@ -560,7 +565,7 @@ def load_conflicted_decks() -> list[Deck]:
             GROUP BY
                 d1.decklist_hash
         )"""
-    ds, _ = load_decks(where, order_by='d.decklist_hash')
+    ds = load_decks(where, order_by='d.decklist_hash')
     return ds
 
 def load_queue_similarity(decks: list[Deck]) -> None:

@@ -160,7 +160,7 @@ def test_calculate_similar_decks_ranks_rare_shared_cards_above_common_ones() -> 
 
     with (
         mock.patch.object(deck.playability, 'playability', return_value=plays) as get_playability,
-        mock.patch.object(deck, 'load_decks', return_value=([common_match, rare_match, no_match], 3)),
+        mock.patch.object(deck, 'load_decks', return_value=[common_match, rare_match, no_match]),
         mock.patch.object(deck.redis, 'store') as store,
     ):
         deck.calculate_similar_decks([source])

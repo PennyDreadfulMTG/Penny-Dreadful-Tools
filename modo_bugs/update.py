@@ -114,6 +114,8 @@ def process_issue(issue: Issue) -> None:
     msg = issue.title
 
     categories = [c for c in labels if c in CATEGORIES]
+    check_for_multiple_categories(issue, categories)
+    check_for_long_title(issue)
     if not categories:
         if 'From Bug Blog' in labels:
             cat = 'Unclassified'
@@ -235,6 +237,22 @@ def check_for_invalid_card_names(issue: Issue, cards: list[str]) -> None:
         issue.add_to_labels('Invalid Card Name')
     elif not fail and 'Invalid Card Name' in labels:
         issue.remove_from_labels('Invalid Card Name')
+
+def check_for_multiple_categories(issue: Issue, categories: list[str]) -> None:
+    labels = [lab.name for lab in issue.labels]
+    if len(categories) > 1:
+        if 'Multiple Categories' not in labels:
+            issue.add_to_labels('Multiple Categories')
+    elif 'Multiple Categories' in labels:
+        issue.remove_from_labels('Multiple Categories')
+
+def check_for_long_title(issue: Issue) -> None:
+    labels = [lab.name for lab in issue.labels]
+    if len(issue.title) > 100:
+        if 'Title Too Long' not in labels:
+            issue.add_to_labels('Title Too Long')
+    elif 'Title Too Long' in labels:
+        issue.remove_from_labels('Title Too Long')
 
 def get_affects(issue: Issue) -> list[str]:
     affects = strings.get_body_field(issue.body, 'Affects')

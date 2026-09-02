@@ -404,7 +404,6 @@ header h1 {
 header .search {
     flex-grow: 1;
     flex-shrink: 1;
-    text-shadow: var(--legibility-text-shadow);
 }
 
 main, nav {

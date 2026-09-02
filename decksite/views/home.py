@@ -1,6 +1,7 @@
 from flask import url_for
 from flask_babel import gettext
 
+from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic import rotation, seasons, tournaments
 from magic.models import Card, Deck
@@ -9,11 +10,12 @@ from shared.container import Container
 
 
 class Home(View):
-    def __init__(self, news: list[Container], decks: list[Deck], cards: list[Card], matches_stats: dict[str, int]) -> None:
+    def __init__(self, news: list[Container], decks: list[Deck], cards: list[Card], matches_stats: dict[str, int], all_archetypes: list[Archetype]) -> None:
         super().__init__()
         self.setup_news(news)
         self.setup_decks(decks)
         self.setup_cards(cards)
+        self.setup_archetypes(all_archetypes)
         self.setup_rotation()
         self.setup_stats(matches_stats)
         self.setup_tournaments()
@@ -92,6 +94,12 @@ class Home(View):
         self.has_top_cards = len(cards) > 0
         self.cards = self.top_cards  # To get prepare_card treatment
         self.cards_url = url_for('.cards')
+
+    def setup_archetypes(self, all_archetypes: list[Archetype]) -> None:
+        top = [a for a in all_archetypes if a.get('num_decks')][:8]
+        self.archetypes = top
+        self.has_top_archetypes = len(top) > 0
+        self.archetypes_url = url_for('.archetypes')
 
     def setup_rotation(self) -> None:
         self.season_start_display = dtutil.display_date(seasons.last_rotation())

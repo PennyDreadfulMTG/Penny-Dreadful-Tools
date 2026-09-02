@@ -6,7 +6,7 @@ from magic import rotation
 
 
 class Hype(Extension):
-    @slash_command('hype')
+    @slash_command('hype', description='Display the latest rotation hype message.')
     async def hype(self, ctx: MtgContext) -> None:
         """Display the latest rotation hype message."""
         if rotation.in_rotation() and rotation.last_run_time() is not None:

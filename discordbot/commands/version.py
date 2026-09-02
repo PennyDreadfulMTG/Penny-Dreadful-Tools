@@ -13,7 +13,7 @@ from shared.pd_exception import DatabaseException
 
 
 class Version(Extension):
-    @slash_command('version')
+    @slash_command('version', description='Display the current version numbers.')
     async def version(self, ctx: MtgContext) -> None:
         """Display the current version numbers"""
         embed = Embed(title='Version')

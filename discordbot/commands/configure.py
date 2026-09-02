@@ -15,7 +15,7 @@ class ConfigError(CommandException):
         self.scope = scope
 
 class Configure(Extension):
-    @slash_command()
+    @slash_command(description='Configure bot settings for this server or channel.')
     @slash_option('scope', "'channel' or 'server'", OptionType.STRING, True)
     @slash_option('setting', 'key=value', OptionType.STRING, True)
     @check(is_owner())

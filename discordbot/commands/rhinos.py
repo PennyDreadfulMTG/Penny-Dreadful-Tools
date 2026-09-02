@@ -10,7 +10,7 @@ from magic.models import Card
 
 
 class Rhinos(Extension):
-    @slash_command()
+    @slash_command(description='Anything can be a rhino if you try hard enough.')
     async def rhinos(self, ctx: MtgInteractionContext) -> None:
         """Anything can be a rhino if you try hard enough"""
         await ctx.defer()

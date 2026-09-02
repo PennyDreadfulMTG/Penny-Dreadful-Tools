@@ -4,7 +4,7 @@ from discordbot.command import MtgContext
 
 
 class Quality(Extension):
-    @slash_command()
+    @slash_command(description="A reminder about everyone's favorite way to play digital Magic.")
     @slash_option('product', 'Product (if not MTGO)', OptionType.STRING)
     async def quality(self, ctx: MtgContext, product: str | None = None) -> None:
         """A reminder about everyone's favorite way to play digital Magic"""

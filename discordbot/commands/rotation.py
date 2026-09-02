@@ -6,7 +6,7 @@ from magic import seasons
 
 
 class Rotation(Extension):
-    @slash_command()
+    @slash_command(description='Date of the next Penny Dreadful rotation.')
     async def rotation(self, ctx: MtgContext) -> None:
         """Date of the next Penny Dreadful rotation."""
         await ctx.send(seasons.message())

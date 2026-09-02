@@ -6,7 +6,7 @@ from shared import redis_wrapper as redis
 
 
 class ModoFail(Extension):
-    @slash_command('modofail')
+    @slash_command('modofail', description='Ding!')
     async def modofail(self, ctx: MtgContext) -> None:
         """Ding!"""
         n = redis.increment(f'modofail:{ctx.guild}')

@@ -8,7 +8,7 @@ from magic import image_fetcher, oracle
 
 
 class P1P1(Extension):
-    @slash_command()
+    @slash_command(description='Pack 1, pick 1 game.')
     @max_concurrency(Buckets.GUILD, 1)
     async def p1p1(self, ctx: MtgInteractionContext) -> None:
         """`!p1p1` Summon a pack 1, pick 1 game."""

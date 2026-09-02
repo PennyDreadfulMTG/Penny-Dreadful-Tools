@@ -8,7 +8,7 @@ from magic import oracle
 
 
 class RandomCard(Extension):
-    @slash_command('random-card')
+    @slash_command('random-card', description='A random PD legal card.')
     @slash_option('number', 'How many cards?', OptionType.INTEGER)
     async def randomcard(self, ctx: MtgInteractionContext, number: int = 1) -> None:
         """A random PD legal card.

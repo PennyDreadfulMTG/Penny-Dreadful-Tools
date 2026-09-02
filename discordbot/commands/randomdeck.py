@@ -7,7 +7,7 @@ from shared import fetch_tools
 
 
 class RandomDeck(Extension):
-    @slash_command('random-deck')
+    @slash_command('random-deck', description='A random deck from the current season.')
     async def randomdeck(self, ctx: MtgInteractionContext) -> None:
         """A random deck from the current season."""
         await ctx.defer()

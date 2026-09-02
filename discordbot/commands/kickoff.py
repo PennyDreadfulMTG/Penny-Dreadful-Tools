@@ -6,7 +6,7 @@ from magic import fetcher
 
 
 class KickOff(Extension):
-    @slash_command('kickoff')
+    @slash_command('kickoff', description='Display a link to the Season Kick Off information page.')
     async def kickoff(self, ctx: MtgContext) -> None:
         """Display a link to the Season Kick Off information page."""
         await ctx.send(fetcher.decksite_url('/tournaments/kickoff/'))

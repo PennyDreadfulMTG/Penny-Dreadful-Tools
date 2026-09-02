@@ -10,7 +10,7 @@ from shared import fetch_tools
 
 
 class Rulings(Extension):
-    @slash_command()
+    @slash_command(description='Rulings for a card.')
     @slash_card_option()
     @auto_defer()
     async def rulings(self, ctx: MtgContext, card: Card) -> None:

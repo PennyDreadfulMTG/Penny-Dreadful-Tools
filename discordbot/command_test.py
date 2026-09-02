@@ -1,12 +1,33 @@
 import datetime
+import glob
+import importlib
+import inspect
+import os
 from typing import Any
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from interactions.models.internal.application_commands import SlashCommand
 
 from discordbot import command, commands
 from discordbot.commands import CardConverter, resources
 from magic.models import Card, Printing
+
+
+def test_all_slash_commands_have_descriptions() -> None:
+    commands_dir = os.path.join(os.path.dirname(__file__), 'commands')
+    paths = glob.glob(os.path.join(commands_dir, '*.py'))
+    missing = []
+    for path in sorted(paths):
+        name = os.path.basename(path)[:-3]
+        if name.startswith('_') or name.endswith('_test'):
+            continue
+        module = importlib.import_module(f'discordbot.commands.{name}')
+        for _cls_name, cls in inspect.getmembers(module, inspect.isclass):
+            for _attr_name, obj in inspect.getmembers_static(cls):
+                if isinstance(obj, SlashCommand) and str(obj.description) == 'No Description Set':
+                    missing.append(f'{name}.{obj.name}')
+    assert missing == [], f'Slash commands missing descriptions: {missing}'
 
 
 def test_command_setup_does_not_load_test_modules(monkeypatch: pytest.MonkeyPatch) -> None:

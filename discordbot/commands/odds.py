@@ -10,7 +10,7 @@ class Odds(Extension):
         self.bot = bot
         super().__init__()
 
-    @slash_command('odds')
+    @slash_command('odds', description='Determine the odds of drawing a card.')
     @slash_option(
         name='copies',
         description='How many copies are you running? (Default 4)',

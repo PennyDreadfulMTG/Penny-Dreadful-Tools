@@ -6,7 +6,7 @@ from shared import repo
 
 
 class Bug(Extension):
-    @slash_command()
+    @slash_command(description='Report a bug or task for the Penny Dreadful Tools team.')
     @slash_option('title', 'One sentence description of the issue', OptionType.STRING, required=True)
     @slash_option('body', 'More info', OptionType.STRING)
     async def bug(self, ctx: MtgContext, title: str, body: str | None = None) -> None:
@@ -21,7 +21,7 @@ class Bug(Extension):
         else:
             await ctx.send(f'Issue has been reported at <{issue.html_url}>')
 
-    @slash_command('gbug')
+    @slash_command('gbug', description='Report a Gatherling bug.')
     @slash_option('title', 'One sentence description of the issue', OptionType.STRING, required=True)
     @slash_option('body', 'More info', OptionType.STRING)
     async def gatherlingbug(self, ctx: MtgContext, title: str, body: str | None = None) -> None:

@@ -9,7 +9,7 @@ from shared import configuration
 
 
 class ClearImageCache(Extension):
-    @slash_command('clear-image-cache')
+    @slash_command('clear-image-cache', description='Deletes all the cached images.')
     @check(is_owner())
     async def clearimagecache(self, ctx: MtgContext) -> None:
         """Deletes all the cached images.  Use sparingly"""

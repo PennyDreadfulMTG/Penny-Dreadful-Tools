@@ -6,7 +6,7 @@ from magic import fetcher
 
 
 class Status(Extension):
-    @slash_command()
+    @slash_command(description='Status of Magic Online.')
     async def status(self, ctx: MtgInteractionContext) -> None:
         """Status of Magic Online."""
         await ctx.defer()

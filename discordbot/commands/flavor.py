@@ -7,7 +7,7 @@ from magic.models import Card
 
 
 class Flavour(Extension):
-    @slash_command('flavor')
+    @slash_command('flavor', description='Flavor text of a card.')
     @slash_card_option()
     async def flavor(self, ctx: MtgInteractionContext, card: Card) -> None:
         """Flavor text of a card"""

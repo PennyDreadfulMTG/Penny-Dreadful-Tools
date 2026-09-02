@@ -14,7 +14,7 @@ from shared.settings import with_config_file
 
 
 class Time(Extension):
-    @slash_command('time')
+    @slash_command('time', description='Current time in a location.')
     @slash_option('place', 'Where are you checking the time?', OptionType.STRING, required=True)
     async def time(self, ctx: MtgInteractionContext, place: str) -> None:
         """Current time in location."""

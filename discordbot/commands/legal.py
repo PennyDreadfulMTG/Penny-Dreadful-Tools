@@ -7,7 +7,7 @@ from magic.models import Card
 
 
 class Legal(Extension):
-    @slash_command('legal')
+    @slash_command('legal', description='Announce whether the specified card is legal or not.')
     @command.slash_card_option()
     async def legal(self, ctx: MtgContext, card: Card) -> None:
         """Announce whether the specified card is legal or not."""

@@ -10,6 +10,7 @@ from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite.cache import cached
+from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import match as ms
@@ -25,10 +26,12 @@ from shared.pd_exception import TooFewItemsException
 @APP.route('/')
 @cached()
 def home() -> str:
-    decks = ds.latest_decks(season_id=get_season_id())
+    season_id = get_season_id()
+    decks = ds.latest_decks(season_id=season_id)
     top_8_plus_basics = 'LIMIT 13'
-    cards, total = cs.load_cards(limit=top_8_plus_basics, season_id=get_season_id())
-    view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats())
+    cards, total = cs.load_cards(limit=top_8_plus_basics, season_id=season_id)
+    all_archetypes = archs.load_archetypes(order_by='num_decks DESC', season_id=season_id)
+    view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats(), all_archetypes)
     return view.page()
 
 @APP.route('/export/<int:deck_id>/')

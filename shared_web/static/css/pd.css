@@ -587,6 +587,7 @@ Color attributes are mostly found with their related structural elements in this
     --error: var(--red);
     --button: var(--light-gray);
     --text-over-images: var(--white);
+    --legibility-text-shadow: 0.05rem 0.05rem 8px black; /* Always dark, even in dark mode, because it's over an image. */
     --toggle-off: var(--light-gray);
     --toggle-on: var(--dark-gray);
     --language-menu-highlight-text: var(--dark-gray);
@@ -690,7 +691,7 @@ header h1 {
     font-size: var(--large-font-size);
     margin-bottom: 0;
     margin-right: 3rem;
-    text-shadow:  0.05rem 0.05rem 8px black; /* We want this dark in both light mode and dark mode because it's over an image. */
+    text-shadow: var(--legibility-text-shadow);
     text-transform: lowercase;
 }
 

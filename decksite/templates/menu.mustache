@@ -2,15 +2,15 @@
 <ul class="menu badges">
     {{#menu}}
         <li class="{{#admin_only}}admin{{/admin_only}} {{#demimod_only}}demimod{{/demimod_only}}">
+            <a class="item {{#current}}current{{/current}}" href="{{url}}">
+                <div class="icon {{endpoint}}"></div>
+                {{name}}
+            </a>
             {{#badge}}
                 <div class="badge-holder">
                     <a class="badge {{class_name}}" href="{{url}}">{{text}}</a>
                 </div>
             {{/badge}}
-            <a class="item {{#current}}current{{/current}}" href="{{url}}">
-                <div class="icon {{endpoint}}"></div>
-                {{name}}
-            </a>
             {{#has_submenu}}
                 <div class="submenu">
                     <ul>

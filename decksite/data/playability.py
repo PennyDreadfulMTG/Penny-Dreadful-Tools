@@ -59,7 +59,7 @@ def key_cards(season_id: int) -> dict[int, str]:
 
 
 @retry_after_calling(preaggregate)
-def key_cards_long(season_id: int) -> dict[int, list[str]]:
+def key_cards_long(season_id: int, archetype_ids: list[int] | None = None) -> dict[int, list[str]]:
     if season_id:
         table = '_season_archetype_playability'
         where = f'p.season_id = {season_id}'
@@ -67,6 +67,11 @@ def key_cards_long(season_id: int) -> dict[int, list[str]]:
         table = '_archetype_playability'
         where = 'TRUE'
     where = f'({where}) AND p.playability > {USEFUL_PLAYABILITY_THRESHOLD}'
+    if archetype_ids is not None:
+        if not archetype_ids:
+            return {}
+        ids = ', '.join(str(i) for i in archetype_ids)
+        where = f'({where}) AND p.archetype_id IN ({ids})'
     sql = f"""
         SELECT
             p.archetype_id,

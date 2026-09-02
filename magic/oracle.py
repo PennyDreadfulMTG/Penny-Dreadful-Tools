@@ -14,6 +14,7 @@ from shared.pd_exception import DatabaseException, InvalidArgumentException, Inv
 
 LEGAL_CARDS: list[str] = []
 CARDS_BY_NAME: dict[str, Card] = {}
+DECK_SORT_KEYS: dict[str, int] = {}
 OMENPATHS_SET_CODE = 'om1'
 
 def init(force: bool = False) -> None:
@@ -27,6 +28,10 @@ def init(force: bool = False) -> None:
                 if existing is not None and existing.name != c.name:
                     continue
                 CARDS_BY_NAME[fn] = c
+        DECK_SORT_KEYS.clear()
+        unique_cards = {c.name: c for c in CARDS_BY_NAME.values()}
+        sorted_cards = sorted(unique_cards.values(), key=_deck_sort_str)
+        DECK_SORT_KEYS.update({c.name: i for i, c in enumerate(sorted_cards)})
 
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
@@ -156,7 +161,7 @@ def get_set(set_id: int) -> Container:
     rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])
     return guarantee.exactly_one([Container(r) for r in rs])
 
-def deck_sort(c: Card) -> str:
+def _deck_sort_str(c: Card) -> str:
     s = ''
     if c.is_creature():
         s += 'A'
@@ -172,6 +177,9 @@ def deck_sort(c: Card) -> str:
     s += str(c.cmc).zfill(10)
     s += c.name
     return s
+
+def deck_sort(c: Card) -> int:
+    return DECK_SORT_KEYS.get(c.name, 0)
 
 async def scryfall_import_async(name: str) -> bool:
     sfcard = await fetch_tools.fetch_json_async(f'https://api.scryfall.com/cards/named?fuzzy={name}')

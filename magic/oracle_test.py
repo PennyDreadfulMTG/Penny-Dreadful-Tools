@@ -92,9 +92,10 @@ def test_preferred_printing_uses_omenpaths_fallback(monkeypatch: pytest.MonkeyPa
     assert printing.system_id == 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'
 
 def test_init_rebuilds_names_and_ignores_alias_collisions(monkeypatch: pytest.MonkeyPatch) -> None:
-    canonical = Card({'name': 'Shared Name'})
-    aliased = Card({'name': 'Other Card', 'flavor_names': 'Shared Name|Alternate Name'})
+    canonical = Card({'name': 'Shared Name', 'type_line': 'Instant', 'mana_cost': None, 'cmc': 0})
+    aliased = Card({'name': 'Other Card', 'flavor_names': 'Shared Name|Alternate Name', 'type_line': 'Instant', 'mana_cost': None, 'cmc': 0})
     monkeypatch.setattr(oracle, 'CARDS_BY_NAME', {'Stale Alias': aliased})
+    monkeypatch.setattr(oracle, 'DECK_SORT_KEYS', {})
     monkeypatch.setattr(oracle, 'load_cards', lambda: [canonical, aliased])
     monkeypatch.setattr(oracle, 'load_cards_with_flavor_names', lambda: [aliased])
 

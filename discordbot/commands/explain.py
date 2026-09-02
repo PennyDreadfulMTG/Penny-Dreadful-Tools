@@ -164,6 +164,15 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         """,
         {},
     ),
+    'sideboard': (
+        """
+        If you sideboard down to less than 60 cards (quite possible due to a known Magic Online bug) and either player notices before the end of turn 2 and the player with a legal deck wants to restart the game, the game will be restarted.
+        The result of any game played beyond turn 2 with less than 60 cards in maindeck will stand.
+        """,
+        {
+            'Tournament Rules': fetcher.decksite_url('/tournaments/'),
+        },
+    ),
     'spectating': (
         """
         Spectating tournament and league matches is allowed and encouraged.
@@ -222,6 +231,7 @@ keys = sorted(explanations.keys())
 
 explanations['drop'] = explanations['retire']
 explanations['legality'] = explanations['rotation']
+explanations['sideboards'] = explanations['sideboard']
 explanations['spectate'] = explanations['spectating']
 explanations['tournaments'] = explanations['tournament']
 explanations['watching'] = explanations['spectating']

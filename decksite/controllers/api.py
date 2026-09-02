@@ -16,12 +16,11 @@ from decksite.data import rotation as rot
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
-from decksite.prepare import colors_html, prepare_archetypes, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
+from decksite.prepare import prepare_archetypes_for_api, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
 from magic import database as magic_database
-from magic import image_fetcher, layout, oracle, seasons, tournaments
-from magic.colors import find_colors
-from magic.models import Card, Deck
+from magic import layout, oracle, seasons, tournaments
+from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, TooManyItemsException
@@ -448,15 +447,7 @@ def archetypes2_api() -> Response:
     results, total = archs.load_disjoint_archetypes(where=where, order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
     archetype_key_cards = playability.key_cards_long(season_id)
     cards = oracle.cards_by_name()
-    for result in results:
-        kcs = [cards[name] for name in archetype_key_cards.get(result.id, [])]
-        result.key_cards = [c for c in kcs if not is_uninteresting(c)][0:5]
-        result.num_matches = (result.wins or 0) + (result.losses or 0) + (result.draws or 0)
-        colors, colored_symbols = find_colors(kcs)
-        result.colors_safe = colors_html(colors, colored_symbols)
-        kcs = [Card({'name': c['name'], 'url': image_fetcher.scryfall_image(c, 'art_crop')}) for c in result.key_cards]
-        result.key_cards = kcs
-    prepare_archetypes(results, None, tournament_only, season_id)
+    prepare_archetypes_for_api(results, archetype_key_cards, cards, tournament_only, season_id)
     # Remove infinite loops from the results
     results = [Container({k: v for k, v in result.items() if 'NodeMixin' not in k}) for result in results]
     r = {'page': page, 'total': total, 'objects': results}
@@ -837,8 +828,3 @@ def pagination(args: dict[str, str], default_page_size: int = DEFAULT_LIVE_TABLE
 
 def send_scryfall_two_names(lo: str) -> bool:
     return lo in layout.has_two_names() and lo not in layout.has_meld_back()
-
-def is_uninteresting(c: Card) -> bool:
-    is_basic = 'Basic' in c.type_line
-    is_dual = '} or {' in c.oracle_text or '}, or {' in c.oracle_text
-    return c.is_land() and (is_basic or is_dual)

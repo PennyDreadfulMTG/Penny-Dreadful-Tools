@@ -235,7 +235,7 @@ class View(BaseView):
             c.league = c.type == 'League'
 
     def prepare_people(self) -> None:
-        prepare.prepare_people(getattr(self, 'people', []))
+        prepare.prepare_people(getattr(self, 'people', []), self.season_id())
 
     def prepare_archetypes(self) -> None:
         prepare.prepare_archetypes(getattr(self, 'archetypes', []), getattr(self, 'archetype', {}).get('id', None), getattr(self, 'tournament_only', False), self.season_id())

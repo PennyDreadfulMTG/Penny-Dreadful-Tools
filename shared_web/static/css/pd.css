@@ -2848,20 +2848,49 @@ Metagame
 
 /* This is the containing grid from the page HTML. */
 .metagamegrid {
+    container-type: inline-size;
     width: 100%;
 }
 
-/* This is the grid of tiles inside the component. */
+/* This is the grid of tiles inside the component. The standard view contains
+   24 archetypes, so factor-of-24 column counts avoid a short final row. A zero
+   minimum keeps every track the same width regardless of its tile's content.
+   Container queries make the breakpoints follow the grid's available space,
+   which changes independently of the viewport when sidebars appear. */
 .metagame-grid {
     display: grid;
     gap: 0.422rem;
-    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     margin-bottom: 1rem;
 }
 
-@media only screen and (max-width: 500px) {
+@container (min-width: 16rem) {
     .metagame-grid {
-        grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@container (min-width: 24.5rem) {
+    .metagame-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@container (min-width: 33rem) {
+    .metagame-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@container (min-width: 50rem) {
+    .metagame-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+@container (min-width: 67rem) {
+    .metagame-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
     }
 }
 

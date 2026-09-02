@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from decksite.data import archetype
+from decksite.data import archetype, clauses
 from decksite.database import db
 from decksite.testutil import with_test_db
 
@@ -57,12 +57,17 @@ def test_load_disjoint_archetypes_returns_float_or_none_for_win_percent() -> Non
             (archetype_id, season_id, num_decks, wins, losses, draws, perfect_runs, tournament_wins, tournament_top8s, deck_type)
         VALUES
             (1, 1, 3, 2, 1, 0, 0, 0, 0, 'league'),
-            (2, 1, 1, 0, 0, 1, 0, 0, 0, 'league')
+            (2, 1, 1, 0, 0, 1, 0, 0, 0, 'league'),
+            (3, 1, 4, 1, 3, 0, 0, 0, 0, 'league'),
+            (4, 1, 4, 3, 1, 0, 0, 0, 0, 'league')
     """)
 
-    archetypes, _ = archetype.load_disjoint_archetypes(order_by='a.id', season_id=1)
-    win_percent_by_id = {a.id: a.win_percent for a in archetypes}
+    ascending, _ = archetype.load_disjoint_archetypes(order_by=clauses.archetype_order_by('winPercent', 'ASC'), season_id=1)
+    descending, _ = archetype.load_disjoint_archetypes(order_by=clauses.archetype_order_by('winPercent', 'DESC'), season_id=1)
+    win_percent_by_id = {a.id: a.win_percent for a in ascending}
 
+    assert [a.id for a in ascending] == [3, 1, 4, 2]
+    assert [a.id for a in descending] == [4, 1, 3, 2]
     assert win_percent_by_id[1] == 66.7
     assert isinstance(win_percent_by_id[1], float)
     assert win_percent_by_id[2] is None

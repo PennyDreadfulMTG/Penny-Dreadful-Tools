@@ -823,12 +823,12 @@ nav {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow-y: auto; /* Scroll here, not on .menu: a scroll container on .menu would clip the absolutely-positioned .submenu popover, whose containing block is a .menu > li. */
     position: relative;
 }
 
 .menu {
     flex: 1;
-    overflow-y: auto;
 }
 
 .submenu {

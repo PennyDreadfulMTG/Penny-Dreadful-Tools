@@ -1,5 +1,7 @@
 /*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound, setDarkMode */
 
+/* eslint-disable max-lines -- this file inlines a third-party library (checkboxes.js) at the end, which pushes it past the line limit; the real app code above is what matters. */
+
 window.PD = {};
 
 PD.init = function() {
@@ -48,6 +50,9 @@ PD.closeMenu = function() {
     document.querySelectorAll("nav").forEach((nav) => {
         nav.classList.remove("showing");
     });
+    document.querySelectorAll(".menu > li.submenu-open").forEach((li) => {
+        li.classList.remove("submenu-open");
+    });
 };
 
 PD.initMenu = function() {
@@ -78,12 +83,25 @@ PD.initMenu = function() {
         interval: 50,
         timeout: 250
     });
-    $(".menu > li").has(".submenu").hoverIntent({over: PD.onSubmenuHover, out: PD.onSubmenuLeave, interval: 50, timeout: 350});
+    var submenuItems = $(".menu > li").has(".submenu");
+    if (window.matchMedia("(hover: hover)").matches) {
+        submenuItems.hoverIntent({over: PD.onSubmenuHover, out: PD.onSubmenuLeave, interval: 50, timeout: 350});
+    } else {
+        // Touch devices cannot sustain a hover, so a tap opens the submenu and keeps it open (sticky) until another item is tapped or the menu is closed. A second tap on the same item follows its link.
+        submenuItems.children("a.item").on("click", PD.onSubmenuTap);
+    }
 };
 PD.onSubmenuHover = function() {
     $(this).addClass("submenu-open").siblings(".submenu-open").removeClass("submenu-open");
 };
 PD.onSubmenuLeave = function() { $(this).removeClass("submenu-open"); };
+PD.onSubmenuTap = function(e) {
+    var $li = $(this).closest("li");
+    if (!$li.hasClass("submenu-open")) {
+        e.preventDefault();
+        $li.addClass("submenu-open").siblings(".submenu-open").removeClass("submenu-open");
+    }
+};
 
 PD.onDropdownHover = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {

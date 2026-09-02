@@ -3747,6 +3747,11 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     color: #ccc;
 }
 
+.manabase-output {
+    font-family: monospace;
+    overflow: scroll;
+}
+
 .tpd-skin-dark a:hover {
     color: #c0c0c0;
 }

@@ -657,8 +657,8 @@ def card_api(card: str) -> Response:
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @APP.route('/api/archetype/reassign/', methods=['POST'])
-@auth.demimod_required
 @fill_form('deck_id', 'archetype_id')
+@auth.demimod_required
 def post_reassign(deck_id: int, archetype_id: int) -> Response:
     archs.assign(deck_id, archetype_id, auth.person_id())
     return return_json({'success': True, 'deck_id': deck_id})

@@ -132,6 +132,7 @@ select = [
 "magic/*" = ["T201"]
 "price_grabber/*" = ["T201"]
 "dev.py" = ["T201"]
+"lint_auth_ordering.py" = ["T201"]
 "logsite/*" = ["T201"]
 "conftest.py" = ["T201"]
 "build.py" = ["T201"]

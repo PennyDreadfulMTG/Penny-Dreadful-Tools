@@ -58,6 +58,10 @@ def do_lint() -> None:
         python['-m', 'ruff', 'check', '.'] & FG
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
+    try:
+        python['lint_auth_ordering.py'] & FG
+    except ProcessExecutionError as e:
+        sys.exit(e.retcode)
 
 @cli.command()
 def lint() -> None:

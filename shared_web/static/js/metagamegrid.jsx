@@ -42,7 +42,7 @@ const renderItem = (grid, archetype) => (
         <div className="row flex-row baseline">
             <div className="percentage-with-additional">
                 <span className={"percentage"} title="Win %">
-                    {n(archetype.winPercent)}%
+                    {archetype.winPercent !== null ? n(archetype.winPercent) + "%" : "—"}
                 </span>
                 <span className="additional">
                     <span title="Win-Loss Record">

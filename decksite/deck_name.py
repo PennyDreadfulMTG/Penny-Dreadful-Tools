@@ -54,6 +54,9 @@ PROFANITY_WHITELIST = [
     'lesbians',
     'queer',
     'queers',
+    'screw',
+    'screwed',
+    'screwing',
 ]
 
 PROFANITY_BLACKLIST = [

@@ -863,7 +863,7 @@ nav, .menu, .submenu {
     padding: 12px 8px;
 }
 
-nav li:hover > .item + .submenu {
+nav li:hover > .item ~ .submenu {
     display: block;
     width: var(--submenu-width);
     z-index: 3;
@@ -886,7 +886,7 @@ When you are in a middle width the main menu is always shown but the submenu is 
 */
 @media only screen and (max-width: 900px), only screen and (min-width: 1601px) {
     /* Expand nav width when hovering over a menu item with a submenu */
-    nav:has(li:hover > .item + .submenu), nav:has(li.submenu-open > .item + .submenu) {
+    nav:has(li:hover > .item ~ .submenu), nav:has(li.submenu-open > .item ~ .submenu) {
         width: var(--full-menu-width);
         z-index: 4;
     }
@@ -914,13 +914,13 @@ When you are in a middle width the main menu is always shown but the submenu is 
         overflow: visible;
         position: relative
     }
-    nav:has(li:hover > .item + .submenu) {
+    nav:has(li:hover > .item ~ .submenu) {
         width: var(--main-menu-width);
     }
 }
 
 /* Fade hover submenus at every width. Touch navigation does not sustain this hover state. */
-nav li > .item + .submenu {
+nav li > .item ~ .submenu {
     display: block;
     opacity: 0;
     transition:
@@ -929,7 +929,7 @@ nav li > .item + .submenu {
     visibility: hidden;
     width: var(--submenu-width);
 }
-nav li.submenu-open > .item + .submenu {
+nav li.submenu-open > .item ~ .submenu {
     opacity: 1;
     transition-delay: 0s;
     visibility: visible;
@@ -941,7 +941,7 @@ nav li.submenu-open > .item + .submenu {
     nav:has(.current ~ .submenu) {
         width: var(--full-menu-width);
     }
-    nav li > .current + .submenu {
+    nav li > .current ~ .submenu {
         display: block;
         opacity: 1;
         visibility: visible;
@@ -982,7 +982,7 @@ nav.showing .menu {
     width: var(--main-menu-width);
 }
 
-nav.showing .current + .submenu {
+nav.showing .current ~ .submenu {
     display: block;
     opacity: 1;
     visibility: visible;
@@ -1609,17 +1609,6 @@ header, nav, main, footer {
 .status-bar {
     z-index: 2;
     box-shadow: var(--elevation-2);
-}
-
-/*
-
-This is a bit of a hack to have the badge appear "above" the menu item so that clicking it works.
-Ideally they're at the same level but this appears later in the HTML so it's still clickable.
-
-*/
-.badge-holder {
-    z-index: 3;
-    /* This is just a div containing the floating number/link to the admin archetypes page and doesn't need a box shadow. */
 }
 
 .scrim {
@@ -2664,9 +2653,8 @@ Notification Badges
 
 */
 
-/* Menu items needed to be positioned statically for dropdowns to work, but the badge needs a relatively-positioned parent in the menu item. */
-.badge-holder {
-    position: relative;
+ul.menu > li {
+    position: relative; /* Establishes containing block for the absolutely-positioned badge. */
 }
 
 /*

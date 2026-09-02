@@ -20,7 +20,7 @@ export class Table extends DataManager {
         }
 
         const rows = objects.map((o) => this.props.renderRow(this, o));
-        const className = ("live " + this.props.className).trim();
+        const className = ("live " + (this.props.className ?? "")).trim();
 
         return (
             <div ref={this.divRef} className={className}>

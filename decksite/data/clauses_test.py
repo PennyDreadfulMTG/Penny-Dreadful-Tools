@@ -1,10 +1,38 @@
 import re
+from collections.abc import Callable
 
 import pytest
 
 from decksite.data import clauses
 from decksite.deck_type import DeckType
 from shared.pd_exception import InvalidArgumentException
+
+
+@pytest.mark.parametrize('sort_order', ['ASC', 'DESC'])
+@pytest.mark.parametrize(
+    'order_by',
+    [
+        clauses.archetype_order_by,
+        clauses.cards_order_by,
+        clauses.people_order_by,
+        clauses.head_to_head_order_by,
+    ],
+)
+def test_win_percent_ordering_puts_nulls_last(
+    order_by: Callable[[str | None, str | None], str],
+    sort_order: str,
+) -> None:
+    sql = order_by('winPercent', sort_order)
+    expression, ordered = sql.split(' IS NULL ASC, ', 1)
+
+    assert ordered.startswith(f'{expression} {sort_order}')
+
+
+def test_archetype_win_percent_auto_order_remains_descending() -> None:
+    sql = clauses.archetype_order_by('winPercent', 'AUTO')
+    expression, ordered = sql.split(' IS NULL ASC, ', 1)
+
+    assert ordered.startswith(f'{expression} DESC')
 
 
 def test_decks_where() -> None:

@@ -15,6 +15,10 @@ DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
 DEFAULT_GRID_PAGE_SIZE = 24  # Looks good at 1, 2, 4, 6, 8, 12 columns wide which is the vast majority of cases
 MAX_PAGE_SIZE = 500
 
+def order_by_nulls_last(column: str, sort_order: str) -> str:
+    assert sort_order in ['ASC', 'DESC']
+    return f'{column} IS NULL ASC, {column} {sort_order}'
+
 def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: str | None) -> str:
     if not sort_by and competition_id:
         sort_by = 'top8'
@@ -68,7 +72,8 @@ def cards_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'tournamentTop8s': 'tournament_top8s',
         'perfectRuns': 'perfect_runs',
     }
-    return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
+    primary_order = order_by_nulls_last(sort_options[sort_by], sort_order) if sort_by == 'winPercent' else f'{sort_options[sort_by]} {sort_order}'
+    return f'{primary_order}, num_decks DESC, record, name'
 
 def people_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
@@ -88,7 +93,8 @@ def people_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'tournamentTop8s': 'tournament_top8s',
         'perfectRuns': 'perfect_runs',
     }
-    return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
+    primary_order = order_by_nulls_last(sort_options[sort_by], sort_order) if sort_by == 'winPercent' else f'{sort_options[sort_by]} {sort_order}'
+    return f'{primary_order}, num_decks DESC, record, name'
 
 def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
@@ -104,7 +110,8 @@ def head_to_head_order_by(sort_by: str | None, sort_order: str | None) -> str:
         'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',
         'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
     }
-    return sort_options[sort_by] + f' {sort_order}, num_matches DESC, record, name'
+    primary_order = order_by_nulls_last(sort_options[sort_by], sort_order) if sort_by == 'winPercent' else f'{sort_options[sort_by]} {sort_order}'
+    return f'{primary_order}, num_matches DESC, record, name'
 
 def leaderboard_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:
@@ -180,11 +187,13 @@ def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
+    win_rate = 'SUM(wins) / NULLIF(SUM(wins + losses), 0)'
+    win_percent = f'ROUND(({win_rate}) * 100, 1)'
     sort_options = {
         'name': ('name', 'ASC'),
         'metaShare': ('SUM(wins + losses + draws) / SUM(SUM(wins + losses + draws)) OVER ()', 'DESC'),
         'quality': (wilson_lower_bound_sql(), 'DESC'),
-        'winPercent': ('SUM(wins) / NULLIF(SUM(wins + losses), 0)', 'DESC'),
+        'winPercent': (win_rate, 'DESC'),
         'tournamentWins': ('tournament_wins', 'DESC'),
         'tournamentTop8s': ('tournament_top8s', 'DESC'),
         'perfectRuns': ('perfect_runs', 'DESC'),
@@ -193,7 +202,8 @@ def archetype_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if sort_order == 'AUTO':
         sort_order = default_order
     assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
-    return f'{col} {sort_order}, {wilson_lower_bound_sql()} DESC, num_decks DESC, win_percent DESC, name ASC'
+    primary_order = order_by_nulls_last(col, sort_order) if sort_by == 'winPercent' else f'{col} {sort_order}'
+    return f'{primary_order}, {wilson_lower_bound_sql()} DESC, num_decks DESC, {order_by_nulls_last(win_percent, "DESC")}, name ASC'
 
 def exclude_active_league_runs(except_person_id: int | None) -> str:
     clause = """

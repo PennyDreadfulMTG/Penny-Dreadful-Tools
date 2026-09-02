@@ -23,8 +23,8 @@ class MatchupResults:
         return len(self.hero_deck_ids)
 
     @property
-    def win_percent(self) -> str:
-        return str(round((self.wins / (self.wins + self.losses)) * 100, 1)) if (self.wins + self.losses) > 0 else ''
+    def win_percent(self) -> float | None:
+        return round((self.wins / (self.wins + self.losses)) * 100, 1) if (self.wins + self.losses) > 0 else None
 
 def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None = None) -> MatchupResults:
     where = 'TRUE'

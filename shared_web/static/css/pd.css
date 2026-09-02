@@ -1926,25 +1926,14 @@ ul.buttons li a:hover, ul.buttons li .dd-button:hover {
     margin-left: 0.317rem; /* This matches the margin-right on .ss which is the other side of the text on the season chooser. */
 }
 
-.dd-input {
-    display: none;
-}
-
 .dropdown .dd-menu {
     border: 0.05rem solid var(--light-border);
+    display: none;
     list-style-type: none;
     padding: 1em;
     position: absolute;
     top: 100%;
     right: 0;
-}
-
-.dd-input + .dd-menu {
-    display: none;
-}
-
-.dd-input:checked + .dd-menu {
-    display: grid;
 }
 
 .dd-menu {

@@ -4,6 +4,7 @@ window.PD = {};
 
 PD.init = function() {
     PD.initDismiss();
+    PD.initDropdown();
     PD.initMenu();
     PD.initDoubleReportCheck();
     PD.initAchievements();
@@ -31,6 +32,24 @@ PD.init = function() {
     PD.initPersonalization();
     PD.renderCharts();
     // $(".archetype-name").fitText(0.8);
+};
+
+PD.initDropdown = function() {
+    $(".dd-button").click(function(e) {
+        e.stopPropagation();
+        var $menu = $(this).siblings(".dd-menu");
+        if ($menu.is(":visible")) {
+            $menu.slideUp("fast");
+        } else {
+            $menu.css("display", "grid").hide().slideDown("fast");
+        }
+    });
+    $(".dd-menu").click(function(e) {
+        e.stopPropagation();
+    });
+    $(document).click(function() {
+        $(".dd-menu:visible").slideUp("fast");
+    });
 };
 
 PD.initDismiss = function() {

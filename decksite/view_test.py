@@ -11,6 +11,11 @@ from shared_web import template
 from shared_web.base_view import BaseView
 
 
+class EmojiTitleView(view.View):
+    def page_title(self) -> str:
+        return '🃏🔥'
+
+
 def test_person_achievements_prepare_active_runs() -> None:
     active_decks = [Mock(), Mock()]
     for deck in active_decks:
@@ -68,6 +73,10 @@ def test_menu_badge_is_entirely_linked() -> None:
         }]})
 
     assert '<a class="badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
+
+def test_title_replaces_emoji_only_page_title_with_words() -> None:
+    with APP.test_request_context('/'):
+        assert EmojiTitleView().title() == 'black joker fire – pennydreadfulmagic.com'
 
 def test_build_menu_uses_endpoint_override_for_active_league() -> None:
     with APP.test_request_context('/competitions/123/'):

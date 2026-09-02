@@ -8,6 +8,7 @@ from decksite import prepare
 from decksite.data import archetype as archs
 from decksite.deck_type import DeckType
 from decksite.view import View
+from shared import text
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException
 
@@ -96,13 +97,13 @@ class Archetype(View):
             self.history_chart = history_chart(season_stats)
 
     def og_title(self) -> str:
-        return self.archetype.name
+        return text.replace_emoji_with_text(self.archetype.name)
 
     def og_url(self) -> str:
         return url_for('.archetype', archetype_id=self.archetype.id, _external=True)
 
     def og_description(self) -> str:
-        return f'Penny Dreadful {self.archetype.name} archetype'
+        return text.replace_emoji_with_text(f'Penny Dreadful {self.archetype.name} archetype')
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.archetype, attr)

@@ -57,6 +57,7 @@ dependencies = [
     "pystache",
     "fasteners",
     "interactions.py==5.16.0",
+    "emoji==2.15.0",
     "tomli",
     "orjson",
     "traceback-with-variables",

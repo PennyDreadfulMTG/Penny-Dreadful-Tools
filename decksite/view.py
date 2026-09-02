@@ -1,5 +1,4 @@
 import sys
-import unicodedata
 from typing import Any, TypedDict, cast
 
 import inflect
@@ -14,7 +13,7 @@ from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAG
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
-from shared import dtutil, logger
+from shared import dtutil, logger, text
 from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
@@ -37,12 +36,6 @@ class SeasonInfoDescription(TypedDict, total=False):
     tournament_leaderboards_url: str
     legality_name: str | None
     legal_cards_url: str | None
-
-def strip_unsafe_chars(s: str) -> str:
-    # Strip Unicode Symbol characters (emoji, pictographs) that render poorly in <title> and og: tags.
-    # Preserves CJK, Greek, Cyrillic, and other letter/number characters.
-    return ''.join(c for c in s if not unicodedata.category(c).startswith('S'))
-
 
 class View(BaseView):
     def __init__(self) -> None:
@@ -152,7 +145,7 @@ class View(BaseView):
             season = ' - All Time'
         else:
             season = f' - Season {get_season_id()}'
-        return strip_unsafe_chars(f'{self.page_title()}{season} – pennydreadfulmagic.com')
+        return text.replace_emoji_with_text(f'{self.page_title()}{season} – pennydreadfulmagic.com')
 
     # Site-wide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:

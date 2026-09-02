@@ -7,10 +7,10 @@ from flask import session, url_for
 
 from decksite import prepare
 from decksite.data.archetype import Archetype
-from decksite.view import View, strip_unsafe_chars
+from decksite.view import View
 from magic import card, oracle
 from magic.models import Deck as DeckModel
-from shared import fetch_tools
+from shared import fetch_tools, text
 from shared.container import Container
 
 
@@ -65,7 +65,7 @@ class Deck(View):
         }
 
     def og_title(self) -> str:
-        return strip_unsafe_chars(self.deck.name if self.public() else '(Active League Run)')
+        return text.replace_emoji_with_text(self.deck.name if self.public() else '(Active League Run)')
 
     def og_url(self) -> str:
         return url_for('deck', deck_id=self.deck.id, _external=True)
@@ -76,7 +76,7 @@ class Deck(View):
             archetype_s = titlecase.titlecase(p.a(self.archetype_name))
         else:
             archetype_s = 'A'
-        return strip_unsafe_chars(f'{archetype_s} deck by {self.person}')
+        return text.replace_emoji_with_text(f'{archetype_s} deck by {self.person}')
 
     def oembed_url(self) -> str:
         return url_for('deck_embed', deck_id=self.deck.id, _external=True)

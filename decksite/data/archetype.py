@@ -31,7 +31,7 @@ def load_archetype(archetype: int | str) -> Archetype:
     except ValueError as c:
         name = titlecase.titlecase(archetype)
         name_without_dashes = name.replace('-', ' ')
-        archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(name, '-', ' ') = %s", [name_without_dashes])
+        archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(REPLACE(name, ' // ', ' / '), '-', ' ') = %s", [name_without_dashes])
         if not archetype_id:
             raise DoesNotExistException(f'Did not find archetype with name of `{name}`') from c
     arch = Archetype()

@@ -25,7 +25,7 @@ def test_post_archetypes_reports_invalid_card_names(monkeypatch: pytest.MonkeyPa
     monkeypatch.setattr(admin.oracle, 'valid_name', valid_name)
     monkeypatch.setattr(admin.ds, 'load_decks_by_cards', load_decks_by_cards)
     monkeypatch.setattr(admin, 'edit_archetypes', edit_archetypes)
-    monkeypatch.setattr(deck, 'load_decks', lambda *args, **kwargs: ([], 0))
+    monkeypatch.setattr(deck, 'load_decks', lambda *args, **kwargs: [])
     monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
     with APP.test_request_context('/admin/archetypes/', method='POST', data={'q': 'Dark Ritual\nNot a Card', 'notq': 'Also Not a Card'}):
         response = cast(Any, admin.post_archetypes).__wrapped__()

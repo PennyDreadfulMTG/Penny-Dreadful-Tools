@@ -112,7 +112,7 @@ def mistagged_decks() -> list[Deck]:
     if not rule_archetypes:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in rule_archetypes)
-    result, _ = deck.load_decks(where=f'd.id IN ({ids_list})')
+    result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.rule_id, d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
@@ -139,7 +139,7 @@ def doubled_decks() -> list[Deck]:
     if not archetypes_from_rules:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in archetypes_from_rules)
-    result, _ = deck.load_decks(where=f'd.id IN ({ids_list})')
+    result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
         d.archetypes_from_rules_names = ', '.join(f'{a.archetype_name} ({a.rule_id})' for a in archetypes_from_rules[d.id])
@@ -171,7 +171,7 @@ def overlooked_decks() -> list[Deck]:
     if not deck_ids:
         return []
     ids_list = ', '.join(deck_ids)
-    ds, _ = deck.load_decks(where=f'd.id IN ({ids_list})')
+    ds = deck.load_decks(where=f'd.id IN ({ids_list})')
     return ds
 
 @retry_after_calling(cache_all_rules)

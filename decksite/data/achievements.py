@@ -210,7 +210,7 @@ class Achievement:
         ids = db().value(sql)
         result = Container()
         if ids:
-            ds, _ = deck.load_decks(where=f'd.id IN ({ids})')
+            ds = deck.load_decks(where=f'd.id IN ({ids})')
         else:
             ds = []
         result.decks = ds

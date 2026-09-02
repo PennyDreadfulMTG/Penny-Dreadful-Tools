@@ -140,7 +140,7 @@ def decks_api() -> Response:
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
     where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
-    ds, total = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    ds, total = deck.load_decks_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'total': total, 'objects': ds}
     resp = return_camelized_json(r)
@@ -176,7 +176,7 @@ class UpdatedDecks(Resource):
             raise InvalidArgumentException('Invalid timestamp!')
         page, page_size, limit = pagination(request.args)
         where = '(' + clauses.decks_where(request.args, False, None) + ') AND ' + clauses.decks_updated_since(timestamp)
-        ds, total = deck.load_decks(where=where, order_by='d.id DESC', limit=limit, season_id=season)
+        ds, total = deck.load_decks_with_total(where=where, order_by='d.id DESC', limit=limit, season_id=season)
         prepare_decks(ds)
         return {'page': page, 'total': total, 'objects': ds}
 
@@ -218,7 +218,7 @@ def cards2_api() -> Response:
     q = request.args.get('q', '').strip()
     additional_where, message = clauses.card_search_where(q, base_query, 'cs.name') if q or base_query else ('TRUE', '')
     all_legal = request.args.get('allLegal', False)
-    cs, total = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, competition_id=competition_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)
+    cs, total = card.load_cards_with_total(additional_where=additional_where, order_by=order_by, limit=limit, archetype_id=archetype_id, competition_id=competition_id, person_id=person_id, tournament_only=tournament_only, season_id=season_id, all_legal=all_legal)
     prepare_cards(cs, tournament_only=tournament_only, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
@@ -270,7 +270,7 @@ def people_api() -> Response:
     season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     where = clauses.text_where(query.person_query(), q) if q else 'TRUE'
-    people, total = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    people, total = ps.load_people_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people, season_id)
     r = {'page': page, 'total': total, 'objects': people}
     resp = return_camelized_json(r)
@@ -392,7 +392,7 @@ def matches_api() -> Response:
         season_id = None
     except ValueError:
         season_id = seasons.season_id(str(request.args.get('seasonId')), None)
-    entries, total = match.load_matches(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
+    entries, total = match.load_matches_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
     prepare_matches(entries)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_camelized_json(r)
@@ -480,7 +480,7 @@ def rotation_cards_api() -> Response:
     if not session.get('admin', False):
         where += " AND status <> 'Undecided'"
     order_by = clauses.rotation_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    cs, total = rot.load_rotation(where=where, order_by=order_by, limit=limit)
+    cs, total = rot.load_rotation_with_total(where=where, order_by=order_by, limit=limit)
     prepare_cards(cs)
     r = {'page': page, 'total': total, 'objects': cs, 'message': message}
     resp = return_camelized_json(r)
@@ -638,7 +638,7 @@ def rotation_clear_cache() -> Response:
 @APP.route('/api/cards')
 @APP.route('/api/cards/')
 def cards_api() -> Response:
-    cs, _ = card.load_cards()
+    cs = card.load_cards()
     return return_json({'cards': cs})
 
 @APP.route('/api/card/<card>')
@@ -702,7 +702,7 @@ def person_status() -> Response:
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:
-        _, total = deck.load_decks('NOT d.reviewed', limit='LIMIT 1')
+        _, total = deck.load_decks_with_total('NOT d.reviewed', limit='LIMIT 1')
         r['archetypes_to_tag'] = total
     active_league = league.active_league()
     if active_league:

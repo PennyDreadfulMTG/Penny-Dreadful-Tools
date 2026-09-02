@@ -41,20 +41,19 @@ def insert_match(dt: datetime.datetime,
     return match_id
 
 def load_match(match_id: int, deck_id: int) -> Container:
-    ms, _ = load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}')
-    return guarantee.exactly_one(ms)
+    return guarantee.exactly_one(load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}'))
 
 def load_matches_by_deck(d: deck.Deck) -> list[Container]:
-    where = f'd.id = {d.id}'
-    ms, _ = load_matches(where=where, season_id=None)
-    return ms
+    return load_matches(where=f'd.id = {d.id}', season_id=None)
 
 def load_matches_by_person(person_id: int, season_id: int | None = None) -> list[Container]:
-    where = f'd.person_id = {person_id}'
-    ms, _ = load_matches(where=where, season_id=season_id)
+    return load_matches(where=f'd.person_id = {person_id}', season_id=season_id)
+
+def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> list[Container]:
+    ms, _ = load_matches_with_total(where, order_by, limit, season_id, show_active_deck_names)
     return ms
 
-def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> tuple[list[Container], int]:
+def load_matches_with_total(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: int | str | None = None, show_active_deck_names: bool = False) -> tuple[list[Container], int]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')
     competition_join = query.competition_join()

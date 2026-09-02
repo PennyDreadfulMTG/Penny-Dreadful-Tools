@@ -121,7 +121,7 @@ export class DataManager extends React.Component {
         this.divRef.current.scrollIntoView();
     }
 
-    sort(sortBy, sortOrder = "ASC") {
+    sort(sortBy, sortOrder = "AUTO") {
         if (this.state.sortBy === sortBy) {
             sortOrder = this.state.sortOrder === "ASC" ? "DESC" : "ASC";
         }

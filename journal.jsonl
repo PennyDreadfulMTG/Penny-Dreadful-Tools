@@ -8793,3 +8793,4 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8792, "seq": 8793, "ts": "2026-09-02T20:53:23Z"}
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8794, "ts": "2026-09-02T20:53:38Z"}
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8795, "ts": "2026-09-02T21:15:42Z"}
+{"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8796, "ts": "2026-09-02T21:18:43Z"}

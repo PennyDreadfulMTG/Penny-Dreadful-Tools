@@ -5,7 +5,7 @@ from decksite.data import deck
 # Make your changes in deck_name.py and then run this to see which decks would change if re-normalized.
 
 def ad_hoc() -> None:
-    ds, _ = deck.load_decks()
+    ds = deck.load_decks()
     for d in ds:
         current = d.name
         potential = deck_name.normalize(d)

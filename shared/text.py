@@ -1,5 +1,6 @@
 import html
 import re
+import unicodedata
 from typing import Any
 
 import emoji
@@ -39,3 +40,15 @@ def unambiguous_prefixes(words: list[str]) -> list[str]:
             if n == 1:
                 prefixes.append(prefix)
     return prefixes
+
+def merge_slashes(name: str) -> str:
+    """Collapse each run of slashes, and the whitespace around it, to a bare '/'.
+
+    The proxies in front of us merge repeated slashes, so `/cards/Bedeck // Bedazzle/` arrives as
+    `Bedeck / Bedazzle`. Both spellings, and the stored `Bedeck // Bedazzle`, share this form.
+    """
+    return re.sub(r'\s*/+\s*', '/', name)
+
+def fold_accents(s: str) -> str:
+    """Drop combining marks, so `Seance` and `Séance` compare equal as they do under utf8mb4_unicode_ci."""
+    return ''.join(c for c in unicodedata.normalize('NFKD', s) if not unicodedata.combining(c))

@@ -12,6 +12,7 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 from shared.pd_exception import DoesNotExistException
+from shared.text import fold_accents, merge_slashes
 
 
 class Archetype(Container, NodeMixin):
@@ -36,15 +37,38 @@ WINDOW_DAYS = 7
 # a freak low-volume week.
 MIN_MATCHES = 6
 
+def url_name_key(name: str) -> str:
+    """The form two archetype names must share to be the same name in a URL.
+
+    Slashes because the proxies in front of us merge repeated ones, dashes because we accept them for
+    spaces, case and accents because the collation this lookup used to lean on ignored both and
+    /archetypes/Seance/ has always found Séance. Dashes go first, so `Leave-//-Chance` reduces the
+    same way `Leave // Chance` does.
+
+    One function, applied to both sides of the comparison. #12494 was two normalisations that disagreed.
+    """
+    return fold_accents(merge_slashes(name.replace('-', ' '))).casefold()
+
+def archetype_id_from_name(name: str) -> int | None:
+    """Find the archetype whose name matches one given in a URL, or None.
+
+    Read the names and compare in Python rather than normalising in SQL: there is one rule and one
+    implementation of it. The table is small and the only caller is a cached page.
+    """
+    wanted = url_name_key(name)
+    for r in db().select('SELECT id, name FROM archetype'):
+        if url_name_key(r['name']) == wanted:
+            return int(r['id'])
+    return None
+
 def load_archetype(archetype: int | str) -> Archetype:
     try:
         archetype_id = int(archetype)
     except ValueError as c:
-        name = titlecase.titlecase(archetype)
-        name_without_dashes = name.replace('-', ' ')
-        archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(REPLACE(name, ' // ', ' / '), '-', ' ') = %s", [name_without_dashes])
-        if not archetype_id:
-            raise DoesNotExistException(f'Did not find archetype with name of `{name}`') from c
+        found = archetype_id_from_name(str(archetype))
+        if not found:
+            raise DoesNotExistException(f'Did not find archetype with name of `{titlecase.titlecase(archetype)}`') from c
+        archetype_id = found
     arch = Archetype()
     arch.id = int(archetype_id)
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])

@@ -310,7 +310,8 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
         parts.append(archetype_where(archetype_id))
     if args.get('personId'):
         person_id = int(args.get('personId', ''))
-    card_names = args.getlist('cardName') if hasattr(args, 'getlist') else ([args['cardName']] if args.get('cardName') else [])
+    raw_card_names = args.getlist('cardName') if hasattr(args, 'getlist') else [args.get('cardName')]
+    card_names = [name for name in raw_card_names if name]
     if card_names:
         parts.append(cards_where(card_names))
     if args.get('minWinRate'):

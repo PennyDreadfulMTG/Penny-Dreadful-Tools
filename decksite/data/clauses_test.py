@@ -55,6 +55,12 @@ def test_decks_where() -> None:
     assert "= 'League'" not in clauses.decks_where(args, False, 1)
     assert "= 'Gatherling'" not in clauses.decks_where(args, False, 1)
 
+def test_decks_where_ignores_empty_card_name() -> None:
+    # The deck table always sends cardName= (empty) from data-card-name="", which must not filter out every deck.
+    from werkzeug.datastructures import MultiDict
+    assert 'FALSE' not in clauses.decks_where(MultiDict([('cardName', '')]), False, 1)
+    assert 'FALSE' not in clauses.decks_where({'cardName': ''}, False, 1)
+
 def test_card_search_where() -> None:
     assert ("name IN ('Tasigur, the Golden Fang')", '') == clauses.card_search_where('Tasigur, the Golden Fang')
     assert ("cs.name IN ('Tasigur, the Golden Fang')", '') == clauses.card_search_where('Tasigur, the Golden Fang', column_name='cs.name')

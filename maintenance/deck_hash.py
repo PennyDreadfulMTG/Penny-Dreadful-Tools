@@ -17,7 +17,7 @@ def recalculate(deck_ids: set[int] | None = None) -> None:
     else:
         where = 'd.id IN ({})'.format(', '.join(map(str, sorted(deck_ids))))
         redis.clear(*(f'decksite:deck:{deck_id}' for deck_id in deck_ids))
-    all_decks, _ = deck.load_decks(where=where)
+    all_decks = deck.load_decks(where=where)
     for d in all_decks:
         # Recalculate all hashes, in case they've changed.  Or we've changed the default sort order.
         cards = {'maindeck': d['maindeck'], 'sideboard': d['sideboard']}

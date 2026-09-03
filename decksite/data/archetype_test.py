@@ -93,3 +93,71 @@ def test_archetype_quality_sorts_put_no_match_archetypes_last(sort_by: str) -> N
 
     assert ascending[-1].id == 2
     assert descending[-1].id == 2
+
+
+def _make_hierarchy() -> None:
+    """Aggro (root) with child Red Deck Wins, and Control (root) with no children. Decks belong only to the leaves."""
+    db().execute("DELETE FROM archetype_closure")
+    db().execute("DELETE FROM archetype")
+    db().execute("INSERT INTO archetype (id, name, description) VALUES (1, 'Aggro', ''), (2, 'Red Deck Wins', ''), (3, 'Control', '')")
+    db().execute("""
+        INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES
+            (1, 1, 0), (2, 2, 0), (3, 3, 0),
+            (1, 2, 1)
+    """)
+
+
+@with_test_db
+@pytest.mark.functional
+def test_home_page_archetypes_do_not_roll_children_into_parents() -> None:
+    """#15109 used load_archetypes, whose parents absorb their children, so the home page listed only taxonomy roots."""
+    _make_hierarchy()
+    archetype.preaggregate_disjoint_archetypes()
+    archetype.preaggregate_archetypes()
+    for table in ('_arch_disjoint_stats', '_arch_stats'):
+        db().execute(f"""
+            INSERT INTO {table}
+                (archetype_id, season_id, num_decks, wins, losses, draws, perfect_runs, tournament_wins, tournament_top8s, deck_type)
+            VALUES
+                (2, 1, 10, 0, 0, 0, 0, 0, 0, 'league'),
+                (3, 1, 4, 0, 0, 0, 0, 0, 0, 'league')
+        """)
+    # _arch_stats is the inclusive table, so Aggro carries Red Deck Wins' decks there but not in the disjoint one.
+    db().execute("""
+        INSERT INTO _arch_stats
+            (archetype_id, season_id, num_decks, wins, losses, draws, perfect_runs, tournament_wins, tournament_top8s, deck_type)
+        VALUES (1, 1, 10, 0, 0, 0, 0, 0, 0, 'league')
+    """)
+
+    disjoint, _ = archetype.load_disjoint_archetypes(order_by='num_decks DESC', season_id=1)
+    by_name = {a.name: a.num_decks for a in disjoint if a.get('num_decks')}
+
+    assert by_name == {'Red Deck Wins': 10, 'Control': 4}, 'the home page must show the archetypes decks are actually assigned to'
+    assert 'Aggro' not in by_name, 'Aggro has no decks of its own; it only looks popular when children are rolled up'
+
+
+@with_test_db
+@pytest.mark.functional
+def test_home_page_archetype_counts_add_up_to_the_number_of_decks() -> None:
+    """The property that makes the list a metagame breakdown: each deck counted once.
+
+    A parent may legitimately appear next to its child if it has decks of its own, but its count must
+    exclude the child's. Under the inclusive loader Aggro would read 11 and the column would sum to 25.
+    """
+    _make_hierarchy()
+    archetype.preaggregate_disjoint_archetypes()
+    db().execute("""
+        INSERT INTO _arch_disjoint_stats
+            (archetype_id, season_id, num_decks, wins, losses, draws, perfect_runs, tournament_wins, tournament_top8s, deck_type)
+        VALUES
+            (1, 1, 1, 0, 0, 0, 0, 0, 0, 'league'),
+            (2, 1, 10, 0, 0, 0, 0, 0, 0, 'league'),
+            (3, 1, 4, 0, 0, 0, 0, 0, 0, 'league')
+    """)
+
+    shown, _ = archetype.load_disjoint_archetypes(order_by='num_decks DESC', season_id=1)
+    shown = [a for a in shown if a.get('num_decks')][:8]  # What Home.setup_archetypes does.
+    counts = {a.name: a.num_decks for a in shown}
+
+    assert counts == {'Red Deck Wins': 10, 'Control': 4, 'Aggro': 1}
+    assert sum(counts.values()) == 15, 'the counts must add up to the number of decks, not more'

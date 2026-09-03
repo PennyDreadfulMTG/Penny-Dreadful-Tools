@@ -30,7 +30,9 @@ def home() -> str:
     decks = ds.latest_decks(season_id=season_id)
     top_8_plus_basics = 'LIMIT 13'
     cards, total = cs.load_cards_with_total(limit=top_8_plus_basics, season_id=season_id)
-    all_archetypes = archs.load_archetypes(order_by='num_decks DESC', season_id=season_id)
+    # Disjoint, not load_archetypes: the latter rolls a child's decks up into its parent, so the top of the list
+    # is always the taxonomy roots (Aggro, Control, ...) and every deck is counted once per ancestor.
+    all_archetypes, _ = archs.load_disjoint_archetypes(order_by='num_decks DESC', season_id=season_id)
     view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats(), all_archetypes)
     return view.page()
 

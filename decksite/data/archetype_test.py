@@ -7,6 +7,8 @@ import pytest
 from decksite.data import archetype, clauses
 from decksite.database import db
 from decksite.testutil import with_test_db
+from shared.pd_exception import DoesNotExistException
+from shared.text import merge_slashes
 
 
 class FakeDatabase:
@@ -128,6 +130,43 @@ def test_load_movers_and_shakers_compares_the_last_week_to_the_week_before() -> 
     assert movers[0].win_percent == 60.0
 
 
+@pytest.mark.parametrize(('a', 'b'), [
+    ('Leave // Chance Midrange', 'Leave / Chance Midrange'),   # What the proxies send after merging slashes.
+    ('Leave // Chance Midrange', 'Leave/Chance Midrange'),
+    ('Leave // Chance Midrange', 'leave // chance midrange'),
+    ('Leave // Chance Midrange', 'Leave-//-Chance-Midrange'),  # Dashes stand in for spaces.
+    ('Séance', 'Seance'),                                      # utf8mb4_unicode_ci ignored accents; so must we.
+    ('-1/-1 Counters', '-1/-1 Counters'),
+])
+def test_url_name_key_treats_these_as_the_same_name(a: str, b: str) -> None:
+    assert archetype.url_name_key(a) == archetype.url_name_key(b)
+
+
+@pytest.mark.parametrize(('a', 'b'), [
+    ('Leave // Chance Midrange', 'Arrive // Fortune Midrange'),
+    ('-1/-1 Counters', '+1/+1 Counters'),
+    ('Aggro', 'Aggro Control'),
+])
+def test_url_name_key_keeps_these_apart(a: str, b: str) -> None:
+    assert archetype.url_name_key(a) != archetype.url_name_key(b)
+
+
+@with_test_db
+@pytest.mark.functional
+@pytest.mark.parametrize('url_name', [
+    'Leave // Chance Midrange',
+    'Leave / Chance Midrange',
+    'Leave/Chance Midrange',
+    'leave // chance midrange',
+    'Leave-//-Chance-Midrange',
+])
+def test_load_archetype_finds_name_containing_slashes(url_name: str) -> None:
+    """#15124 made these URLs route, but the two sides normalised slashes differently so the lookup still missed."""
+    db().execute("INSERT INTO archetype (name, description) VALUES ('Leave // Chance Midrange', '')")
+
+    assert archetype.load_archetype(merge_slashes(url_name)).name == 'Leave // Chance Midrange'
+
+
 @with_test_db
 @pytest.mark.functional
 def test_load_movers_and_shakers_does_not_compare_across_a_rotation() -> None:
@@ -149,6 +188,14 @@ def test_load_movers_and_shakers_does_not_compare_across_a_rotation() -> None:
     assert [a.id for a in movers] == [1]
     assert float(movers[0].meta_share) == 1.0
     assert float(movers[0].meta_share_change) == 0.0
+
+
+def test_load_archetype_finds_accented_name_spelled_without_accents() -> None:
+    """/archetypes/Seance/ has always worked because the collation ignores accents. Keep it working."""
+    db().execute("INSERT INTO archetype (name, description) VALUES ('Séance', '')")
+
+    assert archetype.load_archetype(merge_slashes('Seance')).name == 'Séance'
+    assert archetype.load_archetype(merge_slashes('Séance')).name == 'Séance'
 
 
 @with_test_db
@@ -174,3 +221,19 @@ def test_load_movers_and_shakers_includes_an_archetype_that_stopped_being_played
     assert float(movers[1].meta_share) == 0.0
     assert float(movers[1].meta_share_change) == -0.5
     assert movers[1].win_percent is None
+
+
+def test_load_archetype_still_finds_names_with_dashes_around_slashes() -> None:
+    """-1/-1 Counters is the case #15124 did fix; do not regress it."""
+    db().execute("INSERT INTO archetype (name, description) VALUES ('-1/-1 Counters', '')")
+
+    assert archetype.load_archetype(merge_slashes('-1/-1 Counters')).name == '-1/-1 Counters'
+
+
+@with_test_db
+@pytest.mark.functional
+def test_load_archetype_raises_for_unknown_name() -> None:
+    db().execute("INSERT INTO archetype (name, description) VALUES ('Leave // Chance Midrange', '')")
+
+    with pytest.raises(DoesNotExistException):
+        archetype.load_archetype(merge_slashes('Arrive // Fortune Midrange'))

@@ -1,4 +1,3 @@
-import re
 import urllib.parse
 
 from flask import redirect, request, url_for
@@ -17,6 +16,7 @@ from decksite.deck_type import DeckType
 from decksite.views import Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons
 from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
+from shared.text import merge_slashes
 
 
 @APP.route('/decks/')
@@ -97,9 +97,6 @@ def is_canonical_url_name(submitted_name: str, canonical_name: str) -> bool:
     `Bedeck / Bedazzle`. Redirecting to the double-slashed URL would only get it merged again, forever.
     """
     return merge_slashes(submitted_name) == merge_slashes(canonical_name)
-
-def merge_slashes(name: str) -> str:
-    return re.sub(r'\s*/+\s*', '/', name)
 
 def parse_card_name(name: str) -> str:
     return oracle.valid_name(decode_card_name(name))

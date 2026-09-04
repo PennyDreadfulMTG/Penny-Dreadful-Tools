@@ -150,5 +150,7 @@ jobs:
     - name: Install Chromium
       run: uv run --frozen playwright install --with-deps chromium
     - run: uv run --frozen python run.py init-cards
+    - name: Build symbols font
+      run: uv run --frozen python run.py maintenance fonts
     - name: Run browser tests
       run: PD_BROWSER_TESTS=1 uv run --frozen pytest --no-cov -p no:cacheprovider decksite/browser_test.py

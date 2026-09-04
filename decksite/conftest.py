@@ -83,6 +83,7 @@ def _build_seed() -> Container:
         person.preaggregate()
         card.preaggregate()
         deck.preaggregate()
+        _verify_seed(len(DECKS))
 
     return Container({
         'db_name': SEED_DB_NAME,
@@ -99,6 +100,28 @@ def _build_seed() -> Container:
         'archetype_with_two_decks': ARCHETYPE_WITH_TWO_DECKS,
         'archetype_with_one_deck': ARCHETYPE_WITH_ONE_DECK,
     })
+
+
+def _verify_seed(num_decks: int) -> None:
+    """Tell "the fixture is broken" apart from "the site is broken": the site must be able to see the decks we just inserted."""
+    from decksite.data import deck
+    from decksite.database import db
+    from magic import seasons
+
+    season_num = seasons.current_season_num()
+    _, total = deck.load_decks_with_total(season_id=season_num)
+    if total == num_decks:
+        return
+    diagnostics = {
+        'database': db().value('SELECT DATABASE()'),
+        'server': db().select('SELECT VERSION() AS version, @@sql_mode AS sql_mode, @@session.time_zone AS time_zone, UNIX_TIMESTAMP(NOW()) AS now_ts'),
+        'current_season_num': season_num,
+        'season': db().select('SELECT id, number, code, start_date FROM season ORDER BY id DESC LIMIT 3'),
+        'competition': db().select('SELECT c.id, c.start_date, c.end_date, cs.name AS series, ct.name AS type FROM competition AS c LEFT JOIN competition_series AS cs ON cs.id = c.competition_series_id LEFT JOIN competition_type AS ct ON ct.id = cs.competition_type_id'),
+        'deck': db().select('SELECT id, person_id, competition_id, created_date, retired FROM deck'),
+        'deck_cache': db().select('SELECT deck_id, season_id, wins, draws, losses, legal_formats FROM deck_cache'),
+    }
+    raise AssertionError(f'Seeded database built but the site finds {total} of {num_decks} decks in season {season_num}:\n' + '\n'.join(f'{k}: {v}' for k, v in diagnostics.items()))
 
 
 @pytest.fixture

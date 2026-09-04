@@ -34,7 +34,8 @@ if ENABLED:
 
 # Fixed entry points. More pages are discovered from the links on these so the test needs no knowledge of what data the site has.
 PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/resources/', '/about/']
-DISCOVER = [('/decks/', '.decktable a[href^="/people/"]'), ('/decks/', '.decktable a[href^="/archetypes/"]'), ('/decks/', '.decktable a[href^="/competitions/"]'), ('/decks/', '.decktable a[href^="/decks/"]'), ('/cards/', '.cardtable a[href^="/cards/"]')]
+# Links in tables may carry a /seasons/N/ prefix, so match anywhere in the href.
+DISCOVER = [('/decks/', '.decktable a[href*="/people/"]'), ('/decks/', '.decktable a[href*="/archetypes/"]'), ('/decks/', '.decktable a[href*="/competitions/"]'), ('/decks/', '.decktable a[href*="/decks/"]'), ('/cards/', '.cardtable a[href*="/cards/"]')]
 LIVE_TABLE_CLASSES = ['decktable', 'cardtable', 'persontable', 'matchtable', 'leaderboardtable', 'headtoheadtable']
 LOAD_TIMEOUT = 15_000
 VIEWPORTS = {'mobile': (400, 800), 'medium': (1200, 800), 'wide': (1700, 900)}  # Either side of the 900px and 1600px breakpoints in pd.css.
@@ -114,6 +115,9 @@ def discover_pages(page: 'Page') -> list[str]:
 def test_pages_render_with_data_and_without_errors(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     pages = PAGES + discover_pages(page)
+    if site.seed:
+        # Only the seeded database has this person, so a server answering from any other database (the dev one, say) turns this into a 404 below.
+        pages.append(f'/people/{site.seed.person}/')
     problems = list(collector.problems)
     for path in pages:
         collector.problems.clear()
@@ -125,7 +129,7 @@ def test_pages_render_with_data_and_without_errors(browser: 'Browser', site: Con
         problems.extend(wait_for_live_tables(page))
         problems.extend(f'{path}: {p}' for p in collector.problems)
     if site.seed:
-        assert any('/people/' in p for p in pages) and any('/cards/' in p and p != '/cards/' for p in pages), f'Discovery found no person/card pages in {pages}'
+        assert any('/people/' in p and p != '/people/' for p in pages) and any('/cards/' in p and p != '/cards/' for p in pages), f'Discovery found no person/card pages in {pages}'
     assert not problems, '\n'.join(problems)
 
 

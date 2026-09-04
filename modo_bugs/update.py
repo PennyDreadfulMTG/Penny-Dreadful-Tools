@@ -1,5 +1,4 @@
 import codecs
-import datetime
 import json
 import logging
 import re
@@ -9,7 +8,7 @@ import urllib.parse
 import requests
 from github.Issue import Issue
 
-from shared import configuration
+from shared import configuration, dtutil
 from shared.custom_types import BugData
 from shared.lazy import lazy_property
 
@@ -82,8 +81,13 @@ def verification_numbers() -> None:
     print('... Done')
 
 
+def age_in_days(issue: Issue) -> int:
+    # PyGithub gives timezone-aware datetimes; a naive now() cannot be subtracted from one.
+    return (dtutil.now() - issue.updated_at).days
+
+
 def process_issue(issue: Issue) -> None:
-    age = (datetime.datetime.now() - issue.updated_at).days
+    age = age_in_days(issue)
     if age < 5:
         fix_user_errors(issue)
         apply_screenshot_labels(issue)
@@ -162,7 +166,7 @@ def process_issue(issue: Issue) -> None:
         if 'Deck Building' in labels:
             bug['cade_bug'] = True
 
-        age = (datetime.datetime.now() - issue.updated_at).days
+        age = age_in_days(issue)
         if 'Help Wanted' in labels:
             bug['help_wanted'] = True
         elif age > 60:

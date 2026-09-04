@@ -10,7 +10,7 @@ from magic.models import Competition
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_list, empty_page, retry_after_calling
 from shared.pd_exception import DoesNotExistException
 from shared.text import fold_accents, merge_slashes
 
@@ -577,7 +577,7 @@ def preaggregate_matchups_person() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_list)
 def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Container]:
     if person_id:
         table = '_matchup_ps_stats'
@@ -615,7 +615,7 @@ def load_matchups(where: str = 'TRUE', archetype_id: int | None = None, person_i
     """
     return [Container(m) for m in db().select(sql)]
 
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_list)
 def load_archetypes(order_by: str | None = None, person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> list[Archetype]:
     if person_id:
         table = '_arch_person_stats'
@@ -661,7 +661,7 @@ def load_archetypes(order_by: str | None = None, person_id: int | None = None, s
     return archs
 
 # Load a list of all archetypes where archetypes categories do NOT include the stats of their children. Thus Aggro is only decks assigned directly to Aggro and does not include Red Deck Wins. See also load_archetypes that does it the other way.
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_page)
 def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, limit: str = '', person_id: int | None = None, season_id: int | None = None, tournament_only: bool = False) -> tuple[list[Archetype], int]:
     if person_id:
         table = '_arch_disjoint_person_stats'
@@ -748,7 +748,7 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
 # season, compared against the `window_days` immediately before that. /metagame has no time axis, so
 # this is the one thing the home page can say about the metagame that a link to /metagame cannot.
 # Both windows are clamped to the season, so nothing from the previous season leaks in over rotation.
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_list)
 def load_movers_and_shakers(season_id: int, window_days: int = WINDOW_DAYS, min_matches: int = MIN_MATCHES) -> list[Archetype]:
     window = window_days * 60 * 60 * 24
     season_query = query.season_query(season_id)

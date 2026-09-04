@@ -5,30 +5,6 @@
         <p><a href="{{url}}">{{link_text}}</a></p>
     </section>
 {{/deck_tables}}
-{{#has_top_archetypes}}
-    <section>
-        <h2>{{_ Top Archetypes}}</h2>
-        <table>
-            <thead>
-                <th>Archetype</th>
-                <th># Decks</th>
-                <th>Record</th>
-                <th>Win %</th>
-            </thead>
-            <tbody>
-                {{#archetypes}}
-                    <tr data-href="{{url}}" class="clickable">
-                        <td><a href="{{url}}">{{name}}</a></td>
-                        <td class="n">{{num_decks}}</td>
-                        <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                        <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
-                    </tr>
-                {{/archetypes}}
-            </tbody>
-        </table>
-        <p><a href="{{archetypes_url}}">{{_ More archetypes…}}</a></p>
-    </section>
-{{/has_top_archetypes}}
 {{#has_top_cards}}
     <section>
         <h2>{{_ Top Cards}}</h2>

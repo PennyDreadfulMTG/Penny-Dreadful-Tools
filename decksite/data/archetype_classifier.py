@@ -23,8 +23,10 @@ The structured answer makes the model identify the primary plan, intended castab
 literal decklist evidence, competing candidates, and whether the chosen name's qualifiers fit.
 These are judgment aids rather than mechanical color rules: reanimation targets, alternate
 costs, narrow sideboard splashes, and incidental activations can all be deliberately off-color.
-They are logged with the candidates and final choice so a bad suggestion can be investigated;
-confidence and the chosen archetype remain the only values stored in the database.
+They are logged with the candidates and final choice so a bad suggestion can be investigated.
+If cited evidence is not in the literal list, the answer is discarded and the nearest-deck
+fallback is used; this avoids both saving a hallucinated answer and paying to retry it hourly.
+Confidence and the chosen archetype remain the only values stored in the database.
 
 Playability and archetype card profiles are database-preaggregated, and load_decks can reuse
 Redis-cached deck objects. Similarity scores are still recomputed for every nonempty run; the
@@ -195,10 +197,12 @@ def _classify_one(api_key: str, model: str, d: Deck, meta: Metadata, new_cards: 
     unsupported_evidence = [name for name in evidence_cards if name not in listed_cards]
     if unsupported_evidence:
         logger.warning(
-            'archetype_classifier: deck %s cited cards absent from submitted decklist: %s',
+            'archetype_classifier: deck %s cited cards absent from submitted decklist: %s; using nearest-deck fallback',
             d.id,
             unsupported_evidence,
         )
+        _fallback_one(d)
+        return
     if chosen.upper() == NONE_ANSWER or chosen.lower() not in name_to_id:
         # Nothing fit: leave for a human. A future novelty pass can use this + possible_new_variant.
         return
@@ -384,9 +388,13 @@ def _base_root_ids() -> list[int]:
 
 def _fallback(decks: list[Deck]) -> None:
     for d in decks:
-        for s in getattr(d, 'similar_decks', []):
-            if s.reviewed and s.archetype_id is not None:
-                sim = int(100 * deck.similarity_score(d, s))
-                if d.archetype_id != s.archetype_id:
-                    archetype.assign(d.id, s.archetype_id, None, False, sim)
-                break
+        _fallback_one(d)
+
+
+def _fallback_one(d: Deck) -> None:
+    for s in getattr(d, 'similar_decks', []):
+        if s.reviewed and s.archetype_id is not None:
+            sim = int(100 * deck.similarity_score(d, s))
+            if d.archetype_id != s.archetype_id:
+                archetype.assign(d.id, s.archetype_id, None, False, sim)
+            break

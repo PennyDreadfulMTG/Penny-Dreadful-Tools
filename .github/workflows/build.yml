@@ -125,6 +125,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v7
+      with:
+        lfs: true  # The font sources the symbols font is built from are LFS objects.
     - name: Set up Python 3.13
       uses: actions/setup-python@v7
       with:

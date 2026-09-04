@@ -45,7 +45,7 @@ _seed: Container | None = None
 
 def _build_seed() -> Container:
     from decksite import database
-    from decksite.data import archetype, card, competition, deck, match, person
+    from decksite.data import archetype, card, competition, deck, match, person, season
     from decksite.database import db
     from decksite.main import APP
     from maintenance import insert_seasons
@@ -55,9 +55,12 @@ def _build_seed() -> Container:
         db().execute(f'CREATE DATABASE {SEED_DB_NAME} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci')
         db().execute(f'USE {SEED_DB_NAME}')
         database.setup()
+        # The schema's season table stops at season 21. deck_cache.season_id comes from it, so without this every season-scoped query is empty.
         insert_seasons.run()
+        # decksite.data.season caches the season table in a module-level list on first use. Any earlier test that called get_season_id() filled it from whatever database was configured then (in CI a schema-only one), so it must be dropped here and again on teardown.
+        season.SEASONS.clear()
         # A fresh schema has archetypes but no closure rows (prod gets those when archetypes are created through the admin pages) and every archetype query goes through the closure table.
-        db().execute('INSERT INTO archetype_closure (ancestor, descendant, depth) SELECT id, id, 0 FROM archetype')  # The schema's season table stops years ago; deck_cache.season_id comes from it, so without this every season-scoped query is empty.
+        db().execute('INSERT INTO archetype_closure (ancestor, descendant, depth) SELECT id, id, 0 FROM archetype')
 
         now = dtutil.now()
         competition_id = competition.get_or_insert_competition(now - datetime.timedelta(days=1), now - datetime.timedelta(hours=20), COMPETITION_NAME, COMPETITION_SERIES, 'https://example.com/smoke-test-tournament', Top.EIGHT)
@@ -126,6 +129,7 @@ def _verify_seed(num_decks: int) -> None:
 
 @pytest.fixture
 def seeded_db() -> Iterator[Container]:
+    from decksite.data import season
     global _seed
     old_db_name = configuration.get_str('decksite_database')
     configuration.CONFIG['decksite_database'] = SEED_DB_NAME
@@ -135,3 +139,4 @@ def seeded_db() -> Iterator[Container]:
         yield _seed
     finally:
         configuration.CONFIG['decksite_database'] = old_db_name
+        season.SEASONS.clear()

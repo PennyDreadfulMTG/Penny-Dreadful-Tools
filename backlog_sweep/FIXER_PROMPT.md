@@ -78,10 +78,22 @@ Never print the contents of `config.json`; it holds real credentials.
      full suite once the bootstrap above has run). If the environment cannot run
      these, record exactly what you ran and what failed for environmental reasons in
      `tests.detail` — do NOT claim tests passed if they didn't run.
+   - **If you touched a template, CSS, JS/JSX, `decksite/controllers/api.py` or
+     `decksite/data/clauses.py`, also run `uv run --frozen python dev.py smoke`**
+     (renders every page with a live table against a seeded database and makes the
+     API calls the browser would make; a few seconds, needs the database from the
+     bootstrap). For CSS/JS/menu changes additionally run
+     `uv run --frozen playwright install chromium && uv run --frozen python dev.py browser`
+     (headless Chromium: tables fill, no JS errors, menu usable at every width).
+     A 200 from a page is not evidence that the page works; two sweep PRs in
+     September 2026 shipped an invisible menu and an empty /decks/ with green CI.
 4. Self-review `git diff origin/master...` — every hunk must serve #{{ISSUE}}.
-5. Commit (imperative one-line summary mentioning the issue, e.g.
+5. Never mark a PR ready for review, never approve, and never comment `@mergifyio`
+   anything. Those are the human's actions; doing them yourself is how unreviewed
+   code reached production on 2026-09-02.
+6. Commit (imperative one-line summary mentioning the issue, e.g.
    `Fix <thing> (#{{ISSUE}})`) and push: `git push -u origin {{BRANCH}}`.
-6. Write the PR title/body for the dispatcher. Body must contain: what was wrong,
+7. Write the PR title/body for the dispatcher. Body must contain: what was wrong,
    what changed, how it was validated (including any environmental test caveats,
    honestly disclosed), and the line `Fixes #{{ISSUE}}`.
 
@@ -133,9 +145,10 @@ command ran and passed.
   `logsite_migrations/`, `.github/workflows/`, `Dockerfile`, `setup.py`,
   `pyproject.toml` dependency sections) then opens the PR:
   `gh pr create --base master --head <branch> --title … --body-file … --draft`
-  (**draft is mandatory** — see `DISPATCHER_SPEC.md` §8; Mergify auto-merges
-  non-draft PRs authored by bakert, so draft is the merge brake, and bakert marks
-  a PR ready for review when he has reviewed it). The dispatcher verifies
+  (**draft is mandatory** — see `DISPATCHER_SPEC.md` §8. No Mergify rule matches
+  PRs authored by bakert, so nothing merges one until a human clicks merge or
+  comments `@mergifyio queue`; draft keeps it off the reviewable pile until
+  bakert has reviewed it and marks it ready). The dispatcher verifies
   `isDraft=true` before journaling `PR_OPENED` and closes the PR if it is not.
   Validation failure ⇒ escalate, do not open the PR.
 - `tests.result != "passed"` does not block the PR but must be disclosed in the body

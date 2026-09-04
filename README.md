@@ -146,6 +146,13 @@ There are various levels of granularity but in general use you want:
 
 Check the dev.py source code for the full set of options including `unit`, `types`, `lint` (covered by `test` above) as well as `functional` (integration tests), `perf` (performance tests). `release` will take you all the way from your committed change to a PR via the tests (needs GitHub's commandline `gh` installed).
 
+Two more targets look at what a user would actually see, because a page can return 200 and still be broken:
+
+- `uv run --frozen python dev.py smoke` renders every page that has a "live" React table against a small seeded database (`decksite/conftest.py`), makes exactly the API request the browser's DataManager would make from the page's `data-*` attributes, and checks rows come back. A few seconds. Run it when you touch templates, CSS, JSX, `decksite/controllers/api.py` or `decksite/data/clauses.py`.
+- `uv run --frozen python dev.py browser` loads real pages in headless Chromium (`decksite/browser_test.py`): live tables fill, no request fails, no JavaScript throws, and the navigation submenu is genuinely visible and clickable at mobile, medium and wide widths, by mouse and by touch. Needs `uv run --frozen playwright install chromium` once and a built JS bundle. About 30 seconds. `--url https://pennydreadfulmagic.com` runs the same checks read-only against a deployed site; the `Production Canary` GitHub workflow does that after every push to master and every two hours.
+
+CI runs the browser tests as a separate `browser` job, in parallel, so they add no time to the main test job. It is a required check: `.mergify.yml` lists it alongside `mypy`, `lint`, `test` and `jslint`, so a red `browser` job blocks the merge.
+
 ### Validating card-import changes
 
 Changes to the Scryfall importer should also be checked with two disposable databases made from exactly the same bulk data:

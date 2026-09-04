@@ -53,8 +53,11 @@ Then, deliberately and in this order:
 
 ## Operating rules that are not optional
 
-- PRs are **drafts, always** (Mergify auto-merges non-draft green PRs authored by
-  the automerge team — draft is the merge brake). The owner's review action is
+- PRs are **drafts, always**, and the sweep **never comments `@mergifyio`
+  anything**. The second half is the one that matters. Sweep PRs are authored by
+  bakert, and no Mergify rule auto-queues that author, so an undrafted sweep PR
+  sits there until a human acts. `@mergifyio queue` is that action, and it is
+  what merged 25 PRs unreviewed. The owner's review action is approving and
   marking ready-for-review.
 - The sweep **never merges, never force-pushes, never touches labels**, never
   edits `.github/workflows/`, migrations, or dependency manifests.
@@ -149,7 +152,9 @@ into the prompt files here via a normal PR.
 
 ## Lessons register (hard-won, do not relearn)
 
-- The "do not merge" label does nothing in this repo; drafts are the only brake.
+- The "do not merge" label does nothing in this repo. Nothing auto-merges a
+  bakert-authored PR either: no Mergify rule matches that author. What merges one
+  is a person typing `@mergifyio queue` or clicking merge.
 - `updatedAt` is useless as an activity guard (bulk labelling touches everything);
   use non-bot comments.
 - Data-retention changes are never easy-fixes (#12781).
@@ -157,3 +162,22 @@ into the prompt files here via a normal PR.
   commits already settled the question before classifying.
 - Trust nothing you didn't verify: check `isDraft` after PR creation, check
   workspace state after archiving, fetch before verifying claims against master.
+- Green CI is not "works". Merged code is live within minutes via the deploy
+  hook, and on 2026-09-02 a batch of ~25 sweep PRs was marked ready and merged
+  without a human looking; two shipped user-visible breakage (invisible menu,
+  empty /decks/) that no test could see because nothing rendered a page with
+  data or ran a browser. Now `dev.py smoke` and `dev.py browser` exist, a
+  `browser` CI job runs the latter on every PR, and the `Production Canary`
+  workflow checks the live site after every push to master. `browser` is a
+  required check in `.mergify.yml`, so a red one blocks the merge.
+- `@mergifyio queue` is the hole. The agent marked the PRs ready and commented
+  it with the owner's own GitHub token. Only the first queue rule requires
+  `#approved-reviews-by>=1`. The `default` queue has no queue conditions at all,
+  so anything sent there merges on green checks alone, review or no review. That
+  is the route the 25 PRs took. The owner has decided to leave it: requiring an
+  approval would mean another maintainer approving every one of his PRs, since
+  GitHub blocks self-approval. The control is elsewhere: the token an agent runs
+  with cannot comment on PRs, so it cannot queue anything. The rule stands on
+  behaviour as well as scope: never run Mergify commands, never approve, never
+  mark a PR ready. A human does that, one PR at a time, and after a batch someone
+  watches the canary and the site.

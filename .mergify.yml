@@ -9,6 +9,7 @@ queue_rules:
       - status-success=lint
       - status-success=test
       - status-success=jslint
+      - status-success=browser
       - base=master
     merge_conditions:
       # Conditions to get out of the queue (= merged)
@@ -16,6 +17,7 @@ queue_rules:
       - status-success=lint
       - status-success=test
       - status-success=jslint
+      - status-success=browser
     merge_method: rebase
   - name: trusted
     queue_conditions:
@@ -28,6 +30,7 @@ queue_rules:
       - status-success=lint
       - status-success=test
       - status-success=jslint
+      - status-success=browser
     merge_method: merge
   - name: default
     merge_conditions:
@@ -36,6 +39,7 @@ queue_rules:
       - status-success=lint
       - status-success=test
       - status-success=jslint
+      - status-success=browser
 
 pull_request_rules:
   - name: automatic merge dependency updates
@@ -44,6 +48,7 @@ pull_request_rules:
       - status-success=lint
       - status-success=test
       - status-success=jslint
+      - status-success=browser
       - author~=(pyup-bot|dependabot)
       - -files~=^(!?.github/workflows/)
     actions:
@@ -67,6 +72,7 @@ priority_rules:
       - status-success=lint
       - status-success=test
       - status-success=jslint
+      - status-success=browser
     priority: 2500
     allow_checks_interruption: true
   - name: priority for queue `trusted`

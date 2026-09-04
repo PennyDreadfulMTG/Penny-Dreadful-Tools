@@ -42,7 +42,9 @@ jobs:
     - name: Run browser tests against production
       env:
         PD_BROWSER_BASE_URL: ${{ github.event.inputs.url || 'https://pennydreadfulmagic.com' }}
-      run: uv run --frozen pytest --no-cov -p no:cacheprovider --noconftest decksite/browser_test.py
+        PYTHONPATH: .
+      # importlib mode imports the test file without importing the decksite package, whose __init__ opens a database connection; there is no database here.
+      run: uv run --frozen pytest --no-cov -p no:cacheprovider --noconftest --import-mode=importlib decksite/browser_test.py
     - name: Notify Discord
       if: failure() && env.DISCORD_WEBHOOK_URL != ''
       env:

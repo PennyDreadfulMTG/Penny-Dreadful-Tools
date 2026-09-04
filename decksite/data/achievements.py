@@ -12,20 +12,22 @@ from magic import tournaments
 from magic.models import Deck
 from shared import logger
 from shared.container import Container
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_optional, retry_after_calling
 from shared.pd_exception import InvalidArgumentException
 
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
 def load_achievements(p: Person | None, season_id: int | None, with_detail: bool = False) -> list[Container]:
+    if with_detail and p is None:
+        raise InvalidArgumentException('A person is required when loading achievement detail.')
     achievements = []
     for a in Achievement.all_achievements:
         desc = Container({'title': a.title, 'description_safe': a.description_safe})
         desc.summary = a.load_summary(season_id=season_id)
         desc.legend = a.display(p) if p else ''
         if with_detail:
-            desc.detail = a.detail(p, season_id=season_id)
+            desc.detail = a.detail(cast(Person, p), season_id=season_id)
         else:
             desc.percent = a.percent(season_id=season_id)
             desc.leaderboard = a.leaderboard(season_id=season_id)
@@ -170,7 +172,7 @@ class Achievement:
         return ''
 
     # Note: load_summary must be overridden if in_db=False!
-    @retry_after_calling(preaggregate_achievements)
+    @retry_after_calling(preaggregate_achievements, fallback=empty_optional)
     def load_summary(self, season_id: int | None = None) -> str | None:
         season_condition = query.season_query(season_id)
         sql = f'SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 AND {season_condition}'
@@ -183,7 +185,7 @@ class Achievement:
             return f'Earned{times_text} by {players_text}.'
         return None
 
-    @retry_after_calling(preaggregate_achievements)
+    @retry_after_calling(preaggregate_achievements, fallback=lambda: 0.0)
     def percent(self, season_id: int | None = None) -> float:
         season_condition = query.season_query(season_id)
         sql = f'SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}'
@@ -193,7 +195,7 @@ class Achievement:
         except ZeroDivisionError:
             return 0
 
-    @retry_after_calling(preaggregate_achievements)
+    @retry_after_calling(preaggregate_achievements, fallback=empty_optional)
     def detail(self, p: Person, season_id: int | None = None) -> list[Deck] | None:
         if self.detail_sql is None:
             return None
@@ -218,6 +220,7 @@ class Achievement:
             result[f] = True
         return result
 
+    @retry_after_calling(preaggregate_achievements, fallback=empty_optional)
     def leaderboard(self, season_id: int | None = None) -> list[Container] | None:
         season_condition = query.season_query(season_id)
         person_query = query.person_query()
@@ -332,7 +335,7 @@ class TournamentOrganizer(Achievement):
         clarification = ' (all-time)' if season_id != 0 else ''
         return f'Earned by {len(self.hosts)} players{clarification}.'
 
-    @retry_after_calling(preaggregate_achievements)
+    @retry_after_calling(preaggregate_achievements, fallback=lambda: 0.0)
     def percent(self, season_id: int | None = None) -> float:
         sql = 'SELECT COUNT(*) AS mnum FROM _achievements'
         r = db().select(sql)[0]

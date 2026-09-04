@@ -5,7 +5,7 @@ from magic.models import Card
 from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_dict, empty_list, empty_page, retry_after_calling
 
 
 def load_competition_cards(competition_id: int, order_by: str, limit: str) -> tuple[list[Card], int]:
@@ -255,7 +255,6 @@ def preaggregate_trailblazer() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
-@retry_after_calling(preaggregate)
 def load_cards(
         additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',
@@ -270,6 +269,7 @@ def load_cards(
     cs, _ = load_cards_with_total(additional_where, order_by, limit, archetype_id, competition_id, person_id, season_id, tournament_only, all_legal)
     return cs
 
+@retry_after_calling(preaggregate, fallback=empty_page)
 def load_cards_with_total(
         additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',
@@ -333,7 +333,6 @@ def load_cards_with_total(
         c.played_competitively = c.wins or c.draws or c.losses
     return cs, 0 if not rs else rs[0]['total']
 
-@retry_after_calling(preaggregate_card)
 def load_card(name: str, tournament_only: bool = False, season_id: int | None = None) -> Card:
     cs = load_cards(additional_where=f'name = {sqlescape(name)}', order_by='NULL', season_id=season_id, tournament_only=tournament_only)
     c = guarantee.at_most_one(cs)
@@ -346,7 +345,7 @@ def load_card(name: str, tournament_only: bool = False, season_id: int | None = 
     c.win_percent = None
     return c
 
-@retry_after_calling(preaggregate_unique)
+@retry_after_calling(preaggregate_unique, fallback=empty_list)
 def unique_cards_played(person_id: int) -> list[str]:
     sql = """
         SELECT
@@ -358,7 +357,7 @@ def unique_cards_played(person_id: int) -> list[str]:
     """
     return db().values(sql, [person_id])
 
-@retry_after_calling(preaggregate_trailblazer)
+@retry_after_calling(preaggregate_trailblazer, fallback=empty_dict)
 def trailblazer_cards(person_id: int) -> dict[str, int]:
     sql = """
         SELECT

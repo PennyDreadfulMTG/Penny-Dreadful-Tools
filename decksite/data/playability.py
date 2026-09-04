@@ -4,7 +4,7 @@ from find import search
 from shared import logger
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_dict, empty_list, retry_after_calling
 from shared.pd_exception import DatabaseNoSuchTableException
 
 SIDEBOARD_WEIGHT = 0.2
@@ -25,13 +25,13 @@ def preaggregate() -> None:
     preaggregate_season_playability()
     preaggregate_playability()
 
-def _season_table_and_where(season_id: int) -> tuple[str, str]:
+def _season_table_and_where(season_id: int | None) -> tuple[str, str]:
     if season_id:
         return '_season_archetype_playability', f'p.season_id = {season_id}'
     return '_archetype_playability', 'TRUE'
 
 # Map of archetype_id => cardname where cardname is the key card for that archetype for the supplied season, or all time if 0 supplied as season_id.
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_dict)
 def key_cards(season_id: int) -> dict[int, str]:
     table, where = _season_table_and_where(season_id)
     sql = f"""
@@ -58,8 +58,8 @@ def key_cards(season_id: int) -> dict[int, str]:
     return {r['archetype_id']: r['name'] for r in db().select(sql)}
 
 
-@retry_after_calling(preaggregate)
-def key_cards_long(season_id: int, archetype_ids: list[int] | None = None) -> dict[int, list[str]]:
+@retry_after_calling(preaggregate, fallback=empty_dict)
+def key_cards_long(season_id: int | None, archetype_ids: list[int] | None = None) -> dict[int, list[str]]:
     table, where = _season_table_and_where(season_id)
     where = f'({where}) AND p.playability > {USEFUL_PLAYABILITY_THRESHOLD}'
     if archetype_ids is not None:
@@ -85,7 +85,7 @@ def key_cards_long(season_id: int, archetype_ids: list[int] | None = None) -> di
         r[row['archetype_id']] = r.get(row['archetype_id'], []) + [row['name']]
     return r
 
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_dict)
 def playability() -> dict[str, float]:
     sql = """
         SELECT
@@ -96,7 +96,7 @@ def playability() -> dict[str, float]:
     """
     return {r['name']: float(r['playability']) for r in db().select(sql)}
 
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_list)
 def season_playability(season_id: int) -> list[Container]:
     # This is a temporary thing used to generate banners.
     # Feel free to replace it with something better.
@@ -113,7 +113,7 @@ def season_playability(season_id: int) -> list[Container]:
     """
     return [Container(r) for r in db().select(sql)]
 
-@retry_after_calling(preaggregate)
+@retry_after_calling(preaggregate, fallback=empty_dict)
 def rank() -> dict[str, int]:
     sql = query.ranks_select()
     return {r['name']: r['rank'] for r in db().select(sql)}

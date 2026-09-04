@@ -6,7 +6,7 @@ from decksite.database import db
 from shared import dtutil, guarantee, logger
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_page, retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DatabaseException, DoesNotExistException
 
 
@@ -210,7 +210,7 @@ def preaggregate_head_to_head() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
-@retry_after_calling(achievements.preaggregate_achievements)
+@retry_after_calling(achievements.preaggregate_achievements, fallback=lambda: None)
 def set_achievements(people: list[Person], season_id: int | None = None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = achievements.load_query(people_by_id, season_id)
@@ -220,7 +220,7 @@ def set_achievements(people: list[Person], season_id: int | None = None) -> None
         people_by_id[result['id']].achievements = result
         people_by_id[result['id']].achievements.pop('id')
 
-@retry_after_calling(preaggregate_head_to_head)
+@retry_after_calling(preaggregate_head_to_head, fallback=empty_page)
 def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: int | None = None) -> tuple[Sequence[Container], int]:
     season_query = query.season_query(season_id)
     sql = f"""

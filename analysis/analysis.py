@@ -8,7 +8,7 @@ from magic.models.card import Card
 from shared import configuration
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_list, retry_after_calling
 
 
 def preaggregate() -> None:
@@ -66,7 +66,7 @@ def preaggregate_played_person() -> None:
     """.format(table=table, logsite_database=configuration.get('logsite_database'), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
 
-@retry_after_calling(preaggregate_played_person)
+@retry_after_calling(preaggregate_played_person, fallback=empty_list)
 def played_cards_by_person(person_id: int, season_id: int) -> list[Card]:
     sql = f"""
         SELECT

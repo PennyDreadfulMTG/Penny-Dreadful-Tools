@@ -4,6 +4,7 @@ from unittest import mock
 
 import pytest
 
+from decksite import APP
 from decksite.data import archetype, clauses
 from decksite.database import db
 from decksite.testutil import with_test_db
@@ -48,6 +49,15 @@ def test_assign_clears_cached_deck_after_committing(monkeypatch: pytest.MonkeyPa
 
     database.commit.assert_called_once_with('assign_archetype')
     clear.assert_called_once_with('decksite:deck:42')
+
+
+@with_test_db
+@pytest.mark.functional
+def test_missing_movers_preaggregate_returns_no_data_during_a_web_request() -> None:
+    with APP.test_request_context('/'):
+        assert archetype.load_movers_and_shakers(1) == []
+
+    assert db().value("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = '_arch_day_stats'") == 0
 
 
 @with_test_db

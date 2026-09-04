@@ -302,7 +302,7 @@ def h2h_api() -> Response:
     """
     order_by = clauses.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args)
-    season_id = seasons.season_id(str(request.args.get('seasonId')), None)
+    season_id = cast(int | None, seasons.season_id(str(request.args.get('seasonId')), None))
     person_id = int(request.args.get('personId', 0))
     q = request.args.get('q', '').strip()
     where = clauses.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
@@ -444,7 +444,7 @@ def archetypes2_api() -> Response:
     order_by = clauses.archetype_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page, page_size, limit = pagination(request.args, DEFAULT_GRID_PAGE_SIZE)
     tournament_only = request.args.get('deckType') == 'tournament'
-    season_id = seasons.season_id(str(request.args.get('seasonId')), None)
+    season_id = cast(int | None, seasons.season_id(str(request.args.get('seasonId')), None))
     results, total = archs.load_disjoint_archetypes(where=where, order_by=order_by, limit=limit, season_id=season_id, tournament_only=tournament_only)
     archetype_key_cards = playability.key_cards_long(season_id, [r.id for r in results])
     cards = oracle.cards_by_name()

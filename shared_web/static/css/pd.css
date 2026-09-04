@@ -921,19 +921,13 @@ When you are in a middle width the main menu is always shown but the submenu is 
     }
 }
 
-/* Fade hover submenus at every width. Touch navigation does not sustain this hover state. */
+/* Show hover submenus at every width. Touch navigation does not sustain this hover state. */
 nav li > .item ~ .submenu {
     display: block;
-    opacity: 0;
-    transition:
-        opacity 0.2s ease,
-        visibility 0s linear 0.2s;
     visibility: hidden;
     width: var(--submenu-width);
 }
 nav li.submenu-open > .item ~ .submenu {
-    opacity: 1;
-    transition-delay: 0s;
     visibility: visible;
     z-index: 3;
 }
@@ -945,7 +939,6 @@ nav li.submenu-open > .item ~ .submenu {
     }
     nav li > .current ~ .submenu {
         display: block;
-        opacity: 1;
         visibility: visible;
         width: var(--submenu-width);
     }

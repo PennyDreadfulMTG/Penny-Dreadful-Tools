@@ -43,8 +43,11 @@ jobs:
       env:
         PD_BROWSER_BASE_URL: ${{ github.event.inputs.url || 'https://pennydreadfulmagic.com' }}
         PYTHONPATH: .
-      # importlib mode imports the test file without importing the decksite package, whose __init__ opens a database connection; there is no database here.
-      run: uv run --frozen pytest --no-cov -p no:cacheprovider --noconftest --import-mode=importlib decksite/browser_test.py
+      # Collecting a test inside the decksite package imports decksite/__init__.py, which opens a database connection, and there is no database here.
+      # So run a copy of the file from outside the package. Same as dev.py browser --url.
+      run: |
+        mkdir -p /tmp/canary && cp decksite/browser_test.py /tmp/canary/
+        uv run --frozen pytest --no-cov -p no:cacheprovider --noconftest --rootdir=/tmp/canary -o markers=browser /tmp/canary/browser_test.py
     - name: Notify Discord
       if: failure() && env.DISCORD_WEBHOOK_URL != ''
       env:

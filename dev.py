@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from collections.abc import Iterable
 
@@ -183,13 +185,16 @@ def do_browser(base_url: str | None) -> None:
         print(f'>>>> Running browser tests against {base_url}')
         env['PD_BROWSER_BASE_URL'] = base_url
         env['PYTHONPATH'] = '.'
-        # The root conftest wants a cards database and importing the decksite package opens a connection; the canary needs nothing but a browser.
-        args = ['--noconftest', '--import-mode=importlib']
+        # The root conftest wants a cards database and collecting a test inside the decksite package imports decksite/__init__.py, which opens a
+        # connection. The canary needs nothing but a browser, so run a copy of the file from outside the package (the canary workflow does the same).
+        outside = os.path.join(tempfile.mkdtemp(prefix='pd-browser-'), 'browser_test.py')
+        shutil.copyfile('decksite/browser_test.py', outside)
+        args = ['--noconftest', f'--rootdir={os.path.dirname(outside)}', '-o', 'markers=browser', outside]  # No pytest.ini out there, so register the marker by hand.
     else:
         print('>>>> Running browser tests against a local server (needs a database and a built JS bundle)')
         env['PD_BROWSER_TESTS'] = '1'
-        args = []
-    code = subprocess.call(['pytest', '--no-cov', '-p', 'no:cacheprovider', *args, 'decksite/browser_test.py'], env=env)
+        args = ['decksite/browser_test.py']
+    code = subprocess.call(['pytest', '--no-cov', '-p', 'no:cacheprovider', *args], env=env)
     if code:
         sys.exit(code)
 

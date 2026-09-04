@@ -164,6 +164,39 @@ def unit(argv: list[str]) -> None:
 def test(argv: list[str]) -> None:
     runtests(argv, '')
 
+SMOKE_TESTS = ['decksite/smoke_test.py', 'decksite/live_table_test.py', 'logsite/smoke_test.py']
+
+def do_smoke() -> None:
+    print('>>>> Running smoke tests (needs a database)')
+    code = subprocess.call(['pytest', '--no-cov', '-p', 'no:cacheprovider', *SMOKE_TESTS])
+    if code:
+        sys.exit(code)
+
+@cli.command()
+def smoke() -> None:
+    """Render every page with a live table against a seeded database and check the API calls the browser would make return rows. A few seconds."""
+    do_smoke()
+
+def do_browser(base_url: str | None) -> None:
+    env = dict(os.environ)
+    if base_url:
+        print(f'>>>> Running browser tests against {base_url}')
+        env['PD_BROWSER_BASE_URL'] = base_url
+        args = ['--noconftest']  # The root conftest wants a cards database; the canary needs nothing but a browser.
+    else:
+        print('>>>> Running browser tests against a local server (needs a database and a built JS bundle)')
+        env['PD_BROWSER_TESTS'] = '1'
+        args = []
+    code = subprocess.call(['pytest', '--no-cov', '-p', 'no:cacheprovider', *args, 'decksite/browser_test.py'], env=env)
+    if code:
+        sys.exit(code)
+
+@cli.command()
+@click.option('--url', default=None, help='Run read-only against a deployed site (for example https://pennydreadfulmagic.com) instead of a local server.')
+def browser(url: str | None = None) -> None:
+    """Load real pages in headless Chromium: live tables fill, nothing errors, the menu is usable at every width. Run `uv run playwright install chromium` once first."""
+    do_browser(url)
+
 def do_sort(fix: bool) -> None:
     print('>>>> Checking imports')
     args = ['-m', 'ruff', 'check', '.', '--select', 'I']

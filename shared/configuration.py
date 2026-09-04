@@ -212,7 +212,9 @@ def get(key: str) -> str | list[str] | int | float | None:
         print(f'CONFIG: {key}={cfg[key]}')
         return cfg[key]
     if key in cfg:
-        CONFIG.update(cfg)
+        # Cache everything we just read, but never clobber a value already in CONFIG: tests point decksite_database at a scratch database by writing to CONFIG directly.
+        for k, v in cfg.items():
+            CONFIG.setdefault(k, v)
         return cfg[key]
     if key in DEFAULTS:
         # Lock in the default value if we use it.

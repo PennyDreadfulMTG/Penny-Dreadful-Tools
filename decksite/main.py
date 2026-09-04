@@ -10,6 +10,7 @@ from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite.cache import cached
+from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import match as ms
@@ -29,7 +30,8 @@ def home() -> str:
     decks = ds.latest_decks(season_id=season_id)
     top_8_plus_basics = 'LIMIT 13'
     cards, total = cs.load_cards_with_total(limit=top_8_plus_basics, season_id=season_id)
-    view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats())
+    movers_and_shakers = archs.load_movers_and_shakers(season_id)
+    view = Home(ns.all_news(decks, max_items=10), decks, cards, ms.stats(), movers_and_shakers)
     return view.page()
 
 @APP.route('/export/<int:deck_id>/')

@@ -25,6 +25,17 @@ class SeasonStats(TypedDict):
 
 BASE_ARCHETYPES: dict[Archetype, Archetype] = {}
 
+# The length of each of the two periods movers and shakers compares. A week is short enough that
+# what it shows is news and long enough that most archetypes clear the minimum match count.
+WINDOW_DAYS = 7
+
+# Matches needed in one of the two windows before an archetype can be a mover. Because an archetype's
+# change in meta share is bounded by its meta share, a rare archetype cannot move far enough to reach
+# the top or bottom of the list anyway, and in practice anything from 1 to 15 picks the same
+# archetypes. This is set to a little more than a single 5-round league run purely as a floor against
+# a freak low-volume week.
+MIN_MATCHES = 6
+
 def load_archetype(archetype: int | str) -> Archetype:
     try:
         archetype_id = int(archetype)
@@ -197,6 +208,7 @@ def preaggregate() -> None:
     preaggregate_disjoint_archetype_person()
     preaggregate_matchups()
     preaggregate_matchups_person()
+    preaggregate_archetype_days()
 
 def preaggregate_archetypes() -> None:
     table = '_arch_stats'
@@ -393,6 +405,55 @@ def preaggregate_disjoint_archetype_person() -> None:
             ct.name
         HAVING
             season.season_id IS NOT NULL
+    """
+    preaggregation.preaggregate(table, sql)
+
+# Disjoint archetype stats bucketed by the UTC day a match was played on, so that we can compare
+# recent form against the immediately preceding period. Unlike the other archetype preaggregates
+# this is keyed on match date rather than deck creation date, because "what happened this week" is a
+# question about matches, not about when a decklist was first uploaded.
+def preaggregate_archetype_days() -> None:
+    table = '_arch_day_stats'
+    sql = f"""
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            archetype_id INT NOT NULL,
+            season_id INT NOT NULL,
+            day INT NOT NULL,
+            num_decks INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            deck_type ENUM('league', 'tournament', 'other') NOT NULL,
+            PRIMARY KEY (season_id, day, archetype_id, deck_type),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            d.archetype_id,
+            season.season_id,
+            FLOOR(m.date / 86400) * 86400 AS day,
+            COUNT(DISTINCT d.id) AS num_decks,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm ON dm.match_id = m.id
+        INNER JOIN
+            deck_match AS odm ON odm.match_id = m.id AND odm.deck_id <> dm.deck_id
+        INNER JOIN
+            deck AS d ON d.id = dm.deck_id
+        {query.competition_join()}
+        {query.season_join()}
+        GROUP BY
+            d.archetype_id,
+            season.season_id,
+            day,
+            ct.name
+        HAVING
+            season_id IS NOT NULL AND archetype_id IS NOT NULL
     """
     preaggregation.preaggregate(table, sql)
 
@@ -658,6 +719,75 @@ def load_disjoint_archetypes(where: str = 'TRUE', order_by: str | None = None, l
         {limit}
     """
     return archetype_list_from(sql, order_by is None)
+
+# Archetypes whose share of the metagame has moved most over the last `window_days` days of the
+# season, compared against the `window_days` immediately before that. /metagame has no time axis, so
+# this is the one thing the home page can say about the metagame that a link to /metagame cannot.
+# Both windows are clamped to the season, so nothing from the previous season leaks in over rotation.
+@retry_after_calling(preaggregate)
+def load_movers_and_shakers(season_id: int, window_days: int = WINDOW_DAYS, min_matches: int = MIN_MATCHES) -> list[Archetype]:
+    window = window_days * 60 * 60 * 24
+    season_query = query.season_query(season_id)
+    sql = f"""
+        WITH bounds AS (
+            -- One day past the most recent day with any matches in this season. For the current
+            -- season that is tomorrow; for a past season it is the day after the season ended.
+            SELECT
+                MAX(day) + 86400 AS end_date
+            FROM
+                _arch_day_stats
+            WHERE
+                {season_query}
+        ),
+        windows AS (
+            SELECT
+                ads.archetype_id,
+                SUM(CASE WHEN ads.day >= b.end_date - {window} THEN ads.wins + ads.losses + ads.draws ELSE 0 END) AS num_matches,
+                SUM(CASE WHEN ads.day >= b.end_date - {window} THEN ads.wins ELSE 0 END) AS wins,
+                SUM(CASE WHEN ads.day >= b.end_date - {window} THEN ads.losses ELSE 0 END) AS losses,
+                SUM(CASE WHEN ads.day >= b.end_date - {window} THEN ads.draws ELSE 0 END) AS draws,
+                SUM(CASE WHEN ads.day < b.end_date - {window} THEN ads.wins + ads.losses + ads.draws ELSE 0 END) AS previous_num_matches
+            FROM
+                _arch_day_stats AS ads
+            CROSS JOIN
+                bounds AS b
+            WHERE
+                ({season_query}) AND ads.day >= b.end_date - {window * 2} AND ads.day < b.end_date
+            GROUP BY
+                ads.archetype_id
+        ),
+        totals AS (
+            SELECT
+                SUM(num_matches) AS total_matches,
+                SUM(previous_num_matches) AS previous_total_matches
+            FROM
+                windows
+        )
+        SELECT
+            a.id,
+            a.name,
+            w.num_matches,
+            w.wins,
+            w.losses,
+            w.draws,
+            CAST(ROUND((w.wins / NULLIF(w.wins + w.losses, 0)) * 100, 1) AS DOUBLE) AS win_percent,
+            w.num_matches / t.total_matches AS meta_share,
+            w.num_matches / t.total_matches - (CASE WHEN t.previous_total_matches > 0 THEN w.previous_num_matches / t.previous_total_matches ELSE 0 END) AS meta_share_change
+        FROM
+            windows AS w
+        INNER JOIN
+            archetype AS a ON a.id = w.archetype_id
+        CROSS JOIN
+            totals AS t
+        WHERE
+            -- Either window will do: an archetype that played 90 matches last week and 11 this week
+            -- is the most interesting faller there is, and a floor on the current window alone would
+            -- be exactly the thing that hid it.
+            GREATEST(w.num_matches, w.previous_num_matches) >= {min_matches}
+        ORDER BY
+            meta_share_change DESC, w.num_matches DESC, a.name
+    """
+    return [Archetype(r) for r in db().select(sql)]
 
 def archetype_list_from(sql: str, should_preorder: bool) -> tuple[list[Archetype], int]:
     rs = db().select(sql)

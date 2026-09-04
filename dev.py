@@ -182,7 +182,9 @@ def do_browser(base_url: str | None) -> None:
     if base_url:
         print(f'>>>> Running browser tests against {base_url}')
         env['PD_BROWSER_BASE_URL'] = base_url
-        args = ['--noconftest']  # The root conftest wants a cards database; the canary needs nothing but a browser.
+        env['PYTHONPATH'] = '.'
+        # The root conftest wants a cards database and importing the decksite package opens a connection; the canary needs nothing but a browser.
+        args = ['--noconftest', '--import-mode=importlib']
     else:
         print('>>>> Running browser tests against a local server (needs a database and a built JS bundle)')
         env['PD_BROWSER_TESTS'] = '1'

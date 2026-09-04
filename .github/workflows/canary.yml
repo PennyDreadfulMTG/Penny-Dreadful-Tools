@@ -1,0 +1,51 @@
+name: Production Canary
+# Merged code reaches production within minutes via a deploy hook. This runs the read-only browser smoke tests
+# (decksite/browser_test.py) against the live site shortly after every push to master and on a schedule, so a
+# regression that CI could not see (empty tables, invisible menu, JS errors) is caught in minutes, not from user reports.
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '17 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Site to check
+        default: https://pennydreadfulmagic.com
+
+concurrency:
+  group: production-canary
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    name: canary
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.13'
+    - name: Install uv
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      with:
+        version: '0.9.26'
+        enable-cache: true
+    - name: Install dependencies
+      run: uv sync --frozen --dev
+    - name: Install Chromium
+      run: uv run --frozen playwright install --with-deps chromium
+    - name: Wait for the deploy hook
+      if: github.event_name == 'push'
+      run: sleep 90
+    - name: Run browser tests against production
+      env:
+        PD_BROWSER_BASE_URL: ${{ github.event.inputs.url || 'https://pennydreadfulmagic.com' }}
+      run: uv run --frozen pytest --no-cov -p no:cacheprovider --noconftest decksite/browser_test.py
+    - name: Notify Discord
+      if: failure() && env.DISCORD_WEBHOOK_URL != ''
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: |
+        curl -sS -H 'Content-Type: application/json' -d "{\"content\": \"Production canary FAILED after ${{ github.event_name }} (${{ github.sha }}): ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" "$DISCORD_WEBHOOK_URL"

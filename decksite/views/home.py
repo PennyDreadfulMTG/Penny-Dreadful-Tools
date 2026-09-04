@@ -1,6 +1,7 @@
 from flask import url_for
 from flask_babel import gettext
 
+from decksite.data.archetype import WINDOW_DAYS, Archetype
 from decksite.view import View
 from magic import rotation, seasons, tournaments
 from magic.models import Card, Deck
@@ -9,11 +10,12 @@ from shared.container import Container
 
 
 class Home(View):
-    def __init__(self, news: list[Container], decks: list[Deck], cards: list[Card], matches_stats: dict[str, int]) -> None:
+    def __init__(self, news: list[Container], decks: list[Deck], cards: list[Card], matches_stats: dict[str, int], movers_and_shakers: list[Archetype]) -> None:
         super().__init__()
         self.setup_news(news)
         self.setup_decks(decks)
         self.setup_cards(cards)
+        self.setup_movers_and_shakers(movers_and_shakers)
         self.setup_rotation()
         self.setup_stats(matches_stats)
         self.setup_tournaments()
@@ -93,6 +95,15 @@ class Home(View):
         self.cards = self.top_cards  # To get prepare_card treatment
         self.cards_url = url_for('.cards')
 
+    def setup_movers_and_shakers(self, movers_and_shakers: list[Archetype]) -> None:
+        movers = biggest_movers(movers_and_shakers)
+        for a in movers:
+            a.meta_share_display = f'{a.meta_share * 100:.1f}%'
+            a.meta_share_change_display = f'{"↑" if a.meta_share_change > 0 else "↓"} {abs(a.meta_share_change) * 100:.1f}'
+        self.archetypes = movers  # Named archetypes so that View.prepare_archetypes gives them urls.
+        self.has_movers_and_shakers = len(movers) > 0
+        self.movers_and_shakers_window = gettext('Last %(days)d days', days=WINDOW_DAYS)
+
     def setup_rotation(self) -> None:
         self.season_start_display = dtutil.display_date(seasons.last_rotation())
         self.season_end_display = dtutil.display_date(seasons.next_rotation())
@@ -129,3 +140,13 @@ class Home(View):
                 ],
             },
         ]
+
+# movers_and_shakers arrives sorted by meta share change, most improved first. Show the biggest
+# risers and the biggest fallers, and if there aren't enough of one take more of the other, so that a
+# week where everything is up (the first week of a season) still fills the table.
+def biggest_movers(movers_and_shakers: list[Archetype], max_rows: int = 8, max_per_direction: int = 4) -> list[Archetype]:
+    risers = [a for a in movers_and_shakers if a.meta_share_change > 0]
+    fallers = [a for a in movers_and_shakers if a.meta_share_change < 0]
+    num_risers = min(len(risers), max(max_per_direction, max_rows - len(fallers)))
+    num_fallers = min(len(fallers), max_rows - num_risers)
+    return risers[:num_risers] + fallers[len(fallers) - num_fallers:]

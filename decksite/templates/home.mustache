@@ -5,6 +5,32 @@
         <p><a href="{{url}}">{{link_text}}</a></p>
     </section>
 {{/deck_tables}}
+{{#has_movers_and_shakers}}
+    <section>
+        <h2>{{_ Metagame}} <span class="subtitle">{{movers_and_shakers_window}}</span></h2>
+        <table>
+            <thead>
+                <th>Archetype</th>
+                <th class="n">Meta Share</th>
+                <th class="n">Change</th>
+                <th class="n">Record</th>
+                <th class="n">Win %</th>
+            </thead>
+            <tbody>
+                {{#archetypes}}
+                    <tr data-href="{{url}}" class="clickable">
+                        <td><a href="{{url}}">{{name}}</a></td>
+                        <td class="n">{{meta_share_display}}</td>
+                        <td class="n">{{meta_share_change_display}}</td>
+                        <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>
+                        <td class="n">{{win_percent}}</td>
+                    </tr>
+                {{/archetypes}}
+            </tbody>
+        </table>
+        <p><a href="{{metagame_url}}">{{_ More metagame…}}</a></p>
+    </section>
+{{/has_movers_and_shakers}}
 {{#has_top_cards}}
     <section>
         <h2>{{_ Top Cards}}</h2>

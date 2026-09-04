@@ -6,7 +6,7 @@ from magic.decklist import parse_line
 from magic.models import Deck
 from shared import logger
 from shared.container import Container
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_list, retry_after_calling
 from shared.pd_exception import InvalidDataException
 
 IGNORE: list[str] = ['Commander', 'Unclassified']
@@ -75,12 +75,12 @@ def cache_all_rules() -> None:
     preaggregation.preaggregate(table, sql)
     logger.warning(f'Done creating {table}')
 
-@retry_after_calling(cache_all_rules)
+@retry_after_calling(cache_all_rules, fallback=lambda: 0)
 def num_classified_decks() -> int:
     sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM _applied_rules'
     return db().value(sql)
 
-@retry_after_calling(cache_all_rules)
+@retry_after_calling(cache_all_rules, fallback=empty_list)
 def mistagged_decks() -> list[Deck]:
     sql = """
             SELECT
@@ -117,7 +117,7 @@ def mistagged_decks() -> list[Deck]:
         d.rule_id, d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
 
-@retry_after_calling(cache_all_rules)
+@retry_after_calling(cache_all_rules, fallback=empty_list)
 def doubled_decks() -> list[Deck]:
     sql = """
         SELECT
@@ -145,7 +145,7 @@ def doubled_decks() -> list[Deck]:
         d.archetypes_from_rules_names = ', '.join(f'{a.archetype_name} ({a.rule_id})' for a in archetypes_from_rules[d.id])
     return result
 
-@retry_after_calling(cache_all_rules)
+@retry_after_calling(cache_all_rules, fallback=empty_list)
 def overlooked_decks() -> list[Deck]:
     sql = """
             SELECT
@@ -174,7 +174,7 @@ def overlooked_decks() -> list[Deck]:
     ds = deck.load_decks(where=f'd.id IN ({ids_list})')
     return ds
 
-@retry_after_calling(cache_all_rules)
+@retry_after_calling(cache_all_rules, fallback=empty_list)
 def load_all_rules() -> list[Container]:
     result = []
     result_by_id = {}

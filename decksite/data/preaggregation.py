@@ -1,14 +1,15 @@
 from decksite.database import db
 from shared import logger
-from shared.pd_exception import DatabaseException
+from shared.pd_exception import LockNotAcquiredException
 
 
 def preaggregate(table: str, sql: str) -> None:
     lock_key = f'preaggregation:{table}'
     try:
         db().get_lock(lock_key, 60 * 5)
-    except DatabaseException as e:
+    except LockNotAcquiredException as e:
         logger.warning(f'Not preaggregating {table} because of {e}')
+        return
     db().execute('SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED')
     db().execute(f'DROP TABLE IF EXISTS _new{table}')
     db().execute(sql)

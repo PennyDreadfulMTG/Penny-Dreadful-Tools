@@ -5,7 +5,7 @@ from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.decorators import retry_after_calling
+from shared.decorators import empty_dict, retry_after_calling
 from shared.pd_exception import InvalidDataException
 
 SEASONS: list[Container] = []
@@ -118,7 +118,7 @@ def preaggregate_season_stats() -> None:
     values_s = ', '.join(values)
     db().execute(f'INSERT INTO {table} VALUES {values_s}')
 
-@retry_after_calling(preaggregate_season_stats)
+@retry_after_calling(preaggregate_season_stats, fallback=empty_dict)
 def season_stats() -> dict[int, dict[str, int | datetime.datetime]]:
     sql = """
         SELECT

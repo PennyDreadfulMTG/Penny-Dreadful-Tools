@@ -114,3 +114,41 @@ jobs:
       run: python build.py
     - name: Run jslint
       run: uv run --frozen python dev.py jslint
+
+  browser:
+    name: browser
+    runs-on: ubuntu-latest
+    env:
+      mysql_user: root
+      mysql_passwd: bad-password
+      mysql_host: 127.0.0.1
+
+    steps:
+    - uses: actions/checkout@v7
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.13'
+    - name: Install uv
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      with:
+        version: '0.9.26'
+        enable-cache: true
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v7.0.0
+      with:
+        node-version: 24.12.0
+        cache: npm
+    - uses: getong/mariadb-action@v1.11
+      with:
+        mysql root password: bad-password
+        mariadb version: 11
+    - name: Install dependencies
+      run: uv sync --frozen --dev
+    - name: Build javascript
+      run: npm ci && npm run build
+    - name: Install Chromium
+      run: uv run --frozen playwright install --with-deps chromium
+    - run: uv run --frozen python run.py init-cards
+    - name: Run browser tests
+      run: PD_BROWSER_TESTS=1 uv run --frozen pytest --no-cov -p no:cacheprovider decksite/browser_test.py

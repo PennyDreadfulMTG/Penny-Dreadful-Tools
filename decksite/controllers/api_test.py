@@ -4,6 +4,7 @@ from typing import Any, cast
 import pytest
 
 from decksite.controllers import api
+from decksite.database import db
 from decksite.main import APP
 from shared.container import Container
 
@@ -65,3 +66,35 @@ def test_card_api_returns_not_found_for_unknown_card() -> None:
 
     assert response.status_code == 404
     assert response.get_json()['code'] == 'NOTFOUND'
+
+
+@pytest.mark.functional
+def test_aggregate_apis_serialize_integer_stats_as_numbers(seeded_db: Container) -> None:
+    season_id = db().value('SELECT season_id FROM deck_cache LIMIT 1')
+    cases = [
+        ('/api/cards2/', {
+            'deckType': 'all', 'page': 0, 'pageSize': 1, 'seasonId': 'all', 'sortBy': 'numDecks', 'sortOrder': 'DESC',
+        }, ['numDecks', 'wins', 'losses', 'draws', 'record', 'perfectRuns', 'tournamentWins', 'tournamentTop8s']),
+        ('/api/people/', {
+            'page': 0, 'pageSize': 1, 'seasonId': 'all', 'sortBy': 'numDecks', 'sortOrder': 'DESC',
+        }, ['numDecks', 'wins', 'losses', 'draws', 'record', 'perfectRuns', 'tournamentWins', 'tournamentTop8s', 'numCompetitions']),
+        ('/api/archetypes2/', {
+            'deckType': 'all', 'page': 0, 'pageSize': 1, 'seasonId': season_id, 'sortBy': 'quality', 'sortOrder': 'AUTO',
+        }, ['numDecks', 'numMatches', 'wins', 'losses', 'draws', 'record', 'perfectRuns', 'tournamentWins', 'tournamentTop8s']),
+        ('/api/leaderboards/', {
+            'page': 0, 'pageSize': 1, 'seasonId': season_id, 'sortBy': 'points', 'sortOrder': 'DESC',
+        }, ['numDecks', 'wins', 'points']),
+        ('/api/h2h/', {
+            'page': 0, 'pageSize': 1, 'personId': seeded_db.person_id, 'seasonId': season_id, 'sortBy': 'numMatches', 'sortOrder': 'DESC',
+        }, ['numMatches', 'wins', 'losses', 'draws', 'record']),
+    ]
+
+    client = APP.test_client()
+    for path, query_string, fields in cases:
+        response = client.get(path, query_string=query_string)
+        assert response.status_code == 200, path
+        data = response.get_json()
+        assert data['objects'], path
+        for field in fields:
+            value = data['objects'][0][field]
+            assert isinstance(value, int) and not isinstance(value, bool), f'{path} {field} was {type(value).__name__}'

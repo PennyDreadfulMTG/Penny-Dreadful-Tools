@@ -158,6 +158,36 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_card_stats_are_numbers_and_card_summaries_are_locale_formatted(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site, locale='en-US')
+    with page.expect_response(lambda response: '/api/cards2/' in response.url) as response_info:
+        page.goto('/seasons/all/cards/')
+    assert not wait_for_live_tables(page)
+
+    data = response_info.value.json()
+    assert data['objects']
+    card = data['objects'][0]
+    fields = ['numDecks', 'wins', 'losses', 'draws', 'record', 'perfectRuns', 'tournamentWins', 'tournamentTop8s']
+    for field in fields:
+        assert isinstance(card[field], int) and not isinstance(card[field], bool), f'{field} was {type(card[field]).__name__}'
+
+    row = page.locator('.cardtable tbody tr').first
+    expected_num_decks = page.evaluate('(value) => value.toLocaleString()', card['numDecks'])
+    expected_win_percent = page.evaluate('(value) => value.toLocaleString([], {minimumFractionDigits: 1, maximumFractionDigits: 1})', card['winPercent'])
+    record = [card['wins'], card['losses']] + ([card['draws']] if card['draws'] > 0 else [])
+    expected_record = page.evaluate('(values) => values.map(value => value.toLocaleString()).join("–")', record)
+    expect(row.locator('.num-decks')).to_have_text(expected_num_decks)
+    expect(row.locator('.win-percent')).to_have_text(expected_win_percent)
+    expect(row.locator('.win-percent span')).to_have_attribute('title', f'Record: {expected_record}')
+    assert re.fullmatch(r'.*[.,]\d', row.locator('.win-percent').inner_text())
+
+    page.goto('/')
+    top_cards = page.locator('section').filter(has=page.get_by_role('heading', name='Top Cards'))
+    assert top_cards.locator('th').all_text_contents() == ['Card', '# Decks', 'Win %']
+    expect(top_cards.locator('tbody tr').first.locator('td').nth(2)).to_have_attribute('title', re.compile(r'^Record: [\d,.]+–[\d,.]+'))
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def submenu_items(page: 'Page') -> 'Locator':
     return page.locator('.menu > li:has(.submenu):visible')
 

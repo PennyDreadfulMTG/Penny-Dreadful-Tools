@@ -1373,13 +1373,6 @@ Force a consistent size of each column in react tables otherwise things "jump" a
     max-width: 5em;
 }
 
-/* We use the name 'card-record' for this rule not 'record' because Deck Table already has a .record.
-Although it displays a similar thing that maxes out around 7-1-1 for a long tournament run but a card's all time record size is unbounded. */
-.live .card-record {
-    min-width: 8em;
-    max-width: 8em;
-}
-
 .live .win-percent {
     min-width: 3em;
     max-width: 3em;

@@ -21960,6 +21960,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:13:37Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T20:25:33Z"
         }
       ],
       "issue": 12590,
@@ -21967,16 +21971,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15057 as finally merged. The dedicated prepare_archetypes_for_api helper preserves key-card filtering/capping, image URLs, null-safe match counts, color calculation over all key cards, and generic archetype preparation. An earlier draft added API-only optional arguments to generic preparation, but was replaced before merge. Current focused controller/prepare tests pass 12/12.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12590-consider-moving-the-key-cards-and-other",
         "ci": {
-          "checked_at": "2026-09-02T02:06:46Z",
+          "checked_at": "2026-09-05T20:25:33Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "0f1e4775036f1035aa8c5664de35baf7abb399b6",
+        "head_sha": "7c7e3b39a311c8c31bfc76d72e17e434cd531a0c",
+        "merged_at": "2026-09-02T19:08:39Z",
         "number": 15057,
         "opened_at": "2026-09-01T18:07:11Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15057"
@@ -40893,8 +40898,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8826,
-  "last_snapshot_at": "2026-09-05T19:25:50Z",
+  "last_seq": 8829,
+  "last_snapshot_at": "2026-09-05T20:25:33Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

@@ -8,7 +8,7 @@ from magic.models import Card, Printing
 from shared import configuration, fetch_tools, guarantee
 from shared.container import Container
 from shared.database import sqlescape, sqllikeescape
-from shared.pd_exception import DatabaseException, InvalidArgumentException, InvalidDataException, TooFewItemsException
+from shared.pd_exception import DatabaseException, DoesNotExistException, InvalidArgumentException, InvalidDataException, TooFewItemsException
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
@@ -52,7 +52,13 @@ def canonical_name_or_self(name: str) -> str:
         return name
 
 def load_card(name: str) -> Card:
-    return CARDS_BY_NAME.get(name) or load_cards([name])[0]
+    cached = CARDS_BY_NAME.get(name)
+    if cached is not None:
+        return cached
+    try:
+        return load_cards([name])[0]
+    except TooFewItemsException as e:
+        raise DoesNotExistException(f'Did not find card `{name}`') from e
 
 def load_cards(names: Iterable[str] | None = None, where: str | None = None) -> list[Card]:
     if names is not None:

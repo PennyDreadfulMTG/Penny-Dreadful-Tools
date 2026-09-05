@@ -8,6 +8,7 @@ import sqlalchemy as sa
 from flask import url_for
 
 from shared import dtutil
+from shared.pd_exception import DoesNotExistException
 
 from .. import db
 from ..db import DB as fsa
@@ -92,8 +93,18 @@ def create_match(match_id: int, format_name: str, comment: str, modules: list[st
     db.commit()
     return local
 
-def get_match(match_id: int) -> Match:
+def get_match(match_id: int | str) -> Match | None:
+    try:
+        match_id = int(match_id)
+    except (TypeError, ValueError):
+        return None
     return Match.query.filter_by(id=match_id).one_or_none()
+
+def load_match(match_id: int | str) -> Match:
+    local = get_match(match_id)
+    if local is None:
+        raise DoesNotExistException(f'Did not find match `{match_id}`')
+    return local
 
 def get_recent_matches() -> Any:
     return Match.query.order_by(Match.id.desc())

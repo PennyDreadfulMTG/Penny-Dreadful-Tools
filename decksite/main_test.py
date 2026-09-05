@@ -1,4 +1,7 @@
+from unittest.mock import Mock
+
 import pytest
+from flask import g
 
 from decksite import main
 from magic.models import Card
@@ -49,6 +52,23 @@ def test_image_route_passes_version_through_and_is_cacheable(monkeypatch: pytest
     assert not response.cache_control.no_cache
 
 
+def test_image_route_accepts_small_art_crop(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured = {}
+    monkeypatch.setattr(main.oracle, 'load_cards', lambda _names: [Card({'name': 'Reclaim'})])
+
+    def download_image(cards: list[Card], version: str = '') -> str:
+        captured['version'] = version
+        return 'LICENSE.md'
+
+    monkeypatch.setattr(main.image_fetcher, 'download_image', download_image)
+
+    with main.APP.test_request_context('/image/Reclaim/?version=art_crop_small'):
+        response = main.image('Reclaim')
+
+    assert response.status_code == 200
+    assert captured['version'] == 'art_crop_small'
+
+
 def test_image_route_rejects_unknown_version(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(main.oracle, 'load_cards', lambda _names: [Card({'name': 'Reclaim'})])
 
@@ -69,6 +89,15 @@ def test_image_requests_do_not_touch_the_session(monkeypatch: pytest.MonkeyPatch
 
     with main.APP.test_request_context('/image/Reclaim/?version=art_crop'):
         assert main.before_request() is None
+
+
+def test_image_teardown_closes_only_the_database_it_used() -> None:
+    magic_database = Mock()
+
+    with main.APP.test_request_context('/image/Reclaim/?version=art_crop'):
+        g.magic_database = magic_database
+
+    magic_database.close.assert_called_once_with()
 
 
 def test_image_route_rejects_an_art_crop_of_multiple_cards(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -93,17 +122,40 @@ def test_image_route_fallback_keeps_the_requested_version(monkeypatch: pytest.Mo
 
     assert response.status_code == 303
     assert response.location is not None
-    assert response.location.endswith('&version=art_crop')
+    assert response.location == 'https://api.scryfall.com/cards/named?exact=Nonesuch&format=image&version=art_crop'
 
 
-def test_image_route_falls_back_to_scryfall_when_the_fetch_fails(monkeypatch: pytest.MonkeyPatch) -> None:
-    """A cold cache plus a Scryfall 429 used to be a 500 per image. Send the browser to Scryfall for that one instead."""
+def test_small_art_crop_fallback_uses_scryfalls_art_crop(monkeypatch: pytest.MonkeyPatch) -> None:
+    def not_found(_names: list[str]) -> list[Card]:
+        raise TooFewItemsException('nope')
+
+    monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+
+    with main.APP.test_request_context('/image/Nonesuch/?version=art_crop_small'):
+        response = main.image('Nonesuch')
+
+    assert response.status_code == 303
+    assert response.location == 'https://api.scryfall.com/cards/named?exact=Nonesuch&format=image&version=art_crop'
+
+
+def test_image_route_returns_404_when_the_fetch_fails(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(main.oracle, 'load_cards', lambda _names: [Card({'name': 'Lovestruck Beast'})])
     monkeypatch.setattr(main.image_fetcher, 'download_image', lambda cards, version='': None)
 
     with main.APP.test_request_context('/image/Lovestruck%20Beast/?version=art_crop'):
         response = main.image('Lovestruck Beast')
 
+    assert response.status_code == 404
+
+
+def test_unknown_card_fallback_encodes_user_input(monkeypatch: pytest.MonkeyPatch) -> None:
+    def not_found(_names: list[str]) -> list[Card]:
+        raise TooFewItemsException('nope')
+
+    monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+
+    with main.APP.test_request_context('/image/Name%26format%3Djson/?version=art_crop'):
+        response = main.image('Name&format=json')
+
     assert response.status_code == 303
-    assert response.location == 'https://api.scryfall.com/cards/named?exact=Lovestruck Beast&format=image&version=art_crop'
-    assert not response.cache_control.max_age  # Must not be cached, or we never get the chance to serve it ourselves.
+    assert response.location == 'https://api.scryfall.com/cards/named?exact=Name%26format%3Djson&format=image&version=art_crop'

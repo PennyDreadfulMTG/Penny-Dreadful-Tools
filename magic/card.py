@@ -82,7 +82,7 @@ def base_query_specific_properties() -> TableDescription:
 
 def card_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'oracle_id', 'layout']:
+    for k in ['id', 'oracle_id', 'layout', 'default_printing_system_id', 'meld_result_printing_system_id']:
         props[k] = copy.deepcopy(BASE)
     props['id']['type'] = INTEGER
     props['id']['nullable'] = False
@@ -91,6 +91,10 @@ def card_properties() -> TableDescription:
     props['oracle_id']['type'] = UUID
     props['oracle_id']['unique'] = True
     props['layout']['nullable'] = False
+    props['default_printing_system_id']['type'] = UUID
+    props['default_printing_system_id']['scryfall'] = False
+    props['meld_result_printing_system_id']['type'] = UUID
+    props['meld_result_printing_system_id']['scryfall'] = False
     return props
 
 def face_properties() -> TableDescription:
@@ -138,7 +142,7 @@ def set_properties() -> TableDescription:
 
 def printing_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'system_id', 'flavor', 'artist', 'number', 'watermark', 'reserved', 'card_id', 'set_id', 'rarity_id', 'flavor_name']:
+    for k in ['id', 'system_id', 'flavor', 'artist', 'number', 'watermark', 'reserved', 'card_id', 'set_id', 'rarity_id', 'flavor_name', 'image_status']:
         props[k] = copy.deepcopy(BASE)
     for k in ['id', 'system_id', 'artist', 'card_id', 'set_id']:
         props[k]['nullable'] = False

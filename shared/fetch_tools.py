@@ -172,19 +172,39 @@ def store_image(url: str, path: str) -> requests.Response:
 
 async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
     logger.info(f'Async storing {url} in {path}')
+    temporary_path = ''
+    headers = {'User-Agent': USER_AGENT}
+    if urllib.parse.urlparse(url).hostname == 'api.scryfall.com':
+        headers['Accept'] = 'application/json'
     try:
-        async with aiohttp.ClientSession() as aios:
+        async with aiohttp.ClientSession(headers=headers) as aios:
             response = await aios.get(url)
-            with open(path, 'wb') as fout:
-                while True:
-                    chunk = await response.content.read(1024)
-                    if not chunk:
-                        break
-                    fout.write(chunk)
-            return response
+            if response.status != 200:
+                raise FetchException(f'Server returned {response.status} from {url}')
+            content_type = response.headers.get('Content-Type', '').split(';', maxsplit=1)[0].strip().lower()
+            if not content_type.startswith('image/'):
+                raise FetchException(f'Expected an image from {url}, got `{content_type or "no content type"}`')
 
-    except (urllib.error.HTTPError, aiohttp.ClientError) as e:
-        raise FetchException(e) from e
+            directory = os.path.dirname(os.path.abspath(path))
+            with tempfile.NamedTemporaryFile(dir=directory, delete=False) as fout:
+                temporary_path = fout.name
+                async for chunk in response.content.iter_chunked(1024):
+                    fout.write(chunk)
+
+            if not acceptable_file(temporary_path):
+                raise FetchException(f'Image from {url} was empty or unexpectedly small')
+            with Image.open(temporary_path) as image:
+                image.verify()
+            os.replace(temporary_path, path)
+            temporary_path = ''
+            return response
+    except FetchException:
+        raise
+    except (OSError, UnidentifiedImageError, aiohttp.ClientError) as e:
+        raise FetchException(f'Could not download a valid image from {url}: {e}') from e
+    finally:
+        if temporary_path and os.path.exists(temporary_path):
+            os.remove(temporary_path)
 
 class FetchException(OperationalException):
     pass

@@ -137,6 +137,7 @@ def base_query_lite() -> str:
 
 
 async def update_database_async(new_date: datetime.datetime) -> bool:
+    oracle_cards_task = asyncio.create_task(load_oracle_cards_async())
     try:
         sets = await fetcher.all_sets_async()
         local_cards = load_local_cards()
@@ -146,16 +147,18 @@ async def update_database_async(new_date: datetime.datetime) -> bool:
         else:
             all_cards, download_uri = await fetcher.all_cards_async()
     except Exception as e:
+        await oracle_cards_task
         print(f'Aborting database update because fetching from Scryfall failed: {e}')
         return False
+    oracle_cards = await oracle_cards_task
     try:
-        await insert_cards(new_date, sets, all_cards)
+        await insert_cards(new_date, sets, all_cards, oracle_cards)
         if download_uri:
             configuration.last_good_bulk_data.value = download_uri
     except Exception as e:
         print(f'Failed to load current bulk data, using fallback: {e}')
         all_cards, download_uri = await fetcher.all_cards_async(force_last_good=True)
-        await insert_cards(new_date, sets, all_cards)
+        await insert_cards(new_date, sets, all_cards, oracle_cards)
     return True
 
 def load_local_cards() -> list[CardDescription] | None:
@@ -167,7 +170,26 @@ def load_local_cards() -> list[CardDescription] | None:
             return json.load(f)
     return None
 
-async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription]) -> None:
+def load_local_oracle_cards() -> list[CardDescription] | None:
+    if os.path.exists('scryfall-oracle-cards.jsonl.gz'):
+        with open('scryfall-oracle-cards.jsonl.gz', 'rb') as f:
+            return fetch_tools.load_jsonl_gzip(f)
+    if os.path.exists('scryfall-oracle-cards.json'):
+        with open('scryfall-oracle-cards.json', encoding='utf-8') as f:
+            return json.load(f)
+    return None
+
+async def load_oracle_cards_async() -> list[CardDescription]:
+    local_cards = load_local_oracle_cards()
+    if local_cards is not None:
+        return local_cards
+    try:
+        return await fetcher.oracle_cards_async()
+    except Exception as e:
+        print(f'WARNING: Could not fetch Oracle Cards; default printings will be unset: {e}')
+        return []
+
+async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription], oracle_cards: list[CardDescription] | None = None) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
@@ -184,7 +206,7 @@ async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], 
     for s in sets:
         insert_set(s)
     every_card_printing = all_cards
-    await insert_cards_async(every_card_printing)
+    await insert_cards_async(every_card_printing, oracle_cards)
     await update_pd_legality_async()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().execute('SET FOREIGN_KEY_CHECKS=1')  # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
@@ -192,10 +214,10 @@ async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], 
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
-async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
+async def insert_cards_async(printings: list[CardDescription], oracle_cards: list[CardDescription] | None = None) -> list[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
-    values = await determine_values_async(printings, next_card_id)
-    insert_many('card', card.card_properties(), values['card'], ['id'])
+    values = await determine_values_async(printings, next_card_id, oracle_cards)
+    insert_many('card', card.card_properties(), values['card'], ['id', 'default_printing_system_id', 'meld_result_printing_system_id'])
     if values['card_color']:  # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
         insert_many('card_color', card.card_color_properties(), values['card_color'])
         insert_many('card_color_identity', card.card_color_properties(), values['card_color_identity'])
@@ -210,7 +232,7 @@ async def insert_cards_async(printings: list[CardDescription]) -> list[int]:
     await update_bugged_cards_async()
     return [c['id'] for c in values['card']]
 
-async def determine_values_async(printings: list[CardDescription], next_card_id: int) -> dict[str, list[dict[str, Any]]]:
+async def determine_values_async(printings: list[CardDescription], next_card_id: int, oracle_cards: list[CardDescription] | None = None) -> dict[str, list[dict[str, Any]]]:
     cards: dict[str, int] = {}
     canonical_names: dict[str, int] = {}
     flavor_names: dict[str, int] = {}
@@ -324,6 +346,9 @@ async def determine_values_async(printings: list[CardDescription], next_card_id:
         for flavor_name, card_id in flavor_names.items()
         if canonical_names.get(flavor_name, card_id) == card_id
     ]
+
+    apply_default_printings(card_values, printing_values, oracle_cards or [])
+    apply_meld_result_printings(card_values, printing_values, meld_result_printings, cards)
 
     return {
         'card': card_values,
@@ -503,7 +528,51 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['watermark'] = p.get('watermark')
     result['reserved'] = 1 if p.get('reserved') else 0  # replace True and False with 1 and 0
     result['flavor_name'] = p.get('flavor_name')
+    result['image_status'] = p.get('image_status')
     return result
+
+def apply_default_printings(card_values: list[dict[str, Any]], printing_values: list[dict[str, Any]], oracle_cards: list[CardDescription]) -> None:
+    """Attach Scryfall's chosen default printing to each imported oracle card.
+
+    Only printing ids that survived our import filters are retained. This keeps a card with a
+    missing oracle entry (or an oracle entry for a printing we do not store) explicitly unset.
+    """
+    defaults_by_oracle_id = {
+        oracle_card.get('oracle_id'): oracle_card.get('id')
+        for oracle_card in oracle_cards
+        if oracle_card.get('oracle_id') and oracle_card.get('id')
+    }
+    imported_printing_ids = {printing['system_id'] for printing in printing_values}
+    for card_value in card_values:
+        default_id = defaults_by_oracle_id.get(card_value['oracle_id'])
+        card_value['default_printing_system_id'] = default_id if default_id in imported_printing_ids else None
+
+def apply_meld_result_printings(card_values: list[dict[str, Any]], printing_values: list[dict[str, Any]], meld_results: list[CardDescription], card_ids_by_name: dict[str, int]) -> None:
+    """Store each meld result's image id on its front cards.
+
+    Meld result rows deliberately have no face of their own, so they do not appear in ``_cache_card``
+    and cannot be resolved by name at request time.
+    """
+    cards_by_id = {card_value['id']: card_value for card_value in card_values}
+    printings_by_card_id: dict[int, list[dict[str, Any]]] = {}
+    for printing in printing_values:
+        printings_by_card_id.setdefault(printing['card_id'], []).append(printing)
+    for card_value in card_values:
+        card_value['meld_result_printing_system_id'] = None
+
+    for meld_result in meld_results:
+        result_card_id = card_ids_by_name[meld_result['name']]
+        result_card = cards_by_id[result_card_id]
+        result_printing_id = result_card['default_printing_system_id']
+        if result_printing_id is None:
+            fallback = next((
+                printing for printing in printings_by_card_id.get(result_card_id, [])
+                if printing.get('image_status') not in ('placeholder', 'missing')
+            ), None)
+            result_printing_id = fallback['system_id'] if fallback else None
+        for part in meld_result.get('all_parts') or []:
+            if part['component'] == 'meld_part':
+                cards_by_id[card_ids_by_name[part['name']]]['meld_result_printing_system_id'] = result_printing_id
 
 async def set_legal_cards_async(season: str | None = None) -> None:
     if season is None:

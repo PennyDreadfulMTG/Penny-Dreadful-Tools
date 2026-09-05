@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from discordbot.commands import art, downtimes, modobug, mos_league, randomcard, randomdeck, resources, rhinos, rulings, scry, status, welcome, whois
+from discordbot.commands import art, downtimes, dreadrise, modobug, mos_league, randomcard, randomdeck, resources, rhinos, rulings, scry, status, welcome, whois
 from discordbot.commands import time as time_command
 
 
@@ -20,6 +20,35 @@ async def test_random_deck_defers_and_fetches_asynchronously(monkeypatch: pytest
 
     ctx.defer.assert_awaited_once_with()
     fetch_json.assert_awaited_once_with('https://example.com/api/randomlegaldeck')
+
+
+@pytest.mark.asyncio
+async def test_dreadrise_deck_thumbnail_uses_the_decksite_image_cache(monkeypatch: pytest.MonkeyPatch) -> None:
+    ctx = SimpleNamespace(defer=AsyncMock(), send=AsyncMock())
+    result = {
+        'success': True,
+        'matches': 1,
+        'winrate': 60,
+        'sample': [{
+            'main_card': 'Fire // Ice',
+            'deck': {'name': 'Split Decisions', 'wins': 3, 'losses': 2, 'deck_id': 123},
+            'tags': [{'name': 'Control'}],
+            'author': {'nickname': 'Tester'},
+            'format': 'Penny Dreadful',
+        }],
+    }
+    fetch_decks = AsyncMock(return_value=result)
+    image_url = Mock(return_value='https://example.com/image/Fire%20%2F%2F%20Ice/?version=art_crop')
+    embed = Mock()
+    monkeypatch.setattr(dreadrise.fetcher, 'dreadrise_search_decks', fetch_decks)
+    monkeypatch.setattr(dreadrise.fetcher, 'decksite_url', image_url)
+    monkeypatch.setattr(dreadrise, 'Embed', Mock(return_value=embed))
+
+    await dreadrise.Dreadrise.decks.callback(SimpleNamespace(), ctx, 'fire')
+
+    image_url.assert_called_once_with('/image/Fire%20%2F%2F%20Ice/?version=art_crop')
+    embed.set_thumbnail.assert_called_once_with(url='https://example.com/image/Fire%20%2F%2F%20Ice/?version=art_crop')
+    ctx.send.assert_awaited_once_with(embeds=[embed])
 
 
 @pytest.mark.asyncio

@@ -46,6 +46,13 @@ async def all_cards_async(force_last_good: bool = False) -> tuple[list[CardDescr
             raise FetchException(f'Default Cards not in expected format. Got {response}') from c
     return response, download_uri
 
+async def oracle_cards_async() -> list[CardDescription]:
+    download_uri = await oracle_cards_uri()
+    response = await fetch_bulk_data_async(download_uri)
+    if not isinstance(response, list):
+        raise FetchException(f'Oracle Cards not in expected format. Got {response}')
+    return response
+
 async def fetch_bulk_data_async(download_uri: str) -> list[CardDescription]:
     if download_uri.endswith('.jsonl.gz'):
         return await fetch_tools.fetch_jsonl_gzip_async(download_uri)
@@ -64,15 +71,21 @@ async def banner_cards() -> tuple[list[str], str]:
     return (data['cardnames'], data['background'])
 
 async def bulk_data_uri() -> str:
+    return await _bulk_data_uri('default_cards', 'Default Cards')
+
+async def oracle_cards_uri() -> str:
+    return await _bulk_data_uri('oracle_cards', 'Oracle Cards')
+
+async def _bulk_data_uri(bulk_type: str, display_name: str) -> str:
     endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
     for e in endpoints['data']:
-        if e['type'] == 'default_cards':
+        if e['type'] == bulk_type:
             download_uri = e.get('download_uri') or e.get('jsonl_download_uri')
             if download_uri:
                 return download_uri
-            raise FetchException('Default Cards has no download URI')
+            raise FetchException(f'{display_name} has no download URI')
     else:
-        raise FetchException('Unable to find Default Cards')
+        raise FetchException(f'Unable to find {display_name}')
 
 async def bugged_cards_async() -> list[BugData] | None:
     try:

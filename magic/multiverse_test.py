@@ -44,6 +44,79 @@ def test_load_local_cards_supports_compressed_json_lines(tmp_path: Path, monkeyp
     monkeypatch.chdir(tmp_path)
     assert multiverse.load_local_cards() == cards
 
+def test_load_local_oracle_cards_supports_compressed_json_lines(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    cards: list[CardDescription] = [
+        {'name': 'Forest', 'oracle_id': 'oracle-forest', 'id': 'printing-forest'},
+    ]
+    with gzip.open(tmp_path / 'scryfall-oracle-cards.jsonl.gz', 'wt', encoding='utf-8') as f:
+        for card in cards:
+            f.write(json.dumps(card) + '\n')
+    monkeypatch.chdir(tmp_path)
+    assert multiverse.load_local_oracle_cards() == cards
+
+def test_apply_default_printings_maps_oracle_ids_for_dfc_and_meld() -> None:
+    cards = [
+        {'id': 1, 'oracle_id': 'oracle-dfc'},
+        {'id': 2, 'oracle_id': 'oracle-meld'},
+        {'id': 3, 'oracle_id': 'oracle-without-entry'},
+    ]
+    printings = [
+        {'system_id': 'printing-dfc'},
+        {'system_id': 'printing-meld'},
+        {'system_id': 'another-printing'},
+    ]
+    oracle_cards: list[CardDescription] = [
+        {'oracle_id': 'oracle-dfc', 'id': 'printing-dfc', 'layout': 'transform'},
+        {'oracle_id': 'oracle-meld', 'id': 'printing-meld', 'layout': 'meld'},
+    ]
+
+    multiverse.apply_default_printings(cards, printings, oracle_cards)
+
+    assert cards == [
+        {'id': 1, 'oracle_id': 'oracle-dfc', 'default_printing_system_id': 'printing-dfc'},
+        {'id': 2, 'oracle_id': 'oracle-meld', 'default_printing_system_id': 'printing-meld'},
+        {'id': 3, 'oracle_id': 'oracle-without-entry', 'default_printing_system_id': None},
+    ]
+
+def test_apply_default_printings_rejects_a_printing_we_did_not_import() -> None:
+    cards = [{'id': 1, 'oracle_id': 'oracle-id'}]
+    oracle_cards: list[CardDescription] = [{'oracle_id': 'oracle-id', 'id': 'filtered-printing'}]
+
+    multiverse.apply_default_printings(cards, [], oracle_cards)
+
+    assert cards[0]['default_printing_system_id'] is None
+
+def test_apply_meld_result_printings_attaches_the_result_id_to_both_fronts() -> None:
+    cards = [
+        {'id': 1, 'oracle_id': 'oracle-gisela', 'default_printing_system_id': 'printing-gisela'},
+        {'id': 2, 'oracle_id': 'oracle-bruna', 'default_printing_system_id': 'printing-bruna'},
+        {'id': 3, 'oracle_id': 'oracle-brisela', 'default_printing_system_id': 'printing-brisela'},
+    ]
+    printings = [
+        {'card_id': 1, 'system_id': 'printing-gisela', 'image_status': 'highres_scan'},
+        {'card_id': 2, 'system_id': 'printing-bruna', 'image_status': 'highres_scan'},
+        {'card_id': 3, 'system_id': 'printing-brisela', 'image_status': 'highres_scan'},
+    ]
+    meld_result: CardDescription = {
+        'name': 'Brisela, Voice of Nightmares',
+        'all_parts': [
+            {'component': 'meld_part', 'name': 'Gisela, the Broken Blade'},
+            {'component': 'meld_part', 'name': 'Bruna, the Fading Light'},
+            {'component': 'meld_result', 'name': 'Brisela, Voice of Nightmares'},
+        ],
+    }
+    card_ids = {
+        'Gisela, the Broken Blade': 1,
+        'Bruna, the Fading Light': 2,
+        'Brisela, Voice of Nightmares': 3,
+    }
+
+    multiverse.apply_meld_result_printings(cards, printings, [meld_result], card_ids)
+
+    assert cards[0]['meld_result_printing_system_id'] == 'printing-brisela'
+    assert cards[1]['meld_result_printing_system_id'] == 'printing-brisela'
+    assert cards[2]['meld_result_printing_system_id'] is None
+
 def test_card_aliases_include_english_printed_name() -> None:
     card: CardDescription = {
         'name': 'Spider-Man Noir',

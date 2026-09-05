@@ -120,7 +120,7 @@ def test_prepare_archetypes_for_api_adds_grid_fields(monkeypatch: pytest.MonkeyP
         prepare.prepare_archetypes_for_api(archetypes, key_card_names, cards, False, 42)
 
     assert [(card.name, card.url) for card in archetypes[0].key_cards] == [
-        (f'Card {n}', f'/image/Card%20{n}/?version=art_crop') for n in range(1, 6)
+        (f'Card {n}', f'/image/Card%20{n}/?version=art_crop_small') for n in range(1, 6)
     ]
     assert archetypes[0].num_matches == 5
     assert archetypes[0].colors_safe == '<div class="mana-bar"><span class="stacked-bar mana-R" style="flex-grow: 100"></span></div>'
@@ -129,10 +129,10 @@ def test_prepare_archetypes_for_api_adds_grid_fields(monkeypatch: pytest.MonkeyP
     assert archetypes[1].colors_safe == '<div class="mana-bar"><span class="stacked-bar mana" style="flex-grow: 1"></span></div>'
     assert colors_calls == [list(cards), []]
 
-def test_url_for_image_requests_an_art_crop_from_us_not_scryfall() -> None:
+def test_url_for_image_requests_a_small_art_crop_from_us_not_scryfall() -> None:
     """The /metagame tiles used to hotlink api.scryfall.com and get rate limited into 429s."""
     with APP.test_request_context('/'):
-        url = prepare.url_for_image('Reclaim', version='art_crop')
+        url = prepare.url_for_image('Reclaim', version='art_crop_small')
 
-    assert url == '/image/Reclaim/?version=art_crop'
+    assert url == '/image/Reclaim/?version=art_crop_small'
     assert 'scryfall' not in url

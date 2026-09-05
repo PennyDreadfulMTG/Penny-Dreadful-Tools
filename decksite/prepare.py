@@ -204,7 +204,7 @@ def prepare_archetypes_for_api(archetypes: list[Archetype], key_card_names: Mapp
     for a in archetypes:
         key_cards = [cards_by_name[name] for name in key_card_names.get(a.id, [])]
         a.key_cards = [
-            Card({'name': card.name, 'url': url_for_image(card.name, version='art_crop')})
+            Card({'name': card.name, 'url': url_for_image(card.name, version='art_crop_small')})
             for card in key_cards
             if not is_uninteresting(card)
         ][:5]

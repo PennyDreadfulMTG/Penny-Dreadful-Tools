@@ -21,3 +21,7 @@ Do not use the "merge when ready" label. It is a leftover from an old CI setup a
   port 5000. Port detection is separate from enabling forwarding in Conductor's
   Ports panel. Verify from the Mac with RunLocalCommand when available.
   Check `.context/pd-preview.json` for an existing temporary SSH preview tunnel.
+- Cloud VM restart/resume stops background services. An SSH fallback must use
+  `.conductor/preview-tunnel.py` on the Mac and the restricted
+  `.conductor/preview-ssh.sh` server entry point so it reconnects and restarts
+  decksite. Verify recovery, not just the initial HTTP response.

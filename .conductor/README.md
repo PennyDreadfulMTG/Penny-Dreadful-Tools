@@ -28,14 +28,39 @@ Then verify `http://127.0.0.1:<local_port>/` from the Mac before sharing that li
 This database is an implementation detail; if its schema changes, use the Ports UI.
 Leave the development server running after verification.
 
-If the Ports toggle is unavailable, an agent can also forward port 5000 through
-Conductor's existing SSH mapping for remote port 22. Use a temporary key restricted
-to forwarding `127.0.0.1:5000`, no shell access, and a temporary known-hosts file.
-The sandbox's sshd may use `/root/.ssh/authorized_keys` (check `sshd -T`). Record
-the chosen Mac URL and tunnel control socket in `.context/pd-preview.json` so the
-next agent can reuse or stop it. This is a temporary fallback; the Ports panel is
-the normal way to manage forwarding, and the SSH tunnel ends when its connection
-to the cloud workspace closes.
+If the Ports toggle is unavailable, use `.conductor/preview-tunnel.py` on the Mac
+to forward port 5000 through Conductor's existing SSH mapping for remote port 22.
+A plain `ssh -f -N` tunnel is insufficient: VM restart/resume kills the database,
+web server, and SSH connection. The supervisor reconnects, and its restricted SSH
+command runs `.conductor/preview-ssh.sh` to restart MariaDB and decksite as needed.
+The supervisor exits when Conductor closes the workspace's SSH listener.
+
+Use a temporary key restricted to `127.0.0.1:5000` forwarding and a forced command
+that runs `preview-ssh.sh` as the workspace user. For this Amazon Linux sandbox,
+the authorized-key options are:
+
+```text
+restrict,port-forwarding,permitopen="127.0.0.1:5000",command="/usr/bin/sudo -u vercel-sandbox /bin/bash <workspace-path>/.conductor/preview-ssh.sh"
+```
+
+The sandbox's sshd may use `/root/.ssh/authorized_keys` (check `sshd -T`). Preserve
+existing keys. Store the temporary private key as `id` on the Mac, together with
+a `known_hosts` file containing the verified cloud SSH host key. Copy
+`preview-tunnel.py` to that temporary directory and start it with:
+
+```sh
+python3 /tmp/<preview-directory>/preview-tunnel.py \
+  --directory /tmp/<preview-directory> --ssh-port <Conductor-SSH-local-port> \
+  --web-port <Mac-preview-port>
+```
+
+Launch the supervisor detached with logs saved in that directory, and record its
+PID and the chosen Mac URL in `.context/pd-preview.json`. Stop it with
+`kill "$(cat /tmp/<preview-directory>/supervisor.pid)"`. This is a temporary
+fallback; the Ports panel remains the normal way to manage forwarding. The Mac
+supervisor must be restarted after quitting Conductor or restarting the Mac.
+Verify recovery by stopping the preview and its database, then checking that the
+same Mac URL returns HTTP 200 without manually restarting either service.
 
 ## Database lifecycle
 

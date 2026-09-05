@@ -64,11 +64,16 @@ def decks_order_by(sort_by: str | None, sort_order: str | None, competition_id: 
         'sourceName': 's.name',
         'record': f'(cache.wins - cache.losses) {sort_order}, cache.wins',
         'omw': 'cache.omw IS NOT NULL DESC, cache.omw',
-        'top8': 'd.finish IS NOT NULL DESC, d.finish',
+        'top8': f'd.finish IS NOT NULL DESC, d.finish {sort_order}, IF(d.finish IS NULL, cache.active_date, c.start_date) DESC, d.competition_id ASC, d.person_id ASC',
         'date': 'cache.active_date',
         'season': 'cache.active_date',
     }
+    if sort_by == 'top8':
+        return sort_options[sort_by]
     return sort_options[sort_by] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
+
+def decks_order_uses_swiss_tiebreakers(sort_by: str | None, competition_id: str | None) -> bool:
+    return sort_by == 'top8' or (not sort_by and bool(competition_id))
 
 def cards_order_by(sort_by: str | None, sort_order: str | None) -> str:
     if not sort_by:

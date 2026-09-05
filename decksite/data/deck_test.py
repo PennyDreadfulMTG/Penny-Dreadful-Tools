@@ -33,6 +33,43 @@ def test_maybe_regenerate_symbols_font_ignores_latin_1() -> None:
     regenerate_symbols_font.assert_not_called()
 
 
+def test_order_decks_by_swiss_tiebreakers_uses_opponents_match_win_percentage() -> None:
+    def result(deck_id: int, opponent_id: int, games: int, opponent_games: int) -> dict[str, int]:
+        return {'deck_id': deck_id, 'opponent_deck_id': opponent_id, 'games': games, 'opponent_games': opponent_games}
+
+    # Both quarterfinalists won their only match in this compact sample. Alpha's opponent
+    # then won twice, while Beta's opponent lost twice, so OMW% separates the tied players.
+    rows = [
+        result(1, 3, 2, 0), result(3, 1, 0, 2),
+        result(2, 4, 2, 0), result(4, 2, 0, 2),
+        result(3, 5, 2, 0), result(5, 3, 0, 2),
+        result(3, 6, 2, 0), result(6, 3, 0, 2),
+        result(4, 5, 0, 2), result(5, 4, 2, 0),
+        result(4, 6, 0, 2), result(6, 4, 2, 0),
+    ]
+    alpha = Deck({'id': 1, 'competition_id': 10, 'finish': 5, 'person': 'Alpha'})
+    beta = Deck({'id': 2, 'competition_id': 10, 'finish': 5, 'person': 'Beta'})
+
+    with mock.patch.object(deck, 'db') as database:
+        database.return_value.select.return_value = rows
+        ordered = deck.order_decks_by_swiss_tiebreakers([beta, alpha])
+
+    assert [d.id for d in ordered] == [1, 2]
+    sql = database.return_value.select.call_args.args[0]
+    assert 'player_match.elimination = 0' in sql
+
+
+def test_order_decks_by_swiss_tiebreakers_does_no_extra_query_without_visible_tie() -> None:
+    winner = Deck({'id': 1, 'competition_id': 10, 'finish': 1, 'person': 'Winner'})
+    semifinalist = Deck({'id': 2, 'competition_id': 10, 'finish': 3, 'person': 'Semifinalist'})
+
+    with mock.patch.object(deck, 'db') as database:
+        ordered = deck.order_decks_by_swiss_tiebreakers([winner, semifinalist])
+
+    assert ordered == [winner, semifinalist]
+    database.assert_not_called()
+
+
 def test_set_colors() -> None:
     def card(name: str, mana_cost: str, oracle_text: str = '') -> Card:
         return Card({

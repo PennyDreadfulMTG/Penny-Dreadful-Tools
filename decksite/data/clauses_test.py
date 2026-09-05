@@ -107,6 +107,20 @@ def test_order_by_auto() -> None:
     assert 'DESC' in clauses.archetype_order_by('quality', 'AUTO')
     assert 'ASC' in clauses.archetype_order_by('name', 'AUTO')
 
+def test_top8_order_groups_tied_finishes_by_competition_for_application_tiebreaking() -> None:
+    order_by = clauses.decks_order_by('top8', 'AUTO', None)
+
+    assert order_by.index('d.finish ASC') < order_by.index('c.start_date) DESC')
+    assert order_by.index('c.start_date) DESC') < order_by.index('d.competition_id ASC')
+    assert order_by.index('d.competition_id ASC') < order_by.index('d.person_id ASC')
+    assert 'deck_match' not in order_by
+
+def test_only_top8_order_uses_swiss_tiebreakers() -> None:
+    assert clauses.decks_order_uses_swiss_tiebreakers('top8', None)
+    assert clauses.decks_order_uses_swiss_tiebreakers(None, '123')
+    assert not clauses.decks_order_uses_swiss_tiebreakers('date', '123')
+    assert not clauses.decks_order_uses_swiss_tiebreakers(None, None)
+
 def test_cards_where_single(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(clauses.oracle, 'valid_name', lambda name: name)
     result = clauses.cards_where(['Hive Mind'])

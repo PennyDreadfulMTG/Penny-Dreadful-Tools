@@ -21334,7 +21334,14 @@
     },
     "12583": {
       "class": "easy-fix",
-      "closure": null,
+      "closure": {
+        "comment_posted": false,
+        "duplicate_of": null,
+        "executed_at": "2026-09-05T21:43:43Z",
+        "external": true,
+        "reason": "completed",
+        "verified_by_batch": null
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/12583.json",
@@ -21376,6 +21383,21 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:13:40Z"
+        },
+        {
+          "event": "PR_WITHDRAWN",
+          "status": "deferred_human",
+          "ts": "2026-09-05T21:43:43Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "closing",
+          "ts": "2026-09-05T21:43:43Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-05T21:43:43Z"
         }
       ],
       "issue": 12583,
@@ -21383,7 +21405,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: PR #15058 was correctly closed without merging and issue #12583 was correctly closed as already completed. PR #12773 fixed the issue in 2024 by transitioning the meta-share bar to highlight-border on hover. Browser frames confirm the tile and bar remain visually separated throughout the one-second transition; #15058's claim that the bar stayed invisible for that second was false, and forcing an instant transition would only make the animation abrupt.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
@@ -21395,14 +21417,16 @@
         "head_sha": "23725fb7da68ad395e1c973f0dc9d201f823f2cf",
         "number": 15058,
         "opened_at": "2026-09-01T18:07:15Z",
-        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15058"
+        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15058",
+        "branch_deleted": false,
+        "withdrawn_at": "2026-09-05T21:43:43Z"
       },
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "closed",
       "title": "When you mouseover a metagame grid tile the meta share bar kind of \"disappears\" because it's the same color",
       "verdict": null
     },
@@ -40898,8 +40922,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8829,
-  "last_snapshot_at": "2026-09-05T20:25:33Z",
+  "last_seq": 8833,
+  "last_snapshot_at": "2026-09-05T21:43:43Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

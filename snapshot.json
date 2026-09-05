@@ -21618,6 +21618,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:20:34Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T22:13:23Z"
         }
       ],
       "issue": 12585,
@@ -21625,16 +21629,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15062. PR #12517 introduced a label width of 100 - metaShare even though metaShare is a 0-1 fraction, pairing a 15% bar with a 99.85% label and shrinking the visible bar to about 13.1% of the bar-plus-label space. #15062 correctly uses complementary 15%/85% widths and moves spacing to an 8px flex gap. Browser measurement on a 6.98% current-season tile produced a 7.09% usable-space ratio versus 6.65% under a live simulation of the old code; the small remaining difference is border/subpixel rounding, and neither layout overflows.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12585-the-meta-share-bar-doesn-t-show-a-true-p",
         "ci": {
-          "checked_at": "2026-09-02T02:07:55Z",
+          "checked_at": "2026-09-05T22:13:23Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "069160e03eb8fa6ae525a7653a792347552669d2",
+        "merged_at": "2026-09-02T14:37:50Z",
         "number": 15062,
         "opened_at": "2026-09-01T18:13:01Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15062"
@@ -40946,8 +40951,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8844,
-  "last_snapshot_at": "2026-09-05T22:09:18Z",
+  "last_seq": 8847,
+  "last_snapshot_at": "2026-09-05T22:13:23Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

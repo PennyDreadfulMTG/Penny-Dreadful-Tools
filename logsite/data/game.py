@@ -41,10 +41,14 @@ def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     db.merge(local)  # This will replace an old version of the game, if one exists.
     db.commit()
 
-def get_game(game_id: int) -> Game | None:
+def get_game(game_id: int | str) -> Game | None:
+    try:
+        game_id = int(game_id)
+    except (TypeError, ValueError):
+        return None
     return Game.query.filter_by(id=game_id).one_or_none()
 
-def load_game(game_id: int) -> Game:
+def load_game(game_id: int | str) -> Game:
     local = get_game(game_id)
     if local is None:
         raise DoesNotExistException(f'Did not find game `{game_id}`')

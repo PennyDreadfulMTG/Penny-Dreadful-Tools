@@ -93,10 +93,14 @@ def create_match(match_id: int, format_name: str, comment: str, modules: list[st
     db.commit()
     return local
 
-def get_match(match_id: int) -> Match | None:
+def get_match(match_id: int | str) -> Match | None:
+    try:
+        match_id = int(match_id)
+    except (TypeError, ValueError):
+        return None
     return Match.query.filter_by(id=match_id).one_or_none()
 
-def load_match(match_id: int) -> Match:
+def load_match(match_id: int | str) -> Match:
     local = get_match(match_id)
     if local is None:
         raise DoesNotExistException(f'Did not find match `{match_id}`')

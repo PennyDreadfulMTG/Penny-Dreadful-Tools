@@ -21654,6 +21654,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:10:06Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T17:13:24Z"
         }
       ],
       "issue": 12586,
@@ -21661,16 +21665,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15054. It is runtime-neutral and gives Table and Grid their actual allowed className values; all callers conform and the full browser render smoke test passes. Adjacent pre-existing debt remains: the subclasses' own propTypes objects shadow the other shared DataManager propTypes, so those shared declarations are not currently checked.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12586-rename-classname-on-grid-and-on-table-an",
         "ci": {
-          "checked_at": "2026-09-02T02:07:54Z",
+          "checked_at": "2026-09-05T17:13:24Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "03ffcdaee883d2d0a02c9a0f811807c535468323",
+        "merged_at": "2026-09-02T23:29:38Z",
         "number": 15054,
         "opened_at": "2026-09-01T18:04:00Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15054"
@@ -40878,8 +40883,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8817,
-  "last_snapshot_at": "2026-09-05T17:09:05Z",
+  "last_seq": 8820,
+  "last_snapshot_at": "2026-09-05T17:13:24Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

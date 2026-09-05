@@ -1,0 +1,54 @@
+name: Build cloud development database
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 4 * * 0'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dev-db-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: '0.9.26'
+          enable-cache: true
+      - name: Install native MariaDB 11.8 and build dependencies
+        run: |
+          curl -fsSL https://r.mariadb.com/downloads/mariadb_repo_setup -o /tmp/mariadb_repo_setup
+          sudo bash /tmp/mariadb_repo_setup --mariadb-server-version=mariadb-11.8 --skip-maxscale --skip-tools
+          sudo apt-get update
+          sudo apt-get install -y mariadb-server libmariadb-dev pkg-config build-essential zstd
+          uv sync --frozen
+      - name: Check setup safeguards
+        run: python3 .conductor/cloud_test.py
+      - name: Build sanitized database and derived assets
+        run: python3 .conductor/cloud.py build-snapshot
+      - name: Verify a fresh restore
+        env:
+          CONDUCTOR_IS_LOCAL: '0'
+        run: |
+          mv .context/pd-cloud .context/pd-cloud-built
+          PD_CLOUD_SNAPSHOT_DIR="$PWD/.context/pd-cloud-artifacts" python3 .conductor/cloud.py setup
+          PYTHONPATH=.conductor python3 -c 'import cloud; cloud.check_pages()'
+      - name: Upload prepared database
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view dev-db-snapshot >/dev/null 2>&1; then
+            gh release create dev-db-snapshot --draft --target "$GITHUB_SHA" \
+              --title 'Cloud development database' \
+              --notes 'Prepared MariaDB 11.8 database from the public sanitized dev dump, plus Scryfall cards and generated search/font assets. Used by Conductor cloud setup.'
+          fi
+          gh release upload dev-db-snapshot .context/pd-cloud-artifacts/* --clobber

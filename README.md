@@ -4,6 +4,8 @@ Repository for the tools used by the Penny Dreadful Community.
 
 View individual subdirectories for details
 
+For Conductor cloud setup and Mac browser previews, see [Conductor development](.conductor/README.md).
+
 [![Build Status](https://travis-ci.org/PennyDreadfulMTG/Penny-Dreadful-Tools.svg?branch=master)](https://travis-ci.org/PennyDreadfulMTG/Penny-Dreadful-Tools)
 [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m778417564-ebc98d54a784806de06fee4d.svg)](https://status.pennydreadfulmagic.com)
 

@@ -136,12 +136,28 @@ def decks_api() -> Response:
             'total': <int>
         }
     """
-    order_by = clauses.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
+    sort_by = request.args.get('sortBy')
+    competition_id = request.args.get('competitionId')
+    order_by = clauses.decks_order_by(sort_by, request.args.get('sortOrder'), competition_id)
     page, page_size, limit = pagination(request.args)
+    use_swiss_tiebreakers = clauses.decks_order_uses_swiss_tiebreakers(sort_by, competition_id)
+    page_start = page * page_size
+    query_start = page_start
+    if use_swiss_tiebreakers:
+        # A tied elimination group contains at most four quarterfinalists. Include enough rows
+        # on both sides of the requested page to order a group that crosses a page boundary.
+        buffer_size = deck.MAX_TIED_ELIMINATION_FINISH_SIZE - 1
+        query_start = max(0, page_start - buffer_size)
+        query_end = page_start + page_size + buffer_size
+        limit = f'LIMIT {query_start}, {query_end - query_start}'
     # Don't restrict by season if we're loading something with a date by its id.
-    season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
+    season_id = 'all' if competition_id else seasons.season_id(str(request.args.get('seasonId')), None)
     where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
     ds, total = deck.load_decks_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    if use_swiss_tiebreakers:
+        ds = deck.order_decks_by_swiss_tiebreakers(ds)
+        result_start = page_start - query_start
+        ds = ds[result_start:result_start + page_size]
     prepare_decks(ds)
     r = {'page': page, 'total': total, 'objects': ds}
     resp = return_camelized_json(r)

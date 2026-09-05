@@ -35,8 +35,14 @@ def init() -> None:
 def last_updated() -> datetime.datetime:
     return dtutil.ts2dt(db().value('SELECT last_updated FROM scryfall_version', [], 0))
 
+def card_information_is_available() -> bool:
+    return last_updated() > dtutil.ts2dt(0)
+
 def stale_card_information_age() -> datetime.timedelta | None:
-    age = dtutil.now() - last_updated()
+    updated = last_updated()
+    if updated <= dtutil.ts2dt(0):
+        return None
+    age = dtutil.now() - updated
     return age if age > MAX_CARD_INFORMATION_AGE else None
 
 def db_version() -> int:

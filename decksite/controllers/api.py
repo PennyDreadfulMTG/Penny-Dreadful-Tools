@@ -688,7 +688,14 @@ def hide_intro() -> Response:
 @auth.load_person
 def person_status() -> Response:
     username = auth.mtgo_username()
-    stale_card_information_age = magic_database.stale_card_information_age()
+    if not magic_database.card_information_is_available():
+        card_information_warning = 'Card data is unavailable'
+    else:
+        stale_card_information_age = magic_database.stale_card_information_age()
+        if stale_card_information_age is not None:
+            card_information_warning = f'Card data last updated {dtutil.display_time(stale_card_information_age.total_seconds(), 1)} ago'
+        else:
+            card_information_warning = ''
     r = {
         'mtgo_username': username,
         'discord_id': auth.discord_id(),
@@ -696,7 +703,7 @@ def person_status() -> Response:
         'demimod': session.get('demimod', False),
         'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or username or auth.discord_id(),
         'in_guild': session.get('in_guild', False),
-        'card_information_warning': f'Card data last updated {dtutil.display_time(stale_card_information_age.total_seconds(), 1)} ago' if stale_card_information_age is not None else '',
+        'card_information_warning': card_information_warning,
     }
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))

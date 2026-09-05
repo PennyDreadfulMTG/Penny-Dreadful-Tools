@@ -315,18 +315,8 @@ def decks_where(args: dict[str, str], is_admin: bool, viewer_id: int | None) -> 
         parts.append(archetype_where(archetype_id))
     if args.get('personId'):
         person_id = int(args.get('personId', ''))
-    raw_card_names = args.getlist('cardName') if hasattr(args, 'getlist') else [args.get('cardName')]
-    card_names = [name for name in raw_card_names if name]
-    if card_names:
-        parts.append(cards_where(card_names))
-    if args.get('minWinRate'):
-        try:
-            min_win_rate = float(args.get('minWinRate', ''))
-        except ValueError as e:
-            raise InvalidArgumentException('minWinRate must be a number') from e
-        if not 0 <= min_win_rate <= 100:
-            raise InvalidArgumentException('minWinRate must be between 0 and 100')
-        parts.append(f'(cache.wins / NULLIF(cache.wins + cache.losses, 0)) * 100 >= {min_win_rate}')
+    if args.get('cardName'):
+        parts.append(card_where(args.get('cardName', '')))
     if args.get('competitionFlagId'):
         competition_flag_id = CompetitionFlag(int(args.get('competitionFlagId', ''))).value
         parts.append(f'c.competition_flag_id = {competition_flag_id} AND d.finish = 1')
@@ -366,22 +356,6 @@ def card_where(name: str) -> str:
     except InvalidDataException:
         return 'FALSE'
     return f'd.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(name)})'
-
-def cards_where(names: list[str]) -> str:
-    validated = []
-    for name in names:
-        try:
-            validated.append(oracle.valid_name(name))
-        except InvalidDataException:
-            return 'FALSE'
-    if len(validated) == 1:
-        return f'd.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(validated[0])})'
-    return """d.id IN (
-        SELECT deck_id FROM deck_card
-        WHERE card IN ({names})
-        GROUP BY deck_id
-        HAVING COUNT(DISTINCT card) = {n})""".format(
-        names=', '.join(map(sqlescape, validated)), n=len(validated))
 
 # Returns two values, a SQL WHERE clause and a message about that clause (possibly an error message) suitable for display.
 def card_search_where(q: str, base_query: str | None = None, column_name: str = 'name') -> tuple[str, str]:

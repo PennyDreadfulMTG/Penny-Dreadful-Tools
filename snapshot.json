@@ -24134,6 +24134,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:07:21Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T16:59:28Z"
         }
       ],
       "issue": 12670,
@@ -24141,16 +24145,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": "bakert: proper stacking-context restructure ONLY if low risk; fixer must abort-escalate rather than force it. Queued during the hold; will not dispatch until he gives the go (spawning is off).",
+      "notes": "Post-merge audit 2026-09-05: keep PR #15052. Browser verification passed at 400px, 1200px, and 1700px. At the medium layout, removing the submenu z-index lets the page header cover it; level 3 is the lowest documented elevation that works while preserving level 5 for card/text tooltips.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12670-figure-out-z-index-in-the-main-menu",
         "ci": {
-          "checked_at": "2026-09-02T02:05:24Z",
+          "checked_at": "2026-09-05T16:59:28Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "c83a3266b8863d052896773200f1029a108eaec1",
+        "merged_at": "2026-09-02T11:23:12Z",
         "number": 15052,
         "opened_at": "2026-09-01T18:01:42Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15052"
@@ -40868,8 +40873,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8811,
-  "last_snapshot_at": "2026-09-05T16:25:31Z",
+  "last_seq": 8814,
+  "last_snapshot_at": "2026-09-05T16:59:28Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

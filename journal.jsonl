@@ -8809,3 +8809,6 @@
 {"event": "PR_MERGED", "issue": 12550, "merged_at": "2026-09-02T23:20:08Z", "pr": 15112, "seq": 8809, "ts": "2026-09-05T16:25:31Z"}
 {"event": "ADJUDICATED", "issue": 12550, "note": "PR #15112 supplied backend-only deck-query parameters without the requested UI. PR #15216 reverts it; issue #12550 is reopened for an explicit product implementation.", "seq": 8810, "status": "deferred_human", "ts": "2026-09-05T16:25:31Z", "verb": "defer-to-human"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8810, "seq": 8811, "ts": "2026-09-05T16:25:31Z"}
+{"event": "PR_MERGED", "issue": 12670, "merged_at": "2026-09-02T11:23:12Z", "pr": 15052, "seq": 8812, "ts": "2026-09-05T16:59:28Z"}
+{"event": "ADJUDICATED", "issue": 12670, "note": "Post-merge audit 2026-09-05: keep PR #15052. Browser verification passed at 400px, 1200px, and 1700px. At the medium layout, removing the submenu z-index lets the page header cover it; level 3 is the lowest documented elevation that works while preserving level 5 for card/text tooltips.", "seq": 8813, "ts": "2026-09-05T16:59:28Z", "verb": "annotate"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8813, "seq": 8814, "ts": "2026-09-05T16:59:28Z"}

@@ -9,6 +9,7 @@ from shared.container import Container
 
 
 def test_status_includes_stale_card_information_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(api.magic_database, 'card_information_is_available', lambda: True)
     monkeypatch.setattr(api.magic_database, 'stale_card_information_age', lambda: api.datetime.timedelta(days=4))
     monkeypatch.setattr(api.league, 'active_league', lambda: None)
 
@@ -19,6 +20,7 @@ def test_status_includes_stale_card_information_warning(monkeypatch: pytest.Monk
     assert data['card_information_warning'] == 'Card data last updated 4 days ago'
 
 def test_status_omits_recent_card_information_warning(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(api.magic_database, 'card_information_is_available', lambda: True)
     monkeypatch.setattr(api.magic_database, 'stale_card_information_age', lambda: None)
     monkeypatch.setattr(api.league, 'active_league', lambda: None)
 
@@ -27,6 +29,16 @@ def test_status_omits_recent_card_information_warning(monkeypatch: pytest.Monkey
 
     data = json.loads(response.get_data(as_text=True))
     assert data['card_information_warning'] == ''
+
+def test_status_reports_unavailable_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(api.magic_database, 'card_information_is_available', lambda: False)
+    monkeypatch.setattr(api.league, 'active_league', lambda: None)
+
+    with APP.test_request_context('/api/status'):
+        response = cast(Any, api.person_status).__wrapped__()
+
+    data = json.loads(response.get_data(as_text=True))
+    assert data['card_information_warning'] == 'Card data is unavailable'
 
 
 def test_archetypes2_serializes_win_percent_as_number_or_null(monkeypatch: pytest.MonkeyPatch) -> None:

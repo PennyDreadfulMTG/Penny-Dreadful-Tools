@@ -3256,7 +3256,25 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     cursor: help;
 }
 
-[title]:not(a) {
+[title]:not(
+    a,
+    a *,
+    button,
+    button *,
+    input,
+    label,
+    label *,
+    select,
+    summary,
+    summary *,
+    textarea,
+    th,
+    th *,
+    [role="button"],
+    [role="button"] *,
+    .clickable,
+    .clickable *
+) {
     cursor: help;
 }
 

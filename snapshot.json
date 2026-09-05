@@ -21516,6 +21516,15 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:25:31Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T22:00:27Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-05T22:00:27Z"
         }
       ],
       "issue": 12584,
@@ -21523,16 +21532,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: PR #15060 does not materially solve issue #12584. With 100 deliberate ESLint errors, the previous stylish formatter produced 105 lines and 8,167 bytes; compact produced 103 lines and 17,262 bytes because it repeats the absolute path for every problem. The PR description's claim that stylish emits four to six lines per problem is false. ESLint v9 officially supports the added standalone formatter and the package is small and dependency-free, but it adds maintenance cost for negligible line reduction and worse byte volume. Recommend reverting #15060 and reopening #12584 for a fix based on the actual noisy output.",
       "pr": {
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
         "ci": {
-          "checked_at": "2026-09-02T02:07:56Z",
+          "checked_at": "2026-09-05T22:00:27Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "f96509137bf06cc1d84bdee9b8e26c8da557df82",
+        "merged_at": "2026-09-02T14:04:36Z",
         "number": 15060,
         "opened_at": "2026-09-01T18:20:04Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15060"
@@ -21542,7 +21552,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "deferred_human",
       "title": "jslint's output is about 1000 lines long if it encounters an issue",
       "verdict": null
     },
@@ -40927,8 +40937,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8836,
-  "last_snapshot_at": "2026-09-05T21:50:04Z",
+  "last_seq": 8839,
+  "last_snapshot_at": "2026-09-05T22:00:27Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

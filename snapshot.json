@@ -22602,6 +22602,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:22:58Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T21:50:04Z"
         }
       ],
       "issue": 12600,
@@ -22609,16 +22613,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15059 as finally merged. The empty-string sentinel was introduced deliberately by commit 2e225941 in 2017 to hide an undefined win percentage (#1140), then propagated through later queries; it was data-layer presentation leakage rather than a recent regression. The first sweep draft exposed Decimal values, but the merged version explicitly returns DOUBLE or NULL, renders undefined values as an em dash, and sorts NULL percentages last. PR #15205 complements rather than supersedes this: its centralized conversion handles only scale-zero integer Decimals, while fractional win percentages still need #15059's explicit numeric cast. Fourteen focused database, query, API, and ordering tests pass.",
       "pr": {
         "adopted": true,
         "branch": "sweep/12600-win-percent-should-never-be-a-string",
         "ci": {
-          "checked_at": "2026-09-02T02:06:40Z",
+          "checked_at": "2026-09-05T21:50:04Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "cf9df71a5851c83297ecb1cb732aa6ffe2111724",
+        "head_sha": "c457ddb13aa55551da0f8fc908630342fb1a2c8e",
+        "merged_at": "2026-09-02T13:59:15Z",
         "number": 15059,
         "opened_at": "2026-09-01T18:20:04Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15059"
@@ -40922,8 +40927,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8833,
-  "last_snapshot_at": "2026-09-05T21:43:43Z",
+  "last_seq": 8836,
+  "last_snapshot_at": "2026-09-05T21:50:04Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

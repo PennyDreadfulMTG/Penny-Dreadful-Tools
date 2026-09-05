@@ -91,6 +91,14 @@ def test_image_requests_do_not_touch_the_session(monkeypatch: pytest.MonkeyPatch
         assert main.before_request() is None
 
 
+@pytest.mark.parametrize('path', ['/seasons/all/decks/', '/seasons/all/decks/league/'])
+def test_all_time_deck_requests_are_not_redirected(path: str) -> None:
+    with main.APP.test_request_context(path):
+        g.season_id = 0
+
+        assert main.before_request() is None
+
+
 def test_image_teardown_closes_only_the_database_it_used() -> None:
     magic_database = Mock()
 

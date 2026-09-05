@@ -21189,6 +21189,15 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:20:38Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T22:56:46Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-05T22:56:46Z"
         }
       ],
       "issue": 12580,
@@ -21196,16 +21205,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: issue #12580 was valid, but PR #15063's final behavior is too aggressive in a different direction. Its initial commit stripped every Unicode Symbol category, including ordinary currency and mathematical symbols; the merged follow-up preserved non-Latin text but expanded every emoji into an English name, producing noisy metadata such as 'No More Meming police officer police officer police officer' and rewriting text-presentation symbols such as TM, copyright, hearts, arrows, and sun. PR #15220 repairs this with a predictable hybrid: remove pictographic emoji when meaningful text remains, use readable names only for emoji-only fields so metadata never becomes blank, preserve text-presentation Unicode and untouched whitespace, and process user-controlled names before adding fixed metadata wrappers. Seventeen focused tests, repository-wide mypy/lint, and real deck pages in headless Chrome pass. Await human review of #15220.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12580-strip-unsafe-chars-from-title-and-other",
         "ci": {
-          "checked_at": "2026-09-02T02:07:58Z",
+          "checked_at": "2026-09-05T22:56:46Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "f0b8921b6c1bd09896f95e50a1f90463112f93d8",
+        "head_sha": "2ddf513d5d5a5870c8a8f66a82ab9e5fda6c83f9",
+        "merged_at": "2026-09-02T15:00:09Z",
         "number": 15063,
         "opened_at": "2026-09-01T18:13:04Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15063"
@@ -21215,7 +21225,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "deferred_human",
       "title": "Strip \"unsafe\" chars from <title> and other metadata",
       "verdict": null
     },

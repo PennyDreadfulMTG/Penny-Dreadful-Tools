@@ -1,12 +1,11 @@
 import asyncio
 import hashlib
-import io
 import math
 import os
 import re
-import urllib.error
+import tempfile
+from urllib import parse
 
-import aiohttp
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from magic import card, fetcher, layout, oracle
@@ -14,42 +13,101 @@ from magic.models import Card, Printing
 from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape
 
+UNUSABLE_IMAGE_STATUSES = {'placeholder', 'missing'}
+SCRYFALL_ID = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
+SMALL_ART_CROP_WIDTH = 320
+SMALL_ART_CROP_QUALITY = 80
+
 if not os.path.exists(configuration.get_str('image_dir')):
     os.makedirs(configuration.get_str('image_dir'), exist_ok=True)
 
 def basename(cards: list[Card]) -> str:
-    return '_'.join(
-        re.sub('[^a-z-]', '-', card.canonicalize(c.name))
-        + (f'-{preferred_printing}' if (preferred_printing := c.get('preferred_printing')) else '')
-        + (f'-{preferred_printing_system_id}' if (preferred_printing_system_id := c.get('preferred_printing_system_id')) else '')
-        for c in cards
-    )
+    return '_'.join(card_basename(c) for c in cards)
+
+def card_basename(c: Card) -> str:
+    result = re.sub('[^a-z-]', '-', card.canonicalize(c.name))
+    preferred_set = c.get('preferred_printing')
+    preferred_id = c.get('preferred_printing_system_id')
+    if preferred_set:
+        result += f'-{cache_key_component(preferred_set)}'
+    if preferred_id and SCRYFALL_ID.fullmatch(preferred_id):
+        result += f'-{preferred_id.lower()}'
+    elif not preferred_set and (default_id := c.get('default_printing_system_id')):
+        result += f'-{cache_key_component(default_id)}'
+    return result
+
+def cache_key_component(value: object) -> str:
+    return re.sub('[^a-z0-9-]', '-', str(value).lower())
 
 def bluebones_image(cards: list[Card]) -> str:
     c = '|'.join(c.name for c in cards)
     return f'http://magic.bluebones.net/proxies/index2.php?c={escape(c)}'
 
-def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
-    if face == 'meld':
-        name = c.names[1]
-    elif ' // ' in c.name:
-        name = c.name.replace(' // ', '/')
-    else:
-        name = c.name
+def resolve_printing(c: Card) -> Printing | None:
+    """Resolve a card to a usable printing without consulting Scryfall's API."""
     preferred_printing_system_id = c.get('preferred_printing_system_id')
-    if preferred_printing_system_id:
-        u = f'https://api.scryfall.com/cards/{escape(preferred_printing_system_id)}?format=image'
-    else:
-        p = oracle.get_printing(c, c.get('preferred_printing'))
-        if p is not None:
-            u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&set={escape(p.set_code)}&format=image'
-        else:
-            u = f'https://api.scryfall.com/cards/named?exact={escape(name)}&format=image'
+    if preferred_printing_system_id and SCRYFALL_ID.fullmatch(preferred_printing_system_id):
+        return Printing({'system_id': preferred_printing_system_id, 'image_status': None})
+
+    preferred_set = c.get('preferred_printing')
+    if preferred_set:
+        preferred = oracle.get_printing(c, preferred_set)
+        if preferred is not None:
+            return preferred
+
+    default_printing_system_id = c.get('default_printing_system_id')
+    if c.get('id') is None:
+        if default_printing_system_id:
+            return Printing({'system_id': default_printing_system_id, 'image_status': None})
+        return None
+
+    printings = oracle.get_printings(c)
+    if default_printing_system_id:
+        default = next((p for p in printings if p.system_id == default_printing_system_id), None)
+        if default is not None and default.get('image_status') not in UNUSABLE_IMAGE_STATUSES:
+            return default
+    return next((p for p in printings if p.get('image_status') not in UNUSABLE_IMAGE_STATUSES), None)
+
+def cdn_image_url(system_id: str, version: str, face: str = 'front') -> str:
+    cdn_version = version or 'large'
+    extension = 'png' if cdn_version == 'png' else 'jpg'
+    return f'https://cards.scryfall.io/{cdn_version}/{face}/{system_id[0]}/{system_id[1]}/{system_id}.{extension}'
+
+def api_image_url(system_id: str, version: str = '', face: str | None = None) -> str:
+    query = {'format': 'image'}
     if version:
-        u += f'&version={escape(version)}'
-    if face and face != 'meld':
-        u += f'&face={escape(face)}'
-    return u
+        query['version'] = version
+    if face:
+        query['face'] = face
+    return f'https://api.scryfall.com/cards/{parse.quote(system_id, safe="")}?{parse.urlencode(query)}'
+
+def named_api_image_url(name: str, version: str = '') -> str:
+    query = {'exact': name, 'format': 'image'}
+    if version:
+        query['version'] = version
+    return f'https://api.scryfall.com/cards/named?{parse.urlencode(query)}'
+
+def image_urls(c: Card, version: str = '', face: str | None = None) -> list[str]:
+    if face == 'meld':
+        meld_result_id = c.get('meld_result_printing_system_id')
+        printing = Printing({'system_id': meld_result_id, 'image_status': None}) if meld_result_id else None
+        image_name = c.names[1]
+    else:
+        printing = resolve_printing(c)
+        image_name = c.name
+    if printing is None:
+        return [named_api_image_url(image_name, version)]
+
+    image_face = face if face and face != 'meld' else 'front'
+    api_face = face if face and face != 'meld' else None
+    return [
+        cdn_image_url(printing.system_id, version, image_face),
+        api_image_url(printing.system_id, version, api_face),
+    ]
+
+def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
+    """Return the API fallback URL retained for callers that need one URL."""
+    return image_urls(c, version, face)[-1]
 
 def mci_image(printing: Printing) -> str:
     return f'http://magiccards.info/scans/en/{printing.set_code.lower()}/{printing.number}.jpg'
@@ -74,9 +132,9 @@ async def download_scryfall_image(cards: list[Card], filepath: str, version: str
         save_composite_image(image_filepaths, filepath)
     return fetch_tools.acceptable_file(filepath)
 
-async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]]) -> str | None:
+async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]] | None) -> str | None:
     if hq_data is None:
-        hq_data = await fetcher.hq_artcrops()
+        hq_data = fetcher.hq_artcrops()
     if c.name in hq_data:
         url = hq_data[c.name][0]
         file_path = re.sub('.jpg$', '.hq_art_crop.jpg', determine_filepath([c]))
@@ -86,13 +144,65 @@ async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]]) -> str
             return file_path
     return await download_scryfall_art_crop(c)
 
+def art_crop_filepath(c: Card) -> str:
+    return re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
+
+def small_art_crop_filepath(c: Card) -> str:
+    return re.sub('.jpg$', '.art_crop_small.jpg', determine_filepath([c]))
+
+def art_crop_is_cached(c: Card) -> bool:
+    return fetch_tools.acceptable_file(art_crop_filepath(c))
+
 async def download_scryfall_art_crop(c: Card) -> str | None:
-    file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
+    file_path = art_crop_filepath(c)
     if not fetch_tools.acceptable_file(file_path):
         await download_scryfall_card_image(c, file_path, version='art_crop')
     if fetch_tools.acceptable_file(file_path):
         return file_path
     return None
+
+async def download_small_art_crop(c: Card) -> str | None:
+    """Create a lightweight art crop for image-heavy thumbnail grids."""
+    file_path = small_art_crop_filepath(c)
+    if fetch_tools.acceptable_file(file_path):
+        return file_path
+
+    temporary_path = ''
+    temporary_output_path = ''
+    source_path: str | None = None
+    try:
+        # Older releases cached double-faced art crops as a side-by-side composite. Do not derive a
+        # thumbnail from that stale file: fetch the front-face crop into a temporary source instead.
+        if c.is_double_sided():
+            directory = os.path.dirname(os.path.abspath(file_path))
+            with tempfile.NamedTemporaryFile(dir=directory, suffix='.jpg', delete=False) as temporary:
+                temporary_path = temporary.name
+            if not await download_first_image(image_urls(c, version='art_crop'), temporary_path):
+                return None
+            source_path = temporary_path
+        else:
+            source_path = await download_scryfall_art_crop(c)
+        if source_path is None:
+            return None
+        with Image.open(source_path) as source:
+            image = source.convert('RGB')
+            if image.width > SMALL_ART_CROP_WIDTH:
+                height = round(image.height * SMALL_ART_CROP_WIDTH / image.width)
+                image = image.resize((SMALL_ART_CROP_WIDTH, height), Image.Resampling.LANCZOS)
+            directory = os.path.dirname(os.path.abspath(file_path))
+            with tempfile.NamedTemporaryFile(dir=directory, suffix='.jpg', delete=False) as temporary_output:
+                temporary_output_path = temporary_output.name
+            image.save(temporary_output_path, quality=SMALL_ART_CROP_QUALITY, optimize=True, progressive=True)
+            os.replace(temporary_output_path, file_path)
+            temporary_output_path = ''
+    except (OSError, UnidentifiedImageError):
+        return None
+    finally:
+        if temporary_path and os.path.exists(temporary_path):
+            os.remove(temporary_path)
+        if temporary_output_path and os.path.exists(temporary_output_path):
+            os.remove(temporary_output_path)
+    return file_path if fetch_tools.acceptable_file(file_path) else None
 
 async def download_scryfall_png(c: Card) -> str | None:
     file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
@@ -103,27 +213,34 @@ async def download_scryfall_png(c: Card) -> str | None:
     return None
 
 async def download_scryfall_card_image(c: Card, filepath: str, version: str = '') -> bool:
-    try:
-        if c.is_double_sided():
-            split = os.path.splitext(filepath)
+    if c.is_double_sided() and version != 'art_crop':
+        split = os.path.splitext(filepath)
 
-            if f'.{version}' in filepath:
-                paths = [f'{split[0]}.a{split[1]}', f'{split[0]}.b{split[1]}']
-            else:
-                paths = [f'{split[0]}.{version}.a{split[1]}', f'{split[0]}.{version}.b{split[1]}']
-
-            await fetch_tools.store_async(scryfall_image(c, version=version), paths[0])
-            if c.layout in layout.has_single_back():
-                await fetch_tools.store_async(scryfall_image(c, version=version, face='back'), paths[1])
-            if c.layout in layout.has_meld_back():
-                await fetch_tools.store_async(scryfall_image(c, version=version, face='meld'), paths[1])
-            if (fetch_tools.acceptable_file(paths[0]) and fetch_tools.acceptable_file(paths[1])):
-                save_composite_image(paths, filepath)
+        if f'.{version}' in filepath:
+            paths = [f'{split[0]}.a{split[1]}', f'{split[0]}.b{split[1]}']
         else:
-            await fetch_tools.store_async(scryfall_image(c, version=version), filepath)
-    except FetchException as e:
-        print(f'Error: {e}')
+            paths = [f'{split[0]}.{version}.a{split[1]}', f'{split[0]}.{version}.b{split[1]}']
+
+        front_ok = await download_first_image(image_urls(c, version=version), paths[0])
+        back_ok = False
+        if c.layout in layout.has_single_back():
+            back_ok = await download_first_image(image_urls(c, version=version, face='back'), paths[1])
+        if c.layout in layout.has_meld_back():
+            back_ok = await download_first_image(image_urls(c, version=version, face='meld'), paths[1])
+        if front_ok and back_ok:
+            save_composite_image(paths, filepath)
+    else:
+        await download_first_image(image_urls(c, version=version), filepath)
     return fetch_tools.acceptable_file(filepath)
+
+async def download_first_image(urls: list[str], filepath: str) -> bool:
+    for url in urls:
+        try:
+            await fetch_tools.store_async(url, filepath)
+            return True
+        except FetchException as e:
+            print(f'Error fetching {url}: {e}')
+    return False
 
 def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.jpg') -> str:
     imagename = basename(cards)
@@ -135,16 +252,22 @@ def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.jpg') -
     return f'{directory}/{prefix}{filename}'
 
 
-def download_image(cards: list[Card]) -> str | None:
+def download_image(cards: list[Card], version: str = '') -> str | None:
     event_loop = None
     try:
         event_loop = asyncio.get_event_loop()
     except RuntimeError:
         event_loop = asyncio.new_event_loop()
         asyncio.set_event_loop(event_loop)
-    return event_loop.run_until_complete(download_image_async(cards))
+    return event_loop.run_until_complete(download_image_async(cards, version))
 
-async def download_image_async(cards: list[Card]) -> str | None:
+async def download_image_async(cards: list[Card], version: str = '') -> str | None:
+    if version in ('art_crop', 'art_crop_small'):
+        if len(cards) != 1:
+            return None  # There's no such thing as a composite art crop.
+        if version == 'art_crop_small':
+            return await download_small_art_crop(cards[0])
+        return await download_scryfall_art_crop(cards[0])
     filepath = determine_filepath(cards)
     if fetch_tools.acceptable_file(filepath):
         return filepath
@@ -249,26 +372,11 @@ async def generate_discord_banner(names: list[str], background: str) -> str:
     return out_filepath
 
 async def paste_card(canvas: Image.Image, c: Card, x: int, y: int, card_size: tuple[int, int]) -> int:
-    url = scryfall_image(c, version='png')
-
-    try:
-        async with aiohttp.ClientSession() as aios:
-            response = await aios.get(url)
-
-            data = io.BytesIO()
-            while True:
-                chunk = await response.content.read(1024)
-                if not chunk:
-                    break
-                data.write(chunk)
-
-    except (urllib.error.HTTPError, aiohttp.ClientError) as e:
-        raise FetchException(e) from e
-
-    if not data:
+    filepath = await download_scryfall_png(c)
+    if filepath is None:
         return x
 
-    with Image.open(data) as img:
+    with Image.open(filepath) as img:
         newimg = img.resize(card_size, Image.Resampling.LANCZOS)
         canvas.paste(newimg, (x, y))
         x = x + newimg.width + 10

@@ -24,7 +24,7 @@ const renderItem = (grid, archetype) => (
         </div>
         <div className="row key-card">
             {archetype.keyCards.length > 0 && (
-                <div className="card" data-name={archetype.keyCards[0].name} style={{background: `url(${archetype.keyCards[0].url}) center top / cover no-repeat`}}></div>
+                <div className="card" data-name={archetype.keyCards[0].name} style={{background: `url("${archetype.keyCards[0].url}") center top / cover no-repeat`}}></div>
             )}
         </div>
         <div className="row flex-row" style={{gap: "8px"}}>
@@ -86,7 +86,7 @@ const renderItem = (grid, archetype) => (
         </div>
         <div className="row key-cards">
             {archetype.keyCards && archetype.keyCards.shift() && archetype.keyCards.map((card) => (
-                <div className="card" data-name={card.name} style={{background: `url(${card.url}) center top / cover no-repeat`}} key={card.name}></div>
+                <div className="card" data-name={card.name} style={{background: `url("${card.url}") center top / cover no-repeat`}} key={card.name}></div>
             ))}
         </div>
     </a>

@@ -1,12 +1,12 @@
 import logging
 import os
 import re
+import urllib.parse
 from copy import copy
 
 import sentry_sdk
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
 from werkzeug import wrappers
-from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite.cache import cached
@@ -15,12 +15,16 @@ from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
-from decksite.database import db
 from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
-from shared import logger, perf
+from shared import configuration, logger, perf
 from shared.pd_exception import TooFewItemsException
+
+SUPPORTED_IMAGE_VERSIONS = ['', 'art_crop', 'art_crop_small']
+# Card images never change once we've picked a printing, so let browsers and Cloudflare hang on to them.
+# Without this every card on every page is revalidated against us on every pageview.
+IMAGE_MAX_AGE = 60 * 60 * 24 * 7
 
 
 @APP.route('/')
@@ -51,6 +55,11 @@ def discord() -> wrappers.Response:
 @APP.route('/image/<path:c>/')
 def image(c: str = '') -> wrappers.Response:
     names = c.split('|')
+    version = request.args.get('version', '')
+    if version not in SUPPORTED_IMAGE_VERSIONS:
+        return make_response('', 400)
+    if version == 'art_crop' and len(names) > 1:
+        return make_response('', 400)  # There's no such thing as a composite art crop.
     try:
         requested_cards = oracle.load_cards(names)
         preferred_printing = request.args.get('printing')
@@ -62,14 +71,24 @@ def image(c: str = '') -> wrappers.Response:
                     card['preferred_printing'] = preferred_printing
                 if preferred_printing_system_id:
                     card['preferred_printing_system_id'] = preferred_printing_system_id
-        path = image_fetcher.download_image(requested_cards)
+        path = image_fetcher.download_image(requested_cards, version=version)
         if path is None:
-            raise InternalServerError(f'Failed to get image for {c}')
-        return send_file(os.path.abspath(path))  # Send abspath to work around monolith root versus web root.
+            logger.warning(f'Could not fetch image for {c}')
+            return make_response('', 404)
+        response = send_file(os.path.abspath(path))  # Send abspath to work around monolith root versus web root.
+        # send_file defaults to no-cache, which wins over any max-age we add and makes browsers revalidate
+        # every image on every pageview. Clear it. (send_file has a max_age argument but types-flask predates it.)
+        response.cache_control.no_cache = None
+        response.cache_control.public = True
+        response.cache_control.max_age = IMAGE_MAX_AGE
+        return response
     except TooFewItemsException as e:
         logger.info(f'Did not find an image for {c}: {e}')
         if len(names) == 1:
-            return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
+            query = {'exact': c, 'format': 'image'}
+            if version:
+                query['version'] = 'art_crop' if version == 'art_crop_small' else version
+            return redirect(f'https://api.scryfall.com/cards/named?{urllib.parse.urlencode(query)}', code=303)
         return make_response('', 400)
 
 @APP.route('/static/dev-db.sql.gz')
@@ -79,9 +98,12 @@ def dev_db() -> wrappers.Response:
 
 @APP.before_request
 def before_request() -> wrappers.Response | None:
-    simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt']
-    if not any(request.path.startswith(prefix) for prefix in simple_paths):
-        auth.check_perms()
+    # These serve identical bytes to everyone. Touching the session would add a Vary: Cookie that stops
+    # them being cached by Cloudflare, so return before anything looks at it.
+    simple_paths = [APP.static_url_path, '/banner/', '/favicon.ico', '/robots.txt', '/image/']
+    if any(request.path.startswith(prefix) for prefix in simple_paths):
+        return None
+    auth.check_perms()
     if not request.path.endswith('/'):
         return None  # Let flask do the redirect-routes-not-ending-in-slashes thing before we interfere with routing. Avoids #8277.
     if request.path.startswith('/seasons') and len(request.path) > len('/seasons/') and get_season_id() >= seasons.current_season_num():
@@ -102,7 +124,12 @@ def before_request() -> wrappers.Response | None:
 def teardown_request(_: BaseException | None) -> None:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
-    db().close()
+    decksite_database = g.get(configuration.get_str('decksite_database'))
+    if decksite_database is not None:
+        decksite_database.close()
+    magic_database = g.get('magic_database')
+    if magic_database is not None:
+        magic_database.close()
 
 def init(debug: bool = True, port: int | None = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

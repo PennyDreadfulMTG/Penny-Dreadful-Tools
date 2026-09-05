@@ -9,7 +9,7 @@ from shared.database import Database, get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 110
+SCHEMA_VERSION = 111
 MAX_CARD_INFORMATION_AGE = datetime.timedelta(days=2)
 DATABASE = Container()
 

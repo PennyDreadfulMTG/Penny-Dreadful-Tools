@@ -8,7 +8,7 @@ from decksite.data import archetype
 from decksite.data.archetype import Archetype
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import fetcher, image_fetcher, oracle, seasons
+from magic import fetcher, oracle, seasons
 from magic.colors import find_colors
 from magic.models import Card, Deck
 from shared import dtutil
@@ -60,17 +60,21 @@ def prepare_card_urls(c: Card, tournament_only: bool = False, season_id: int | s
     c.url = url_for_card(c, tournament_only, season_id)
     c.img_url = url_for_image(c.name, c.get('preferred_printing'), c.get('preferred_printing_system_id'))
 
-def url_for_image(name: str, preferred_printing: str | None = None, preferred_printing_system_id: str | None = None) -> str:
+def url_for_image(name: str, preferred_printing: str | None = None, preferred_printing_system_id: str | None = None, version: str | None = None) -> str:
     if g.get('url_cache') is None:
         g.url_cache = {}
     if g.url_cache.get('card_image') is None:
         g.url_cache['card_image'] = url_for('image', c='--cardname--')
-    url = g.url_cache['card_image'].replace('--cardname--', name)
+    # Encode the name. Unencoded spaces are tolerated in an img src but make the URL invalid inside a
+    # CSS url(), which is how /metagame draws its tiles.
+    url = g.url_cache['card_image'].replace('--cardname--', urllib.parse.quote(name))
     query = {}
     if preferred_printing:
         query['printing'] = preferred_printing
     if preferred_printing_system_id:
         query['printing_id'] = preferred_printing_system_id
+    if version:
+        query['version'] = version
     if query:
         return f'{url}?{urllib.parse.urlencode(query)}'
     return url
@@ -200,7 +204,7 @@ def prepare_archetypes_for_api(archetypes: list[Archetype], key_card_names: Mapp
     for a in archetypes:
         key_cards = [cards_by_name[name] for name in key_card_names.get(a.id, [])]
         a.key_cards = [
-            Card({'name': card.name, 'url': image_fetcher.scryfall_image(card, 'art_crop')})
+            Card({'name': card.name, 'url': url_for_image(card.name, version='art_crop_small')})
             for card in key_cards
             if not is_uninteresting(card)
         ][:5]

@@ -4,6 +4,8 @@ from typing import Any
 
 import sqlalchemy as sa
 
+from shared.pd_exception import DoesNotExistException
+
 from .. import db
 from ..db import DB as fsa
 
@@ -39,8 +41,14 @@ def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     db.merge(local)  # This will replace an old version of the game, if one exists.
     db.commit()
 
-def get_game(game_id: int) -> Game:
+def get_game(game_id: int) -> Game | None:
     return Game.query.filter_by(id=game_id).one_or_none()
+
+def load_game(game_id: int) -> Game:
+    local = get_game(game_id)
+    if local is None:
+        raise DoesNotExistException(f'Did not find game `{game_id}`')
+    return local
 
 class Line(fsa.Model):
     id = sa.Column(fsa.Integer, primary_key=True, autoincrement=True)

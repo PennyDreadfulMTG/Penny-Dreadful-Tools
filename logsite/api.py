@@ -27,8 +27,8 @@ def person_status() -> Response:
     }
     return return_json(r)
 
-@APP.route('/api/matchExists/<match_id>')
-@APP.route('/api/matchExists/<match_id>/')
+@APP.route('/api/matchExists/<int:match_id>')
+@APP.route('/api/matchExists/<int:match_id>/')
 def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
@@ -37,15 +37,15 @@ def match_exists(match_id: int) -> Response:
 def person_data(person: str) -> Response:
     return return_json(list(match.Match.query.filter(match.Match.players.any(db.User.name == person))))
 
-@APP.route('/api/match/<match_id>')
-@APP.route('/api/match/<match_id>/')
+@APP.route('/api/match/<int:match_id>')
+@APP.route('/api/match/<int:match_id>/')
 def match_data(match_id: int) -> Response:
-    return return_json(match.get_match(match_id))
+    return return_json(match.load_match(match_id))
 
-@APP.route('/api/game/<game_id>')
-@APP.route('/api/game/<game_id>/')
+@APP.route('/api/game/<int:game_id>')
+@APP.route('/api/game/<int:game_id>/')
 def game_data(game_id: int) -> Response:
-    return return_json(game.get_game(game_id))
+    return return_json(game.load_game(game_id))
 
 @APP.route('/api/upload', methods=['POST'])
 @APP.route('/api/upload/', methods=['POST'])
@@ -65,18 +65,16 @@ def upload() -> Response:
             importing.import_from_pdbot(match_id)
         start_time = int(request.form['start_time_utc'])
         end_time = int(request.form['end_time_utc'])
-        match.get_match(match_id).set_times(start_time, end_time)
+        match.load_match(match_id).set_times(start_time, end_time)
     except InvalidDataException as e:
         repo.create_issue('Error uploading match', 'logsite', 'logsite', 'PennyDreadfulMTG/perf-reports', exception=e)
 
     return return_json({'success': True})
 
-@APP.route('/export/<match_id>')
-@APP.route('/export/<match_id>/')
+@APP.route('/export/<int:match_id>')
+@APP.route('/export/<int:match_id>/')
 def export(match_id: int) -> tuple[str, int, dict[str, str]]:
-    local = match.get_match(match_id)
-    if local is None:
-        return return_json({'success': False})
+    local = match.load_match(match_id)
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,
         comment=local.comment,

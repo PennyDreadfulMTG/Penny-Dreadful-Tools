@@ -58,3 +58,10 @@ def test_archetypes2_serializes_win_percent_as_number_or_null(monkeypatch: pytes
     assert data['objects'][0]['winPercent'] == 50.0
     assert isinstance(data['objects'][0]['winPercent'], float)
     assert data['objects'][1]['winPercent'] is None
+
+
+def test_card_api_returns_not_found_for_unknown_card() -> None:
+    response = APP.test_client().get('/api/card/DefinitelyNotARealCard/')
+
+    assert response.status_code == 404
+    assert response.get_json()['code'] == 'NOTFOUND'

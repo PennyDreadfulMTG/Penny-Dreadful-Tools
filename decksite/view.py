@@ -137,15 +137,17 @@ class View(BaseView):
         return url_for('favicon', rest='-152.png')
 
     def title(self) -> str:
-        if not self.page_title():
+        page_title = self.page_title()
+        if not page_title:
             return 'pennydreadfulmagic.com'
+        page_title = text.replace_emoji_with_text(page_title)
         if get_season_id() == seasons.current_season_num():
             season = ''
         elif get_season_id() == 0:
             season = ' - All Time'
         else:
             season = f' - Season {get_season_id()}'
-        return text.replace_emoji_with_text(f'{self.page_title()}{season} – pennydreadfulmagic.com')
+        return f'{page_title}{season} – pennydreadfulmagic.com'
 
     # Site-wide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:

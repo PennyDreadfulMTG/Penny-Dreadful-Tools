@@ -17,6 +17,16 @@ from shared.database import sqlescape
 from shared.pd_exception import DatabaseException, InvalidDataException, LockNotAcquiredException
 from shared_web import fonts
 
+MAX_TIED_ELIMINATION_FINISH_SIZE = 4
+
+
+class SwissRecord(TypedDict):
+    match_points: int
+    matches_played: int
+    games_won: int
+    games_played: int
+    opponents: list[int]
+
 
 def latest_decks(season_id: str | int | None = None) -> list[Deck]:
     return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
@@ -154,6 +164,95 @@ def deserialize_deck(sdeck: Container) -> Deck:
     deck.maindeck = [CardRef(ref['name'], ref['n']) for ref in deck.maindeck]
     deck.sideboard = [CardRef(ref['name'], ref['n']) for ref in deck.sideboard]
     return deck
+
+def order_decks_by_swiss_tiebreakers(decks: list[Deck]) -> list[Deck]:
+    """Order tied top-four/top-eight groups without turning their shared finish into fake individual places."""
+    tied_groups: list[tuple[int, int]] = []
+    group_start = 0
+    while group_start < len(decks):
+        group_key = (decks[group_start].competition_id, decks[group_start].finish)
+        group_end = group_start + 1
+        while group_end < len(decks) and (decks[group_end].competition_id, decks[group_end].finish) == group_key:
+            group_end += 1
+        if group_key[1] in [3, 5] and group_end - group_start > 1:
+            tied_groups.append((group_start, group_end))
+        group_start = group_end
+    if not tied_groups:
+        return decks
+
+    competition_ids = {decks[start].competition_id for start, _ in tied_groups}
+    ids = ', '.join(str(int(competition_id)) for competition_id in competition_ids)
+    rows = db().select(f"""
+        SELECT
+            player_dm.deck_id,
+            opponent_dm.deck_id AS opponent_deck_id,
+            player_dm.games,
+            opponent_dm.games AS opponent_games
+        FROM
+            deck_match AS player_dm
+        INNER JOIN
+            deck AS player_deck ON player_deck.id = player_dm.deck_id
+        INNER JOIN
+            `match` AS player_match ON player_match.id = player_dm.match_id
+        LEFT JOIN
+            deck_match AS opponent_dm ON opponent_dm.match_id = player_dm.match_id AND opponent_dm.deck_id <> player_dm.deck_id
+        WHERE
+            player_deck.competition_id IN ({ids}) AND player_match.elimination = 0
+    """)
+    records: dict[int, SwissRecord] = {}
+    for row in rows:
+        deck_id = int(row['deck_id'])
+        record = records.setdefault(deck_id, {'match_points': 0, 'matches_played': 0, 'games_won': 0, 'games_played': 0, 'opponents': []})
+        opponent_id = row['opponent_deck_id']
+        opponent_games = int(row['opponent_games'] or 0)
+        games = int(row['games'])
+        record['matches_played'] += 1
+        if games > opponent_games:
+            record['match_points'] += 3
+        elif games == opponent_games:
+            record['match_points'] += 1
+        if opponent_id is not None:
+            record['games_won'] += games
+            record['games_played'] += games + opponent_games
+            record['opponents'].append(int(opponent_id))
+
+    def percentage(numerator: int, denominator: int) -> float | None:
+        return numerator / denominator if denominator else None
+
+    def average(values: list[float]) -> float | None:
+        return sum(values) / len(values) if values else None
+
+    def metrics(deck_id: int) -> tuple[float | None, float | None, float | None, float | None]:
+        record = records.get(deck_id)
+        if record is None:
+            return None, None, None, None
+        opponent_match_win_percentages = []
+        opponent_game_win_percentages = []
+        for opponent_id in record['opponents']:
+            opponent = records[opponent_id]
+            opponent_match_win_percentage = percentage(opponent['match_points'], opponent['matches_played'] * 3)
+            if opponent_match_win_percentage is not None:
+                opponent_match_win_percentages.append(max(0.33, opponent_match_win_percentage))
+            opponent_game_win_percentage = percentage(opponent['games_won'], opponent['games_played'])
+            if opponent_game_win_percentage is not None:
+                opponent_game_win_percentages.append(max(0.33, opponent_game_win_percentage))
+        return (
+            float(record['match_points']),
+            average(opponent_match_win_percentages),
+            percentage(record['games_won'], record['games_played']),
+            average(opponent_game_win_percentages),
+        )
+
+    def descending(value: float | None) -> float:
+        return -value if value is not None else float('inf')
+
+    ordered = list(decks)
+    for start, end in tied_groups:
+        ordered[start:end] = sorted(
+            ordered[start:end],
+            key=lambda d: tuple(descending(value) for value in metrics(d.id)) + (str(d.person).casefold(),),
+        )
+    return ordered
 
 def load_decks_heavy(where: str = 'TRUE',
                      having: str = 'TRUE',

@@ -1,14 +1,17 @@
 import warnings
 from collections.abc import Iterable
+from decimal import Decimal
 from typing import Any, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
+from MySQLdb.constants import FIELD_TYPE
 
 from shared import configuration, perf
 from shared.pd_exception import DatabaseConnectionRefusedException, DatabaseException, DatabaseMissingException, DatabaseNoSuchTableException, InvalidArgumentException, LockNotAcquiredException
 
 ValidSqlArgumentDescription = Any
+DECIMAL_FIELD_TYPES = {FIELD_TYPE.DECIMAL, FIELD_TYPE.NEWDECIMAL}
 
 class Database:
     def __init__(self, db: str) -> None:
@@ -72,6 +75,13 @@ class Database:
                 perf.check(p, 'slow_query', (f'```{sql}```', f'```{args}```'), 'mysql')
                 if fetch_rows:
                     rows = self.cursor.fetchall()
+                    # MariaDB returns SUM(integer) and DECIMAL(..., 0) as Decimal. The DB-API scale metadata lets us
+                    # restore their integer semantics without converting genuinely fractional Decimals to float.
+                    scale_zero_columns = [field[0] for field in self.cursor.description if field[1] in DECIMAL_FIELD_TYPES and field[5] == 0]
+                    for row in rows:
+                        for column in scale_zero_columns:
+                            if isinstance(row[column], Decimal):
+                                row[column] = int(row[column])
                     result = (n, rows)
                 else:
                     result = (n, [])

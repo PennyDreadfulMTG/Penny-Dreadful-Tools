@@ -309,7 +309,7 @@ def load_cards_with_total(
             SUM(IFNULL(wins, 0)) AS wins,
             SUM(IFNULL(losses, 0)) AS losses,
             SUM(IFNULL(draws, 0)) AS draws,
-            SUM(IFNULL(wins, 0) - losses) AS record,
+            SUM(IFNULL(wins, 0) - IFNULL(losses, 0)) AS record,
             SUM(IFNULL(perfect_runs, 0)) AS perfect_runs,
             SUM(IFNULL(tournament_wins, 0)) AS tournament_wins,
             SUM(IFNULL(tournament_top8s, 0)) AS tournament_top8s,

@@ -104,9 +104,10 @@ export const renderRecord = (object) => {
 };
 
 export const renderWinPercent = (object) => {
-    if (object.showRecord) {
-        return object.winPercent;
+    if (object.showRecord && Number.isFinite(object.winPercent)) {
+        return object.winPercent.toLocaleString([], {minimumFractionDigits: 1, maximumFractionDigits: 1});
     }
+    return "";
 };
 
 export const renderCard = (card) => (

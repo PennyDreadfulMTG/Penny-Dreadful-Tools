@@ -6,7 +6,6 @@ const renderHeaderRow = (table) => (
     <tr>
         <th className="name" onClick={table.sort.bind(table, "name", "ASC")}>Card</th>
         <th className="n num-decks" onClick={table.sort.bind(table, "numDecks", "DESC")}># Decks</th>
-        <th className="n card-record" onClick={table.sort.bind(table, "record", "DESC")}>Record</th>
         <th className="n win-percent" onClick={table.sort.bind(table, "winPercent", "DESC")}>Win %</th>
         { table.props.leagueOnly
             ? null
@@ -30,32 +29,38 @@ const renderHeaderRow = (table) => (
 const renderRow = (table, card) => (
     <tr key={card.name} className="clickable">
         <td className="name">{renderCard(card)}</td>
-        <td className="n">{card.numDecks.toLocaleString()}</td>
-        <td className="n">{renderRecord(card)}</td>
-        <td className="n">{renderWinPercent(card)}</td>
+        <td className="n num-decks">{card.numDecks.toLocaleString()}</td>
+        <td className="n win-percent">
+            <span
+                title={`Record: ${renderRecord(card)}`}
+                aria-label={`${renderWinPercent(card)}%; record ${renderRecord(card)}`}
+            >
+                {renderWinPercent(card)}
+            </span>
+        </td>
         { table.props.leagueOnly
             ? null
-            : <td className="n">
+            : <td className="n tournament-wins">
                 { card.tournamentWins > 0
-                    ? card.tournamentWins
+                    ? card.tournamentWins.toLocaleString()
                     : ""
                 }
             </td>
         }
         { table.props.leagueOnly
             ? null
-            : <td className="n">
+            : <td className="n tournament-top-8s">
                 { card.tournamentTop8s > 0
-                    ? card.tournamentTop8s
+                    ? card.tournamentTop8s.toLocaleString()
                     : ""
                 }
             </td>
         }
         { table.props.tournamentOnly
             ? null
-            : <td className="n">
+            : <td className="n perfect-runs">
                 { card.perfectRuns > 0
-                    ? card.perfectRuns
+                    ? card.perfectRuns.toLocaleString()
                     : ""
                 }
             </td>

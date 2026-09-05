@@ -1,5 +1,5 @@
 from flask import url_for
-from flask_babel import gettext
+from flask_babel import format_decimal, gettext
 
 from decksite.data.archetype import WINDOW_DAYS, Archetype
 from decksite.view import View
@@ -91,6 +91,11 @@ class Home(View):
     def setup_cards(self, cards: list[Card]) -> None:
         cards = [c for c in cards if 'Basic' not in c.type_line]
         self.top_cards = cards[0:8]
+        for card in self.top_cards:
+            card.num_decks_display = format_decimal(card.num_decks)
+            record = [card.wins, card.losses] + ([card.draws] if card.draws else [])
+            card.record_display = '–'.join(format_decimal(n) for n in record)
+            card.win_percent_display = format_decimal(card.win_percent, format='#,##0.0')
         self.has_top_cards = len(cards) > 0
         self.cards = self.top_cards  # To get prepare_card treatment
         self.cards_url = url_for('.cards')

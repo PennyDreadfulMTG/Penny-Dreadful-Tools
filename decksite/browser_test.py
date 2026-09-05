@@ -144,6 +144,20 @@ def test_metagame_uses_number_sign_for_deck_count_without_quality_rank(browser: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.goto('/metagame/')
+    assert not wait_for_live_tables(page)
+    expect(page.locator('[title="Number of Decks"]').first).to_have_css('cursor', 'pointer')
+
+    page.goto('/decks/league/')
+    expect(page.locator('th.omw')).to_have_css('cursor', 'pointer')
+
+    page.locator('main').evaluate("element => { element.insertAdjacentHTML('beforeend', '<li class=button id=informational-title title=Details>Achievement</li>'); }")
+    expect(page.locator('#informational-title')).to_have_css('cursor', 'help')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def submenu_items(page: 'Page') -> 'Locator':
     return page.locator('.menu > li:has(.submenu):visible')
 

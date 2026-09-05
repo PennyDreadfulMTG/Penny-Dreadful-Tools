@@ -21525,6 +21525,10 @@
           "event": "ADJUDICATED",
           "status": "deferred_human",
           "ts": "2026-09-05T22:00:27Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "ts": "2026-09-05T22:05:41Z"
         }
       ],
       "issue": 12584,
@@ -21532,7 +21536,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Post-merge audit 2026-09-05: PR #15060 does not materially solve issue #12584. With 100 deliberate ESLint errors, the previous stylish formatter produced 105 lines and 8,167 bytes; compact produced 103 lines and 17,262 bytes because it repeats the absolute path for every problem. The PR description's claim that stylish emits four to six lines per problem is false. ESLint v9 officially supports the added standalone formatter and the package is small and dependency-free, but it adds maintenance cost for negligible line reduction and worse byte volume. Recommend reverting #15060 and reopening #12584 for a fix based on the actual noisy output.",
+      "notes": "Post-merge audit 2026-09-05: PR #15060 does not materially solve issue #12584. With 100 deliberate ESLint errors, the previous stylish formatter produced 105 lines and 8,167 bytes; compact produced 103 lines and 17,262 bytes because it repeats the absolute path for every problem. The PR description's claim that stylish emits four to six lines per problem is false. ESLint v9 officially supports the added standalone formatter and the package is small and dependency-free, but it adds maintenance cost for negligible line reduction and worse byte volume. PR #15218 cleanly reverts #15060, and issue #12584 has been reopened for a fix based on the actual noisy output.",
       "pr": {
         "adopted": true,
         "branch": "sweep/12584-jslint-s-output-is-about-1000-lines-long",
@@ -40937,8 +40941,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8839,
-  "last_snapshot_at": "2026-09-05T22:00:27Z",
+  "last_seq": 8841,
+  "last_snapshot_at": "2026-09-05T22:05:41Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

@@ -73,10 +73,10 @@ class Deck(View):
     def og_description(self) -> str:
         if self.public() and self.archetype_name and self.reviewed:
             p = inflect.engine()
-            archetype_s = titlecase.titlecase(p.a(self.archetype_name))
+            archetype_s = titlecase.titlecase(p.a(text.replace_emoji_with_text(self.archetype_name)))
         else:
             archetype_s = 'A'
-        return text.replace_emoji_with_text(f'{archetype_s} deck by {self.person}')
+        return f'{archetype_s} deck by {text.replace_emoji_with_text(self.person)}'
 
     def oembed_url(self) -> str:
         return url_for('deck_embed', deck_id=self.deck.id, _external=True)

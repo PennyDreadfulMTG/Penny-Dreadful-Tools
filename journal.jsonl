@@ -8839,3 +8839,6 @@
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8838, "seq": 8839, "ts": "2026-09-05T22:00:27Z"}
 {"event": "ADJUDICATED", "issue": 12584, "note": "PR #15218 cleanly reverts #15060, and issue #12584 has been reopened for a fix based on the actual noisy output.", "seq": 8840, "ts": "2026-09-05T22:05:41Z", "verb": "annotate"}
 {"event": "SNAPSHOT_WRITTEN", "last_seq": 8840, "seq": 8841, "ts": "2026-09-05T22:05:41Z"}
+{"event": "PR_MERGED", "issue": 12613, "merged_at": "2026-09-02T14:29:26Z", "pr": 15061, "seq": 8842, "ts": "2026-09-05T22:09:18Z"}
+{"event": "ADJUDICATED", "issue": 12613, "note": "Post-merge audit 2026-09-05: keep PR #15061 as correct but superseded by PR #15070. PR #12517 introduced an 11rem (220px) minimum tile width, so two tracks could not fit in the 350px content area at a 390px iPhone viewport. #15061's mobile 8rem override correctly produced two 170.8px tiles there. #15070 later replaced the viewport-specific override with container-query factor-of-24 columns while preserving the mobile result. Current browser measurements show two columns at 375-501px, one column at 320px, and no horizontal overflow across tested widths.", "seq": 8843, "ts": "2026-09-05T22:09:18Z", "verb": "annotate"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8843, "seq": 8844, "ts": "2026-09-05T22:09:18Z"}

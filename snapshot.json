@@ -23038,6 +23038,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:20:26Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T22:09:18Z"
         }
       ],
       "issue": 12613,
@@ -23045,16 +23049,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15061 as correct but superseded by PR #15070. PR #12517 introduced an 11rem (220px) minimum tile width, so two tracks could not fit in the 350px content area at a 390px iPhone viewport. #15061's mobile 8rem override correctly produced two 170.8px tiles there. #15070 later replaced the viewport-specific override with container-query factor-of-24 columns while preserving the mobile result. Current browser measurements show two columns at 375-501px, one column at 320px, and no horizontal overflow across tested widths.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12613-metagame-is-only-one-tile-wide-on-a-mode",
         "ci": {
-          "checked_at": "2026-09-02T02:05:28Z",
+          "checked_at": "2026-09-05T22:09:18Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "863d8501f167b7298be9ba927500a67bc34c9c19",
+        "head_sha": "bd2dc67f0beba3f725560867be12f548fed287a9",
+        "merged_at": "2026-09-02T14:29:26Z",
         "number": 15061,
         "opened_at": "2026-09-01T18:12:57Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15061"
@@ -40941,8 +40946,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8841,
-  "last_snapshot_at": "2026-09-05T22:05:41Z",
+  "last_seq": 8844,
+  "last_snapshot_at": "2026-09-05T22:09:18Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

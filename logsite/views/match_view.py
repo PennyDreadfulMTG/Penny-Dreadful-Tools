@@ -14,7 +14,7 @@ from ..view import View
 
 @APP.route('/match/<int:match_id>/')
 def show_match(match_id: int) -> str:
-    view = Match(match.get_match(match_id))
+    view = Match(match.load_match(match_id))
     return view.page()
 
 class Match(View):

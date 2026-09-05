@@ -5,7 +5,7 @@ import pytest
 
 from magic import oracle, seasons
 from magic.models import Card, Printing
-from shared.pd_exception import DatabaseException, InvalidDataException
+from shared.pd_exception import DatabaseException, DoesNotExistException, InvalidDataException
 
 
 def test_legality() -> None:
@@ -24,6 +24,10 @@ def test_legality() -> None:
     assert card.legalities['Legacy'] == 'Banned'
     assert card.legalities['Vintage'] == 'Restricted'
     assert season_name not in card.legalities.keys()
+
+def test_load_card_raises_for_unknown_name() -> None:
+    with pytest.raises(DoesNotExistException, match='Did not find card `Definitely Not a Card`'):
+        oracle.load_card('Definitely Not a Card')
 
 def test_valid_name() -> None:
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'

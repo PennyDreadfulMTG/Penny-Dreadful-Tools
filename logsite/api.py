@@ -29,7 +29,7 @@ def person_status() -> Response:
 
 @APP.route('/api/matchExists/<match_id>')
 @APP.route('/api/matchExists/<match_id>/')
-def match_exists(match_id: int) -> Response:
+def match_exists(match_id: str) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
 @APP.route('/api/person/<person>')
@@ -39,13 +39,13 @@ def person_data(person: str) -> Response:
 
 @APP.route('/api/match/<match_id>')
 @APP.route('/api/match/<match_id>/')
-def match_data(match_id: int) -> Response:
-    return return_json(match.get_match(match_id))
+def match_data(match_id: str) -> Response:
+    return return_json(match.load_match(match_id))
 
 @APP.route('/api/game/<game_id>')
 @APP.route('/api/game/<game_id>/')
-def game_data(game_id: int) -> Response:
-    return return_json(game.get_game(game_id))
+def game_data(game_id: str) -> Response:
+    return return_json(game.load_game(game_id))
 
 @APP.route('/api/upload', methods=['POST'])
 @APP.route('/api/upload/', methods=['POST'])
@@ -73,10 +73,8 @@ def upload() -> Response:
 
 @APP.route('/export/<match_id>')
 @APP.route('/export/<match_id>/')
-def export(match_id: int) -> tuple[str, int, dict[str, str]]:
-    local = match.get_match(match_id)
-    if local is None:
-        return return_json({'success': False})
+def export(match_id: str) -> tuple[str, int, dict[str, str]]:
+    local = match.load_match(match_id)
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,
         comment=local.comment,
@@ -91,5 +89,5 @@ def export(match_id: int) -> tuple[str, int, dict[str, str]]:
     text = text.replace('\n', '\r\n')
     return (text, 200, {
         'Content-type': 'text/plain; charset=utf-8',
-        'Content-Disposition': f'attachment; filename={match_id}.txt',
+        'Content-Disposition': f'attachment; filename={local.id}.txt',
     })

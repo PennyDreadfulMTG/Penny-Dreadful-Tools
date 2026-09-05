@@ -175,14 +175,21 @@ def test_escape_underscores() -> None:
     assert r == 'Adamaro, First to Desire :white_check_mark:'
 
 def test_no_warning_for_recent_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(command.database, 'card_information_is_available', lambda: True)
     monkeypatch.setattr(command.database, 'stale_card_information_age', lambda: None)
 
     assert command.stale_card_information_warning() == ''
 
 def test_warning_for_stale_card_information(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(command.database, 'card_information_is_available', lambda: True)
     monkeypatch.setattr(command.database, 'stale_card_information_age', lambda: datetime.timedelta(days=29))
 
     assert command.stale_card_information_warning() == '\nWARNING: card information is 4 weeks old'
+
+def test_warning_when_card_information_is_unavailable(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(command.database, 'card_information_is_available', lambda: False)
+
+    assert command.stale_card_information_warning() == '\nWARNING: card information is unavailable'
 
 @pytest.mark.asyncio
 async def test_card_converter_uses_buttons_for_ambiguous_names(monkeypatch: pytest.MonkeyPatch) -> None:

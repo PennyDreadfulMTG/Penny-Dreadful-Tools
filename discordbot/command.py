@@ -156,6 +156,8 @@ async def post_nothing(channel: PrefixedContext | InteractionContext | TYPE_MESS
     await message.add_reaction('❎')
 
 def stale_card_information_warning() -> str:
+    if not database.card_information_is_available():
+        return '\nWARNING: card information is unavailable'
     age = database.stale_card_information_age()
     if age is not None:
         return f'\nWARNING: card information is {dtutil.display_time(age.total_seconds(), 1)} old'

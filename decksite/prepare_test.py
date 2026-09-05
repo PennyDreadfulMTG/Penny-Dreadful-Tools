@@ -92,7 +92,7 @@ def test_prepare_card_uses_preferred_printing_for_image(monkeypatch: pytest.Monk
     with APP.test_request_context('/'):
         prepare.prepare_card(card)
 
-    assert card.img_url == '/image/Agent Venom/?printing=om1&printing_id=d62cf4f8-36a2-4d9f-9d52-53ea18a52760'
+    assert card.img_url == '/image/Agent%20Venom/?printing=om1&printing_id=d62cf4f8-36a2-4d9f-9d52-53ea18a52760'
 
 
 def test_prepare_archetypes_for_api_adds_grid_fields(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -115,13 +115,12 @@ def test_prepare_archetypes_for_api_adds_grid_fields(monkeypatch: pytest.MonkeyP
         return (['R'], ['R']) if key_cards else ([], [])
 
     monkeypatch.setattr(prepare, 'find_colors', fake_find_colors)
-    monkeypatch.setattr(prepare.image_fetcher, 'scryfall_image', lambda card, version: f'https://images.test/{card.name}/{version}')
 
     with APP.test_request_context('/'):
         prepare.prepare_archetypes_for_api(archetypes, key_card_names, cards, False, 42)
 
     assert [(card.name, card.url) for card in archetypes[0].key_cards] == [
-        (f'Card {n}', f'https://images.test/Card {n}/art_crop') for n in range(1, 6)
+        (f'Card {n}', f'/image/Card%20{n}/?version=art_crop_small') for n in range(1, 6)
     ]
     assert archetypes[0].num_matches == 5
     assert archetypes[0].colors_safe == '<div class="mana-bar"><span class="stacked-bar mana-R" style="flex-grow: 100"></span></div>'
@@ -129,3 +128,11 @@ def test_prepare_archetypes_for_api_adds_grid_fields(monkeypatch: pytest.MonkeyP
     assert archetypes[1].num_matches == 0
     assert archetypes[1].colors_safe == '<div class="mana-bar"><span class="stacked-bar mana" style="flex-grow: 1"></span></div>'
     assert colors_calls == [list(cards), []]
+
+def test_url_for_image_requests_a_small_art_crop_from_us_not_scryfall() -> None:
+    """The /metagame tiles used to hotlink api.scryfall.com and get rate limited into 429s."""
+    with APP.test_request_context('/'):
+        url = prepare.url_for_image('Reclaim', version='art_crop_small')
+
+    assert url == '/image/Reclaim/?version=art_crop_small'
+    assert 'scryfall' not in url

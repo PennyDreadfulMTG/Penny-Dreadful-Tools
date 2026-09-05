@@ -29,8 +29,8 @@ def test_alternate_card_page_uses_alternate_name_and_printing(monkeypatch: pytes
     assert '<section class="card-image-block">' in content
     assert '<p class="alternate-printing-note ">Alternate printing of' in content
     assert 'href="/cards/Agent%20Venom/">Agent Venom</a>' in content
-    assert 'src="/image/Agent Venom/?printing=om1&amp;printing_id=d62cf4f8-36a2-4d9f-9d52-53ea18a52760"' in content
-    assert content.index('src="/image/Agent Venom/?printing=om1') < content.index('Alternate printing of')
+    assert 'src="/image/Agent%20Venom/?printing=om1&amp;printing_id=d62cf4f8-36a2-4d9f-9d52-53ea18a52760"' in content
+    assert content.index('src="/image/Agent%20Venom/?printing=om1') < content.index('Alternate printing of')
 
 
 def test_canonical_card_page_links_to_alternate_printing(monkeypatch: pytest.MonkeyPatch) -> None:

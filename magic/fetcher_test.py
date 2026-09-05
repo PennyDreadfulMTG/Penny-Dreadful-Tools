@@ -54,3 +54,18 @@ async def test_bulk_data_uri_supports_legacy_json_download(monkeypatch: pytest.M
     monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json_async', fetch_json_async)
 
     assert await fetcher.bulk_data_uri() == 'https://data.scryfall.io/default-cards.json'
+
+
+@pytest.mark.asyncio
+async def test_oracle_cards_uri_uses_oracle_bulk_file(monkeypatch: pytest.MonkeyPatch) -> None:
+    async def fetch_json_async(_url: str) -> dict:
+        return {
+            'data': [{
+                'type': 'oracle_cards',
+                'jsonl_download_uri': 'https://data.scryfall.io/oracle-cards.jsonl.gz',
+            }],
+        }
+
+    monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json_async', fetch_json_async)
+
+    assert await fetcher.oracle_cards_uri() == 'https://data.scryfall.io/oracle-cards.jsonl.gz'

@@ -1,8 +1,9 @@
 import gzip
 import io
 import json
+from collections.abc import AsyncIterator
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
 import requests
@@ -58,3 +59,62 @@ def test_store_image_only_publishes_valid_image(tmp_path: Path) -> None:
         fetch_tools.store_image('https://example.com/card.bmp', str(destination))
 
     assert destination.read_bytes() == contents.getvalue()
+
+
+def mock_async_response(monkeypatch: pytest.MonkeyPatch, response: Mock) -> Mock:
+    session = MagicMock()
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    session.get = AsyncMock(return_value=response)
+    client_session = Mock(return_value=session)
+    monkeypatch.setattr(fetch_tools.aiohttp, 'ClientSession', client_session)
+    return client_session
+
+
+@pytest.mark.asyncio
+async def test_store_async_rejects_http_error_without_replacing_existing_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    response = Mock(status=429, headers={'Content-Type': 'application/json'})
+    client_session = mock_async_response(monkeypatch, response)
+    destination = tmp_path / 'card.jpg'
+    destination.write_bytes(b'existing image')
+
+    with pytest.raises(fetch_tools.FetchException, match='429'):
+        await fetch_tools.store_async('https://api.scryfall.com/cards/id?format=image', str(destination))
+
+    assert destination.read_bytes() == b'existing image'
+    client_session.assert_called_once_with(headers={
+        'User-Agent': fetch_tools.USER_AGENT,
+        'Accept': 'application/json',
+    })
+
+
+@pytest.mark.asyncio
+async def test_store_async_rejects_non_image_response(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    response = Mock(status=200, headers={'Content-Type': 'text/html; charset=utf-8'})
+    mock_async_response(monkeypatch, response)
+    destination = tmp_path / 'card.jpg'
+
+    with pytest.raises(fetch_tools.FetchException, match='Expected an image'):
+        await fetch_tools.store_async('https://cards.scryfall.io/card.jpg', str(destination))
+
+    assert not destination.exists()
+
+
+@pytest.mark.asyncio
+async def test_store_async_only_publishes_a_valid_image(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    contents = io.BytesIO()
+    Image.new('RGB', (100, 100)).save(contents, format='BMP')
+
+    async def chunks(_size: int) -> AsyncIterator[bytes]:
+        yield contents.getvalue()
+
+    content = Mock()
+    content.iter_chunked = chunks
+    response = Mock(status=200, headers={'Content-Type': 'image/bmp'}, content=content)
+    client_session = mock_async_response(monkeypatch, response)
+    destination = tmp_path / 'card.bmp'
+
+    await fetch_tools.store_async('https://cards.scryfall.io/card.bmp', str(destination))
+
+    assert destination.read_bytes() == contents.getvalue()
+    client_session.assert_called_once_with(headers={'User-Agent': fetch_tools.USER_AGENT})

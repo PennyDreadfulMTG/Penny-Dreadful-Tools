@@ -68,8 +68,8 @@ class Dreadrise(Extension):
                 query=parse.quote_plus(query),
             )})
 
-        embed.set_thumbnail(url='https://api.scryfall.com/cards/named?exact={card}&format=image&version=art_crop'.format(
-            card=data['sample'][0]['main_card'].replace(' ', '%20')))
+        card_name = parse.quote(data['sample'][0]['main_card'], safe='')
+        embed.set_thumbnail(url=fetcher.decksite_url(f'/image/{card_name}/?version=art_crop'))
         for x in arr:
             embed.add_field(name=x['name'], value=x['value'], inline=False)
         await ctx.send(embeds=[embed])

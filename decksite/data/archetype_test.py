@@ -247,3 +247,10 @@ def test_load_archetype_raises_for_unknown_name() -> None:
 
     with pytest.raises(DoesNotExistException):
         archetype.load_archetype(merge_slashes('Arrive // Fortune Midrange'))
+
+
+@with_test_db
+@pytest.mark.functional
+def test_load_archetype_raises_for_unknown_id() -> None:
+    with pytest.raises(DoesNotExistException, match=r'Did not find archetype with id `2147483647`'):
+        archetype.load_archetype(2147483647)

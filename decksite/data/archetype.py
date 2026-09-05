@@ -69,9 +69,12 @@ def load_archetype(archetype: int | str) -> Archetype:
         if not found:
             raise DoesNotExistException(f'Did not find archetype with name of `{titlecase.titlecase(archetype)}`') from c
         archetype_id = found
+    name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
+    if name is None:
+        raise DoesNotExistException(f'Did not find archetype with id `{archetype_id}`')
     arch = Archetype()
     arch.id = int(archetype_id)
-    arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
+    arch.name = name
     return arch
 
 def load_competition_archetypes(competition_id: int) -> list[Archetype]:

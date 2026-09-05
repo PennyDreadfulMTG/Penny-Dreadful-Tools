@@ -133,6 +133,17 @@ def test_pages_render_with_data_and_without_errors(browser: 'Browser', site: Con
     assert not problems, '\n'.join(problems)
 
 
+def test_metagame_uses_number_sign_for_deck_count_without_quality_rank(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.goto('/metagame/')
+    assert not wait_for_live_tables(page)
+    deck_count = page.locator('[title="Number of Decks"]').first
+    expect(deck_count).to_be_visible()
+    assert (deck_count.text_content() or '').strip().startswith('#')
+    expect(page.locator('.quality-rank')).to_have_count(0)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def submenu_items(page: 'Page') -> 'Locator':
     return page.locator('.menu > li:has(.submenu):visible')
 

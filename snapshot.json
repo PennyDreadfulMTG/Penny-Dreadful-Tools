@@ -22228,6 +22228,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:13:36Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T19:25:50Z"
         }
       ],
       "issue": 12595,
@@ -22235,16 +22239,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15056. Across 24 real archetypes and 705 key-card entries, cached lookups and the old per-archetype loader produced identical card sets, colors, symbol counts, and mana-bar HTML. The replacement avoids 24 redundant queries per normal page; the warmed cloud database measured about 50ms total for those old calls. Current code retains this behavior in prepare_archetypes_for_api.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12595-api-archtypes2-is-a-bit-crazed-about-ora",
         "ci": {
-          "checked_at": "2026-09-02T02:06:44Z",
+          "checked_at": "2026-09-05T19:25:50Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "b623bc89818d94edaca8290808ff9a7c75c4eac6",
+        "merged_at": "2026-09-02T11:47:53Z",
         "number": 15056,
         "opened_at": "2026-09-01T18:07:07Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15056"
@@ -40888,8 +40893,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8823,
-  "last_snapshot_at": "2026-09-05T19:15:11Z",
+  "last_seq": 8826,
+  "last_snapshot_at": "2026-09-05T19:25:50Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

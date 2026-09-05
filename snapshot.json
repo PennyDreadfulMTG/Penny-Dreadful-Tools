@@ -20879,6 +20879,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:07:30Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-05T17:09:05Z"
         }
       ],
       "issue": 12576,
@@ -20886,16 +20890,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-05: keep PR #15053 as finally merged. It introduces a reusable legibility-shadow token without changing the heading's rendered shadow. The ineffective attempt to apply it to the search container was removed by follow-up commit 86c204c7 before merge; the search input correctly retains no text shadow.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12576-figure-out-a-standard-legibility-drop-sh",
         "ci": {
-          "checked_at": "2026-09-02T02:08:01Z",
+          "checked_at": "2026-09-05T17:09:05Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "7aff2633690316e90299c9295110bc4dd55cedc1",
+        "head_sha": "86c204c79de01d21cc6a4500679d5a7f4e1ad266",
+        "merged_at": "2026-09-02T11:45:56Z",
         "number": 15053,
         "opened_at": "2026-09-01T18:01:46Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15053"
@@ -40873,8 +40878,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8814,
-  "last_snapshot_at": "2026-09-05T16:59:28Z",
+  "last_seq": 8817,
+  "last_snapshot_at": "2026-09-05T17:09:05Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

@@ -17,6 +17,7 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
 FORMAT_IDS: dict[str, int] = {}
+INSERT_BATCH_SIZE = 1000
 
 # This is only a fallback
 KNOWN_MELDS = ['Brisela, Voice of Nightmares', 'Chittering Host', 'Hanweir, the Writhing Township',
@@ -412,12 +413,14 @@ def insert_many(table: str, properties: TableDescription, values: list[dict[str,
     columns = additional_columns or []
     columns += [k for k, v in properties.items() if v.get('foreign_key')]
     columns += [name for name, prop in properties.items() if prop['scryfall']]
-    query = f'INSERT INTO `{table}` ('
-    query += ', '.join(columns)
-    query += ') VALUES ('
-    query += '), ('.join(', '.join(str(sqlescape(entry[column])) for column in columns) for entry in values)
-    query += ')'
-    db().execute(query)
+    for start in range(0, len(values), INSERT_BATCH_SIZE):
+        batch = values[start:start + INSERT_BATCH_SIZE]
+        query = f'INSERT INTO `{table}` ('
+        query += ', '.join(columns)
+        query += ') VALUES ('
+        query += '), ('.join(', '.join(str(sqlescape(entry[column])) for column in columns) for entry in batch)
+        query += ')'
+        db().execute(query)
 
 async def update_bugged_cards_async() -> None:
     bugs = await fetcher.bugged_cards_async()

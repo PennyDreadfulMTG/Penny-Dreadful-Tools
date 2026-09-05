@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from magic import multiverse
+from magic import card, multiverse
 from magic.abc import CardDescription
 from magic.database import db
 
@@ -169,6 +169,28 @@ def test_add_aliases_ignores_ambiguous_aliases() -> None:
 
     multiverse.add_aliases({'name': 'Third Card', 'flavor_name': 'Shared Name'}, 3, aliases, ambiguous_aliases)
     assert aliases == {}
+
+def test_insert_many_batches_large_imports(monkeypatch: pytest.MonkeyPatch) -> None:
+    queries = []
+
+    class FakeDatabase:
+        def execute(self, query: str) -> None:
+            queries.append(query)
+
+    database = FakeDatabase()
+    monkeypatch.setattr(multiverse, 'db', lambda: database)
+    monkeypatch.setattr(multiverse, 'INSERT_BATCH_SIZE', 2)
+    values = [
+        {'card_id': 1, 'flavor_name': 'One'},
+        {'card_id': 2, 'flavor_name': 'Two'},
+        {'card_id': 3, 'flavor_name': 'Three'},
+    ]
+
+    multiverse.insert_many('card_flavor_name', card.card_flavor_name_properties(), values)
+
+    assert len(queries) == 2
+    assert "(1, 'One'), (2, 'Two')" in queries[0]
+    assert "(3, 'Three')" in queries[1]
 
 @pytest.mark.asyncio
 async def test_alias_from_later_printing_is_stored(monkeypatch: pytest.MonkeyPatch) -> None:

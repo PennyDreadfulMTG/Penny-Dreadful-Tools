@@ -158,6 +158,29 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_card_stats_are_numbers_and_locale_formatted(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site, locale='en-US')
+    with page.expect_response(lambda response: '/api/cards2/' in response.url) as response_info:
+        page.goto('/seasons/all/cards/')
+    assert not wait_for_live_tables(page)
+
+    data = response_info.value.json()
+    assert data['objects']
+    card = data['objects'][0]
+    fields = ['numDecks', 'wins', 'losses', 'draws', 'record', 'perfectRuns', 'tournamentWins', 'tournamentTop8s']
+    for field in fields:
+        assert isinstance(card[field], int) and not isinstance(card[field], bool), f'{field} was {type(card[field]).__name__}'
+
+    row = page.locator('.cardtable tbody tr').first
+    numeric_cells = row.locator('td.n')
+    expected_num_decks = page.evaluate('(value) => value.toLocaleString()', card['numDecks'])
+    record = [card['wins'], card['losses']] + ([card['draws']] if card['draws'] > 0 else [])
+    expected_record = page.evaluate('(values) => values.map(value => value.toLocaleString()).join("–")', record)
+    expect(numeric_cells.nth(0)).to_have_text(expected_num_decks)
+    expect(numeric_cells.nth(1)).to_have_text(expected_record)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def submenu_items(page: 'Page') -> 'Locator':
     return page.locator('.menu > li:has(.submenu):visible')
 

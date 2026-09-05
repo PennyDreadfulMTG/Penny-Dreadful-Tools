@@ -1,7 +1,9 @@
+from decimal import Decimal
 from unittest.mock import Mock, patch
 
 import pytest
 from MySQLdb import OperationalError
+from MySQLdb.constants import FIELD_TYPE
 
 from shared.database import Database, sqlescape, sqllikeescape
 from shared.pd_exception import DatabaseException, InvalidArgumentException
@@ -31,6 +33,35 @@ def test_execute_does_not_retry_when_server_goes_away_during_transaction() -> No
     connect.assert_called_once_with()
     assert db.cursor.execute.call_count == 1
     assert db.open_transactions == []
+
+def test_execute_converts_scale_zero_decimals_to_integers() -> None:
+    db = Database.__new__(Database)
+    db.cursor = Mock()
+    db.cursor.execute.return_value = 1
+    db.cursor.fetchall.return_value = [{
+        'integer_decimal': Decimal('123456789012345678901234567890123'),
+        'integer': 7,
+        'nullable': None,
+        'fractional_decimal': Decimal('10.00'),
+    }]
+    db.cursor.description = (
+        ('integer_decimal', FIELD_TYPE.NEWDECIMAL, 33, 33, 33, 0, False),
+        ('integer', FIELD_TYPE.LONGLONG, 1, 21, 21, 0, False),
+        ('nullable', FIELD_TYPE.NEWDECIMAL, None, 33, 33, 0, True),
+        ('fractional_decimal', FIELD_TYPE.NEWDECIMAL, 5, 22, 22, 2, False),
+    )
+    db.open_transactions = []
+
+    _, rows = db.execute_with_reconnect('SELECT results', fetch_rows=True)
+
+    assert rows == [{
+        'integer_decimal': 123456789012345678901234567890123,
+        'integer': 7,
+        'nullable': None,
+        'fractional_decimal': Decimal('10.00'),
+    }]
+    assert isinstance(rows[0]['integer_decimal'], int)
+    assert isinstance(rows[0]['fractional_decimal'], Decimal)
 
 
 def test_sqlescape() -> None:

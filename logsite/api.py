@@ -89,5 +89,5 @@ def export(match_id: str) -> tuple[str, int, dict[str, str]]:
     text = text.replace('\n', '\r\n')
     return (text, 200, {
         'Content-type': 'text/plain; charset=utf-8',
-        'Content-Disposition': f'attachment; filename={match_id}.txt',
+        'Content-Disposition': f'attachment; filename={local.id}.txt',
     })

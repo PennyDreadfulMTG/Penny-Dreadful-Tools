@@ -1,5 +1,7 @@
 # type: ignore
 
+from types import SimpleNamespace
+
 import pytest
 
 from logsite import APP, api
@@ -28,6 +30,23 @@ def test_non_numeric_resource_ids_return_not_found(path: str) -> None:
     response = APP.test_client().get(path)
 
     assert response.status_code == 404
+
+
+def test_export_filename_uses_loaded_match_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    loaded = SimpleNamespace(
+        id=123,
+        format=SimpleNamespace(name='PennyDreadful'),
+        comment='',
+        modules=[],
+        players=[],
+        games=[],
+    )
+    monkeypatch.setattr(api.match, 'get_match', lambda _match_id: loaded)
+
+    response = APP.test_client().get('/export/000123/')
+
+    assert response.status_code == 200
+    assert response.headers['Content-Disposition'] == 'attachment; filename=123.txt'
 
 
 def test_match_exists_returns_false_for_missing_match(monkeypatch: pytest.MonkeyPatch) -> None:

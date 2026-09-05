@@ -19301,6 +19301,15 @@
           "event": "PR_OPENED",
           "status": "pr_open",
           "ts": "2026-09-02T19:36:31Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-02T23:20:08Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-05T16:25:31Z"
         }
       ],
       "issue": 12550,
@@ -19308,21 +19317,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Build a public Scryfall-like deck query language into every full/paginated deck list, not the small homepage preview and not a separate /decksearch page. Queries automatically intersect the list's existing scope: /decks/ is current season, /seasons/all/decks/ is all history, and person/archetype/card/competition lists retain their own scopes. Make every meaningful displayed deck attribute searchable (name, pilot, colors, archetype, source, record/win rate, OMW, finish/Top 8, date, season), plus deck type and contents. Use is:tournament and is:league. Card syntax: card:\"Lightning Bolt\" for any count; card>=4:\"Lightning Bolt\" for total 75; main>=4:\"Lightning Bolt\" and side>=2:Pyroblast for zone counts. Support =, !=, <, <=, >, >= where meaningful; quotes only when needed. Keep the grammar extensible, validate syntax safely, and add focused parser/query tests.",
-      "pr": {
-        "adopted": false,
-        "branch": "sweep/12550-deck-search",
-        "head_sha": "1cf20fba2aa305fa1fc23fc9a74aae0d2582b702",
-        "number": 15112,
-        "opened_at": "2026-09-02T19:36:31Z",
-        "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15112"
-      },
+      "notes": "Build a public Scryfall-like deck query language into every full/paginated deck list, not the small homepage preview and not a separate /decksearch page. Queries automatically intersect the list's existing scope: /decks/ is current season, /seasons/all/decks/ is all history, and person/archetype/card/competition lists retain their own scopes. Make every meaningful displayed deck attribute searchable (name, pilot, colors, archetype, source, record/win rate, OMW, finish/Top 8, date, season), plus deck type and contents. Use is:tournament and is:league. Card syntax: card:\"Lightning Bolt\" for any count; card>=4:\"Lightning Bolt\" for total 75; main>=4:\"Lightning Bolt\" and side>=2:Pyroblast for zone counts. Support =, !=, <, <=, >, >= where meaningful; quotes only when needed. Keep the grammar extensible, validate syntax safely, and add focused parser/query tests. PR #15112 supplied backend-only parameters without the requested UI; PR #15216 reverts it and issue #12550 is reopened. Leave deferred for an explicit product implementation.",
+      "pr": null,
       "stage_attempts": {
         "fix": 0,
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "deferred_human",
       "title": "Deck Search",
       "verdict": null
     },
@@ -40866,8 +40868,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8793,
-  "last_snapshot_at": "2026-09-02T20:53:23Z",
+  "last_seq": 8811,
+  "last_snapshot_at": "2026-09-05T16:25:31Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

@@ -8806,3 +8806,6 @@
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8806, "ts": "2026-09-02T23:14:36Z"}
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8807, "ts": "2026-09-02T23:21:03Z"}
 {"event": "MIRROR_PUSHED", "kind": "branch", "ref": "sweep-state", "seq": 8808, "ts": "2026-09-02T23:27:11Z"}
+{"event": "PR_MERGED", "issue": 12550, "merged_at": "2026-09-02T23:20:08Z", "pr": 15112, "seq": 8809, "ts": "2026-09-05T16:25:31Z"}
+{"event": "ADJUDICATED", "issue": 12550, "note": "PR #15112 supplied backend-only deck-query parameters without the requested UI. PR #15216 reverts it; issue #12550 is reopened for an explicit product implementation.", "seq": 8810, "status": "deferred_human", "ts": "2026-09-05T16:25:31Z", "verb": "defer-to-human"}
+{"event": "SNAPSHOT_WRITTEN", "last_seq": 8810, "seq": 8811, "ts": "2026-09-05T16:25:31Z"}

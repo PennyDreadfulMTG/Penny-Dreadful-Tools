@@ -1,10 +1,14 @@
 from dataclasses import dataclass
+from typing import Literal
 
 from decksite.data import deck, match, query
 from decksite.database import db
 from magic.models import Deck
 from shared import guarantee
 from shared.container import Container
+from shared.pd_exception import DoesNotExistException
+
+MatchupOptionType = Literal['archetypes', 'people', 'cards']
 
 
 @dataclass
@@ -25,6 +29,90 @@ class MatchupResults:
     @property
     def win_percent(self) -> float | None:
         return round((self.wins / (self.wins + self.losses)) * 100, 1) if (self.wins + self.losses) > 0 else None
+
+
+def search_options(option_type: MatchupOptionType, search: str, limit: int = 10) -> list[dict[str, str]]:
+    """Return the small amount of data the matchup typeaheads actually use."""
+    search = search.strip()
+    if not search:
+        return []
+    contains = f'%{search}%'
+    starts_with = f'{search}%'
+    if option_type == 'archetypes':
+        sql = """
+            SELECT CAST(id AS CHAR) AS value, name
+            FROM archetype
+            WHERE name LIKE %s
+            ORDER BY CASE WHEN name LIKE %s THEN 0 ELSE 1 END, name
+            LIMIT %s
+        """
+    elif option_type == 'people':
+        sql = """
+            SELECT CAST(id AS CHAR) AS value, LOWER(mtgo_username) AS name
+            FROM person
+            WHERE mtgo_username IS NOT NULL AND mtgo_username LIKE %s
+            ORDER BY CASE WHEN mtgo_username LIKE %s THEN 0 ELSE 1 END, mtgo_username
+            LIMIT %s
+        """
+    else:
+        # Match the old chooser's contents exactly: cards represented in the all-time
+        # card statistics, rather than every card in the Oracle database.
+        sql = """
+            SELECT name AS value, name
+            FROM (SELECT DISTINCT name FROM _card_stats) AS cards
+            WHERE name LIKE %s
+            ORDER BY CASE WHEN name LIKE %s THEN 0 ELSE 1 END, name
+            LIMIT %s
+        """
+    return [{'value': str(r['value']), 'name': r['name']} for r in db().select(sql, [contains, starts_with, limit])]
+
+
+def resolve_choices(choices: dict[str, str]) -> dict[str, str]:
+    """Resolve submitted IDs (and typed-name fallbacks) into display-ready criteria."""
+    resolved: dict[str, str] = {}
+    archetype = _resolve_archetype(choices.get('archetype_id'), choices.get('archetype_name'))
+    if archetype:
+        resolved['archetype_id'] = str(archetype['id'])
+        resolved['archetype_name'] = str(archetype['name'])
+    person = _resolve_person(choices.get('person_id'), choices.get('person_name'))
+    if person:
+        resolved['person_id'] = str(person['id'])
+        resolved['person_name'] = str(person['name'])
+        resolved['person_label'] = str(person['label'])
+    card_name = choices.get('card') or choices.get('card_name')
+    if card_name:
+        card = db().value('SELECT name FROM _card_stats WHERE name = %s LIMIT 1', [card_name])
+        if card is None:
+            raise DoesNotExistException(f'Did not find a played card with name of `{card_name}`')
+        resolved['card'] = card
+    return resolved
+
+
+def _resolve_archetype(archetype_id: str | None, name: str | None) -> dict[str, str | int] | None:
+    if archetype_id:
+        rows = db().select('SELECT id, name FROM archetype WHERE id = %s', [archetype_id])
+    elif name:
+        rows = db().select('SELECT id, name FROM archetype WHERE name = %s', [name])
+    else:
+        return None
+    if not rows:
+        value = archetype_id or name
+        raise DoesNotExistException(f'Did not find archetype `{value}`')
+    return rows[0]
+
+
+def _resolve_person(person_id: str | None, name: str | None) -> dict[str, str | int] | None:
+    person_name = query.person_query()
+    if person_id:
+        rows = db().select(f'SELECT id, {person_name} AS name, LOWER(mtgo_username) AS label FROM person AS p WHERE id = %s AND mtgo_username IS NOT NULL', [person_id])
+    elif name:
+        rows = db().select(f'SELECT id, {person_name} AS name, LOWER(mtgo_username) AS label FROM person AS p WHERE mtgo_username = %s', [name])
+    else:
+        return None
+    if not rows:
+        value = person_id or name
+        raise DoesNotExistException(f'Did not find MTGO player `{value}`')
+    return rows[0]
 
 def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None = None) -> MatchupResults:
     where = 'TRUE'

@@ -68,6 +68,16 @@ def test_card_api_returns_not_found_for_unknown_card() -> None:
     assert response.get_json()['code'] == 'NOTFOUND'
 
 
+def test_matchup_options_api_returns_small_search_results(monkeypatch: pytest.MonkeyPatch) -> None:
+    expected = [{'name': 'Lightning Bolt', 'value': 'Lightning Bolt'}]
+    monkeypatch.setattr(api.mus, 'search_options', lambda option_type, search: expected if option_type == 'cards' and search == 'bolt' else [])
+
+    response = APP.test_client().get('/api/matchup-options/cards/?q=bolt')
+
+    assert response.status_code == 200
+    assert response.get_json() == expected
+
+
 @pytest.mark.functional
 def test_aggregate_apis_serialize_integer_stats_as_numbers(seeded_db: Container) -> None:
     season_id = db().value('SELECT season_id FROM deck_cache LIMIT 1')

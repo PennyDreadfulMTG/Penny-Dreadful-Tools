@@ -1,5 +1,7 @@
 from collections.abc import Mapping
 
+from flask import request
+
 from decksite.data.archetype import Archetype
 from decksite.data.matchup import MatchupResults
 from decksite.data.person import Person
@@ -33,6 +35,26 @@ class Matchups(View):
 
     def show_season_icon(self) -> bool:
         return not self.search_season_id
+
+    def og_title(self) -> str | None:
+        if self.results is None:
+            return None
+        return f'{self.hero_summary} versus {self.enemy_summary}'
+
+    def og_url(self) -> str | None:
+        if self.results is None:
+            return None
+        return request.url
+
+    def og_description(self) -> str | None:
+        if self.results is None:
+            return None
+        record = f'{self.results.wins}–{self.results.losses}'
+        if self.results.draws:
+            record += f'–{self.results.draws}'
+        if self.results.win_percent is not None:
+            record += f' ({self.results.win_percent}% win rate)'
+        return f'{record} · {self.season_summary}'
 
     def page_title(self) -> str:
         return 'Matchups Calculator'

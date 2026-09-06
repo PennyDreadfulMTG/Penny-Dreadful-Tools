@@ -145,7 +145,7 @@ PD.initTrailblazerCardLists = function() {
 
 PD.initTables = function() {
     var selector = "main table";
-    var noTablesorter = "table.live";
+    var noTablesorter = "table.live, table.calendar";
 
     $.tablesorter.addParser({
         "id": "record",

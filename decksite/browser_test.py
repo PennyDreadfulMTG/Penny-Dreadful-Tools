@@ -155,6 +155,16 @@ def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Co
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_tournament_calendar_is_not_sortable(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    for path in ['/', '/tournaments/']:
+        page.goto(path)
+        calendar = page.locator('table.calendar')
+        expect(calendar).to_be_visible()
+        expect(calendar.locator('th.tablesorter-header')).to_have_count(0)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     page.goto('/metagame/')

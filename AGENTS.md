@@ -25,3 +25,6 @@ Do not use the "merge when ready" label. It is a leftover from an old CI setup a
   `.conductor/preview-tunnel.py` on the Mac and the restricted
   `.conductor/preview-ssh.sh` server entry point so it reconnects and restarts
   decksite. Verify recovery, not just the initial HTTP response.
+- To run the Discord test bot in a cloud workspace, use
+  `bash .conductor/discordbot-cloud.sh`, wait for the logged-in message, and
+  leave it running. Never print its `PDT_*` credential environment variables.

@@ -62,6 +62,26 @@ supervisor must be restarted after quitting Conductor or restarting the Mac.
 Verify recovery by stopping the preview and its database, then checking that the
 same Mac URL returns HTTP 200 without manually restarting either service.
 
+## Discord test bot
+
+Cloud workspaces can run a dedicated Discord test bot when these values are
+configured in **Settings → Organization → Cloud Computer → Environment**:
+
+- `PDT_TEST_DISCORD_TOKEN`: token for a dedicated, revocable test bot
+- `PDT_GOOGLE_MAPS_API_KEY`: Google Maps API key used by `/time`
+- `PDT_TEST_DISCORD_GUILD_ID`: server ID for guild-scoped test commands
+
+Cloud environment changes apply only to workspaces created from a subsequent
+Cloud Computer build. Do not use the production bot token: cloud environment
+values are available to agents and terminals in every workspace created from
+that build.
+
+Run `bash .conductor/discordbot-cloud.sh`, or choose **discordbot_test** from
+Conductor's Run menu. The bot registers normally global commands in the test
+guild for immediate updates, redirects explicitly guild-scoped commands to the
+test guild, and disables production background tasks. The runner fails before
+connecting if any required variable is missing and never prints the values.
+
 ## Database lifecycle
 
 Cloud MariaDB runs as the workspace user on `127.0.0.1:3307`, with its data in

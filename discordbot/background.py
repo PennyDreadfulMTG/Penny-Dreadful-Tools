@@ -25,6 +25,9 @@ class BackgroundTasks(Extension):
 
     @listen()
     async def on_startup(self) -> None:
+        if configuration.discord_test_guild_id.value:
+            logging.info('Discord test mode: production background tasks are disabled')
+            return
         self.do_banner.start()
 
         self.do_reboot_key = reboot_utils.REBOOT_KEY

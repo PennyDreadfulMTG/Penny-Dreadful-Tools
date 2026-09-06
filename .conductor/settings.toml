@@ -10,3 +10,8 @@ available_in = [ "cloud" ]
 command = "bash .conductor/decksite-cloud.sh"
 default = true
 icon = "play"
+
+[scripts.run.discordbot_test]
+available_in = [ "cloud" ]
+command = "bash .conductor/discordbot-cloud.sh"
+icon = "bot"

@@ -7,7 +7,7 @@ import string
 from typing import Any, overload
 
 from shared.pd_exception import InvalidArgumentException
-from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, StrSetting, fail, save_cfg
+from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, OptionalStrSetting, StrSetting, fail, save_cfg
 
 try:
     import dotenv
@@ -32,7 +32,8 @@ use_24h = BoolSetting('use_24h', False, configurable=True, doc='Use a 24 hour cl
 cse_api_key = StrSetting('cse_api_key', '')
 cse_engine_id = StrSetting('cse_engine_id', '')
 bot_debug = BoolSetting('bot_debug', False)
-token = StrSetting('token', '')
+token = StrSetting('token', '', environment_variable='PDT_TEST_DISCORD_TOKEN')
+discord_test_guild_id = IntSetting('discord_test_guild_id', 0, environment_variable='PDT_TEST_DISCORD_GUILD_ID')
 pd_server_id = IntSetting('pd_server_id', 207281932214599682)
 honeypot_channel_id = IntSetting('honeypot_channel_id', 1255127999901208620)
 
@@ -73,6 +74,7 @@ mysql_passwd = StrSetting('mysql_passwd', '')
 # == Discord API ==
 oauth2_client_id = StrSetting('oauth2_client_id', '')
 oauth2_client_secret = StrSetting('oauth2_client_secret', '')
+google_maps_api_key = OptionalStrSetting('google_maps_api_key', None, environment_variable='PDT_GOOGLE_MAPS_API_KEY')
 
 DEFAULTS: dict[str, Any] = {
     # Anthropic API key for the archetype-guessing helper (maintenance/classify_archetypes.py).
@@ -91,8 +93,6 @@ DEFAULTS: dict[str, Any] = {
     # github credentials.  Used for auto-reporting issues.
     'github_password': None,
     'github_user': None,
-    # Google Maps API key (for !time)
-    'google_maps_api_key': None,
     # Required if you want to share cookies between subdomains
     'flask_cookie_domain': None,
     'flask_server_name': None,
@@ -138,6 +138,10 @@ DEFAULTS: dict[str, Any] = {
     'dreadrise_public_url': 'https://penny.dreadrise.xyz',
     'mos_premodern_channel_id': '921967538907271258',
 }
+
+def discord_command_scopes(production_guild_id: int) -> list[Any]:
+    test_guild_id = discord_test_guild_id.value
+    return [test_guild_id or production_guild_id]
 
 def get_optional_str(key: str) -> str | None:
     val = get(key)

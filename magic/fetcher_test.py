@@ -23,7 +23,7 @@ def test_times_from_location_skips_business_results(monkeypatch: pytest.MonkeyPa
     }
     timezone_response = {'status': 'OK', 'timeZoneId': 'Europe/London'}
     fetch_json = Mock(side_effect=[geocode_response, timezone_response])
-    monkeypatch.setattr(fetcher.configuration, 'get', lambda _key: 'api-key')
+    monkeypatch.setattr(fetcher.configuration.google_maps_api_key, 'get', lambda: 'api-key')
     monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json', fetch_json)
     monkeypatch.setattr(fetcher, 'current_time', lambda _timezone, _twentyfour: '12:34 PM')
 
@@ -39,7 +39,7 @@ def test_times_from_location_rejects_only_business_results(monkeypatch: pytest.M
             'types': ['establishment', 'point_of_interest'],
         }],
     })
-    monkeypatch.setattr(fetcher.configuration, 'get', lambda _key: 'api-key')
+    monkeypatch.setattr(fetcher.configuration.google_maps_api_key, 'get', lambda: 'api-key')
     monkeypatch.setattr(fetcher.fetch_tools, 'fetch_json', fetch_json)
 
     with pytest.raises(fetcher.TooFewItemsException):

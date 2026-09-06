@@ -354,7 +354,7 @@ def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
     return results
 
 def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    api_key = configuration.get('google_maps_api_key')
+    api_key = configuration.google_maps_api_key.get()
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
     url = f'https://maps.googleapis.com/maps/api/geocode/json?address={fetch_tools.escape(q)}&key={api_key}&sensor=false'

@@ -234,10 +234,14 @@ class Bot(Client):
                 await reaction.message.delete()
 
 def init() -> None:
-    client = Bot()
+    client = Bot(**client_options())
     logging.info('Connecting to Discord')
     asyncio.run(prepare_database_async())
     client.start(configuration.token.value)
+
+def client_options() -> dict[str, int]:
+    test_guild_id = configuration.discord_test_guild_id.value
+    return {'debug_scope': test_guild_id} if test_guild_id else {}
 
 async def prepare_database_async() -> None:
     logging.info('Initializing Cards DB')

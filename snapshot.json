@@ -20265,6 +20265,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:27:22Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T11:22:05Z"
         }
       ],
       "issue": 12566,
@@ -20272,16 +20276,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15073. This was maintenance cleanup, not a user-visible defect fix. Commit ffca6ed1 introduced key_cards_long for the metagame grid in May 2024 by copying key_cards' season-versus-all-time table selection, and explicitly left unification as a TODO. #15073 extracted exactly that duplicated selection into _season_table_and_where without changing either SQL query. Later #15075 extended key_cards_long with optional filtering and still uses the helper, so the refactor remains useful. Database validation covered all-time and Season 43: key_cards/key_cards_long returned the same 589/589 and 137/137 archetype key sets respectively, with 22,547 and 4,449 long rows, and every single key card appeared in its long result. Twelve relevant API/preparation tests and repository lint pass. No revert or follow-up is needed.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12566-key-cards-and-key-cards-long-repeat-each",
         "ci": {
-          "checked_at": "2026-09-02T02:04:09Z",
+          "checked_at": "2026-09-06T11:22:05Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "f4021b69892f35db8d7989c8d2aaca5149f42977",
+        "merged_at": "2026-09-02T23:42:08Z",
         "number": 15073,
         "opened_at": "2026-09-01T18:20:08Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15073"

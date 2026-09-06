@@ -7,7 +7,6 @@ window.PD = {};
 PD.init = function() {
     PD.initDismiss();
     PD.initMenu();
-    PD.initSeasonChooser();
     PD.initDoubleReportCheck();
     PD.initAchievements();
     PD.initTrailblazerCardLists();
@@ -115,23 +114,6 @@ PD.onDropdownLeave = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {
         $(this).removeClass("hovering");
         $(this).find(".language-menu").slideUp("fast");
-    }
-};
-
-PD.initSeasonChooser = function() {
-    $(".seasonchooser .dd-button").on("click", PD.onSeasonChooserClick);
-};
-
-PD.onSeasonChooserClick = function() {
-    var button = $(this);
-    var menu = button.siblings(".dd-menu");
-    var expanded = button.attr("aria-expanded") === "true";
-    button.attr("aria-expanded", (!expanded).toString());
-    menu.stop(true, true);
-    if (expanded) {
-        menu.slideUp("fast");
-    } else {
-        menu.css("display", "grid").hide().slideDown("fast");
     }
 };
 

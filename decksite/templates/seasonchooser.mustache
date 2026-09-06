@@ -1,6 +1,7 @@
-<div class="dropdown seasonchooser">
-    <button type="button" class="dd-button button" aria-expanded="false" aria-controls="season-chooser-menu"><i class="ss ss-{{season_code_lower}}"></i>{{season_name}}<span class="expansion-indicator" aria-hidden="true">▾</span></button>
-    <ol class="dd-menu" id="season-chooser-menu">
+<label class="dropdown seasonchooser">
+    <div class="dd-button button"><i class="ss ss-{{season_code_lower}}"></i>{{season_name}}<span class="expansion-indicator">▾</span></div>
+    <input type="checkbox" class="dd-input">
+    <ol class="dd-menu">
         {{! Skip two cells so that All and the current season are near to the cursor after opening the menu. }}
         <span></span>
         <span></span>
@@ -14,4 +15,4 @@
             </li>
         {{/season_chooser}}
     </ol>
-</div>
+</label>

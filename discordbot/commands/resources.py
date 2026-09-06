@@ -4,6 +4,7 @@ import re
 from interactions import Client, Extension
 from interactions.models.internal import OptionType, auto_defer, slash_command, slash_option
 
+from discordbot import error_handling
 from discordbot.command import MtgInteractionContext, roughly_matches
 from magic import fetcher
 from shared import fetch_tools
@@ -20,7 +21,12 @@ class Resources(Extension):
             resource = ''
         if len(resource) > 0:
             results.update(resources_resources(resource))
-            results.update(await asyncio.to_thread(site_resources, resource))
+            try:
+                results.update(await asyncio.to_thread(site_resources, resource))
+            except fetch_tools.FetchException as e:
+                error_handling.log_exception(e, 'Could not retrieve the Penny Dreadful website sitemap')
+                await ctx.send('The Penny Dreadful website is currently unavailable. Please try again later.')
+                return
         s = ''
         if len(results) == 0:
             s = "Sorry, I don't know about that.\nPD resources: <{url}>".format(url=fetcher.decksite_url('/resources/'))

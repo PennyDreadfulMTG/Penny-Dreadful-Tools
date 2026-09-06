@@ -413,12 +413,23 @@ PD.initLinks = function() {
 
 PD.localizeTimeElements = function() {
     $("time").each(function() {
-        var t = moment($(this).attr("datetime")),
-            format = $(this).data("format"),
+        var elem = $(this),
+            datetime = elem.attr("datetime"),
+            t = moment(datetime),
+            format = elem.data("format"),
             tz = moment.tz.guess(),
+            s;
+        elem.attr("title", PD.formatExactTimestamp(datetime));
+        if (format) {
             s = t.tz(tz).format(format);
-        $(this).html(s).show();
+            elem.html(s);
+        }
+        elem.show();
     });
+};
+
+PD.formatExactTimestamp = function(datetime) {
+    return moment(datetime).tz(moment.tz.guess()).format("YYYY-MM-DD HH:mm:ss z");
 };
 
 PD.hideRepetitionInCalendar = function() {

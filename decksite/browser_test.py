@@ -212,6 +212,31 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    with page.expect_response(lambda response: '/api/decks/?' in response.url) as response_info:
+        page.goto('/decks/')
+    assert not wait_for_live_tables(page)
+
+    deck = response_info.value.json()['objects'][0]
+    friendly_date = page.locator('.decktable td.date time').first
+    exact_date = page.evaluate(
+        "timestamp => moment.unix(timestamp).tz(moment.tz.guess()).format('YYYY-MM-DD HH:mm:ss z')",
+        deck['activeDate'],
+    )
+    iso_date = page.evaluate('timestamp => new Date(timestamp * 1000).toISOString()', deck['activeDate'])
+    expect(friendly_date).to_have_text(deck['displayDate'])
+    expect(friendly_date).to_have_attribute('datetime', iso_date)
+    expect(friendly_date).to_have_attribute('title', exact_date)
+
+    page.goto(deck['url'])
+    deck_date = page.locator('.subtitle time').first
+    expect(deck_date).to_have_text(deck['displayDate'])
+    expect(deck_date).to_have_attribute('datetime', re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$'))
+    expect(deck_date).to_have_attribute('title', exact_date)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_card_stats_are_numbers_and_card_summaries_are_locale_formatted(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site, locale='en-US')
     with page.expect_response(lambda response: '/api/cards2/' in response.url) as response_info:

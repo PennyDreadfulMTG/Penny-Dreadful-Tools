@@ -1,4 +1,4 @@
-import { Table, renderRecord } from "./table";
+import { Table, renderFriendlyDate, renderRecord } from "./table";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
@@ -78,7 +78,7 @@ const renderRow = (table, deck) => (
             </td>
         }
         <td className="date">
-            {deck.displayDate}
+            {renderFriendlyDate(deck.displayDate, deck.activeDate)}
         </td>
         { table.props.showSeasonIcon
             ? <td dangerouslySetInnerHTML={{__html: deck.seasonIcon}}></td>

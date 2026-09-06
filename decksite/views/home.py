@@ -7,6 +7,7 @@ from magic import rotation, seasons, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
+from shared_web import friendly_time
 
 
 class Home(View):
@@ -66,12 +67,14 @@ class Home(View):
                 },
             )
         if tournament_decks:
+            subtitle_friendly_date = friendly_time.friendly_date(tournament_decks[0].active_date)
             self.deck_tables.append(
                 {
                     'hide_source': True,
                     'hide_date': True,
                     'title': gettext('Latest Tournament Top 8'),
-                    'subtitle': dtutil.display_date(tournament_decks[0].active_date),
+                    'subtitle': subtitle_friendly_date.display,
+                    'subtitle_friendly_date': subtitle_friendly_date,
                     'url': url_for('competition', competition_id=tournament_id),
                     'link_text': gettext('View Tournament…'),
                     'decks': tournament_decks,
@@ -110,8 +113,10 @@ class Home(View):
         self.movers_and_shakers_window = gettext('Last %(days)d days', days=WINDOW_DAYS)
 
     def setup_rotation(self) -> None:
-        self.season_start_display = dtutil.display_date(seasons.last_rotation())
-        self.season_end_display = dtutil.display_date(seasons.next_rotation())
+        self.season_start_friendly = friendly_time.friendly_date(seasons.last_rotation())
+        self.season_end_friendly = friendly_time.friendly_date(seasons.next_rotation())
+        self.season_start_display = self.season_start_friendly.display
+        self.season_end_display = self.season_end_friendly.display
         self.scryfall_url = 'https://scryfall.com/search?q=f%3Apd'
         self.legal_cards_url = 'http://pdmtgo.com/legal_cards.txt'
         self.in_rotation = rotation.in_rotation()

@@ -1,4 +1,5 @@
 import { DataManager } from "./datamanager";
+import { Pagination } from "./pagination";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -77,24 +78,7 @@ export class Grid extends DataManager {
     }
 
     renderPagination() {
-        const { start, end, total } = super.preRenderPagination();
-        return (
-            <div className="pagination">
-                <span className="pages section">
-                    {start}-{end} of {total}
-                </span>
-                <span className="links section">
-                    { this.state.page > 0
-                        ? <a className="prev paginate" onClick={this.movePage.bind(this, this.state.page - 1)}>←</a>
-                        : <span className="inactive prev paginate">←</span>
-                    }
-                    { end < this.state.total
-                        ? <a className="next paginate" onClick={this.movePage.bind(this, this.state.page + 1)}>→</a>
-                        : <span className="inactive next paginate">→</span>
-                    }
-                </span>
-            </div>
-        );
+        return <Pagination {...super.preRenderPagination()} page={this.state.page} onPageChange={this.movePage.bind(this)}/>;
     }
 }
 

@@ -54,14 +54,6 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
         'You can find your Game History under the gear icon in the top right on MTGO. Latest match is at the bottom.',
         {},
     ),
-    'language': (
-        """
-        To change the language you see the site in use the language switcher in the top-left hand corner (desktop only) or follow the link below for English.
-        """,
-        {
-            'PDM in English': fetcher.decksite_url('/?locale=en'),
-        },
-    ),
     'league': (
         """
         Leagues last for roughly a month. You may enter any number of times but only one deck at a time.

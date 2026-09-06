@@ -2,18 +2,17 @@ import sys
 from typing import Any, TypedDict, cast
 
 import inflect
-from babel import Locale
 from flask import request, session, url_for
-from flask_babel import gettext, ngettext
+from flask_babel import ngettext
 from werkzeug.routing import BuildError
 
-from decksite import APP, auth, get_season_id, prepare
+from decksite import get_season_id, prepare
 from decksite.data import competition
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
-from shared import configuration, dtutil, logger, text
+from shared import dtutil, logger, text
 from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
@@ -264,15 +263,6 @@ class View(BaseView):
         if active and o.hide_active_runs:
             o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if active else ''
             o.decks = other
-
-    def babel_languages(self) -> list[Locale]:
-        return APP.babel.list_translations()
-
-    def show_language_switcher(self) -> bool:
-        return not configuration.production.value or bool(auth.person_id())
-
-    def TT_HELP_TRANSLATE(self) -> str:
-        return gettext('Help us translate the site into your language')
 
     def setup_tournaments(self) -> None:
         info = tournaments.next_tournament_info()

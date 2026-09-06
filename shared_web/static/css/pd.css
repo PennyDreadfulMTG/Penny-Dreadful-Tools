@@ -592,10 +592,6 @@ Color attributes are mostly found with their related structural elements in this
     --legibility-text-shadow: 0.05rem 0.05rem 8px black; /* Always dark, even in dark mode, because it's over an image. */
     --toggle-off: var(--light-gray);
     --toggle-on: var(--dark-gray);
-    --language-menu-highlight-text: var(--dark-gray);
-    --language-menu-background: var(--black);
-    --language-menu-text: var(--white);
-    --language-menu-text-hover: var(--dark-gray);
     --scrim-color: var(--true-black);
 
     /* Header and footer */
@@ -1585,14 +1581,6 @@ header, nav, main, footer {
 .dd-menu {
     z-index: 1;
     box-shadow: var(--elevation-1);
-}
-
-/* The way the desktop submenu is implemented it floats over the top of most other stuff. */
-@media only screen and (min-width: 641px) {
-    .language-menu {
-        z-index: 2;
-        box-shadow: var(--elevation-2);
-    }
 }
 
 .status-bar {
@@ -2613,31 +2601,6 @@ main .ss-grid a.season-icon-link:hover, main .season-grid a.season-icon-link:hov
 
 /*
 
-Language Switcher
-
-*/
-
-.language-switcher {
-    left: 0;
-    position: absolute;
-    top: 0;
-}
-
-.language-icon {
-    width: 35px;
-    height: 35px;
-    padding: 0.563rem;
-    vertical-align: middle;
-}
-
-@media only screen and (max-width: 900px) {
-    .language-switcher {
-        display: none;
-    }
-}
-
-/*
-
 Notification Badges
 
 */
@@ -3089,94 +3052,6 @@ From https://codepen.io/mallendeo/pen/eLIiG
 
 .toggle-right + .toggle-button {
     background: var(--toggle-on);
-}
-
-/*
-
-Language Switcher (Menu)
-
-The old menu used to use most of this, now it's just used by the language switcher.
-
-*/
-
-@media only screen and (min-width: 641px) {
-    .language-switcher {
-        width: 100%;
-    }
-
-    /* Slide-out caret at top of the dropdown. */
-
-    /* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */
-    .contains-dropdown > a:focus {
-        opacity: 1;
-    }
-
-    .contains-dropdown > a {
-        position: relative; /* Position the caret relative to the language switcher icon. */
-    }
-
-    /* Create the caret as a border with opacity zero to hide it initially. */
-    .contains-dropdown > a::after {
-        border-bottom: 1em solid var(--text);
-        border-left: 1.333em solid transparent;
-        border-right: 1.333em solid transparent;
-        content: "";
-        display: block;
-        height: 0;
-        left: 50%;
-        margin-left: -1.333em; /* Equal to border-left/border-right, to compensate for *starting* at left 50% instead of centering there. */
-        opacity: 0;
-        position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
-        transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
-        transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
-        width: 0;
-    }
-
-    .language-switcher.contains-dropdown > a::after {
-        top: 1.126em;
-    }
-
-    /* Show the caret on hover. */
-    .hovering > a::after {
-        opacity: 1;
-        transform: translateY(0); /* In the revealed state the caret is sitting inside the language switcher's padding,  */
-        transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a::after on hover. */
-    }
-}
-
-.language-menu li > a, .language-menu li > button {
-    display: block;
-    padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
-    text-decoration: none;
-}
-
-.language-menu {
-    background: var(--language-menu-background);
-    box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
-    color: var(--language-menu-text);
-    display: none;
-    left: 0;
-    margin: 0;
-    position: absolute;
-    width: 100%;
-}
-
-.language-menu li {
-    float: left;
-}
-
-.language-menu button {
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    margin: 0;
-    width: auto;
-}
-
-.language-menu a:hover, .language-menu button:hover {
-    background-color: var(--language-menu-background);
-    color: var(--language-menu-highlight-text);
 }
 
 /*

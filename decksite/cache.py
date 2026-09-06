@@ -10,7 +10,6 @@ from flask import make_response, request
 
 from decksite import get_season_id
 from magic import seasons
-from shared_web import localization
 
 CACHE = SimpleCache()
 
@@ -22,7 +21,7 @@ def cached_impl(cacheable: bool = False,
                 client_only: bool = True,
                 client_timeout: int = 0,
                 server_timeout: int = 5 * 60,
-                key: str = 'view{id}{locale}') -> Callable:
+                key: str = 'view{id}') -> Callable:
     """
     @see https://jakearchibald.com/2016/caching-best-practices/
          https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
@@ -30,7 +29,7 @@ def cached_impl(cacheable: bool = False,
     def decorator(f: Callable) -> Callable:
         @functools.wraps(f)
         def decorated_function(*args: list[Any], **kwargs: dict[str, Any]) -> Callable:
-            cache_key = key.format(id=request.full_path, locale=localization.get_locale())  # include querystring
+            cache_key = key.format(id=request.full_path)  # include querystring
             cache_policy = ''
             if not cacheable:
                 cache_policy += ', no-store'  # tells the browser not to cache at all

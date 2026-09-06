@@ -1,7 +1,5 @@
 /*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, ChartDataLabels, Bloodhound, setDarkMode */
 
-/* eslint-disable max-lines -- this file inlines a third-party library (checkboxes.js) at the end, which pushes it past the line limit; the real app code above is what matters. */
-
 window.PD = {};
 
 PD.init = function() {
@@ -77,12 +75,6 @@ PD.initMenu = function() {
             PD.closeMenu();
         }
     });
-    $(".contains-dropdown").hoverIntent({
-        over: PD.onDropdownHover,
-        out: PD.onDropdownLeave,
-        interval: 50,
-        timeout: 250
-    });
     var submenuItems = $(".menu > li").has(".submenu");
     if (window.matchMedia("(hover: hover)").matches) {
         submenuItems.hoverIntent({over: PD.onSubmenuHover, out: PD.onSubmenuLeave, interval: 50, timeout: 350});
@@ -100,20 +92,6 @@ PD.onSubmenuTap = function(e) {
     if (!$li.hasClass("submenu-open")) {
         e.preventDefault();
         $li.addClass("submenu-open").siblings(".submenu-open").removeClass("submenu-open");
-    }
-};
-
-PD.onDropdownHover = function() {
-    if (window.matchMedia("only screen and (min-width: 641px)").matches) {
-        $(this).addClass("hovering");
-        $(this).find(".language-menu").slideDown("fast");
-    }
-};
-
-PD.onDropdownLeave = function() {
-    if (window.matchMedia("only screen and (min-width: 641px)").matches) {
-        $(this).removeClass("hovering");
-        $(this).find(".language-menu").slideUp("fast");
     }
 };
 

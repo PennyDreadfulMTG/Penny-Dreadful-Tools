@@ -6,10 +6,10 @@ not run on macOS and do not use Docker.
 
 ## Cloud startup and previews
 
-Type `/seeit` in an agent chat to start or reuse decksite, verify the relevant
-page, and get the actual browser URL for that workspace. The command handles the
-different local and cloud ports and refuses to describe the cloud VM's loopback
-URL as a Mac-accessible preview.
+Invoke the repo skill as `$seeit` in Codex (or `/seeit` in Claude) to start or
+reuse decksite, verify the relevant page, and get the actual browser URL for that
+workspace. The skill handles the different local and cloud ports and refuses to
+describe the cloud VM's loopback URL as a Mac-accessible preview.
 
 The shared setup script runs `bash .conductor/setup.sh`. It syncs Python dependencies,
 restores a prepared database, and builds JavaScript. Use the **decksite_cloud** run

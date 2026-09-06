@@ -167,15 +167,15 @@ def test_pagination_shows_page_number_and_jumps_to_ends(browser: 'Browser', site
     assert match
     last_page = int(match.group(1))
     assert last_page > 1
-    expect(pagination.locator('.first')).to_have_class(re.compile(r'\binactive\b'))
+    expect(pagination.get_by_role('button', name='First page')).to_be_disabled()
 
     with page.expect_response(lambda response: '/api/decks/' in response.url and f'page={last_page - 1}' in response.url):
-        pagination.locator('a.last').click()
+        pagination.get_by_role('button', name='Last page').click()
     expect(page_number).to_have_text(f'Page {last_page} of {last_page}')
-    expect(pagination.locator('.last')).to_have_class(re.compile(r'\binactive\b'))
+    expect(pagination.get_by_role('button', name='Last page')).to_be_disabled()
 
     with page.expect_response(lambda response: '/api/decks/' in response.url and 'page=0' in response.url):
-        pagination.locator('a.first').click()
+        pagination.get_by_role('button', name='First page').click()
     expect(page_number).to_have_text(f'Page 1 of {last_page}')
     assert not collector.problems, '\n'.join(collector.problems)
 

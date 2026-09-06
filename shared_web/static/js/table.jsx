@@ -1,4 +1,5 @@
 import { DataManager } from "./datamanager";
+import { Pagination } from "./pagination";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -75,35 +76,7 @@ export class Table extends DataManager {
     }
 
     renderPagination() {
-        const { start, end, pageCount, pageNumber, total } = super.preRenderPagination();
-        const firstPage = 0;
-        const lastPage = pageCount - 1;
-        return (
-            <div className="pagination">
-                <span className="pages section">
-                    {start}-{end} of {total}
-                </span>
-                <span className="links section">
-                    { this.state.page > firstPage
-                        ? <a aria-label="First page" className="first paginate" title="First page" onClick={this.movePage.bind(this, firstPage)}>⇤</a>
-                        : <span aria-label="First page" className="inactive first paginate" title="First page">⇤</span>
-                    }
-                    { this.state.page > 0
-                        ? <a aria-label="Previous page" className="prev paginate" title="Previous page" onClick={this.movePage.bind(this, this.state.page - 1)}>←</a>
-                        : <span aria-label="Previous page" className="inactive prev paginate" title="Previous page">←</span>
-                    }
-                    <span className="page-number">Page {pageNumber} of {pageCount}</span>
-                    { end < this.state.total
-                        ? <a aria-label="Next page" className="next paginate" title="Next page" onClick={this.movePage.bind(this, this.state.page + 1)}>→</a>
-                        : <span aria-label="Next page" className="inactive next paginate" title="Next page">→</span>
-                    }
-                    { this.state.page < lastPage
-                        ? <a aria-label="Last page" className="last paginate" title="Last page" onClick={this.movePage.bind(this, lastPage)}>⇥</a>
-                        : <span aria-label="Last page" className="inactive last paginate" title="Last page">⇥</span>
-                    }
-                </span>
-            </div>
-        );
+        return <Pagination {...super.preRenderPagination()} page={this.state.page} onPageChange={this.movePage.bind(this)}/>;
     }
 }
 

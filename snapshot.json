@@ -23001,6 +23001,11 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:22:57Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-06T00:44:12Z"
         }
       ],
       "issue": 12612,
@@ -23008,14 +23013,14 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: leave PR #15068 closed and unmerged, with issue #12612 open. The PR escaped completed bot-authored messages and handled only underscores, which could damage intentional Markdown, URLs, emoji, or mentions while still missing most Discord Markdown syntax and other card-name output paths. The issue now specifies the correct trust boundary: centrally escape literal card-name fragments before interpolation, cover complete relevant Markdown and accidental mentions, preserve bot-authored markup, audit all textual output paths, and test final messages. No partial implementation should remain.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12612-markdown-escape-card-names-in-bot-output",
         "ci": {
-          "checked_at": "2026-09-02T02:06:38Z",
+          "checked_at": "2026-09-06T00:44:12Z",
           "failed": [],
-          "state": "green"
+          "state": "closed"
         },
         "head_sha": "ff42516de5c1a75443263c2a039e91c54d14f8ac",
         "number": 15068,
@@ -23027,7 +23032,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "deferred_human",
       "title": "Markdown-escape card names in bot output",
       "verdict": null
     },

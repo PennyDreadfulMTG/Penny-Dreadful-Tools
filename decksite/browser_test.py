@@ -188,6 +188,16 @@ def test_pagination_shows_page_number_and_jumps_to_ends(browser: 'Browser', site
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_tournament_calendar_is_not_sortable(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    for path in ['/', '/tournaments/']:
+        page.goto(path)
+        calendar = page.locator('table.calendar')
+        expect(calendar).to_be_visible()
+        expect(calendar.locator('th.tablesorter-header')).to_have_count(0)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     page.goto('/metagame/')

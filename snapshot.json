@@ -20049,6 +20049,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:25:34Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T01:00:43Z"
         }
       ],
       "issue": 12563,
@@ -20056,16 +20060,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15070. Issue #12563 deliberately asked the standard 24-result metagame grid to avoid five-, seven-, and larger non-factor column counts that leave a ragged final row. #15070 uses grid-container rather than viewport breakpoints to choose one, two, three, four, six, or eight columns, with minmax(0, 1fr) tracks. This was already exercised during the #15055 and #15061 audits: current browser measurements showed one column at 320px, two at 375-501px, four at 768-1200px, six at 1700px, equal tile widths, balanced full-result rows, and no horizontal overflow. It also correctly supersedes the earlier auto-fill and mobile-minimum patches.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12563-metagame-has-a-ragged-end-when-the-numbe",
         "ci": {
-          "checked_at": "2026-09-02T02:04:10Z",
+          "checked_at": "2026-09-06T01:00:43Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "62d2cfb71f5b2fa4ebac1d8c0e9d9de36f691c03",
+        "head_sha": "f74268aa2499efbf404d53a9ebeb04ff31e36a43",
+        "merged_at": "2026-09-02T16:43:53Z",
         "number": 15070,
         "opened_at": "2026-09-01T18:17:20Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15070"

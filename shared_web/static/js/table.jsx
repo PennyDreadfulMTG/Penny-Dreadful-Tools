@@ -1,3 +1,4 @@
+/*global PD*/
 import { DataManager } from "./datamanager";
 import PropTypes from "prop-types";
 import React from "react";
@@ -108,6 +109,14 @@ export const renderWinPercent = (object) => {
         return object.winPercent.toLocaleString([], {minimumFractionDigits: 1, maximumFractionDigits: 1});
     }
     return "";
+};
+
+export const renderFriendlyDate = (displayDate, timestamp) => {
+    if (!Number.isFinite(timestamp)) {
+        return displayDate;
+    }
+    const isoDate = new Date(timestamp * 1000).toISOString();
+    return <time dateTime={isoDate} title={PD.formatExactTimestamp(isoDate)}>{displayDate}</time>;
 };
 
 export const renderCard = (card) => (

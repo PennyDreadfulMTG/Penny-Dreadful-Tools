@@ -412,9 +412,9 @@ PD.initLinks = function() {
 };
 
 PD.localizeTimeElements = function() {
-    $("time").each(function() {
+    $("time, [data-friendly-datetime]").each(function() {
         var elem = $(this),
-            datetime = elem.attr("datetime"),
+            datetime = elem.attr("datetime") || elem.data("friendly-datetime"),
             t = moment(datetime),
             format = elem.data("format"),
             tz = moment.tz.guess(),
@@ -528,10 +528,11 @@ PD.initPersonNotes = function() {
             if (data.notes.length > 0) {
                 let s = "<article>";
                 for (i = 0; i < data.notes.length; i++) {
-                    s += '<p><span class="subtitle">' + data.notes[i].display_date + "</span> " + data.notes[i].note + "</p>";
+                    s += '<p><span class="subtitle"><time datetime="' + PD.htmlEscape(data.notes[i].friendly_date.datetime) + '">' + PD.htmlEscape(data.notes[i].friendly_date.display) + "</time></span> " + data.notes[i].note + "</p>";
                 }
                 s += "</article>";
                 $(".person-notes").html(s);
+                PD.localizeTimeElements();
             } else {
                 $(".person-notes").html("<p>None</p>");
             }

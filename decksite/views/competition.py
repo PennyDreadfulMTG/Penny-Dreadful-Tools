@@ -8,6 +8,7 @@ from decksite.view import View
 from magic import seasons, tournaments
 from magic.models import Competition as Comp
 from shared import dtutil
+from shared_web import friendly_time
 
 
 def _exact_date(date: datetime.datetime) -> str:
@@ -30,7 +31,8 @@ class Competition(View):
             self.hide_top8 = True
             self.has_leaderboard = True
             self.competition_dates = f'{self.competition_dates} – {_exact_date(competition.end_date)}'
-        self.date = dtutil.display_date(competition.start_date)
+        self.friendly_date = friendly_time.friendly_date(competition.start_date)
+        self.date = self.friendly_date.display
         if competition.season_id:
             self.competition_season_name = seasons.season_name(competition.season_id)
             self.competition_season_url = url_for('seasons.competitions', season_id=competition.season_id)

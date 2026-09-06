@@ -169,6 +169,30 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_season_chooser_uses_an_animated_button_toggle(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.goto('/decks/')
+    chooser = page.locator('.seasonchooser')
+    button = chooser.get_by_role('button')
+    menu = chooser.locator('.dd-menu')
+
+    expect(chooser.locator('input[type="checkbox"]')).to_have_count(0)
+    expect(button).to_have_attribute('aria-expanded', 'false')
+    expect(menu).to_be_hidden()
+
+    page.evaluate('jQuery.fx.speeds.fast = 1000')
+    button.click()
+    expect(button).to_have_attribute('aria-expanded', 'true')
+    assert menu.evaluate("element => jQuery(element).is(':animated')")
+    expect(menu).to_have_css('display', 'grid', timeout=2000)
+
+    button.press('Enter')
+    expect(button).to_have_attribute('aria-expanded', 'false')
+    assert menu.evaluate("element => jQuery(element).is(':animated')")
+    expect(menu).to_be_hidden(timeout=2000)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_card_stats_are_numbers_and_card_summaries_are_locale_formatted(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site, locale='en-US')
     with page.expect_response(lambda response: '/api/cards2/' in response.url) as response_info:

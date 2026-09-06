@@ -144,6 +144,17 @@ def test_metagame_uses_number_sign_for_deck_count_without_quality_rank(browser: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.goto('/cards/')
+    assert not wait_for_live_tables(page)
+    table_container = page.locator('.cardtable > div.live')
+    expect(table_container).to_have_attribute('class', 'live')
+    expect(table_container.locator('table')).to_have_attribute('class', 'live')
+    expect(page.locator('.cardtable .undefined')).to_have_count(0)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     page.goto('/metagame/')

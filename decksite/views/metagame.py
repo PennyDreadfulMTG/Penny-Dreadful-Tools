@@ -15,3 +15,6 @@ class Metagame(View):
 
     def page_title(self) -> str:
         return 'Metagame'
+
+    def og_description(self) -> str:
+        return 'Explore the Penny Dreadful metagame, including popular archetypes, matchups, and successful decklists from recent leagues and tournaments.'

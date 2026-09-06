@@ -115,6 +115,32 @@ def test_split_cards_do_not_redirect_when_the_proxy_has_merged_the_slashes(monke
     assert response == 'split card page'
 
 
+def test_matchups_only_resolves_selected_criteria(monkeypatch: pytest.MonkeyPatch) -> None:
+    resolved: list[dict[str, str]] = []
+
+    def resolve_choices(choices: dict[str, str]) -> dict[str, str]:
+        resolved.append(choices)
+        return choices
+
+    class FakeMatchups:
+        def __init__(self, hero: dict[str, str], enemy: dict[str, str], season_id: int | None, results: object | None) -> None:
+            assert hero == {'archetype_id': '16'}
+            assert enemy == {'card': 'Counterspell'}
+            assert season_id == 43
+            assert results is None
+
+        def page(self) -> str:
+            return 'fast matchup page'
+
+    monkeypatch.setattr(metagame.mus, 'resolve_choices', resolve_choices)
+    monkeypatch.setattr(metagame, 'Matchups', FakeMatchups)
+    with APP.test_request_context('/matchups/?season_id=43&hero_archetype_id=16&enemy_card=Counterspell'):
+        response = metagame.matchups()
+
+    assert response == 'fast matchup page'
+    assert resolved == [{'archetype_id': '16'}, {'card': 'Counterspell'}]
+
+
 @pytest.mark.parametrize(
     ('submitted', 'canonical', 'expected'),
     [

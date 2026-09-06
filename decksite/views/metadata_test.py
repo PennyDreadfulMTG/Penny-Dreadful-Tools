@@ -1,6 +1,9 @@
 from decksite.data.archetype import Archetype
+from decksite.main import APP
 from decksite.views.archetype import Archetype as ArchetypeView
 from decksite.views.deck import Deck as DeckView
+from decksite.views.home import Home
+from decksite.views.tournaments import Tournaments
 from shared.container import Container
 
 
@@ -43,3 +46,18 @@ def test_open_graph_metadata_uses_words_for_emoji_only_fields() -> None:
     assert deck_view.og_title() == 'fire'
     assert deck_view.og_description() == 'A deck by fish'
     assert archetype_view.og_description() == 'Penny Dreadful fire archetype'
+
+
+def test_marquee_pages_have_default_open_graph_metadata() -> None:
+    with APP.test_request_context('/tournaments/', base_url='https://pennydreadfulmagic.com/'):
+        tournaments_view = Tournaments.__new__(Tournaments)
+
+        assert tournaments_view.og_title() == 'Cardhoarder Tournaments'
+        assert tournaments_view.og_url() == 'https://pennydreadfulmagic.com/tournaments/'
+        assert tournaments_view.og_description() == 'Penny Dreadful is an ultra-budget Magic Online format with thousands of legal cards, free weekly tournaments, a free league, and quarterly rotations.'
+
+    with APP.test_request_context('/', base_url='https://pennydreadfulmagic.com/'):
+        home_view = Home.__new__(Home)
+
+        assert home_view.og_title() == 'Penny Dreadful Magic'
+        assert home_view.og_url() == 'https://pennydreadfulmagic.com/'

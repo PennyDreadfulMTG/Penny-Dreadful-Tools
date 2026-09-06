@@ -20643,6 +20643,14 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:23:04Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:38:46Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "ts": "2026-09-06T00:38:46Z"
         }
       ],
       "issue": 12572,
@@ -20650,16 +20658,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: reject the product choice in PR #15067. It replaced the conventional # deck-count marker with a joker emoji because # could be read as rank. During the later #15115 audit, the redundant quality-rank display was removed and the human reviewer explicitly chose to restore # because the joker was less legible and the starred quality score already communicated quality/ranking. PR #15197 merged that restoration with a browser regression test. No further work is needed.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12572-is-not-a-good-icon-for-number-of-decks-o",
         "ci": {
-          "checked_at": "2026-09-02T02:04:08Z",
+          "checked_at": "2026-09-06T00:38:46Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "f738dad7e0e9c4e9dbb6362d13337dcc087f799a",
+        "merged_at": "2026-09-02T15:45:51Z",
         "number": 15067,
         "opened_at": "2026-09-01T18:13:22Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15067"

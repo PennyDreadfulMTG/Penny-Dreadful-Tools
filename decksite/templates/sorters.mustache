@@ -15,7 +15,7 @@
                     <td class="person"><a href="{{url}}">{{name}}</a></td>
                     <td class="n">{{num_decks_sorted}}</td>
                     <td class="n">{{sorted_per_day}}</td>
-                    <td data-text="{{date_sort}}">{{display_last_sorted}}</td>
+                    <td data-text="{{date_sort}}">{{#last_sorted_friendly}}{{> friendlytime}}{{/last_sorted_friendly}}</td>
                 </tr>
             {{/people}}
         </tbody>

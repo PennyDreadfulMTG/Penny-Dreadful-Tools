@@ -8,7 +8,9 @@ import sqlalchemy as sa
 from flask import url_for
 
 from shared import dtutil
+from shared.container import Container
 from shared.pd_exception import DoesNotExistException
+from shared_web import friendly_time
 
 from .. import db
 from ..db import DB as fsa
@@ -63,11 +65,11 @@ class Match(fsa.Model):
             return None
         return pytz.utc.localize(self.end_time)
 
-    def display_date(self) -> str:
+    def friendly_date(self) -> Container | None:
         start = self.start_time_aware()
         if start is None:
-            return ''
-        return dtutil.display_date(start)
+            return None
+        return friendly_time.friendly_date(start)
 
     def to_dict(self) -> dict:
         return {

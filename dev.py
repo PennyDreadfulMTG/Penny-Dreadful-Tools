@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import ast
 import json
 import os
 import shutil
@@ -27,6 +28,7 @@ if ON_PROD:
     sys.exit(1)
 
 ON_WINDOWS = sys.platform == 'win32'
+AUTH_DECORATORS = {'admin_required', 'demimod_required'}
 
 
 @click.group()
@@ -60,6 +62,24 @@ def do_lint() -> None:
         python['-m', 'ruff', 'check', '.'] & FG
     except ProcessExecutionError as e:
         sys.exit(e.retcode)
+    errors = auth_decorator_order_errors(find_files(file_extension='py'))
+    if errors:
+        print('\n'.join(errors))
+        sys.exit(1)
+
+def auth_decorator_order_errors(paths: Iterable[str]) -> list[str]:
+    """Require permission checks to be applied before any route or helper wrapper."""
+    errors = []
+    for path in paths:
+        with open(path, encoding='utf-8') as f:
+            tree = ast.parse(f.read(), filename=path)
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            for decorator in node.decorator_list[:-1]:
+                if isinstance(decorator, ast.Attribute) and isinstance(decorator.value, ast.Name) and decorator.value.id == 'auth' and decorator.attr in AUTH_DECORATORS:
+                    errors.append(f'{path}:{decorator.lineno}: PDA001 auth.{decorator.attr} must be the innermost decorator')
+    return errors
 
 @cli.command()
 def lint() -> None:

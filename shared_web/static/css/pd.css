@@ -1464,25 +1464,22 @@ Some pages still send giant tables of data but logsite and deck table have pagin
 */
 
 .pagination {
+    align-items: center;
     display: flex;
     font-size: var(--table-font-size);
     font-variant-numeric: oldstyle-nums;
+    flex-wrap: wrap;
+    gap: 0 1em;
     justify-content: flex-end;
-    line-height: 1.777; /* So that the smaller (font-size: 0.75rem) text lines up vertically with the larger (font-size: 1rem) arrows which have line-height 1.333 (the base line height) = 1.333 / 0.75 */
+    line-height: 1.333;
 }
 
 .pagination .section {
-    margin-right: 1em;
     white-space: nowrap;
 }
 
-.pagination .section:last-child {
-    margin-right: 0;
-}
-
 .pagination .links {
-    font-size: var(--reading-font-size);
-    line-height: var(--reading-line-height);
+    display: flex;
 }
 
 .pagination .pages {
@@ -1490,8 +1487,45 @@ Some pages still send giant tables of data but logsite and deck table have pagin
     width: 8em;
 }
 
+.pagination .page-number {
+    min-width: 7em;
+    text-align: center;
+}
+
 .pagination a, .pagination .inactive {
     padding: 0.75rem; /* rem because font-size is larger for arrows than page-size. */
+}
+
+.pagination button.paginate {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    display: flex;
+    height: 2.2rem;
+    justify-content: center;
+    margin: 0;
+    max-width: none;
+    padding: 0;
+    width: 2.2rem;
+}
+
+.pagination button.paginate:not(:disabled) {
+    cursor: pointer;
+}
+
+.pagination button.paginate:not(:disabled):hover {
+    background-color: var(--highlight);
+    border-radius: var(--button-rounded-corners);
+}
+
+.pagination button.paginate:disabled {
+    color: var(--inactive);
+}
+
+.pagination button.paginate svg {
+    height: 0.8rem;
+    width: 0.8rem;
 }
 
 .page-size {

@@ -216,7 +216,7 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
 
 
 def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', site: Container) -> None:
-    page, collector = new_page(browser, site, locale='en-US', timezone_id='America/Los_Angeles')
+    page, collector = new_page(browser, site, locale='en-GB', timezone_id='America/New_York')
     with page.expect_response(lambda response: '/api/decks/?' in response.url) as response_info:
         page.goto('/decks/')
     assert not wait_for_live_tables(page)
@@ -225,10 +225,10 @@ def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', sit
     api_friendly_date = deck['friendlyDate']
     friendly_date = page.locator('.decktable td.date time').first
     exact_date = page.evaluate(
-        "datetime => new Intl.DateTimeFormat('en-US', {dateStyle: 'full', timeStyle: 'long'}).format(new Date(datetime))",
+        "datetime => new Intl.DateTimeFormat('en-GB', {dateStyle: 'full', timeStyle: 'full'}).format(new Date(datetime))",
         api_friendly_date['datetime'],
     )
-    assert re.fullmatch(r'(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday), .+ at \d{1,2}:\d{2}:\d{2} [AP]M P[SD]T', exact_date)
+    assert re.search(r' Eastern (Daylight|Standard) Time$', exact_date)
     assert deck['displayDate'] == api_friendly_date['display']
     expect(friendly_date).to_have_text(api_friendly_date['display'])
     expect(friendly_date).to_have_attribute('datetime', api_friendly_date['datetime'])

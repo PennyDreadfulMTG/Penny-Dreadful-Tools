@@ -431,7 +431,7 @@ PD.localizeTimeElements = function() {
 PD.formatExactTimestamp = function(datetime) {
     return new Intl.DateTimeFormat(navigator.language, {
         dateStyle: "full",
-        timeStyle: "long"
+        timeStyle: "full"
     }).format(new Date(datetime));
 };
 

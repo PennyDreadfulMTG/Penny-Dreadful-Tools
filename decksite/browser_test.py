@@ -191,6 +191,21 @@ def test_pagination_shows_page_number_and_jumps_to_ends(browser: 'Browser', site
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_matchups_uses_working_paginated_deck_and_read_only_match_tables(browser: 'Browser', site: Container) -> None:
+    if not site.seed:
+        pytest.skip('The canary database does not have the seeded matchup fixture')
+    page, collector = new_page(browser, site)
+    page.goto(f'/matchups/?hero_person_id={site.seed.person_id}')
+
+    assert not wait_for_live_tables(page)
+    expect(page.locator('.decktable tbody tr')).to_have_count(2)
+    expect(page.locator('.matchtable tbody tr')).to_have_count(2)
+    expect(page.locator('.matchtable th')).to_contain_text(['Person', 'Deck', 'Opponent', "Opponent's Deck", 'Result', 'Competition', 'Date', 'MTGO Log'])
+    expect(page.locator('.matchtable form')).to_have_count(0)
+    expect(page.locator('.matchtable a[href*="/decks/"]').first).to_be_visible()
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_tournament_calendar_is_not_sortable(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     for path in ['/', '/tournaments/']:

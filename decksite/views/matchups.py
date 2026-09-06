@@ -13,15 +13,15 @@ class Matchups(View):
             criterion('… versus …', 'enemy_', enemy),
         ]
         self.seasons = [{'season_id': s['num'] or '', 'name': s['name'], 'selected': str(season_id) == str(s['num'])} for s in self.all_seasons()]
-        self.decks = results.hero_decks if results and results.hero_decks else []
-        self.show_decks = len(self.decks) > 0
-        self.matches = results.matches if results and results.matches else []
-        self.show_matches = len(self.matches) > 0
+        self.show_decks = bool(results and results.num_decks)
+        self.show_matches = bool(results and results.num_matches)
         self.hero_summary = summary_text(hero)
         self.enemy_summary = summary_text(enemy)
         self.season_summary = f'Season {season_id}' if season_id else 'All Time'
-        self.show_hero = True  # We should show both players in the list of matches, not just "opponent".
-        self.search_season_id = season_id
+        self.search_season_id = season_id or ''
+        for prefix, choices in [('hero', hero), ('enemy', enemy)]:
+            for key in ('archetype_id', 'person_id', 'card'):
+                setattr(self, f'{prefix}_{key}', choices.get(key) or '')
 
     def show_season_icon(self) -> bool:
         return not self.search_season_id

@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from contextlib import nullcontext
 from types import SimpleNamespace
@@ -87,6 +88,20 @@ async def test_resources_moves_sitemap_fetch_off_event_loop(monkeypatch: pytest.
     await resources.Resources.resources.callback(SimpleNamespace(), ctx, 'cards bolt')
 
     to_thread.assert_awaited_once_with(resources.site_resources, 'cards bolt')
+
+
+@pytest.mark.asyncio
+async def test_resources_reports_decksite_outage_to_user(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:
+    ctx = SimpleNamespace(author=SimpleNamespace(mention='<@123>'), send=AsyncMock())
+    failure = resources.fetch_tools.FetchException('Server returned a 500')
+    monkeypatch.setattr(resources.asyncio, 'to_thread', AsyncMock(side_effect=failure))
+    monkeypatch.setattr(resources, 'resources_resources', Mock(return_value={}))
+
+    with caplog.at_level(logging.ERROR):
+        await resources.Resources.resources.callback(SimpleNamespace(), ctx, 'cards bolt')
+
+    ctx.send.assert_awaited_once_with('The Penny Dreadful website is currently unavailable. Please try again later.')
+    assert 'Could not retrieve the Penny Dreadful website sitemap' in caplog.text
 
 
 @pytest.mark.asyncio

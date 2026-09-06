@@ -21113,6 +21113,10 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-02T19:36:15Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:29:56Z"
         }
       ],
       "issue": 12579,
@@ -21120,18 +21124,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15064. The May 2024 metagame-grid rewrite (ffca6ed1) introduced client-side sorting that always initialized to Quality/Auto, so full-page navigation for a season change or the tournament-only toggle discarded the user's selection; issue #12579 asked for that preference to be sticky. #15064 appropriately uses localStorage rather than a cookie for browser-only state, restores the values before the first request, and makes the selects controlled so their visible state agrees. Grid is generic in name, but metagamegrid is its only consumer. A production Chrome test changed Quality/Auto to Meta Share/Descending and confirmed both values and the stored JSON survived navigation to all seasons and then tournament-only. No console, request, or rendering failure occurred.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12579-sort-should-be-sticky-on-metagame",
         "ci": {
-          "checked_at": "2026-09-01T18:13:44Z",
-          "failed": [
-            "jslint"
-          ],
-          "state": "failed"
+          "checked_at": "2026-09-06T00:29:56Z",
+          "failed": [],
+          "state": "merged"
         },
         "head_sha": "de5ff5baab1a5b195a17d98cd5adef9df82bda54",
+        "merged_at": "2026-09-02T15:09:03Z",
         "number": 15064,
         "opened_at": "2026-09-01T18:13:08Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15064"
@@ -21141,7 +21144,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "escalated",
+      "status": "pr_open",
       "title": "Sort should be sticky on /metagame",
       "verdict": null
     },

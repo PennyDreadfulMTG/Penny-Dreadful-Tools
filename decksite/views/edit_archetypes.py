@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 from flask import url_for
 
 from decksite import prepare
@@ -7,7 +9,7 @@ from decksite.view import View
 
 
 class EditArchetypes(View):
-    def __init__(self, archetypes: list[Archetype], q: str, notq: str, query_errors: list[str] | None = None, notquery_errors: list[str] | None = None) -> None:
+    def __init__(self, archetypes: list[Archetype], q: str, notq: str, query_errors: list[str] | None = None, notquery_errors: list[str] | None = None, add_errors: list[str] | None = None, add_values: Mapping[str, str] | None = None) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)
@@ -39,6 +41,13 @@ class EditArchetypes(View):
         self.notquery_errors = notquery_errors or []
         self.has_query_errors = bool(self.query_errors)
         self.has_notquery_errors = bool(self.notquery_errors)
+        self.add_errors = add_errors or []
+        values = add_values or {}
+        self.add_archetypes = [{'id': a.id, 'name': a.name, 'selected': str(a.id) == values.get('parent')} for a in archetypes]
+        self.add_name = values.get('name', '')
+        self.add_description = values.get('description', '')
+        self.add_include = values.get('include', '')
+        self.add_exclude = values.get('exclude', '')
 
     def page_title(self) -> str:
         return 'Edit Archetypes'

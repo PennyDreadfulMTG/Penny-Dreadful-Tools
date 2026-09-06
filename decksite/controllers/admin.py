@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from typing import Any, cast
 
 import titlecase
@@ -61,8 +62,8 @@ def post_aliases(person_id: int | None = None, alias: str | None = None) -> str 
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
-def edit_archetypes(q: str = '', notq: str = '', query_errors: list[str] | None = None, notquery_errors: list[str] | None = None) -> wrappers.Response:
-    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq, query_errors, notquery_errors)
+def edit_archetypes(q: str = '', notq: str = '', query_errors: list[str] | None = None, notquery_errors: list[str] | None = None, add_errors: list[str] | None = None, add_values: Mapping[str, str] | None = None) -> wrappers.Response:
+    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq, query_errors, notquery_errors, add_errors, add_values)
     return view.response()
 
 def validate_card_names(raw_names: str) -> tuple[list[str], list[str]]:
@@ -109,9 +110,16 @@ def post_archetypes() -> wrappers.Response:
         archs.move(int(request.form.getlist('archetype_id')[0]), int(request.form.getlist('archetype_id')[1]))
     elif request.form.get('parent') is not None:
         if len(request.form.get('name', '')) > 0:
+            include = request.form.get('include', '')
+            exclude = request.form.get('exclude', '')
+            try:
+                included_cards, excluded_cards = rs.parse_cards_raw(include, exclude)
+            except InvalidDataException as e:
+                return edit_archetypes(add_errors=[str(e)], add_values=request.form)
             archetype_id = archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
-            rule_id = rs.add_rule(archetype_id)
-            rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
+            if included_cards or excluded_cards:
+                rule_id = rs.add_rule(archetype_id)
+                rs.update_cards(rule_id, included_cards, excluded_cards)
     else:
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/archetypes: {request.form}')
     if search_results:
@@ -132,8 +140,13 @@ def edit_rules(errors: list[str] | None = None) -> wrappers.Response:
 @auth.demimod_required
 def post_rules() -> wrappers.Response:
     if request.form.get('archetype_id'):
-        rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
-        rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
+        try:
+            included_cards, excluded_cards = rs.parse_cards_raw(request.form.get('include', ''), request.form.get('exclude', ''))
+        except InvalidDataException as e:
+            return edit_rules([str(e)])
+        if included_cards or excluded_cards:
+            rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
+            rs.update_cards(rule_id, included_cards, excluded_cards)
     else:
         return edit_rules(['Please select an archetype.'])
     return edit_rules()

@@ -214,7 +214,7 @@ def add_rule(archetype_id: int) -> int:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     return db().insert(sql, [archetype_id])
 
-def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
+def parse_cards_raw(include: str, exclude: str) -> tuple[list[tuple[int, str]], list[tuple[int, str]]]:
     inc = []
     exc = []
     cards = set()
@@ -222,26 +222,33 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, st
         try:
             inc.append(parse_line(line))
         except InvalidDataException:
-            return False, f"Couldn't find a card count and name on line: {line}"
+            raise InvalidDataException(f"Couldn't find a card count and name on line: {line}") from None
         if not card.card_exists(inc[-1][1]):
-            return False, f'Card not found in any deck: {line}'
+            raise InvalidDataException(f'Card not found in any deck: {line}')
         canonical_name = oracle.valid_name(inc[-1][1])
         if canonical_name in cards:
-            return False, f'Card appears more than once in rule: {canonical_name}'
+            raise InvalidDataException(f'Card appears more than once in rule: {canonical_name}')
         cards.add(canonical_name)
         inc[-1] = (inc[-1][0], canonical_name)
     for line in exclude.strip().splitlines():
         try:
             exc.append(parse_line(line))
         except InvalidDataException:
-            return False, f"Couldn't find a card count and name on line: {line}"
+            raise InvalidDataException(f"Couldn't find a card count and name on line: {line}") from None
         if not card.card_exists(exc[-1][1]):
-            return False, f'Card not found in any deck {line}'
+            raise InvalidDataException(f'Card not found in any deck {line}')
         canonical_name = oracle.valid_name(exc[-1][1])
         if canonical_name in cards:
-            return False, f'Card appears more than once in rule: {canonical_name}'
+            raise InvalidDataException(f'Card appears more than once in rule: {canonical_name}')
         cards.add(canonical_name)
         exc[-1] = (exc[-1][0], canonical_name)
+    return inc, exc
+
+def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
+    try:
+        inc, exc = parse_cards_raw(include, exclude)
+    except InvalidDataException as e:
+        return False, str(e)
     update_cards(rule_id, inc, exc)
     return True, ''
 

@@ -126,31 +126,34 @@
 </section>
 <section>
     <h2>Add Archetype</h2>
+    {{#add_errors}}
+        <p class="error">{{.}}</p>
+    {{/add_errors}}
     <form method="post">
         <div>
             <label for="parent">Parent</label>
             <select name="parent">
                 <option value="">[Select]</option>
-                {{#archetypes}}
-                    <option value="{{id}}">{{name}}</option>
-                {{/archetypes}}
+                {{#add_archetypes}}
+                    <option value="{{id}}"{{#selected}} selected{{/selected}}>{{name}}</option>
+                {{/add_archetypes}}
             </select>
         </div>
         <div>
             <label for="name">Name</label>
-            <input type="text" name="name">
+            <input type="text" name="name" value="{{add_name}}">
         </div>
         <div>
             <label for="description">Description</label>
-            <input type="text" name="description">
+            <input type="text" name="description" value="{{add_description}}">
         </div>
         <div>
             <label for="include">Must include</label>
-            <textarea name="include" id="include"></textarea>
+            <textarea name="include" id="include">{{add_include}}</textarea>
         </div>
         <div>
             <label for="exclude">Must not include</label>
-            <textarea name="exclude" id="exclude"></textarea>
+            <textarea name="exclude" id="exclude">{{add_exclude}}</textarea>
         </div>
         <div>
             <button type="submit">Add</button>

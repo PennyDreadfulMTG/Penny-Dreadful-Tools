@@ -58,13 +58,17 @@ def test_post_archetypes_creates_rule_with_new_archetype(monkeypatch: pytest.Mon
         calls.append(('rule', archetype_id))
         return 99
 
-    def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
+    def parse_cards_raw(include: str, exclude: str) -> tuple[list[tuple[int, str]], list[tuple[int, str]]]:
+        calls.append(('parse', include, exclude))
+        return [(4, 'Delver of Secrets')], [(1, 'Tolarian Terror')]
+
+    def update_cards(rule_id: int, include: list[tuple[int, str]], exclude: list[tuple[int, str]]) -> None:
         calls.append(('cards', rule_id, include, exclude))
-        return True, ''
 
     monkeypatch.setattr(admin.archs, 'add', add_archetype)
     monkeypatch.setattr(admin.rs, 'add_rule', add_rule)
-    monkeypatch.setattr(admin.rs, 'update_cards_raw', update_cards_raw)
+    monkeypatch.setattr(admin.rs, 'parse_cards_raw', parse_cards_raw)
+    monkeypatch.setattr(admin.rs, 'update_cards', update_cards)
     monkeypatch.setattr(admin, 'edit_archetypes', lambda *args: 'done')
 
     data = {
@@ -79,10 +83,54 @@ def test_post_archetypes_creates_rule_with_new_archetype(monkeypatch: pytest.Mon
 
     assert response == 'done'
     assert calls == [
+        ('parse', '4 Delver of Secrets', '1 Tolarian Terror'),
         ('archetype', 'Tempo Spells', 7, 'Cheap threats backed by interaction.'),
         ('rule', 42),
-        ('cards', 99, '4 Delver of Secrets', '1 Tolarian Terror'),
+        ('cards', 99, [(4, 'Delver of Secrets')], [(1, 'Tolarian Terror')]),
     ]
+
+
+def test_post_archetypes_does_not_create_empty_rule(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(admin.rs, 'parse_cards_raw', lambda include, exclude: ([], []))
+    monkeypatch.setattr(admin.archs, 'add', lambda name, parent, description: 42)
+    monkeypatch.setattr(admin.rs, 'add_rule', lambda archetype_id: pytest.fail('Should not create an empty rule'))
+    monkeypatch.setattr(admin, 'edit_archetypes', lambda *args: 'done')
+
+    with APP.test_request_context('/admin/archetypes/', method='POST', data={'parent': '7', 'name': 'Tempo Spells', 'description': 'Description'}):
+        response = cast(Any, admin.post_archetypes).__wrapped__()
+
+    assert response == 'done'
+
+
+def test_post_archetypes_validates_rule_before_creating_archetype(monkeypatch: pytest.MonkeyPatch) -> None:
+    def parse_cards_raw(include: str, exclude: str) -> tuple[list[tuple[int, str]], list[tuple[int, str]]]:
+        raise InvalidDataException('Card not found in any deck: 4 Not a Card')
+
+    def edit_archetypes(q: str = '', notq: str = '', query_errors: list[str] | None = None, notquery_errors: list[str] | None = None, add_errors: list[str] | None = None, add_values: dict[str, str] | None = None) -> str:
+        return EditArchetypes([], q, notq, query_errors, notquery_errors, add_errors, add_values).render_content()
+
+    monkeypatch.setattr(admin.rs, 'parse_cards_raw', parse_cards_raw)
+    monkeypatch.setattr(admin.archs, 'add', lambda *args: pytest.fail('Should not create an archetype with an invalid rule'))
+    monkeypatch.setattr(admin.rs, 'add_rule', lambda archetype_id: pytest.fail('Should not create an invalid rule'))
+    monkeypatch.setattr(admin, 'edit_archetypes', edit_archetypes)
+    monkeypatch.setattr(deck, 'load_decks', lambda *args, **kwargs: [])
+    monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
+    data = {
+        'parent': '7',
+        'name': 'Tempo Spells',
+        'description': 'Cheap threats backed by interaction.',
+        'include': '4 Not a Card',
+        'exclude': '1 Tolarian Terror',
+    }
+
+    with APP.test_request_context('/admin/archetypes/', method='POST', data=data):
+        response = cast(Any, admin.post_archetypes).__wrapped__()
+
+    assert 'Card not found in any deck: 4 Not a Card' in response
+    assert 'value="Tempo Spells"' in response
+    assert 'value="Cheap threats backed by interaction."' in response
+    assert '>4 Not a Card</textarea>' in response
+    assert '>1 Tolarian Terror</textarea>' in response
 
 
 def test_edit_archetypes_add_form_includes_rule_fields(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -135,6 +183,34 @@ def test_post_rules_requires_archetype(monkeypatch: pytest.MonkeyPatch) -> None:
         response = cast(Any, admin.post_rules).__wrapped__()
     assert 'Please select an archetype.' in response
     assert '<select name="archetype_id" required class="error" aria-describedby="archetype-error">' in response
+
+
+def test_post_rules_validates_before_creating_rule(monkeypatch: pytest.MonkeyPatch) -> None:
+    def edit_rules(errors: list[str] | None = None) -> str:
+        return EditRules(0, 0, [], [], [], [], [], [], errors).render_content()
+
+    def parse_cards_raw(include: str, exclude: str) -> tuple[list[tuple[int, str]], list[tuple[int, str]]]:
+        raise InvalidDataException('Card not found in any deck: 4 Not a Card')
+
+    monkeypatch.setattr(admin, 'edit_rules', edit_rules)
+    monkeypatch.setattr(admin.rs, 'parse_cards_raw', parse_cards_raw)
+    monkeypatch.setattr(admin.rs, 'add_rule', lambda archetype_id: pytest.fail('Should not create an invalid rule'))
+
+    with APP.test_request_context('/admin/rules/', method='POST', data={'archetype_id': '7', 'include': '4 Not a Card'}):
+        response = cast(Any, admin.post_rules).__wrapped__()
+
+    assert 'Card not found in any deck: 4 Not a Card' in response
+
+
+def test_post_rules_does_not_create_empty_rule(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(admin, 'edit_rules', lambda errors=None: 'done')
+    monkeypatch.setattr(admin.rs, 'parse_cards_raw', lambda include, exclude: ([], []))
+    monkeypatch.setattr(admin.rs, 'add_rule', lambda archetype_id: pytest.fail('Should not create an empty rule'))
+
+    with APP.test_request_context('/admin/rules/', method='POST', data={'archetype_id': '7'}):
+        response = cast(Any, admin.post_rules).__wrapped__()
+
+    assert response == 'done'
 
 
 @pytest.mark.parametrize('action', ['add', 'change'])

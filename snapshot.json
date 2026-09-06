@@ -19555,6 +19555,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:27:27Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T12:54:27Z"
         }
       ],
       "issue": 12554,
@@ -19562,16 +19566,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15075. PR #12517/commit ffca6ed1 introduced /api/archetypes2 in May 2024 and, after paginating the archetype result set, fetched qualifying key cards for every archetype in the selected season/all-time. Issue #12554 explicitly asked to check whether the query was fast and focus it if useful. #15075 passes the current page's database-loaded integer IDs, adds an IN filter, handles an empty page without invalid SQL, and preserves the unfiltered default. prepare_archetypes_for_api only reads key cards for the displayed objects, so no other data is needed. Database comparisons for actual 24-result pages produced exact output subsets. Median warm time fell 23.89 to 7.29 ms for Season 43 (4,449 to 764 rows) and 151.98 to 2.43 ms all-time (22,547 to 841 rows). Production returned 24/24 current metagame entries with key cards. Twelve relevant API/preparation tests and lint pass. The PR's mention of /api/key_cards as an existing key_cards_long caller was inaccurate, but does not affect the implementation. No follow-up needed.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12554-our-handling-of-key-cards-in-api-archety",
         "ci": {
-          "checked_at": "2026-09-02T02:04:16Z",
+          "checked_at": "2026-09-06T12:54:27Z",
           "failed": [],
           "state": "green"
         },
         "head_sha": "1f50ec8fc480f34c0bc92433372e0ca7385c27ae",
+        "merged_at": "2026-09-02T23:54:48Z",
         "number": 15075,
         "opened_at": "2026-09-01T18:20:17Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15075"

@@ -38,7 +38,7 @@ def test_matchup_search_has_open_graph_summary(monkeypatch: pytest.MonkeyPatch) 
         )
 
         assert view.og_title() == 'Aggro, SmokeTester versus Control'
-        assert view.og_description() == '2–1–1 (66.7% win rate) · Season 7'
+        assert view.og_description() == 'Aggro, SmokeTester versus Control is 2–1–1 (66.7% win rate) · Season 7'
         assert view.og_url() == f'http://localhost{path}'
 
 
@@ -49,7 +49,7 @@ def test_matchup_search_without_matches_still_has_open_graph_summary(monkeypatch
         view = Matchups({'card': 'Black Lotus'}, {}, None, [], [], [], matchup_results(wins=0, losses=0, draws=0))
 
         assert view.og_title() == 'Black Lotus versus All Decks'
-        assert view.og_description() == '0–0 · All Time'
+        assert view.og_description() == 'Black Lotus versus All Decks is 0–0 · All Time'
 
 
 def test_matchup_calculator_without_search_has_no_open_graph_summary(monkeypatch: pytest.MonkeyPatch) -> None:

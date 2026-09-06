@@ -54,7 +54,7 @@ class Matchups(View):
             record += f'–{self.results.draws}'
         if self.results.win_percent is not None:
             record += f' ({self.results.win_percent}% win rate)'
-        return f'{record} · {self.season_summary}'
+        return f'{self.hero_summary} versus {self.enemy_summary} is {record} · {self.season_summary}'
 
     def page_title(self) -> str:
         return 'Matchups Calculator'

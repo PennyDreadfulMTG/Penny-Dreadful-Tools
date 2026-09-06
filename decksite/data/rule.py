@@ -247,23 +247,24 @@ def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, st
 
 # @retry_after_calling(cache_all_rules)
 def update_cards(rule_id: int, inc: list[tuple[int, str]], exc: list[tuple[int, str]]) -> None:
-    with db().transaction('update_rule_cards'):
-        sql = 'DELETE FROM _applied_rules WHERE rule_id = %s'
-        db().execute(sql, [rule_id])
-        sql = 'DELETE FROM rule_card WHERE rule_id = %s'
-        db().execute(sql, [rule_id])
-        for n, c in inc:
-            sideboard = 'TRUE' if c in COMPANIONS else 'FALSE'
-            sql = f'INSERT INTO rule_card (rule_id, card, n, include, sideboard) VALUES (%s, %s, %s, TRUE, {sideboard})'
-            db().execute(sql, [rule_id, oracle.valid_name(c), n])
-        for n, c in exc:
-            sideboard = 'TRUE' if c in COMPANIONS else 'FALSE'
-            sql = f'INSERT INTO rule_card (rule_id, card, n, include, sideboard) VALUES (%s, %s, %s, FALSE, {sideboard})'
-            db().execute(sql, [rule_id, oracle.valid_name(c), n])
-        sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
-        if not inc and not exc:
-            db().execute('DELETE FROM rule WHERE id = %s', [rule_id])
-        db().execute(sql)
+    db().begin('update_rule_cards')
+    sql = 'DELETE FROM _applied_rules WHERE rule_id = %s'
+    db().execute(sql, [rule_id])
+    sql = 'DELETE FROM rule_card WHERE rule_id = %s'
+    db().execute(sql, [rule_id])
+    for n, c in inc:
+        sideboard = 'TRUE' if c in COMPANIONS else 'FALSE'
+        sql = f'INSERT INTO rule_card (rule_id, card, n, include, sideboard) VALUES (%s, %s, %s, TRUE, {sideboard})'
+        db().execute(sql, [rule_id, oracle.valid_name(c), n])
+    for n, c in exc:
+        sideboard = 'TRUE' if c in COMPANIONS else 'FALSE'
+        sql = f'INSERT INTO rule_card (rule_id, card, n, include, sideboard) VALUES (%s, %s, %s, FALSE, {sideboard})'
+        db().execute(sql, [rule_id, oracle.valid_name(c), n])
+    sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
+    if not inc and not exc:
+        db().execute('DELETE FROM rule WHERE id = %s', [rule_id])
+    db().execute(sql)
+    db().commit('update_rule_cards')
 
 def classified_decks_query() -> str:
     return '(NOT reviewed OR deck.archetype_id NOT IN ({ex}))'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))

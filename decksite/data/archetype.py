@@ -164,34 +164,36 @@ def add(name: str, parent: int, description: str) -> None:
     db().execute(sql)
 
 def assign(deck_id: int, archetype_id: int, person_id: int | None, reviewed: bool = True, similarity: int | None = None) -> None:
-    with db().transaction('assign_archetype'):
-        db().execute('INSERT INTO deck_archetype_change (changed_date, deck_id, archetype_id, person_id) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)', [deck_id, archetype_id, person_id])
-        and_clause = '' if reviewed else 'AND reviewed is FALSE'
-        db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
-        if not reviewed and similarity is not None:
-            db().execute('UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
+    db().begin('assign_archetype')
+    db().execute('INSERT INTO deck_archetype_change (changed_date, deck_id, archetype_id, person_id) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)', [deck_id, archetype_id, person_id])
+    and_clause = '' if reviewed else 'AND reviewed is FALSE'
+    db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
+    if not reviewed and similarity is not None:
+        db().execute('UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
+    db().commit('assign_archetype')
     redis.clear(f'decksite:deck:{deck_id}')
 
 def move(archetype_id: int, parent_id: int) -> None:
-    with db().transaction('move_archetype'):
-        remove_sql = """
-            DELETE a
-            FROM archetype_closure AS a
-            INNER JOIN archetype_closure AS d
-                ON a.descendant = d.descendant
-            LEFT JOIN archetype_closure AS x
-                ON x.ancestor = d.ancestor AND x.descendant = a.ancestor
-            WHERE d.ancestor = %s AND x.ancestor IS NULL
-        """
-        db().execute(remove_sql, [archetype_id])
-        add_sql = """
-            INSERT INTO archetype_closure (ancestor, descendant, depth)
-                SELECT supertree.ancestor, subtree.descendant, supertree.depth + subtree.depth + 1
-                FROM archetype_closure AS supertree JOIN archetype_closure AS subtree
-                WHERE subtree.ancestor = %s
-                AND supertree.descendant = %s
-        """
-        db().execute(add_sql, [archetype_id, parent_id])
+    db().begin('move_archetype')
+    remove_sql = """
+        DELETE a
+        FROM archetype_closure AS a
+        INNER JOIN archetype_closure AS d
+            ON a.descendant = d.descendant
+        LEFT JOIN archetype_closure AS x
+            ON x.ancestor = d.ancestor AND x.descendant = a.ancestor
+        WHERE d.ancestor = %s AND x.ancestor IS NULL
+    """
+    db().execute(remove_sql, [archetype_id])
+    add_sql = """
+        INSERT INTO archetype_closure (ancestor, descendant, depth)
+            SELECT supertree.ancestor, subtree.descendant, supertree.depth + subtree.depth + 1
+            FROM archetype_closure AS supertree JOIN archetype_closure AS subtree
+            WHERE subtree.ancestor = %s
+            AND supertree.descendant = %s
+    """
+    db().execute(add_sql, [archetype_id, parent_id])
+    db().commit('move_archetype')
 
 def rename(archetype_id: int, new_name: str) -> None:
     db().execute('UPDATE archetype SET name = %s WHERE id = %s', [new_name, archetype_id])

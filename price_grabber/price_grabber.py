@@ -34,29 +34,30 @@ def fetch() -> None:
     cleanup(count)
 
 def store(timestamp: float, all_prices: dict[str, parser.PriceListType]) -> int:
-    with DATABASE.transaction('store'):
-        lows: dict[str, int] = {}
-        for code in all_prices:
-            prices = all_prices[code]
-            for name, p, _ in prices:
-                cents = int(float(p) * 100)
-                if cents < lows.get(name, sys.maxsize):
-                    lows[name] = cents
-        count = 0
-        while lows:
-            count = count + 1
-            sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
-            chunk = []
-            try:
-                for _ in range(0, 20):
-                    chunk.append(lows.popitem())
-            except KeyError:
-                pass  # Emptied it
-            sql += ', '.join(['(%s, %s, %s)'] * len(chunk))
-            values = []
-            for name, cents in chunk:
-                values.extend([timestamp, name, cents])
-            execute(sql, values)
+    DATABASE.begin('store')
+    lows: dict[str, int] = {}
+    for code in all_prices:
+        prices = all_prices[code]
+        for name, p, _ in prices:
+            cents = int(float(p) * 100)
+            if cents < lows.get(name, sys.maxsize):
+                lows[name] = cents
+    count = 0
+    while lows:
+        count = count + 1
+        sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
+        chunk = []
+        try:
+            for _ in range(0, 20):
+                chunk.append(lows.popitem())
+        except KeyError:
+            pass  # Emptied it
+        sql += ', '.join(['(%s, %s, %s)'] * len(chunk))
+        values = []
+        for name, cents in chunk:
+            values.extend([timestamp, name, cents])
+        execute(sql, values)
+    DATABASE.commit('store')
     return count * 20
 
 def cleanup(count: int = 0) -> None:

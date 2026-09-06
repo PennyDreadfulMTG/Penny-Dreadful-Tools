@@ -21,19 +21,20 @@ def insert_match(dt: datetime.datetime,
                  round_num: int | None = None,
                  elimination: int | None = None,
                  mtgo_match_id: int | None = None) -> int:
-    with db().transaction('insert_match'):
-        match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
-        update_cache(left_id, left_games, right_games, dt=dt)
-        if right_id is not None:
-            update_cache(right_id, right_games, left_games, dt=dt)
-        sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
-        db().execute(sql, [left_id, match_id, left_games])
-        if right_id is not None:  # Don't insert matches or adjust Elo for the bye.
-            db().execute(sql, [right_id, match_id, right_games])
-            if left_games != right_games:  # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
-                winner_id = left_id if left_games > right_games else right_id
-                loser_id = left_id if left_games < right_games else right_id
-                elo.adjust_elo(winner_id, loser_id)
+    db().begin('insert_match')
+    match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
+    update_cache(left_id, left_games, right_games, dt=dt)
+    if right_id is not None:
+        update_cache(right_id, right_games, left_games, dt=dt)
+    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
+    db().execute(sql, [left_id, match_id, left_games])
+    if right_id is not None:  # Don't insert matches or adjust Elo for the bye.
+        db().execute(sql, [right_id, match_id, right_games])
+        if left_games != right_games:  # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
+            winner_id = left_id if left_games > right_games else right_id
+            loser_id = left_id if left_games < right_games else right_id
+            elo.adjust_elo(winner_id, loser_id)
+    db().commit('insert_match')
     redis.clear(f'decksite:deck:{left_id}')
     if right_id is not None:
         redis.clear(f'decksite:deck:{right_id}')
@@ -139,17 +140,18 @@ def stats() -> dict[str, int]:
     return db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0]
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
-    with db().transaction('update_match'):
-        m = load_match(match_id, left_id)
-        prev_winner = winner(m.deck_id, m.game_wins, m.opponent_deck_id, m.game_losses)
-        new_winner = winner(left_id, left_games, right_id, right_games)
-        update_games(match_id, left_id, left_games)
-        update_games(match_id, right_id, right_games)
-        if new_winner != prev_winner:
-            update_cache(m.deck_id, m.game_wins, m.game_losses, delete=True)
-            update_cache(m.opponent_deck_id, m.game_losses, m.game_wins, delete=True)
-            update_cache(left_id, left_games, right_games)
-            update_cache(right_id, right_games, left_games)
+    db().begin('update_match')
+    m = load_match(match_id, left_id)
+    prev_winner = winner(m.deck_id, m.game_wins, m.opponent_deck_id, m.game_losses)
+    new_winner = winner(left_id, left_games, right_id, right_games)
+    update_games(match_id, left_id, left_games)
+    update_games(match_id, right_id, right_games)
+    if new_winner != prev_winner:
+        update_cache(m.deck_id, m.game_wins, m.game_losses, delete=True)
+        update_cache(m.opponent_deck_id, m.game_losses, m.game_wins, delete=True)
+        update_cache(left_id, left_games, right_games)
+        update_cache(right_id, right_games, left_games)
+    db().commit('update_match')
     redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
 def update_games(match_id: int, deck_id: int, games: int) -> int:
@@ -178,21 +180,22 @@ def update_cache(deck_id: int, games: int, opponent_games: int, delete: bool | N
     db().execute(sql, args)
 
 def delete_match(match_id: int) -> None:
-    with db().transaction('delete_match'):
-        rs = db().select('SELECT deck_id, games FROM deck_match WHERE match_id = %s', [match_id])
-        if not rs:
-            raise TooFewItemsException('No deck_match entries found for match_id `{match_id}`')
-        left_id = rs[0]['deck_id']
-        left_games = rs[0]['games']
-        if len(rs) > 1:
-            right_id = rs[1]['deck_id']
-            right_games = rs[1]['games']
-        else:
-            right_id, right_games = 0, 0
-        update_cache(left_id, left_games, right_games, delete=True)
-        update_cache(right_id, right_games, left_games, delete=True)
-        sql = 'DELETE FROM `match` WHERE id = %s'
-        db().execute(sql, [match_id])
+    db().begin('delete_match')
+    rs = db().select('SELECT deck_id, games FROM deck_match WHERE match_id = %s', [match_id])
+    if not rs:
+        raise TooFewItemsException('No deck_match entries found for match_id `{match_id}`')
+    left_id = rs[0]['deck_id']
+    left_games = rs[0]['games']
+    if len(rs) > 1:
+        right_id = rs[1]['deck_id']
+        right_games = rs[1]['games']
+    else:
+        right_id, right_games = 0, 0
+    update_cache(left_id, left_games, right_games, delete=True)
+    update_cache(right_id, right_games, left_games, delete=True)
+    sql = 'DELETE FROM `match` WHERE id = %s'
+    db().execute(sql, [match_id])
+    db().commit('delete_match')
     if rs:
         redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 

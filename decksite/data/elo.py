@@ -31,8 +31,9 @@ def adjust_elo(winning_deck_id: int, losing_deck_id: int) -> None:
     loser = guarantee.exactly_one(ps)
     adj = adjustment(winner.elo or STARTING_ELO, loser.elo or STARTING_ELO)
     sql = f'UPDATE person SET elo = IFNULL(elo, {sqlescape(STARTING_ELO)}) + %s WHERE id = %s'
-    with db().transaction('per-match-elo-adjustment'):
-        logger.info(f'Elo (winner) {adj} {winner.id} {winner.mtgo_username} {winner.elo} {sql}')
-        logger.info(f'Elo (loser) {-adj} {loser.id} {loser.mtgo_username} {loser.elo} {sql}')
-        db().execute(sql, [adj, winner.id])
-        db().execute(sql, [-adj, loser.id])
+    db().begin('per-match-elo-adjustment')
+    logger.info(f'Elo (winner) {adj} {winner.id} {winner.mtgo_username} {winner.elo} {sql}')
+    logger.info(f'Elo (loser) {-adj} {loser.id} {loser.mtgo_username} {loser.elo} {sql}')
+    db().execute(sql, [adj, winner.id])
+    db().execute(sql, [-adj, loser.id])
+    db().commit('per-match-elo-adjustment')

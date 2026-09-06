@@ -60,12 +60,13 @@ def load_rotation_summary() -> tuple[int, int]:
 @decorators.interprocess_locked('.rotation-cache.lock')
 def force_cache_update(hard: bool = False) -> None:
     season_id = seasons.next_season_num()
-    with db().transaction(f'rotation_runs_season_{season_id}'):
-        # This is why this is expensive, starting again from scratch every time, so we don't do it by default.
-        # If you edit the existing Run_xxx.txt files (which happens sometimes when things go wrong) you will need to open an interpreter on prod and run this with hard=True.
-        if hard:
-            db().execute('DELETE FROM rotation_runs WHERE season_id = %s', [season_id])
-        update_rotation_runs()
+    db().begin(f'rotation_runs_season_{season_id}')
+    # This is why this is expensive, starting again from scratch every time, so we don't do it by default.
+    # If you edit the existing Run_xxx.txt files (which happens sometimes when things go wrong) you will need to open an interpreter on prod and run this with hard=True.
+    if hard:
+        db().execute('DELETE FROM rotation_runs WHERE season_id = %s', [season_id])
+    update_rotation_runs()
+    db().commit(f'rotation_runs_season_{season_id}')
     cache_rotation()
 
 def update_rotation_runs() -> None:

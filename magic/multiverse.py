@@ -191,27 +191,28 @@ async def load_oracle_cards_async() -> list[CardDescription]:
         return []
 
 async def insert_cards(new_date: datetime.datetime, sets: list[dict[str, Any]], all_cards: list[CardDescription], oracle_cards: list[CardDescription] | None = None) -> None:
-    with db().transaction('update_database'):
-        db().execute('DELETE FROM scryfall_version')
-        db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
-        db().execute('DELETE FROM card_color')
-        db().execute('DELETE FROM card_color_identity')
-        db().execute('DELETE FROM card_produced_mana')
-        db().execute('DELETE FROM card_legality')
-        db().execute('DELETE FROM card_bug')
-        db().execute('DELETE FROM face')
-        db().execute('DELETE FROM printing')
-        db().execute('DELETE FROM card_flavor_name')
-        db().execute('DELETE FROM card')
-        db().execute('DELETE FROM `set`')
-        for s in sets:
-            insert_set(s)
-        every_card_printing = all_cards
-        await insert_cards_async(every_card_printing, oracle_cards)
-        await update_pd_legality_async()
-        db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
-        db().execute('SET FOREIGN_KEY_CHECKS=1')  # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
-        rebuild_cache()
+    db().begin('update_database')
+    db().execute('DELETE FROM scryfall_version')
+    db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
+    db().execute('DELETE FROM card_color')
+    db().execute('DELETE FROM card_color_identity')
+    db().execute('DELETE FROM card_produced_mana')
+    db().execute('DELETE FROM card_legality')
+    db().execute('DELETE FROM card_bug')
+    db().execute('DELETE FROM face')
+    db().execute('DELETE FROM printing')
+    db().execute('DELETE FROM card_flavor_name')
+    db().execute('DELETE FROM card')
+    db().execute('DELETE FROM `set`')
+    for s in sets:
+        insert_set(s)
+    every_card_printing = all_cards
+    await insert_cards_async(every_card_printing, oracle_cards)
+    await update_pd_legality_async()
+    db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
+    db().execute('SET FOREIGN_KEY_CHECKS=1')  # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
+    rebuild_cache()
+    db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
 async def insert_cards_async(printings: list[CardDescription], oracle_cards: list[CardDescription] | None = None) -> list[int]:
@@ -425,16 +426,17 @@ async def update_bugged_cards_async() -> None:
     bugs = await fetcher.bugged_cards_async()
     if bugs is None:
         return
-    with db().transaction('update_bugged_cards'):
-        db().execute('DELETE FROM card_bug')
-        for bug in bugs:
-            last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-            name = bug['card'].split(' // ')[0]  # We need a face name from split cards - we don't have combined card names yet.
-            card_id = db().value('SELECT card_id FROM face WHERE name = %s', [name])
-            if card_id is None:
-                print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
-                continue
-            db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
+    db().begin('update_bugged_cards')
+    db().execute('DELETE FROM card_bug')
+    for bug in bugs:
+        last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
+        name = bug['card'].split(' // ')[0]  # We need a face name from split cards - we don't have combined card names yet.
+        card_id = db().value('SELECT card_id FROM face WHERE name = %s', [name])
+        if card_id is None:
+            print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
+            continue
+        db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
+    db().commit('update_bugged_cards')
 
 async def update_pd_legality_async() -> None:
     for s in seasons.SEASONS:
@@ -600,26 +602,27 @@ async def set_legal_cards_async(season: str | None = None) -> None:
     # In case we get windows line endings.
     new_list = {c.rstrip() for c in new_list}
 
-    with db().transaction('set_legal_cards'):
-        db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
-        db().execute('SET group_concat_max_len=100000')
+    db().begin('set_legal_cards')
+    db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
+    db().execute('SET group_concat_max_len=100000')
 
-        all_cards = db().select(base_query_lite())
-        legal_cards = []
-        for row in all_cards:
-            if row['name'] in new_list:
-                legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
-                                                                              card_id=row['id']))
-            elif row['flavor_names']:
-                for fn in row['flavor_names'].split('|'):
-                    if fn in new_list:
-                        legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
-                                                                                      card_id=row['id']))
-                        break
-        sql = """INSERT INTO card_legality (format_id, card_id, legality)
-                 VALUES {values}""".format(values=', '.join(legal_cards))
+    all_cards = db().select(base_query_lite())
+    legal_cards = []
+    for row in all_cards:
+        if row['name'] in new_list:
+            legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
+                                                                          card_id=row['id']))
+        elif row['flavor_names']:
+            for fn in row['flavor_names'].split('|'):
+                if fn in new_list:
+                    legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
+                                                                                  card_id=row['id']))
+                    break
+    sql = """INSERT INTO card_legality (format_id, card_id, legality)
+             VALUES {values}""".format(values=', '.join(legal_cards))
 
-        db().execute(sql)
+    db().execute(sql)
+    db().commit('set_legal_cards')
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):

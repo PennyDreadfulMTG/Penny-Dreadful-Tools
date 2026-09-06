@@ -35,20 +35,21 @@ def cache() -> None:
     sql = 'SELECT MAX(`time`) FROM low_price'
     latest = db.value(sql)
 
-    with db.transaction('cache'):
-        db.execute('DELETE FROM cache')
-        sql = f"""
-            INSERT INTO cache (`time`, name, price, low, high, week, month, season)
-                SELECT
-                    MAX(`time`) AS `time`,
-                    name,
-                    MIN(CASE WHEN `time` = %s THEN price END) AS price,
-                    MIN(CASE WHEN `time` > %s THEN price END) AS low,
-                    MAX(CASE WHEN `time` > %s THEN price END) AS high,
-                    AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS week,
-                    AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS month,
-                    AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS season
-                FROM low_price
-                GROUP BY name;
-        """
-        db.execute(sql, [latest, last_rotation, last_rotation, week, week, month, month, last_rotation, last_rotation])
+    db.begin('cache')
+    db.execute('DELETE FROM cache')
+    sql = f"""
+        INSERT INTO cache (`time`, name, price, low, high, week, month, season)
+            SELECT
+                MAX(`time`) AS `time`,
+                name,
+                MIN(CASE WHEN `time` = %s THEN price END) AS price,
+                MIN(CASE WHEN `time` > %s THEN price END) AS low,
+                MAX(CASE WHEN `time` > %s THEN price END) AS high,
+                AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS week,
+                AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS month,
+                AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS season
+            FROM low_price
+            GROUP BY name;
+    """
+    db.execute(sql, [latest, last_rotation, last_rotation, week, week, month, month, last_rotation, last_rotation])
+    db.commit('cache')

@@ -8,7 +8,6 @@ from decksite import APP
 from decksite.data import archetype, clauses
 from decksite.database import db
 from decksite.testutil import with_test_db
-from shared.database import Database
 from shared.pd_exception import DoesNotExistException
 from shared.text import merge_slashes
 
@@ -41,17 +40,14 @@ def test_season_stats(monkeypatch: pytest.MonkeyPatch, tournament_only: bool, wh
 
 
 def test_assign_clears_cached_deck_after_committing(monkeypatch: pytest.MonkeyPatch) -> None:
-    database = Database.__new__(Database)
-    database.open_transactions = []
+    database = mock.Mock()
     clear = mock.Mock()
     monkeypatch.setattr(archetype, 'db', lambda: database)
     monkeypatch.setattr(archetype.redis, 'clear', clear)
 
-    with mock.patch.object(database, 'execute') as execute:
-        archetype.assign(42, 7, None, False, 72)
+    archetype.assign(42, 7, None, False, 72)
 
-    assert execute.call_args_list[-1] == mock.call('COMMIT')
-    assert database.open_transactions == []
+    database.commit.assert_called_once_with('assign_archetype')
     clear.assert_called_once_with('decksite:deck:42')
 
 

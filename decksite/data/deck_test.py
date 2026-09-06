@@ -8,7 +8,6 @@ from decksite.testutil import with_test_db
 from magic import decklist, oracle
 from magic.models import Card, CardRef, Deck
 from shared.container import Container
-from shared.database import Database
 
 
 def test_maybe_regenerate_symbols_font_for_unusual_character() -> None:
@@ -32,26 +31,6 @@ def test_maybe_regenerate_symbols_font_ignores_latin_1() -> None:
 
     db.assert_not_called()
     regenerate_symbols_font.assert_not_called()
-
-
-def test_add_cards_rolls_back_on_unexpected_error() -> None:
-    database = Database.__new__(Database)
-    database.open_transactions = []
-    cards: deck.CardsDescription = {'maindeck': {'Black Lotus': 1}, 'sideboard': {}}
-
-    with (
-        mock.patch.object(database, 'execute') as execute,
-        mock.patch.object(deck, 'db', return_value=database),
-        mock.patch.object(deck, 'insert_deck_card', side_effect=RuntimeError('card insert failed')),
-        pytest.raises(RuntimeError, match='card insert failed'),
-    ):
-        deck.add_cards(1, cards)
-
-    assert database.open_transactions == []
-    assert execute.call_args_list == [
-        mock.call('BEGIN'),
-        mock.call('ROLLBACK'),
-    ]
 
 
 def test_order_decks_by_swiss_tiebreakers_uses_opponents_match_win_percentage() -> None:

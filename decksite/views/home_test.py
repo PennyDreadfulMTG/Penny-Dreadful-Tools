@@ -1,7 +1,7 @@
 import pytest
 
 from decksite.data.archetype import Archetype
-from decksite.views.home import biggest_movers
+from decksite.views.home import Home, biggest_movers
 
 
 def movers(*changes: float) -> list[Archetype]:
@@ -34,3 +34,28 @@ def test_biggest_movers_fills_the_table_from_whichever_direction_has_enough(chan
 
 def test_biggest_movers_is_empty_when_nothing_moved() -> None:
     assert biggest_movers([]) == []
+
+
+def test_setup_stats_shows_player_counts_for_each_requested_period() -> None:
+    view = Home.__new__(Home)
+    view.setup_stats({
+        'num_matches_today': 1,
+        'num_matches_this_week': 2,
+        'num_matches_this_month': 3,
+        'num_matches_this_season': 4,
+        'num_matches_all_time': 5,
+        'num_players_this_week': 6,
+        'num_players_this_month': 7,
+        'num_players_this_season': 8,
+        'num_players_all_time': 9000,
+    })
+
+    assert view.community_stats[1] == {
+        'header': 'League and Tournament Players',
+        'stats': [
+            {'text': '6 players this week'},
+            {'text': '7 players this month'},
+            {'text': '8 players this season'},
+            {'text': '9,000 players all time'},
+        ],
+    }

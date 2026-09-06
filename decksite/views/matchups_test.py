@@ -52,12 +52,12 @@ def test_matchup_search_without_matches_still_has_open_graph_summary(monkeypatch
         assert view.og_description() == 'Black Lotus versus All Decks is 0–0 · All Time'
 
 
-def test_matchup_calculator_without_search_has_no_open_graph_summary(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_matchup_calculator_without_search_has_default_open_graph_metadata(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(Matchups, 'all_seasons', lambda _self: [])
 
     with APP.test_request_context('/matchups/'):
         view = Matchups({}, {}, None, [], [], [], None)
 
-        assert view.og_title() is None
-        assert view.og_description() is None
-        assert view.og_url() is None
+        assert view.og_title() == 'Matchups Calculator'
+        assert view.og_description() == 'Penny Dreadful is an ultra-budget Magic Online format with thousands of legal cards, free weekly tournaments, a free league, and quarterly rotations.'
+        assert view.og_url() == 'http://localhost/matchups/'

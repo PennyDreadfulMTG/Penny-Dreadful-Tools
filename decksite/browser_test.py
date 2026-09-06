@@ -30,7 +30,7 @@ ENABLED = bool(BASE_URL) or os.environ.get('PD_BROWSER_TESTS') == '1'
 pytestmark = [pytest.mark.browser, pytest.mark.skipif(not ENABLED, reason='Set PD_BROWSER_TESTS=1 or PD_BROWSER_BASE_URL to run browser tests')]
 
 if ENABLED:
-    from playwright.sync_api import Browser, Locator, Page, expect, sync_playwright
+    from playwright.sync_api import Browser, Locator, Page, Route, expect, sync_playwright
 
 # Fixed entry points. More pages are discovered from the links on these so the test needs no knowledge of what data the site has.
 PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/resources/', '/about/']
@@ -157,6 +157,14 @@ def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Co
 
 def test_pagination_shows_page_number_and_jumps_to_ends(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
+
+    def force_multiple_pages(route: 'Route') -> None:
+        response = route.fetch()
+        data = response.json()
+        data['total'] = 41
+        route.fulfill(response=response, json=data)
+
+    page.route('**/api/decks/**', force_multiple_pages)
     page.goto('/decks/')
     assert not wait_for_live_tables(page)
     pagination = page.locator('.decktable .pagination')

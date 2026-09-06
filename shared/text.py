@@ -18,8 +18,30 @@ def sanitize(s: str) -> str:
     return html.unescape(s)
 
 def replace_emoji_with_text(s: str) -> str:
-    """Replace emoji sequences with readable text while preserving other Unicode."""
+    """Remove pictographic emoji from text, with names as an emoji-only fallback.
+
+    Unicode characters with text presentation, such as © and ♥, are preserved.
+    """
+    found_emoji = False
+
+    def remove(chars: str, data: dict[str, Any]) -> str:
+        nonlocal found_emoji
+        if data.get('status') == emoji.STATUS['unqualified']:
+            return chars
+        found_emoji = True
+        return ' '
+
+    without_emoji = emoji.replace_emoji(s, replace=remove)
+    if not found_emoji:
+        return s
+
+    without_emoji = re.sub(r'\s+', ' ', without_emoji).strip()
+    if any(c.isalnum() for c in without_emoji):
+        return without_emoji
+
     def replace(chars: str, data: dict[str, Any]) -> str:
+        if data.get('status') == emoji.STATUS['unqualified']:
+            return chars
         replacement = anyascii(chars)
         if not replacement or replacement == chars:
             replacement = str(data.get('en', ''))

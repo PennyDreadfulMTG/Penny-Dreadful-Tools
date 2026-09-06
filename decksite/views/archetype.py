@@ -103,7 +103,7 @@ class Archetype(View):
         return url_for('.archetype', archetype_id=self.archetype.id, _external=True)
 
     def og_description(self) -> str:
-        return text.replace_emoji_with_text(f'Penny Dreadful {self.archetype.name} archetype')
+        return f'Penny Dreadful {text.replace_emoji_with_text(self.archetype.name)} archetype'
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.archetype, attr)

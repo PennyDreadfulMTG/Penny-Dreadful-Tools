@@ -21001,6 +21001,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:20:39Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:32:02Z"
         }
       ],
       "issue": 12578,
@@ -21008,16 +21012,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15065. Issue #12578 explicitly requested Quality (Optimistic) as the 50% Wilson lower bound, Quality (Strict) as the 99.999% Wilson lower bound, and Potential as the Wilson upper bound; #15065 implements those definitions and preserves the existing 99% Quality sort. This is an intentional product feature, not a rogue repair. The merged PR includes focused SQL/ordering tests, including NULL-last behavior in both directions.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12578-more-sort-options-for-metagame",
         "ci": {
-          "checked_at": "2026-09-02T02:07:59Z",
+          "checked_at": "2026-09-06T00:32:02Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "a3a8858ff4bd9a351490c21f04d1bba38e1ac90e",
+        "head_sha": "9157486164035c38de574711dbed5b06f776c1d6",
+        "merged_at": "2026-09-02T15:26:52Z",
         "number": 15065,
         "opened_at": "2026-09-01T18:13:13Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15065"

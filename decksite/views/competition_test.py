@@ -21,8 +21,9 @@ def test_competition_subtitle_shows_season() -> None:
         view = Competition(competition, [])
         rendered = template.render_name('subtitle', view)
 
-    assert '<a href="/seasons/14/competitions/">Season 14</a>' in rendered
-    assert 'Oct 10th, 2019' in rendered
+    compact_rendered = ' '.join(rendered.split())
+    assert rendered.count('<div class="subtitle">') == 1
+    assert '<a href="/seasons/14/competitions/">Season 14</a> · Oct 10th, 2019' in compact_rendered
     assert view.season_id() == 14
 
 
@@ -39,4 +40,6 @@ def test_league_subtitle_shows_exact_date_range() -> None:
     with APP.test_request_context('/competitions/2/'):
         rendered = template.render_name('subtitle', Competition(competition, []))
 
-    assert 'Oct 4th, 2019 – Nov 1st, 2019' in rendered
+    compact_rendered = ' '.join(rendered.split())
+    assert rendered.count('<div class="subtitle">') == 1
+    assert '<a href="/seasons/14/competitions/">Season 14</a> · Oct 4th, 2019 – Nov 1st, 2019' in compact_rendered

@@ -1,13 +1,15 @@
 {{#competition_season_name}}
     <div class="subtitle">
-        <a href="{{competition_season_url}}">{{competition_season_name}}</a>
+        <a href="{{competition_season_url}}">{{competition_season_name}}</a>{{#competition_dates}} · {{competition_dates}}{{/competition_dates}}
     </div>
 {{/competition_season_name}}
-{{#competition_dates}}
-    <div class="subtitle">
-        {{competition_dates}}
-    </div>
-{{/competition_dates}}
+{{^competition_season_name}}
+    {{#competition_dates}}
+        <div class="subtitle">
+            {{competition_dates}}
+        </div>
+    {{/competition_dates}}
+{{/competition_season_name}}
 {{^competition_dates}}
     {{#competition_ends}}
         <div class="subtitle">

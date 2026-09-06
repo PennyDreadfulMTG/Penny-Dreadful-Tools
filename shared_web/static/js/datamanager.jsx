@@ -113,7 +113,9 @@ export class DataManager extends React.Component {
         const start = objects.length === 0 ? 0 : page * this.state.pageSize + 1;
         const end = Math.min(start + this.state.pageSize - 1, this.state.total);
         const total = this.state.total;
-        return { start, end, total };
+        const pageCount = Math.ceil(total / this.state.pageSize);
+        const pageNumber = total === 0 ? 0 : page + 1;
+        return { start, end, pageCount, pageNumber, total };
     }
 
     movePage(page) {

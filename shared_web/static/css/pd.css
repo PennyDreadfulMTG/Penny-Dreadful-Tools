@@ -1490,6 +1490,15 @@ Some pages still send giant tables of data but logsite and deck table have pagin
     width: 8em;
 }
 
+.pagination .page-number {
+    display: inline-block;
+    font-size: var(--table-font-size);
+    line-height: 1.777;
+    min-width: 7em;
+    text-align: center;
+    vertical-align: top;
+}
+
 .pagination a, .pagination .inactive {
     padding: 0.75rem; /* rem because font-size is larger for arrows than page-size. */
 }

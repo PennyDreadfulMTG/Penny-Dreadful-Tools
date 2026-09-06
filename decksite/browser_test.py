@@ -155,6 +155,31 @@ def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Co
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_pagination_shows_page_number_and_jumps_to_ends(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.goto('/decks/')
+    assert not wait_for_live_tables(page)
+    pagination = page.locator('.decktable .pagination')
+
+    page_number = pagination.locator('.page-number')
+    expect(page_number).to_have_text(re.compile(r'Page 1 of \d+'))
+    match = re.fullmatch(r'Page 1 of (\d+)', page_number.inner_text())
+    assert match
+    last_page = int(match.group(1))
+    assert last_page > 1
+    expect(pagination.locator('.first')).to_have_class(re.compile(r'\binactive\b'))
+
+    with page.expect_response(lambda response: '/api/decks/' in response.url and f'page={last_page - 1}' in response.url):
+        pagination.locator('a.last').click()
+    expect(page_number).to_have_text(f'Page {last_page} of {last_page}')
+    expect(pagination.locator('.last')).to_have_class(re.compile(r'\binactive\b'))
+
+    with page.expect_response(lambda response: '/api/decks/' in response.url and 'page=0' in response.url):
+        pagination.locator('a.first').click()
+    expect(page_number).to_have_text(f'Page 1 of {last_page}')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     page.goto('/metagame/')

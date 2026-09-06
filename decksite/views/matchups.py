@@ -1,5 +1,7 @@
 from collections.abc import Mapping
 
+from flask import request
+
 from decksite.data.matchup import MatchupResults
 from decksite.view import View
 
@@ -25,6 +27,26 @@ class Matchups(View):
 
     def show_season_icon(self) -> bool:
         return not self.search_season_id
+
+    def og_title(self) -> str:
+        if self.results is None:
+            return super().og_title()
+        return f'{self.hero_summary} versus {self.enemy_summary}'
+
+    def og_url(self) -> str:
+        if self.results is None:
+            return super().og_url()
+        return request.url
+
+    def og_description(self) -> str:
+        if self.results is None:
+            return super().og_description()
+        record = f'{self.results.wins}–{self.results.losses}'
+        if self.results.draws:
+            record += f'–{self.results.draws}'
+        if self.results.win_percent is not None:
+            record += f' ({self.results.win_percent}% win rate)'
+        return f'{self.hero_summary} versus {self.enemy_summary} is {record} · {self.season_summary}'
 
     def page_title(self) -> str:
         return 'Matchups Calculator'

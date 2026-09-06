@@ -51,6 +51,21 @@ def test_assign_clears_cached_deck_after_committing(monkeypatch: pytest.MonkeyPa
     clear.assert_called_once_with('decksite:deck:42')
 
 
+def test_add_returns_new_archetype_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    database = mock.Mock()
+    database.insert.return_value = 42
+    database.select.return_value = []
+    monkeypatch.setattr(archetype, 'db', lambda: database)
+
+    archetype_id = archetype.add('Tempo Spells', 7, 'Cheap threats backed by interaction.')
+
+    assert archetype_id == 42
+    database.insert.assert_called_once_with(
+        'INSERT INTO archetype (name, description) VALUES (%s, %s)',
+        ['Tempo Spells', 'Cheap threats backed by interaction.'],
+    )
+
+
 @with_test_db
 @pytest.mark.functional
 def test_missing_movers_preaggregate_returns_no_data_during_a_web_request() -> None:

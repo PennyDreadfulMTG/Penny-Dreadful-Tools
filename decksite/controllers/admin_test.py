@@ -47,6 +47,58 @@ def test_validate_card_names_canonicalizes_and_ignores_blank_lines(monkeypatch: 
     assert errors == ['Card not found: Not a Card']
 
 
+def test_post_archetypes_creates_rule_with_new_archetype(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[Any, ...]] = []
+
+    def add_archetype(name: str, parent: int, description: str) -> int:
+        calls.append(('archetype', name, parent, description))
+        return 42
+
+    def add_rule(archetype_id: int) -> int:
+        calls.append(('rule', archetype_id))
+        return 99
+
+    def update_cards_raw(rule_id: int, include: str, exclude: str) -> tuple[bool, str]:
+        calls.append(('cards', rule_id, include, exclude))
+        return True, ''
+
+    monkeypatch.setattr(admin.archs, 'add', add_archetype)
+    monkeypatch.setattr(admin.rs, 'add_rule', add_rule)
+    monkeypatch.setattr(admin.rs, 'update_cards_raw', update_cards_raw)
+    monkeypatch.setattr(admin, 'edit_archetypes', lambda *args: 'done')
+
+    data = {
+        'parent': '7',
+        'name': 'Tempo Spells',
+        'description': 'Cheap threats backed by interaction.',
+        'include': '4 Delver of Secrets',
+        'exclude': '1 Tolarian Terror',
+    }
+    with APP.test_request_context('/admin/archetypes/', method='POST', data=data):
+        response = cast(Any, admin.post_archetypes).__wrapped__()
+
+    assert response == 'done'
+    assert calls == [
+        ('archetype', 'Tempo Spells', 7, 'Cheap threats backed by interaction.'),
+        ('rule', 42),
+        ('cards', 99, '4 Delver of Secrets', '1 Tolarian Terror'),
+    ]
+
+
+def test_edit_archetypes_add_form_includes_rule_fields(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(deck, 'load_decks', lambda *args, **kwargs: [])
+    monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
+
+    with APP.test_request_context('/admin/archetypes/'):
+        html = EditArchetypes([], '', '').render_content()
+
+    assert '<label for="description">Description</label>' in html
+    assert '<label for="include">Must include</label>' in html
+    assert '<textarea name="include" id="include"></textarea>' in html
+    assert '<label for="exclude">Must not include</label>' in html
+    assert '<textarea name="exclude" id="exclude"></textarea>' in html
+
+
 def test_admin_menu_hides_admin_only_items_from_demimod() -> None:
     with APP.test_request_context('/admin/'):
         with APP.test_request_context('/admin/', environ_base={'HTTP_HOST': 'localhost'}):

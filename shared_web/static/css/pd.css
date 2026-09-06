@@ -521,6 +521,29 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
     margin-top: 2rem;
 }
 
+.matchup-calculator .twitter-typeahead {
+    margin-left: var(--form-element-margin);
+    width: 20rem;
+}
+
+.matchup-calculator .twitter-typeahead input {
+    margin-left: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+.matchup-calculator .tt-hint, .matchup-calculator .tt-menu {
+    left: 0 !important;
+    right: auto !important;
+}
+
+@media only screen and (max-width: 800px) {
+    .matchup-calculator .twitter-typeahead {
+        margin-left: 0;
+        max-width: 80%;
+    }
+}
+
 /*
 
 Spacing

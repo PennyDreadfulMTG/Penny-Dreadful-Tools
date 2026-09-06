@@ -11,6 +11,7 @@ from decksite import APP, auth, league
 from decksite.data import archetype as archs
 from decksite.data import card, clauses, deck, match, playability, query
 from decksite.data import competition as comp
+from decksite.data import matchup as mus
 from decksite.data import person as ps
 from decksite.data import rotation as rot
 from decksite.data import rule as rs
@@ -817,6 +818,12 @@ def search() -> Response:
         elif q in name:
             fuzzy_matches.append(item)
     return return_json(exact_matches + fuzzy_matches)
+
+
+@APP.route('/api/matchup-options/<any(archetypes,people,cards):option_type>')
+@APP.route('/api/matchup-options/<any(archetypes,people,cards):option_type>/')
+def matchup_options(option_type: mus.MatchupOptionType) -> Response:
+    return return_json(mus.search_options(option_type, request.args.get('q', '')))
 
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:

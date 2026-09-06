@@ -15,6 +15,7 @@ PD.init = function() {
     PD.initDarkModeToggle();
     PD.initTooltips();
     PD.initTypeahead();
+    PD.initMatchupCalculator();
     PD.initSearchShortcut();
     PD.initUseGuess();
     PD.initReassign();
@@ -279,6 +280,41 @@ PD.initTypeahead = function() {
     $(".typeahead").typeahead(options, dataSource);
     $(".typeahead").bind("typeahead:select", function(event, suggestion) {
         window.location.href = suggestion.url;
+    });
+};
+
+PD.initMatchupCalculator = function() {
+    $(".matchup-option").each(function() {
+        var input = $(this),
+            valueInput = input.siblings("input[type=hidden]"),
+            optionType = input.data("option-type"),
+            corpus = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    "url": "/api/matchup-options/" + optionType + "/?q={q}",
+                    "wildcard": "{q}"
+                }
+            }),
+            options = {
+                "autoselect": true,
+                "highlight": true,
+                "hint": true,
+                "minLength": 1
+            },
+            dataSource = {
+                "display": "name",
+                "limit": 10,
+                "source": corpus,
+                "templates": {
+                    "empty": function() { return '<div class="tt-suggestion">No results found</div>'; }
+                }
+            };
+        input.typeahead(options, dataSource);
+        input.on("input", function() { valueInput.val(""); });
+        input.bind("typeahead:autocomplete typeahead:select", function(_event, suggestion) {
+            valueInput.val(suggestion.value);
+        });
     });
 };
 

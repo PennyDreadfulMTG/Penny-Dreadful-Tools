@@ -26,3 +26,6 @@ class Resources(View):
 
     def page_title(self) -> str:
         return 'Resources'
+
+    def og_description(self) -> str:
+        return 'Find Penny Dreadful tools and community resources, including deck checks, rotation information, Discord, and useful external links.'

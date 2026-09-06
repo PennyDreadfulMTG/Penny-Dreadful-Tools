@@ -174,6 +174,15 @@ class View(BaseView):
     def page_title(self) -> str | None:
         pass
 
+    def og_title(self) -> str:
+        return text.replace_emoji_with_text(self.page_title() or 'Penny Dreadful Magic')
+
+    def og_url(self) -> str:
+        return request.base_url
+
+    def og_description(self) -> str:
+        return 'Penny Dreadful is an ultra-budget Magic Online format with thousands of legal cards, free weekly tournaments, a free league, and quarterly rotations.'
+
     def num_tournaments(self) -> str:
         r = inflect.engine().number_to_words(str(len(tournaments.all_series_info())))
         return cast(str, r)

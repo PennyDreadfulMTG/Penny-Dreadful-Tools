@@ -124,12 +124,12 @@
         {{/archetypes_preordered}}
     </table>
 </section>
-<section>
+<section id="add-archetype">
     <h2>Add Archetype</h2>
     {{#add_errors}}
         <p class="error">{{.}}</p>
     {{/add_errors}}
-    <form method="post">
+    <form method="post" action="#add-archetype">
         <div>
             <label for="parent">Parent</label>
             <select name="parent">

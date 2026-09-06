@@ -141,6 +141,8 @@ def test_edit_archetypes_add_form_includes_rule_fields(monkeypatch: pytest.Monke
         html = EditArchetypes([], '', '').render_content()
 
     assert '<label for="description">Description</label>' in html
+    assert '<section id="add-archetype">' in html
+    assert '<form method="post" action="#add-archetype">' in html
     assert '<label for="include">Must include</label>' in html
     assert '<textarea name="include" id="include"></textarea>' in html
     assert '<label for="exclude">Must not include</label>' in html

@@ -35,3 +35,17 @@ def test_update_cards_raw_updates_distinct_cards(monkeypatch: pytest.MonkeyPatch
     assert success
     assert message == ''
     assert updates == [(1, [(4, 'Lightning Bolt')], [(1, 'Counterspell')])]
+
+
+@pytest.mark.parametrize(
+    ('include', 'exclude', 'expected'),
+    [
+        ('4 lightning bolt', '', ([(4, 'Lightning Bolt')], [])),
+        ('', '1 counterspell', ([], [(1, 'Counterspell')])),
+    ],
+)
+def test_parse_cards_raw_accepts_one_sided_rules(monkeypatch: pytest.MonkeyPatch, include: str, exclude: str, expected: tuple[list[tuple[int, str]], list[tuple[int, str]]]) -> None:
+    monkeypatch.setattr(rule.card, 'card_exists', lambda name: True)
+    monkeypatch.setattr(rule.oracle, 'valid_name', lambda name: name.title())
+
+    assert rule.parse_cards_raw(include, exclude) == expected

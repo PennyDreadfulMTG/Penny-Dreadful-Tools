@@ -17,3 +17,6 @@ class Tournaments(View):
 
     def page_title(self) -> str:
         return 'Cardhoarder Tournaments'
+
+    def og_description(self) -> str:
+        return 'Play in free weekly Penny Dreadful tournaments on Magic Online, with Cardhoarder prizes and events scheduled across multiple time zones.'

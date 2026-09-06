@@ -22,6 +22,9 @@ class About(View):
     def page_title(self) -> str:
         return 'About Penny Dreadful'
 
+    def og_description(self) -> str:
+        return 'Discover Penny Dreadful, an ultra-budget Magic Online format with thousands of legal cards, quarterly rotations, free events, and a friendly community.'
+
 def exciting_cards() -> list[Card]:
     cards = fancy_cards()
     random.shuffle(cards)

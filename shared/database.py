@@ -1,5 +1,6 @@
 import warnings
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
+from contextlib import contextmanager
 from decimal import Decimal
 from typing import Any, cast
 
@@ -129,6 +130,17 @@ class Database:
         self.open_transactions = []
         print(f'After ROLLBACK ({self.open_transactions}) in {label}')
 
+    @contextmanager
+    def transaction(self, label: str) -> Iterator[None]:
+        self.begin(label)
+        try:
+            yield
+            self.commit(label)
+        except BaseException:
+            if self.open_transactions:
+                self.rollback(label)
+            raise
+
     def last_insert_rowid(self) -> int:
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))
 
@@ -161,16 +173,15 @@ class Database:
             raise DatabaseException(f'Closed database connection with open transactions `{self.open_transactions}` (they have been rolled back).')
 
     def nuke_database(self) -> None:
-        self.begin('nuke_database')
-        query = self.values("""
-            SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
-            FROM information_schema.tables
-            WHERE table_schema = %s;
-        """, [self.name])
-        self.execute('SET FOREIGN_KEY_CHECKS = 0')
-        self.execute(''.join(query))
-        self.execute('SET FOREIGN_KEY_CHECKS = 1')
-        self.commit('nuke_database')
+        with self.transaction('nuke_database'):
+            query = self.values("""
+                SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
+                FROM information_schema.tables
+                WHERE table_schema = %s;
+            """, [self.name])
+            self.execute('SET FOREIGN_KEY_CHECKS = 0')
+            self.execute(''.join(query))
+            self.execute('SET FOREIGN_KEY_CHECKS = 1')
 
 def get_database(location: str) -> Database:
     return Database(location)

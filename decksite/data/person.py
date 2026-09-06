@@ -298,15 +298,14 @@ def load_aliases() -> list[Container]:
     return [Container(r) for r in db().select(sql)]
 
 def add_alias(person_id: int, alias: str) -> None:
-    db().begin('add_alias')
-    try:
-        p = load_person_by_mtgo_username(alias)
-        db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [person_id, p.id])
-        db().execute('DELETE FROM person WHERE id = %s', [p.id])
-    except DoesNotExistException:
-        pass
-    db().execute('INSERT INTO person_alias (person_id, alias) VALUES (%s, %s)', [person_id, alias])
-    db().commit('add_alias')
+    with db().transaction('add_alias'):
+        try:
+            p = load_person_by_mtgo_username(alias)
+            db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [person_id, p.id])
+            db().execute('DELETE FROM person WHERE id = %s', [p.id])
+        except DoesNotExistException:
+            pass
+        db().execute('INSERT INTO person_alias (person_id, alias) VALUES (%s, %s)', [person_id, alias])
 
 def load_notes(person_id: int | None = None) -> list[Container]:
     where = f'subject_id = {person_id}' if person_id else 'TRUE'
@@ -361,12 +360,11 @@ def is_banned(mtgo_username: str) -> bool:
 
 def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     logger.warning(f'Squashing {p1id} and {p2id} on {col1} and {col2}')
-    db().begin('squash')
-    new_value = db().value(f'SELECT {col2} FROM person WHERE id = %s', [p2id])
-    db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [p1id, p2id])
-    db().execute('DELETE FROM person WHERE id = %s', [p2id])
-    db().execute(f'UPDATE person SET {col2} = %s WHERE id = %s', [new_value, p1id])
-    db().commit('squash')
+    with db().transaction('squash'):
+        new_value = db().value(f'SELECT {col2} FROM person WHERE id = %s', [p2id])
+        db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [p1id, p2id])
+        db().execute('DELETE FROM person WHERE id = %s', [p2id])
+        db().execute(f'UPDATE person SET {col2} = %s WHERE id = %s', [new_value, p1id])
 
 def set_locale(person_id: int, locale: str) -> None:
     db().execute('UPDATE person SET locale = %s WHERE id = %s', [locale, person_id])

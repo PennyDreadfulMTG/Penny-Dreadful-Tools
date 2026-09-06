@@ -425,13 +425,12 @@ def add_deck(params: RawDeckDescription) -> Deck:
     deck_id = get_deck_id(params['source'], params['identifier'])
     cards = decklist.normalize(params['cards'])
     if deck_id:
-        db().begin('replace_deck_cards')
-        db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [get_deckhash(cards), deck_id])
-        db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
-        add_cards(deck_id, cards)
-        db().commit('replace_deck_cards')
-        d = load_deck(deck_id)
-        prime_cache(d)
+        with db().transaction('replace_deck_cards'):
+            db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [get_deckhash(cards), deck_id])
+            db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
+            add_cards(deck_id, cards)
+            d = load_deck(deck_id)
+            prime_cache(d)
         return d
     created_date = params.get('created_date')
     if not created_date:
@@ -478,19 +477,18 @@ def add_deck(params: RawDeckDescription) -> Deck:
         params.get('finish'),
         get_deckhash(cards),
     ]
-    db().begin('add_deck')
-    try:
-        deck_id = db().insert(sql, values)
-        add_cards(deck_id, cards)
-    except DatabaseException as e:
-        if 'Duplicate entry' not in str(e):
-            raise
-        deck_id = get_deck_id(params['source'], params['identifier'])
-        if deck_id is None:
-            raise
-    d = load_deck(deck_id)
-    prime_cache(d)
-    db().commit('add_deck')
+    with db().transaction('add_deck'):
+        try:
+            deck_id = db().insert(sql, values)
+            add_cards(deck_id, cards)
+        except DatabaseException as e:
+            if 'Duplicate entry' not in str(e):
+                raise
+            deck_id = get_deck_id(params['source'], params['identifier'])
+            if deck_id is None:
+                raise
+        d = load_deck(deck_id)
+        prime_cache(d)
     maybe_regenerate_symbols_font(params['name'])
     return d
 
@@ -534,15 +532,13 @@ def maybe_regenerate_symbols_font(name: str) -> None:
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
     try:
-        db().begin('add_cards')
-        for name, n in cards.get('maindeck', {}).items():
-            insert_deck_card(deck_id, name, n, False)
-        for name, n in cards.get('sideboard', {}).items():
-            insert_deck_card(deck_id, name, n, True)
-        db().commit('add_cards')
+        with db().transaction('add_cards'):
+            for name, n in cards.get('maindeck', {}).items():
+                insert_deck_card(deck_id, name, n, False)
+            for name, n in cards.get('sideboard', {}).items():
+                insert_deck_card(deck_id, name, n, True)
     except InvalidDataException as e:
         logger.warning('Unable to add_cards to {deck_id} with {cards}', e)
-        db().rollback('add_cards')
         raise
 
 def get_deck_id(source_name: str, identifier: str) -> int | None:

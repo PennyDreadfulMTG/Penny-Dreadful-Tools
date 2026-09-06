@@ -1,5 +1,5 @@
 from decimal import Decimal
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 import pytest
 from MySQLdb import OperationalError
@@ -33,6 +33,34 @@ def test_execute_does_not_retry_when_server_goes_away_during_transaction() -> No
     connect.assert_called_once_with()
     assert db.cursor.execute.call_count == 1
     assert db.open_transactions == []
+
+def test_transaction_rolls_back_nested_transactions_on_error() -> None:
+    db = Database.__new__(Database)
+    db.open_transactions = []
+
+    with patch.object(db, 'execute') as execute, pytest.raises(RuntimeError, match='failed inside transaction'):
+        with db.transaction('outer'):
+            with db.transaction('inner'):
+                raise RuntimeError('failed inside transaction')
+
+    assert db.open_transactions == []
+    assert execute.call_args_list == [
+        call('BEGIN'),
+        call('ROLLBACK'),
+    ]
+
+def test_transaction_commits_on_success() -> None:
+    db = Database.__new__(Database)
+    db.open_transactions = []
+
+    with patch.object(db, 'execute') as execute, db.transaction('transaction'):
+        pass
+
+    assert db.open_transactions == []
+    assert execute.call_args_list == [
+        call('BEGIN'),
+        call('COMMIT'),
+    ]
 
 def test_execute_converts_scale_zero_decimals_to_integers() -> None:
     db = Database.__new__(Database)

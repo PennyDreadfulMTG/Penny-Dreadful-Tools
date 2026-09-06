@@ -181,12 +181,11 @@ def process_tournament(name: str, event: Event) -> None:
     except ValueError as e:
         raise InvalidDataException(f'Could not parse tournament date `{event.start}`') from e
     fs = determine_finishes(event.standings, event.finalists)
-    db().begin('tournament')
-    competition_id = insert_competition(name, date, event)
-    decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, event.players)
-    insert_matches(date, decks_by_gatherling_username, event.matches, event.mainrounds + event.finalrounds)
-    guess_archetypes(list(decks_by_gatherling_username.values()))
-    db().commit('tournament')
+    with db().transaction('tournament'):
+        competition_id = insert_competition(name, date, event)
+        decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, event.players)
+        insert_matches(date, decks_by_gatherling_username, event.matches, event.mainrounds + event.finalrounds)
+        guess_archetypes(list(decks_by_gatherling_username.values()))
 
 def determine_finishes(standings: list[Standing], finalists: list[Finalist]) -> FinalStandings:
     ps = {}

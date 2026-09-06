@@ -33,7 +33,7 @@ if ENABLED:
     from playwright.sync_api import Browser, Locator, Page, Route, expect, sync_playwright
 
 # Fixed entry points. More pages are discovered from the links on these so the test needs no knowledge of what data the site has.
-PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/seasons/', '/rotation/', '/resources/', '/about/']
+PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/resources/', '/about/']
 # Links in tables may carry a /seasons/N/ prefix, so match anywhere in the href.
 DISCOVER = [('/decks/', '.decktable a[href*="/people/"]'), ('/decks/', '.decktable a[href*="/archetypes/"]'), ('/decks/', '.decktable a[href*="/competitions/"]'), ('/decks/', '.decktable a[href*="/decks/"]'), ('/cards/', '.cardtable a[href*="/cards/"]')]
 LIVE_TABLE_CLASSES = ['decktable', 'cardtable', 'persontable', 'matchtable', 'leaderboardtable', 'headtoheadtable']

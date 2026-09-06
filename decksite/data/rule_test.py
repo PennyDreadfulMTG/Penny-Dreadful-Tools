@@ -1,6 +1,65 @@
+from unittest import mock
+
 import pytest
 
 from decksite.data import rule
+from magic.models import Deck
+
+
+def test_mistagged_decks_loads_decks_by_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    expected = Deck({'id': 17})
+    load_decks_by_id = mock.Mock(return_value=[expected])
+    monkeypatch.setattr(rule, 'db', lambda: StubDatabase([{
+        'deck_id': 17,
+        'rule_id': 23,
+        'rule_archetype_id': 42,
+        'rule_archetype_name': 'Burn',
+    }]))
+    monkeypatch.setattr(rule.deck, 'load_decks_by_id', load_decks_by_id)
+
+    result = rule.mistagged_decks()
+
+    assert result == [expected]
+    assert list(load_decks_by_id.call_args.args[0]) == [17]
+    assert (expected.rule_id, expected.rule_archetype_id, expected.rule_archetype_name) == (23, 42, 'Burn')
+
+
+def test_doubled_decks_loads_decks_by_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    expected = Deck({'id': 17})
+    load_decks_by_id = mock.Mock(return_value=[expected])
+    monkeypatch.setattr(rule, 'db', lambda: StubDatabase([{
+        'deck_id': 17,
+        'rule_ids': '23,24',
+        'archetype_ids': '42,43',
+        'archetype_names': 'Burn|Red Deck Wins',
+    }]))
+    monkeypatch.setattr(rule.deck, 'load_decks_by_id', load_decks_by_id)
+
+    result = rule.doubled_decks()
+
+    assert result == [expected]
+    assert list(load_decks_by_id.call_args.args[0]) == [17]
+    assert expected.archetypes_from_rules_names == 'Burn (23), Red Deck Wins (24)'
+
+
+def test_overlooked_decks_loads_decks_by_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    expected = Deck({'id': 17})
+    load_decks_by_id = mock.Mock(return_value=[expected])
+    monkeypatch.setattr(rule, 'db', lambda: StubDatabase([{'deck_id': 17}]))
+    monkeypatch.setattr(rule.deck, 'load_decks_by_id', load_decks_by_id)
+
+    result = rule.overlooked_decks()
+
+    assert result == [expected]
+    assert list(load_decks_by_id.call_args.args[0]) == [17]
+
+
+class StubDatabase:
+    def __init__(self, rows: list[dict[str, int | str]]) -> None:
+        self.rows = rows
+
+    def select(self, _sql: str) -> list[dict[str, int | str]]:
+        return self.rows
 
 
 @pytest.mark.parametrize(

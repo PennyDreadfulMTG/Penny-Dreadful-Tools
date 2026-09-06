@@ -10,6 +10,23 @@ from magic.models import Card, CardRef, Deck
 from shared.container import Container
 
 
+def test_load_decks_by_id() -> None:
+    expected = [Deck({'id': 17}), Deck({'id': 23})]
+    with mock.patch.object(deck, 'load_decks', return_value=expected) as load_decks:
+        result = deck.load_decks_by_id([17, 23])
+
+    assert result == expected
+    load_decks.assert_called_once_with(where='d.id IN (17, 23)')
+
+
+def test_load_decks_by_id_with_no_ids() -> None:
+    with mock.patch.object(deck, 'load_decks') as load_decks:
+        result = deck.load_decks_by_id([])
+
+    assert result == []
+    load_decks.assert_not_called()
+
+
 def test_maybe_regenerate_symbols_font_for_unusual_character() -> None:
     with (
         mock.patch.object(deck, 'db') as db,

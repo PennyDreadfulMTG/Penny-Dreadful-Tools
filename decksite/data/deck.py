@@ -1,6 +1,7 @@
 import hashlib
 import json
 import time
+from collections.abc import Iterable
 from typing import TypedDict
 
 from decksite import deck_name
@@ -36,6 +37,12 @@ def recent_decks_for_person(person_id: int) -> list[Deck]:
 
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks(f'd.id = {sqlescape(deck_id)}'))
+
+def load_decks_by_id(deck_ids: Iterable[int]) -> list[Deck]:
+    ids = [int(deck_id) for deck_id in deck_ids]
+    if not ids:
+        return []
+    return load_decks(where=f'd.id IN ({", ".join(map(str, ids))})')
 
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',

@@ -1,15 +1,29 @@
-{{#competition_ends}}
+{{#competition_season_name}}
     <div class="subtitle">
-        Ends {{competition_ends}}
+        <a href="{{competition_season_url}}">{{competition_season_name}}</a>{{#competition_dates}} · {{competition_dates}}{{/competition_dates}}
     </div>
-{{/competition_ends}}
-{{^competition_ends}}
-    {{#date}}
+{{/competition_season_name}}
+{{^competition_season_name}}
+    {{#competition_dates}}
         <div class="subtitle">
-            {{date}}
+            {{competition_dates}}
         </div>
-    {{/date}}
-{{/competition_ends}}
+    {{/competition_dates}}
+{{/competition_season_name}}
+{{^competition_dates}}
+    {{#competition_ends}}
+        <div class="subtitle">
+            Ends {{competition_ends}}
+        </div>
+    {{/competition_ends}}
+    {{^competition_ends}}
+        {{#date}}
+            <div class="subtitle">
+                {{date}}
+            </div>
+        {{/date}}
+    {{/competition_ends}}
+{{/competition_dates}}
 {{#is_deck_page}}
     <div class="subtitle">
         {{#public}}{{#reviewed}}<a href="{{archetype_url}}">{{archetype_name}}</a>{{/reviewed}}{{/public}}

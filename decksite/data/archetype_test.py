@@ -66,6 +66,24 @@ def test_add_returns_new_archetype_id(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
 
+def test_archetype_exists_checks_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    database = mock.Mock()
+    database.value.return_value = 1
+    monkeypatch.setattr(archetype, 'db', lambda: database)
+
+    assert archetype.archetype_exists(42)
+    database.value.assert_called_once_with('SELECT EXISTS(SELECT 1 FROM archetype WHERE id = %s)', [42])
+
+
+def test_name_exists_checks_database_name_equality(monkeypatch: pytest.MonkeyPatch) -> None:
+    database = mock.Mock()
+    database.value.return_value = 0
+    monkeypatch.setattr(archetype, 'db', lambda: database)
+
+    assert not archetype.name_exists('Tempo Spells')
+    database.value.assert_called_once_with('SELECT EXISTS(SELECT 1 FROM archetype WHERE name = %s)', ['Tempo Spells'])
+
+
 @with_test_db
 @pytest.mark.functional
 def test_missing_movers_preaggregate_returns_no_data_during_a_web_request() -> None:

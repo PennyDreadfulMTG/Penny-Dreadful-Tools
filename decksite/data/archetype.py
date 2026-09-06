@@ -61,6 +61,12 @@ def archetype_id_from_name(name: str) -> int | None:
             return int(r['id'])
     return None
 
+def archetype_exists(archetype_id: int) -> bool:
+    return bool(db().value('SELECT EXISTS(SELECT 1 FROM archetype WHERE id = %s)', [archetype_id]))
+
+def name_exists(name: str) -> bool:
+    return bool(db().value('SELECT EXISTS(SELECT 1 FROM archetype WHERE name = %s)', [name]))
+
 def load_archetype(archetype: int | str) -> Archetype:
     try:
         archetype_id = int(archetype)

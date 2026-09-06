@@ -42,6 +42,7 @@ class EditArchetypes(View):
         self.has_query_errors = bool(self.query_errors)
         self.has_notquery_errors = bool(self.notquery_errors)
         self.add_errors = add_errors or []
+        self.has_add_errors = bool(self.add_errors)
         values = add_values or {}
         self.add_archetypes = [{'id': a.id, 'name': a.name, 'selected': str(a.id) == values.get('parent')} for a in archetypes]
         self.add_name = values.get('name', '')

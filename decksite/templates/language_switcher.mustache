@@ -1,11 +1,12 @@
 <div class="language-switcher contains-dropdown">
     <a href="#"><img alt="Language Switcher" class="language-icon" src="{{language_icon}}"></a>
-    <div class="language-menu">
+    <form class="language-menu" method="post" action="{{locale_url}}">
+        <input type="hidden" name="target" value="{{current_url}}">
         <ul>
             {{#babel_languages}}
-                <li><a href="?locale={{.}}" rel="nofollow">{{display_name}}</a></li>
+                <li><button type="submit" name="locale" value="{{.}}">{{display_name}}</button></li>
             {{/babel_languages}}
             <li><a href="https://poeditor.com/join/project/sZ94JeTk1V">{{TT_HELP_TRANSLATE}}</a></li>
         </ul>
-    </div>
+    </form>
 </div>

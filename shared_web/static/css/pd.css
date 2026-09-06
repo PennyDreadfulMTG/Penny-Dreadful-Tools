@@ -3144,7 +3144,7 @@ The old menu used to use most of this, now it's just used by the language switch
     }
 }
 
-.language-menu li > a {
+.language-menu li > a, .language-menu li > button {
     display: block;
     padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
     text-decoration: none;
@@ -3156,6 +3156,7 @@ The old menu used to use most of this, now it's just used by the language switch
     color: var(--language-menu-text);
     display: none;
     left: 0;
+    margin: 0;
     position: absolute;
     width: 100%;
 }
@@ -3164,7 +3165,16 @@ The old menu used to use most of this, now it's just used by the language switch
     float: left;
 }
 
-.language-menu a:hover {
+.language-menu button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    margin: 0;
+    width: auto;
+}
+
+.language-menu a:hover, .language-menu button:hover {
     background-color: var(--language-menu-background);
     color: var(--language-menu-highlight-text);
 }

@@ -31,6 +31,7 @@ class PDFlask(Flask):
         super().register_error_handler(exceptions.InternalServerError, self.internal_server_error)
         super().route('/unauthorized/')(self.unauthorized)
         super().route('/logout/')(self.logout)
+        super().route('/locale/', methods=['POST'])(self.set_locale)
         super().route('/authenticate/')(self.authenticate)
         super().route('/authenticate/callback/')(self.authenticate_callback)
         super().route('/api/gitpull', methods=['POST'])(api.process_github_webhook)
@@ -39,6 +40,7 @@ class PDFlask(Flask):
         super().route('/api/commit/')(api.commit_id)
         super().route('/robots.txt')(self.robots_txt)
         super().route('/favicon<rest>')(self.favicon)
+        super().before_request(self.handle_legacy_locale_query)
         self.url_build_error_handlers.append(self.external_url_handler)
         if self.config.get('SERVER_NAME') is None:
             self.config['SERVER_NAME'] = configuration.get_optional_str('flask_server_name')
@@ -55,8 +57,7 @@ class PDFlask(Flask):
 
         translations = os.path.abspath(os.path.join(shared_web_path, 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
-        self.babel = Babel(self)
-        self.babel.locale_selector_func = localization.get_locale
+        self.babel = Babel(self, locale_selector=localization.get_locale)
         with self.app_context():
             localization.init(self.babel)
         self.api_root = Blueprint('api', import_name, url_prefix='/api')
@@ -111,6 +112,24 @@ class PDFlask(Flask):
         # The cookies we actually want are set with domain=.pennydreadfulmagic.com so they work on subdomains.
         response.delete_cookie('session', domain=None)
         return response
+
+    def set_locale(self) -> wrappers.Response:
+        locale = request.form.get('locale')
+        if locale not in localization.LANGUAGES:
+            raise BadRequestException(f'Unknown locale: {locale}')
+        session['locale'] = locale
+        target = self.redirect_target(request.form.get('target')) or url_for('home')
+        return redirect(target)
+
+    def handle_legacy_locale_query(self) -> wrappers.Response | None:
+        if request.method not in {'GET', 'HEAD'} or 'locale' not in request.args:
+            return None
+        locale = request.args.get('locale')
+        if locale not in localization.LANGUAGES:
+            raise BadRequestException(f'Unknown locale: {locale}')
+        query = urllib.parse.urlencode([(key, value) for key, value in request.args.items(multi=True) if key != 'locale'])
+        target = request.path + (f'?{query}' if query else '')
+        return redirect(target)
 
     def authenticate(self) -> wrappers.Response:
         target = request.args.get('target')

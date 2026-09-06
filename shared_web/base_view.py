@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from flask import current_app, make_response, url_for, wrappers
+from flask import current_app, make_response, request, url_for, wrappers
 
 from . import template
 
@@ -69,6 +69,12 @@ class BaseView:
 
     def language_icon(self) -> str:
         return url_for('static', filename='images/language_icon.svg')
+
+    def locale_url(self) -> str:
+        return url_for('set_locale')
+
+    def current_url(self) -> str:
+        return request.full_path.removesuffix('?')
 
     def menu(self) -> list[dict[str, str | dict[str, str]]]:
         return current_app.config['menu']()

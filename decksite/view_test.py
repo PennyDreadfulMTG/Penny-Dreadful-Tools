@@ -1,5 +1,6 @@
 from unittest.mock import Mock, patch
 
+from babel import Locale
 from flask import g
 
 from decksite import build_menu, view
@@ -73,6 +74,22 @@ def test_menu_badge_is_entirely_linked() -> None:
         }]})
 
     assert '<a class="badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
+
+
+def test_language_switcher_posts_locale_without_a_query_parameter() -> None:
+    with APP.test_request_context('/cards/Lightning%20Bolt/?season=all'):
+        rendered = template.render_name('language_switcher', {
+            'babel_languages': [Locale.parse('en')],
+            'current_url': '/cards/Lightning%20Bolt/?season=all',
+            'locale_url': '/locale/',
+            'language_icon': '/static/images/language_icon.svg',
+            'TT_HELP_TRANSLATE': 'Help us translate',
+        })
+
+    assert '<form class="language-menu" method="post" action="/locale/">' in rendered
+    assert 'name="locale" value="en"' in rendered
+    assert 'name="target" value="/cards/Lightning%20Bolt/?season=all"' in rendered
+    assert '?locale=' not in rendered
 
 def test_title_replaces_emoji_only_page_title_with_words() -> None:
     with APP.test_request_context('/'):

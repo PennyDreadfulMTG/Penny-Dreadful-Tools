@@ -2,8 +2,9 @@ from typing import Any
 from unittest import mock
 
 import pytest
+from flask_babel import gettext
 
-from shared_web import oauth
+from shared_web import localization, oauth
 from shared_web.flask_app import PDFlask
 
 
@@ -20,7 +21,59 @@ def app() -> PDFlask:
     def destination() -> str:
         return ''
 
+    @flask_app.route('/localized/')
+    def localized() -> str:
+        return gettext('Recent Top League Decks')
+
     return flask_app
+
+
+def test_babel_uses_the_locale_selector(app: PDFlask) -> None:
+    assert app.extensions['babel'].locale_selector is localization.get_locale
+
+
+def test_locale_query_parameter_does_not_change_locale(app: PDFlask) -> None:
+    client: Any = app.test_client()
+
+    response = client.get('/localized/', query_string={'locale': 'en', 'tab': 'details'})
+
+    assert response.location == '/localized/?tab=details'
+    with client.session_transaction() as session:
+        assert 'locale' not in session
+
+
+def test_locale_query_parameter_rejects_an_unknown_locale(app: PDFlask) -> None:
+    response = app.test_client().get('/localized/', query_string={'locale': 'notalocale'})
+
+    assert response.status_code == 400
+
+
+def test_set_locale_rejects_an_unknown_locale(app: PDFlask) -> None:
+    response = app.test_client().post('/locale/', data={'locale': 'notalocale'})
+
+    assert response.status_code == 400
+
+
+def test_set_locale_saves_a_known_locale_and_returns_to_target(app: PDFlask) -> None:
+    client: Any = app.test_client()
+
+    response = client.post('/locale/', data={'locale': 'en', 'target': '/destination/?tab=details'})
+
+    assert response.location == '/destination/?tab=details'
+    with client.session_transaction() as session:
+        assert session['locale'] == 'en'
+
+
+def test_stale_session_locale_falls_back_to_a_supported_locale(app: PDFlask) -> None:
+    client: Any = app.test_client()
+    with client.session_transaction() as session:
+        session['locale'] = 'notalocale'
+
+    response = client.get('/localized/', headers={'Accept-Language': 'en'})
+
+    assert response.status_code == 200
+    with client.session_transaction() as session:
+        assert 'locale' not in session
 
 
 @pytest.mark.parametrize('target', [

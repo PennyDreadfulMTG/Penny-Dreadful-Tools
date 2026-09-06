@@ -22444,6 +22444,15 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:22:59Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:51:40Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "deferred_human",
+          "ts": "2026-09-06T00:51:40Z"
         }
       ],
       "issue": 12598,
@@ -22451,16 +22460,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15069's one-line fix, but its claimed Python-suite validation did not render the React component and could not cover the defect. Commit 697cb1e2 introduced string concatenation of the optional className prop, turning absence into class=\"live undefined\"; #15069 null-coalesces absence to an empty string before trimming, correctly producing class=\"live\". Follow-up PR #15222 adds a real browser regression test using the card table, which omits className, and checks the exact classes on both the rendered container and table. The test passes on current master and was separately demonstrated to fail against the old expression with actual value \"live undefined\". The full 10-test browser suite, build, mypy, and lint pass. Await human review of #15222.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12598-if-you-don-t-supply-a-data-class-name-to",
         "ci": {
-          "checked_at": "2026-09-02T02:06:42Z",
+          "checked_at": "2026-09-06T00:51:40Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "ea2317ee87738494b5f3d7487f2d603d8047c31b",
+        "merged_at": "2026-09-02T15:49:56Z",
         "number": 15069,
         "opened_at": "2026-09-01T18:15:26Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15069"
@@ -22470,7 +22480,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "pr_open",
+      "status": "deferred_human",
       "title": "If you don't supply a data-class-name to a .decktable we write class=\"live undefined\" in the resulting HTML",
       "verdict": null
     },

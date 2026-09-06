@@ -1,6 +1,6 @@
 {{#deck_tables}}
     <section>
-        <h2>{{title}}{{#subtitle}} <span class="subtitle">{{subtitle}}</span>{{/subtitle}}</h2>
+        <h2>{{title}}{{#subtitle_friendly_date}} <span class="subtitle">{{> friendlytime}}</span>{{/subtitle_friendly_date}}{{^subtitle_friendly_date}}{{#subtitle}} <span class="subtitle">{{subtitle}}</span>{{/subtitle}}{{/subtitle_friendly_date}}</h2>
         {{> decktable}}
         <p><a href="{{url}}">{{link_text}}</a></p>
     </section>
@@ -68,7 +68,7 @@
 {{/has_news}}
 <section class="rotation">
     <h2>Season {{season_id}}</h2>
-    <p>Season {{season_id}} began {{season_start_display}} and ends {{season_end_display}}.</p>
+    <p>Season {{season_id}} began {{#season_start_friendly}}{{> friendlytime}}{{/season_start_friendly}} and ends {{#season_end_friendly}}{{> friendlytime}}{{/season_end_friendly}}.</p>
     <ul>
         <li><a href="{{scryfall_url}}">{{_ Legal cards (scryfall)}}</a></li>
         <li><a href="{{legal_cards_url}}">{{_ Legal cards (text)}}</a></li>

@@ -1,3 +1,4 @@
+import { FriendlyTime } from "./friendlytime";
 import React from "react";
 import { Table } from "./table";
 import { createRoot } from "react-dom/client";
@@ -27,7 +28,7 @@ const renderRow = (table, entry) => (
                 : "Manually Reported"
             }
         </td>
-        <td className="date">{entry.displayDate}</td>
+        <td className="date"><FriendlyTime date={entry.friendlyDate}/></td>
         <td>
             <form method="post" className="inline">
                 <input type="hidden" name="match_id" defaultValue={entry.id}/>

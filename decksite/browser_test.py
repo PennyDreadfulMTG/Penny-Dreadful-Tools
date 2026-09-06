@@ -127,6 +127,9 @@ def test_pages_render_with_data_and_without_errors(browser: 'Browser', site: Con
             problems.append(f'{path}: HTTP {response.status}')
             continue
         problems.extend(wait_for_live_tables(page))
+        untitled_times = page.locator('time:not([title])')
+        if untitled_times.count():
+            problems.append(f'{path}: {untitled_times.count()} time elements lack exact timestamp titles')
         problems.extend(f'{path}: {p}' for p in collector.problems)
     if site.seed:
         assert any('/people/' in p and p != '/people/' for p in pages) and any('/cards/' in p and p != '/cards/' for p in pages), f'Discovery found no person/card pages in {pages}'
@@ -209,6 +212,33 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
 
     page.locator('main').evaluate("element => { element.insertAdjacentHTML('beforeend', '<li class=button id=informational-title title=Details>Achievement</li>'); }")
     expect(page.locator('#informational-title')).to_have_css('cursor', 'help')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
+def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site, locale='en-GB', timezone_id='America/New_York')
+    with page.expect_response(lambda response: '/api/decks/?' in response.url) as response_info:
+        page.goto('/decks/')
+    assert not wait_for_live_tables(page)
+
+    deck = response_info.value.json()['objects'][0]
+    api_friendly_date = deck['friendlyDate']
+    friendly_date = page.locator('.decktable td.date time').first
+    exact_date = page.evaluate(
+        "datetime => new Intl.DateTimeFormat('en-GB', {dateStyle: 'full', timeStyle: 'full'}).format(new Date(datetime))",
+        api_friendly_date['datetime'],
+    )
+    assert re.search(r' Eastern (Daylight|Standard) Time$', exact_date)
+    assert deck['displayDate'] == api_friendly_date['display']
+    expect(friendly_date).to_have_text(api_friendly_date['display'])
+    expect(friendly_date).to_have_attribute('datetime', api_friendly_date['datetime'])
+    expect(friendly_date).to_have_attribute('title', exact_date)
+
+    page.goto(deck['url'])
+    deck_date = page.locator('.subtitle time').first
+    expect(deck_date).to_have_text(api_friendly_date['display'])
+    expect(deck_date).to_have_attribute('datetime', api_friendly_date['datetime'])
+    expect(deck_date).to_have_attribute('title', exact_date)
     assert not collector.problems, '\n'.join(collector.problems)
 
 

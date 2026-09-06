@@ -87,7 +87,7 @@ dev = [
     "types-typed-ast",
     "types-freezegun",
     "brotli",
-    "ruff==0.16.5",
+    "ruff==0.16.6",
     "mypy-extensions",
     "playwright==1.62.0",
 ]

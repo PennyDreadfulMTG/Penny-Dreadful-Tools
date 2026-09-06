@@ -1,5 +1,5 @@
 <section>
-    <p>{{rotation_msg}}</p>
+    <p>{{rotation_prefix}}{{#rotation_friendly_date}}{{> friendlytime}}{{/rotation_friendly_date}}</p>
     {{#runs}}
         {{#note}}
             <p>{{note}}</p>

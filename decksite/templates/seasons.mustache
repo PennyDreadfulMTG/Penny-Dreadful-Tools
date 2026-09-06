@@ -1,7 +1,7 @@
 {{#seasons}}
     <section class="stats">
         <h2>Season {{num}} ({{code}})</h2>
-        <p>{{start_date_display}}–{{end_date_display}} ({{length_in_days}})</p>
+        <p>{{#start_date_friendly}}{{> friendlytime}}{{/start_date_friendly}}–{{#end_date_friendly}}{{> friendlytime}}{{/end_date_friendly}}{{^end_date_friendly}}Now{{/end_date_friendly}} ({{length_in_days}})</p>
         <ul>
             <li><a href="{{decks_url}}">{{num_decks}} Decks</a></li>
             <li><a href="{{decks_url}}">{{decks_per_day}} Decks Per Day</a></li>

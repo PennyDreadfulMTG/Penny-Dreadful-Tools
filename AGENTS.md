@@ -3,7 +3,7 @@
 ## Merging pull requests
 
 To merge a PR, comment `@mergifyio queue` on it (for example `gh pr comment <number> --body "@mergifyio queue"`).
-Mergify then merges it once the mypy, lint, test and jslint checks pass.
+Mergify then merges it once the mypy, lint, test, jslint and browser checks pass.
 
 Do not use the "merge when ready" label. It is a leftover from an old CI setup and Mergify ignores it.
 
@@ -25,3 +25,14 @@ Do not use the "merge when ready" label. It is a leftover from an old CI setup a
   `.conductor/preview-tunnel.py` on the Mac and the restricted
   `.conductor/preview-ssh.sh` server entry point so it reconnects and restarts
   decksite. Verify recovery, not just the initial HTTP response.
+
+## Web dates
+
+- Keep `shared.dtutil.display_date` as a plain-text formatter for bots, errors,
+  and other non-HTML output.
+- For humanized dates in web views, use
+  `shared_web.friendly_time.friendly_date`, render it with the
+  `friendlytime.mustache` partial, or use the React `FriendlyTime` component.
+  This preserves the friendly label while providing an exact, localized
+  timestamp on hover. Do not render the compatibility `display_date` fields
+  directly in HTML.

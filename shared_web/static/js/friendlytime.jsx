@@ -13,6 +13,6 @@ export const FriendlyTime = ({date}) => {
 FriendlyTime.propTypes = {
     "date": PropTypes.shape({
         "datetime": PropTypes.string.isRequired,
-        "display": PropTypes.string.isRequired,
-    }),
+        "display": PropTypes.string.isRequired
+    })
 };

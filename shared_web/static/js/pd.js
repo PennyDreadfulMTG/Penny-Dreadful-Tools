@@ -429,7 +429,10 @@ PD.localizeTimeElements = function() {
 };
 
 PD.formatExactTimestamp = function(datetime) {
-    return moment(datetime).tz(moment.tz.guess()).format("YYYY-MM-DD HH:mm:ss z");
+    return new Intl.DateTimeFormat(navigator.language, {
+        dateStyle: "full",
+        timeStyle: "long"
+    }).format(new Date(datetime));
 };
 
 PD.hideRepetitionInCalendar = function() {

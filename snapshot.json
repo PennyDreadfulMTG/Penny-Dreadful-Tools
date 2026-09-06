@@ -19619,6 +19619,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:25:38Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T01:09:48Z"
         }
       ],
       "issue": 12555,
@@ -19626,16 +19630,17 @@
         "triage"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Post-merge audit 2026-09-06: keep PR #15071. It is itself the intended follow-up to #15065's additional Quality variants, implementing issue #12555's request for a tooltip or small explanatory text. Production browser verification confirms the Quality explanation appears through the site's real Tipped layer, changes to the Optimistic explanation with the selected sort, and is absent for Meta Share. The key tied to sortBy deliberately remounts the select so the third-party tooltip layer notices the changed title; this drops keyboard focus after an arrow-key change, but mouse behavior and explanations work and the minor accessibility wart does not justify treating the feature as broken or rogue.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12555-explain-what-quality-sort-is-on-metagame",
         "ci": {
-          "checked_at": "2026-09-02T02:04:14Z",
+          "checked_at": "2026-09-06T01:09:48Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
-        "head_sha": "2f3095020c5bf25a2e6f2206e6d450e8941d1d8f",
+        "head_sha": "194564f51cb3d6b98c1d7534e95333480fde4c12",
+        "merged_at": "2026-09-02T17:16:03Z",
         "number": 15071,
         "opened_at": "2026-09-01T18:17:24Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15071"

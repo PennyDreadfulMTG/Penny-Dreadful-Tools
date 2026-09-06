@@ -3,7 +3,7 @@ from typing import Any, cast
 
 from decksite.view import View
 from magic import oracle
-from shared import dtutil
+from shared_web import friendly_time
 
 
 class Seasons(View):
@@ -33,11 +33,14 @@ class Seasons(View):
             for k, v in season.items():
                 if isinstance(v, int):
                     season[k] = f'{v:,}'  # Human-friendly number formatting like "29,000".
-            season['start_date_display'] = dtutil.display_date(season['start_date'])
+            season['start_date_friendly'] = friendly_time.friendly_date(season['start_date'])
+            season['start_date_display'] = season['start_date_friendly'].display
             season['length_in_days'] = season['length_in_days'] + ' day' + pluralize
             if season.get('end_date'):
-                season['end_date_display'] = dtutil.display_date(season['end_date'])
+                season['end_date_friendly'] = friendly_time.friendly_date(season['end_date'])
+                season['end_date_display'] = season['end_date_friendly'].display
             else:
+                season['end_date_friendly'] = None
                 season['end_date_display'] = 'Now'
                 season['length_in_days'] += ' so far'
             self.seasons.append(season)

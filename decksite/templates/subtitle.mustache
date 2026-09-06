@@ -11,18 +11,18 @@
     {{/competition_dates}}
 {{/competition_season_name}}
 {{^competition_dates}}
-    {{#competition_ends}}
+    {{#competition_ends_friendly}}
         <div class="subtitle">
-            Ends {{competition_ends}}
+            Ends {{> friendlytime}}
         </div>
-    {{/competition_ends}}
-    {{^competition_ends}}
+    {{/competition_ends_friendly}}
+    {{^competition_ends_friendly}}
         {{#date}}
             <div class="subtitle">
-                {{date}}
+                {{#friendly_date}}{{> friendlytime}}{{/friendly_date}}
             </div>
         {{/date}}
-    {{/competition_ends}}
+    {{/competition_ends_friendly}}
 {{/competition_dates}}
 {{#is_deck_page}}
     <div class="subtitle">
@@ -31,7 +31,7 @@
         by <a href="{{person_url}}" class="person">{{person}}</a>
     </div>
     <div class="subtitle">
-        <time datetime="{{date_iso}}">{{display_date}}</time>
+        {{#friendly_date}}{{> friendlytime}}{{/friendly_date}}
     </div>
     <div class="subtitle">
         <a href="{{#competition_url}}{{competition_url}}{{/competition_url}}{{^competition_url}}{{source_url}}{{/competition_url}}">

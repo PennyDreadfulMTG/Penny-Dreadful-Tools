@@ -8,6 +8,7 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import empty_page, retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DatabaseException, DoesNotExistException
+from shared_web import friendly_time
 
 
 def load_person_by_id(person_id: int, season_id: int | None = None) -> Person:
@@ -332,7 +333,8 @@ def load_notes(person_id: int | None = None) -> list[Container]:
     notes = [Container(r) for r in db().select(sql)]
     for n in notes:
         n.created_date = dtutil.ts2dt(n.created_date)
-        n.display_date = dtutil.display_date(n.created_date)
+        n.friendly_date = friendly_time.friendly_date(n.created_date)
+        n.display_date = n.friendly_date.display  # API compatibility.
     return notes
 
 def add_note(creator_id: int, subject_id: int, note: str) -> None:

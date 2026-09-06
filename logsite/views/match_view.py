@@ -26,6 +26,7 @@ class Match(View):
         self.id = viewed_match.id
         self.comment = viewed_match.comment
         self.format_name = viewed_match.format_name()
+        self.friendly_date = viewed_match.friendly_date()
         self.players_string = ' vs '.join([p.name for p in viewed_match.players])
         self.players_string_safe = ' vs '.join([player_link(p.name) for p in viewed_match.players])
         self.module_string = ', '.join([m.name for m in viewed_match.modules])

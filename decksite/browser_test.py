@@ -33,7 +33,7 @@ if ENABLED:
     from playwright.sync_api import Browser, Locator, Page, Route, expect, sync_playwright
 
 # Fixed entry points. More pages are discovered from the links on these so the test needs no knowledge of what data the site has.
-PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/resources/', '/about/']
+PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/seasons/', '/rotation/', '/resources/', '/about/']
 # Links in tables may carry a /seasons/N/ prefix, so match anywhere in the href.
 DISCOVER = [('/decks/', '.decktable a[href*="/people/"]'), ('/decks/', '.decktable a[href*="/archetypes/"]'), ('/decks/', '.decktable a[href*="/competitions/"]'), ('/decks/', '.decktable a[href*="/decks/"]'), ('/cards/', '.cardtable a[href*="/cards/"]')]
 LIVE_TABLE_CLASSES = ['decktable', 'cardtable', 'persontable', 'matchtable', 'leaderboardtable', 'headtoheadtable']
@@ -127,6 +127,9 @@ def test_pages_render_with_data_and_without_errors(browser: 'Browser', site: Con
             problems.append(f'{path}: HTTP {response.status}')
             continue
         problems.extend(wait_for_live_tables(page))
+        untitled_times = page.locator('time:not([title])')
+        if untitled_times.count():
+            problems.append(f'{path}: {untitled_times.count()} time elements lack exact timestamp titles')
         problems.extend(f'{path}: {p}' for p in collector.problems)
     if site.seed:
         assert any('/people/' in p and p != '/people/' for p in pages) and any('/cards/' in p and p != '/cards/' for p in pages), f'Discovery found no person/card pages in {pages}'
@@ -219,20 +222,18 @@ def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', sit
     assert not wait_for_live_tables(page)
 
     deck = response_info.value.json()['objects'][0]
+    api_friendly_date = deck['friendlyDate']
     friendly_date = page.locator('.decktable td.date time').first
-    exact_date = page.evaluate(
-        "timestamp => moment.unix(timestamp).tz(moment.tz.guess()).format('YYYY-MM-DD HH:mm:ss z')",
-        deck['activeDate'],
-    )
-    iso_date = page.evaluate('timestamp => new Date(timestamp * 1000).toISOString()', deck['activeDate'])
-    expect(friendly_date).to_have_text(deck['displayDate'])
-    expect(friendly_date).to_have_attribute('datetime', iso_date)
+    exact_date = page.evaluate('datetime => PD.formatExactTimestamp(datetime)', api_friendly_date['datetime'])
+    assert deck['displayDate'] == api_friendly_date['display']
+    expect(friendly_date).to_have_text(api_friendly_date['display'])
+    expect(friendly_date).to_have_attribute('datetime', api_friendly_date['datetime'])
     expect(friendly_date).to_have_attribute('title', exact_date)
 
     page.goto(deck['url'])
     deck_date = page.locator('.subtitle time').first
-    expect(deck_date).to_have_text(deck['displayDate'])
-    expect(deck_date).to_have_attribute('datetime', re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$'))
+    expect(deck_date).to_have_text(api_friendly_date['display'])
+    expect(deck_date).to_have_attribute('datetime', api_friendly_date['datetime'])
     expect(deck_date).to_have_attribute('title', exact_date)
     assert not collector.problems, '\n'.join(collector.problems)
 

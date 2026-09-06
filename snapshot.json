@@ -18831,6 +18831,10 @@
           "event": "ADJUDICATED",
           "status": "deferred_human",
           "ts": "2026-09-06T01:48:37Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T01:48:37Z"
         }
       ],
       "issue": 12540,
@@ -18838,7 +18842,7 @@
         "triage"
       ],
       "lease": null,
-      "notes": "Post-merge audit 2026-09-06: keep PR #15072's behavior-preserving formatter cache, but reopen issue #12540 because the PR implemented only the issue comment about avoiding repeated Intl.NumberFormat construction, not the original request for locale-sensitive number formatting everywhere. Production still shows ungrouped all-time archetype values such as 10915 decks and 18180–19740–2, while other server-rendered pages use one-off hard-coded English comma formatting. Client formatting is also scattered, and metagamegrid.jsx calls toPrecision before toLocaleString on values under 1, making that localization call a no-op. A complete follow-up should centralize count, record, decimal, and percentage formatters; keep API values and sort keys numeric; distinguish quantities from identifiers; define a consistent browser/request locale strategy for server-rendered pages; inventory public displays; and test English plus a comma-decimal locale. GitHub allowed reopening #12540 but the integration token could not comment on or edit the issue, so this scope is preserved here.",
+      "notes": "Post-merge audit 2026-09-06: keep PR #15072's behavior-preserving formatter cache, but reopen issue #12540 because the PR implemented only the issue comment about avoiding repeated Intl.NumberFormat construction, not the original request for locale-sensitive number formatting everywhere. Production still shows ungrouped all-time archetype values such as 10915 decks and 18180\u201319740\u20132, while other server-rendered pages use one-off hard-coded English comma formatting. Client formatting is also scattered, and metagamegrid.jsx calls toPrecision before toLocaleString on values under 1, making that localization call a no-op. A complete follow-up should centralize count, record, decimal, and percentage formatters; keep API values and sort keys numeric; distinguish quantities from identifiers; define a consistent browser/request locale strategy for server-rendered pages; inventory public displays; and test English plus a comma-decimal locale. GitHub allowed reopening #12540 but the integration token could not comment on or edit the issue, so this scope is preserved here.",
       "pr": {
         "adopted": false,
         "branch": "sweep/12540-use-tolocalestring-and-toprecision-every",
@@ -19559,6 +19563,10 @@
         {
           "event": "PR_MERGED",
           "ts": "2026-09-06T12:54:27Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T12:54:27Z"
         }
       ],
       "issue": 12554,
@@ -19573,7 +19581,7 @@
         "ci": {
           "checked_at": "2026-09-06T12:54:27Z",
           "failed": [],
-          "state": "green"
+          "state": "merged"
         },
         "head_sha": "1f50ec8fc480f34c0bc92433372e0ca7385c27ae",
         "merged_at": "2026-09-02T23:54:48Z",
@@ -19634,6 +19642,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:25:38Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T01:09:48Z"
         },
         {
           "event": "PR_MERGED",
@@ -19756,6 +19768,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:29:25Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T11:35:08Z"
         },
         {
           "event": "PR_MERGED",
@@ -19961,6 +19977,10 @@
         {
           "event": "PR_MERGED",
           "ts": "2026-09-06T13:04:55Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T13:04:55Z"
         }
       ],
       "issue": 12560,
@@ -20079,6 +20099,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:25:34Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T01:00:43Z"
         },
         {
           "event": "PR_MERGED",
@@ -20280,6 +20304,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:27:22Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T11:22:05Z"
         },
         {
           "event": "PR_MERGED",
@@ -20691,6 +20719,10 @@
         {
           "event": "ADJUDICATED",
           "ts": "2026-09-06T00:38:46Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:38:46Z"
         }
       ],
       "issue": 12572,
@@ -20766,6 +20798,10 @@
         {
           "event": "PR_CI_GREEN",
           "ts": "2026-09-01T18:23:03Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:37:48Z"
         },
         {
           "event": "PR_MERGED",
@@ -21059,6 +21095,10 @@
         {
           "event": "PR_MERGED",
           "ts": "2026-09-06T00:32:02Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:32:02Z"
         }
       ],
       "issue": 12578,
@@ -21094,10 +21134,7 @@
       "class": "easy-fix",
       "closure": null,
       "confidence": "high",
-      "escalation": {
-        "kind": "fix-validation",
-        "question": "PR validation failed: branch sweep/12579-sort-should-be-sticky-on-metagame not on origin"
-      },
+      "escalation": null,
       "evidence_file": "evidence/12579.json",
       "fixup": {
         "attempt": 1,
@@ -21172,6 +21209,10 @@
           "event": "ESCALATED",
           "status": "escalated",
           "ts": "2026-09-02T19:36:15Z"
+        },
+        {
+          "event": "PR_MERGED",
+          "ts": "2026-09-06T00:29:56Z"
         },
         {
           "event": "PR_MERGED",
@@ -21259,6 +21300,10 @@
         {
           "event": "ADJUDICATED",
           "status": "deferred_human",
+          "ts": "2026-09-05T22:56:46Z"
+        },
+        {
+          "event": "PR_MERGED",
           "ts": "2026-09-05T22:56:46Z"
         }
       ],
@@ -21481,6 +21526,7 @@
       "pr": {
         "adopted": false,
         "branch": "sweep/12583-when-you-mouseover-a-metagame-grid-tile",
+        "branch_deleted": false,
         "ci": {
           "checked_at": "2026-09-02T02:07:57Z",
           "failed": [],
@@ -21490,7 +21536,6 @@
         "number": 15058,
         "opened_at": "2026-09-01T18:07:15Z",
         "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/pull/15058",
-        "branch_deleted": false,
         "withdrawn_at": "2026-09-05T21:43:43Z"
       },
       "stage_attempts": {
@@ -22492,6 +22537,10 @@
         {
           "event": "ADJUDICATED",
           "status": "deferred_human",
+          "ts": "2026-09-06T00:51:40Z"
+        },
+        {
+          "event": "PR_MERGED",
           "ts": "2026-09-06T00:51:40Z"
         }
       ],
@@ -29162,7 +29211,14 @@
     },
     "5704": {
       "class": "easy-fix",
-      "closure": null,
+      "closure": {
+        "comment_posted": true,
+        "duplicate_of": null,
+        "executed_at": "2026-09-06T18:53:20Z",
+        "external": true,
+        "reason": "completed",
+        "verified_by_batch": "fresh-sol-5704"
+      },
       "confidence": "high",
       "escalation": null,
       "evidence_file": "evidence/5704.json",
@@ -29195,6 +29251,16 @@
           "event": "RESULT_RECORDED",
           "status": "fix_pushed",
           "ts": "2026-09-02T00:23:04Z"
+        },
+        {
+          "event": "ADJUDICATED",
+          "status": "escalated",
+          "ts": "2026-09-06T18:53:20Z"
+        },
+        {
+          "event": "CLOSE_EXECUTED",
+          "status": "closed",
+          "ts": "2026-09-06T18:53:20Z"
         }
       ],
       "issue": 5704,
@@ -29204,7 +29270,7 @@
         "- backlog"
       ],
       "lease": null,
-      "notes": null,
+      "notes": "Fresh audit 2026-09-06: issue #5704 was closed by the user after production verification found the hidden-checkbox season chooser functional with pointer input in Chromium and Firefox. The ticket requested only a cosmetic slide animation, so the proposed fix was rejected and its unmerged sweep branch was deleted.",
       "pr": {
         "branch": "sweep/5704-consider-replacing-hidden-checkbox-dropd",
         "head_sha": "c5e513ebdf3637f44b0f80ed8ce24eb6a26e68a8"
@@ -29214,7 +29280,7 @@
         "triage": 0,
         "verify": 0
       },
-      "status": "fix_pushed",
+      "status": "closed",
       "title": "Consider replacing hidden checkbox dropdown with js given that we use js for menu and achievements accordion and it has nicer slide behavior",
       "verdict": null
     },
@@ -41038,8 +41104,8 @@
   "last_bundle_at": "2026-09-01T23:01:55Z",
   "last_master_sha": "a21df9e47dab107046a42babba6835976caf6a0c",
   "last_mirror_at": "2026-09-02T01:56:35Z",
-  "last_seq": 8847,
-  "last_snapshot_at": "2026-09-05T22:13:23Z",
+  "last_seq": 8892,
+  "last_snapshot_at": "2026-09-06T18:53:20Z",
   "pause_level": 0,
   "pause_seconds": 9243,
   "pause_until": null,

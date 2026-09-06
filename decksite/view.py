@@ -13,7 +13,7 @@ from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAG
 from decksite.deck_type import DeckType
 from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
-from shared import dtutil, logger, text
+from shared import configuration, dtutil, logger, text
 from shared.container import Container
 from shared_web import template
 from shared_web.base_view import BaseView
@@ -268,8 +268,8 @@ class View(BaseView):
     def babel_languages(self) -> list[Locale]:
         return APP.babel.list_translations()
 
-    def logged_in(self) -> bool:
-        return bool(auth.person_id())
+    def show_language_switcher(self) -> bool:
+        return not configuration.production.value or bool(auth.person_id())
 
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')

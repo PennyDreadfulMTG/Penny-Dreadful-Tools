@@ -68,6 +68,71 @@ def test_card_api_returns_not_found_for_unknown_card() -> None:
     assert response.get_json()['code'] == 'NOTFOUND'
 
 
+def test_search_api_ranks_mixed_live_results_and_returns_at_most_ten(monkeypatch: pytest.MonkeyPatch) -> None:
+    static_items: tuple[api.site_search.SearchResult, ...] = (
+        {'name': 'Bolt Reference', 'type': 'Page', 'url': '/bolt-reference/'},
+    )
+    monkeypatch.setattr(api, 'static_search_items', lambda: static_items)
+    monkeypatch.setattr(api.site_search, 'archetype_names', lambda _query: ['Bolt'])
+    monkeypatch.setattr(api.site_search, 'card_names', lambda _query: [
+        {'name': f'Bolt Card {i}', 'search_name': f'Bolt Card {i}'} for i in range(10)
+    ])
+    monkeypatch.setattr(api.site_search, 'person_names', lambda _query: ['Lightning Bolt'])
+
+    response = APP.test_client().get('/api/search/?q=bolt')
+
+    assert response.status_code == 200
+    data = response.get_json()
+    assert len(data) == 10
+    assert data[0] == {'name': 'Bolt', 'type': 'Archetype', 'url': '/archetypes/Bolt/'}
+    assert data[1] == {'name': 'Bolt Reference', 'type': 'Page', 'url': '/bolt-reference/'}
+    assert data[-1] == {'name': 'Bolt Card 7', 'type': 'Card', 'url': '/cards/Bolt%20Card%207/'}
+
+
+def test_search_api_does_not_load_sources_for_short_queries(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(api, 'static_search_items', lambda: pytest.fail('A short search should not load any source'))
+
+    response = APP.test_client().get('/api/search/?q=a')
+
+    assert response.status_code == 200
+    assert response.get_json() == []
+
+
+def test_search_api_uses_alias_rank_but_only_returns_public_result_fields(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(api, 'static_search_items', lambda: ())
+    monkeypatch.setattr(api.site_search, 'archetype_names', lambda _query: [])
+    monkeypatch.setattr(api.site_search, 'card_names', lambda _query: [
+        {'name': 'Lightning Bolt', 'search_name': 'bolt'},
+        {'name': 'Bolt Bend', 'search_name': 'Bolt Bend'},
+    ])
+    monkeypatch.setattr(api.site_search, 'person_names', lambda _query: [])
+
+    response = APP.test_client().get('/api/search/?q=bolt')
+
+    assert response.get_json() == [
+        {'name': 'Lightning Bolt', 'type': 'Card', 'url': '/cards/Lightning%20Bolt/'},
+        {'name': 'Bolt Bend', 'type': 'Card', 'url': '/cards/Bolt%20Bend/'},
+    ]
+
+
+def test_static_search_items_include_public_menu_and_resources(monkeypatch: pytest.MonkeyPatch) -> None:
+    public_child = Container({'name': 'Child', 'url': '/child/', 'permission_required': None, 'submenu': []})
+    private_child = Container({'name': 'Private Child', 'url': '/private-child/', 'permission_required': 'admin', 'submenu': []})
+    public = Container({'name': 'Public', 'url': '/public/', 'permission_required': None, 'submenu': [public_child, private_child]})
+    private = Container({'name': 'Private', 'url': '/private/', 'permission_required': 'admin', 'submenu': []})
+    monkeypatch.setitem(api.APP.config, 'menu', lambda: [public, private])
+    monkeypatch.setattr(api.fetcher, 'resources', lambda: {'Guides': {'Example': 'https://example.com/'}})
+    api.static_search_items.cache_clear()
+    try:
+        assert api.static_search_items() == (
+            {'name': 'Public', 'type': 'Page', 'url': '/public/'},
+            {'name': 'Child', 'type': 'Page', 'url': '/child/'},
+            {'name': 'Resources – Guides – Example', 'type': 'Resource', 'url': 'https://example.com/'},
+        )
+    finally:
+        api.static_search_items.cache_clear()
+
+
 def test_matchup_options_api_returns_small_search_results(monkeypatch: pytest.MonkeyPatch) -> None:
     expected = [{'name': 'Lightning Bolt', 'value': 'Lightning Bolt'}]
     monkeypatch.setattr(api.mus, 'search_options', lambda option_type, search, person_filter: expected if option_type == 'cards' and search == 'bolt' and person_filter == 'matchups' else [])

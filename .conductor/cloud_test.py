@@ -32,7 +32,7 @@ class CloudSetupTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             path = root / 'config.json'
-            path.write_text(json.dumps({'mysql_passwd': 'stale', 'mysql_host': 'localhost', 'always_show_rotation': True}))
+            path.write_text(json.dumps({'mysql_passwd': 'stale', 'mysql_host': 'localhost', 'always_show_rotation': True, 'typeahead_data_path': '/tmp/obsolete.json'}))
             with patch.object(cloud, 'ROOT', root), patch.object(cloud, 'STATE', root / 'db'):
                 cloud.configure()
                 first = json.loads(path.read_text())
@@ -42,6 +42,7 @@ class CloudSetupTest(unittest.TestCase):
             self.assertEqual(first['mysql_host'], '127.0.0.1')
             self.assertEqual(first['mysql_port'], 3307)
             self.assertTrue(first['always_show_rotation'])
+            self.assertNotIn('typeahead_data_path', first)
             self.assertFalse(first['production'])
             self.assertFalse(first['create_github_issues'])
 

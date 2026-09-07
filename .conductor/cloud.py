@@ -100,6 +100,7 @@ def stop() -> None:
 def configure() -> None:
     path = ROOT / 'config.json'
     config = json.loads(path.read_text()) if path.exists() else {}
+    config.pop('typeahead_data_path', None)
     config.update({
         'mysql_host': '127.0.0.1', 'mysql_port': PORT,
         'mysql_user': 'pennydreadful', 'mysql_passwd': PASSWORD,
@@ -108,7 +109,6 @@ def configure() -> None:
         'decksite_test_database': 'decksite_test',
         'whoosh_index_dir': str(STATE / 'whoosh_index'),
         'geonames_database': str(STATE / 'geonames.sqlite'),
-        'typeahead_data_path': str(STATE / 'typeahead.json'),
         'production': False, 'create_github_issues': False, 'redis_enabled': False,
         'sentry_token': None, 'flask_server_name': None, 'flask_cookie_domain': None,
     })
@@ -132,8 +132,8 @@ def verify() -> None:
         raise RuntimeError('Snapshot is missing deck, card, or homepage summary data.')
     if not list((STATE / 'whoosh_index').glob('*.toc')):
         raise RuntimeError('Snapshot is missing its Whoosh search index.')
-    if not (STATE / 'typeahead.json').is_file() or not (STATE / 'symbols.woff2').is_file():
-        raise RuntimeError('Snapshot is missing search suggestions or the symbols font.')
+    if not (STATE / 'symbols.woff2').is_file():
+        raise RuntimeError('Snapshot is missing the symbols font.')
 
 
 def restore() -> None:
@@ -220,9 +220,6 @@ def build_derived_assets() -> None:
     run('uv', 'run', '--frozen', 'python', '-c',
         'from decksite.data import archetype; archetype.preaggregate_archetype_days()')
     run('uv', 'run', '--frozen', 'python', '-c',
-        'from decksite import main; from maintenance import typeahead; '
-        'ctx = main.APP.test_request_context(); ctx.push(); typeahead.run(); ctx.pop()')
-    run('uv', 'run', '--frozen', 'python', '-c',
         'from magic import oracle; oracle.init(); from maintenance import fonts; fonts.ad_hoc()')
     shutil.copyfile(ROOT / 'shared_web/static/fonts/symbols.woff2', STATE / 'symbols.woff2')
     check_pages()
@@ -245,7 +242,7 @@ def pack_snapshot(output: Path) -> None:
     (output / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     log('Compressing cleanly stopped database')
     run('tar', '-I', 'zstd -T0 -3', '-cf', str(output / ASSET), '-C', str(STATE),
-        'mysql', 'whoosh_index', 'typeahead.json', 'symbols.woff2')
+        'mysql', 'whoosh_index', 'symbols.woff2')
     with (output / 'SHA256SUMS').open('w') as sums:
         run('sha256sum', ASSET, 'manifest.json', cwd=output, stdout=sums)
     shutil.copyfile(output / 'manifest.json', STATE / 'manifest.json')

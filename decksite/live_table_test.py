@@ -8,6 +8,7 @@ shipped and emptied /decks/. These tests render the real page against a seeded d
 the real element, build the request exactly as DataManager.load() would, and check that rows come back.
 """
 import re
+import urllib.parse
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -37,12 +38,15 @@ class LiveTable:
 def live_tables(seed: Container) -> list[LiveTable]:
     competition_page = f'/competitions/{seed.competition_id}/'
     person_page = f'/people/{seed.person}/'
+    matchup_page = '/matchups/?' + urllib.parse.urlencode({'hero_person_id': seed.person_id})
     return [
         LiveTable('/decks/', 'decktable', '/api/decks/', seed.num_decks),
         LiveTable('/decks/league/', 'decktable', '/api/decks/', 0),
         LiveTable(person_page, 'decktable', '/api/decks/', 2),
         LiveTable(person_page, 'cardtable', '/api/cards2/', 1),
         LiveTable(person_page, 'headtoheadtable', '/api/h2h/', 1),
+        LiveTable(matchup_page, 'decktable', '/api/decks/', 2),
+        LiveTable(matchup_page, 'matchtable', '/api/matches/', 2),
         LiveTable(f'/cards/{seed.card_in_two_decks}/', 'decktable', '/api/decks/', 2),
         LiveTable(f'/cards/{seed.card_in_one_deck}/', 'decktable', '/api/decks/', 1),
         LiveTable('/cards/', 'cardtable', '/api/cards2/', 1),

@@ -99,6 +99,60 @@ def test_matchup_people_options_rejects_unknown_filter() -> None:
     assert response.status_code == 400
 
 
+def test_decks_api_combines_standard_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def load_decks_with_total(**kwargs: Any) -> tuple[list[Container], int]:
+        captured.update(kwargs)
+        return [Container({'id': 7})], 123
+
+    monkeypatch.setattr(api.deck, 'load_decks_with_total', load_decks_with_total)
+    monkeypatch.setattr(api, 'prepare_decks', lambda _decks: None)
+
+    response = APP.test_client().get('/api/decks/', query_string={
+        'archetypeId': '4',
+        'opponentCardName': 'Counterspell',
+        'page': '2',
+        'pageSize': '20',
+        'seasonId': 'all',
+    })
+
+    assert response.status_code == 200
+    assert response.get_json() == {'objects': [{'id': 7}], 'page': 2, 'total': 123}
+    assert 'd.archetype_id IN' in captured['where']
+    assert 'd.retired' in captured['where']
+    assert 'matchup_enemy.id IN' in captured['where']
+    assert "card = 'Counterspell'" in captured['where']
+    assert captured['limit'] == 'LIMIT 40, 20'
+    assert captured['season_id'] is None
+
+
+def test_matches_api_combines_hero_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def load_matches_with_total(**kwargs: Any) -> tuple[list[Container], int]:
+        captured.update(kwargs)
+        return [Container({'id': 8})], 456
+
+    monkeypatch.setattr(api.match, 'load_matches_with_total', load_matches_with_total)
+    monkeypatch.setattr(api, 'prepare_matches', lambda _matches: None)
+
+    response = APP.test_client().get('/api/matches/', query_string={
+        'personId': '10',
+        'opponentPersonId': '11',
+        'page': '1',
+        'pageSize': '100',
+        'seasonId': 'all',
+    })
+
+    assert response.status_code == 200
+    assert response.get_json() == {'objects': [{'id': 8}], 'page': 1, 'total': 456}
+    assert 'd.person_id = 10' in captured['where']
+    assert 'od.person_id = 11' in captured['where']
+    assert captured['limit'] == 'LIMIT 100, 100'
+    assert captured['season_id'] is None
+
+
 @pytest.mark.functional
 def test_aggregate_apis_serialize_integer_stats_as_numbers(seeded_db: Container) -> None:
     season_id = db().value('SELECT season_id FROM deck_cache LIMIT 1')

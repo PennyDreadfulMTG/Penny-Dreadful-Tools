@@ -1,11 +1,11 @@
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
-from decksite.data import deck, match, person, query
+from decksite.data import person, query
 from decksite.database import db
-from magic.models import Deck
 from shared import guarantee
-from shared.container import Container
+from shared.database import sqlescape
 from shared.pd_exception import DoesNotExistException
 
 MatchupOptionType = Literal['archetypes', 'people', 'cards']
@@ -13,18 +13,11 @@ MatchupOptionType = Literal['archetypes', 'people', 'cards']
 
 @dataclass
 class MatchupResults:
-    hero_deck_ids: list[int]
-    enemy_deck_ids: list[int]
-    match_ids: list[int]
+    num_decks: int
+    num_matches: int
     wins: int
     draws: int
     losses: int
-    hero_decks: list[Deck]
-    matches: list[Container]
-
-    @property
-    def num_decks(self) -> int:
-        return len(self.hero_deck_ids)
 
     @property
     def win_percent(self) -> float | None:
@@ -108,30 +101,15 @@ def _resolve_person(person_id: str | None, name: str | None) -> dict[str, str | 
         raise DoesNotExistException(f'Did not find MTGO player `{value}`')
     return rows[0]
 
-def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None = None) -> MatchupResults:
-    where = 'TRUE'
-    prefix = None
-    args: list[str | int] = []
+def matchup(hero: Mapping[str, str], enemy: Mapping[str, str], season_id: int | None = None) -> MatchupResults:
+    where = matchup_where(hero, enemy)
     if season_id:
-        where += ' AND (season.season_id = %s)'
-        args.append(season_id)
-    for criteria in [hero, enemy]:
-        prefix = '' if prefix is None else 'o'
-        if criteria.get('person_id'):
-            where += f' AND ({prefix}d.person_id = %s)'
-            args.append(criteria['person_id'])
-        if criteria.get('archetype_id'):
-            where += f' AND ({prefix}d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = %s))'
-            args.append(criteria['archetype_id'])
-        if criteria.get('card'):
-            where += f' AND ({prefix}d.id IN (SELECT deck_id FROM deck_card WHERE card = %s))'
-            args.append(criteria['card'])
+        where += f' AND (season.season_id = {sqlescape(season_id)})'
     season_join = query.season_join()
     sql = f"""
         SELECT
-            GROUP_CONCAT(DISTINCT d.id) AS hero_deck_ids,
-            GROUP_CONCAT(DISTINCT od.id) AS enemy_deck_ids,
-            GROUP_CONCAT(DISTINCT m.id) AS match_ids,
+            COUNT(DISTINCT d.id) AS num_decks,
+            COUNT(DISTINCT m.id) AS num_matches,
             IFNULL(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END), 0) AS wins,
             IFNULL(SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END), 0) AS draws,
             IFNULL(SUM(CASE WHEN odm.games > dm.games THEN 1 ELSE 0 END), 0) AS losses
@@ -149,26 +127,39 @@ def matchup(hero: dict[str, str], enemy: dict[str, str], season_id: int | None =
         WHERE
             {where}
     """
-    rs = guarantee.exactly_one(db().select(sql, args))
-
-    hero_deck_ids = rs['hero_deck_ids'].split(',') if rs['hero_deck_ids'] else []
-    if hero_deck_ids:
-        hero_decks = deck.load_decks('d.id IN (' + ', '.join(hero_deck_ids) + ')')
-    else:
-        hero_decks = []
-    enemy_deck_ids = rs['enemy_deck_ids'].split(',') if rs['enemy_deck_ids'] else []
-    match_ids = rs['match_ids'].split(',') if rs['match_ids'] else []
-    if match_ids:
-        ms = match.load_matches(where='m.id IN (' + ', '.join(match_ids) + ')', order_by='m.date DESC, m.round DESC')
-    else:
-        ms = []
+    rs = guarantee.exactly_one(db().select(sql))
     return MatchupResults(
-        hero_deck_ids=hero_deck_ids,
-        hero_decks=hero_decks,
-        enemy_deck_ids=enemy_deck_ids,
-        match_ids=match_ids,
-        matches=ms,
+        num_decks=rs['num_decks'],
+        num_matches=rs['num_matches'],
         wins=rs['wins'],
         draws=rs['draws'],
         losses=rs['losses'],
     )
+
+
+def opponent_decks_where(enemy: Mapping[str, str]) -> str:
+    enemy_where = _criteria_where(enemy, 'matchup_enemy')
+    return f"""
+        EXISTS (
+            SELECT 1
+            FROM deck_match AS matchup_dm
+            INNER JOIN deck_match AS matchup_odm ON matchup_odm.match_id = matchup_dm.match_id AND matchup_odm.deck_id <> matchup_dm.deck_id
+            INNER JOIN deck AS matchup_enemy ON matchup_enemy.id = matchup_odm.deck_id
+            WHERE matchup_dm.deck_id = d.id AND {enemy_where}
+        )
+    """
+
+
+def matchup_where(hero: Mapping[str, str], enemy: Mapping[str, str]) -> str:
+    return f"{_criteria_where(hero, 'd')} AND {_criteria_where(enemy, 'od')}"
+
+
+def _criteria_where(criteria: Mapping[str, str], deck_alias: str) -> str:
+    clauses = []
+    if criteria.get('person_id'):
+        clauses.append(f'{deck_alias}.person_id = {sqlescape(criteria["person_id"])}')
+    if criteria.get('archetype_id'):
+        clauses.append(f'{deck_alias}.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {sqlescape(criteria["archetype_id"])})')
+    if criteria.get('card'):
+        clauses.append(f'{deck_alias}.id IN (SELECT deck_id FROM deck_card WHERE card = {sqlescape(criteria["card"])})')
+    return ' AND '.join(clauses) or 'TRUE'

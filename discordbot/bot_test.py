@@ -6,7 +6,21 @@ from unittest.mock import AsyncMock, Mock, call
 import pytest
 from interactions import GLOBAL_SCOPE
 
+from discordbot import bot as bot_module
 from discordbot.bot import COMMAND_SYNC_ATTEMPTS, Bot
+from shared import configuration
+
+
+def test_client_options_scope_commands_to_test_guild(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(configuration.discord_test_guild_id, 'get', lambda: 123)
+
+    assert bot_module.client_options() == {'debug_scope': 123}
+
+
+def test_client_options_leave_commands_global_without_test_guild(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(configuration.discord_test_guild_id, 'get', lambda: 0)
+
+    assert bot_module.client_options() == {}
 
 
 @pytest.mark.asyncio

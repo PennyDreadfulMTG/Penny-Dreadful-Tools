@@ -9,7 +9,8 @@ from discordbot.command import MtgInteractionContext
 from discordbot.shared import guild_id
 from magic import fetcher
 from shared import configuration
-from shared.pd_exception import NotConfiguredException, TooFewItemsException
+from shared.fetch_tools import FetchException
+from shared.pd_exception import TooFewItemsException
 from shared.settings import with_config_file
 
 
@@ -31,8 +32,9 @@ class Time(Extension):
                 cities = sorted({re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones})
                 times_s += '{cities}: {t}\n'.format(cities=', '.join(cities), t=t)
             await ctx.send(times_s)
-        except NotConfiguredException:
-            await ctx.send('The time command has not been configured.')
+        except FetchException:
+            logging.exception('Exception updating or reading the location database.')
+            await ctx.send('The location database is temporarily unavailable.')
         except TooFewItemsException:
             logging.exception('Exception trying to get the time for %s.', place)
             await ctx.send(f'{ctx.author.mention}: Location not found.')

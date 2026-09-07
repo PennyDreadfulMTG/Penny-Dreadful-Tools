@@ -139,6 +139,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 - uv run --frozen python run.py discordbot
 - Visit your Discord server.
+- The time command uses the GeoNames `cities500` dataset under CC BY 4.0. Run `uv run --frozen python run.py update-geonames` to create or refresh its local index.
 
 ## Running the tests
 

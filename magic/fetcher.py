@@ -20,12 +20,12 @@ from interactions import Snowflake
 from magic import layout
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools
+from shared import configuration, dtutil, fetch_tools, geonames
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.custom_types import BugData, ForumData
 from shared.fetch_tools import FetchException
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, NotConfiguredException, TooFewItemsException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException, TooFewItemsException
 
 
 async def achievement_cache_async() -> dict[str, dict[str, str]]:
@@ -340,7 +340,44 @@ def subreddit() -> Container:
     return feedparser.parse(url)
 
 def time(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    return times_from_timezone_code(q, twentyfour) if len(q) <= 4 else times_from_location(q, twentyfour)
+    query = q.strip()
+    if not query:
+        raise TooFewItemsException('No location provided')
+    offset = times_from_utc_offset(query, twentyfour)
+    if offset is not None:
+        return offset
+    if '/' in query:
+        return times_from_timezone_name(query, twentyfour)
+    if re.fullmatch(r'[A-Za-z]{2,6}', query):
+        try:
+            return times_from_timezone_code(query, twentyfour)
+        except TooFewItemsException:
+            pass
+    return times_from_location(query, twentyfour)
+
+def times_from_timezone_name(q: str, twentyfour: bool) -> dict[str, list[str]]:
+    possible = next((name for name in pytz.all_timezones if name.casefold() == q.casefold()), None)
+    if possible is None:
+        raise TooFewItemsException(f'Not a recognized timezone: {q}')
+    timezone = dtutil.timezone(possible)
+    return {current_time(timezone, twentyfour): [possible]}
+
+def times_from_utc_offset(q: str, twentyfour: bool) -> dict[str, list[str]] | None:
+    if q.upper() in {'UTC', 'GMT'}:
+        timezone = datetime.UTC
+        return {current_time(timezone, twentyfour): [q.upper()]}
+    match = re.fullmatch(r'(?:UTC|GMT)\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?', q, re.IGNORECASE)
+    if match is None:
+        return None
+    hours = int(match.group(2))
+    minutes = int(match.group(3) or 0)
+    if hours > 14 or minutes > 59 or (hours == 14 and minutes != 0):
+        raise TooFewItemsException(f'Not a valid UTC offset: {q}')
+    sign = 1 if match.group(1) == '+' else -1
+    offset = datetime.timedelta(hours=hours, minutes=minutes) * sign
+    label = f'UTC{match.group(1)}{hours:02d}' + (f':{minutes:02d}' if minutes else '')
+    timezone = datetime.timezone(offset, name=label)
+    return {current_time(timezone, twentyfour): [label]}
 
 def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
@@ -354,28 +391,11 @@ def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
     return results
 
 def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    api_key = configuration.get('google_maps_api_key')
-    if not api_key:
-        raise NotConfiguredException('No value found for google_maps_api_key')
-    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={fetch_tools.escape(q)}&key={api_key}&sensor=false'
-    info = fetch_tools.fetch_json(url)
-    if 'error_message' in info:
-        return info['error_message']
-    try:
-        location = info['results'][0]['geometry']['location']
-    except IndexError as e:
-        raise TooFewItemsException(e) from e
-    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=fetch_tools.escape(str(location['lat'])), lng=fetch_tools.escape(str(location['lng'])), timestamp=fetch_tools.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
-    timezone_info = fetch_tools.fetch_json(url)
-    if 'error_message' in timezone_info:
-        return timezone_info['error_message']
-    if timezone_info['status'] == 'ZERO_RESULTS':
-        raise TooFewItemsException(timezone_info['status'])
-    try:
-        timezone = dtutil.timezone(timezone_info['timeZoneId'])
-    except KeyError as e:
-        raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}') from e
-    return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
+    place = geonames.find(q)
+    if place is None:
+        raise TooFewItemsException(f'No populated place found for {q}')
+    timezone = dtutil.timezone(place.timezone)
+    return {current_time(timezone, twentyfour): [place.display_name]}
 
 
 class WISDateType(TypedDict):

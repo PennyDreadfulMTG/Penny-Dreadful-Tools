@@ -43,6 +43,13 @@ def discordbot() -> None:
     bot.init()
 
 @cli.command()
+@click.option('--force', is_flag=True, help='Download and rebuild even if the local copy is fresh')
+def update_geonames(force: bool = False) -> None:
+    """Update the local GeoNames cities500 place-to-timezone index."""
+    from magic import geonames
+    geonames.ensure_fresh(force=force)
+
+@cli.command()
 def decksite() -> None:
     from decksite import main
     main.init(port=configuration.get_int('decksite_port'))

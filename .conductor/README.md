@@ -68,7 +68,6 @@ Cloud workspaces can run a dedicated Discord test bot when these values are
 configured in **Settings → Organization → Cloud Computer → Environment**:
 
 - `PDT_TEST_DISCORD_TOKEN`: token for a dedicated, revocable test bot
-- `PDT_GOOGLE_MAPS_API_KEY`: Google Maps API key used by `/time`
 - `PDT_TEST_DISCORD_GUILD_ID`: server ID for guild-scoped test commands
 
 Cloud environment changes apply only to workspaces created from a subsequent
@@ -81,6 +80,8 @@ Conductor's Run menu. The bot registers normally global commands in the test
 guild for immediate updates, redirects explicitly guild-scoped commands to the
 test guild, and disables production background tasks. The runner fails before
 connecting if any required variable is missing and never prints the values.
+The first bot start downloads GeoNames `cities500` and builds a local `/time`
+index; it refreshes at most weekly and does not require a Google API key.
 
 ## Database lifecycle
 

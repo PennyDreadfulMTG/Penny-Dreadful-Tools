@@ -7,7 +7,7 @@ import string
 from typing import Any, overload
 
 from shared.pd_exception import InvalidArgumentException
-from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, OptionalStrSetting, StrSetting, fail, save_cfg
+from shared.settings import CONFIG, BoolSetting, IntSetting, ListSetting, StrSetting, fail, save_cfg
 
 try:
     import dotenv
@@ -42,6 +42,8 @@ honeypot_channel_id = IntSetting('honeypot_channel_id', 1255127999901208620)
 card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
 # Path to list of is:spikey cards.
 is_spikey_file = StrSetting('is_spikey_file', './.is-spikey.txt')
+# Local place-to-timezone index used by !time.
+geonames_database = StrSetting('geonames_database', '.cache/geonames/cities500.sqlite')
 # Block Scryfall updates when things are broken
 prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
 
@@ -74,7 +76,6 @@ mysql_passwd = StrSetting('mysql_passwd', '')
 # == Discord API ==
 oauth2_client_id = StrSetting('oauth2_client_id', '')
 oauth2_client_secret = StrSetting('oauth2_client_secret', '')
-google_maps_api_key = OptionalStrSetting('google_maps_api_key', None, environment_variable='PDT_GOOGLE_MAPS_API_KEY')
 
 DEFAULTS: dict[str, Any] = {
     # Anthropic API key for the archetype-guessing helper (maintenance/classify_archetypes.py).

@@ -13,7 +13,7 @@ from interactions.models import ActivityType, Guild, GuildText, Intents, Member,
 import discordbot.commands
 from discordbot import command, error_handling
 from discordbot.shared import guild_id
-from magic import fetcher, multiverse, oracle, whoosh_write
+from magic import fetcher, geonames, multiverse, oracle, whoosh_write
 from shared import configuration, perf, repo
 from shared import redis_wrapper as redis
 from shared.settings import with_config_file
@@ -244,6 +244,8 @@ def client_options() -> dict[str, int]:
     return {'debug_scope': test_guild_id} if test_guild_id else {}
 
 async def prepare_database_async() -> None:
+    logging.info('Initializing GeoNames location database')
+    await asyncio.to_thread(geonames.ensure_fresh)
     logging.info('Initializing Cards DB')
     updated = await multiverse.init_async()
     if updated:

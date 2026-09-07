@@ -8,7 +8,7 @@ if [[ "${CONDUCTOR_IS_LOCAL:-1}" != 0 ]]; then
     exit 1
 fi
 
-required=(PDT_TEST_DISCORD_TOKEN PDT_GOOGLE_MAPS_API_KEY PDT_TEST_DISCORD_GUILD_ID)
+required=(PDT_TEST_DISCORD_TOKEN PDT_TEST_DISCORD_GUILD_ID)
 for name in "${required[@]}"; do
     if [[ -z "${!name:-}" ]]; then
         echo "Missing required Conductor cloud environment variable: $name" >&2

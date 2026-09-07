@@ -14,18 +14,17 @@ from typing import Any, Literal, TypedDict, cast
 from urllib import parse
 
 import feedparser
-import pytz
 from interactions import Snowflake
 
 from magic import layout
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools, geonames
+from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.custom_types import BugData, ForumData
 from shared.fetch_tools import FetchException
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, TooFewItemsException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 
 async def achievement_cache_async() -> dict[str, dict[str, str]]:
@@ -104,14 +103,6 @@ def card_price(cardname: str) -> PriceDataType:
 
 def cardfeed() -> dict[str, list[dict[str, str | int | bool]]]:
     return fetch_tools.fetch_json(decksite_url('/api/cardfeed'))
-
-def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
-    if twentyfour:
-        return dtutil.now(timezone).strftime('%H:%M')
-    try:
-        return dtutil.now(timezone).strftime('%l:%M %p')
-    except ValueError:  # %l is not a univerally supported argument.  Fall back to %I on other platforms.
-        return dtutil.now(timezone).strftime('%I:%M %p')
 
 async def daybreak_forums_async() -> dict[str, ForumData] | None:
     try:
@@ -338,65 +329,6 @@ def sitemap() -> list[str]:
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
     return feedparser.parse(url)
-
-def time(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    query = q.strip()
-    if not query:
-        raise TooFewItemsException('No location provided')
-    offset = times_from_utc_offset(query, twentyfour)
-    if offset is not None:
-        return offset
-    if '/' in query:
-        return times_from_timezone_name(query, twentyfour)
-    if re.fullmatch(r'[A-Za-z]{2,6}', query):
-        try:
-            return times_from_timezone_code(query, twentyfour)
-        except TooFewItemsException:
-            pass
-    return times_from_location(query, twentyfour)
-
-def times_from_timezone_name(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    possible = next((name for name in pytz.all_timezones if name.casefold() == q.casefold()), None)
-    if possible is None:
-        raise TooFewItemsException(f'Not a recognized timezone: {q}')
-    timezone = dtutil.timezone(possible)
-    return {current_time(timezone, twentyfour): [possible]}
-
-def times_from_utc_offset(q: str, twentyfour: bool) -> dict[str, list[str]] | None:
-    if q.upper() in {'UTC', 'GMT'}:
-        timezone = datetime.UTC
-        return {current_time(timezone, twentyfour): [q.upper()]}
-    match = re.fullmatch(r'(?:UTC|GMT)\s*([+-])\s*(\d{1,2})(?::?(\d{2}))?', q, re.IGNORECASE)
-    if match is None:
-        return None
-    hours = int(match.group(2))
-    minutes = int(match.group(3) or 0)
-    if hours > 14 or minutes > 59 or (hours == 14 and minutes != 0):
-        raise TooFewItemsException(f'Not a valid UTC offset: {q}')
-    sign = 1 if match.group(1) == '+' else -1
-    offset = datetime.timedelta(hours=hours, minutes=minutes) * sign
-    label = f'UTC{match.group(1)}{hours:02d}' + (f':{minutes:02d}' if minutes else '')
-    timezone = datetime.timezone(offset, name=label)
-    return {current_time(timezone, twentyfour): [label]}
-
-def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
-    if not possibles:
-        raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
-    results: dict[str, list[str]] = {}
-    for possible in possibles:
-        timezone = dtutil.timezone(possible)
-        t = current_time(timezone, twentyfour)
-        results[t] = results.get(t, []) + [possible]
-    return results
-
-def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    place = geonames.find(q)
-    if place is None:
-        raise TooFewItemsException(f'No populated place found for {q}')
-    timezone = dtutil.timezone(place.timezone)
-    return {current_time(timezone, twentyfour): [place.display_name]}
-
 
 class WISDateType(TypedDict):
     exact: str

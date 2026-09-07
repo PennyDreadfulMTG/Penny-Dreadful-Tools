@@ -5,9 +5,9 @@ import re
 from interactions import Client, Extension
 from interactions.models import OptionType, slash_command, slash_option
 
+from discordbot import timezones
 from discordbot.command import MtgInteractionContext
 from discordbot.shared import guild_id
-from magic import fetcher
 from shared import configuration
 from shared.fetch_tools import FetchException
 from shared.pd_exception import TooFewItemsException
@@ -26,7 +26,7 @@ class Time(Extension):
         try:
             with with_config_file(guild_id(ctx.channel)), with_config_file(ctx.channel.id):
                 twentyfour = configuration.use_24h.value
-            ts = await asyncio.to_thread(fetcher.time, place, twentyfour)
+            ts = await asyncio.to_thread(timezones.time, place, twentyfour)
             times_s = ''
             for t, zones in ts.items():
                 cities = sorted({re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones})

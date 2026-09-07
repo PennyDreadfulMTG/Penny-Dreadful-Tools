@@ -121,7 +121,7 @@ async def test_time_defers_and_moves_location_fetch_off_event_loop(monkeypatch: 
     await time_command.Time.time.callback(SimpleNamespace(), ctx, 'New York')
 
     ctx.defer.assert_awaited_once_with()
-    to_thread.assert_awaited_once_with(time_command.fetcher.time, 'New York', True)
+    to_thread.assert_awaited_once_with(time_command.timezones.time, 'New York', True)
     ctx.send.assert_awaited_once_with('New York: 12:00\n')
 
 

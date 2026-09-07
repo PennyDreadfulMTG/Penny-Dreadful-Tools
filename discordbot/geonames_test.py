@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from shared import geonames
+from discordbot import geonames
 from shared.fetch_tools import FetchException
 
 

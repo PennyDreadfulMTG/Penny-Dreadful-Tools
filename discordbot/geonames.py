@@ -1,4 +1,4 @@
-"""A small, local place-to-timezone index built from GeoNames cities500.
+"""A bot-local place-to-timezone index built from GeoNames cities500.
 
 GeoNames data is licensed under CC BY 4.0: https://www.geonames.org/
 """

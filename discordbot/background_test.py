@@ -10,6 +10,31 @@ from discordbot import background as background_module
 from discordbot import error_handling, reboot_utils
 from discordbot.background import BackgroundTasks
 from magic import fetcher
+from shared import configuration
+
+
+@pytest.mark.asyncio
+async def test_background_tasks_are_disabled_for_test_guild(monkeypatch: pytest.MonkeyPatch) -> None:
+    tasks = [SimpleNamespace(start=Mock()) for _ in range(3)]
+    background = SimpleNamespace(
+        do_banner=tasks[0],
+        background_task_reboot=tasks[1],
+        background_task_update_cards=tasks[2],
+        prepare_tournaments=AsyncMock(),
+        prepare_hype=AsyncMock(),
+        prepare_league_end=AsyncMock(),
+        prepare_mos=AsyncMock(),
+    )
+    monkeypatch.setattr(configuration.discord_test_guild_id, 'get', lambda: 123)
+
+    await BackgroundTasks.on_startup.callback(background)
+
+    for task in tasks:
+        task.start.assert_not_called()
+    background.prepare_tournaments.assert_not_awaited()
+    background.prepare_hype.assert_not_awaited()
+    background.prepare_league_end.assert_not_awaited()
+    background.prepare_mos.assert_not_awaited()
 
 
 @pytest.mark.asyncio

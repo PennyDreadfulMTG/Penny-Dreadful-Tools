@@ -107,6 +107,7 @@ def configure() -> None:
         'prices_database': 'prices', 'logsite_database': 'pdlogs',
         'decksite_test_database': 'decksite_test',
         'whoosh_index_dir': str(STATE / 'whoosh_index'),
+        'geonames_database': str(STATE / 'geonames.sqlite'),
         'typeahead_data_path': str(STATE / 'typeahead.json'),
         'production': False, 'create_github_issues': False, 'redis_enabled': False,
         'sentry_token': None, 'flask_server_name': None, 'flask_cookie_domain': None,

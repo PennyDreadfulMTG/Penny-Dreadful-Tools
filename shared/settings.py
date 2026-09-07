@@ -4,7 +4,7 @@ import json
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from shared.pd_exception import InvalidDataException
 
@@ -48,10 +48,11 @@ def save_cfg(cfg: Any) -> None:
         fh.write(json.dumps(cfg, indent=4, sort_keys=True))
 
 class Setting[T]:
-    def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str | None = None) -> None:
+    def __init__(self, key: str, default_value: T, configurable: bool = False, doc: str | None = None, environment_variable: str | None = None) -> None:
         self.key = key
         self.default_value = default_value
         self.configurable = configurable
+        self.environment_variable = environment_variable
         if doc is not None:
             self.__doc__ = doc
         if configurable:
@@ -66,6 +67,10 @@ class Setting[T]:
                     return NS_CONFIG[key]
 
         key = self.key
+        if self.environment_variable is not None and self.environment_variable in os.environ:
+            # Named environment variables are intended for secrets supplied by the
+            # runtime. Do not print or persist them to config.json.
+            return cast(T, os.environ[self.environment_variable])
         if key in CONFIG:
             return CONFIG[key]
 

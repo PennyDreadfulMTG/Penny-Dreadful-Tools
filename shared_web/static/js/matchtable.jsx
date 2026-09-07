@@ -3,7 +3,7 @@ import React from "react";
 import { Table } from "./table";
 import { createRoot } from "react-dom/client";
 
-const renderHeaderRow = (table) => (
+const renderEditHeaderRow = (table) => (
     <tr>
         <th className="name" onClick={table.sort.bind(table, "person", "ASC")}>Person</th>
         <th className="name" onClick={table.sort.bind(table, "deckName", "ASC")}>Deck</th>
@@ -16,7 +16,7 @@ const renderHeaderRow = (table) => (
     </tr>
 );
 
-const renderRow = (table, entry) => (
+const renderEditRow = (table, entry) => (
     <tr key={entry.id}>
         <td className="name"><a href={entry.personUrl}>{entry.person}</a></td>
         <td className="deck-name"><a href={entry.deckUrl}>{entry.deckName}</a></td>
@@ -48,14 +48,56 @@ const renderRow = (table, entry) => (
     </tr>
 );
 
+const renderReadOnlyHeaderRow = (table) => (
+    <tr>
+        <th className="name" onClick={table.sort.bind(table, "person", "ASC")}>Person</th>
+        <th className="name" onClick={table.sort.bind(table, "deckName", "ASC")}>Deck</th>
+        <th className="name" onClick={table.sort.bind(table, "opponent", "ASC")}>Opponent</th>
+        <th className="name" onClick={table.sort.bind(table, "opponentDeckName", "ASC")}>Opponent&apos;s Deck</th>
+        <th className="n">Result</th>
+        <th>Competition</th>
+        <th className="date" onClick={table.sort.bind(table, "date", "DESC")}>Date</th>
+        <th className="n mtgo-id" onClick={table.sort.bind(table, "mtgoId", "ASC")}>MTGO Log</th>
+    </tr>
+);
+
+const renderReadOnlyRow = (table, entry) => (
+    <tr key={entry.id}>
+        <td className="name"><a href={entry.personUrl}>{entry.person}</a></td>
+        <td className="deck-name"><a href={entry.deckUrl}>{entry.deckName}</a></td>
+        <td className="name">
+            { entry.opponentUrl
+                ? <a href={entry.opponentUrl}>{entry.opponent}</a>
+                : entry.opponent
+            }
+        </td>
+        <td className="deck-name">
+            { entry.opponentDeckUrl
+                ? <a href={entry.opponentDeckUrl}>{entry.opponentDeckName}</a>
+                : entry.opponentDeckName
+            }
+        </td>
+        <td className="n">{entry.gameWins}–{entry.gameLosses}</td>
+        <td><a href={entry.competitionUrl}>{entry.competitionTypeName}</a></td>
+        <td className="date"><FriendlyTime date={entry.friendlyDate}/></td>
+        <td className="n">
+            { entry.mtgoId
+                ? <a href={entry.logUrl}>{entry.mtgoId}</a>
+                : null
+            }
+        </td>
+    </tr>
+);
+
 [...document.getElementsByClassName("matchtable")].forEach((e) => {
     if (e !== null) {
+        const readOnly = Boolean(e.dataset.readOnly);
         const table =
             <Table
                 endpoint="/api/matches/"
-                renderHeaderRow={renderHeaderRow}
-                renderRow={renderRow}
-                showSearch={true}
+                renderHeaderRow={readOnly ? renderReadOnlyHeaderRow : renderEditHeaderRow}
+                renderRow={readOnly ? renderReadOnlyRow : renderEditRow}
+                showSearch={!readOnly}
                 searchPrompt="MTGO username"
                 {...e.dataset}
             />;

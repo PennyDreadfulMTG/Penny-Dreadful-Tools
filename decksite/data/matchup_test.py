@@ -13,18 +13,41 @@ from decksite.data.matchup import MatchupResults
 )
 def test_win_percent_is_float_or_none(wins: int, losses: int, expected: float | None) -> None:
     results = MatchupResults(
-        hero_deck_ids=[],
-        enemy_deck_ids=[],
-        match_ids=[],
+        num_decks=2,
+        num_matches=3,
         wins=wins,
         draws=0,
         losses=losses,
-        hero_decks=[],
-        matches=[],
     )
 
     assert results.win_percent == expected
     assert results.win_percent is None or isinstance(results.win_percent, float)
+
+
+def test_matchup_counts_results_without_concatenating_ids(monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeDatabase:
+        def select(self, sql: str) -> list[dict[str, int]]:
+            assert 'COUNT(DISTINCT d.id) AS num_decks' in sql
+            assert 'COUNT(DISTINCT m.id) AS num_matches' in sql
+            assert 'GROUP_CONCAT' not in sql
+            assert 'd.archetype_id IN' in sql
+            assert 'od.person_id' in sql
+            return [{'num_decks': 12, 'num_matches': 34, 'wins': 20, 'draws': 1, 'losses': 13}]
+
+    monkeypatch.setattr(matchup, 'db', FakeDatabase)
+
+    result = matchup.matchup({'archetype_id': '5'}, {'person_id': '9'}, season_id=43)
+
+    assert result == MatchupResults(num_decks=12, num_matches=34, wins=20, draws=1, losses=13)
+
+
+def test_opponent_decks_where_filters_through_matches() -> None:
+    where = matchup.opponent_decks_where({'person_id': '1', 'card': "Urza's Bauble"})
+
+    assert 'EXISTS' in where
+    assert 'matchup_dm.deck_id = d.id' in where
+    assert 'matchup_enemy.person_id = 1' in where
+    assert "card = 'Urza''s Bauble'" in where
 
 
 @pytest.mark.parametrize(

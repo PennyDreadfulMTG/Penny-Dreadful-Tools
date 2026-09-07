@@ -2420,6 +2420,12 @@ Search
 
 }
 
+main form .tt-suggestion {
+    font-size: inherit;
+    line-height: 1.333;
+    padding: 0.1em 0.4rem;
+}
+
 .tt-highlight {
     background-color: var(--highlight);
 }

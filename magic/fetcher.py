@@ -17,10 +17,10 @@ import feedparser
 import pytz
 from interactions import Snowflake
 
-from magic import geonames, layout
+from magic import layout
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools
+from shared import configuration, dtutil, fetch_tools, geonames
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.custom_types import BugData, ForumData

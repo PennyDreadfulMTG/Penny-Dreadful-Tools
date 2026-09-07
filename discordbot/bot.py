@@ -13,8 +13,8 @@ from interactions.models import ActivityType, Guild, GuildText, Intents, Member,
 import discordbot.commands
 from discordbot import command, error_handling
 from discordbot.shared import guild_id
-from magic import fetcher, geonames, multiverse, oracle, whoosh_write
-from shared import configuration, perf, repo
+from magic import fetcher, multiverse, oracle, whoosh_write
+from shared import configuration, geonames, perf, repo
 from shared import redis_wrapper as redis
 from shared.settings import with_config_file
 

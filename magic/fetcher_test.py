@@ -3,7 +3,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from magic import fetcher, geonames
+from magic import fetcher
+from shared import geonames
 
 
 def test_time_treats_short_city_as_a_location(monkeypatch: pytest.MonkeyPatch) -> None:

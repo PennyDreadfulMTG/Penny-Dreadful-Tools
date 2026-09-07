@@ -46,7 +46,7 @@ def discordbot() -> None:
 @click.option('--force', is_flag=True, help='Download and rebuild even if the local copy is fresh')
 def update_geonames(force: bool = False) -> None:
     """Update the local GeoNames cities500 place-to-timezone index."""
-    from magic import geonames
+    from shared import geonames
     geonames.ensure_fresh(force=force)
 
 @cli.command()

@@ -1,10 +1,11 @@
 import os
 import zipfile
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
-from magic import geonames
+from shared import geonames
 from shared.fetch_tools import FetchException
 
 
@@ -66,10 +67,18 @@ def test_refresh_failure_uses_a_stale_valid_database(tmp_path: Path, monkeypatch
     old = database.stat().st_mtime - geonames.REFRESH_INTERVAL.total_seconds() - 1
     os.utime(database, (old, old))
 
-    def fail(_path: Path) -> None:
-        raise FetchException('offline')
-
-    monkeypatch.setattr(geonames, '_download_and_build', fail)
+    refresh = Mock(side_effect=FetchException('offline'))
+    monkeypatch.setattr(geonames, '_download_and_build', refresh)
 
     assert geonames.ensure_fresh() == database
+    refresh.assert_called_once_with(database)
     assert geonames.find('London') == geonames.Place('London', 'GB', 'ENG', 'Europe/London')
+
+
+def test_fresh_database_does_not_download(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    database = build_test_database(tmp_path, monkeypatch)
+    refresh = Mock()
+    monkeypatch.setattr(geonames, '_download_and_build', refresh)
+
+    assert geonames.ensure_fresh() == database
+    refresh.assert_not_called()

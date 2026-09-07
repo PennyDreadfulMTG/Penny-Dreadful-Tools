@@ -32,7 +32,8 @@ use_24h = BoolSetting('use_24h', False, configurable=True, doc='Use a 24 hour cl
 cse_api_key = StrSetting('cse_api_key', '')
 cse_engine_id = StrSetting('cse_engine_id', '')
 bot_debug = BoolSetting('bot_debug', False)
-token = StrSetting('token', '')
+token = StrSetting('token', '', environment_variable='PDT_TEST_DISCORD_TOKEN')
+discord_test_guild_id = IntSetting('discord_test_guild_id', 0, environment_variable='PDT_TEST_DISCORD_GUILD_ID')
 pd_server_id = IntSetting('pd_server_id', 207281932214599682)
 honeypot_channel_id = IntSetting('honeypot_channel_id', 1255127999901208620)
 
@@ -41,6 +42,8 @@ honeypot_channel_id = IntSetting('honeypot_channel_id', 1255127999901208620)
 card_alias_file = StrSetting('card_alias_file', './card_aliases.tsv')
 # Path to list of is:spikey cards.
 is_spikey_file = StrSetting('is_spikey_file', './.is-spikey.txt')
+# Local place-to-timezone index used by !time.
+geonames_database = StrSetting('geonames_database', '.cache/geonames/cities500.sqlite')
 # Block Scryfall updates when things are broken
 prevent_cards_db_updates = BoolSetting('prevent_cards_db_updates', False)
 
@@ -91,8 +94,6 @@ DEFAULTS: dict[str, Any] = {
     # github credentials.  Used for auto-reporting issues.
     'github_password': None,
     'github_user': None,
-    # Google Maps API key (for !time)
-    'google_maps_api_key': None,
     # Required if you want to share cookies between subdomains
     'flask_cookie_domain': None,
     'flask_server_name': None,
@@ -138,6 +139,10 @@ DEFAULTS: dict[str, Any] = {
     'dreadrise_public_url': 'https://penny.dreadrise.xyz',
     'mos_premodern_channel_id': '921967538907271258',
 }
+
+def discord_command_scopes(production_guild_id: int) -> list[Any]:
+    test_guild_id = discord_test_guild_id.value
+    return [test_guild_id or production_guild_id]
 
 def get_optional_str(key: str) -> str | None:
     val = get(key)

@@ -14,7 +14,6 @@ from typing import Any, Literal, TypedDict, cast
 from urllib import parse
 
 import feedparser
-import pytz
 from interactions import Snowflake
 
 from magic import layout
@@ -25,7 +24,7 @@ from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.custom_types import BugData, ForumData
 from shared.fetch_tools import FetchException
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, NotConfiguredException, TooFewItemsException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 
 async def achievement_cache_async() -> dict[str, dict[str, str]]:
@@ -104,14 +103,6 @@ def card_price(cardname: str) -> PriceDataType:
 
 def cardfeed() -> dict[str, list[dict[str, str | int | bool]]]:
     return fetch_tools.fetch_json(decksite_url('/api/cardfeed'))
-
-def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
-    if twentyfour:
-        return dtutil.now(timezone).strftime('%H:%M')
-    try:
-        return dtutil.now(timezone).strftime('%l:%M %p')
-    except ValueError:  # %l is not a univerally supported argument.  Fall back to %I on other platforms.
-        return dtutil.now(timezone).strftime('%I:%M %p')
 
 async def daybreak_forums_async() -> dict[str, ForumData] | None:
     try:
@@ -338,45 +329,6 @@ def sitemap() -> list[str]:
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
     return feedparser.parse(url)
-
-def time(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    return times_from_timezone_code(q, twentyfour) if len(q) <= 4 else times_from_location(q, twentyfour)
-
-def times_from_timezone_code(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
-    if not possibles:
-        raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
-    results: dict[str, list[str]] = {}
-    for possible in possibles:
-        timezone = dtutil.timezone(possible)
-        t = current_time(timezone, twentyfour)
-        results[t] = results.get(t, []) + [possible]
-    return results
-
-def times_from_location(q: str, twentyfour: bool) -> dict[str, list[str]]:
-    api_key = configuration.get('google_maps_api_key')
-    if not api_key:
-        raise NotConfiguredException('No value found for google_maps_api_key')
-    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={fetch_tools.escape(q)}&key={api_key}&sensor=false'
-    info = fetch_tools.fetch_json(url)
-    if 'error_message' in info:
-        return info['error_message']
-    try:
-        location = info['results'][0]['geometry']['location']
-    except IndexError as e:
-        raise TooFewItemsException(e) from e
-    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=fetch_tools.escape(str(location['lat'])), lng=fetch_tools.escape(str(location['lng'])), timestamp=fetch_tools.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
-    timezone_info = fetch_tools.fetch_json(url)
-    if 'error_message' in timezone_info:
-        return timezone_info['error_message']
-    if timezone_info['status'] == 'ZERO_RESULTS':
-        raise TooFewItemsException(timezone_info['status'])
-    try:
-        timezone = dtutil.timezone(timezone_info['timeZoneId'])
-    except KeyError as e:
-        raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}') from e
-    return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
-
 
 class WISDateType(TypedDict):
     exact: str

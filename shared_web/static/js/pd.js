@@ -15,6 +15,7 @@ PD.init = function() {
     PD.initTypeahead();
     PD.initMatchupCalculator();
     PD.initPersonPickers();
+    PD.initArchetypePickers();
     PD.initSearchShortcut();
     PD.initUseGuess();
     PD.initReassign();
@@ -268,6 +269,31 @@ PD.initRemoteTypeahead = function(input, config) {
     }
 };
 
+PD.initValueTypeahead = function(input, config) {
+    var valueInput = input.siblings("input[type=hidden]");
+    PD.initRemoteTypeahead(input, {
+        "display": config.display,
+        "hint": config.hint,
+        "url": config.url,
+        "onInput": function() {
+            valueInput.val("");
+            input[0].setCustomValidity("");
+        },
+        "selectEvents": "typeahead:autocomplete typeahead:select",
+        "onSelect": function(_event, suggestion) {
+            valueInput.val(suggestion.value);
+            input[0].setCustomValidity("");
+        }
+    });
+    input.closest("form").on("submit", function(event) {
+        if (input.val() && !valueInput.val()) {
+            input[0].setCustomValidity(config.selectionError);
+            input[0].reportValidity();
+            event.preventDefault();
+        }
+    });
+};
+
 PD.initTypeahead = function() {
     $(".typeahead").each(function() {
         PD.initRemoteTypeahead($(this), {
@@ -300,28 +326,22 @@ PD.initMatchupCalculator = function() {
 
 PD.initPersonPickers = function() {
     $(".person-option").each(function() {
-        var input = $(this),
-            valueInput = input.siblings("input[type=hidden]");
-        PD.initRemoteTypeahead(input, {
+        var input = $(this);
+        PD.initValueTypeahead(input, {
             "display": "label",
             "hint": false,
             "url": "/api/matchup-options/people/?personFilter=" + encodeURIComponent(input.data("person-filter")) + "&q={q}",
-            "onInput": function() {
-                valueInput.val("");
-                input[0].setCustomValidity("");
-            },
-            "selectEvents": "typeahead:autocomplete typeahead:select",
-            "onSelect": function(_event, suggestion) {
-                valueInput.val(suggestion.value);
-                input[0].setCustomValidity("");
-            }
+            "selectionError": "Select a person from the suggestions."
         });
-        input.closest("form").on("submit", function(event) {
-            if (!valueInput.val()) {
-                input[0].setCustomValidity("Select a person from the suggestions.");
-                input[0].reportValidity();
-                event.preventDefault();
-            }
+    });
+};
+
+PD.initArchetypePickers = function() {
+    $(".archetype-option").each(function() {
+        PD.initValueTypeahead($(this), {
+            "display": "name",
+            "url": "/api/matchup-options/archetypes/?q={q}",
+            "selectionError": "Select an archetype from the suggestions."
         });
     });
 };
@@ -338,7 +358,10 @@ PD.initSearchShortcut = function() {
 
 PD.initUseGuess = function() {
     $(".use-guess").click(function() {
-        $(this).closest("tr").find("select[name$='archetype_id']").val($(this).data("archetype_id"));
+        var row = $(this).closest("tr"),
+            input = row.find(".archetype-option.tt-input");
+        input.typeahead("val", $(this).data("archetype_name"));
+        row.find("input[type=hidden][name$='archetype_id']").val($(this).data("archetype_id"));
         return false;
     });
 };

@@ -20,7 +20,7 @@
                         <td><a href="{{source_url}}">{{source_name}}</a></td>
                         <td>
                             <a href="{{archetype_url}}" title="{{archetype_description}}">{{archetype_name}}</a>
-                            {{#archetype_id}}<a class="use-guess" title="Assign this deck to {{archetype_name}}" data-archetype_id="{{archetype_id}}">[✓]</a>{{/archetype_id}}
+                            {{#archetype_id}}<a class="use-guess" title="Assign this deck to {{archetype_name}}" data-archetype_id="{{archetype_id}}" data-archetype_name="{{archetype_name}}">[✓]</a>{{/archetype_id}}
                         </td>
                         <td class="n">
                             {{similarity}}
@@ -31,7 +31,7 @@
                         <td><a href="{{rule_archetype_url}}" title="{{rule_archetype_description}}">{{rule_archetype_name}}</a></td>
                         <td>
                             <input type="hidden" name="deck_id" value="{{id}}">
-                            {{> archetypedropdown}}
+                            {{> archetypepicker}}
                         </td>
                     </tr>
                 {{/queue}}
@@ -45,11 +45,11 @@
     <form method="post">
         <div>
             <label>Move</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <div>
             <label>New Parent</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <button type="submit">Move</button>
     </form>
@@ -59,7 +59,7 @@
     <form method="post">
         <div>
             <label for="archetype_id">Rename</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <div>
             <label for="rename_to">To</label>
@@ -73,7 +73,7 @@
     <form method="post">
         <div>
             <label>Update</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <div>
             <label>New description</label>
@@ -136,13 +136,9 @@
     <form method="post" action="#add-archetype">
         <input type="hidden" name="create_archetype" value="1">
         <div>
-            <label for="parent">Parent</label>
-            <select name="parent" id="parent" required>
-                <option value="">[Select]</option>
-                {{#add_archetypes}}
-                    <option value="{{id}}"{{#selected}} selected{{/selected}}>{{name}}</option>
-                {{/add_archetypes}}
-            </select>
+            <label for="parent_name">Parent</label>
+            <input id="parent_name" class="archetype-option" data-option-type="archetypes" type="text" autocomplete="off" placeholder="Search archetypes" value="{{add_parent_name}}" required>
+            <input id="parent" name="parent" type="hidden" value="{{add_parent_id}}">
         </div>
         <div>
             <label for="name">Name</label>

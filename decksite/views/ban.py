@@ -5,10 +5,10 @@ from decksite.view import View
 
 
 class Ban(View):
-    def __init__(self, people: Iterable[Person], success: bool | None) -> None:
+    def __init__(self, banned_people: Iterable[Person], success: bool | None) -> None:
         super().__init__()
-        self.people = [p for p in people if not p.banned]
-        self.banned_people = [p for p in people if p.banned]
+        self.person_filter = 'unbanned'
+        self.banned_people = banned_people
         if success is not None:
             self.message = 'Operation ' + ('succeeded' if success else 'failed')
 

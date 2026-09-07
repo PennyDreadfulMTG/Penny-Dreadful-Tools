@@ -149,6 +149,23 @@ class Home(View):
                     },
                 ],
             },
+            {
+                'header': 'League and Tournament Players',
+                'stats': [
+                    {
+                        'text': f"{matches_stats_display['num_players_this_week']} players this week",
+                    },
+                    {
+                        'text': f"{matches_stats_display['num_players_this_month']} players this month",
+                    },
+                    {
+                        'text': f"{matches_stats_display['num_players_this_season']} players this season",
+                    },
+                    {
+                        'text': f"{matches_stats_display['num_players_all_time']} players all time",
+                    },
+                ],
+            },
         ]
 
 # movers_and_shakers arrives sorted by meta share change, most improved first. Show the biggest

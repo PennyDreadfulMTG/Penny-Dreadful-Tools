@@ -74,6 +74,7 @@ def test_menu_badge_is_entirely_linked() -> None:
 
     assert '<a class="badge edit_archetypes" href="/admin/archetypes/">12</a>' in rendered
 
+
 def test_title_replaces_emoji_only_page_title_with_words() -> None:
     with APP.test_request_context('/'):
         assert EmojiTitleView().title() == 'black joker fire – pennydreadfulmagic.com'

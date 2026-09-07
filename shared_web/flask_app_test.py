@@ -2,6 +2,7 @@ from typing import Any
 from unittest import mock
 
 import pytest
+from flask_babel import gettext
 
 from shared_web import oauth
 from shared_web.flask_app import PDFlask
@@ -20,7 +21,32 @@ def app() -> PDFlask:
     def destination() -> str:
         return ''
 
+    @flask_app.route('/localized/')
+    def localized() -> str:
+        return gettext('Recent Top League Decks')
+
     return flask_app
+
+
+def test_babel_has_no_locale_selector(app: PDFlask) -> None:
+    assert app.extensions['babel'].locale_selector is None
+
+
+def test_locale_query_parameter_is_ignored(app: PDFlask) -> None:
+    client: Any = app.test_client()
+
+    response = client.get('/localized/', query_string={'locale': 'not-a-locale', 'tab': 'details'})
+
+    assert response.status_code == 200
+    assert response.location is None
+    with client.session_transaction() as session:
+        assert 'locale' not in session
+
+
+def test_locale_endpoint_is_removed(app: PDFlask) -> None:
+    response = app.test_client().post('/locale/', data={'locale': 'en'})
+
+    assert response.status_code == 404
 
 
 @pytest.mark.parametrize('target', [

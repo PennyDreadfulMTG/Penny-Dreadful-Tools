@@ -127,7 +127,8 @@ def setup_matches(show_active_deck_names: bool, matches: Sequence[Container]) ->
             m.opponent_deck_name = '(Active League Run)'
 
 def stats() -> dict[str, int]:
-    sql = """
+    season_start = dtutil.dt2ts(seasons.last_rotation())
+    matches_sql = """
         SELECT
             SUM(CASE WHEN FROM_UNIXTIME(`date`) >= NOW() - INTERVAL 1 DAY THEN 1 ELSE 0 END) AS num_matches_today,
             SUM(CASE WHEN FROM_UNIXTIME(`date`) >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) AS num_matches_this_week,
@@ -137,7 +138,40 @@ def stats() -> dict[str, int]:
         FROM
             `match`
     """
-    return db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0]
+    result = db().select(matches_sql, [season_start])[0]
+    players_sql = """
+        SELECT
+            COUNT(DISTINCT CASE WHEN m.`date` >= UNIX_TIMESTAMP(NOW() - INTERVAL 7 DAY) THEN d.person_id END) AS num_players_this_week,
+            COUNT(DISTINCT CASE WHEN m.`date` >= UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY) THEN d.person_id END) AS num_players_this_month,
+            COUNT(DISTINCT CASE WHEN m.`date` >= %s THEN d.person_id END) AS num_players_this_season,
+            (
+                SELECT
+                    COUNT(*)
+                FROM
+                    person AS all_time_person
+                WHERE
+                    EXISTS (
+                        SELECT
+                            1
+                        FROM
+                            deck AS all_time_deck
+                        INNER JOIN
+                            deck_match AS all_time_deck_match ON all_time_deck_match.deck_id = all_time_deck.id
+                        WHERE
+                            all_time_deck.person_id = all_time_person.id
+                    )
+            ) AS num_players_all_time
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm ON dm.match_id = m.id
+        INNER JOIN
+            deck AS d ON d.id = dm.deck_id
+        WHERE
+            m.`date` >= LEAST(UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY), %s)
+    """
+    result.update(db().select(players_sql, [season_start, season_start])[0])
+    return result
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin('update_match')

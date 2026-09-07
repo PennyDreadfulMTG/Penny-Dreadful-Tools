@@ -521,29 +521,6 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
     margin-top: 2rem;
 }
 
-.matchup-calculator .twitter-typeahead {
-    margin-left: var(--form-element-margin);
-    width: 20rem;
-}
-
-.matchup-calculator .twitter-typeahead input {
-    margin-left: 0;
-    max-width: 100%;
-    width: 100%;
-}
-
-.matchup-calculator .tt-hint, .matchup-calculator .tt-menu {
-    left: 0 !important;
-    right: auto !important;
-}
-
-@media only screen and (max-width: 800px) {
-    .matchup-calculator .twitter-typeahead {
-        margin-left: 0;
-        max-width: 80%;
-    }
-}
-
 /*
 
 Spacing
@@ -2160,6 +2137,22 @@ main input, select, textarea {
     margin-left: var(--form-element-margin);
 }
 
+main form .twitter-typeahead {
+    margin-left: var(--form-element-margin);
+    width: 20rem;
+}
+
+main form .twitter-typeahead input {
+    margin-left: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+main form .tt-hint, main form .tt-menu {
+    left: 0 !important;
+    right: auto !important;
+}
+
 input[type=radio] {
     margin-left: 0;
 }
@@ -2229,6 +2222,10 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-bottom: 1rem;
         margin-left: 0;
         margin-top: 0.5625rem;
+        max-width: 80%;
+    }
+    main form .twitter-typeahead {
+        margin-left: 0;
         max-width: 80%;
     }
     button, div.error, .uploader-label, div.validation-ok, .form-field {
@@ -2364,8 +2361,8 @@ Search
     }
 }
 
-/* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */
-.twitter-typeahead {
+/* The js inserts a span with display:inline-block inside .search. We have to tell it to take up all the remaining space to get a bigger input. */
+.search .twitter-typeahead {
     width: 100%;
 }
 

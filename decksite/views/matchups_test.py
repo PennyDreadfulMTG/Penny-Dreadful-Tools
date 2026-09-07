@@ -7,14 +7,11 @@ from decksite.views.matchups import Matchups
 
 def matchup_results(wins: int = 2, losses: int = 1, draws: int = 1) -> MatchupResults:
     return MatchupResults(
-        hero_deck_ids=[1, 2],
-        enemy_deck_ids=[3],
-        match_ids=[1, 2, 3, 4],
+        num_decks=2,
+        num_matches=4,
         wins=wins,
         draws=draws,
         losses=losses,
-        hero_decks=[],
-        matches=[],
     )
 
 

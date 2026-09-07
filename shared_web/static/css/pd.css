@@ -1290,6 +1290,81 @@ div.live {
     width: 10em;
 }
 
+.table-skeleton .table-header {
+    align-items: center;
+    min-height: 1.1rem;
+}
+
+.table-skeleton thead {
+    pointer-events: none;
+}
+
+.table-skeleton th {
+    cursor: default;
+}
+
+.table-loading {
+    line-height: 1.1rem;
+}
+
+.skeleton-cell {
+    animation: skeleton-pulse 1.2s ease-in-out infinite;
+    background-color: var(--light-gray);
+    border-radius: var(--button-rounded-corners);
+    display: block;
+    height: 0.6em;
+    margin: 0.2em 0;
+    width: 85%;
+}
+
+.skeleton-row {
+    height: 1.3rem;
+}
+
+.table-skeleton-season-icons .skeleton-row {
+    height: 1.35rem;
+}
+
+.skeleton-row:nth-child(3n+2) .skeleton-cell {
+    width: 65%;
+}
+
+.skeleton-row:nth-child(3n) .skeleton-cell {
+    width: 75%;
+}
+
+.skeleton-row td.c .skeleton-cell {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.skeleton-row td.n .skeleton-cell {
+    margin-left: auto;
+}
+
+.skeleton-row td.marginalia .skeleton-cell {
+    visibility: hidden;
+}
+
+.skeleton-pagination {
+    min-height: 2.2rem;
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% {
+        opacity: 0.45;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton-cell {
+        animation: none;
+    }
+}
+
 /* Highlight table rows on hover. */
 
 tr.clickable:hover td:not(.marginalia) {

@@ -93,10 +93,12 @@ def wait_for_live_tables(page: 'Page') -> list[str]:
             root = page.locator(f'div.{css_class}').nth(i)
             rows = root.locator('.metagame-grid > *' if css_class == 'metagamegrid' else 'table tbody tr')
             try:
+                if css_class != 'metagamegrid':
+                    expect(root.locator('.table-skeleton')).to_have_count(0, timeout=LOAD_TIMEOUT)
                 expect(rows.first).to_be_attached(timeout=LOAD_TIMEOUT)
             except AssertionError:
                 error = root.locator('.message.error')
-                detail = error.first.text_content() if error.count() else ('still loading' if root.locator('.loading').count() else 'no rows')
+                detail = error.first.text_content() if error.count() else ('still loading' if root.locator('.loading, .table-skeleton').count() else 'no rows')
                 problems.append(f'{page.url}: {css_class} #{i} is empty ({detail})')
     return problems
 
@@ -155,6 +157,39 @@ def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Co
     expect(table_container).to_have_attribute('class', 'live')
     expect(table_container.locator('table')).to_have_attribute('class', 'live')
     expect(page.locator('.cardtable .undefined')).to_have_count(0)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
+def test_live_table_reserves_space_with_skeleton_while_loading(browser: 'Browser', site: Container, monkeypatch: pytest.MonkeyPatch) -> None:
+    if BASE_URL:
+        pytest.skip('Cannot delay the API on a remote canary.')
+    from decksite.controllers import api
+
+    load_decks_with_total = api.deck.load_decks_with_total
+    release_request = threading.Event()
+
+    def delayed_load(*args: Any, **kwargs: Any) -> Any:
+        release_request.wait(timeout=LOAD_TIMEOUT / 1000)
+        return load_decks_with_total(*args, **kwargs)
+
+    monkeypatch.setattr(api.deck, 'load_decks_with_total', delayed_load)
+    page, collector = new_page(browser, site)
+    try:
+        page.goto('/decks/', wait_until='domcontentloaded')
+        skeleton = page.locator('.decktable .table-skeleton')
+        expect(skeleton).to_be_visible()
+        expect(skeleton).to_have_attribute('aria-busy', 'true')
+        expect(skeleton.locator('table')).to_have_attribute('aria-hidden', 'true')
+        expect(skeleton.locator('.table-loading')).to_have_text('Loading…')
+        expect(skeleton.locator('.skeleton-row')).to_have_count(20)
+        assert skeleton.locator('.skeleton-row').first.locator('td').count() == skeleton.locator('thead th').count()
+        box = skeleton.bounding_box()
+        assert box is not None
+        assert box['height'] > 500
+    finally:
+        release_request.set()
+    expect(page.locator('.decktable .table-skeleton')).to_have_count(0, timeout=LOAD_TIMEOUT)
+    expect(page.locator('.decktable div.live tbody tr').first).to_be_visible()
     assert not collector.problems, '\n'.join(collector.problems)
 
 

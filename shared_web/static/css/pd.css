@@ -2201,7 +2201,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     max-width: 100%;
 }
 
-main form.inline .twitter-typeahead {
+main td.archetype-picker-cell .twitter-typeahead {
     margin: 0;
     max-width: 100%;
     width: 100%;

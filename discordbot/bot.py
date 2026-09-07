@@ -11,7 +11,7 @@ from interactions.client.errors import CommandCheckFailure, CommandOnCooldown, M
 from interactions.models import ActivityType, Guild, GuildText, Intents, Member, Role
 
 import discordbot.commands
-from discordbot import command, error_handling
+from discordbot import command, error_handling, geonames
 from discordbot.shared import guild_id
 from magic import fetcher, multiverse, oracle, whoosh_write
 from shared import configuration, perf, repo
@@ -234,12 +234,18 @@ class Bot(Client):
                 await reaction.message.delete()
 
 def init() -> None:
-    client = Bot()
+    client = Bot(**client_options())
     logging.info('Connecting to Discord')
     asyncio.run(prepare_database_async())
     client.start(configuration.token.value)
 
+def client_options() -> dict[str, int]:
+    test_guild_id = configuration.discord_test_guild_id.value
+    return {'debug_scope': test_guild_id} if test_guild_id else {}
+
 async def prepare_database_async() -> None:
+    logging.info('Initializing GeoNames location database')
+    await asyncio.to_thread(geonames.ensure_fresh)
     logging.info('Initializing Cards DB')
     updated = await multiverse.init_async()
     if updated:

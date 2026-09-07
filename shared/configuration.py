@@ -130,7 +130,6 @@ DEFAULTS: dict[str, Any] = {
     'to_username': '',
     'tournament_channel_id': '334220558159970304',
     'tournament_reminders_channel_id': '207281932214599682',
-    'typeahead_data_path': 'shared_web/static/dist/typeahead.json',
     'web_cache': '.web_cache',
     'whoosh_index_dir': 'whoosh_index',
     # Dreadrise top-level URL. used for dreadrise-based searches.

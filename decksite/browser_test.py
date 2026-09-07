@@ -160,6 +160,20 @@ def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Co
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_header_search_ranks_aliases_and_navigates_live_results(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.goto('/decks/', wait_until='domcontentloaded')
+    search = page.locator('header input.tt-input')
+    search.fill('bolt')
+    suggestions = page.locator('header .tt-menu .tt-suggestion')
+    expect(suggestions.first).to_be_visible()
+    assert 1 <= suggestions.count() <= 10
+    expect(suggestions.first).to_have_text('Lightning Bolt – Card')
+    suggestions.first.click()
+    expect(page).to_have_url(re.compile(r'/cards/Lightning%20Bolt/$'))
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_live_table_reserves_space_with_skeleton_while_loading(browser: 'Browser', site: Container, monkeypatch: pytest.MonkeyPatch) -> None:
     if BASE_URL:
         pytest.skip('Cannot delay the API on a remote canary.')

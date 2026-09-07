@@ -1,22 +1,15 @@
 <div>
-    <label for="{{prefix}}archetype">{{_ Archetype}}</label>
-    {{> archetypedropdown}}
+    <label for="{{prefix}}archetype_name">{{_ Archetype}}</label>
+    <input id="{{prefix}}archetype_name" name="{{prefix}}archetype_name" class="matchup-option" data-option-type="archetypes" type="text" autocomplete="off" placeholder="Search archetypes" value="{{archetype_name}}">
+    <input name="{{prefix}}archetype_id" type="hidden" value="{{archetype_id}}">
 </div>
 <div>
-    <label for="{{prefix}}person_id">{{_ Person}}</label>
-    <select name="{{prefix}}person_id">
-        <option value="">[Select]</option>
-        {{#people}}
-            <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{mtgo_username}}</option>
-        {{/people}}
-    </select>
+    <label for="{{prefix}}person_name">{{_ Person}}</label>
+    <input id="{{prefix}}person_name" name="{{prefix}}person_name" class="matchup-option" data-option-type="people" type="text" autocomplete="off" placeholder="Search people" value="{{person_label}}">
+    <input name="{{prefix}}person_id" type="hidden" value="{{person_id}}">
 </div>
 <div>
-    <label for="{{prefix}}card">{{_ Card}}</label>
-    <select name="{{prefix}}card">
-        <option value="">[Select]</option>
-        {{#cards}}
-            <option {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
-        {{/cards}}
-    </select>
+    <label for="{{prefix}}card_name">{{_ Card}}</label>
+    <input id="{{prefix}}card_name" name="{{prefix}}card_name" class="matchup-option" data-option-type="cards" type="text" autocomplete="off" placeholder="Search cards" value="{{card}}">
+    <input name="{{prefix}}card" type="hidden" value="{{card}}">
 </div>

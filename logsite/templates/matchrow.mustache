@@ -16,6 +16,6 @@
         <td>{{comment}}</td>
     {{/hide_comment}}
     <td data-text="{{date_sort}}">
-        {{display_date}}
+        {{#friendly_date}}{{> friendlytime}}{{/friendly_date}}
     </td>
 </tr>

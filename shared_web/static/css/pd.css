@@ -592,10 +592,6 @@ Color attributes are mostly found with their related structural elements in this
     --legibility-text-shadow: 0.05rem 0.05rem 8px black; /* Always dark, even in dark mode, because it's over an image. */
     --toggle-off: var(--light-gray);
     --toggle-on: var(--dark-gray);
-    --language-menu-highlight-text: var(--dark-gray);
-    --language-menu-background: var(--black);
-    --language-menu-text: var(--white);
-    --language-menu-text-hover: var(--dark-gray);
     --scrim-color: var(--true-black);
 
     /* Header and footer */
@@ -1464,25 +1460,22 @@ Some pages still send giant tables of data but logsite and deck table have pagin
 */
 
 .pagination {
+    align-items: center;
     display: flex;
     font-size: var(--table-font-size);
     font-variant-numeric: oldstyle-nums;
+    flex-wrap: wrap;
+    gap: 0 1em;
     justify-content: flex-end;
-    line-height: 1.777; /* So that the smaller (font-size: 0.75rem) text lines up vertically with the larger (font-size: 1rem) arrows which have line-height 1.333 (the base line height) = 1.333 / 0.75 */
+    line-height: 1.333;
 }
 
 .pagination .section {
-    margin-right: 1em;
     white-space: nowrap;
 }
 
-.pagination .section:last-child {
-    margin-right: 0;
-}
-
 .pagination .links {
-    font-size: var(--reading-font-size);
-    line-height: var(--reading-line-height);
+    display: flex;
 }
 
 .pagination .pages {
@@ -1490,8 +1483,45 @@ Some pages still send giant tables of data but logsite and deck table have pagin
     width: 8em;
 }
 
+.pagination .page-number {
+    min-width: 7em;
+    text-align: center;
+}
+
 .pagination a, .pagination .inactive {
     padding: 0.75rem; /* rem because font-size is larger for arrows than page-size. */
+}
+
+.pagination button.paginate {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    display: flex;
+    height: 2.2rem;
+    justify-content: center;
+    margin: 0;
+    max-width: none;
+    padding: 0;
+    width: 2.2rem;
+}
+
+.pagination button.paginate:not(:disabled) {
+    cursor: pointer;
+}
+
+.pagination button.paginate:not(:disabled):hover {
+    background-color: var(--highlight);
+    border-radius: var(--button-rounded-corners);
+}
+
+.pagination button.paginate:disabled {
+    color: var(--inactive);
+}
+
+.pagination button.paginate svg {
+    height: 0.8rem;
+    width: 0.8rem;
 }
 
 .page-size {
@@ -1585,14 +1615,6 @@ header, nav, main, footer {
 .dd-menu {
     z-index: 1;
     box-shadow: var(--elevation-1);
-}
-
-/* The way the desktop submenu is implemented it floats over the top of most other stuff. */
-@media only screen and (min-width: 641px) {
-    .language-menu {
-        z-index: 2;
-        box-shadow: var(--elevation-2);
-    }
 }
 
 .status-bar {
@@ -2115,6 +2137,28 @@ main input, select, textarea {
     margin-left: var(--form-element-margin);
 }
 
+main form .twitter-typeahead {
+    margin-left: var(--form-element-margin);
+    width: 20rem;
+}
+
+main form .twitter-typeahead input {
+    margin-left: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Value pickers should look like ordinary form inputs, not header search. */
+main form .tt-input {
+    background-color: var(--light-gray) !important;
+    box-shadow: none;
+}
+
+main form .tt-hint, main form .tt-menu {
+    left: 0 !important;
+    right: auto !important;
+}
+
 input[type=radio] {
     margin-left: 0;
 }
@@ -2157,6 +2201,16 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     max-width: 100%;
 }
 
+main td.archetype-picker-cell .twitter-typeahead {
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+main td.archetype-picker-cell {
+    overflow: visible;
+}
+
 .inline input, .inline select, .inline textarea, .inline label, .inline button {
     height: 1.1rem; /* Nonstandard height because of the padding the browser adds. */
     font-size: var(--table-font-size);
@@ -2184,6 +2238,10 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-bottom: 1rem;
         margin-left: 0;
         margin-top: 0.5625rem;
+        max-width: 80%;
+    }
+    main form .twitter-typeahead {
+        margin-left: 0;
         max-width: 80%;
     }
     button, div.error, .uploader-label, div.validation-ok, .form-field {
@@ -2319,8 +2377,8 @@ Search
     }
 }
 
-/* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */
-.twitter-typeahead {
+/* The js inserts a span with display:inline-block inside .search. We have to tell it to take up all the remaining space to get a bigger input. */
+.search .twitter-typeahead {
     width: 100%;
 }
 
@@ -2360,6 +2418,12 @@ Search
     font-size: var(--reading-font-size);
     padding: 0.563rem 0.563em;
 
+}
+
+main form .tt-suggestion {
+    font-size: inherit;
+    line-height: 1.333;
+    padding: 0.1em 0.4rem;
 }
 
 .tt-highlight {
@@ -2609,31 +2673,6 @@ main .ss-grid a.season-icon-link:hover, main .season-grid a.season-icon-link:hov
     color: var(--text);
     font-family: var(--main-text-font-family);
     font-size: var(--table-font-size);
-}
-
-/*
-
-Language Switcher
-
-*/
-
-.language-switcher {
-    left: 0;
-    position: absolute;
-    top: 0;
-}
-
-.language-icon {
-    width: 35px;
-    height: 35px;
-    padding: 0.563rem;
-    vertical-align: middle;
-}
-
-@media only screen and (max-width: 900px) {
-    .language-switcher {
-        display: none;
-    }
 }
 
 /*
@@ -3089,84 +3128,6 @@ From https://codepen.io/mallendeo/pen/eLIiG
 
 .toggle-right + .toggle-button {
     background: var(--toggle-on);
-}
-
-/*
-
-Language Switcher (Menu)
-
-The old menu used to use most of this, now it's just used by the language switcher.
-
-*/
-
-@media only screen and (min-width: 641px) {
-    .language-switcher {
-        width: 100%;
-    }
-
-    /* Slide-out caret at top of the dropdown. */
-
-    /* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */
-    .contains-dropdown > a:focus {
-        opacity: 1;
-    }
-
-    .contains-dropdown > a {
-        position: relative; /* Position the caret relative to the language switcher icon. */
-    }
-
-    /* Create the caret as a border with opacity zero to hide it initially. */
-    .contains-dropdown > a::after {
-        border-bottom: 1em solid var(--text);
-        border-left: 1.333em solid transparent;
-        border-right: 1.333em solid transparent;
-        content: "";
-        display: block;
-        height: 0;
-        left: 50%;
-        margin-left: -1.333em; /* Equal to border-left/border-right, to compensate for *starting* at left 50% instead of centering there. */
-        opacity: 0;
-        position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
-        transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
-        transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
-        width: 0;
-    }
-
-    .language-switcher.contains-dropdown > a::after {
-        top: 1.126em;
-    }
-
-    /* Show the caret on hover. */
-    .hovering > a::after {
-        opacity: 1;
-        transform: translateY(0); /* In the revealed state the caret is sitting inside the language switcher's padding,  */
-        transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a::after on hover. */
-    }
-}
-
-.language-menu li > a {
-    display: block;
-    padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
-    text-decoration: none;
-}
-
-.language-menu {
-    background: var(--language-menu-background);
-    box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
-    color: var(--language-menu-text);
-    display: none;
-    left: 0;
-    position: absolute;
-    width: 100%;
-}
-
-.language-menu li {
-    float: left;
-}
-
-.language-menu a:hover {
-    background-color: var(--language-menu-background);
-    color: var(--language-menu-highlight-text);
 }
 
 /*

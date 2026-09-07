@@ -1,3 +1,4 @@
+from collections.abc import Mapping
 from typing import Any, cast
 
 import titlecase
@@ -47,8 +48,7 @@ def admin_home() -> wrappers.Response:
 @auth.admin_required
 def edit_aliases() -> str:
     aliases = ps.load_aliases()
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = EditAliases(aliases, all_people)
+    view = EditAliases(aliases)
     return view.page()
 
 @APP.route('/admin/aliases/', methods=['POST'])
@@ -61,8 +61,8 @@ def post_aliases(person_id: int | None = None, alias: str | None = None) -> str 
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
-def edit_archetypes(q: str = '', notq: str = '', query_errors: list[str] | None = None, notquery_errors: list[str] | None = None) -> wrappers.Response:
-    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq, query_errors, notquery_errors)
+def edit_archetypes(q: str = '', notq: str = '', query_errors: list[str] | None = None, notquery_errors: list[str] | None = None, add_errors: list[str] | None = None, add_values: Mapping[str, str] | None = None) -> wrappers.Response:
+    view = EditArchetypes(archs.load_archetypes(order_by='a.name'), q, notq, query_errors, notquery_errors, add_errors, add_values)
     return view.response()
 
 def validate_card_names(raw_names: str) -> tuple[list[str], list[str]]:
@@ -107,13 +107,40 @@ def post_archetypes() -> wrappers.Response:
         archs.update_description(cast_int(request.form.get('archetype_id')), cast(str, request.form.get('new_description')))
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
         archs.move(int(request.form.getlist('archetype_id')[0]), int(request.form.getlist('archetype_id')[1]))
-    elif request.form.get('parent') is not None:
-        if len(request.form.get('name', '')) > 0:
-            archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')), cast(str, request.form.get('description')))
+    elif request.form.get('create_archetype') is not None or request.form.get('parent') is not None:
+        errors = []
+        parent_id = None
+        parent = request.form.get('parent', '').strip()
+        name = request.form.get('name', '').strip()
+        include = request.form.get('include', '')
+        exclude = request.form.get('exclude', '')
+        try:
+            parent_id = int(parent)
+        except ValueError:
+            errors.append('Please select a valid parent archetype.')
+        else:
+            if not archs.archetype_exists(parent_id):
+                errors.append('Please select a valid parent archetype.')
+        if not name:
+            errors.append('Please enter a name.')
+        elif archs.name_exists(name):
+            errors.append(f'An archetype named {name} already exists.')
+        try:
+            included_cards, excluded_cards = rs.parse_cards_raw(include, exclude)
+        except InvalidDataException as e:
+            errors.append(str(e))
+            included_cards, excluded_cards = [], []
+        if errors:
+            return edit_archetypes(add_errors=errors, add_values=request.form)
+        assert parent_id is not None
+        archetype_id = archs.add(name, parent_id, request.form.get('description', '').strip())
+        if included_cards or excluded_cards:
+            rule_id = rs.add_rule(archetype_id)
+            rs.update_cards(rule_id, included_cards, excluded_cards)
     else:
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/archetypes: {request.form}')
     if search_results:
-        view = ArchetypeSearch(archs.load_archetypes(order_by='a.name'), search_results, request.form.get('q', ''), request.form.get('notq', ''))
+        view = ArchetypeSearch(search_results, request.form.get('q', ''), request.form.get('notq', ''))
         return view.response()
     return edit_archetypes(request.form.get('q', ''), request.form.get('notq', ''))
 
@@ -130,8 +157,13 @@ def edit_rules(errors: list[str] | None = None) -> wrappers.Response:
 @auth.demimod_required
 def post_rules() -> wrappers.Response:
     if request.form.get('archetype_id'):
-        rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
-        rs.update_cards_raw(rule_id, request.form.get('include', ''), request.form.get('exclude', ''))
+        try:
+            included_cards, excluded_cards = rs.parse_cards_raw(request.form.get('include', ''), request.form.get('exclude', ''))
+        except InvalidDataException as e:
+            return edit_rules([str(e)])
+        if included_cards or excluded_cards:
+            rule_id = rs.add_rule(cast_int(request.form.get('archetype_id')))
+            rs.update_cards(rule_id, included_cards, excluded_cards)
     else:
         return edit_rules(['Please select an archetype.'])
     return edit_rules()
@@ -201,8 +233,7 @@ def rotation_checklist() -> str:
 @auth.admin_required
 def player_notes() -> str:
     notes = ps.load_notes()
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = PlayerNotes(notes, all_people)
+    view = PlayerNotes(notes)
     return view.page()
 
 @APP.route('/admin/people/notes/', methods=['POST'])
@@ -218,8 +249,7 @@ def post_player_note(person_id: int, note: str) -> wrappers.Response:
 @APP.route('/admin/unlink/')
 @auth.admin_required
 def unlink(num_affected_people: int | None = None, errors: list[str] | None = None) -> str:
-    all_people = ps.load_people(where='p.discord_id IS NOT NULL', order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = Unlink(all_people, num_affected_people, errors)
+    view = Unlink(num_affected_people, errors)
     return view.page()
 
 @APP.route('/admin/unlink/', methods=['POST'])
@@ -240,8 +270,8 @@ def post_unlink() -> str:
 @APP.route('/admin/ban/')
 @auth.admin_required
 def ban(success: bool | None = None) -> str:
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = Ban(all_people, success)
+    banned_people = ps.load_people_statless(where='p.banned', order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    view = Ban(banned_people, success)
     return view.page()
 
 @APP.route('/admin/ban/', methods=['POST'])

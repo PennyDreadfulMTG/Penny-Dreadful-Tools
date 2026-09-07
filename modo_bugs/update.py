@@ -30,6 +30,11 @@ ALL_BUGS: list[BugData] = []
 
 VERIFICATION_BY_ISSUE: dict[int, str] = {}
 
+MAX_TITLE_LENGTH = 120
+ALLOWED_MULTIPLE_CATEGORIES = {
+    frozenset({'Advantageous', 'Non-Functional ability'}),
+}
+
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
 
@@ -91,6 +96,7 @@ def process_issue(issue: Issue) -> None:
     if age < 5:
         fix_user_errors(issue)
         apply_screenshot_labels(issue)
+    check_for_invalid_metadata(issue)
     labels = [c.name for c in issue.labels]
     see_also = strings.get_body_field(issue.body, 'See Also')
     feedback_link = strings.get_body_field(issue.body, 'Forum Post')
@@ -239,6 +245,20 @@ def check_for_invalid_card_names(issue: Issue, cards: list[str]) -> None:
         issue.add_to_labels('Invalid Card Name')
     elif not fail and 'Invalid Card Name' in labels:
         issue.remove_from_labels('Invalid Card Name')
+
+def check_for_invalid_metadata(issue: Issue) -> None:
+    labels = [label.name for label in issue.labels]
+    categories = frozenset(label for label in labels if label in CATEGORIES)
+    has_invalid_categories = len(categories) > 1 and categories not in ALLOWED_MULTIPLE_CATEGORIES
+
+    update_validation_label(issue, labels, 'Invalid Title', len(issue.title) > MAX_TITLE_LENGTH)
+    update_validation_label(issue, labels, 'Multiple Categories', has_invalid_categories)
+
+def update_validation_label(issue: Issue, labels: list[str], label: str, should_apply: bool) -> None:
+    if should_apply and label not in labels:
+        issue.add_to_labels(label)
+    elif not should_apply and label in labels:
+        issue.remove_from_labels(label)
 
 def get_affects(issue: Issue) -> list[str]:
     affects = strings.get_body_field(issue.body, 'Affects')

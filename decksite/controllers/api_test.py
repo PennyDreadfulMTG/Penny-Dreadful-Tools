@@ -68,6 +68,91 @@ def test_card_api_returns_not_found_for_unknown_card() -> None:
     assert response.get_json()['code'] == 'NOTFOUND'
 
 
+def test_matchup_options_api_returns_small_search_results(monkeypatch: pytest.MonkeyPatch) -> None:
+    expected = [{'name': 'Lightning Bolt', 'value': 'Lightning Bolt'}]
+    monkeypatch.setattr(api.mus, 'search_options', lambda option_type, search, person_filter: expected if option_type == 'cards' and search == 'bolt' and person_filter == 'matchups' else [])
+
+    response = APP.test_client().get('/api/matchup-options/cards/?q=bolt')
+
+    assert response.status_code == 200
+    assert response.get_json() == expected
+
+
+def test_matchup_people_options_passes_admin_filter(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[str, str, str]] = []
+
+    def search_options(option_type: str, search: str, person_filter: str) -> list[dict[str, str]]:
+        calls.append((option_type, search, person_filter))
+        return []
+
+    monkeypatch.setattr(api.mus, 'search_options', search_options)
+
+    response = APP.test_client().get('/api/matchup-options/people/?q=smoke&personFilter=discord')
+
+    assert response.status_code == 200
+    assert calls == [('people', 'smoke', 'discord')]
+
+
+def test_matchup_people_options_rejects_unknown_filter() -> None:
+    response = APP.test_client().get('/api/matchup-options/people/?q=smoke&personFilter=anything')
+
+    assert response.status_code == 400
+
+
+def test_decks_api_combines_standard_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def load_decks_with_total(**kwargs: Any) -> tuple[list[Container], int]:
+        captured.update(kwargs)
+        return [Container({'id': 7})], 123
+
+    monkeypatch.setattr(api.deck, 'load_decks_with_total', load_decks_with_total)
+    monkeypatch.setattr(api, 'prepare_decks', lambda _decks: None)
+
+    response = APP.test_client().get('/api/decks/', query_string={
+        'archetypeId': '4',
+        'opponentCardName': 'Counterspell',
+        'page': '2',
+        'pageSize': '20',
+        'seasonId': 'all',
+    })
+
+    assert response.status_code == 200
+    assert response.get_json() == {'objects': [{'id': 7}], 'page': 2, 'total': 123}
+    assert 'd.archetype_id IN' in captured['where']
+    assert 'd.retired' in captured['where']
+    assert 'matchup_enemy.id IN' in captured['where']
+    assert "card = 'Counterspell'" in captured['where']
+    assert captured['limit'] == 'LIMIT 40, 20'
+    assert captured['season_id'] is None
+
+
+def test_matches_api_combines_hero_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def load_matches_with_total(**kwargs: Any) -> tuple[list[Container], int]:
+        captured.update(kwargs)
+        return [Container({'id': 8})], 456
+
+    monkeypatch.setattr(api.match, 'load_matches_with_total', load_matches_with_total)
+    monkeypatch.setattr(api, 'prepare_matches', lambda _matches: None)
+
+    response = APP.test_client().get('/api/matches/', query_string={
+        'personId': '10',
+        'opponentPersonId': '11',
+        'page': '1',
+        'pageSize': '100',
+        'seasonId': 'all',
+    })
+
+    assert response.status_code == 200
+    assert response.get_json() == {'objects': [{'id': 8}], 'page': 1, 'total': 456}
+    assert 'd.person_id = 10' in captured['where']
+    assert 'od.person_id = 11' in captured['where']
+    assert captured['limit'] == 'LIMIT 100, 100'
+    assert captured['season_id'] is None
+
+
 @pytest.mark.functional
 def test_aggregate_apis_serialize_integer_stats_as_numbers(seeded_db: Container) -> None:
     season_id = db().value('SELECT season_id FROM deck_cache LIMIT 1')

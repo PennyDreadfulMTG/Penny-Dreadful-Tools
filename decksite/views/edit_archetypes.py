@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+
 from flask import url_for
 
 from decksite import prepare
@@ -7,7 +9,7 @@ from decksite.view import View
 
 
 class EditArchetypes(View):
-    def __init__(self, archetypes: list[Archetype], q: str, notq: str, query_errors: list[str] | None = None, notquery_errors: list[str] | None = None) -> None:
+    def __init__(self, archetypes: list[Archetype], q: str, notq: str, query_errors: list[str] | None = None, notquery_errors: list[str] | None = None, add_errors: list[str] | None = None, add_values: Mapping[str, str] | None = None) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.archetypes_preordered = archetype.preorder(archetypes)
@@ -20,15 +22,13 @@ class EditArchetypes(View):
             prepare.prepare_deck(d)
             d.archetype_url = url_for('.archetype', archetype_id=d.archetype_name)
             d.archetype_description = archetype_descriptions.get(d.get('archetype_id'), '')
+            d.selected_archetype_id = ''
+            d.selected_archetype_name = ''
             if d.get('rule_archetype_id'):
                 d.rule_archetype_url = url_for('.archetype', archetype_id=d.rule_archetype_name)
                 d.rule_archetype_description = archetype_descriptions.get(d.rule_archetype_id, '')
-                d.archetypes = []
-                for a in self.archetypes:
-                    if a.id == d.rule_archetype_id:
-                        d.archetypes.append({'id': a.id, 'name': a.name, 'selected': True})
-                    else:
-                        d.archetypes.append(a)
+                d.selected_archetype_id = d.rule_archetype_id
+                d.selected_archetype_name = d.rule_archetype_name
             if d.get('rule_archetype_id') == 0:
                 d.rule_archetype_url = url_for('edit_rules')
             d.show_add_rule_prompt = d.similarity == '100%' and not d.get('rule_archetype_name')
@@ -39,6 +39,16 @@ class EditArchetypes(View):
         self.notquery_errors = notquery_errors or []
         self.has_query_errors = bool(self.query_errors)
         self.has_notquery_errors = bool(self.notquery_errors)
+        self.add_errors = add_errors or []
+        self.has_add_errors = bool(self.add_errors)
+        values = add_values or {}
+        selected_parent = next((a for a in archetypes if str(a.id) == values.get('parent')), None)
+        self.add_parent_id = selected_parent.id if selected_parent else ''
+        self.add_parent_name = selected_parent.name if selected_parent else ''
+        self.add_name = values.get('name', '')
+        self.add_description = values.get('description', '')
+        self.add_include = values.get('include', '')
+        self.add_exclude = values.get('exclude', '')
 
     def page_title(self) -> str:
         return 'Edit Archetypes'

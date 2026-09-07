@@ -20,7 +20,7 @@
                         <td><a href="{{source_url}}">{{source_name}}</a></td>
                         <td>
                             <a href="{{archetype_url}}" title="{{archetype_description}}">{{archetype_name}}</a>
-                            {{#archetype_id}}<a class="use-guess" title="Assign this deck to {{archetype_name}}" data-archetype_id="{{archetype_id}}">[✓]</a>{{/archetype_id}}
+                            {{#archetype_id}}<a class="use-guess" title="Assign this deck to {{archetype_name}}" data-archetype_id="{{archetype_id}}" data-archetype_name="{{archetype_name}}">[✓]</a>{{/archetype_id}}
                         </td>
                         <td class="n">
                             {{similarity}}
@@ -29,9 +29,9 @@
                             {{/show_add_rule_prompt}}
                         </td>
                         <td><a href="{{rule_archetype_url}}" title="{{rule_archetype_description}}">{{rule_archetype_name}}</a></td>
-                        <td>
+                        <td class="archetype-picker-cell">
                             <input type="hidden" name="deck_id" value="{{id}}">
-                            {{> archetypedropdown}}
+                            {{> archetypepicker}}
                         </td>
                     </tr>
                 {{/queue}}
@@ -45,11 +45,11 @@
     <form method="post">
         <div>
             <label>Move</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <div>
             <label>New Parent</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <button type="submit">Move</button>
     </form>
@@ -59,7 +59,7 @@
     <form method="post">
         <div>
             <label for="archetype_id">Rename</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <div>
             <label for="rename_to">To</label>
@@ -73,7 +73,7 @@
     <form method="post">
         <div>
             <label>Update</label>
-            {{> archetypedropdown}}
+            {{> archetypepicker}}
         </div>
         <div>
             <label>New description</label>
@@ -124,25 +124,37 @@
         {{/archetypes_preordered}}
     </table>
 </section>
-<section>
+<section id="add-archetype">
     <h2>Add Archetype</h2>
-    <form method="post">
+    {{#has_add_errors}}
+        <div id="add-archetype-errors" role="alert">
+            {{#add_errors}}
+                <p class="error">{{.}}</p>
+            {{/add_errors}}
+        </div>
+    {{/has_add_errors}}
+    <form method="post" action="#add-archetype">
+        <input type="hidden" name="create_archetype" value="1">
         <div>
-            <label for="parent">Parent</label>
-            <select name="parent">
-                <option value="">[Select]</option>
-                {{#archetypes}}
-                    <option value="{{id}}">{{name}}</option>
-                {{/archetypes}}
-            </select>
+            <label for="parent_name">Parent</label>
+            <input id="parent_name" class="archetype-option" data-option-type="archetypes" type="text" autocomplete="off" placeholder="Search archetypes" value="{{add_parent_name}}" required>
+            <input id="parent" name="parent" type="hidden" value="{{add_parent_id}}">
         </div>
         <div>
             <label for="name">Name</label>
-            <input type="text" name="name">
+            <input type="text" name="name" id="name" value="{{add_name}}" required>
         </div>
         <div>
             <label for="description">Description</label>
-            <input type="text" name="description">
+            <input type="text" name="description" id="description" value="{{add_description}}">
+        </div>
+        <div>
+            <label for="include">Must include</label>
+            <textarea name="include" id="include">{{add_include}}</textarea>
+        </div>
+        <div>
+            <label for="exclude">Must not include</label>
+            <textarea name="exclude" id="exclude">{{add_exclude}}</textarea>
         </div>
         <div>
             <button type="submit">Add</button>

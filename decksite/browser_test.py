@@ -30,7 +30,7 @@ ENABLED = bool(BASE_URL) or os.environ.get('PD_BROWSER_TESTS') == '1'
 pytestmark = [pytest.mark.browser, pytest.mark.skipif(not ENABLED, reason='Set PD_BROWSER_TESTS=1 or PD_BROWSER_BASE_URL to run browser tests')]
 
 if ENABLED:
-    from playwright.sync_api import Browser, Locator, Page, expect, sync_playwright
+    from playwright.sync_api import Browser, Locator, Page, Route, expect, sync_playwright
 
 # Fixed entry points. More pages are discovered from the links on these so the test needs no knowledge of what data the site has.
 PAGES = ['/', '/decks/', '/people/', '/cards/', '/metagame/', '/competitions/', '/tournaments/leaderboards/', '/resources/', '/about/']
@@ -127,6 +127,9 @@ def test_pages_render_with_data_and_without_errors(browser: 'Browser', site: Con
             problems.append(f'{path}: HTTP {response.status}')
             continue
         problems.extend(wait_for_live_tables(page))
+        untitled_times = page.locator('time:not([title])')
+        if untitled_times.count():
+            problems.append(f'{path}: {untitled_times.count()} time elements lack exact timestamp titles')
         problems.extend(f'{path}: {p}' for p in collector.problems)
     if site.seed:
         assert any('/people/' in p and p != '/people/' for p in pages) and any('/cards/' in p and p != '/cards/' for p in pages), f'Discovery found no person/card pages in {pages}'
@@ -155,6 +158,64 @@ def test_table_without_optional_class_name_omits_it(browser: 'Browser', site: Co
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_pagination_shows_page_number_and_jumps_to_ends(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+
+    def force_multiple_pages(route: 'Route') -> None:
+        response = route.fetch()
+        data = response.json()
+        data['total'] = 41
+        route.fulfill(response=response, json=data)
+
+    page.route('**/api/decks/**', force_multiple_pages)
+    page.goto('/decks/')
+    assert not wait_for_live_tables(page)
+    pagination = page.locator('.decktable .pagination')
+
+    page_number = pagination.locator('.page-number')
+    expect(page_number).to_have_text(re.compile(r'Page 1 of \d+'))
+    match = re.fullmatch(r'Page 1 of (\d+)', page_number.inner_text())
+    assert match
+    last_page = int(match.group(1))
+    assert last_page > 1
+    expect(pagination.get_by_role('button', name='First page')).to_be_disabled()
+
+    with page.expect_response(lambda response: '/api/decks/' in response.url and f'page={last_page - 1}' in response.url):
+        pagination.get_by_role('button', name='Last page').click()
+    expect(page_number).to_have_text(f'Page {last_page} of {last_page}')
+    expect(pagination.get_by_role('button', name='Last page')).to_be_disabled()
+
+    with page.expect_response(lambda response: '/api/decks/' in response.url and 'page=0' in response.url):
+        pagination.get_by_role('button', name='First page').click()
+    expect(page_number).to_have_text(f'Page 1 of {last_page}')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
+def test_matchups_uses_working_paginated_deck_and_read_only_match_tables(browser: 'Browser', site: Container) -> None:
+    if not site.seed:
+        pytest.skip('The canary database does not have the seeded matchup fixture')
+    page, collector = new_page(browser, site)
+    page.goto(f'/matchups/?hero_person_id={site.seed.person_id}')
+
+    assert not wait_for_live_tables(page)
+    expect(page.locator('.decktable tbody tr')).to_have_count(2)
+    expect(page.locator('.matchtable tbody tr')).to_have_count(2)
+    expect(page.locator('.matchtable th')).to_contain_text(['Person', 'Deck', 'Opponent', "Opponent's Deck", 'Result', 'Competition', 'Date', 'MTGO Log'])
+    expect(page.locator('.matchtable form')).to_have_count(0)
+    expect(page.locator('.matchtable a[href*="/decks/"]').first).to_be_visible()
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
+def test_tournament_calendar_is_not_sortable(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    for path in ['/', '/tournaments/']:
+        page.goto(path)
+        calendar = page.locator('table.calendar')
+        expect(calendar).to_be_visible()
+        expect(calendar.locator('th.tablesorter-header')).to_have_count(0)
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site)
     page.goto('/metagame/')
@@ -166,6 +227,33 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
 
     page.locator('main').evaluate("element => { element.insertAdjacentHTML('beforeend', '<li class=button id=informational-title title=Details>Achievement</li>'); }")
     expect(page.locator('#informational-title')).to_have_css('cursor', 'help')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
+def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site, locale='en-GB', timezone_id='America/New_York')
+    with page.expect_response(lambda response: '/api/decks/?' in response.url) as response_info:
+        page.goto('/decks/')
+    assert not wait_for_live_tables(page)
+
+    deck = response_info.value.json()['objects'][0]
+    api_friendly_date = deck['friendlyDate']
+    friendly_date = page.locator('.decktable td.date time').first
+    exact_date = page.evaluate(
+        "datetime => new Intl.DateTimeFormat('en-GB', {dateStyle: 'full', timeStyle: 'full'}).format(new Date(datetime))",
+        api_friendly_date['datetime'],
+    )
+    assert re.search(r' Eastern (Daylight|Standard) Time$', exact_date)
+    assert deck['displayDate'] == api_friendly_date['display']
+    expect(friendly_date).to_have_text(api_friendly_date['display'])
+    expect(friendly_date).to_have_attribute('datetime', api_friendly_date['datetime'])
+    expect(friendly_date).to_have_attribute('title', exact_date)
+
+    page.goto(deck['url'])
+    deck_date = page.locator('.subtitle time').first
+    expect(deck_date).to_have_text(api_friendly_date['display'])
+    expect(deck_date).to_have_attribute('datetime', api_friendly_date['datetime'])
+    expect(deck_date).to_have_attribute('title', exact_date)
     assert not collector.problems, '\n'.join(collector.problems)
 
 

@@ -3,14 +3,14 @@
     <form method="post">
         <select {{#form.errors.left_id}}class="error" aria-describedby="left-id-error" {{/form.errors.left_id}}name="left_id">
             {{#decks}}
-                <option value="{{id}}" class="person">{{person}} ({{name}}, {{display_date}}, {{id}}{{#retired}}, Retired{{/retired}}, {{wins}}–{{losses}})</option>
+                <option value="{{id}}" class="person" data-friendly-datetime="{{friendly_date.datetime}}">{{person}} ({{name}}, {{friendly_date.display}}, {{id}}{{#retired}}, Retired{{/retired}}, {{wins}}–{{losses}})</option>
             {{/decks}}
         </select>
         <input {{#form.errors.left_games}}class="error" aria-describedby="left-games-error" {{/form.errors.left_games}}type="number" name="left_games" value="{{form.left_games}}">
         <input {{#form.errors.right_games}}class="error" aria-describedby="right-games-error" {{/form.errors.right_games}}type="number" name="right_games" value="{{form.right_games}}">
         <select {{#form.errors.right_id}}class="error" aria-describedby="right-id-error" {{/form.errors.right_id}}name="right_id">
             {{#decks}}
-                <option value="{{id}}" class="person">{{person}} ({{name}}, {{display_date}}, {{id}})</option>
+                <option value="{{id}}" class="person" data-friendly-datetime="{{friendly_date.datetime}}">{{person}} ({{name}}, {{friendly_date.display}}, {{id}})</option>
             {{/decks}}
         </select>
         <button type="submit" name="action" value="add">Add Match</button>

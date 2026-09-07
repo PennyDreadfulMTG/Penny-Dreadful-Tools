@@ -13,7 +13,7 @@ from werkzeug import exceptions, wrappers
 from shared import configuration, logger, repo, sentry
 from shared.pd_exception import BadRequestException, DoesNotExistException
 
-from . import api, localization, oauth
+from . import api, oauth
 from .api import generate_error, return_json
 from .views import BadRequest, InternalServerError, NotFound, Unauthorized
 
@@ -56,9 +56,6 @@ class PDFlask(Flask):
         translations = os.path.abspath(os.path.join(shared_web_path, 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
-        self.babel.locale_selector_func = localization.get_locale
-        with self.app_context():
-            localization.init(self.babel)
         self.api_root = Blueprint('api', import_name, url_prefix='/api')
         self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
         self.register_blueprint(self.api_root)

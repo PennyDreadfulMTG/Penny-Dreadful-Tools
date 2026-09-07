@@ -9,6 +9,7 @@ from magic.models import Deck
 from shared import dtutil, logger, repo
 from shared import redis_wrapper as redis
 from shared.container import Container
+from shared_web import friendly_time
 
 
 def all_news(ds: list[Deck], start_date: datetime.datetime | None = None, end_date: datetime.datetime | None = None, max_items: int = sys.maxsize) -> list[Container]:
@@ -28,7 +29,8 @@ def all_news(ds: list[Deck], start_date: datetime.datetime | None = None, end_da
             continue
         if item.date < start_date:
             break
-        item.display_date = dtutil.display_date(item.date)
+        item.friendly_date = friendly_time.friendly_date(item.date)
+        item.display_date = item.friendly_date.display  # API compatibility.
         results.append(item)
         if len(results) >= max_items:
             break

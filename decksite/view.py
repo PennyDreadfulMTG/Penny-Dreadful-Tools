@@ -2,12 +2,11 @@ import sys
 from typing import Any, TypedDict, cast
 
 import inflect
-from babel import Locale
 from flask import request, session, url_for
-from flask_babel import gettext, ngettext
+from flask_babel import ngettext
 from werkzeug.routing import BuildError
 
-from decksite import APP, auth, get_season_id, prepare
+from decksite import get_season_id, prepare
 from decksite.data import competition
 from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAGE_SIZE
 from decksite.deck_type import DeckType
@@ -15,7 +14,7 @@ from magic import card_price, legality, seasons, tournaments
 from magic.models import Deck
 from shared import dtutil, logger, text
 from shared.container import Container
-from shared_web import template
+from shared_web import friendly_time, template
 from shared_web.base_view import BaseView
 
 
@@ -174,6 +173,15 @@ class View(BaseView):
     def page_title(self) -> str | None:
         pass
 
+    def og_title(self) -> str:
+        return text.replace_emoji_with_text(self.page_title() or 'Penny Dreadful Magic')
+
+    def og_url(self) -> str:
+        return request.base_url
+
+    def og_description(self) -> str:
+        return 'Penny Dreadful is an ultra-budget Magic Online format with thousands of legal cards, free weekly tournaments, a free league, and quarterly rotations.'
+
     def num_tournaments(self) -> str:
         r = inflect.engine().number_to_words(str(len(tournaments.all_series_info())))
         return cast(str, r)
@@ -231,8 +239,10 @@ class View(BaseView):
     def prepare_competitions(self) -> None:
         for c in getattr(self, 'competitions', []):
             c.competition_url = f'/competitions/{c.id}/'
-            c.display_date = dtutil.display_date(c.start_date)
-            c.competition_ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
+            c.friendly_date = friendly_time.friendly_date(c.start_date)
+            c.display_date = c.friendly_date.display  # API compatibility.
+            c.competition_ends_friendly = None if c.end_date < dtutil.now() else friendly_time.friendly_date(c.end_date)
+            c.competition_ends = '' if c.competition_ends_friendly is None else c.competition_ends_friendly.display  # API compatibility.
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = c.type == 'League'
 
@@ -264,15 +274,6 @@ class View(BaseView):
         if active and o.hide_active_runs:
             o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if active else ''
             o.decks = other
-
-    def babel_languages(self) -> list[Locale]:
-        return APP.babel.list_translations()
-
-    def logged_in(self) -> bool:
-        return bool(auth.person_id())
-
-    def TT_HELP_TRANSLATE(self) -> str:
-        return gettext('Help us translate the site into your language')
 
     def setup_tournaments(self) -> None:
         info = tournaments.next_tournament_info()

@@ -2,22 +2,23 @@ from collections.abc import Iterable
 
 from flask import url_for
 
-from decksite.data.person import Person
 from decksite.view import View
 from shared import dtutil
 from shared.container import Container
+from shared_web import friendly_time
 
 
 class PlayerNotes(View):
-    def __init__(self, notes: Iterable[Container], people: Iterable[Person]) -> None:
+    def __init__(self, notes: Iterable[Container]) -> None:
         super().__init__()
         for n in notes:
             n.date_sort = dtutil.dt2ts(n.created_date)
-            n.display_date = dtutil.display_date(n.created_date)
+            n.friendly_date = friendly_time.friendly_date(n.created_date)
+            n.display_date = n.friendly_date.display  # API compatibility.
             n.subject_url = url_for('person', person_id=n.subject_id)
             n.creator_url = url_for('person', person_id=n.creator_id)
         self.notes = notes
-        self.people = people
+        self.person_filter = 'all'
 
     def page_title(self) -> str:
         return 'Player Notes'

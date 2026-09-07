@@ -20,6 +20,9 @@ class LeagueInfo(View):
     def page_title(self) -> str:
         return 'Cardhoarder League'
 
+    def og_description(self) -> str:
+        return 'Join the free, play-anytime Penny Dreadful league on Magic Online, play five-match runs, and compete for monthly Cardhoarder prizes.'
+
     def discord_url(self) -> str:
         return 'https://discord.gg/Yekrz3s'  # Invite directly into #league channel
 

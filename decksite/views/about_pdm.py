@@ -3,8 +3,6 @@ from flask_babel import gettext
 
 from decksite.view import View
 
-from .. import APP
-
 
 class AboutPdm(View):
     def __init__(self) -> None:
@@ -13,6 +11,3 @@ class AboutPdm(View):
 
     def page_title(self) -> str:
         return gettext('About')
-
-    def languages(self) -> str:
-        return ', '.join([locale.display_name for locale in APP.babel.list_translations()])

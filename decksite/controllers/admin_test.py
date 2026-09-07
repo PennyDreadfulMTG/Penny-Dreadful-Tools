@@ -2,11 +2,15 @@ from typing import Any, cast
 
 import pytest
 
+from decksite import prepare
 from decksite.controllers import admin
-from decksite.data import deck
+from decksite.data import deck, rule
+from decksite.data.archetype import Archetype
 from decksite.league import EditMatchForm
 from decksite.main import APP
 from decksite.views import Ban, EditAliases, EditArchetypes, EditMatches, EditRules, PlayerNotes, Unlink
+from decksite.views.archetype_search import ArchetypeSearch
+from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
 
@@ -195,12 +199,67 @@ def test_edit_archetypes_add_form_includes_rule_fields(monkeypatch: pytest.Monke
     assert '<section id="add-archetype">' in html
     assert '<form method="post" action="#add-archetype">' in html
     assert '<input type="hidden" name="create_archetype" value="1">' in html
-    assert '<select name="parent" id="parent" required>' in html
+    assert '<input id="parent_name" class="archetype-option" data-option-type="archetypes" type="text" autocomplete="off" placeholder="Search archetypes" value="" required>' in html
+    assert '<input id="parent" name="parent" type="hidden" value="">' in html
     assert '<input type="text" name="name" id="name" value="" required>' in html
     assert '<label for="include">Must include</label>' in html
     assert '<textarea name="include" id="include"></textarea>' in html
     assert '<label for="exclude">Must not include</label>' in html
     assert '<textarea name="exclude" id="exclude"></textarea>' in html
+    assert html.count('class="archetype-option"') == 5
+    assert '<select name="archetype_id"' not in html
+    assert '<select name="parent"' not in html
+
+
+def test_edit_archetypes_queue_uses_remote_picker_and_keeps_rule_guess(monkeypatch: pytest.MonkeyPatch) -> None:
+    queued_deck = Container({
+        'id': 123,
+        'archetype_id': 67,
+        'archetype_name': 'Burn',
+        'rule_archetype_id': 44,
+        'rule_archetype_name': 'Burning Vengeance',
+        'similarity': '75%',
+    })
+    archetypes = [
+        Archetype({'id': 44, 'name': 'Burning Vengeance', 'description': 'Rule match'}),
+        Archetype({'id': 67, 'name': 'Burn', 'description': 'Current guess'}),
+    ]
+    monkeypatch.setattr(deck, 'load_decks', lambda *args, **kwargs: [queued_deck])
+    monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
+    monkeypatch.setattr(rule, 'apply_rules_to_decks', lambda decks: None)
+    monkeypatch.setattr(prepare, 'prepare_deck', lambda d: None)
+
+    with APP.test_request_context('/admin/archetypes/'):
+        html = EditArchetypes(archetypes, '', '').render_content()
+
+    assert html.count('class="archetype-option"') == 6
+    assert 'value="Burning Vengeance"' in html
+    assert '<input name="archetype_id" type="hidden" value="44">' in html
+    assert 'data-archetype_id="67" data-archetype_name="Burn"' in html
+    assert '<option' not in html
+
+
+def test_edit_archetypes_preserves_selected_parent_after_add_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    parent = Archetype({'id': 67, 'name': 'Burn', 'description': ''})
+    monkeypatch.setattr(deck, 'load_decks', lambda *args, **kwargs: [])
+    monkeypatch.setattr(deck, 'load_queue_similarity', lambda decks: None)
+
+    with APP.test_request_context('/admin/archetypes/'):
+        html = EditArchetypes([parent], '', '', add_errors=['Invalid rule'], add_values={'parent': '67'}).render_content()
+
+    assert '<input id="parent_name" class="archetype-option" data-option-type="archetypes" type="text" autocomplete="off" placeholder="Search archetypes" value="Burn" required>' in html
+    assert '<input id="parent" name="parent" type="hidden" value="67">' in html
+
+
+def test_archetype_search_results_use_remote_picker(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(prepare, 'prepare_deck', lambda d: None)
+
+    with APP.test_request_context('/admin/archetypes/'):
+        html = ArchetypeSearch([Container({'id': 123})], 'Bolt', '').render_content()
+
+    assert 'class="archetype-option"' in html
+    assert '<input name="archetype_id" type="hidden" value="">' in html
+    assert '<select name="archetype_id"' not in html
 
 
 def test_admin_menu_hides_admin_only_items_from_demimod() -> None:

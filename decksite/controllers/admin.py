@@ -140,7 +140,7 @@ def post_archetypes() -> wrappers.Response:
     else:
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/archetypes: {request.form}')
     if search_results:
-        view = ArchetypeSearch(archs.load_archetypes(order_by='a.name'), search_results, request.form.get('q', ''), request.form.get('notq', ''))
+        view = ArchetypeSearch(search_results, request.form.get('q', ''), request.form.get('notq', ''))
         return view.response()
     return edit_archetypes(request.form.get('q', ''), request.form.get('notq', ''))
 

@@ -340,6 +340,7 @@ PD.initArchetypePickers = function() {
     $(".archetype-option").each(function() {
         PD.initValueTypeahead($(this), {
             "display": "name",
+            "hint": false,
             "url": "/api/matchup-options/archetypes/?q={q}",
             "selectionError": "Select an archetype from the suggestions."
         });

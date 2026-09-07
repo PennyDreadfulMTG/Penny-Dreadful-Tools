@@ -2148,6 +2148,12 @@ main form .twitter-typeahead input {
     width: 100%;
 }
 
+/* Value pickers should look like ordinary form inputs, not header search. */
+main form .tt-input {
+    background-color: var(--light-gray) !important;
+    box-shadow: none;
+}
+
 main form .tt-hint, main form .tt-menu {
     left: 0 !important;
     right: auto !important;
@@ -2193,6 +2199,16 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     float: none;
     margin: 0;
     max-width: 100%;
+}
+
+main form.inline .twitter-typeahead {
+    margin: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+main td.archetype-picker-cell {
+    overflow: visible;
 }
 
 .inline input, .inline select, .inline textarea, .inline label, .inline button {

@@ -279,6 +279,28 @@ def test_help_cursor_does_not_hide_clickable_elements(browser: 'Browser', site: 
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_archetype_picker_does_not_overwrite_other_hidden_form_values(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site)
+    page.route('**/api/matchup-options/archetypes/**', lambda route: route.fulfill(json=[{'name': 'Burn', 'value': '67'}]))
+    page.goto('/')
+    page.locator('main').evaluate("""main => {
+        main.innerHTML = `
+            <form>
+                <input name="deck_id" type="hidden" value="123">
+                <input class="archetype-option" type="text">
+                <input name="archetype_id" type="hidden" value="">
+            </form>`;
+    }""")
+    page.evaluate('PD.initArchetypePickers()')
+
+    page.locator('.archetype-option').fill('Burn')
+    page.locator('.tt-suggestion', has_text='Burn').click()
+
+    expect(page.locator('input[name="deck_id"]')).to_have_value('123')
+    expect(page.locator('input[name="archetype_id"]')).to_have_value('67')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_friendly_deck_dates_have_exact_timestamp_titles(browser: 'Browser', site: Container) -> None:
     page, collector = new_page(browser, site, locale='en-GB', timezone_id='America/New_York')
     with page.expect_response(lambda response: '/api/decks/?' in response.url) as response_info:

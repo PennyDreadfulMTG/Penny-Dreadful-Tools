@@ -10,7 +10,6 @@ from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import match
 from decksite.data import matchup as mus
-from decksite.data import person as ps
 from decksite.data import season as ss
 from decksite.deck_type import DeckType
 from decksite.views import Archetype, Archetypes, Card, Cards, Deck, Decks, Matchups, Metagame, Seasons
@@ -138,25 +137,12 @@ def archetype(archetype_id: str, deck_type: str | None = None) -> str:
 
 @APP.route('/matchups/')
 def matchups() -> str:
-    hero: dict[str, str] = {}
-    enemy: dict[str, str] = {}
-    for k, v in request.args.items():
-        if k.startswith('hero_'):
-            k = k.replace('hero_', '')
-            hero[k] = v
-        else:
-            k = k.replace('enemy_', '')
-            enemy[k] = v
+    hero = mus.resolve_choices({k.removeprefix('hero_'): v for k, v in request.args.items() if k.startswith('hero_')})
+    enemy = mus.resolve_choices({k.removeprefix('enemy_'): v for k, v in request.args.items() if k.startswith('enemy_')})
     season_str = request.args.get('season_id')
     season_id = int(season_str) if season_str else None
     results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else None
-    matchup_archetypes = archs.load_archetypes()
-    matchup_archetypes.sort(key=lambda a: a.name)
-    matchup_people = ps.load_people(where='p.mtgo_username IS NOT NULL')
-    matchup_people.sort(key=lambda p: p.name)
-    matchup_cards = cs.load_cards()
-    matchup_cards.sort(key=lambda c: c.name)
-    view = Matchups(hero, enemy, season_id, matchup_archetypes, matchup_people, matchup_cards, results)
+    view = Matchups(hero, enemy, season_id, results)
     return view.page()
 
 

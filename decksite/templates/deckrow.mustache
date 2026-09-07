@@ -32,7 +32,7 @@
     {{/hide_top8}}
     {{^hide_date}}
         <td data-text="{{date_sort}}">
-            {{display_date}}
+            {{#friendly_date}}{{> friendlytime}}{{/friendly_date}}
         </td>
     {{/hide_date}}
     {{#show_season_icon}}

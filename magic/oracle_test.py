@@ -96,9 +96,10 @@ def test_preferred_printing_uses_omenpaths_fallback(monkeypatch: pytest.MonkeyPa
     assert printing.system_id == 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'
 
 def test_init_rebuilds_names_and_ignores_alias_collisions(monkeypatch: pytest.MonkeyPatch) -> None:
-    canonical = Card({'name': 'Shared Name'})
-    aliased = Card({'name': 'Other Card', 'flavor_names': 'Shared Name|Alternate Name'})
+    canonical = Card({'name': 'Shared Name', 'type_line': 'Creature', 'mana_cost': None, 'cmc': 0})
+    aliased = Card({'name': 'Other Card', 'type_line': 'Creature', 'mana_cost': None, 'cmc': 0, 'flavor_names': 'Shared Name|Alternate Name'})
     monkeypatch.setattr(oracle, 'CARDS_BY_NAME', {'Stale Alias': aliased})
+    monkeypatch.setattr(oracle, 'DECK_SORT_RANK_BY_NAME', {})
     monkeypatch.setattr(oracle, 'load_cards', lambda: [canonical, aliased])
     monkeypatch.setattr(oracle, 'load_cards_with_flavor_names', lambda: [aliased])
 
@@ -107,6 +108,7 @@ def test_init_rebuilds_names_and_ignores_alias_collisions(monkeypatch: pytest.Mo
     assert 'Stale Alias' not in oracle.CARDS_BY_NAME
     assert oracle.CARDS_BY_NAME['Shared Name'] is canonical
     assert oracle.CARDS_BY_NAME['Alternate Name'] is aliased
+    assert oracle.deck_sort(aliased) < oracle.deck_sort(canonical)
 
 def test_load_cards() -> None:
     cards = oracle.load_cards(['Think Twice', 'Swamp'])
@@ -122,6 +124,7 @@ def test_deck_sort_x_last() -> None:
     cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])
     assert len(cards) == 3
     cards_by_name = {c.name: c for c in cards}
+    assert all(isinstance(oracle.deck_sort(c), int) for c in cards)
     assert oracle.deck_sort(cards_by_name['Ghitu Fire']) < oracle.deck_sort(cards_by_name['Flash of Insight'])
     assert oracle.deck_sort(cards_by_name['Ghitu Fire']) > oracle.deck_sort(cards_by_name['Frantic Search'])
 

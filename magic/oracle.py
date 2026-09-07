@@ -14,12 +14,14 @@ from shared.pd_exception import DatabaseException, DoesNotExistException, Invali
 
 LEGAL_CARDS: list[str] = []
 CARDS_BY_NAME: dict[str, Card] = {}
+DECK_SORT_RANK_BY_NAME: dict[str, int] = {}
 OMENPATHS_SET_CODE = 'om1'
 
 def init(force: bool = False) -> None:
     if len(CARDS_BY_NAME) == 0 or force:
+        cards = load_cards()
         CARDS_BY_NAME.clear()
-        for c in load_cards():
+        for c in cards:
             CARDS_BY_NAME[c.name] = c
         for c in load_cards_with_flavor_names():
             for fn in c.flavor_names.split('|'):
@@ -27,6 +29,7 @@ def init(force: bool = False) -> None:
                 if existing is not None and existing.name != c.name:
                     continue
                 CARDS_BY_NAME[fn] = c
+        _rebuild_deck_sort_ranks(cards)
 
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
@@ -162,7 +165,7 @@ def get_set(set_id: int) -> Container:
     rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])
     return guarantee.exactly_one([Container(r) for r in rs])
 
-def deck_sort(c: Card) -> str:
+def _deck_sort_key(c: Card) -> str:
     s = ''
     if c.is_creature():
         s += 'A'
@@ -178,6 +181,14 @@ def deck_sort(c: Card) -> str:
     s += str(c.cmc).zfill(10)
     s += c.name
     return s
+
+def _rebuild_deck_sort_ranks(cards: Iterable[Card]) -> None:
+    DECK_SORT_RANK_BY_NAME.clear()
+    for rank, c in enumerate(sorted(cards, key=_deck_sort_key)):
+        DECK_SORT_RANK_BY_NAME[c.name] = rank
+
+def deck_sort(c: Card) -> int:
+    return DECK_SORT_RANK_BY_NAME[c.name]
 
 async def scryfall_import_async(name: str) -> bool:
     sfcard = await fetch_tools.fetch_json_async(f'https://api.scryfall.com/cards/named?fuzzy={name}')
@@ -260,3 +271,4 @@ async def add_cards_and_update_async(printings: list[CardDescription]) -> None:
     whoosh_write.reindex_specific_cards(cs)
     for c in cs:
         CARDS_BY_NAME[c.name] = c
+    _rebuild_deck_sort_ranks(set(CARDS_BY_NAME.values()))

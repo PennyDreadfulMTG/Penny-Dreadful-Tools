@@ -165,6 +165,10 @@ explanations: dict[str, tuple[str, dict[str, str]]] = {
             'Tournament Rules': fetcher.decksite_url('/tournaments/'),
         },
     ),
+    'showchat': (
+        'If game chat is hidden on Magic Online, click the chat icon in the bottom-left corner of the game window, then select `Show Chat`.',
+        {},
+    ),
     'spectating': (
         """
         Spectating tournament and league matches is allowed and encouraged.

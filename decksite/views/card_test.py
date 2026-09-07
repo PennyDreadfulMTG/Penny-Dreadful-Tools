@@ -6,6 +6,25 @@ from magic import oracle, seasons
 from magic.models import Card, Printing
 
 
+def test_card_page_links_to_exact_scryfall_search(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(seasons, 'current_season_name', lambda: 'Penny Dreadful TST')
+    card = Card({
+        'name': 'Wear // Tear',
+        'layout': 'split',
+        'legalities': None,
+        'played_competitively': False,
+        'bugs': None,
+    })
+
+    with APP.test_request_context('/cards/Wear%20//%20Tear/'):
+        content = CardView(card).render_content()
+
+    assert (
+        '<a class="external" href="https://scryfall.com/search?q=%21%22Wear+%2F%2F+Tear%22">'
+        'View on Scryfall</a>'
+    ) in content
+
+
 def test_alternate_card_page_uses_alternate_name_and_printing(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(seasons, 'current_season_name', lambda: 'Penny Dreadful TST')
     printing = Printing({'set_code': 'om1', 'system_id': 'd62cf4f8-36a2-4d9f-9d52-53ea18a52760'})

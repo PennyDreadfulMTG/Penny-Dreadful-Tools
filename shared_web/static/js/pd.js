@@ -13,6 +13,7 @@ PD.init = function() {
     PD.initDarkModeToggle();
     PD.initTooltips();
     PD.initTypeahead();
+    PD.initMatchupCalculator();
     PD.initSearchShortcut();
     PD.initUseGuess();
     PD.initReassign();
@@ -123,7 +124,7 @@ PD.initTrailblazerCardLists = function() {
 
 PD.initTables = function() {
     var selector = "main table";
-    var noTablesorter = "table.live";
+    var noTablesorter = "table.live, table.calendar";
 
     $.tablesorter.addParser({
         "id": "record",
@@ -260,6 +261,41 @@ PD.initTypeahead = function() {
     });
 };
 
+PD.initMatchupCalculator = function() {
+    $(".matchup-option").each(function() {
+        var input = $(this),
+            valueInput = input.siblings("input[type=hidden]"),
+            optionType = input.data("option-type"),
+            corpus = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    "url": "/api/matchup-options/" + optionType + "/?q={q}",
+                    "wildcard": "{q}"
+                }
+            }),
+            options = {
+                "autoselect": true,
+                "highlight": true,
+                "hint": true,
+                "minLength": 1
+            },
+            dataSource = {
+                "display": "name",
+                "limit": 10,
+                "source": corpus,
+                "templates": {
+                    "empty": function() { return '<div class="tt-suggestion">No results found</div>'; }
+                }
+            };
+        input.typeahead(options, dataSource);
+        input.on("input", function() { valueInput.val(""); });
+        input.bind("typeahead:autocomplete typeahead:select", function(_event, suggestion) {
+            valueInput.val(suggestion.value);
+        });
+    });
+};
+
 PD.initSearchShortcut = function() {
     $(document).keypress(function(e) {
         if (!$(e.target).is(":input") && String.fromCharCode(e.which) === "/") {
@@ -390,13 +426,27 @@ PD.initLinks = function() {
 };
 
 PD.localizeTimeElements = function() {
-    $("time").each(function() {
-        var t = moment($(this).attr("datetime")),
-            format = $(this).data("format"),
+    $("time, [data-friendly-datetime]").each(function() {
+        var elem = $(this),
+            datetime = elem.attr("datetime") || elem.data("friendly-datetime"),
+            t = moment(datetime),
+            format = elem.data("format"),
             tz = moment.tz.guess(),
+            s;
+        elem.attr("title", PD.formatExactTimestamp(datetime));
+        if (format) {
             s = t.tz(tz).format(format);
-        $(this).html(s).show();
+            elem.html(s);
+        }
+        elem.show();
     });
+};
+
+PD.formatExactTimestamp = function(datetime) {
+    return new Intl.DateTimeFormat(navigator.language, {
+        dateStyle: "full",
+        timeStyle: "full"
+    }).format(new Date(datetime));
 };
 
 PD.hideRepetitionInCalendar = function() {
@@ -495,10 +545,11 @@ PD.initPersonNotes = function() {
             if (data.notes.length > 0) {
                 let s = "<article>";
                 for (i = 0; i < data.notes.length; i++) {
-                    s += '<p><span class="subtitle">' + data.notes[i].display_date + "</span> " + data.notes[i].note + "</p>";
+                    s += '<p><span class="subtitle"><time datetime="' + PD.htmlEscape(data.notes[i].friendly_date.datetime) + '">' + PD.htmlEscape(data.notes[i].friendly_date.display) + "</time></span> " + data.notes[i].note + "</p>";
                 }
                 s += "</article>";
                 $(".person-notes").html(s);
+                PD.localizeTimeElements();
             } else {
                 $(".person-notes").html("<p>None</p>");
             }

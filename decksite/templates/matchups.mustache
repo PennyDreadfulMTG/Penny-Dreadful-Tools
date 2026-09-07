@@ -46,9 +46,12 @@
 {{#show_decks}}
     <section>
         <h2>Decks</h2>
-        {{> decktable}}
+        {{> matchupdecktable}}
     </section>
 {{/show_decks}}
 {{#show_matches}}
-    {{> personmatches}}
+    <section>
+        <h2>Matches</h2>
+        {{> matchupmatchtable}}
+    </section>
 {{/show_matches}}

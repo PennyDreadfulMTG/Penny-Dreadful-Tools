@@ -122,6 +122,9 @@ def decks_api() -> Response:
             'competitionId': <int?>,
             'competitionFlagId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
+            'opponentArchetypeId': <int?>,
+            'opponentCardName': <str?>,
+            'opponentPersonId': <int?>,
             'page': <int>,
             'pageSize': <int>,
             'personId': <int?>,
@@ -153,6 +156,9 @@ def decks_api() -> Response:
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if competition_id else seasons.season_id(str(request.args.get('seasonId')), None)
     where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
+    _, opponent = _matchup_criteria()
+    if opponent:
+        where = f'({where}) AND ({mus.opponent_decks_where(opponent)})'
     ds, total = deck.load_decks_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id)
     if use_swiss_tiebreakers:
         ds = deck.order_decks_by_swiss_tiebreakers(ds)
@@ -163,6 +169,7 @@ def decks_api() -> Response:
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
+
 
 @APP.api.route('/decks/updated')
 @APP.api.route('/decks/updated/')
@@ -382,9 +389,15 @@ def matches_api() -> Response:
     Grab a slice of results from a 0-indexed resultset of matches.
     Input:
         {
+            'archetypeId': <int?>,
+            'cardName': <str?>,
             'competitionId': <int?>,
+            'opponentArchetypeId': <int?>,
+            'opponentCardName': <str?>,
+            'opponentPersonId': <int?>,
             'page': <int>,
             'pageSize': <int>,
+            'personId': <int?>,
             'q': <str>,
             'sortBy': <str>,
             'sortOrder': <'ASC'|'DESC'>,
@@ -403,6 +416,9 @@ def matches_api() -> Response:
     person_where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
     opponent_where = clauses.text_match_where(query.person_query('o'), q) if q else 'TRUE'
     where = f'({person_where} OR {opponent_where})'
+    hero, opponent = _matchup_criteria()
+    if hero or opponent:
+        where += f' AND ({mus.matchup_where(hero, opponent)})'
     try:
         competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
@@ -415,6 +431,7 @@ def matches_api() -> Response:
     resp = return_camelized_json(r)
     resp.set_cookie('page_size', str(page_size))
     return resp
+
 
 @APP.route('/api/archetypes')
 @APP.route('/api/archetypes/')
@@ -824,6 +841,22 @@ def search() -> Response:
 @APP.route('/api/matchup-options/<any(archetypes,people,cards):option_type>/')
 def matchup_options(option_type: mus.MatchupOptionType) -> Response:
     return return_json(mus.search_options(option_type, request.args.get('q', '')))
+
+
+def _matchup_criteria() -> tuple[dict[str, str], dict[str, str]]:
+    def criteria(request_prefix: str) -> dict[str, str]:
+        names = {
+            'archetype_id': 'ArchetypeId',
+            'person_id': 'PersonId',
+            'card': 'CardName',
+        }
+        return {
+            name: value
+            for name, suffix in names.items()
+            if (value := request.args.get(f'{request_prefix}{suffix}' if request_prefix else suffix[:1].lower() + suffix[1:], '').strip())
+        }
+
+    return criteria(''), criteria('opponent')
 
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:

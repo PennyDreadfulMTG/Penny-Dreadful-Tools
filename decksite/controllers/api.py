@@ -1,5 +1,5 @@
 import datetime
-import json
+import functools
 import subprocess
 from typing import Any, cast
 
@@ -9,7 +9,7 @@ from werkzeug.exceptions import BadRequest
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card, clauses, deck, match, playability, query
+from decksite.data import card, clauses, deck, match, playability, query, site_search
 from decksite.data import competition as comp
 from decksite.data import matchup as mus
 from decksite.data import person as ps
@@ -20,7 +20,7 @@ from decksite.data.clauses import DEFAULT_GRID_PAGE_SIZE, DEFAULT_LIVE_TABLE_PAG
 from decksite.prepare import prepare_archetypes_for_api, prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
 from decksite.views import DeckEmbed
 from magic import database as magic_database
-from magic import layout, oracle, seasons, tournaments
+from magic import fetcher, layout, oracle, seasons, tournaments
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared.container import Container
@@ -29,10 +29,6 @@ from shared_web import template
 from shared_web.api import generate_error, return_camelized_json, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 from shared_web.menu import MenuItem
-
-SearchItem = dict[str, str]
-
-SEARCH_CACHE: list[SearchItem] = []
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
@@ -822,19 +818,30 @@ def all_tournaments() -> Response:
 @APP.route('/api/search')
 @APP.route('/api/search/')
 def search() -> Response:
-    init_search_cache()
-    q = request.args.get('q', '').lower()
-    exact_matches: list[SearchItem] = []
-    fuzzy_matches: list[SearchItem] = []
+    q = request.args.get('q', '').strip()
     if len(q) < 2:
         return return_json([])
-    for item in SEARCH_CACHE:
-        name = item['name'].lower()
-        if q == name:
-            exact_matches.append(item)
-        elif q in name:
-            fuzzy_matches.append(item)
-    return return_json(exact_matches + fuzzy_matches)
+    candidates = list(static_search_items())
+    candidates.extend(
+        {'name': name, 'type': 'Archetype', 'url': url_for('archetype', archetype_id=name)}
+        for name in site_search.archetype_names(q)
+    )
+    candidates.extend(
+        {
+            'name': match['name'],
+            'search_name': match['search_name'],
+            'type': 'Card',
+            'url': url_for('card', name=match['name']),
+        }
+        for match in site_search.card_names(q)
+    )
+    candidates.extend(
+        {'name': name, 'type': 'Person', 'url': url_for('person', mtgo_username=name)}
+        for name in site_search.person_names(q)
+    )
+    ranked = site_search.results(candidates, q)
+    response = [{'name': item['name'], 'type': item['type'], 'url': item['url']} for item in ranked]
+    return return_json(response)
 
 
 @APP.route('/api/matchup-options/<any(archetypes,people,cards):option_type>')
@@ -861,25 +868,26 @@ def _matchup_criteria() -> tuple[dict[str, str], dict[str, str]]:
 
     return criteria(''), criteria('opponent')
 
-def init_search_cache() -> None:
-    if len(SEARCH_CACHE) > 0:
-        return
+@functools.lru_cache(maxsize=1)
+def static_search_items() -> tuple[site_search.SearchResult, ...]:
+    items: list[site_search.SearchResult] = []
     submenu_entries = []  # Accumulate the submenu entries and add them after the top-level entries as they are less important.
     for entry in APP.config.get('menu', lambda: [])():
         if entry.permission_required:
             continue
-        SEARCH_CACHE.append(menu_item_to_search_item(entry))
+        items.append(menu_item_to_search_item(entry))
         for subentry in entry.submenu:
             if subentry.permission_required:
                 continue
             submenu_entries.append(menu_item_to_search_item(subentry))
     for entry in submenu_entries:
-        SEARCH_CACHE.append(entry)
-    with open(configuration.get_str('typeahead_data_path')) as f:
-        for item in json.load(f):
-            SEARCH_CACHE.append(item)
+        items.append(entry)
+    for category, entries in fetcher.resources().items():
+        for name, url in entries.items():
+            items.append({'name': f'Resources – {category} – {name}', 'type': 'Resource', 'url': url})
+    return tuple(items)
 
-def menu_item_to_search_item(menu_item: MenuItem, parent_name: str | None = None) -> dict[str, Any]:
+def menu_item_to_search_item(menu_item: MenuItem, parent_name: str | None = None) -> site_search.SearchResult:
     name = ''
     if parent_name:
         name += f'{parent_name} – '

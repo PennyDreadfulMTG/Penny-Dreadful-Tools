@@ -1,6 +1,6 @@
 import pytest
 
-from decksite.data import matchup
+from decksite.data import matchup, person
 from decksite.data.matchup import MatchupResults
 
 
@@ -31,7 +31,6 @@ def test_win_percent_is_float_or_none(wins: int, losses: int, expected: float | 
     ('option_type', 'expected_table'),
     [
         ('archetypes', 'FROM archetype'),
-        ('people', 'FROM person'),
         ('cards', 'FROM _card_stats'),
     ],
 )
@@ -47,6 +46,38 @@ def test_search_options_returns_lightweight_matches(option_type: matchup.Matchup
     options = matchup.search_options(option_type, 'Bolt')
 
     assert options == [{'value': '123', 'name': 'Lightning Bolt'}]
+
+
+@pytest.mark.parametrize(
+    ('person_filter', 'expected_where'),
+    [
+        ('matchups', 'p.mtgo_username IS NOT NULL'),
+        ('all', 'TRUE'),
+        ('discord', 'p.discord_id IS NOT NULL'),
+        ('unbanned', 'NOT COALESCE(p.banned, FALSE)'),
+    ],
+)
+def test_search_people_returns_identifiable_lightweight_matches(person_filter: person.PersonFilter, expected_where: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeDatabase:
+        def select(self, sql: str, args: list[str | int]) -> list[dict[str, object]]:
+            assert 'FROM person AS p' in sql
+            assert expected_where in sql
+            assert args == ['%Smoke%', 'Smoke%', 'Smoke%', 'Smoke%', 'Smoke%', 'Smoke%', 10]
+            return [{
+                'value': '123',
+                'name': 'smoketester',
+                'mtgo_username': 'SmokeTester',
+                'site_name': 'Smoke',
+                'tappedout_username': 'SmokeTO',
+                'mtggoldfish_username': None,
+                'discord_id': 456,
+            }]
+
+    monkeypatch.setattr(person, 'db', FakeDatabase)
+
+    options = person.search_options('Smoke', person_filter=person_filter)
+
+    assert options == [{'value': '123', 'name': 'smoketester', 'label': 'SmokeTester (to:SmokeTO, discord:456)'}]
 
 
 def test_search_options_ignores_an_empty_search(monkeypatch: pytest.MonkeyPatch) -> None:

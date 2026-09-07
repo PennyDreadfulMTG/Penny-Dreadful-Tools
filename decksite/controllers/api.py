@@ -823,7 +823,10 @@ def search() -> Response:
 @APP.route('/api/matchup-options/<any(archetypes,people,cards):option_type>')
 @APP.route('/api/matchup-options/<any(archetypes,people,cards):option_type>/')
 def matchup_options(option_type: mus.MatchupOptionType) -> Response:
-    return return_json(mus.search_options(option_type, request.args.get('q', '')))
+    person_filter = request.args.get('personFilter', 'matchups')
+    if person_filter not in ps.PERSON_FILTERS:
+        raise BadRequest(f'Unknown person filter: {person_filter}')
+    return return_json(mus.search_options(option_type, request.args.get('q', ''), person_filter=cast(ps.PersonFilter, person_filter)))
 
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:

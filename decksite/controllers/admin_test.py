@@ -6,7 +6,7 @@ from decksite.controllers import admin
 from decksite.data import deck
 from decksite.league import EditMatchForm
 from decksite.main import APP
-from decksite.views import EditArchetypes, EditMatches, EditRules
+from decksite.views import Ban, EditAliases, EditArchetypes, EditMatches, EditRules, PlayerNotes, Unlink
 from shared.pd_exception import InvalidDataException
 
 
@@ -228,6 +228,27 @@ def test_admin_information_pages_require_login(path: str) -> None:
     assert response.status_code == 302
     assert response.location is not None
     assert response.location.startswith('/authenticate/?target=')
+
+
+@pytest.mark.parametrize(
+    ('view_class', 'args', 'person_filter'),
+    [
+        (EditAliases, ([],), 'all'),
+        (PlayerNotes, ([],), 'all'),
+        (Unlink, (), 'discord'),
+        (Ban, ([], None), 'unbanned'),
+    ],
+)
+def test_admin_person_dropdown_is_remote_picker(view_class: Any, args: tuple[Any, ...], person_filter: str) -> None:
+    with APP.test_request_context('/'):
+        view = view_class(*args)
+        html = view.render_content()
+
+    assert '<select name="person_id">' not in html
+    assert f'data-person-filter="{person_filter}"' in html
+    assert 'class="person-option"' in html
+    assert 'placeholder="Search people"' in html
+    assert '<input id="person_id" name="person_id" type="hidden">' in html
 
 
 def test_post_rules_requires_archetype(monkeypatch: pytest.MonkeyPatch) -> None:

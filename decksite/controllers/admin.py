@@ -48,8 +48,7 @@ def admin_home() -> wrappers.Response:
 @auth.admin_required
 def edit_aliases() -> str:
     aliases = ps.load_aliases()
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = EditAliases(aliases, all_people)
+    view = EditAliases(aliases)
     return view.page()
 
 @APP.route('/admin/aliases/', methods=['POST'])
@@ -234,8 +233,7 @@ def rotation_checklist() -> str:
 @auth.admin_required
 def player_notes() -> str:
     notes = ps.load_notes()
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = PlayerNotes(notes, all_people)
+    view = PlayerNotes(notes)
     return view.page()
 
 @APP.route('/admin/people/notes/', methods=['POST'])
@@ -251,8 +249,7 @@ def post_player_note(person_id: int, note: str) -> wrappers.Response:
 @APP.route('/admin/unlink/')
 @auth.admin_required
 def unlink(num_affected_people: int | None = None, errors: list[str] | None = None) -> str:
-    all_people = ps.load_people(where='p.discord_id IS NOT NULL', order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = Unlink(all_people, num_affected_people, errors)
+    view = Unlink(num_affected_people, errors)
     return view.page()
 
 @APP.route('/admin/unlink/', methods=['POST'])
@@ -273,8 +270,8 @@ def post_unlink() -> str:
 @APP.route('/admin/ban/')
 @auth.admin_required
 def ban(success: bool | None = None) -> str:
-    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
-    view = Ban(all_people, success)
+    banned_people = ps.load_people_statless(where='p.banned', order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
+    view = Ban(banned_people, success)
     return view.page()
 
 @APP.route('/admin/ban/', methods=['POST'])

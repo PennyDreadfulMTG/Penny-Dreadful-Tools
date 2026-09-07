@@ -14,6 +14,7 @@ PD.init = function() {
     PD.initTooltips();
     PD.initTypeahead();
     PD.initMatchupCalculator();
+    PD.initPersonPickers();
     PD.initSearchShortcut();
     PD.initUseGuess();
     PD.initReassign();
@@ -232,32 +233,51 @@ PD.initTooltips = function() {
     });
 };
 
-PD.initTypeahead = function() {
+PD.initRemoteTypeahead = function(input, config) {
     var corpus = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace(config.display),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            "url": "/api/search/?q={q}",
+            "url": config.url,
             "wildcard": "{q}"
         }
     });
     var options = {
         "autoselect": true,
         "highlight": true,
-        "hint": true
+        "hint": true,
+        "minLength": 1
     };
     var dataSource = {
-        "display": "name",
+        "display": config.display,
         "limit": 10,
         "source": corpus,
         "templates": {
-            "empty": function() { return '<div class="tt-suggestion">No results found</div>'; },
-            "suggestion": function (o) { return "<div><strong>{{name}}</strong> – {{type}}</div>".replace("{{name}}", o.name).replace("{{type}}", o.type); }
+            "empty": function() { return '<div class="tt-suggestion">No results found</div>'; }
         }
     };
-    $(".typeahead").typeahead(options, dataSource);
-    $(".typeahead").bind("typeahead:select", function(event, suggestion) {
-        window.location.href = suggestion.url;
+    if (config.suggestion) {
+        dataSource.templates.suggestion = config.suggestion;
+    }
+    input.typeahead(options, dataSource);
+    if (config.onInput) {
+        input.on("input", config.onInput);
+    }
+    if (config.onSelect) {
+        input.bind(config.selectEvents || "typeahead:select", config.onSelect);
+    }
+};
+
+PD.initTypeahead = function() {
+    $(".typeahead").each(function() {
+        PD.initRemoteTypeahead($(this), {
+            "display": "name",
+            "url": "/api/search/?q={q}",
+            "suggestion": function (o) { return "<div><strong>{{name}}</strong> – {{type}}</div>".replace("{{name}}", o.name).replace("{{type}}", o.type); },
+            "onSelect": function(_event, suggestion) {
+                window.location.href = suggestion.url;
+            }
+        });
     });
 };
 
@@ -265,33 +285,42 @@ PD.initMatchupCalculator = function() {
     $(".matchup-option").each(function() {
         var input = $(this),
             valueInput = input.siblings("input[type=hidden]"),
-            optionType = input.data("option-type"),
-            corpus = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    "url": "/api/matchup-options/" + optionType + "/?q={q}",
-                    "wildcard": "{q}"
-                }
-            }),
-            options = {
-                "autoselect": true,
-                "highlight": true,
-                "hint": true,
-                "minLength": 1
+            optionType = input.data("option-type");
+        PD.initRemoteTypeahead(input, {
+            "display": "name",
+            "url": "/api/matchup-options/" + optionType + "/?q={q}",
+            "onInput": function() { valueInput.val(""); },
+            "selectEvents": "typeahead:autocomplete typeahead:select",
+            "onSelect": function(_event, suggestion) {
+                valueInput.val(suggestion.value);
+            }
+        });
+    });
+};
+
+PD.initPersonPickers = function() {
+    $(".person-option").each(function() {
+        var input = $(this),
+            valueInput = input.siblings("input[type=hidden]");
+        PD.initRemoteTypeahead(input, {
+            "display": "label",
+            "url": "/api/matchup-options/people/?personFilter=" + encodeURIComponent(input.data("person-filter")) + "&q={q}",
+            "onInput": function() {
+                valueInput.val("");
+                input[0].setCustomValidity("");
             },
-            dataSource = {
-                "display": "name",
-                "limit": 10,
-                "source": corpus,
-                "templates": {
-                    "empty": function() { return '<div class="tt-suggestion">No results found</div>'; }
-                }
-            };
-        input.typeahead(options, dataSource);
-        input.on("input", function() { valueInput.val(""); });
-        input.bind("typeahead:autocomplete typeahead:select", function(_event, suggestion) {
-            valueInput.val(suggestion.value);
+            "selectEvents": "typeahead:autocomplete typeahead:select",
+            "onSelect": function(_event, suggestion) {
+                valueInput.val(suggestion.value);
+                input[0].setCustomValidity("");
+            }
+        });
+        input.closest("form").on("submit", function(event) {
+            if (!valueInput.val()) {
+                input[0].setCustomValidity("Select a person from the suggestions.");
+                input[0].reportValidity();
+                event.preventDefault();
+            }
         });
     });
 };

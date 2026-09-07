@@ -270,7 +270,7 @@ PD.initRemoteTypeahead = function(input, config) {
 };
 
 PD.initValueTypeahead = function(input, config) {
-    var valueInput = input.siblings("input[type=hidden]");
+    var valueInput = input.next("input[type=hidden]");
     PD.initRemoteTypeahead(input, {
         "display": config.display,
         "hint": config.hint,

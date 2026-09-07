@@ -245,7 +245,7 @@ PD.initRemoteTypeahead = function(input, config) {
     var options = {
         "autoselect": true,
         "highlight": true,
-        "hint": true,
+        "hint": config.hint !== false,
         "minLength": 1
     };
     var dataSource = {
@@ -304,6 +304,7 @@ PD.initPersonPickers = function() {
             valueInput = input.siblings("input[type=hidden]");
         PD.initRemoteTypeahead(input, {
             "display": "label",
+            "hint": false,
             "url": "/api/matchup-options/people/?personFilter=" + encodeURIComponent(input.data("person-filter")) + "&q={q}",
             "onInput": function() {
                 valueInput.val("");

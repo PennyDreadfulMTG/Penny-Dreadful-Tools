@@ -41,23 +41,13 @@ def test_matchup_counts_results_without_concatenating_ids(monkeypatch: pytest.Mo
     assert result == MatchupResults(num_decks=12, num_matches=34, wins=20, draws=1, losses=13)
 
 
-def test_paginated_decks_require_an_enemy_match_only_when_enemy_is_filtered(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: list[dict[str, object]] = []
+def test_opponent_decks_where_filters_through_matches() -> None:
+    where = matchup.opponent_decks_where({'person_id': '1', 'card': "Urza's Bauble"})
 
-    def load_decks_with_total(**kwargs: object) -> tuple[list[object], int]:
-        calls.append(kwargs)
-        return [], 0
-
-    monkeypatch.setattr(matchup.deck, 'load_decks_with_total', load_decks_with_total)
-
-    matchup.load_decks_with_total({'person_id': '1'}, {}, 'cache.active_date DESC', 'LIMIT 0, 20', 43)
-    matchup.load_decks_with_total({'person_id': '1'}, {'card': "Urza's Bauble"}, 'cache.active_date DESC', 'LIMIT 0, 20', 43)
-
-    assert 'EXISTS' not in str(calls[0]['where'])
-    assert 'EXISTS' in str(calls[1]['where'])
-    assert "Urza''s Bauble" in str(calls[1]['where'])
-    assert calls[1]['limit'] == 'LIMIT 0, 20'
-    assert calls[1]['season_id'] == 43
+    assert 'EXISTS' in where
+    assert 'matchup_dm.deck_id = d.id' in where
+    assert 'matchup_enemy.person_id = 1' in where
+    assert "card = 'Urza''s Bauble'" in where
 
 
 @pytest.mark.parametrize(

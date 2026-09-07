@@ -122,6 +122,9 @@ def decks_api() -> Response:
             'competitionId': <int?>,
             'competitionFlagId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
+            'opponentArchetypeId': <int?>,
+            'opponentCardName': <str?>,
+            'opponentPersonId': <int?>,
             'page': <int>,
             'pageSize': <int>,
             'personId': <int?>,
@@ -153,6 +156,9 @@ def decks_api() -> Response:
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if competition_id else seasons.season_id(str(request.args.get('seasonId')), None)
     where = clauses.decks_where(request.args, cast(bool, session.get('admin')), cast(int, session.get('person_id')))
+    _, opponent = _matchup_criteria()
+    if opponent:
+        where = f'({where}) AND ({mus.opponent_decks_where(opponent)})'
     ds, total = deck.load_decks_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id)
     if use_swiss_tiebreakers:
         ds = deck.order_decks_by_swiss_tiebreakers(ds)
@@ -164,36 +170,6 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-
-@APP.route('/api/matchup-decks')
-@APP.route('/api/matchup-decks/')
-def matchup_decks_api() -> Response:
-    """Return one page of the hero decks represented by a matchup query."""
-    sort_by = request.args.get('sortBy')
-    order_by = clauses.decks_order_by(sort_by, request.args.get('sortOrder'), None)
-    page, page_size, limit = pagination(request.args)
-    page_start = page * page_size
-    query_start = page_start
-    use_swiss_tiebreakers = clauses.decks_order_uses_swiss_tiebreakers(sort_by, None)
-    if use_swiss_tiebreakers:
-        buffer_size = deck.MAX_TIED_ELIMINATION_FINISH_SIZE - 1
-        query_start = max(0, page_start - buffer_size)
-        query_end = page_start + page_size + buffer_size
-        limit = f'LIMIT {query_start}, {query_end - query_start}'
-    ds, total = mus.load_decks_with_total(
-        *_matchup_criteria(),
-        order_by=order_by,
-        limit=limit,
-        season_id=_matchup_season_id(),
-    )
-    if use_swiss_tiebreakers:
-        ds = deck.order_decks_by_swiss_tiebreakers(ds)
-        result_start = page_start - query_start
-        ds = ds[result_start:result_start + page_size]
-    prepare_decks(ds)
-    response = return_camelized_json({'page': page, 'total': total, 'objects': ds})
-    response.set_cookie('page_size', str(page_size))
-    return response
 
 @APP.api.route('/decks/updated')
 @APP.api.route('/decks/updated/')
@@ -413,9 +389,15 @@ def matches_api() -> Response:
     Grab a slice of results from a 0-indexed resultset of matches.
     Input:
         {
+            'archetypeId': <int?>,
+            'cardName': <str?>,
             'competitionId': <int?>,
+            'opponentArchetypeId': <int?>,
+            'opponentCardName': <str?>,
+            'opponentPersonId': <int?>,
             'page': <int>,
             'pageSize': <int>,
+            'personId': <int?>,
             'q': <str>,
             'sortBy': <str>,
             'sortOrder': <'ASC'|'DESC'>,
@@ -434,6 +416,9 @@ def matches_api() -> Response:
     person_where = clauses.text_match_where(query.person_query(), q) if q else 'TRUE'
     opponent_where = clauses.text_match_where(query.person_query('o'), q) if q else 'TRUE'
     where = f'({person_where} OR {opponent_where})'
+    hero, opponent = _matchup_criteria()
+    if hero or opponent:
+        where += f' AND ({mus.matchup_where(hero, opponent)})'
     try:
         competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
@@ -447,24 +432,6 @@ def matches_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-
-@APP.route('/api/matchup-matches')
-@APP.route('/api/matchup-matches/')
-def matchup_matches_api() -> Response:
-    """Return one page of matches, oriented from the hero side of a matchup query."""
-    order_by = clauses.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
-    page, page_size, limit = pagination(request.args)
-    entries, total = mus.load_matches_with_total(
-        *_matchup_criteria(),
-        order_by=order_by,
-        limit=limit,
-        season_id=_matchup_season_id(),
-        show_active_deck_names=bool(session.get('admin')),
-    )
-    prepare_matches(entries)
-    response = return_camelized_json({'page': page, 'total': total, 'objects': entries})
-    response.set_cookie('page_size', str(page_size))
-    return response
 
 @APP.route('/api/archetypes')
 @APP.route('/api/archetypes/')
@@ -877,29 +844,19 @@ def matchup_options(option_type: mus.MatchupOptionType) -> Response:
 
 
 def _matchup_criteria() -> tuple[dict[str, str], dict[str, str]]:
-    def criteria(prefix: str) -> dict[str, str]:
+    def criteria(request_prefix: str) -> dict[str, str]:
         names = {
             'archetype_id': 'ArchetypeId',
             'person_id': 'PersonId',
-            'card': 'Card',
+            'card': 'CardName',
         }
         return {
             name: value
             for name, suffix in names.items()
-            if (value := request.args.get(f'{prefix}{suffix}', '').strip())
+            if (value := request.args.get(f'{request_prefix}{suffix}' if request_prefix else suffix[:1].lower() + suffix[1:], '').strip())
         }
 
-    return criteria('hero'), criteria('enemy')
-
-
-def _matchup_season_id() -> int | None:
-    value = request.args.get('seasonId', '').strip()
-    if not value or value == 'all':
-        return None
-    try:
-        return int(value)
-    except ValueError as e:
-        raise BadRequest from e
+    return criteria(''), criteria('opponent')
 
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:

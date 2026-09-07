@@ -78,53 +78,56 @@ def test_matchup_options_api_returns_small_search_results(monkeypatch: pytest.Mo
     assert response.get_json() == expected
 
 
-def test_matchup_decks_api_passes_filters_and_pagination(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_decks_api_combines_standard_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, Any] = {}
 
-    def load_decks_with_total(hero: dict[str, str], enemy: dict[str, str], **kwargs: Any) -> tuple[list[Container], int]:
-        captured.update({'hero': hero, 'enemy': enemy} | kwargs)
+    def load_decks_with_total(**kwargs: Any) -> tuple[list[Container], int]:
+        captured.update(kwargs)
         return [Container({'id': 7})], 123
 
-    monkeypatch.setattr(api.mus, 'load_decks_with_total', load_decks_with_total)
+    monkeypatch.setattr(api.deck, 'load_decks_with_total', load_decks_with_total)
     monkeypatch.setattr(api, 'prepare_decks', lambda _decks: None)
 
-    response = APP.test_client().get('/api/matchup-decks/', query_string={
-        'heroArchetypeId': '4',
-        'enemyCard': 'Counterspell',
+    response = APP.test_client().get('/api/decks/', query_string={
+        'archetypeId': '4',
+        'opponentCardName': 'Counterspell',
         'page': '2',
         'pageSize': '20',
-        'seasonId': '43',
+        'seasonId': 'all',
     })
 
     assert response.status_code == 200
     assert response.get_json() == {'objects': [{'id': 7}], 'page': 2, 'total': 123}
-    assert captured['hero'] == {'archetype_id': '4'}
-    assert captured['enemy'] == {'card': 'Counterspell'}
+    assert 'd.archetype_id IN' in captured['where']
+    assert 'd.retired' in captured['where']
+    assert 'matchup_enemy.id IN' in captured['where']
+    assert "card = 'Counterspell'" in captured['where']
     assert captured['limit'] == 'LIMIT 40, 20'
-    assert captured['season_id'] == 43
+    assert captured['season_id'] is None
 
 
-def test_matchup_matches_api_returns_a_page_of_read_only_rows(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_matches_api_combines_hero_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, Any] = {}
 
-    def load_matches_with_total(hero: dict[str, str], enemy: dict[str, str], **kwargs: Any) -> tuple[list[Container], int]:
-        captured.update({'hero': hero, 'enemy': enemy} | kwargs)
+    def load_matches_with_total(**kwargs: Any) -> tuple[list[Container], int]:
+        captured.update(kwargs)
         return [Container({'id': 8})], 456
 
-    monkeypatch.setattr(api.mus, 'load_matches_with_total', load_matches_with_total)
+    monkeypatch.setattr(api.match, 'load_matches_with_total', load_matches_with_total)
     monkeypatch.setattr(api, 'prepare_matches', lambda _matches: None)
 
-    response = APP.test_client().get('/api/matchup-matches/', query_string={
-        'heroPersonId': '10',
-        'enemyPersonId': '11',
+    response = APP.test_client().get('/api/matches/', query_string={
+        'personId': '10',
+        'opponentPersonId': '11',
         'page': '1',
         'pageSize': '100',
+        'seasonId': 'all',
     })
 
     assert response.status_code == 200
     assert response.get_json() == {'objects': [{'id': 8}], 'page': 1, 'total': 456}
-    assert captured['hero'] == {'person_id': '10'}
-    assert captured['enemy'] == {'person_id': '11'}
+    assert 'd.person_id = 10' in captured['where']
+    assert 'od.person_id = 11' in captured['where']
     assert captured['limit'] == 'LIMIT 100, 100'
     assert captured['season_id'] is None
 

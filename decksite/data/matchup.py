@@ -2,11 +2,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
-from decksite.data import deck, match, query
+from decksite.data import query
 from decksite.database import db
-from magic.models import Deck
 from shared import guarantee
-from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import DoesNotExistException
 
@@ -145,30 +143,17 @@ def matchup(hero: Mapping[str, str], enemy: Mapping[str, str], season_id: int | 
     )
 
 
-def load_decks_with_total(hero: Mapping[str, str], enemy: Mapping[str, str], order_by: str, limit: str, season_id: int | None) -> tuple[list[Deck], int]:
-    where = _criteria_where(hero, 'd')
-    if any(enemy.get(key) for key in ('person_id', 'archetype_id', 'card')):
-        enemy_where = _criteria_where(enemy, 'matchup_enemy')
-        where += f"""
-            AND EXISTS (
-                SELECT 1
-                FROM deck_match AS matchup_dm
-                INNER JOIN deck_match AS matchup_odm ON matchup_odm.match_id = matchup_dm.match_id AND matchup_odm.deck_id <> matchup_dm.deck_id
-                INNER JOIN deck AS matchup_enemy ON matchup_enemy.id = matchup_odm.deck_id
-                WHERE matchup_dm.deck_id = d.id AND {enemy_where}
-            )
-        """
-    return deck.load_decks_with_total(where=where, order_by=order_by, limit=limit, season_id=season_id)
-
-
-def load_matches_with_total(hero: Mapping[str, str], enemy: Mapping[str, str], order_by: str, limit: str, season_id: int | None, show_active_deck_names: bool = False) -> tuple[list[Container], int]:
-    return match.load_matches_with_total(
-        where=matchup_where(hero, enemy),
-        order_by=order_by,
-        limit=limit,
-        season_id=season_id,
-        show_active_deck_names=show_active_deck_names,
-    )
+def opponent_decks_where(enemy: Mapping[str, str]) -> str:
+    enemy_where = _criteria_where(enemy, 'matchup_enemy')
+    return f"""
+        EXISTS (
+            SELECT 1
+            FROM deck_match AS matchup_dm
+            INNER JOIN deck_match AS matchup_odm ON matchup_odm.match_id = matchup_dm.match_id AND matchup_odm.deck_id <> matchup_dm.deck_id
+            INNER JOIN deck AS matchup_enemy ON matchup_enemy.id = matchup_odm.deck_id
+            WHERE matchup_dm.deck_id = d.id AND {enemy_where}
+        )
+    """
 
 
 def matchup_where(hero: Mapping[str, str], enemy: Mapping[str, str]) -> str:

@@ -18,13 +18,13 @@ class Matchups(View):
         self.hero_summary = summary_text(hero)
         self.enemy_summary = summary_text(enemy)
         self.season_summary = f'Season {season_id}' if season_id else 'All Time'
-        self.search_season_id = season_id or ''
+        self.search_season_id = season_id or 'all'
         for prefix, choices in [('hero', hero), ('enemy', enemy)]:
             for key in ('archetype_id', 'person_id', 'card'):
                 setattr(self, f'{prefix}_{key}', choices.get(key) or '')
 
     def show_season_icon(self) -> bool:
-        return not self.search_season_id
+        return self.search_season_id == 'all'
 
     def page_title(self) -> str:
         return 'Matchups Calculator'

@@ -2,7 +2,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
-from decksite.data import query
+from decksite.data import person, query
 from decksite.database import db
 from shared import guarantee
 from shared.database import sqlescape
@@ -24,7 +24,7 @@ class MatchupResults:
         return round((self.wins / (self.wins + self.losses)) * 100, 1) if (self.wins + self.losses) > 0 else None
 
 
-def search_options(option_type: MatchupOptionType, search: str, limit: int = 10) -> list[dict[str, str]]:
+def search_options(option_type: MatchupOptionType, search: str, limit: int = 10, person_filter: person.PersonFilter = 'matchups') -> list[dict[str, str]]:
     """Return the small amount of data the matchup typeaheads actually use."""
     search = search.strip()
     if not search:
@@ -40,13 +40,7 @@ def search_options(option_type: MatchupOptionType, search: str, limit: int = 10)
             LIMIT %s
         """
     elif option_type == 'people':
-        sql = """
-            SELECT CAST(id AS CHAR) AS value, LOWER(mtgo_username) AS name
-            FROM person
-            WHERE mtgo_username IS NOT NULL AND mtgo_username LIKE %s
-            ORDER BY CASE WHEN mtgo_username LIKE %s THEN 0 ELSE 1 END, mtgo_username
-            LIMIT %s
-        """
+        return person.search_options(search, limit, person_filter)
     else:
         # Match the old chooser's contents exactly: cards represented in the all-time
         # card statistics, rather than every card in the Oracle database.

@@ -70,12 +70,33 @@ def test_card_api_returns_not_found_for_unknown_card() -> None:
 
 def test_matchup_options_api_returns_small_search_results(monkeypatch: pytest.MonkeyPatch) -> None:
     expected = [{'name': 'Lightning Bolt', 'value': 'Lightning Bolt'}]
-    monkeypatch.setattr(api.mus, 'search_options', lambda option_type, search: expected if option_type == 'cards' and search == 'bolt' else [])
+    monkeypatch.setattr(api.mus, 'search_options', lambda option_type, search, person_filter: expected if option_type == 'cards' and search == 'bolt' and person_filter == 'matchups' else [])
 
     response = APP.test_client().get('/api/matchup-options/cards/?q=bolt')
 
     assert response.status_code == 200
     assert response.get_json() == expected
+
+
+def test_matchup_people_options_passes_admin_filter(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[tuple[str, str, str]] = []
+
+    def search_options(option_type: str, search: str, person_filter: str) -> list[dict[str, str]]:
+        calls.append((option_type, search, person_filter))
+        return []
+
+    monkeypatch.setattr(api.mus, 'search_options', search_options)
+
+    response = APP.test_client().get('/api/matchup-options/people/?q=smoke&personFilter=discord')
+
+    assert response.status_code == 200
+    assert calls == [('people', 'smoke', 'discord')]
+
+
+def test_matchup_people_options_rejects_unknown_filter() -> None:
+    response = APP.test_client().get('/api/matchup-options/people/?q=smoke&personFilter=anything')
+
+    assert response.status_code == 400
 
 
 def test_decks_api_combines_standard_and_opponent_filters(monkeypatch: pytest.MonkeyPatch) -> None:

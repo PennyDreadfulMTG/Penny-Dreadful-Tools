@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from typing import Literal
 
 from decksite.data import achievements, deck, preaggregation, query
 from decksite.data.models.person import Person
@@ -10,9 +11,68 @@ from shared.decorators import empty_page, retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DatabaseException, DoesNotExistException
 from shared_web import friendly_time
 
+PersonFilter = Literal['matchups', 'all', 'discord', 'unbanned']
+PERSON_FILTERS: tuple[PersonFilter, ...] = ('matchups', 'all', 'discord', 'unbanned')
+
 
 def load_person_by_id(person_id: int, season_id: int | None = None) -> Person:
     return load_person(f'p.id = {person_id}', season_id=season_id)
+
+def search_options(search: str, limit: int = 10, person_filter: PersonFilter = 'matchups') -> list[dict[str, str]]:
+    search = search.strip()
+    if not search:
+        return []
+    filter_where = {
+        'matchups': 'p.mtgo_username IS NOT NULL',
+        'all': 'TRUE',
+        'discord': 'p.discord_id IS NOT NULL',
+        'unbanned': 'NOT COALESCE(p.banned, FALSE)',
+    }[person_filter]
+    searchable = "CONCAT_WS(' ', p.mtgo_username, p.name, p.tappedout_username, p.mtggoldfish_username, CAST(p.discord_id AS CHAR))"
+    contains = f'%{search}%'
+    starts_with = f'{search}%'
+    sql = f"""
+        SELECT
+            CAST(p.id AS CHAR) AS value,
+            LOWER(p.mtgo_username) AS name,
+            p.mtgo_username,
+            p.name AS site_name,
+            p.tappedout_username,
+            p.mtggoldfish_username,
+            p.discord_id
+        FROM person AS p
+        WHERE ({filter_where}) AND ({searchable} LIKE %s)
+        ORDER BY
+            CASE WHEN
+                p.mtgo_username LIKE %s OR
+                p.name LIKE %s OR
+                p.tappedout_username LIKE %s OR
+                p.mtggoldfish_username LIKE %s OR
+                CAST(p.discord_id AS CHAR) LIKE %s
+            THEN 0 ELSE 1 END,
+            COALESCE(p.mtgo_username, p.name, p.mtggoldfish_username, p.tappedout_username, CAST(p.discord_id AS CHAR))
+        LIMIT %s
+    """
+    args: list[str | int] = [contains, starts_with, starts_with, starts_with, starts_with, starts_with, limit]
+    return [
+        {
+            'value': str(r['value']),
+            'name': str(r['name'] or r['site_name'] or r['mtggoldfish_username'] or r['tappedout_username'] or r['discord_id']),
+            'label': _option_label(r),
+        }
+        for r in db().select(sql, args)
+    ]
+
+def _option_label(person: dict[str, object]) -> str:
+    primary = person['mtgo_username'] or person['site_name'] or person['mtggoldfish_username'] or person['tappedout_username'] or f"Discord {person['discord_id']}"
+    details = []
+    if person['tappedout_username']:
+        details.append(f"to:{person['tappedout_username']}")
+    if person['mtggoldfish_username']:
+        details.append(f"mtgg:{person['mtggoldfish_username']}")
+    if person['discord_id']:
+        details.append(f"discord:{person['discord_id']}")
+    return f'{primary} ({", ".join(details)})' if details else str(primary)
 
 def load_person_by_mtgo_username(username: str, season_id: int | None = None) -> Person:
     return load_person(f'p.mtgo_username = {sqlescape(username, force_string=True)}', season_id=season_id)
@@ -69,7 +129,7 @@ def load_person(where: str, season_id: int | None = None) -> Person:
     return person
 
 # Sometimes (person detail page) we want to load what we know about a person even though they had no decks in the specified season.
-def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> Person:
+def load_people_statless(where: str = 'TRUE', order_by: str = 'p.id', season_id: int | None = None) -> list[Person]:
     person_query = query.person_query()
     sql = f"""
         SELECT
@@ -85,11 +145,16 @@ def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> P
             person AS p
         WHERE
             {where}
-        """
+        ORDER BY
+            {order_by}
+    """
     people = [Person(r) for r in db().select(sql)]
     for p in people:
         p.season_id = season_id
-    return guarantee.exactly_one(people)
+    return people
+
+def load_person_statless(where: str = 'TRUE', season_id: int | None = None) -> Person:
+    return guarantee.exactly_one(load_people_statless(where, season_id=season_id))
 
 # Note: This only loads people who have decks in the specified season.
 def load_people(where: str = 'TRUE',

@@ -135,7 +135,14 @@ def round_up_preceding_unit(result: ResultsType) -> ResultsType:
     for i in range(1, len(result) + 1):
         prev_value, prev_unit = result[-i]
         result[-i] = (prev_value + 1, prev_unit)
-        if result[-i][0] < intervals[prev_unit][1]:
+        max_units = intervals[prev_unit][0]
+        if max_units is None or result[-i][0] < max_units:
             break
         result[-i] = (0, result[-i][1])
+    else:
+        # All entries overflowed, so prepend the next-largest unit if one exists.
+        units = list(intervals)
+        first_unit_index = units.index(result[0][1])
+        if first_unit_index > 0:
+            result.insert(0, (1, units[first_unit_index - 1]))
     return result

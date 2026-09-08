@@ -16,6 +16,7 @@ PD.init = function() {
     PD.initMatchupCalculator();
     PD.initPersonPickers();
     PD.initArchetypePickers();
+    PD.initTableTypeaheadMenus();
     PD.initSearchShortcut();
     PD.initUseGuess();
     PD.initReassign();
@@ -346,6 +347,31 @@ PD.initArchetypePickers = function() {
         });
     });
 };
+PD.initTableTypeaheadMenus = function() {
+    var inputs = $("main table input.tt-input");
+    if (!inputs.length) {
+        return;
+    }
+    var positionOpenMenu = function() {
+        var input = $(this),
+            menu = input.siblings(".tt-menu"),
+            bounds = input[0].getBoundingClientRect(),
+            menuBounds = menu[0].getBoundingClientRect(),
+            left = Math.max(0, Math.min(bounds.left, window.innerWidth - menuBounds.width)),
+            top = bounds.bottom + menuBounds.height > window.innerHeight && bounds.top >= menuBounds.height ? bounds.top - menuBounds.height : bounds.bottom;
+        menu[0].style.setProperty("--table-typeahead-left", left + "px");
+        menu[0].style.setProperty("--table-typeahead-top", top + "px");
+        menu[0].style.setProperty("--table-typeahead-input-width", bounds.width + "px");
+    };
+    inputs.each(positionOpenMenu);
+    inputs.on("typeahead:open typeahead:render", positionOpenMenu);
+    inputs.closest("table").on("scroll", function() {
+        $(this).find("input.tt-input").each(positionOpenMenu);
+    });
+    $(window).on("resize scroll", function() {
+        inputs.each(positionOpenMenu);
+    });
+};
 
 PD.initSearchShortcut = function() {
     $(document).keypress(function(e) {
@@ -618,7 +644,6 @@ PD.htmlEscape = function(s) {
 $(document).ready(function() {
     PD.init();
 });
-
 
 // Shift-click checkboxes behavior.
 // Inlining https://raw.githubusercontent.com/rmariuzzo/checkboxes.js/master/src/jquery.checkboxes.js because it's not very big and there's no CDN version.

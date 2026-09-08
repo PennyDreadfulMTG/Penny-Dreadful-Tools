@@ -2286,6 +2286,17 @@ main td.archetype-picker-cell {
     overflow: visible;
 }
 
+/* Tables scroll horizontally on narrow screens. Keep their typeahead menus out of that scroll container so they are not clipped or given a vertical scrollbar. */
+main table .tt-menu {
+    left: var(--table-typeahead-left) !important; /* csslint allow: important */
+    max-width: 20rem;
+    position: fixed !important; /* csslint allow: important */
+    right: auto !important; /* csslint allow: important */
+    top: var(--table-typeahead-top) !important; /* csslint allow: important */
+    width: min(20rem, max(12rem, var(--table-typeahead-input-width)), calc(100vw - 2rem));
+    z-index: 4;
+}
+
 .inline input, .inline select, .inline textarea, .inline label, .inline button {
     height: 1.1rem; /* Nonstandard height because of the padding the browser adds. */
     font-size: var(--table-font-size);

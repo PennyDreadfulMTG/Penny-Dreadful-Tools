@@ -174,6 +174,41 @@ def test_header_search_ranks_aliases_and_navigates_live_results(browser: 'Browse
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_table_typeahead_suggestions_escape_scroll_container(browser: 'Browser', site: Container) -> None:
+    if BASE_URL:
+        pytest.skip('Cannot create a demimod session on a remote canary.')
+    from decksite.main import APP
+
+    serializer = APP.session_interface.get_signing_serializer(APP)
+    assert serializer is not None
+    page, collector = new_page(browser, site, viewport=(800, 800))
+    page.context.add_cookies([{
+        'name': APP.config.get('SESSION_COOKIE_NAME', 'session'),
+        'value': serializer.dumps({'demimod': True}),
+        'url': site.base_url,
+    }])
+    page.goto('/admin/archetypes/')
+    table = page.locator('main table').first
+    table.evaluate('(element) => { element.scrollLeft = element.scrollWidth; }')
+    picker = table.locator('input.tt-input').first
+    expect(picker).to_be_visible()
+    picker.fill('rakdos')
+    menu = picker.locator('xpath=following-sibling::*[contains(@class, "tt-menu")]')
+    suggestion = menu.locator('.tt-suggestion').first
+    expect(suggestion).to_be_visible()
+
+    picker_box = picker.bounding_box()
+    menu_box = menu.bounding_box()
+    assert picker_box is not None and menu_box is not None
+    assert min(abs(menu_box['y'] - (picker_box['y'] + picker_box['height'])), abs(menu_box['y'] + menu_box['height'] - picker_box['y'])) < 1
+    assert 0 <= menu_box['x'] <= picker_box['x']
+    assert menu_box['x'] + menu_box['width'] >= picker_box['x'] + picker_box['width']
+    assert menu_box['x'] + menu_box['width'] <= 800
+    assert table.evaluate('(element) => element.scrollHeight === element.clientHeight')
+    assert suggestion.evaluate('(element) => element.contains(document.elementFromPoint(element.getBoundingClientRect().left + 2, element.getBoundingClientRect().top + 2))')
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def test_live_table_reserves_space_with_skeleton_while_loading(browser: 'Browser', site: Container, monkeypatch: pytest.MonkeyPatch) -> None:
     if BASE_URL:
         pytest.skip('Cannot delay the API on a remote canary.')

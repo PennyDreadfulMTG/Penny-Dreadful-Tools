@@ -16,10 +16,11 @@ restores a prepared database, and builds JavaScript. Use the **decksite_cloud** 
 script to start the app on port 5000 with Python auto-reload and no interactive
 debugger. After changing JavaScript, run `npm run build` (or `npm run watch`).
 
-**Enable port forwarding in the workspace's Ports panel.** Merely detecting port
-5000 in the VM does not enable forwarding on the Mac. Open the forwarded entry for
-5000; its Mac port can differ from 5000 and can change when reconnecting. A cloud
-`http://127.0.0.1:5000` health check verifies the VM only, not the Mac tunnel.
+Merely detecting port 5000 in the VM does not prove forwarding on the Mac.
+Conductor's automatic forwarding can appear shortly after detection, and its Mac
+port can differ from 5000 or change when reconnecting. Agents should poll briefly
+for that mapping and verify it from the Mac. A cloud `http://127.0.0.1:5000`
+health check verifies the VM only, not the Mac tunnel.
 
 An agent with RunLocalCommand can identify the actual mapping with this read-only
 query on the Mac (substitute the current `CONDUCTOR_WORKSPACE_ID`):
@@ -33,8 +34,11 @@ Then verify `http://127.0.0.1:<local_port>/` from the Mac before sharing that li
 This database is an implementation detail; if its schema changes, use the Ports UI.
 Leave the development server running after verification.
 
-If the Ports toggle is unavailable, use `.conductor/preview-tunnel.py` on the Mac
-to forward port 5000 through Conductor's existing SSH mapping for remote port 22.
+If no usable automatic mapping appears, use `.conductor/preview-tunnel.py` on the
+Mac to forward port 5000 through Conductor's existing SSH mapping for remote port
+22. Agents with RunLocalCommand should do this automatically instead of asking the
+user to change the Ports panel. Ask only when Mac access is unavailable and there
+is no working mapping or existing tunnel.
 A plain `ssh -f -N` tunnel is insufficient: VM restart/resume kills the database,
 web server, and SSH connection. The supervisor reconnects, and its restricted SSH
 command runs `.conductor/preview-ssh.sh` to restart MariaDB and decksite as needed.

@@ -193,6 +193,7 @@ def test_table_typeahead_suggestions_escape_scroll_container(browser: 'Browser',
     table = page.locator('main table').first
     table.evaluate('(element) => { element.scrollLeft = element.scrollWidth; }')
     picker = table.locator('input.tt-input').first
+    picker.scroll_into_view_if_needed()
     expect(picker).to_be_visible()
     picker.fill('rakdos')
     menu = picker.locator('xpath=following-sibling::*[contains(@class, "tt-menu")]')

@@ -174,11 +174,13 @@ def test_header_search_ranks_aliases_and_navigates_live_results(browser: 'Browse
     assert not collector.problems, '\n'.join(collector.problems)
 
 
-def test_table_typeahead_suggestions_escape_scroll_container(browser: 'Browser', site: Container) -> None:
+def test_table_typeahead_suggestions_escape_scroll_container(browser: 'Browser', site: Container, monkeypatch: pytest.MonkeyPatch) -> None:
     if BASE_URL:
         pytest.skip('Cannot create a demimod session on a remote canary.')
     from decksite.main import APP
 
+    # CI deliberately has no OAuth secret, which production normally reuses as Flask's session signing key.
+    monkeypatch.setitem(APP.config, 'SECRET_KEY', 'browser-test-secret')
     serializer = APP.session_interface.get_signing_serializer(APP)
     assert serializer is not None
     page, collector = new_page(browser, site, viewport=(800, 800))

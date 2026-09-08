@@ -52,17 +52,20 @@ When it returns a port, use `RunLocalCommand` again to request
 `http://127.0.0.1:<local-port>/<path>`. Return that exact URL only after the Mac
 request succeeds.
 
-No row means forwarding is not enabled; it does not mean `RunLocalCommand` is
-unavailable. Confirm the state with this read-only query:
+No row can mean Conductor has detected the port but has not created its automatic
+forward yet. It does not mean `RunLocalCommand` is unavailable. Confirm the state
+with this read-only query:
 
 ```bash
 sqlite3 -readonly -header -column "$HOME/Library/Application Support/com.conductor.app/conductor.db" "SELECT auto_forward_enabled, port_forwarding_enabled FROM workspaces WHERE id = '<workspace-id>';"
 ```
 
-If `port_forwarding_enabled` is `0`, ask the user to enable detected port 5000
-in the workspace's Ports popover, then repeat the lookup and Mac HTTP check. If
-the Ports control is unavailable, follow the supervised SSH fallback in
+When automatic forwarding is enabled, poll the mapping query for up to 30 seconds
+before concluding that no native mapping is available. If no usable mapping
+appears, use RunLocalCommand to create the supervised SSH fallback in
 `.conductor/README.md`, record its URL in `.context/pd-preview.json`, and verify
-recovery as described there.
+initial connectivity and recovery as described there. Do this automatically; do
+not ask the user to enable a port. Ask the user only if RunLocalCommand is
+unavailable and there is no working native mapping or existing supervised tunnel.
 
 Never present the cloud VM's `127.0.0.1:5000` as the user's forwarded URL.

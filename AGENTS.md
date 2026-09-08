@@ -21,6 +21,11 @@ Do not use the "merge when ready" label. It is a leftover from an old CI setup a
   port 5000. Port detection is separate from enabling forwarding in Conductor's
   Ports panel. Verify from the Mac with RunLocalCommand when available.
   Check `.context/pd-preview.json` for an existing temporary SSH preview tunnel.
+- Do not ask the user to enable cloud preview forwarding. Conductor's automatic
+  forwarding can appear shortly after port detection, so poll for the Mac mapping.
+  If no usable mapping appears and RunLocalCommand is available, create the
+  supervised SSH fallback described in `.conductor/README.md`. Ask the user only
+  when neither Mac access nor an existing preview tunnel is available.
 - Cloud VM restart/resume stops background services. An SSH fallback must use
   `.conductor/preview-tunnel.py` on the Mac and the restricted
   `.conductor/preview-ssh.sh` server entry point so it reconnects and restarts

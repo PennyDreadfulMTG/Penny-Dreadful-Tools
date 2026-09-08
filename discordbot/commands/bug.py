@@ -1,8 +1,34 @@
-from interactions import Client, Extension
+import re
+
+from interactions import Client, Extension, Guild
 from interactions.models import OptionType, slash_command, slash_option
 
 from discordbot.command import MtgContext
 from shared import repo
+
+
+def normalize_mentions(text: str, guild: Guild | None) -> str:
+    if guild is None:
+        return text
+
+    def replace_mention(match: re.Match[str]) -> str:
+        mention_type, snowflake = match.groups()
+        discord_id = int(snowflake)
+        if mention_type == '#':
+            channel = guild.get_channel(discord_id)
+            name = getattr(channel, 'name', None)
+            prefix = '#'
+        elif mention_type == '@&':
+            role = guild.get_role(discord_id)
+            name = role.name if role else None
+            prefix = '@'
+        else:
+            member = guild.get_member(discord_id)
+            name = member.display_name if member else None
+            prefix = '@'
+        return f'{prefix}{name}' if name else match.group(0)
+
+    return re.sub(r'<(@!?|@&|#)(\d+)>', replace_mention, text)
 
 
 class Bug(Extension):
@@ -14,6 +40,7 @@ class Bug(Extension):
         text = title
         if body:
             text += f'\n\n{body}'
+        text = normalize_mentions(text, ctx.guild)
         issue = repo.create_issue(text, str(ctx.author))
         if issue is None:
             msg = f'{ctx.author.mention}: Unable to create an issue. Please report at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>'
@@ -29,6 +56,7 @@ class Bug(Extension):
         text = title
         if body:
             text += f'\n\n{body}'
+        text = normalize_mentions(text, ctx.guild)
         issue = repo.create_issue(text, str(ctx.author), 'Discord', 'PennyDreadfulMTG/gatherling')
         if issue is None:
             await ctx.send('Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')

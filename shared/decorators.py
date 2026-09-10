@@ -112,7 +112,9 @@ class _SystemwideLock:
     def __call__[**P](self, f: Callable[P, None]) -> Callable[P, None]:
         @functools.wraps(f)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> None:
-            lock_db = get_database(configuration.get_str('decksite_database'))
+            # Every process that uses these locks has a cards database, while non-web
+            # processes such as discordbot may not have a valid decksite database.
+            lock_db = get_database(configuration.get_str('magic_database'))
             acquired = False
             try:
                 try:

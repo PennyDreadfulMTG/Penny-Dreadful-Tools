@@ -85,13 +85,17 @@ def test_schedule_reprime_cache_detaches_once_per_cooldown(monkeypatch: pytest.M
 
 def test_interprocess_locked_uses_a_nonblocking_systemwide_database_lock(monkeypatch: pytest.MonkeyPatch) -> None:
     lock_db = mock.Mock()
-    monkeypatch.setattr(decorators, 'get_database', mock.Mock(return_value=lock_db))
+    get_database_mock = mock.Mock(return_value=lock_db)
+    monkeypatch.setattr(decorators, 'get_database', get_database_mock)
+    monkeypatch.setitem(configuration.CONFIG, 'magic_database', 'discordbot')
+    monkeypatch.setitem(configuration.CONFIG, 'decksite_database', './decksite.sqlite')
     work = mock.Mock(return_value=None)
     work.__name__ = 'work'
 
     wrapped = decorators.interprocess_locked('.task.lock')(work)
 
     assert wrapped() is None
+    get_database_mock.assert_called_once_with('discordbot')
     work.assert_called_once_with()
     lock_db.get_lock.assert_called_once_with('penny-dreadful-tools:.task.lock', 0)
     lock_db.release_lock.assert_called_once_with('penny-dreadful-tools:.task.lock')
@@ -117,7 +121,7 @@ def test_interprocess_locked_does_not_queue_another_run(monkeypatch: pytest.Monk
 def test_interprocess_locked_contends_across_real_database_connections() -> None:
     path = f'.test-{uuid4()}.lock'
     lock_key = f'penny-dreadful-tools:{path}'
-    holder = get_database(configuration.get_str('decksite_database'))
+    holder = get_database(configuration.get_str('magic_database'))
     calls: list[bool] = []
 
     @decorators.interprocess_locked(path)

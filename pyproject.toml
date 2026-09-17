@@ -20,7 +20,7 @@ dependencies = [
     "lxml",
     "matplotlib==3.11.2",
     "munch==4.0.0",
-    "mysqlclient==2.2.8",
+    "mysqlclient==2.3.0",
     "plumbum==2.0.2",
     "poeditor==1.2.1",
     "pygtrie==2.6.2",

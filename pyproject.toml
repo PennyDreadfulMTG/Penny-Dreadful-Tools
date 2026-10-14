@@ -50,7 +50,7 @@ dependencies = [
     "Pillow",
     "PyGithub==2.10.0",
     "SQLAlchemy>=2.1.4",
-    "SQLAlchemy-Utils>=0.42.1",
+    "SQLAlchemy-Utils>=0.43.0",
     "Whoosh==2.7.4",
     "sentry-sdk[flask]",
     "pydantic",

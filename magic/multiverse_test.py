@@ -231,3 +231,48 @@ async def test_alias_from_later_printing_is_stored(monkeypatch: pytest.MonkeyPat
     values = await multiverse.determine_values_async([printing, omenpaths_printing], 100)
 
     assert values['flavor_name'] == [{'card_id': 100, 'flavor_name': 'Kroble, Envoy of the Bog'}]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('season, refreshed', [(None, True), ('DFT', True), ('FDN', False)])
+async def test_current_legality_refreshes_populated_format(monkeypatch: pytest.MonkeyPatch, season: str | None, refreshed: bool) -> None:
+    queries: list[str] = []
+
+    class FakeDatabase:
+        def select(self, query: str, args: list[int] | None = None) -> list[dict[str, object]]:
+            if 'FROM card_legality' in query:
+                return [{'id': 1}]
+            return [
+                {'id': 1, 'name': 'Plains', 'flavor_names': None},
+                {'id': 2, 'name': 'Plasma Bolt', 'flavor_names': None},
+                {'id': 3, 'name': 'Monoist Sentry', 'flavor_names': None},
+            ]
+
+        def execute(self, query: str, args: list[int] | None = None) -> None:
+            queries.append(query)
+
+        def begin(self, name: str) -> None:
+            pass
+
+        def commit(self, name: str) -> None:
+            pass
+
+        def value(self, query: str, args: list[int]) -> int:
+            return 3
+
+    async def legal_cards_async(season: str | None = None) -> list[str]:
+        assert season in {'DFT', 'FDN'}
+        return ['Plains', 'Plasma Bolt', 'Monoist Sentry']
+
+    monkeypatch.setattr(multiverse, 'db', FakeDatabase)
+    monkeypatch.setattr(multiverse.seasons, 'current_season_code', lambda: 'DFT')
+    monkeypatch.setattr(multiverse.fetcher, 'legal_cards_async', legal_cards_async)
+    monkeypatch.setattr(multiverse, 'get_format_id', lambda name, insert: 38)
+
+    await multiverse.set_legal_cards_async(season)
+
+    if refreshed:
+        assert any('DELETE FROM card_legality' in query for query in queries)
+        assert any("(38, 2, 'Legal')" in query and "(38, 3, 'Legal')" in query for query in queries)
+    else:
+        assert not queries

@@ -19,6 +19,7 @@ config.json
 .is-spikey.txt
 /images/*.jpg
 /images/*.png
+/images/*.webp
 .cache/
 # The old CMC charts. These are now dynamic with Chart.js and don't use pngs.
 decksite/images/*-cmc.png

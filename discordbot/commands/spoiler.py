@@ -26,14 +26,14 @@ class Spoiler(Extension):
             return
         imagename = '{set}_{number}'.format(
             set=sfcard['set'], number=sfcard['collector_number'])
-        imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
+        imagepath = '{image_dir}/{imagename}.webp'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
         if sfcard.get('card_faces') and sfcard.get('layout', '') != 'split':
             c = sfcard['card_faces'][0]
         else:
             c = sfcard
         image_available = True
         try:
-            await asyncio.to_thread(fetch_tools.store_image, c['image_uris']['normal'], imagepath)
+            await asyncio.to_thread(fetch_tools.store_image, c['image_uris']['grid'], imagepath)
         except FetchException as e:
             logging.warning('Could not download image for %s: %s', sfcard['name'], e)
             image_available = False

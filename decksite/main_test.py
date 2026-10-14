@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
@@ -124,13 +125,15 @@ def test_image_route_fallback_keeps_the_requested_version(monkeypatch: pytest.Mo
         raise TooFewItemsException('nope')
 
     monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+    fetch = Mock(return_value={'image_uris': {'art': 'https://cards.scryfall.io/art/card.webp', 'display': 'https://cards.scryfall.io/display/card.webp'}})
+    monkeypatch.setattr(main.fetch_tools, 'fetch_json', fetch)
 
     with main.APP.test_request_context('/image/Nonesuch/?version=art_crop'):
         response = main.image('Nonesuch')
 
     assert response.status_code == 303
     assert response.location is not None
-    assert response.location == 'https://api.scryfall.com/cards/named?exact=Nonesuch&format=image&version=art_crop'
+    assert response.location == 'https://cards.scryfall.io/art/card.webp'
 
 
 def test_small_art_crop_fallback_uses_scryfalls_art_crop(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -138,12 +141,14 @@ def test_small_art_crop_fallback_uses_scryfalls_art_crop(monkeypatch: pytest.Mon
         raise TooFewItemsException('nope')
 
     monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+    fetch = Mock(return_value={'image_uris': {'art': 'https://cards.scryfall.io/art/card.webp', 'display': 'https://cards.scryfall.io/display/card.webp'}})
+    monkeypatch.setattr(main.fetch_tools, 'fetch_json', fetch)
 
     with main.APP.test_request_context('/image/Nonesuch/?version=art_crop_small'):
         response = main.image('Nonesuch')
 
     assert response.status_code == 303
-    assert response.location == 'https://api.scryfall.com/cards/named?exact=Nonesuch&format=image&version=art_crop'
+    assert response.location == 'https://cards.scryfall.io/art/card.webp'
 
 
 def test_image_route_returns_404_when_the_fetch_fails(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -161,9 +166,52 @@ def test_unknown_card_fallback_encodes_user_input(monkeypatch: pytest.MonkeyPatc
         raise TooFewItemsException('nope')
 
     monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+    fetch = Mock(return_value={'image_uris': {'art': 'https://cards.scryfall.io/art/card.webp', 'display': 'https://cards.scryfall.io/display/card.webp'}})
+    monkeypatch.setattr(main.fetch_tools, 'fetch_json', fetch)
 
     with main.APP.test_request_context('/image/Name%26format%3Djson/?version=art_crop'):
         response = main.image('Name&format=json')
 
     assert response.status_code == 303
-    assert response.location == 'https://api.scryfall.com/cards/named?exact=Name%26format%3Djson&format=image&version=art_crop'
+    assert response.location == 'https://cards.scryfall.io/art/card.webp'
+    fetch.assert_called_once_with('https://api.scryfall.com/cards/named?exact=Name%26format%3Djson')
+
+
+@pytest.mark.parametrize(('extension', 'image_format', 'content_type'), [('webp', 'WEBP', 'image/webp'), ('jpg', 'JPEG', 'image/jpeg')])
+def test_image_route_serves_correct_mime_type(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, extension: str, image_format: str, content_type: str) -> None:
+    from PIL import Image
+
+    path = tmp_path / f'card.{extension}'
+    Image.new('RGB', (100, 100)).save(path, format=image_format)
+    monkeypatch.setattr(main.oracle, 'load_cards', lambda _names: [Card({'name': 'Island'})])
+    monkeypatch.setattr(main.image_fetcher, 'download_image', lambda _cards, version='': str(path))
+
+    with main.APP.test_request_context('/image/Island/'):
+        response = main.image('Island')
+        assert response.status_code == 200
+        assert response.mimetype == content_type
+        response.close()
+
+
+def test_default_image_fallback_requests_webp(monkeypatch: pytest.MonkeyPatch) -> None:
+    def not_found(_names: list[str]) -> list[Card]:
+        raise TooFewItemsException('nope')
+
+    monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+    fetch = Mock(return_value={'image_uris': {'art': 'https://cards.scryfall.io/art/card.webp', 'display': 'https://cards.scryfall.io/display/card.webp'}})
+    monkeypatch.setattr(main.fetch_tools, 'fetch_json', fetch)
+    with main.APP.test_request_context('/image/Nonesuch/'):
+        response = main.image('Nonesuch')
+    assert response.location == 'https://cards.scryfall.io/display/card.webp'
+
+
+@pytest.mark.parametrize('sfcard', [{'object': 'error'}, {'image_uris': {'normal': 'https://cards.scryfall.io/old.jpg'}}])
+def test_unknown_card_fallback_returns_404_without_a_webp(monkeypatch: pytest.MonkeyPatch, sfcard: dict) -> None:
+    def not_found(_names: list[str]) -> list[Card]:
+        raise TooFewItemsException('nope')
+
+    monkeypatch.setattr(main.oracle, 'load_cards', not_found)
+    monkeypatch.setattr(main.fetch_tools, 'fetch_json', Mock(return_value=sfcard))
+    with main.APP.test_request_context('/image/Nonesuch/'):
+        response = main.image('Nonesuch')
+    assert response.status_code == 404

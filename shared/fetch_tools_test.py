@@ -48,15 +48,16 @@ def test_store_image_rejects_http_error(tmp_path: Path) -> None:
     assert not destination.exists()
 
 
-def test_store_image_only_publishes_valid_image(tmp_path: Path) -> None:
+@pytest.mark.parametrize(('image_format', 'extension', 'content_type'), [('BMP', 'bmp', 'image/bmp'), ('WEBP', 'webp', 'image/webp')])
+def test_store_image_only_publishes_valid_image(tmp_path: Path, image_format: str, extension: str, content_type: str) -> None:
     contents = io.BytesIO()
-    Image.new('RGB', (100, 100)).save(contents, format='BMP')
-    response = Mock(headers={'Content-Type': 'image/bmp'})
+    Image.effect_noise((100, 100), 80).convert('RGB').save(contents, format=image_format)
+    response = Mock(headers={'Content-Type': content_type})
     response.iter_content.return_value = [contents.getvalue()]
-    destination = tmp_path / 'card.bmp'
+    destination = tmp_path / f'card.{extension}'
 
     with patch.object(fetch_tools.requests, 'get', return_value=response):
-        fetch_tools.store_image('https://example.com/card.bmp', str(destination))
+        fetch_tools.store_image(f'https://example.com/card.{extension}', str(destination))
 
     assert destination.read_bytes() == contents.getvalue()
 
@@ -101,20 +102,21 @@ async def test_store_async_rejects_non_image_response(tmp_path: Path, monkeypatc
 
 
 @pytest.mark.asyncio
-async def test_store_async_only_publishes_a_valid_image(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.parametrize(('image_format', 'extension', 'content_type'), [('BMP', 'bmp', 'image/bmp'), ('WEBP', 'webp', 'image/webp')])
+async def test_store_async_only_publishes_a_valid_image(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, image_format: str, extension: str, content_type: str) -> None:
     contents = io.BytesIO()
-    Image.new('RGB', (100, 100)).save(contents, format='BMP')
+    Image.effect_noise((100, 100), 80).convert('RGB').save(contents, format=image_format)
 
     async def chunks(_size: int) -> AsyncIterator[bytes]:
         yield contents.getvalue()
 
     content = Mock()
     content.iter_chunked = chunks
-    response = Mock(status=200, headers={'Content-Type': 'image/bmp'}, content=content)
+    response = Mock(status=200, headers={'Content-Type': content_type}, content=content)
     client_session = mock_async_response(monkeypatch, response)
-    destination = tmp_path / 'card.bmp'
+    destination = tmp_path / f'card.{extension}'
 
-    await fetch_tools.store_async('https://cards.scryfall.io/card.bmp', str(destination))
+    await fetch_tools.store_async(f'https://cards.scryfall.io/card.{extension}', str(destination))
 
     assert destination.read_bytes() == contents.getvalue()
     client_session.assert_called_once_with(headers={'User-Agent': fetch_tools.USER_AGENT})

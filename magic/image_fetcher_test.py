@@ -53,8 +53,8 @@ def test_image_urls_put_cdn_before_id_api() -> None:
     c = Card({'name': 'Lightning Bolt', 'default_printing_system_id': DEFAULT_PRINTING_ID})
 
     assert image_fetcher.image_urls(c, version='art_crop') == [
-        f'https://cards.scryfall.io/art_crop/front/8/8/{DEFAULT_PRINTING_ID}.jpg',
-        f'https://api.scryfall.com/cards/{DEFAULT_PRINTING_ID}?format=image&version=art_crop',
+        f'https://cards.scryfall.io/art/front/8/8/{DEFAULT_PRINTING_ID}.webp',
+        f'https://api.scryfall.com/cards/{DEFAULT_PRINTING_ID}',
     ]
 
 
@@ -62,7 +62,7 @@ def test_image_urls_without_a_printing_use_named_api() -> None:
     c = Card({'name': 'Fire // Ice'})
 
     assert image_fetcher.image_urls(c, version='art_crop') == [
-        'https://api.scryfall.com/cards/named?exact=Fire+%2F%2F+Ice&format=image&version=art_crop',
+        'https://api.scryfall.com/cards/named?exact=Fire+%2F%2F+Ice',
     ]
 
 
@@ -74,7 +74,7 @@ def test_meld_back_uses_the_result_cards_printing() -> None:
     })
 
     assert image_fetcher.image_urls(front, version='large', face='meld')[0] == (
-        f'https://cards.scryfall.io/large/front/8/8/{DEFAULT_PRINTING_ID}.jpg'
+        f'https://cards.scryfall.io/display/front/8/8/{DEFAULT_PRINTING_ID}.webp'
     )
 
 
@@ -82,11 +82,14 @@ def test_meld_back_uses_the_result_cards_printing() -> None:
 async def test_download_tries_id_api_after_cdn_failure(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     store = AsyncMock(side_effect=[FetchException('404'), None])
     monkeypatch.setattr(image_fetcher.fetch_tools, 'store_async', store)
-    destination = str(tmp_path / 'card.jpg')
-    urls = ['https://cards.scryfall.io/card.jpg', 'https://api.scryfall.com/cards/id?format=image']
+    destination = str(tmp_path / 'card.webp')
+    urls = ['https://cards.scryfall.io/card.webp', 'https://api.scryfall.com/cards/id']
+    fetch = AsyncMock(return_value={'image_uris': {'display': 'https://cards.scryfall.io/fallback.webp'}})
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'fetch_json_async', fetch)
 
     assert await image_fetcher.download_first_image(urls, destination)
-    assert [call.args[0] for call in store.await_args_list] == urls
+    assert [call.args[0] for call in store.await_args_list] == [urls[0], 'https://cards.scryfall.io/fallback.webp']
+    fetch.assert_awaited_once_with(urls[1])
 
 
 @pytest.mark.asyncio
@@ -99,11 +102,11 @@ async def test_double_faced_art_crop_only_downloads_the_front(monkeypatch: pytes
     })
     download = AsyncMock(return_value=True)
     monkeypatch.setattr(image_fetcher, 'download_first_image', download)
-    destination = str(tmp_path / 'kytheon.art_crop.jpg')
+    destination = str(tmp_path / 'kytheon.art_crop.webp')
 
     await image_fetcher.download_scryfall_card_image(card, destination, version='art_crop')
 
-    download.assert_awaited_once_with(image_fetcher.image_urls(card, version='art_crop'), destination)
+    download.assert_awaited_once_with(image_fetcher.image_urls(card, version='art_crop'), destination, version='art_crop')
 
 
 def test_exact_printings_in_the_same_set_have_distinct_cache_keys() -> None:
@@ -129,8 +132,8 @@ def test_default_printing_changes_the_cache_key() -> None:
 @pytest.mark.asyncio
 async def test_download_small_art_crop_resizes_and_compresses(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     card = Card({'name': 'Reclaim', 'layout': 'normal'})
-    source_path = tmp_path / 'source.jpg'
-    output_path = tmp_path / 'small.jpg'
+    source_path = tmp_path / 'source.webp'
+    output_path = tmp_path / 'small.webp'
     Image.effect_noise((626, 457), 80).convert('RGB').save(source_path, quality=95)
     monkeypatch.setattr(image_fetcher, 'small_art_crop_filepath', lambda _card: str(output_path))
     monkeypatch.setattr(image_fetcher, 'download_scryfall_art_crop', AsyncMock(return_value=str(source_path)))
@@ -139,7 +142,7 @@ async def test_download_small_art_crop_resizes_and_compresses(monkeypatch: pytes
 
     assert result == str(output_path)
     with Image.open(output_path) as image:
-        assert image.format == 'JPEG'
+        assert image.format == 'WEBP'
         assert image.size == (320, 234)
     assert output_path.stat().st_size < source_path.stat().st_size
 
@@ -152,10 +155,10 @@ async def test_small_art_crop_does_not_reuse_a_stale_double_faced_composite(monk
         'layout': 'transform',
         'default_printing_system_id': DEFAULT_PRINTING_ID,
     })
-    output_path = tmp_path / 'small.jpg'
+    output_path = tmp_path / 'small.webp'
     download = AsyncMock(return_value=True)
 
-    async def write_fresh_front(_urls: list[str], destination: str) -> bool:
+    async def write_fresh_front(_urls: list[str], destination: str, version: str) -> bool:
         Image.effect_noise((626, 457), 80).convert('RGB').save(destination, quality=95)
         return True
 
@@ -182,3 +185,83 @@ async def test_download_image_async_uses_small_art_crop(monkeypatch: pytest.Monk
 
     assert await image_fetcher.download_image_async([card], version='art_crop_small') == '/tmp/reclaim.art_crop_small.jpg'
     download.assert_awaited_once_with(card)
+
+
+@pytest.mark.parametrize(('old', 'new', 'extension'), [
+    ('', 'display', 'webp'), ('small', 'thumb', 'webp'), ('normal', 'grid', 'webp'),
+    ('large', 'display', 'webp'), ('border_crop', 'crop', 'webp'), ('art_crop', 'art', 'webp'),
+    ('grid', 'grid', 'webp'), ('png', 'png', 'png'), ('jpeg', 'jpeg', 'jpg'),
+])
+def test_image_versions_use_current_cdn_and_api_formats(old: str, new: str, extension: str) -> None:
+    card = Card({'name': 'Island', 'default_printing_system_id': DEFAULT_PRINTING_ID})
+    assert image_fetcher.image_urls(card, old, face='back') == [
+        f'https://cards.scryfall.io/{new}/back/8/8/{DEFAULT_PRINTING_ID}.{extension}',
+        f'https://api.scryfall.com/cards/{DEFAULT_PRINTING_ID}',
+    ]
+    assert image_fetcher.api_card_image_uri({'image_uris': {new: 'https://example.com/image'}}, old) == 'https://example.com/image'
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('version', ['', 'art_crop', 'art_crop_small'])
+async def test_existing_jpeg_cache_is_reused(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, version: str) -> None:
+    card = Card({'name': 'Island', 'layout': 'normal'})
+    monkeypatch.setattr(image_fetcher.configuration, 'get', lambda _key: str(tmp_path))
+    suffix = f'.{version}.jpg' if version else '.jpg'
+    legacy = tmp_path / f'island{suffix}'
+    Image.effect_noise((100, 100), 80).convert('RGB').save(legacy)
+    download = AsyncMock(side_effect=AssertionError('cached JPEG must not be downloaded again'))
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'store_async', download)
+
+    assert await image_fetcher.download_image_async([card], version) == str(legacy)
+    download.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('card_layout', ['normal', 'transform', 'meld'])
+async def test_uncached_card_downloads_and_composites_webp(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, card_layout: str) -> None:
+    card = Card({
+        'name': 'Front', 'names': 'Front|Back' if card_layout != 'normal' else 'Front',
+        'layout': card_layout, 'default_printing_system_id': DEFAULT_PRINTING_ID,
+        'meld_result_printing_system_id': GODZILLA_PRINTING_ID,
+    })
+    monkeypatch.setattr(image_fetcher.configuration, 'get', lambda _key: str(tmp_path))
+
+    async def store(url: str, destination: str) -> None:
+        assert '/crop/' in url and url.endswith('.webp')
+        Image.effect_noise((480, 680), 80).convert('RGB').save(destination, format='WEBP')
+
+    download = AsyncMock(side_effect=store)
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'store_async', download)
+    result = await image_fetcher.download_image_async([card])
+
+    assert result is not None and result.endswith('.webp')
+    with Image.open(result) as image:
+        assert image.format == 'WEBP'
+        assert image.width > image.height if card_layout != 'normal' else image.width < image.height
+    assert download.await_count == (1 if card_layout == 'normal' else 2)
+
+
+@pytest.mark.asyncio
+async def test_named_api_fallback_selects_back_face_art(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    fetch = AsyncMock(return_value={'card_faces': [
+        {'image_uris': {'art': 'https://cards.scryfall.io/front.webp'}},
+        {'image_uris': {'art': 'https://cards.scryfall.io/back.webp'}},
+    ]})
+    store = AsyncMock()
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'fetch_json_async', fetch)
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'store_async', store)
+    destination = str(tmp_path / 'back.webp')
+    card = Card({'name': 'Delver of Secrets'})
+
+    assert await image_fetcher.download_first_image(image_fetcher.image_urls(card), destination, version='art_crop', face='back')
+    store.assert_awaited_once_with('https://cards.scryfall.io/back.webp', destination)
+
+
+@pytest.mark.asyncio
+async def test_missing_api_image_does_not_download_jpeg(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    fetch = AsyncMock(return_value={'image_uris': {'large': 'https://cards.scryfall.io/old.jpg'}})
+    store = AsyncMock()
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'fetch_json_async', fetch)
+    monkeypatch.setattr(image_fetcher.fetch_tools, 'store_async', store)
+    assert not await image_fetcher.download_first_image(['https://api.scryfall.com/cards/id'], str(tmp_path / 'card.webp'))
+    store.assert_not_awaited()

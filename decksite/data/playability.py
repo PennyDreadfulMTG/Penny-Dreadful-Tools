@@ -128,21 +128,28 @@ def preaggregate_legal_cards() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
     """
     db().execute(sql)
-    # Supplemental rotations add cards to existing seasons, including seasons
-    # already cached before this refresh behavior was introduced.
+    # Supplemental rotations and corrected list names can change any season.
     for season_id in all_season_ids:
         try:
             legal_cards = search.search(f'f:pd{season_id}')
         except search.InvalidValueException as e:
             logger.error(f'Not able to find the legal cards for season {season_id} so skipping', e)
             continue
-        existing = set(db().values('SELECT name FROM _legal_cards WHERE season_id = %s', [season_id]))
-        missing = legal_cards - existing
-        if not missing:
+        if not legal_cards:
             continue
-        logger.info(f'Adding {len(missing)} cards for season {season_id} to _legal_cards')
-        sql = 'INSERT IGNORE INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in missing)
-        db().execute(sql)
+        existing = set(db().values('SELECT name FROM _legal_cards WHERE season_id = %s', [season_id]))
+        if legal_cards == existing:
+            continue
+        logger.info(f'Refreshing {len(legal_cards)} cards for season {season_id} in _legal_cards')
+        sql = 'INSERT INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in legal_cards)
+        db().begin('preaggregate_legal_cards')
+        try:
+            db().execute('DELETE FROM _legal_cards WHERE season_id = %s', [season_id])
+            db().execute(sql)
+        except Exception:
+            db().rollback('preaggregate_legal_cards')
+            raise
+        db().commit('preaggregate_legal_cards')
 
 def preaggregate_season_count() -> None:
     table = '_season_count'

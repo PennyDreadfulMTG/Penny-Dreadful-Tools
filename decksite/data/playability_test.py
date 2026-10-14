@@ -78,3 +78,46 @@ def test_supplemental_refresh_updates_playability_and_archetype_key_cards(monkey
     assert db().value("SELECT num_decks FROM _season_archetype_card_count WHERE season_id = %s AND name = 'Lightning Bolt'", [season_id]) == 2
     assert playability.playability()['Lightning Bolt'] == pytest.approx(2 / 3, abs=0.00001)
     assert 'Lightning Bolt' in playability.key_cards(season_id).values()
+
+
+@pytest.mark.functional
+@pytest.mark.parametrize('season_id, old_name, canonical_name', [
+    (39, 'Aggressive Symbiosis', 'Alien Symbiosis'),
+    (40, 'Lucille', "Gisa's Favorite Shovel"),
+    (40, 'With Great Power...', 'With Great Power . . .'),
+    (40, 'plains', 'Plains'),
+])
+def test_legal_cards_refresh_replaces_corrected_names(monkeypatch: pytest.MonkeyPatch, legal_cards_table: None, season_id: int, old_name: str, canonical_name: str) -> None:
+    cards = {old_name, 'Island'}
+    monkeypatch.setattr(playability.search, 'search', lambda query: cards if query == f'f:pd{season_id}' else {'Island'})
+    playability.preaggregate_legal_cards()
+
+    cards.remove(old_name)
+    cards.add(canonical_name)
+    playability.preaggregate_legal_cards()
+    playability.preaggregate_legal_cards()
+
+    assert set(db().values('SELECT name FROM _legal_cards WHERE season_id = %s', [season_id])) == {canonical_name, 'Island'}
+    assert db().value('SELECT COUNT(*) FROM _legal_cards WHERE season_id = %s', [season_id]) == 2
+
+
+@pytest.mark.functional
+def test_legal_cards_refresh_rolls_back_failed_replacement(monkeypatch: pytest.MonkeyPatch, legal_cards_table: None) -> None:
+    monkeypatch.setattr(playability.search, 'search', lambda query: {'Lucille'} if query == 'f:pd40' else {'Island'})
+    playability.preaggregate_legal_cards()
+    monkeypatch.setattr(playability.search, 'search', lambda query: {"Gisa's Favorite Shovel"} if query == 'f:pd40' else {'Island'})
+    database = db()
+    execute = database.execute
+
+    def fail_insert(sql: str, args: list[int] | None = None) -> int:
+        if sql.startswith('INSERT INTO _legal_cards'):
+            raise RuntimeError('Replacement failed')
+        return execute(sql, args)
+
+    monkeypatch.setattr(database, 'execute', fail_insert)
+
+    with pytest.raises(RuntimeError, match='Replacement failed'):
+        playability.preaggregate_legal_cards()
+
+    assert db().values('SELECT name FROM _legal_cards WHERE season_id = 40') == ['Lucille']
+    assert not database.open_transactions

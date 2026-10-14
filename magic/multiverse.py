@@ -578,8 +578,9 @@ def apply_meld_result_printings(card_values: list[dict[str, Any]], printing_valu
                 cards_by_id[card_ids_by_name[part['name']]]['meld_result_printing_system_id'] = result_printing_id
 
 async def set_legal_cards_async(season: str | None = None) -> None:
+    current_season = seasons.current_season_code()
     if season is None:
-        season = seasons.current_season_code()
+        season = current_season
 
     new_list: set[str] = set()
     try:
@@ -591,7 +592,7 @@ async def set_legal_cards_async(season: str | None = None) -> None:
 
     format_id = get_format_id(f'Penny Dreadful {season}', True)
 
-    if season is not None:
+    if season != current_season:
         # Older formats don't change
         populated = db().select('SELECT id from card_legality WHERE format_id = %s LIMIT 1', [format_id])
         if populated:

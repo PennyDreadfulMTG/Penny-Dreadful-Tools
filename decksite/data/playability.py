@@ -5,7 +5,6 @@ from shared import logger
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import empty_dict, empty_list, retry_after_calling
-from shared.pd_exception import DatabaseNoSuchTableException
 
 SIDEBOARD_WEIGHT = 0.2
 # At the time of writing (May 2024) 0.3 finds at least one key card for any archetype in any season. 0.16 finds five (for /metagame). .1 then seems like a nice baseline to make sure we get "a deck" back. Pretty arbitrary.
@@ -121,31 +120,28 @@ def rank() -> dict[str, int]:
 def preaggregate_legal_cards() -> None:
     sql = 'SELECT number FROM season'
     all_season_ids = set(db().values(sql))
-    sql = 'SELECT DISTINCT season_id FROM _legal_cards'
-    try:
-        found = set(db().values(sql))
-    except DatabaseNoSuchTableException:
-        logger.info("Didn't find _legal_cards so creating it")
-        sql = """
-                CREATE TABLE IF NOT EXISTS _legal_cards (
-                    season_id INT NOT NULL,
-                    name VARCHAR(190) NOT NULL,
-                    PRIMARY KEY (season_id, name)
-                ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-            """
-        db().execute(sql)
-        found = set()
-    missing = all_season_ids - found
-    if not missing:
-        return
-    for season_id in missing:
-        logger.info(f'Adding season {season_id} to _legal_cards')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _legal_cards (
+            season_id INT NOT NULL,
+            name VARCHAR(190) NOT NULL,
+            PRIMARY KEY (season_id, name)
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+    """
+    db().execute(sql)
+    # Supplemental rotations add cards to existing seasons, including seasons
+    # already cached before this refresh behavior was introduced.
+    for season_id in all_season_ids:
         try:
             legal_cards = search.search(f'f:pd{season_id}')
         except search.InvalidValueException as e:
             logger.error(f'Not able to find the legal cards for season {season_id} so skipping', e)
             continue
-        sql = 'INSERT INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in legal_cards)
+        existing = set(db().values('SELECT name FROM _legal_cards WHERE season_id = %s', [season_id]))
+        missing = legal_cards - existing
+        if not missing:
+            continue
+        logger.info(f'Adding {len(missing)} cards for season {season_id} to _legal_cards')
+        sql = 'INSERT IGNORE INTO _legal_cards (season_id, name) VALUES ' + ', '.join(f'({season_id}, {sqlescape(name)})' for name in missing)
         db().execute(sql)
 
 def preaggregate_season_count() -> None:

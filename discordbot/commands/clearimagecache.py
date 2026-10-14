@@ -17,7 +17,7 @@ class ClearImageCache(Extension):
         if not image_dir:
             await ctx.send('Cowardly refusing to delete from unknown image_dir.')
             return
-        files = glob.glob(f'{image_dir}/*.jpg')
+        files = glob.glob(f'{image_dir}/*.jpg') + glob.glob(f'{image_dir}/*.webp')
         for file in files:
             os.remove(file)
         await ctx.send(f'{len(files)} cleared.')

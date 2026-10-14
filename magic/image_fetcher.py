@@ -9,6 +9,7 @@ from urllib import parse
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 from magic import card, fetcher, layout, oracle
+from magic.abc import CardDescription
 from magic.models import Card, Printing
 from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape
@@ -17,6 +18,7 @@ UNUSABLE_IMAGE_STATUSES = {'placeholder', 'missing'}
 SCRYFALL_ID = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
 SMALL_ART_CROP_WIDTH = 320
 SMALL_ART_CROP_QUALITY = 80
+SCRYFALL_IMAGE_VERSIONS = {'small': 'thumb', 'normal': 'grid', 'large': 'display', 'border_crop': 'crop', 'art_crop': 'art'}
 
 if not os.path.exists(configuration.get_str('image_dir')):
     os.makedirs(configuration.get_str('image_dir'), exist_ok=True)
@@ -68,26 +70,35 @@ def resolve_printing(c: Card) -> Printing | None:
             return default
     return next((p for p in printings if p.get('image_status') not in UNUSABLE_IMAGE_STATUSES), None)
 
+def scryfall_image_version(version: str) -> str:
+    return SCRYFALL_IMAGE_VERSIONS.get(version, version) if version else 'display'
+
 def cdn_image_url(system_id: str, version: str, face: str = 'front') -> str:
-    cdn_version = version or 'large'
-    extension = 'png' if cdn_version == 'png' else 'jpg'
+    cdn_version = scryfall_image_version(version)
+    extension = {'png': 'png', 'jpeg': 'jpg'}.get(cdn_version, 'webp')
     return f'https://cards.scryfall.io/{cdn_version}/{face}/{system_id[0]}/{system_id[1]}/{system_id}.{extension}'
 
-def api_image_url(system_id: str, version: str = '', face: str | None = None) -> str:
-    query = {'format': 'image'}
-    if version:
-        query['version'] = version
-    if face:
-        query['face'] = face
-    return f'https://api.scryfall.com/cards/{parse.quote(system_id, safe="")}?{parse.urlencode(query)}'
+def api_card_url(system_id: str) -> str:
+    return f'https://api.scryfall.com/cards/{parse.quote(system_id, safe="")}'
 
-def named_api_image_url(name: str, version: str = '') -> str:
-    query = {'exact': name, 'format': 'image'}
-    if version:
-        query['version'] = version
+def named_api_card_url(name: str) -> str:
+    query = {'exact': name}
     return f'https://api.scryfall.com/cards/named?{parse.urlencode(query)}'
 
+def api_card_image_uri(sfcard: CardDescription, version: str = '', face: str | None = None) -> str:
+    """Use image_uris: format=image redirects do not yet support the WebP versions."""
+    image_uris = sfcard.get('image_uris', {})
+    if not image_uris and (faces := sfcard.get('card_faces')):
+        index = 1 if face == 'back' else 0
+        if index < len(faces):
+            image_uris = faces[index].get('image_uris', {})
+    uri = image_uris.get(scryfall_image_version(version))
+    if not uri:
+        raise FetchException('Scryfall did not provide the requested image')
+    return uri
+
 def image_urls(c: Card, version: str = '', face: str | None = None) -> list[str]:
+    """Try the image CDN, then resolve the image URI from a JSON Card object."""
     if face == 'meld':
         meld_result_id = c.get('meld_result_printing_system_id')
         printing = Printing({'system_id': meld_result_id, 'image_status': None}) if meld_result_id else None
@@ -96,18 +107,13 @@ def image_urls(c: Card, version: str = '', face: str | None = None) -> list[str]
         printing = resolve_printing(c)
         image_name = c.name
     if printing is None:
-        return [named_api_image_url(image_name, version)]
+        return [named_api_card_url(image_name)]
 
     image_face = face if face and face != 'meld' else 'front'
-    api_face = face if face and face != 'meld' else None
     return [
         cdn_image_url(printing.system_id, version, image_face),
-        api_image_url(printing.system_id, version, api_face),
+        api_card_url(printing.system_id),
     ]
-
-def scryfall_image(c: Card, version: str = '', face: str | None = None) -> str:
-    """Return the API fallback URL retained for callers that need one URL."""
-    return image_urls(c, version, face)[-1]
 
 def mci_image(printing: Printing) -> str:
     return f'http://magiccards.info/scans/en/{printing.set_code.lower()}/{printing.number}.jpg'
@@ -123,7 +129,7 @@ async def download_scryfall_image(cards: list[Card], filepath: str, version: str
     print(f'Trying to get scryfall images for {card_names}')
     image_filepaths = []
     for c in cards:
-        card_filepath = determine_filepath([c])
+        card_filepath = cached_image_filepath(determine_filepath([c])) or determine_filepath([c])
         if not fetch_tools.acceptable_file(card_filepath):
             await download_scryfall_card_image(c, card_filepath, version)
         if fetch_tools.acceptable_file(card_filepath):
@@ -137,7 +143,7 @@ async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]] | None)
         hq_data = fetcher.hq_artcrops()
     if c.name in hq_data:
         url = hq_data[c.name][0]
-        file_path = re.sub('.jpg$', '.hq_art_crop.jpg', determine_filepath([c]))
+        file_path = determine_filepath([c], ext='.hq_art_crop.jpg')
         if not fetch_tools.acceptable_file(file_path):
             await fetch_tools.store_async(url, file_path)
         if fetch_tools.acceptable_file(file_path):
@@ -145,18 +151,26 @@ async def download_art_crop(c: Card, hq_data: dict[str, tuple[str, int]] | None)
     return await download_scryfall_art_crop(c)
 
 def art_crop_filepath(c: Card) -> str:
-    return re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
+    return determine_filepath([c], ext='.art_crop.webp')
 
 def small_art_crop_filepath(c: Card) -> str:
-    return re.sub('.jpg$', '.art_crop_small.jpg', determine_filepath([c]))
+    return determine_filepath([c], ext='.art_crop_small.webp')
+
+def cached_image_filepath(filepath: str) -> str | None:
+    """Reuse existing JPEG caches while storing new Scryfall downloads as WebP."""
+    candidates = [filepath]
+    if filepath.endswith('.webp'):
+        candidates.append(os.path.splitext(filepath)[0] + '.jpg')
+    return next((path for path in candidates if fetch_tools.acceptable_file(path)), None)
 
 def art_crop_is_cached(c: Card) -> bool:
-    return fetch_tools.acceptable_file(art_crop_filepath(c))
+    return cached_image_filepath(art_crop_filepath(c)) is not None
 
 async def download_scryfall_art_crop(c: Card) -> str | None:
     file_path = art_crop_filepath(c)
-    if not fetch_tools.acceptable_file(file_path):
-        await download_scryfall_card_image(c, file_path, version='art_crop')
+    if cached := cached_image_filepath(file_path):
+        return cached
+    await download_scryfall_card_image(c, file_path, version='art_crop')
     if fetch_tools.acceptable_file(file_path):
         return file_path
     return None
@@ -164,8 +178,8 @@ async def download_scryfall_art_crop(c: Card) -> str | None:
 async def download_small_art_crop(c: Card) -> str | None:
     """Create a lightweight art crop for image-heavy thumbnail grids."""
     file_path = small_art_crop_filepath(c)
-    if fetch_tools.acceptable_file(file_path):
-        return file_path
+    if cached := cached_image_filepath(file_path):
+        return cached
 
     temporary_path = ''
     temporary_output_path = ''
@@ -175,9 +189,9 @@ async def download_small_art_crop(c: Card) -> str | None:
         # thumbnail from that stale file: fetch the front-face crop into a temporary source instead.
         if c.is_double_sided():
             directory = os.path.dirname(os.path.abspath(file_path))
-            with tempfile.NamedTemporaryFile(dir=directory, suffix='.jpg', delete=False) as temporary:
+            with tempfile.NamedTemporaryFile(dir=directory, suffix='.webp', delete=False) as temporary:
                 temporary_path = temporary.name
-            if not await download_first_image(image_urls(c, version='art_crop'), temporary_path):
+            if not await download_first_image(image_urls(c, version='art_crop'), temporary_path, version='art_crop'):
                 return None
             source_path = temporary_path
         else:
@@ -190,9 +204,9 @@ async def download_small_art_crop(c: Card) -> str | None:
                 height = round(image.height * SMALL_ART_CROP_WIDTH / image.width)
                 image = image.resize((SMALL_ART_CROP_WIDTH, height), Image.Resampling.LANCZOS)
             directory = os.path.dirname(os.path.abspath(file_path))
-            with tempfile.NamedTemporaryFile(dir=directory, suffix='.jpg', delete=False) as temporary_output:
+            with tempfile.NamedTemporaryFile(dir=directory, suffix='.webp', delete=False) as temporary_output:
                 temporary_output_path = temporary_output.name
-            image.save(temporary_output_path, quality=SMALL_ART_CROP_QUALITY, optimize=True, progressive=True)
+            image.save(temporary_output_path, format='WEBP', quality=SMALL_ART_CROP_QUALITY)
             os.replace(temporary_output_path, file_path)
             temporary_output_path = ''
     except (OSError, UnidentifiedImageError):
@@ -205,7 +219,7 @@ async def download_small_art_crop(c: Card) -> str | None:
     return file_path if fetch_tools.acceptable_file(file_path) else None
 
 async def download_scryfall_png(c: Card) -> str | None:
-    file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
+    file_path = determine_filepath([c], ext='.png')
     if not fetch_tools.acceptable_file(file_path):
         await download_scryfall_card_image(c, file_path, version='png')
     if fetch_tools.acceptable_file(file_path):
@@ -213,7 +227,7 @@ async def download_scryfall_png(c: Card) -> str | None:
     return None
 
 async def download_scryfall_card_image(c: Card, filepath: str, version: str = '') -> bool:
-    if c.is_double_sided() and version != 'art_crop':
+    if c.is_double_sided() and scryfall_image_version(version) != 'art':
         split = os.path.splitext(filepath)
 
         if f'.{version}' in filepath:
@@ -221,28 +235,32 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
         else:
             paths = [f'{split[0]}.{version}.a{split[1]}', f'{split[0]}.{version}.b{split[1]}']
 
-        front_ok = await download_first_image(image_urls(c, version=version), paths[0])
+        front_ok = await download_first_image(image_urls(c, version=version), paths[0], version=version)
         back_ok = False
         if c.layout in layout.has_single_back():
-            back_ok = await download_first_image(image_urls(c, version=version, face='back'), paths[1])
+            back_ok = await download_first_image(image_urls(c, version=version, face='back'), paths[1], version=version, face='back')
         if c.layout in layout.has_meld_back():
-            back_ok = await download_first_image(image_urls(c, version=version, face='meld'), paths[1])
+            back_ok = await download_first_image(image_urls(c, version=version, face='meld'), paths[1], version=version)
         if front_ok and back_ok:
             save_composite_image(paths, filepath)
     else:
-        await download_first_image(image_urls(c, version=version), filepath)
+        await download_first_image(image_urls(c, version=version), filepath, version=version)
     return fetch_tools.acceptable_file(filepath)
 
-async def download_first_image(urls: list[str], filepath: str) -> bool:
+async def download_first_image(urls: list[str], filepath: str, version: str = '', face: str | None = None) -> bool:
     for url in urls:
         try:
-            await fetch_tools.store_async(url, filepath)
+            image_url = url
+            if parse.urlparse(url).hostname == 'api.scryfall.com':
+                sfcard = await fetch_tools.fetch_json_async(url)
+                image_url = api_card_image_uri(sfcard, version, face)
+            await fetch_tools.store_async(image_url, filepath)
             return True
         except FetchException as e:
             print(f'Error fetching {url}: {e}')
     return False
 
-def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.jpg') -> str:
+def determine_filepath(cards: list[Card], prefix: str = '', ext: str = '.webp') -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -269,8 +287,8 @@ async def download_image_async(cards: list[Card], version: str = '') -> str | No
             return await download_small_art_crop(cards[0])
         return await download_scryfall_art_crop(cards[0])
     filepath = determine_filepath(cards)
-    if fetch_tools.acceptable_file(filepath):
-        return filepath
+    if cached := cached_image_filepath(filepath):
+        return cached
     if await download_scryfall_image(cards, filepath, version='border_crop'):
         return filepath
     return None

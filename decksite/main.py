@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-import urllib.parse
 from copy import copy
 
 import sentry_sdk
@@ -18,7 +17,7 @@ from decksite.data import news as ns
 from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
-from shared import configuration, logger, perf
+from shared import configuration, fetch_tools, logger, perf
 from shared.pd_exception import TooFewItemsException
 
 SUPPORTED_IMAGE_VERSIONS = ['', 'art_crop', 'art_crop_small']
@@ -85,10 +84,13 @@ def image(c: str = '') -> wrappers.Response:
     except TooFewItemsException as e:
         logger.info(f'Did not find an image for {c}: {e}')
         if len(names) == 1:
-            query = {'exact': c, 'format': 'image'}
-            if version:
-                query['version'] = 'art_crop' if version == 'art_crop_small' else version
-            return redirect(f'https://api.scryfall.com/cards/named?{urllib.parse.urlencode(query)}', code=303)
+            image_version = 'art_crop' if version == 'art_crop_small' else version
+            try:
+                sfcard = fetch_tools.fetch_json(image_fetcher.named_api_card_url(c))
+                return redirect(image_fetcher.api_card_image_uri(sfcard, image_version), code=303)
+            except fetch_tools.FetchException as fetch_error:
+                logger.warning(f'Could not fetch image for {c}: {fetch_error}')
+                return make_response('', 404)
         return make_response('', 400)
 
 @APP.route('/static/dev-db.sql.gz')

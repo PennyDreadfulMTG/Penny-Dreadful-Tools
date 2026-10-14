@@ -23,7 +23,7 @@ class Welcome(Extension):
         await greeting(ctx, card)
 
 async def greeting(ctx: MtgContext, card: Card, text: str = '') -> None:
-    file_path = image_fetcher.determine_filepath([card])
+    file_path = image_fetcher.determine_filepath([card], ext='.png')
     success = await image_fetcher.download_scryfall_card_image(card, file_path, version='png')
     if success:
         await ctx.send_image_with_retry(file_path, text)

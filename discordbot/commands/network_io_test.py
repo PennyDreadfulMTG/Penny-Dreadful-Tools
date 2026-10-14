@@ -213,17 +213,15 @@ async def test_art_defers_before_downloading(monkeypatch: pytest.MonkeyPatch) ->
     card = SimpleNamespace(name='Island')
     ctx = SimpleNamespace(author=SimpleNamespace(mention='<@123>'), defer=AsyncMock(), send=AsyncMock(), send_image_with_retry=AsyncMock())
 
-    async def download(_card: object, _path: str, version: str) -> bool:
+    async def download(_card: object) -> str:
         ctx.defer.assert_awaited_once_with()
-        assert version == 'art_crop'
-        return True
+        return '/tmp/island.art_crop.webp'
 
-    monkeypatch.setattr(art.image_fetcher, 'determine_filepath', Mock(return_value='/tmp/island.jpg'))
-    monkeypatch.setattr(art.image_fetcher, 'download_scryfall_card_image', download)
+    monkeypatch.setattr(art.image_fetcher, 'download_scryfall_art_crop', download)
 
     await art.Art.art.callback(SimpleNamespace(), ctx, card)
 
-    ctx.send_image_with_retry.assert_awaited_once_with('/tmp/island.art_crop.jpg')
+    ctx.send_image_with_retry.assert_awaited_once_with('/tmp/island.art_crop.webp')
 
 
 @pytest.mark.asyncio

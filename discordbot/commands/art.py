@@ -1,5 +1,3 @@
-import re
-
 from interactions.client import Client
 from interactions.models import Extension, slash_command
 
@@ -17,9 +15,8 @@ class Art(Extension):
 
         if card is not None:
             await ctx.defer()
-            file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([card]))
-            success = await image_fetcher.download_scryfall_card_image(card, file_path, version='art_crop')
-            if success:
+            file_path = await image_fetcher.download_scryfall_art_crop(card)
+            if file_path:
                 await ctx.send_image_with_retry(file_path)
             else:
                 await ctx.send(f'{ctx.author.mention}: Could not get image.')

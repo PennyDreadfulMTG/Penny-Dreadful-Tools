@@ -1,4 +1,5 @@
 import asyncio
+import io
 import time
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -9,6 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from PIL import Image
 
 from discordbot.commands import spoiler
 from shared.fetch_tools import FetchException
@@ -32,7 +34,7 @@ def serve_response(payload: bytes, content_type: str, delay: float = 0.15) -> Ge
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
-        yield f'http://127.0.0.1:{server.server_port}/image.jpg'
+        yield f'http://127.0.0.1:{server.server_port}/image.webp'
     finally:
         server.shutdown()
         server.server_close()
@@ -46,13 +48,13 @@ def spoiler_card(image_url: str) -> dict:
         'set': 'ydsk',
         'collector_number': '27',
         'mana_cost': '{1}{G}{U}',
-        'image_uris': {'normal': image_url},
+        'image_uris': {'grid': image_url},
     }
 
 
 @pytest.mark.asyncio
 async def test_spoiler_does_not_send_invalid_image(monkeypatch: pytest.MonkeyPatch) -> None:
-    card = spoiler_card('https://example.com/not-an-image.jpg')
+    card = spoiler_card('https://example.com/not-an-image.webp')
     ctx = SimpleNamespace(
         author=SimpleNamespace(mention='<@123>'),
         bot=Mock(),
@@ -72,7 +74,7 @@ async def test_spoiler_does_not_send_invalid_image(monkeypatch: pytest.MonkeyPat
 
     ctx.defer.assert_awaited_once_with()
     fetch_card.assert_awaited_once_with('https://api.scryfall.com/cards/named?fuzzy=Unnatural Summons')
-    download_image.assert_awaited_once_with(spoiler.fetch_tools.store_image, 'https://example.com/not-an-image.jpg', '/tmp/ydsk_27.jpg')
+    download_image.assert_awaited_once_with(spoiler.fetch_tools.store_image, 'https://example.com/not-an-image.webp', '/tmp/ydsk_27.webp')
     ctx.send.assert_awaited_once_with(content='Unnatural Summons 1GU\nImage unavailable.')
     import_card.assert_awaited_once_with('Unnatural Summons')
 
@@ -82,8 +84,9 @@ async def test_spoiler_keeps_event_loop_responsive_during_real_image_download(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    image = Path('discordbot/commands/img/mana-frank.png').read_bytes()
-    with serve_response(image, 'image/png') as image_url:
+    image = io.BytesIO()
+    Image.effect_noise((488, 680), 80).convert('RGB').save(image, format='WEBP')
+    with serve_response(image.getvalue(), 'image/webp') as image_url:
         card = spoiler_card(image_url)
         ctx = SimpleNamespace(
             author=SimpleNamespace(mention='<@123>'),
@@ -105,7 +108,9 @@ async def test_spoiler_keeps_event_loop_responsive_during_real_image_download(
 
     assert ticks >= 5
     ctx.defer.assert_awaited_once_with()
-    assert (tmp_path / 'ydsk_27.jpg').is_file()
+    assert (tmp_path / 'ydsk_27.webp').is_file()
+    with Image.open(tmp_path / 'ydsk_27.webp') as downloaded:
+        assert downloaded.format == 'WEBP'
     assert 'file' in ctx.send.await_args.kwargs
 
 
@@ -129,7 +134,7 @@ async def test_spoiler_rejects_real_non_image_response(
 
         await spoiler.Spoiler.spoiler.callback(SimpleNamespace(), ctx, 'Unnatural Summons')
 
-    assert not (tmp_path / 'ydsk_27.jpg').exists()
+    assert not (tmp_path / 'ydsk_27.webp').exists()
     ctx.send.assert_awaited_once_with(content='Unnatural Summons 1GU\nImage unavailable.')
 
 

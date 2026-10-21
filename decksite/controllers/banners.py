@@ -1,7 +1,7 @@
 import asyncio
-import functools
 import os
 
+from cachelib.simple import SimpleCache
 from flask import Response, make_response, send_file
 
 from decksite import APP, auth, get_season_id
@@ -12,6 +12,8 @@ from shared import logger
 from shared.container import Container
 from shared.pd_exception import DatabaseException
 from shared_web.api import return_json
+
+BANNER_CACHE = SimpleCache(default_timeout=5 * 60)
 
 
 @APP.route('/admin/banners/')
@@ -115,8 +117,10 @@ def banner_cards(seasonnum: int) -> tuple[list[str], str]:
         cardnames, background = guess_banner(seasonnum)
     return cardnames, background
 
-@functools.lru_cache
 def guess_banner(season_num: int) -> tuple[list[str], str]:
+    cached = BANNER_CACHE.get(str(season_num))
+    if cached is not None:
+        return cached
     cardnames: list[str] = []
     picked_colors = []
     try:
@@ -130,10 +134,18 @@ def guess_banner(season_num: int) -> tuple[list[str], str]:
             color = ''.join(c.colors)
             if color in picked_colors:
                 continue
-            if len(cardnames) == 7:
-                return cardnames, row['name']
             cardnames.append(row['name'])
             picked_colors.append(color)
+            if len(cardnames) == 8:
+                break
+        if cardnames:
+            # Reserve the last qualifier for the background, even with fewer than eight.
+            result = cardnames[:-1], cardnames[-1]
+            BANNER_CACHE.set(str(season_num), result)
+            return result
     except DatabaseException as e:
         logger.error(e)
-    return ['Season of Renewal', 'Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'New Perspectives'
+    # Avoid repeated reads during empty seasons or outages, but retry stats soon.
+    result = ['Season of Renewal', 'Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'New Perspectives'
+    BANNER_CACHE.set(str(season_num), result, timeout=60)
+    return result

@@ -451,7 +451,7 @@ def is_subquery(subquery_name: str) -> str:
         'scryland': 't:land "Temple of" o:"When this land enters, scry 1"',
         'shadowland': "t:land o:/As this land enters, you may reveal an? [a-z]+ or [a-z]+ card from your hand. If you don't, this land enters tapped./",
         'shockland': 't:land o:"As this land enters, you may pay 2 life. If you don\'t, it enters tapped."',
-        'slowland': 't:land o:"this land enters tapped unless you control two or more other lands."',
+        'slowland': 't:land ci=2 o:"this land enters tapped unless you control two or more other lands."',
         # 205.2a The card types are artifact, battle, conspiracy, creature, dungeon, enchantment, instant, land, phenomenon, plane, planeswalker, scheme, sorcery, tribal, and vanguard. See section 3, “Card Types.”
         'spell': 't:artifact OR t:battle OR t:creature OR t:enchantment OR t:instant OR t:planeswalker OR t:sorcery',
         'storageland': 't:land o:"storage counter" (o:"You may choose not to untap this land during your untap step." OR o:"{1}, {T}: Put a storage counter on this land")',

@@ -212,7 +212,7 @@ def test_shortcuts_and_nicknames() -> None:
     do_functional_test('is:shadowland', ['Choked Estuary', 'Vineglimmer Snarl'], ['Secluded Glen', 'Counterbalance'], True)
     do_functional_test('is:snarl', ['Choked Estuary', 'Vineglimmer Snarl'], ['Secluded Glen', 'Counterbalance'])
     do_functional_test('is:shockland', ['Overgrown Tomb'], ['Boseiju, Who Shelters All', 'Tenacious Underdog'], True)
-    do_functional_test('is:slowland', ['Deathcap Glade', 'Shipwreck Marsh'], ['Lantern-Lit Cavern'], True)
+    do_functional_test('is:slowland', ['Deathcap Glade', 'Shipwreck Marsh'], ['Lantern-Lit Cavern', 'The Unicomplex', 'Federation Outpost', "Quark's Bar"], True)
     do_functional_test('is:storageland', ['Bottomless Vault', 'Calciform Pools', 'Mage-Ring Network'], ['City of Shadows', 'Mercadian Bazaar', 'Storage Matrix'])
     do_functional_test('is:creatureland', ['Treetop Village', 'Creeping Tar Pit', 'Restless Bivouac', "Mishra's Factory", 'Crawling Barrens'], ["Urza's Factory", "Thespian's Stage"])
     do_functional_test('is:triland', ['Savage Lands'], ['Bant Charm', "Spara's Headquarters"])

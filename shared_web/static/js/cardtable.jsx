@@ -33,7 +33,7 @@ const renderRow = (table, card) => (
         <td className="n win-percent">
             <span
                 title={`Record: ${renderRecord(card)}`}
-                aria-label={`${renderWinPercent(card)}%; record ${renderRecord(card)}`}
+                aria-label={`Win percentage: ${renderWinPercent(card)}; record ${renderRecord(card)}`}
             >
                 {renderWinPercent(card)}
             </span>

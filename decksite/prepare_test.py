@@ -8,6 +8,22 @@ from magic.models import Card, Printing
 from shared_web import template
 
 
+@pytest.mark.parametrize(('value', 'expected'), [(None, '—'), (0.0, '0.0'), (53.1, '53.1')])
+def test_archetype_win_percentage_display_preserves_numeric_data(value: float | None, expected: str) -> None:
+    archetype = Archetype({'id': 1, 'name': 'Test', 'num_decks': 1, 'wins': 0, 'losses': 1, 'draws': 1, 'win_percent': value})
+    with APP.test_request_context('/'):
+        prepare.prepare_archetype(archetype, [archetype], None, False, 1)
+        stats = template.render_name('stats', archetype)
+        tree = template.render_name('archetypetree', {'archetypes': [archetype]})
+        home = template.render_name('home', {'has_movers_and_shakers': True, 'archetypes': [archetype]})
+
+    assert f'<td class="n">{expected}</td>' in stats
+    assert f'<td class="n">{expected}</td>' in tree
+    assert f'<td class="n">{expected}</td>' in home
+    assert archetype.win_percent == value
+    assert archetype.win_percent is None or isinstance(archetype.win_percent, float)
+
+
 def test_season_icon_link_uses_site_colors(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(seasons, 'current_season_name', lambda: 'Penny Dreadful KLD')
 

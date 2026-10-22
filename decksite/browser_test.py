@@ -396,6 +396,27 @@ def test_card_stats_are_numbers_and_card_summaries_are_locale_formatted(browser:
     assert not collector.problems, '\n'.join(collector.problems)
 
 
+def test_card_win_percentages_distinguish_undefined_zero_and_hidden(browser: 'Browser', site: Container) -> None:
+    page, collector = new_page(browser, site, locale='en-US')
+
+    def mock_percentages(route: 'Route') -> None:
+        response = route.fetch()
+        data = response.json()
+        assert len(data['objects']) >= 3
+        for card, value, show_record in zip(data['objects'], [None, 0.0, None], [True, True, False]):
+            card.update({'winPercent': value, 'showRecord': show_record})
+        route.fulfill(response=response, json=data)
+
+    page.route('**/api/cards2/**', mock_percentages)
+    page.goto('/seasons/all/cards/')
+    assert not wait_for_live_tables(page)
+    rows = page.locator('.cardtable tbody tr')
+    for i, expected in enumerate(['—', '0.0', '']):
+        expect(rows.nth(i).locator('.win-percent')).to_have_text(expected)
+    expect(rows.first.locator('.win-percent span')).to_have_attribute('aria-label', re.compile(r'^Win percentage: —; record '))
+    assert not collector.problems, '\n'.join(collector.problems)
+
+
 def submenu_items(page: 'Page') -> 'Locator':
     return page.locator('.menu > li:has(.submenu):visible')
 

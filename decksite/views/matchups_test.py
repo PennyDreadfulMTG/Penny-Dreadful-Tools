@@ -3,6 +3,7 @@ import pytest
 from decksite.data.matchup import MatchupResults
 from decksite.main import APP
 from decksite.views.matchups import Matchups
+from shared_web import template
 
 
 def matchup_results(wins: int = 2, losses: int = 1, draws: int = 1) -> MatchupResults:
@@ -13,6 +14,19 @@ def matchup_results(wins: int = 2, losses: int = 1, draws: int = 1) -> MatchupRe
         draws=draws,
         losses=losses,
     )
+
+
+@pytest.mark.parametrize(('wins', 'losses', 'expected'), [(0, 0, '—'), (0, 1, '0.0'), (2, 1, '66.7')])
+def test_matchup_win_percentage_display(monkeypatch: pytest.MonkeyPatch, wins: int, losses: int, expected: str) -> None:
+    monkeypatch.setattr(Matchups, 'all_seasons', lambda _self: [])
+    results = matchup_results(wins=wins, losses=losses)
+    original_percent = results.win_percent
+    with APP.test_request_context('/matchups/'):
+        view = Matchups({}, {}, None, results)
+        html = template.render_name('matchups', view)
+
+    assert f'<td class="n">{expected}</td>' in html
+    assert results.win_percent == original_percent
 
 
 def test_matchup_search_has_open_graph_summary(monkeypatch: pytest.MonkeyPatch) -> None:

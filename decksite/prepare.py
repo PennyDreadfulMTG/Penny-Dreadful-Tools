@@ -15,6 +15,7 @@ from shared import dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 from shared_web import friendly_time
+from shared_web.number import display_number
 
 # Take 'raw' items from the database and decorate them for use and display.
 
@@ -23,6 +24,7 @@ def prepare_cards(cs: list[Card], tournament_only: bool = False, season_id: int 
         prepare_card(c, tournament_only, season_id)
 
 def prepare_card(c: Card, tournament_only: bool = False, season_id: int | str | None = None) -> None:
+    c.win_percent_display = display_number(c.get('win_percent'), format='#,##0.0')
     season_name = seasons.current_season_name()
     prepare_card_urls(c, tournament_only, season_id)
     c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
@@ -148,6 +150,7 @@ def prepare_deck(d: Deck) -> None:
 
 def prepare_people(ps: Sequence[Person], season_id: int | str | None = None) -> None:
     for p in ps:
+        p.win_percent_display = display_number(p.get('win_percent'), format='#,##0.0')
         if season_id == 0:
             if p.get('mtgo_username'):
                 p.url = f'/seasons/all/people/{p.mtgo_username.lower()}/'
@@ -195,6 +198,7 @@ def prepare_archetypes(archetypes: list[Archetype], current_id: int | None, tour
         prepare_archetype(a, archetypes, current_id, tournament_only, season_id)
 
 def prepare_archetype(a: archetype.Archetype, archetypes: list[archetype.Archetype], current_id: int | None, tournament_only: bool, season_id: int | str | None) -> None:
+    a.win_percent_display = display_number(a.get('win_percent'), format='#,##0.0')
     a.current = a.id == current_id
     a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
     archetype_ids = {a.id for a in archetypes}

@@ -98,7 +98,6 @@ class Home(View):
             card.num_decks_display = format_decimal(card.num_decks)
             record = [card.wins, card.losses] + ([card.draws] if card.draws else [])
             card.record_display = '–'.join(format_decimal(n) for n in record)
-            card.win_percent_display = format_decimal(card.win_percent, format='#,##0.0')
         self.has_top_cards = len(cards) > 0
         self.cards = self.top_cards  # To get prepare_card treatment
         self.cards_url = url_for('.cards')

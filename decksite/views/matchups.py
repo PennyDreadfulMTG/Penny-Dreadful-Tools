@@ -4,6 +4,7 @@ from flask import request
 
 from decksite.data.matchup import MatchupResults
 from decksite.view import View
+from shared_web.number import display_number
 
 
 class Matchups(View):
@@ -27,6 +28,9 @@ class Matchups(View):
 
     def show_season_icon(self) -> bool:
         return self.search_season_id == 'all'
+
+    def win_percent_display(self) -> str:
+        return display_number(self.results.win_percent if self.results is not None else None, format='#,##0.0')
 
     def og_title(self) -> str:
         if self.results is None:

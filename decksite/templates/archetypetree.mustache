@@ -29,7 +29,7 @@
                         <td class="n">{{num_decks}}</td>
                     {{/is_matchups}}
                     <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                    <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
+                    <td class="n">{{#show_record}}{{win_percent_display}}{{/show_record}}</td>
                     {{^hide_tournament_results}}
                         <td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>
                         <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>

@@ -89,7 +89,7 @@ dev = [
     "brotli",
     "ruff==0.17.2",
     "mypy-extensions",
-    "playwright==1.64.0",
+    "playwright==1.64.1",
 ]
 
 [tool.ruff]

@@ -1,7 +1,7 @@
 import os
 from typing import Any
 
-from flask import g, has_request_context, request
+from flask import g, has_app_context
 
 from shared import configuration, logger
 from shared.container import Container
@@ -13,9 +13,7 @@ MIGRATION_LOCK_TIMEOUT_SECONDS = 10 * 60
 
 def db() -> Database:
     ctx: Any = TEST_CONTEXT  # Fallback context for testing.
-    if has_request_context():  # type: ignore
-        ctx = request
-    elif g:
+    if has_app_context():  # type: ignore
         ctx = g
     db_name = configuration.get_str('decksite_database')
     if not hasattr(ctx, db_name):

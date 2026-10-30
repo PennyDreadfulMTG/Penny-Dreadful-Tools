@@ -3,7 +3,7 @@ import subprocess
 import urllib
 from typing import Any
 
-from flask import Blueprint, Flask, Request, Response, redirect, request, send_from_directory, session, url_for
+from flask import Blueprint, Flask, Request, Response, g, redirect, request, send_from_directory, session, url_for
 from flask.helpers import make_response
 from flask_babel import Babel
 from flask_restx import Api
@@ -24,6 +24,7 @@ class PDFlask(Flask):
         shared_web_path = os.path.abspath(os.path.dirname(__file__))
         static_folder = os.path.join(shared_web_path, 'static')
         super().__init__(import_name, static_folder=static_folder)
+        self.teardown_appcontext(self.close_databases)
         super().register_error_handler(BadRequestException, self.bad_request)
         super().register_error_handler(exceptions.BadRequest, self.bad_request)
         super().register_error_handler(DoesNotExistException, self.not_found)
@@ -59,6 +60,18 @@ class PDFlask(Flask):
         self.api_root = Blueprint('api', import_name, url_prefix='/api')
         self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
         self.register_blueprint(self.api_root)
+
+    def close_databases(self, _: BaseException | None) -> None:
+        # App contexts also cover worker initialization and maintenance jobs. Pop before
+        # closing so repeated teardown cannot reuse a closed connection.
+        decksite_database = g.pop(configuration.get_str('decksite_database'), None)
+        try:
+            if decksite_database is not None:
+                decksite_database.close()
+        finally:
+            magic_database = g.pop('magic_database', None)
+            if magic_database is not None:
+                magic_database.close()
 
     def bad_request(self, e: BadRequestException) -> Response | tuple[str, int]:
         logger.warning('400 Bad Request ' + self.client_error_log_message(request))

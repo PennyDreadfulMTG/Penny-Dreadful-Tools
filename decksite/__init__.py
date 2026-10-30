@@ -90,13 +90,18 @@ def build_menu() -> Menu:
     return menu
 
 
-try:
-    oracle.init()
-except DatabaseException as e:
-    APP.logger.warning("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
-    multiverse.init()
-    oracle.init()
+# Keep the in-memory card cache and rule data, but release the connections used
+# to initialize them before this worker starts serving requests.
+with APP.app_context():
+    try:
+        oracle.init()
+    except DatabaseException as e:
+        APP.logger.warning("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
+        multiverse.init()
+        oracle.init()
 
-from decksite.controllers import admin  # noqa: I001
-from .data import deck  # noqa: F401
+# Importing the controllers also caches rule data from the cards database.
+with APP.app_context():
+    from decksite.controllers import admin  # noqa: I001
+    from .data import deck  # noqa: F401
 APP.config['menu'] = build_menu

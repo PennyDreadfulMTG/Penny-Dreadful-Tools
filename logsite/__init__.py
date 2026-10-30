@@ -12,6 +12,13 @@ from shared_web.menu import Menu, MenuItem
 APP = PDFlask(__name__)
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Production has two request threads per worker. Bound each worker's pool to
+# that concurrency; these connections share the main site's per-user limit.
+APP.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': 2,
+    'max_overflow': 0,
+    'pool_pre_ping': True,
+}
 APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}/{db}'.format(
     user=configuration.mysql_user.value,
     password=configuration.mysql_passwd.value,

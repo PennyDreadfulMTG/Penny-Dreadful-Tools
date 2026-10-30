@@ -17,7 +17,7 @@ from decksite.data import news as ns
 from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
-from shared import configuration, fetch_tools, logger, perf
+from shared import fetch_tools, logger, perf
 from shared.pd_exception import TooFewItemsException
 
 SUPPORTED_IMAGE_VERSIONS = ['', 'art_crop', 'art_crop_small']
@@ -124,12 +124,6 @@ def before_request() -> wrappers.Response | None:
 def teardown_request(_: BaseException | None) -> None:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
-    decksite_database = g.get(configuration.get_str('decksite_database'))
-    if decksite_database is not None:
-        decksite_database.close()
-    magic_database = g.get('magic_database')
-    if magic_database is not None:
-        magic_database.close()
 
 def init(debug: bool = True, port: int | None = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

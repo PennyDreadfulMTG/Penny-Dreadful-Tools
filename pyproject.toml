@@ -72,7 +72,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "mypy==2.4.0",
+    "mypy==2.4.1",
     "types-flask",
     "types-Markdown",
     "types-pytz",

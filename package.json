@@ -32,7 +32,7 @@
   },
   "description": "A suite of tools for the Penny Dreadful MTGO community.",
   "devDependencies": {
-    "@babel/cli": "^8.0.6",
+    "@babel/cli": "^8.1.0",
     "@babel/core": "^8.0.10",
     "@babel/eslint-parser": "^8.0.7",
     "@babel/plugin-transform-class-properties": "^8.0.1",

@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 import pydantic
 
-from decksite.data import archetype, competition, deck, match, person, top
+from decksite.data import competition, deck, match, person, top
 from decksite.database import db
 from decksite.tournament import CompetitionFlag
 from magic import decklist
@@ -185,7 +185,8 @@ def process_tournament(name: str, event: Event) -> None:
     competition_id = insert_competition(name, date, event)
     decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, event.players)
     insert_matches(date, decks_by_gatherling_username, event.matches, event.mainrounds + event.finalrounds)
-    guess_archetypes(list(decks_by_gatherling_username.values()))
+    # The scheduled archetype job classifies these decks after the import commits.
+    # Similarity calculations can exceed the database idle timeout.
     db().commit('tournament')
 
 def determine_finishes(standings: list[Standing], finalists: list[Finalist]) -> FinalStandings:
@@ -248,7 +249,7 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
         'mtgo_username': mtgo_username,
         'finish': finish,
         'url': gatherling_url(f'/deck.php?mode=view&id={d.id}'),
-        'archetype': d.archetype.value,
+        'archetype': None,  # Leave eligible for the scheduled job; Gatherling's labels are too broad.
         'identifier': str(d.id),
         'cards': {'maindeck': d.maindeck, 'sideboard': d.sideboard},
     }
@@ -302,12 +303,6 @@ def gatherling_url(href: str) -> str:
     if href.startswith('http'):
         return href
     return f'https://gatherling.com{href}'
-
-def guess_archetypes(ds: list[deck.Deck]) -> None:
-    deck.calculate_similar_decks(ds)
-    for d in ds:
-        if d.similar_decks and d.similar_decks[0].archetype_id is not None:
-            archetype.assign(d.id, d.similar_decks[0].archetype_id, None, False)
 
 def vivify_date(s: str) -> datetime.datetime:
     return dtutil.parse(s, dtutil.GATHERLING_FORMAT, dtutil.GATHERLING_TZ)

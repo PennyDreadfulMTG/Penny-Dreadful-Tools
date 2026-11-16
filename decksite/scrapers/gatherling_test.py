@@ -2,9 +2,12 @@ import json
 
 import pytest
 
-from decksite.data import competition, match
+from decksite.data import competition, deck, match
+from decksite.database import db
 from decksite.scrapers import gatherling
 from decksite.testutil import with_test_db
+from magic.models import Deck
+from maintenance import guess_league_archetypes
 from shared.database import sqlescape
 
 
@@ -14,14 +17,19 @@ def test_medal2finish() -> None:
 
 @with_test_db
 @pytest.mark.functional
-def test_process() -> None:
+def test_process(monkeypatch: pytest.MonkeyPatch) -> None:
+    def unexpected_similarity_calculation(_: list[Deck]) -> None:
+        pytest.fail('Tournament imports must commit without calculating similarities')
+
+    monkeypatch.setattr(deck, 'calculate_similar_decks', unexpected_similarity_calculation)
     name = 'Penny Dreadful Thursdays 19.04'
     where = 'c.name = ' + sqlescape(name)
     cs = competition.load_competitions(where)
     assert len(cs) == 0
     data = json.loads(API_RESPONSE)
-    response = gatherling.make_api_response(data)
+    response = gatherling.make_api_response({name: data[name]})
     gatherling.process(response)
+    assert db().open_transactions == []
     event = response[name]
     cs = competition.load_competitions(where)
     assert len(cs) == 1
@@ -33,6 +41,7 @@ def test_process() -> None:
     assert len(cs) == 1
     c = cs[0]
     assert len(c.decks) == len(event.decks)
+    assert all(d.archetype_id is None and not d.reviewed for d in c.decks)
     finishes: dict[int, int] = {}
     for d in c.decks:
         finishes[d.finish] = finishes.get(d.finish, 0) + 1
@@ -46,6 +55,22 @@ def test_process() -> None:
     assert len(ms) == len(event.matches)
     for m in ms:
         assert (m.opponent is None) or (2 <= m.game_wins + m.game_losses <= 3)
+
+    # Exercise the real scheduled selector and assignment against the imported decks.
+    # Only the expensive similarity calculation is replaced.
+    reviewed = c.decks[0]
+    reviewed.archetype_id = db().value('SELECT id FROM archetype LIMIT 1')
+    reviewed.reviewed = True
+
+    def set_similar_decks(decks: list[Deck]) -> None:
+        assert {d.id for d in c.decks} <= {d.id for d in decks}
+        for d in decks:
+            d.similar_decks = [reviewed]
+
+    monkeypatch.setattr(deck, 'calculate_similar_decks', set_similar_decks)
+    guess_league_archetypes.run()
+    classified = competition.load_competitions(where, should_load_decks=True)[0].decks
+    assert all(d.archetype_id == reviewed.archetype_id and not d.reviewed for d in classified)
 
 def test_find_mtgo_username() -> None:
     data = json.loads(PLAYERS)

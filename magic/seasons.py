@@ -23,13 +23,15 @@ SEASONS = [
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
     'DFT', 'FIN', 'SPM', 'TLA',         # 2025
-    'ECL', 'SOS', 'HOB',                # 2026
+    'ECL', 'SOS', 'HOB', 'TRK',         # 2026
+    'NAU', 'Berlin',                    # 2027
 ]
 
 SUPPLEMENTAL_SETS = [
     'MAT',  # March of the Machines Aftermath, mini-set
     'TDM', 'EOE',  # 2025
     'TMT', 'MSH', 'FRA', # 2026
+    'MDD', 'Cairo',      # 2027
 ]
 
 IGNORED_SETS = [
@@ -44,6 +46,9 @@ OVERRIDES = {
         'enterDate': {
             'exact': '2020-04-17T00:00:00.000',
         },
+    },
+    'Magic: The Gathering® | Star Trek™': {
+        'code': 'TRK'  #  I was not on top of making sure WIS had the correct code for this set, temporary until PR is merged
     },
 }
 

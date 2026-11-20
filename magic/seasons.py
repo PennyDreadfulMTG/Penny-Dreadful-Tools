@@ -23,7 +23,7 @@ SEASONS = [
     'ONE', 'MOM', 'WOE', 'LCI',         # 2023
     'MKM', 'OTJ', 'BLB', 'DSK', 'FDN',  # 2024
     'DFT', 'FIN', 'SPM', 'TLA',         # 2025
-    'ECL', 'SOS', 'HOB',                # 2026
+    'ECL', 'SOS', 'HOB', 'TRK',         # 2026
 ]
 
 SUPPLEMENTAL_SETS = [

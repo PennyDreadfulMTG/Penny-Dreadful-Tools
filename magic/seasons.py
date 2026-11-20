@@ -48,7 +48,8 @@ OVERRIDES = {
         },
     },
     'Magic: The Gathering® | Star Trek™': {
-        'code': 'TRK'  #  I was not on top of making sure WIS had the correct code for this set, temporary until PR is merged
+        'code': 'TRK',
+        'enterDate': {'exact': '2026-11-06T00:00:00.000'} #  I was not on top of making sure WIS had the correct code for this set, temporary until PR is merged
     },
 }
 

@@ -47,6 +47,9 @@ OVERRIDES = {
             'exact': '2020-04-17T00:00:00.000',
         },
     },
+    'Magic: The Gathering® | Star Trek™': {
+        'code': 'TRK'  #  I was not on top of making sure WIS had the correct code for this set, temporary until PR is merged
+    },
 }
 
 def rotation_offset(code: str) -> datetime.timedelta:

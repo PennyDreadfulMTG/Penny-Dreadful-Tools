@@ -84,6 +84,7 @@ def build_menu() -> Menu:
             MenuItem(gettext('FAQs'), endpoint='faqs'),
             MenuItem(gettext('Community Guidelines'), endpoint='community_guidelines'),
             MenuItem(gettext('Contact Us'), endpoint='contact_us'),
+            MenuItem(gettext('Privacy Policy'), endpoint='privacy'),
         ])),
         MenuItem(gettext('Admin'), endpoint='admin_home', submenu=admin.admin_menu(), permission_required='demimod'),
     ], current_endpoint=g.get('menu_endpoint_override', request.endpoint))
